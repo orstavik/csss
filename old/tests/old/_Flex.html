@@ -1,0 +1,73 @@
+<script src="./cssTester.js" type="module"></script>
+
+<div class="$flex(row-reverse,p(1%,,3%),gap(,3rem))">
+  hello
+</div>
+<div class="$flex(gap(4px),padding(22px,33px,44px))|$_flex(margin(,0.1px,,20%))">
+  hello
+</div>
+<div class="$flex(cc)|*$_flex(margin(10px))">
+  hello
+</div>
+<div class="$flex(ellipsis)">
+  hello
+</div>
+<div class="
+  $flex(gap(1rem),visible-auto,padding(1rem))$w(80%)|*$_flex(0shrink,c)$w(7rem)$h(3rem)">
+  hello
+</div>
+
+<style id="expected">
+  /*container 0*/
+  /*$flex(row-reverse,p(1%,,3%),gap(,3rem))*/
+  :where(.\$flex\(row-reverse\,p\(1\%\,\,3\%\)\,gap\(\,3rem\)\)) {
+    display: flex;
+    flex-direction: row-reverse;
+    padding-block-start: 1%;
+    padding-block-end: 3%;
+    row-gap: 3rem;
+  }
+
+  /*container 0*/
+  /*$flex(gap(4px),padding(22px,33px,44px))|$_flex(margin(,0.1px,,20%))*/
+  :where(.\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\)\|\$_flex\(margin\(\,0\.1px\,\,20\%\)\)) {
+    display: flex;
+    column-gap: 4px;
+    padding-block-start: 22px;
+    padding-inline: 33px;
+    padding-block-end: 44px;
+  }
+
+  /*item 0*/
+  /*$flex(gap(4px),padding(22px,33px,44px))|$_flex(margin(,0.1px,,20%))*/
+  :where(.\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\)\|\$_flex\(margin\(\,0\.1px\,\,20\%\)\))>:where(*) {
+    margin-inline-start: 0.1px;
+    margin-inline-end: 20%;
+  }
+
+  /*container 0*/
+  /*$flex(cc)|*$_flex(margin(10px))*/
+  :where(.\$flex\(cc\)\|\*\$_flex\(margin\(10px\)\)) {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+  }
+
+  /*item 0*/
+  /*$flex(cc)|*$_flex(margin(10px))*/
+  :where(.\$flex\(cc\)\|\*\$_flex\(margin\(10px\)\))>:where(*) {
+    margin: 10px;
+  }
+
+  /*container 0*/
+  /*$flex(ellipsis)*/
+  :where(.\$flex\(ellipsis\)) {
+    display: flex;
+    overflow-x: hidden;
+    overflow-inline: hidden;
+    overflow-y: hidden;
+    overflow-block: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+</style>
