@@ -1,4 +1,4 @@
-import { Debugger, PositiveLengthPercent, Word, P, ListOfSame, Merge,Assign, Dictionary, LogicalFour, CheckNum, ListOf } from "./Xfunc.js";
+import { Debugger, PositiveLengthPercent, Word, P, ListOfSame, Merge,Assign, Dictionary, LogicalFour, CheckNum, ListOf } from "./func.js";
 
 //wrap is a single word. ellipsis-scroll => block: ellipsis, inline: scroll
 const OVERFLOW = /(ellipsis|clip)|(auto|scroll|visible)(?:-(auto|scroll|hidden|visible))?/;

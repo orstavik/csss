@@ -1,6 +1,6 @@
-import { flex, _flex } from "./Xlayout.js";
-import { border, w, h } from "./Xfunc.js";
-import { color, bgColor, colorBorder, colorCaret, colorAccent, colorTextEmphasis, colorTextDecoration, colorColumnRule, colorOutline, colorTextShadow, colorDropShadow, colorShadow } from "./Xcolor.js";
+import { flex, _flex } from "./layout.js";
+import { border, w, h } from "./func.js";
+import { color, bgColor, colorBorder, colorCaret, colorAccent, colorTextEmphasis, colorTextDecoration, colorColumnRule, colorOutline, colorTextShadow, colorDropShadow, colorShadow } from "./color.js";
 
 export class Expression {
 
