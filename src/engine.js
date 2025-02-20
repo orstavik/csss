@@ -1,6 +1,7 @@
 import { flex, _flex } from "./layout.js";
 import { border, w, h } from "./func.js";
-import { color, bgColor, colorBorder, colorCaret, colorAccent, colorTextEmphasis, colorTextDecoration, colorColumnRule, colorOutline, colorTextShadow, colorDropShadow, colorShadow } from "./color.js";
+import { color, palette } from "./palette.js";
+// import { color, bgColor, colorBorder, colorCaret, colorAccent, colorTextEmphasis, colorTextDecoration, colorColumnRule, colorOutline, colorTextShadow, colorDropShadow, colorShadow } from "./color.js";
 
 export class Expression {
 
@@ -18,7 +19,8 @@ export class Expression {
 
 const shortFuncs = {
   flex, _flex, border,
-  color, bgColor, colorBorder, colorCaret, colorAccent, colorTextEmphasis, colorTextDecoration, colorColumnRule, colorOutline, colorTextShadow, colorDropShadow, colorShadow,
+  color, palette,
+  // color, bgColor, colorBorder, colorCaret, colorAccent, colorTextEmphasis, colorTextDecoration, colorColumnRule, colorOutline, colorTextShadow, colorDropShadow, colorShadow,
   w, h,
 };
 for (let [k, v] of Object.entries(shortFuncs)) {
