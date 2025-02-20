@@ -1,4 +1,4 @@
-import { Debugger, PositiveLengthPercent, Word, P, ListOfSame, Merge,Assign, Dictionary, LogicalFour, CheckNum, ListOf } from "./func.js";
+import { Debugger, PositiveLengthPercent, Word, P, ListOfSame, Merge, Assign, Dictionary, LogicalFour, CheckNum, ListOf } from "./func.js";
 
 //wrap is a single word. ellipsis-scroll => block: ellipsis, inline: scroll
 const OVERFLOW = /(ellipsis|clip)|(auto|scroll|visible)(?:-(auto|scroll|hidden|visible))?/;
@@ -27,11 +27,11 @@ const _LAYOUT = [
   LogicalFour("scroll-margin", ListOfSame("scroll-margin", PositiveLengthPercent))
 ];
 
-export const block = Assign({display: "block"}, Merge(Dictionary(
+const block = Assign({ display: "block" }, Merge(Dictionary(
   P("float", Word(/float-(start|end)/, (_, s) => "inline-" + s)),
   ...LAYOUT,
 )));
-export const _block = Merge(Dictionary(
+const _block = Merge(Dictionary(
   ..._LAYOUT
 ));
 
@@ -68,7 +68,7 @@ function doAlignSelf(_, b, i) {
   };
 }
 
-export const grid = Assign({display: "grid"}, Merge(Dictionary(
+const grid = Assign({ display: "grid" }, Merge(Dictionary(
   // P("grid-template-areas",Word( "none")), //todo how do we want to write this in csss?
   P("grid-auto-columns", ListOfSame("column|c", PositiveLengthPercent)),
   P("grid-auto-rows", ListOfSame("row|r", PositiveLengthPercent)),
@@ -78,7 +78,7 @@ export const grid = Assign({display: "grid"}, Merge(Dictionary(
   ...LAYOUT
 )));
 
-export const _grid = Merge(Dictionary(
+const _grid = Merge(Dictionary(
   Word(_GRID_ALIGN, doAlignSelf),
   ..._LAYOUT
 ));
@@ -87,7 +87,7 @@ export const _grid = Merge(Dictionary(
 const FLEX_ALIGN = /([abcsuvw.])([abcsuvw.])?([abcs_])?/;
 const _FLEX_ALIGN = /([abcs_])/;
 
-export const flex = Assign({display: "flex"}, Merge(Dictionary(
+const flex = Assign({ display: "flex" }, Merge(Dictionary(
   P("flex-direction", Word(/column|column-reverse|row-reverse/)),
   P("flex-wrap", Word(/wrap|wrap-reverse/)),
   Word(FLEX_ALIGN, doAlign),
@@ -96,7 +96,7 @@ export const flex = Assign({display: "flex"}, Merge(Dictionary(
 )));
 
 //todo safe
-export const _flex = Merge(Dictionary(
+const _flex = Merge(Dictionary(
   Word(_FLEX_ALIGN, doAlignSelf),
   P("flex-grow", CheckNum("grow|g", 0)),
   P("flex-shrink", CheckNum("shrink|s", 0)),
@@ -104,3 +104,12 @@ export const _flex = Merge(Dictionary(
   P("flex-basis", ListOf("basis", PositiveLengthPercent)),
   ..._LAYOUT
 ));
+
+export default {
+  block,
+  _block,
+  grid,
+  _grid,
+  flex,
+  _flex
+};

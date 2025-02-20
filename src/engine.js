@@ -1,6 +1,7 @@
-import { flex, _flex } from "./layout.js";
+import layouts from "./layout.js";
 import { border, w, h } from "./func.js";
-import { color, palette } from "./palette.js";
+import colorPalette from "./palette.js";
+import colorFunctions from "./color.js";
 // import { color, bgColor, colorBorder, colorCaret, colorAccent, colorTextEmphasis, colorTextDecoration, colorColumnRule, colorOutline, colorTextShadow, colorDropShadow, colorShadow } from "./color.js";
 
 export class Expression {
@@ -18,10 +19,11 @@ export class Expression {
 }
 
 const shortFuncs = {
-  flex, _flex, border,
-  color, palette,
-  // color, bgColor, colorBorder, colorCaret, colorAccent, colorTextEmphasis, colorTextDecoration, colorColumnRule, colorOutline, colorTextShadow, colorDropShadow, colorShadow,
+  border,
   w, h,
+  ...colorPalette,
+  ...layouts,
+  // ...colorFunctions,
 };
 for (let [k, v] of Object.entries(shortFuncs)) {
   const kebab = k.replace(/[A-Z]/g, "-$&").toLowerCase();

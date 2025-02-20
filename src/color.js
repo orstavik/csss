@@ -74,21 +74,35 @@ const Color = (function (Color) {
 */
 const BG_PROPS = Array(8).fill().map((_, i) => `--color${i ? "-" + i : ""}`, Color);
 //singles of foreground+background+border colors
-export const color = Merge(ListOf(null,
+const color = Merge(ListOf(null,
   P("color", Color),
   P("--background-color", Color),
   BorderSwitch(LogicalFour("color", ShorthandFunction(":", null, Color))),
 ));
 
-export const bgColor = PP(BG_PROPS, ListOfSame(null, Color));
-export const colorBorder = BorderSwitch(LogicalFour("color", ShorthandFunction(":", null, Color)));
+const bgColor = PP(BG_PROPS, ListOfSame(null, Color));
+const colorBorder = BorderSwitch(LogicalFour("color", ShorthandFunction(":", null, Color)));
+const colorCaret = P("caret-color", ListOf(null, Color));
+const colorAccent = P("accent-color", ListOf(null, Color));
+const colorTextEmphasis = P("text-emphasis-color", ListOf(null, Color));
+const colorTextDecoration = P("text-decoration-color", ListOf(null, Color));
+const colorColumnRule = P("column-rule-color", ListOf(null, Color));
+const colorOutline = P("outline-color", ListOf(null, Color));
+const colorTextShadow = P("--text-shadow-color", ListOf(null, Color));
+const colorDropShadow = P("--drop-shadow-color", ListOf(null, Color));
+const colorShadow = LogicalFour(["--box-shadow-color"], ListOfSame(null, Color));
 
-export const colorCaret = P("caret-color", ListOf(null, Color));
-export const colorAccent = P("accent-color", ListOf(null, Color));
-export const colorTextEmphasis = P("text-emphasis-color", ListOf(null, Color));
-export const colorTextDecoration = P("text-decoration-color", ListOf(null, Color));
-export const colorColumnRule = P("column-rule-color", ListOf(null, Color));
-export const colorOutline = P("outline-color", ListOf(null, Color));
-export const colorTextShadow = P("--text-shadow-color", ListOf(null, Color));
-export const colorDropShadow = P("--drop-shadow-color", ListOf(null, Color));
-export const colorShadow = LogicalFour(["--box-shadow-color"], ListOfSame(null, Color));
+export default {
+  color,
+  bgColor,
+  colorBorder,
+  colorCaret,
+  colorAccent,
+  colorTextEmphasis,
+  colorTextDecoration,
+  colorColumnRule,
+  colorOutline,
+  colorTextShadow,
+  colorDropShadow,
+  colorShadow,
+};

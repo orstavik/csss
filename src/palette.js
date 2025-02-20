@@ -166,5 +166,7 @@ function toColor(_, name, contrast = "text") {
 
 import { Word, ListOf, Merge } from "./func.js";
 
-export const palette = Merge(ListOf(null, Word(/(\#[0-9a-f]{3,6})/, makePalette)));
-export const color = Merge(ListOf(null, Word(/([a-z]+)(?:-(flip|box|darkflip|pop|pp))?/, toColor)));
+export default {
+  palette: Merge(ListOf(null, Word(/(\#[0-9a-f]{3,6})/, makePalette))),
+  color: Merge(ListOf(null, Word(/([a-z]+)(?:-(flip|box|darkflip|pop|pp))?/, toColor)))
+};
