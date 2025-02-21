@@ -1,7 +1,7 @@
 import layouts from "./layout.js";
 import { border, w, h } from "./func.js";
-import colorPalette from "./palette.js";
-import colorFunctions from "./color.js";
+import colorPalette from "./palette2.js";
+// import colorFunctions from "./color.js";
 // import { color, bgColor, colorBorder, colorCaret, colorAccent, colorTextEmphasis, colorTextDecoration, colorColumnRule, colorOutline, colorTextShadow, colorDropShadow, colorShadow } from "./color.js";
 
 export class Expression {
