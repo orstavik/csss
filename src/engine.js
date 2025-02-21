@@ -37,7 +37,7 @@ for (let [k, v] of Object.entries(shortFuncs)) {
 export const toCss = txt => [...toCssText(txt, interpretClass(txt))].join("\n");
 
 function interpret(exp) {
-  if(!(exp.name in shortFuncs))
+  if (!(exp.name in shortFuncs))
     throw new SyntaxError(`Unknown short function: ${exp.name}`);
   const obj = shortFuncs[exp.name](exp);
   return Object.fromEntries(Object.entries(obj)
@@ -308,8 +308,10 @@ function* toCssText(shortName, dict) {
   [sel, props] = Object.entries(dict).find(([k]) => !k.startsWith("|"));
   [sel, specificity] = sel.split(/\$\$(\d+$)/);
   const conSel = `:where(${sel.replaceAll("%", cssName)})`;
-  rule = ruleToString(conSel, props);
-  yield `/*container ${specificity}*/\n/*${shortName}*/\n${rule}`;
+  if (Object.keys(props).length) {
+    rule = ruleToString(conSel, props);
+    yield `/*container ${specificity}*/\n/*${shortName}*/\n${rule}`;
+  }
   //items
   for ([sel, props] of Object.entries(dict)) {
     if (!sel.startsWith("|"))

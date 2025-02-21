@@ -1,4 +1,24 @@
 <test-html title="border+color+items">
+  <div class="
+  $palette(#er1221)
+  
+  $border(solid,2px)
+  |*$border(double,2px,radius(0.25rem))
+  |.new$border(solid,4px,radius(1rem))
+  |.sale$border(dashed,3px,radius(0.5rem))
+                        
+ $color(grey-text)
+  |*$color(primary)
+  |.new$color(secondary)
+  |.sale$color(tertiary)
+           ">
+
+    <div class="new">New Arrival: Product 1</div>
+
+    <div>Product 3</div>
+    <div class="sale">On Sale: Product 4</div>
+    <div class="new">New Arrival: Product 5</div>
+  </div>
   <style>
     /*container 0*/
     /*$border(solid,2px)*/
@@ -7,97 +27,64 @@
       border-width: 2px;
     }
 
-    /*container 0*/
-    /*|*$border(double,2px,radius(0.25rem))*/
-    :where(.\|\*\$border\(double\,2px\,radius\(0\.25rem\)\)) {}
-
     /*item 0*/
     /*|*$border(double,2px,radius(0.25rem))*/
-    :where(.\|\*\$border\(double\,2px\,radius\(0\.25rem\)\))> :where(*) {
+    :where(.\|\*\$border\(double\,2px\,radius\(0\.25rem\)\))>
+    :where(*) {
       border-style: double;
       border-width: 2px;
       border-radius: 0.25rem;
     }
 
-    /*container 0*/
-    /*|.new$border(solid,4px,radius(1rem))*/
-    :where(.\|\.new\$border\(solid\,4px\,radius\(1rem\)\)) {}
-
     /*item 1*/
     /*|.new$border(solid,4px,radius(1rem))*/
-    :where(.\|\.new\$border\(solid\,4px\,radius\(1rem\)\))> :where(.new) {
+    :where(.\|\.new\$border\(solid\,4px\,radius\(1rem\)\))>
+    :where(.new) {
       border-style: solid;
       border-width: 4px;
       border-radius: 1rem;
     }
 
-    /*container 0*/
-    /*|.sale$border(dashed,3px,radius(0.5rem))*/
-    :where(.\|\.sale\$border\(dashed\,3px\,radius\(0\.5rem\)\)) {}
-
     /*item 1*/
     /*|.sale$border(dashed,3px,radius(0.5rem))*/
-    :where(.\|\.sale\$border\(dashed\,3px\,radius\(0\.5rem\)\))> :where(.sale) {
+    :where(.\|\.sale\$border\(dashed\,3px\,radius\(0\.5rem\)\))>
+    :where(.sale) {
       border-style: dashed;
       border-width: 3px;
       border-radius: 0.5rem;
     }
 
     /*container 0*/
-    /*$color(black,white,b(black))*/
-    :where(.\$color\(black\,white\,b\(black\)\)) {
-      color: black;
-      --background-color: white;
-      border-color: black;
+    /*$color(grey-text)*/
+    :where(.\$color\(grey-text\)) {
+      color: oklch(from var(--color-grey) var(--palette-shade-text-fg) c h);
+      --background-color: oklch(from var(--color-grey) var(--palette-shade-text-bg) c h);
     }
-
-    /*container 0*/
-    /*|*$color(,,b(blue))*/
-    :where(.\|\*\$color\(\,\,b\(blue\)\)) {}
 
     /*item 0*/
-    /*|*$color(,,b(blue))*/
-    :where(.\|\*\$color\(\,\,b\(blue\)\))> :where(*) {
-      border-color: blue;
+    /*|*$color(primary)*/
+    :where(.\|\*\$color\(primary\))>
+    :where(*) {
+      color: oklch(from var(--color-primary) var(--palette-shade-text-fg) c h);
+      --background-color: oklch(from var(--color-primary) var(--palette-shade-text-bg) c h);
     }
 
-    /*container 0*/
-    /*|.new$color(,,b(#4caf50))*/
-    :where(.\|\.new\$color\(\,\,b\(\#4caf50\)\)) {}
-
     /*item 1*/
-    /*|.new$color(,,b(#4caf50))*/
-    :where(.\|\.new\$color\(\,\,b\(\#4caf50\)\))> :where(.new) {
-      border-color: #4caf50;
+    /*|.new$color(secondary)*/
+    :where(.\|\.new\$color\(secondary\))>
+    :where(.new) {
+      color: oklch(from var(--color-secondary) var(--palette-shade-text-fg) c h);
+      --background-color: oklch(from var(--color-secondary) var(--palette-shade-text-bg) c h);
     }
 
-    /*container 0*/
-    /*|.sale$color(,,b(#f44336))*/
-    :where(.\|\.sale\$color\(\,\,b\(\#f44336\)\)) {}
-
     /*item 1*/
-    /*|.sale$color(,,b(#f44336))*/
-    :where(.\|\.sale\$color\(\,\,b\(\#f44336\)\))> :where(.sale) {
-      border-color: #f44336;
+    /*|.sale$color(tertiary)*/
+    :where(.\|\.sale\$color\(tertiary\))>
+    :where(.sale) {
+      color: oklch(from var(--color-tertiary) var(--palette-shade-text-fg) c h);
+      --background-color: oklch(from var(--color-tertiary) var(--palette-shade-text-bg) c h);
     }
   </style>
-  <div class="
-    $border(solid,2px)
-    |*$border(double,2px,radius(0.25rem))
-    |.new$border(solid,4px,radius(1rem))
-    |.sale$border(dashed,3px,radius(0.5rem))
-                          
-   $color(black,white,b(black))
-    |*$color(,,b(blue))
-    |.new$color(,,b(#4caf50))
-    |.sale$color(,,b(#f44336))
-             ">
-    <div class="new">New Arrival: Product 1</div>
-
-    <div>Product 3</div>
-    <div class="sale">On Sale: Product 4</div>
-    <div class="new">New Arrival: Product 5</div>
-  </div>
 </test-html>
 <test-html title="border+size">
   <style>
