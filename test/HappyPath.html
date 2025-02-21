@@ -1,6 +1,6 @@
 <test-html title="border+color+items">
   <div class="
-  $palette(#er1221)
+  $palette(#ec1221)
   
   $border(solid,2px)
   |*$border(double,2px,radius(0.25rem))
@@ -14,12 +14,35 @@
            ">
 
     <div class="new">New Arrival: Product 1</div>
-
+    <div class="sale $h(300px) $w(600px) $border(r(10px,30px,60px))">On Sale: Product 2</div>
     <div>Product 3</div>
     <div class="sale">On Sale: Product 4</div>
     <div class="new">New Arrival: Product 5</div>
   </div>
   <style>
+    /*container 0*/
+    /*$palette(#ec1221)*/
+    :where(.\$palette\(\#ec1221\)) {
+      --color-primary: #ec1221;
+      --color-secondary: oklch(from #ec1221 50 c calc(h - 60));
+      --color-tertiary: oklch(from #ec1221 50 c calc(h + 60));
+      --color-error: oklch(from #ec1221 50 c 30);
+      --color-warning: oklch(from #ec1221 50 c 64);
+      --color-success: oklch(from #ec1221 50 c 164);
+      --color-info: oklch(from #ec1221 50 c 228);
+      --color-neutral: oklch(from #ec1221 50 0.02 h);
+      --color-grey: oklch(50 0 0);
+      --palette-shade-text-fg: 0.23;
+      --palette-shade-text-bg: 0.98;
+      --palette-shade-box-fg: 0.23;
+      --palette-shade-box-bg: 0.92;
+      --palette-shade-flip-fg: 0.98;
+      --palette-shade-flip-bg: 0.66;
+      --palette-shade-darkflip-fg: 0.9;
+      --palette-shade-darkflip-bg: 0.33;
+      --palette-chromas-pop: 2;
+    }
+
     /*container 0*/
     /*$border(solid,2px)*/
     :where(.\$border\(solid\,2px\)) {
@@ -29,8 +52,7 @@
 
     /*item 0*/
     /*|*$border(double,2px,radius(0.25rem))*/
-    :where(.\|\*\$border\(double\,2px\,radius\(0\.25rem\)\))>
-    :where(*) {
+    :where(.\|\*\$border\(double\,2px\,radius\(0\.25rem\)\))>:where(*) {
       border-style: double;
       border-width: 2px;
       border-radius: 0.25rem;
@@ -38,8 +60,7 @@
 
     /*item 1*/
     /*|.new$border(solid,4px,radius(1rem))*/
-    :where(.\|\.new\$border\(solid\,4px\,radius\(1rem\)\))>
-    :where(.new) {
+    :where(.\|\.new\$border\(solid\,4px\,radius\(1rem\)\))>:where(.new) {
       border-style: solid;
       border-width: 4px;
       border-radius: 1rem;
@@ -47,8 +68,7 @@
 
     /*item 1*/
     /*|.sale$border(dashed,3px,radius(0.5rem))*/
-    :where(.\|\.sale\$border\(dashed\,3px\,radius\(0\.5rem\)\))>
-    :where(.sale) {
+    :where(.\|\.sale\$border\(dashed\,3px\,radius\(0\.5rem\)\))>:where(.sale) {
       border-style: dashed;
       border-width: 3px;
       border-radius: 0.5rem;
@@ -59,35 +79,33 @@
     :where(.\$color\(grey-text\)) {
       color: oklch(from var(--color-grey) var(--palette-shade-text-fg) c h);
       --background-color: oklch(from var(--color-grey) var(--palette-shade-text-bg) c h);
+      border-color: color-mix(in oklch, oklch(from var(--color-grey) var(--palette-shade-text-fg) c h), oklch(from var(--color-grey) var(--palette-shade-text-bg) c h) 33%);
     }
 
     /*item 0*/
     /*|*$color(primary)*/
-    :where(.\|\*\$color\(primary\))>
-    :where(*) {
+    :where(.\|\*\$color\(primary\))>:where(*) {
       color: oklch(from var(--color-primary) var(--palette-shade-text-fg) c h);
       --background-color: oklch(from var(--color-primary) var(--palette-shade-text-bg) c h);
+      border-color: color-mix(in oklch, oklch(from var(--color-primary) var(--palette-shade-text-fg) c h), oklch(from var(--color-primary) var(--palette-shade-text-bg) c h) 33%);
     }
 
     /*item 1*/
     /*|.new$color(secondary)*/
-    :where(.\|\.new\$color\(secondary\))>
-    :where(.new) {
+    :where(.\|\.new\$color\(secondary\))>:where(.new) {
       color: oklch(from var(--color-secondary) var(--palette-shade-text-fg) c h);
       --background-color: oklch(from var(--color-secondary) var(--palette-shade-text-bg) c h);
+      border-color: color-mix(in oklch, oklch(from var(--color-secondary) var(--palette-shade-text-fg) c h), oklch(from var(--color-secondary) var(--palette-shade-text-bg) c h) 33%);
     }
 
     /*item 1*/
     /*|.sale$color(tertiary)*/
-    :where(.\|\.sale\$color\(tertiary\))>
-    :where(.sale) {
+    :where(.\|\.sale\$color\(tertiary\))>:where(.sale) {
       color: oklch(from var(--color-tertiary) var(--palette-shade-text-fg) c h);
       --background-color: oklch(from var(--color-tertiary) var(--palette-shade-text-bg) c h);
+      border-color: color-mix(in oklch, oklch(from var(--color-tertiary) var(--palette-shade-text-fg) c h), oklch(from var(--color-tertiary) var(--palette-shade-text-bg) c h) 33%);
     }
-  </style>
-</test-html>
-<test-html title="border+size">
-  <style>
+
     /*container 0*/
     /*$h(300px)*/
     :where(.\$h\(300px\)) {
@@ -110,7 +128,6 @@
       border-bottom-right-radius: 60px 30px;
     }
   </style>
-  <div class="sale $h(300px) $w(600px) $border(r(10px,30px,60px))">On Sale: Product 2</div>
 </test-html>
 <test-html title="border-radius">
   <style>

@@ -31,9 +31,14 @@ function toPalette(_,
 }
 
 function relieff(name, color) {
+  const main = `oklch(from ${color} var(--palette-shade-${name}-fg) c h)`;
+  const bg = `oklch(from ${color} var(--palette-shade-${name}-bg) c h)`;
+  const border = `color-mix(in oklch, ${main}, ${bg} 66%)`;
+  // const softBorder = `color-mix(in oklch, ${main}, ${bg} 66%)`;
   return {
-    color: `oklch(from ${color} var(--palette-shade-${name}-fg) c h)`,
-    "--background-color": `oklch(from ${color} var(--palette-shade-${name}-bg) c h)`
+    color: main,
+    "--background-color": bg,
+    "border-color": border
   };
 }
 
