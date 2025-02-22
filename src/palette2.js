@@ -9,37 +9,37 @@ function toPalette(_,
   neutral = `oklch(from ${primary} 50 0.02 h)`,
   grey = `oklch(50 0 0)`
 ) {
-  const colors = { primary, secondary, tertiary, error, warning, success, info, neutral, grey };
+  const res = {
+    primary, secondary, tertiary,
+    error, warning, success, info,
+    neutral, grey,
 
-  const res = Object.fromEntries(Object.entries(colors).map(
-    ([k, v]) => [`--color-${k}`, v]));
-
-  const shades = {
     "text-fg": .23, "text-bg": .98,
     "box-fg": .23, "box-bg": .92,
     "flip-fg": .98, "flip-bg": .66,
     "darkflip-fg": .90, "darkflip-bg": .33,
+
+    pop: 2
   };
-  for (let [k, v] of Object.entries(shades))
-    res[`--palette-shade-${k}`] = v;
-  const pops = {
-    "pop": 2
-  };
-  for (let [k, v] of Object.entries(pops))
-    res[`--palette-chromas-${k}`] = v;
-  return res;
+  return Object.fromEntries(Object.entries(res).map(
+    ([k, v]) => [`--palette-${k}`, v]));
 }
 
 function relieff(name, color) {
-  const main = `oklch(from ${color} var(--palette-shade-${name}-fg) c h)`;
-  const bg = `oklch(from ${color} var(--palette-shade-${name}-bg) c h)`;
-  const border = `color-mix(in oklch, ${main}, ${bg} 66%)`;
-  // const softBorder = `color-mix(in oklch, ${main}, ${bg} 66%)`;
+  const main = `oklch(from ${color} var(--palette-${name}-fg) c h)`;
+  const bg = `oklch(from ${color} var(--palette-${name}-bg) c h)`;
   return {
     color: main,
     "--background-color": bg,
-    "border-color": border
   };
+}
+
+function border(num) {
+  num = Math.round(Math.pow(num / 9, 1.5) * 100);
+  return function border(_, o) {
+    o["border-color"] = `color-mix(in oklch, ${o["--background-color"]}, ${o.color} ${num}%)`;
+    return o;
+  }
 }
 
 const ColorFuncs = {
@@ -47,18 +47,29 @@ const ColorFuncs = {
   box: relieff,
   flip: relieff,
   darkflip: relieff,
-  pop: (name, c) => `oklch(from ${c} l calc(c * var(--palette-chromas-${name})) h)`,
+  pop: (name, c) => `oklch(from ${c} l calc(c * var(--palette-${name})) h)`,
+  b: border(4),
+  b0: border(0),
+  b1: border(1),
+  b2: border(2),
+  b3: border(3),
+  b4: border(4),
+  b5: border(5),
+  b6: border(6),
+  b7: border(7),
+  b8: border(8),
+  b9: border(9),
 };
 
 function toColor(name) {
   const segs = name.split("-");
-  const output = segs.reduce((res, a) => {
-    res.unshift(a in ColorFuncs ? ColorFuncs[a](a, ...res) :
-      `var(--color-${a})`);
-    return res;
-  }, []).shift();
+  let output = segs.reduce((res, a) =>
+    (res.unshift(ColorFuncs[a]?.(a, ...res) ?? `var(--palette-${a})`), res),
+    []).shift();
   if (typeof output == "string")
-    return relieff("text", output);
+    output = ColorFuncs.text("text", output);
+  if (!("border-color" in output))
+    output = ColorFuncs.b("b", output);
   return output;
 }
 
