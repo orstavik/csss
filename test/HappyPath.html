@@ -23,24 +23,24 @@
     /*container 0*/
     /*$palette(#ec1221)*/
     :where(.\$palette\(\#ec1221\)) {
-      --color-primary: #ec1221;
-      --color-secondary: oklch(from #ec1221 50 c calc(h - 60));
-      --color-tertiary: oklch(from #ec1221 50 c calc(h + 60));
-      --color-error: oklch(from #ec1221 50 c 30);
-      --color-warning: oklch(from #ec1221 50 c 64);
-      --color-success: oklch(from #ec1221 50 c 164);
-      --color-info: oklch(from #ec1221 50 c 228);
-      --color-neutral: oklch(from #ec1221 50 0.02 h);
-      --color-grey: oklch(50 0 0);
-      --palette-shade-text-fg: 0.23;
-      --palette-shade-text-bg: 0.98;
-      --palette-shade-box-fg: 0.23;
-      --palette-shade-box-bg: 0.92;
-      --palette-shade-flip-fg: 0.98;
-      --palette-shade-flip-bg: 0.66;
-      --palette-shade-darkflip-fg: 0.9;
-      --palette-shade-darkflip-bg: 0.33;
-      --palette-chromas-pop: 2;
+      --palette-primary: #ec1221;
+      --palette-secondary: oklch(from #ec1221 50 c calc(h - 60));
+      --palette-tertiary: oklch(from #ec1221 50 c calc(h + 60));
+      --palette-error: oklch(from #ec1221 50 c 30);
+      --palette-warning: oklch(from #ec1221 50 c 64);
+      --palette-success: oklch(from #ec1221 50 c 164);
+      --palette-info: oklch(from #ec1221 50 c 228);
+      --palette-neutral: oklch(from #ec1221 50 0.02 h);
+      --palette-grey: oklch(50 0 0);
+      --palette-text-fg: 0.23;
+      --palette-text-bg: 0.98;
+      --palette-box-fg: 0.23;
+      --palette-box-bg: 0.92;
+      --palette-flip-fg: 0.98;
+      --palette-flip-bg: 0.66;
+      --palette-darkflip-fg: 0.9;
+      --palette-darkflip-bg: 0.33;
+      --palette-pop: 2;
     }
 
     /*container 0*/
@@ -52,7 +52,8 @@
 
     /*item 0*/
     /*|*$border(double,2px,radius(0.25rem))*/
-    :where(.\|\*\$border\(double\,2px\,radius\(0\.25rem\)\))>:where(*) {
+    :where(.\|\*\$border\(double\,2px\,radius\(0\.25rem\)\))>
+    :where(*) {
       border-style: double;
       border-width: 2px;
       border-radius: 0.25rem;
@@ -60,7 +61,8 @@
 
     /*item 1*/
     /*|.new$border(solid,4px,radius(1rem))*/
-    :where(.\|\.new\$border\(solid\,4px\,radius\(1rem\)\))>:where(.new) {
+    :where(.\|\.new\$border\(solid\,4px\,radius\(1rem\)\))>
+    :where(.new) {
       border-style: solid;
       border-width: 4px;
       border-radius: 1rem;
@@ -68,7 +70,8 @@
 
     /*item 1*/
     /*|.sale$border(dashed,3px,radius(0.5rem))*/
-    :where(.\|\.sale\$border\(dashed\,3px\,radius\(0\.5rem\)\))>:where(.sale) {
+    :where(.\|\.sale\$border\(dashed\,3px\,radius\(0\.5rem\)\))>
+    :where(.sale) {
       border-style: dashed;
       border-width: 3px;
       border-radius: 0.5rem;
@@ -77,33 +80,36 @@
     /*container 0*/
     /*$color(grey-text)*/
     :where(.\$color\(grey-text\)) {
-      color: oklch(from var(--color-grey) var(--palette-shade-text-fg) c h);
-      --background-color: oklch(from var(--color-grey) var(--palette-shade-text-bg) c h);
-      border-color: color-mix(in oklch, oklch(from var(--color-grey) var(--palette-shade-text-fg) c h), oklch(from var(--color-grey) var(--palette-shade-text-bg) c h) 33%);
+      color: oklch(from var(--palette-grey) var(--palette-text-fg) c h);
+      --background-color: oklch(from var(--palette-grey) var(--palette-text-bg) c h);
+      border-color: color-mix(in oklch, oklch(from var(--palette-grey) var(--palette-text-bg) c h), oklch(from var(--palette-grey) var(--palette-text-fg) c h) 30%);
     }
 
     /*item 0*/
     /*|*$color(primary)*/
-    :where(.\|\*\$color\(primary\))>:where(*) {
-      color: oklch(from var(--color-primary) var(--palette-shade-text-fg) c h);
-      --background-color: oklch(from var(--color-primary) var(--palette-shade-text-bg) c h);
-      border-color: color-mix(in oklch, oklch(from var(--color-primary) var(--palette-shade-text-fg) c h), oklch(from var(--color-primary) var(--palette-shade-text-bg) c h) 33%);
+    :where(.\|\*\$color\(primary\))>
+    :where(*) {
+      color: oklch(from var(--palette-primary) var(--palette-text-fg) c h);
+      --background-color: oklch(from var(--palette-primary) var(--palette-text-bg) c h);
+      border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-text-bg) c h), oklch(from var(--palette-primary) var(--palette-text-fg) c h) 30%);
     }
 
     /*item 1*/
     /*|.new$color(secondary)*/
-    :where(.\|\.new\$color\(secondary\))>:where(.new) {
-      color: oklch(from var(--color-secondary) var(--palette-shade-text-fg) c h);
-      --background-color: oklch(from var(--color-secondary) var(--palette-shade-text-bg) c h);
-      border-color: color-mix(in oklch, oklch(from var(--color-secondary) var(--palette-shade-text-fg) c h), oklch(from var(--color-secondary) var(--palette-shade-text-bg) c h) 33%);
+    :where(.\|\.new\$color\(secondary\))>
+    :where(.new) {
+      color: oklch(from var(--palette-secondary) var(--palette-text-fg) c h);
+      --background-color: oklch(from var(--palette-secondary) var(--palette-text-bg) c h);
+      border-color: color-mix(in oklch, oklch(from var(--palette-secondary) var(--palette-text-bg) c h), oklch(from var(--palette-secondary) var(--palette-text-fg) c h) 30%);
     }
 
     /*item 1*/
     /*|.sale$color(tertiary)*/
-    :where(.\|\.sale\$color\(tertiary\))>:where(.sale) {
-      color: oklch(from var(--color-tertiary) var(--palette-shade-text-fg) c h);
-      --background-color: oklch(from var(--color-tertiary) var(--palette-shade-text-bg) c h);
-      border-color: color-mix(in oklch, oklch(from var(--color-tertiary) var(--palette-shade-text-fg) c h), oklch(from var(--color-tertiary) var(--palette-shade-text-bg) c h) 33%);
+    :where(.\|\.sale\$color\(tertiary\))>
+    :where(.sale) {
+      color: oklch(from var(--palette-tertiary) var(--palette-text-fg) c h);
+      --background-color: oklch(from var(--palette-tertiary) var(--palette-text-bg) c h);
+      border-color: color-mix(in oklch, oklch(from var(--palette-tertiary) var(--palette-text-bg) c h), oklch(from var(--palette-tertiary) var(--palette-text-fg) c h) 30%);
     }
 
     /*container 0*/
