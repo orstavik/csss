@@ -10,44 +10,41 @@ function toPalette(_,
   grey = `oklch(50 0 0)`
 ) {
   const res = {
+    //colors
     primary, secondary, tertiary,
     error, warning, success, info,
     neutral, grey,
-
+    //shades
     "text-fg": .23, "text-bg": .98,
     "box-fg": .23, "box-bg": .92,
     "flip-fg": .98, "flip-bg": .66,
     "darkflip-fg": .90, "darkflip-bg": .33,
-
+    //chromas
     pop: 2
   };
   return Object.fromEntries(Object.entries(res).map(
     ([k, v]) => [`--palette-${k}`, v]));
 }
 
-function relieff(name, color) {
-  const main = `oklch(from ${color} var(--palette-${name}-fg) c h)`;
-  const bg = `oklch(from ${color} var(--palette-${name}-bg) c h)`;
-  return {
-    color: main,
-    "--background-color": bg,
-  };
-}
+const relieff = name => c => ({
+  color: `oklch(from ${c} var(--palette-${name}-fg) c h)`,
+  "--background-color": `oklch(from ${c} var(--palette-${name}-bg) c h)`
+});
 
-function border(num) {
+const border = num => {
   num = Math.round(Math.pow(num / 9, 1.5) * 100);
-  return function border(_, o) {
+  return function border(o) {
     o["border-color"] = `color-mix(in oklch, ${o["--background-color"]}, ${o.color} ${num}%)`;
     return o;
   }
 }
 
 const ColorFuncs = {
-  text: relieff,
-  box: relieff,
-  flip: relieff,
-  darkflip: relieff,
-  pop: (name, c) => `oklch(from ${c} l calc(c * var(--palette-${name})) h)`,
+  text: relieff("text"),
+  box: relieff("box"),
+  flip: relieff("flip"),
+  darkflip: relieff("darkflip"),
+  pop: c => `oklch(from ${c} l calc(c * var(--palette-pop)) h)`,
   b: border(4),
   b0: border(0),
   b1: border(1),
@@ -64,12 +61,13 @@ const ColorFuncs = {
 function toColor(name) {
   const segs = name.split("-");
   let output = segs.reduce((res, a) =>
-    (res.unshift(ColorFuncs[a]?.(a, ...res) ?? `var(--palette-${a})`), res),
+    (res.unshift(ColorFuncs[a]?.(...res) ?? `var(--palette-${a})`), res),
     []).shift();
   if (typeof output == "string")
-    output = ColorFuncs.text("text", output);
+    output = ColorFuncs.text(output);
   if (!("border-color" in output))
-    output = ColorFuncs.b("b", output);
+    output = ColorFuncs.b(output);
+  //todo disperse backgrounds
   return output;
 }
 
