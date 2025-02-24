@@ -1,12 +1,11 @@
 class Color {
 
+
   constructor(colorStr) {
-    const rgba = Color.cssomColor(colorStr);
-    this.hex = Color.rgbToHex(rgba);
-    rgba.R/=255;
-    rgba.G/=255;
-    rgba.B/=255;
-    const rgb = Color.linearizeRgb(rgba);
+    const [R, G, B, A] = Color.cssomColor(colorStr);
+    this.alpha = A;
+    this.hex = Color.rgbToHex(R, G, B);
+    const rgb = Color.linearizeRgb(R, G, B);
     const xyz = Color.linearRgbToXyz(rgb);
     const lab = Color.xyzToOKLab(xyz);
     const lch = Color.oklabToOklch(lab);
@@ -17,12 +16,11 @@ class Color {
   static cssomColor(colorStr) {
     this.#canvas.fillStyle = colorStr;
     this.#canvas.fillRect(0, 0, 1, 1);
-    const data = this.#canvas.getImageData(0, 0, 1, 1).data;
-    return { R: data[0], G: data[1], B: data[2], A: data[3] / 255 };
+    return this.#canvas.getImageData(0, 0, 1, 1).data;
   }
 
-  static linearizeRgb({ R, G, B }) {
-    const linearize = c => c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  static linearizeRgb(R, G, B) {
+    const linearize = c => (c /= 255) <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     return {
       R: linearize(R),
       G: linearize(G),
@@ -60,54 +58,10 @@ class Color {
     return { L, C, H };
   }
 
-  static oklchToOklab({ L, C, H }) {
-    const hRad = (H * Math.PI) / 180;
-    const a = C * Math.cos(hRad);
-    const b = C * Math.sin(hRad);
-    return { L, a, b };
-  }
-
-  static oklabToXyz({ L, a, b }) {
-    const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
-    const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
-    const s_ = L - 0.0894841775 * a - 1.2914855480 * b;
-    const l = l_ * l_ * l_;
-    const m = m_ * m_ * m_;
-    const s = s_ * s_ * s_;
-    const X = (1.2270138511 * l - 0.5577999807 * m + 0.2812561490 * s);
-    const Y = (-0.0405801784 * l + 1.1122568696 * m - 0.0716766787 * s);
-    const Z = (-0.0763812845 * l - 0.4214819784 * m + 1.5861632204 * s);
-    return { X, Y, Z };
-  }
-
-  static xyzToRgb({ X, Y, Z }) {
-    let R = 3.2406 * X + (-1.5372) * Y + (-0.4986) * Z;
-    let G = -0.9689 * X + 1.8758 * Y + 0.0415 * Z;
-    let B = 0.0557 * X + (-0.2040) * Y + 1.0570 * Z;
-
-    const gammaCorrect = (channel) =>
-      channel <= 0.0031308
-        ? 12.92 * channel
-        : 1.055 * Math.pow(channel, 1 / 2.4) - 0.055;
-
-    R = Math.round(Math.min(Math.max(0, gammaCorrect(R)), 1) * 255);
-    G = Math.round(Math.min(Math.max(0, gammaCorrect(G)), 1) * 255);
-    B = Math.round(Math.min(Math.max(0, gammaCorrect(B)), 1) * 255);
-    return { R, G, B };
-  }
-
-  static rgbToHex({ R, G, B }) {
+  static rgbToHex(R, G, B) {
     const toHex = (value) => value.toString(16).padStart(2, "0").toLowerCase();
     return `#${toHex(R)}${toHex(G)}${toHex(B)}`;
   };
-
-  static analyzeLch(lch) {
-    const lab = this.oklchToOklab(lch);
-    const xyz = this.oklabToXyz(lab);
-    const rgb = this.xyzToRgb(xyz);
-    const hex = this.rgbToHex(rgb);
-    return { ...lch, ...lab, ...xyz, ...rgb, hex };
-  }
 
   static analyzeColors(colorMap) {
     const res = { ...colorMap };
@@ -828,7 +782,7 @@ class ColorPaletteGeneratorLCH {
         const C = chromas[color][l1000];
         let L = 1.05 - (l1000 / 1350);
         L = lights[color][l1000];
-        (res[color] ??= {})[l1000] = Color.analyzeLch({ L, C, H });
+        (res[color] ??= {})[l1000] = new Color(`oklch(${L} ${C} ${H})`);
       }
     return res;
   }
@@ -849,7 +803,7 @@ class ColorPaletteGeneratorLCH {
         // const C = chromas[color][l1000];
         let L = 1.05 - (l1000 / 1350);
         L = lights[color][l1000];
-        (res[color] ??= {})[l1000] = Color.analyzeLch({ L, C, H });
+        (res[color] ??= {})[l1000] = new Color(`oklch(${L} ${C} ${H})`);
       }
     }
     return res;
@@ -874,7 +828,7 @@ class ColorPaletteGeneratorLCH {
         //   console.log(_.H, H);
         //   // debugger
         // }
-        (res[color] ??= {})[l1000] = { ...Color.analyzeLch({ L, C, H }), A, mu, sigma };
+        (res[color] ??= {})[l1000] = { ...new Color(`oklch(${L} ${C} ${H})`), A, mu, sigma };
       }
     }
     return res;
