@@ -32,11 +32,13 @@
       --palette-info: oklch(from #ec1221 50 c 228);
       --palette-neutral: oklch(from #ec1221 50 0.02 h);
       --palette-grey: oklch(50 0 0);
+      --palette-bw-fg: 0;
+      --palette-bw-bg: 1;
       --palette-text-fg: 0.23;
-      --palette-text-bg: 0.98;
+      --palette-text-bg: 0.99;
       --palette-box-fg: 0.23;
       --palette-box-bg: 0.92;
-      --palette-flip-fg: 0.98;
+      --palette-flip-fg: 0.99;
       --palette-flip-bg: 0.66;
       --palette-darkflip-fg: 0.9;
       --palette-darkflip-bg: 0.33;
@@ -173,6 +175,7 @@
 <test-html title="color(3)">
   <style>
     /*container 0*/
+    /*$color(black,#123456)$color-border(red)*/
     /*$color(black,#123456)$color-border(red)*/
     :where(.\$color\(black\,\#123456\)\$color-border\(red\)) {
       color: black;
