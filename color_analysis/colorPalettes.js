@@ -1,6 +1,5 @@
 class Color {
 
-
   constructor(colorStr) {
     const [R, G, B, A] = Color.cssomColor(colorStr);
     this.alpha = A;
@@ -21,11 +20,7 @@ class Color {
 
   static linearizeRgb(R, G, B) {
     const linearize = c => (c /= 255) <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-    return {
-      R: linearize(R),
-      G: linearize(G),
-      B: linearize(B)
-    };
+    return { R: linearize(R), G: linearize(G), B: linearize(B) };
   }
 
   static linearRgbToXyz({ R, G, B }) {
