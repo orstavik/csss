@@ -26,12 +26,7 @@
       --palette-primary: #ec1221;
       --palette-secondary: oklch(from #ec1221 50 c calc(h - 60));
       --palette-tertiary: oklch(from #ec1221 50 c calc(h + 60));
-      --palette-error: oklch(from #ec1221 50 c 30);
-      --palette-warning: oklch(from #ec1221 50 c 64);
-      --palette-success: oklch(from #ec1221 50 c 164);
-      --palette-info: oklch(from #ec1221 50 c 228);
       --palette-neutral: oklch(from #ec1221 50 0.02 h);
-      --palette-grey: oklch(50 0 0);
       --palette-bw-fg: 0;
       --palette-bw-bg: 1;
       --palette-text-fg: 0.23;
@@ -42,7 +37,8 @@
       --palette-flip-bg: 0.66;
       --palette-darkflip-fg: 0.9;
       --palette-darkflip-bg: 0.33;
-      --palette-pop: 2;
+      --palette-chroma: 0.23746015283192687;
+      --palette-pop: calc(c * 2);
     }
 
     /*container 0*/
@@ -82,36 +78,36 @@
     /*container 0*/
     /*$color(grey-text)*/
     :where(.\$color\(grey-text\)) {
-      color: oklch(from var(--palette-grey) var(--palette-text-fg) c h);
-      --background-color: oklch(from var(--palette-grey) var(--palette-text-bg) c h);
-      border-color: color-mix(in oklch, oklch(from var(--palette-grey) var(--palette-text-bg) c h), oklch(from var(--palette-grey) var(--palette-text-fg) c h) 30%);
+      color: oklch(from grey var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+      --background-color: oklch(from grey var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+      border-color: color-mix(in oklch, oklch(from grey var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from grey var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
     }
 
     /*item 0*/
     /*|*$color(primary)*/
     :where(.\|\*\$color\(primary\))>
     :where(*) {
-      color: oklch(from var(--palette-primary) var(--palette-text-fg) c h);
-      --background-color: oklch(from var(--palette-primary) var(--palette-text-bg) c h);
-      border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-text-bg) c h), oklch(from var(--palette-primary) var(--palette-text-fg) c h) 30%);
+      color: oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+      --background-color: oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+      border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
     }
 
     /*item 1*/
     /*|.new$color(secondary)*/
     :where(.\|\.new\$color\(secondary\))>
     :where(.new) {
-      color: oklch(from var(--palette-secondary) var(--palette-text-fg) c h);
-      --background-color: oklch(from var(--palette-secondary) var(--palette-text-bg) c h);
-      border-color: color-mix(in oklch, oklch(from var(--palette-secondary) var(--palette-text-bg) c h), oklch(from var(--palette-secondary) var(--palette-text-fg) c h) 30%);
+      color: oklch(from var(--palette-secondary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+      --background-color: oklch(from var(--palette-secondary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+      border-color: color-mix(in oklch, oklch(from var(--palette-secondary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-secondary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
     }
 
     /*item 1*/
     /*|.sale$color(tertiary)*/
     :where(.\|\.sale\$color\(tertiary\))>
     :where(.sale) {
-      color: oklch(from var(--palette-tertiary) var(--palette-text-fg) c h);
-      --background-color: oklch(from var(--palette-tertiary) var(--palette-text-bg) c h);
-      border-color: color-mix(in oklch, oklch(from var(--palette-tertiary) var(--palette-text-bg) c h), oklch(from var(--palette-tertiary) var(--palette-text-fg) c h) 30%);
+      color: oklch(from var(--palette-tertiary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+      --background-color: oklch(from var(--palette-tertiary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+      border-color: color-mix(in oklch, oklch(from var(--palette-tertiary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-tertiary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
     }
 
     /*container 0*/
