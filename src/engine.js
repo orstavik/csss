@@ -60,8 +60,8 @@ export function interpretClass(txt) {
 }
 
 const WORD = /[-a-z][a-z0-9-]*/;
-const CPP = /[,()]/.source;
-const nCPP = /[^,()]+/.source;
+const CPP = /[,\[\]]/.source;
+const nCPP = /[^,\[\]]+/.source;
 const QUOTE = /([`'"])(?:\\.|(?!\3).)*?\3/.source;
 const TOKENS = new RegExp(`(${QUOTE})|(\\s+)|(${CPP})|(${nCPP})`, "g");
 const SUPERSHORT = new RegExp(
@@ -72,29 +72,30 @@ function processToken([m, , , space]) {
   return space ? undefined : m;
 }
 
+const S = "[", E = "]";
 function diveDeep(tokens, top) {
   const res = [];
   while (tokens.length) {
     let a = tokens.shift();
     if (top && a === ",") throw "can't start with ','";
-    if (top && a === ")") throw "can't start with ')'";
-    if (a === "," || a === ")") {         //empty
+    if (top && a === E) throw "can't start with ')'";
+    if (a === "," || a === E) {         //empty
       res.push(undefined);
-      if (a === ")" && !res.length)
+      if (a === E && !res.length)
         throw new SyntaxError("empty function not allowed in CSSs");
-      if (a === ")")
+      if (a === E)
         return res;
       continue;
     }
     let b = tokens.shift();
     if (top && b === ",") throw "top level can't list using ','";
-    if (top && b === ")") throw "top level can't use ')'";
-    if (b === "(" && !a.match(WORD)) throw "invalid function name";
-    if (b === "(") {
+    if (top && b === E) throw "top level can't use ')'";
+    if (b === S && !a.match(WORD)) throw "invalid function name";
+    if (b === S) {
       a = new Expression(a, diveDeep(tokens));
       b = tokens.shift();
     }
-    if (b === ")" || (top && b === undefined))
+    if (b === E || (top && b === undefined))
       return res.push(a), res;
     if (b == ",")
       res.push(a);

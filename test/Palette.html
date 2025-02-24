@@ -21,14 +21,14 @@
     border-style: solid;
   }
 </style>
-<main class="$palette(#ff3412)"></main>
+<main class="$palette[#ff3412]"></main>
 <script>
   const names = "secondary|primary|tertiary|neutral|grey|red-blend|orange-blend|green-blend|blue-blend";
   const types = "|-bw|-box|-flip|-darkflip|-pop-flip";
   const str = [];
   for (const type of types.split("|")) {
     for (const name of names.split("|"))
-      str.push(`<span class="$color(${name}${type})"> hello sunshine </span>`);
+      str.push(`<span class="$color[${name}${type}]"> hello sunshine </span>`);
     str.push("<hr>");
   }
   document.querySelector("main").insertAdjacentHTML("beforeend", str.join("\n"));
