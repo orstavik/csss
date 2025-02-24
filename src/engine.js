@@ -1,5 +1,5 @@
 import layouts from "./layout.js";
-import { border, w, h } from "./func.js";
+import borderCursorWH from "./func.js";
 import colorPalette from "./palette.js";
 // import colorFunctions from "./color.js";
 // import { color, bgColor, colorBorder, colorCaret, colorAccent, colorTextEmphasis, colorTextDecoration, colorColumnRule, colorOutline, colorTextShadow, colorDropShadow, colorShadow } from "./color.js";
@@ -18,9 +18,14 @@ export class Expression {
   }
 }
 
+// todo this is the function with the native property names
+// function getSupportedCSSProperties() {
+//   return Object.getOwnPropertyNames(document.createElement('div').style).map(p =>
+//     p.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^ms-/, '-ms-'));
+// }
+
 const shortFuncs = {
-  border,
-  w, h,
+  ...borderCursorWH,
   ...colorPalette,
   ...layouts,
   // ...colorFunctions,
@@ -36,14 +41,27 @@ for (let [k, v] of Object.entries(shortFuncs)) {
 
 export const toCss = txt => [...toCssText(txt, interpretClass(txt))].join("\n");
 
+function prepareCssObject(cssProps) {
+  const res = {};
+  for (let [k, v] of Object.entries(cssProps)) {
+    if (v == null) continue;
+    k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
+    res[k] = v;
+    if (!CSS.supports(k, "inherit")) //invalid css property type. You need to transpile the css style.
+      continue;
+    if (!CSS.supports(k, v)) //invalid value. Error in value given to the $short.
+      throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
+  }
+  return res;
+}
+
 function interpret(exp) {
-  if (!(exp.name in shortFuncs))
-    throw new SyntaxError(`Unknown short function: ${exp.name}`);
-  const obj = shortFuncs[exp.name](exp);
-  return Object.fromEntries(Object.entries(obj)
-    .filter(kv => kv[1] != null)
-    .map(([k, v]) => [k.replace(/[A-Z]/g, "-$&").toLowerCase(), v])
-  );
+  if (exp.name in shortFuncs)
+    return prepareCssObject(shortFuncs[exp.name](exp));
+  //todo begin here
+  // if (exp.name in nativeCSSProperties)
+  //   return prepareCssObject(nativeCssProp(...exp.args));
+  throw new SyntaxError(`Unknown short function: ${exp.name}`);
 }
 
 export function interpretClass(txt) {

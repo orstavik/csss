@@ -72,7 +72,7 @@ const Color = (function (Color) {
   outline-color: inherit;
 }
 */
-const BG_PROPS = Array(8).fill().map((_, i) => `--color${i ? "-" + i : ""}`, Color);
+// const BG_PROPS = Array(8).fill().map((_, i) => `--color${i ? "-" + i : ""}`, Color);
 //singles of foreground+background+border colors
 const color = Merge(ListOf(null,
   P("color", Color),
@@ -80,8 +80,11 @@ const color = Merge(ListOf(null,
   BorderSwitch(LogicalFour("color", ShorthandFunction(":", null, Color))),
 ));
 
-const bgColor = PP(BG_PROPS, ListOfSame(null, Color));
+// const bgColor = PP(BG_PROPS, ListOfSame(null, Color));
+const colorShadow = LogicalFour(["--box-shadow-color"], ListOfSame(null, Color));
 const colorBorder = BorderSwitch(LogicalFour("color", ShorthandFunction(":", null, Color)));
+
+//todo this can be handled by the native function for properties.
 const colorCaret = P("caret-color", ListOf(null, Color));
 const colorAccent = P("accent-color", ListOf(null, Color));
 const colorTextEmphasis = P("text-emphasis-color", ListOf(null, Color));
@@ -90,11 +93,10 @@ const colorColumnRule = P("column-rule-color", ListOf(null, Color));
 const colorOutline = P("outline-color", ListOf(null, Color));
 const colorTextShadow = P("--text-shadow-color", ListOf(null, Color));
 const colorDropShadow = P("--drop-shadow-color", ListOf(null, Color));
-const colorShadow = LogicalFour(["--box-shadow-color"], ListOfSame(null, Color));
 
 export default {
   color,
-  bgColor,
+  // bgColor,
   colorBorder,
   colorCaret,
   colorAccent,

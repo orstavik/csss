@@ -44,6 +44,12 @@ function shorthandSignature(x, ALIASES, SEP) {
   throw `Shorthand mismatch: (${ALIASES}) or ${SEP} doesn't accept ${x}.`;
 }
 
+function colonSplit(NAME, SEP, FUNC, x) {
+  const res = x.split(":").map(FUNC);
+  return res.length == 1 ? res[0] :
+    `${NAME}(${res.join(SEP)})`;
+}
+
 function oneOf(FUNCS, x) {
   for (let func of FUNCS)
     try { return func(x); } catch (e) { }
@@ -56,6 +62,8 @@ export const ListOf = (Aliases, ...FUNCS) =>
   x => signature(x, Aliases, FUNCS.length).map((a, i) => a == null ? a : FUNCS[i](a));
 export const ShorthandFunction = (SEP, NAME, FUNC) =>
   x => shorthandSignature(x, NAME, SEP).map(a => a == null ? a : FUNC(a));
+export const ColonFunction = (NAME, SEP, FUNC) =>
+  x => colonSplit(NAME, SEP, FUNC, x);
 export const Either = (...FUNCS) =>
   x => oneOf(FUNCS, x);
 export const Dictionary = (...FUNCS) =>
@@ -113,17 +121,6 @@ function toLogicalEight(NAME, DEFAULT, args) {
   return res;
 }
 
-function toMinMax(NAME, res) {
-  if (res.length == 1)
-    return { [NAME]: res[0] };
-  if (res.length == 3)
-    return {
-      [`min-${NAME}`]: res[0],
-      [NAME]: res[1],
-      [`max-${NAME}`]: res[2]
-    };
-}
-
 function safeMerge(ar) {
   const res = {};
   for (let res2 of ar) {
@@ -164,23 +161,18 @@ function assignIfNone(Defaults, res) {
   return { ...res2, ...res };
 }
 
-function pP(NAMES, ar) {
-  return ar.reduce((res, x, i) => ((res[NAMES[i]] = spaceJoin(x)), res), {});
-}
-
-export const P = (NAME, FUNC) => x => ({ [NAME]: spaceJoin(FUNC(x)) });
-export const PP = (NAMES, FUNC) => x => pP(NAMES, FUNC(x));
+export const P = (NAME, FUNC) => x => ({ [NAME]: spaceJoin(FUNC(x)) }); // PP([NAME], FUNC);//
 export const LogicalFour = (NAME, FUNC) => x => toLogicalFour(NAME, FUNC(x));
 export const CssFunction = (NAME, SEP, FUNC) => x => `${NAME}(${FUNC(x).join(SEP)})`;
 export const CssFunctionIf2 = (NAME, FUNC) => x => toCssFunctionIf2(NAME, FUNC(x));
 export const LogicalEight = (NAME, FUNC) => x => toLogicalEight(NAME, 0, FUNC(x));
-export const ToMinMax = (DIR, FUNC) => x => toMinMax(DIR, FUNC(x));
 export const Merge = FUNC => x => safeMerge(FUNC(x));
 export const Assign = (OBJ, FUNC) => x => assignIfNone(OBJ, FUNC(x));
 export const BorderSwitch = FUNC => x => borderSwitch(FUNC(x));
 
 export const PositiveLengthPercent = CheckNum(LENGTHS_PER, 0);
 
+//todo remove the syntax checking... !!!
 export const PositiveSize = Either(
   Word(/(min|max)(-content)?/, (_, m, c = "-content") => m + c),
   PositiveLengthPercent
@@ -188,22 +180,19 @@ export const PositiveSize = Either(
 
 
 //enables us to write a min and max eiter as 2px:5px or max(2px,5px)
-const Size = DIR => ToMinMax(DIR, Either(
-  ListOf(null, PositiveSize),
-  ListOf(null,
-    CssFunctionIf2("max", ShorthandFunction(":", "max", PositiveSize)),
-    PositiveSize,
-    CssFunctionIf2("min", ShorthandFunction(":", "min", PositiveSize))
-  )
-));
-
 //$w(50%)
 //$w(1,2) not allowed, only 1 or 3 arguments.
 //$w(30em:35%,50%,60cm:80vw:100%)
 //$w(max(30em,35%),50%,min(60cm,80vw,100%))
-
-export const w = Size("inline-size");
-export const h = Size("block-size");
+const Size1 = NAME => P(NAME, ListOf(null, PositiveSize));
+const Size3 = NAME => Merge(ListOf(null,
+  P(`min-${NAME}`, ColonFunction("max", ",", PositiveSize)),
+  P(NAME, PositiveSize),
+  P(`max-${NAME}`, ColonFunction("min", ",", PositiveSize))
+));
+const Size = NAME => Either(Size1(NAME), Size3(NAME));
+const w = Size("inline-size");
+const h = Size("block-size");
 
 
 //$border(solid)
@@ -211,7 +200,7 @@ export const h = Size("block-size");
 
 //todo Dictionary should check that none of the properties coming out are already set.
 //border-colors controlled by $color
-export const border = Assign({ "border-style": "solid" }, BorderSwitch(Merge(Dictionary(
+const border = Assign({ "border-style": "solid" }, BorderSwitch(Merge(Dictionary(
   LogicalFour("style", ListOfSame("style|s|", Word(/solid|dotted|dashed|double/))),
   LogicalFour("width", Either(
     ListOfSame("width|w|", PositiveLengthPercent),
@@ -221,4 +210,10 @@ export const border = Assign({ "border-style": "solid" }, BorderSwitch(Merge(Dic
   LogicalFour("radius", ListOfSame("r2|radius-og", PositiveLengthPercent))//NativeEight?
 ))));
 
-export const cursor = P("cursor", Word(/default|none|context-menu|help|pointer|progress|wait|cell|crosshair|text|vertical-text|alias|copy|move|no-drop|not-allowed|grab|grabbing|col-resize|row-resize|n-resize|s-resize|e-resize|w-resize|ne-resize|nw-resize|se-resize|sw-resize|ew-resize|ns-resize|nesw-resize|nwse-resize|zoom-in|zoom-out/));//auto is excluded
+const cursor = P("cursor", Word(/default|none|context-menu|help|pointer|progress|wait|cell|crosshair|text|vertical-text|alias|copy|move|no-drop|not-allowed|grab|grabbing|col-resize|row-resize|n-resize|s-resize|e-resize|w-resize|ne-resize|nw-resize|se-resize|sw-resize|ew-resize|ns-resize|nesw-resize|nwse-resize|zoom-in|zoom-out/));//auto is excluded
+
+export default {
+  border,
+  cursor,
+  w, h,
+}

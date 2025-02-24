@@ -1,4 +1,4 @@
-import { Debugger, PositiveLengthPercent, Word, P, ListOfSame, Merge, Assign, Dictionary, LogicalFour, CheckNum, ListOf } from "./func.js";
+import { Debugger, NUM, PositiveLengthPercent, Word, P, ListOfSame, Merge, Assign, Dictionary, LogicalFour, CheckNum, ListOf } from "./func.js";
 
 //wrap is a single word. ellipsis-scroll => block: ellipsis, inline: scroll
 const OVERFLOW = /(ellipsis|clip)|(auto|scroll|visible)(?:-(auto|scroll|hidden|visible))?/;
@@ -97,12 +97,12 @@ const flex = Assign({ display: "flex" }, Merge(Dictionary(
 
 //todo safe
 const _flex = Merge(Dictionary(
+  ..._LAYOUT,
   Word(_FLEX_ALIGN, doAlignSelf),
-  P("flex-grow", CheckNum("grow|g", 0)),
-  P("flex-shrink", CheckNum("shrink|s", 0)),
-  P("order", CheckNum("order|o", 0, null, true)),
   P("flex-basis", ListOf("basis", PositiveLengthPercent)),
-  ..._LAYOUT
+  P("order", Word(/(-?\d+)(order|o)/, (_, n) => n)),
+  P("flex-grow", Word(new RegExp(`(${NUM})(grow|g)`), (_, n) => n)),
+  P("flex-shrink", Word(new RegExp(`(${NUM})(shrink|s)`), (_, n) => n))
 ));
 
 export default {

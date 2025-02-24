@@ -8,7 +8,9 @@
         if (clazz.includes("$"))
           try {
             res.push(toCss(clazz));
-          } catch (er) { }
+          } catch (er) {
+            console.error(er);
+           }
     document.querySelector('style').textContent = res.join('\n');
   })();
 </script>
