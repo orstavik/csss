@@ -1,23 +1,32 @@
 class Color {
-  static hexToLinearRgb(hex) {
-    hex = hex.slice(1);
-    let bigint;
-    if (hex.length === 3) {
-      bigint = parseInt(hex.split('').map(char => char + char).join(''), 16);
-    } else if (hex.length === 6) {
-      bigint = parseInt(hex, 16);
-    } else {
-      throw new Error('Invalid HEX color.');
-    }
-    const r = ((bigint >> 16) & 255) / 255;
-    const g = ((bigint >> 8) & 255) / 255;
-    const b = (bigint & 255) / 255;
 
+  constructor(colorStr) {
+    const rgba = Color.cssomColor(colorStr);
+    this.hex = Color.rgbToHex(rgba);
+    rgba.R/=255;
+    rgba.G/=255;
+    rgba.B/=255;
+    const rgb = Color.linearizeRgb(rgba);
+    const xyz = Color.linearRgbToXyz(rgb);
+    const lab = Color.xyzToOKLab(xyz);
+    const lch = Color.oklabToOklch(lab);
+    return Object.assign(this, rgb, xyz, lab, lch);
+  }
+
+  static #canvas = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+  static cssomColor(colorStr) {
+    this.#canvas.fillStyle = colorStr;
+    this.#canvas.fillRect(0, 0, 1, 1);
+    const data = this.#canvas.getImageData(0, 0, 1, 1).data;
+    return { R: data[0], G: data[1], B: data[2], A: data[3] / 255 };
+  }
+
+  static linearizeRgb({ R, G, B }) {
     const linearize = c => c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     return {
-      R: linearize(r),
-      G: linearize(g),
-      B: linearize(b)
+      R: linearize(R),
+      G: linearize(G),
+      B: linearize(B)
     };
   }
 
@@ -88,17 +97,9 @@ class Color {
   }
 
   static rgbToHex({ R, G, B }) {
-    const toHex = (value) => value.toString(16).padStart(2, "0");
+    const toHex = (value) => value.toString(16).padStart(2, "0").toLowerCase();
     return `#${toHex(R)}${toHex(G)}${toHex(B)}`;
   };
-
-  static analyzeHex(hex) {
-    const rgb = this.hexToLinearRgb(hex);
-    const xyz = this.linearRgbToXyz(rgb);
-    const lab = this.xyzToOKLab(xyz);
-    const lch = this.oklabToOklch(lab);
-    return { hex, ...rgb, ...xyz, ...lab, ...lch };
-  }
 
   static analyzeLch(lch) {
     const lab = this.oklchToOklab(lch);
@@ -112,7 +113,7 @@ class Color {
     const res = { ...colorMap };
     for (let name in colorMap)
       for (let [shade, hex] of Object.entries(colorMap[name]))
-        res[name][shade] = this.analyzeHex(hex);
+        res[name][shade] = new Color(hex);
     return res;
   }
 }
