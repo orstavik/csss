@@ -1,28 +1,23 @@
+import { Color } from "./Color.js";
+
 function toPalette(_,
   primary,
   secondary = `oklch(from ${primary} 50 c calc(h - 60))`,
   tertiary = `oklch(from ${primary} 50 c calc(h + 60))`,
   neutral = `oklch(from ${primary} 50 0.02 h)`
-  // ,
-  // error = `oklch(from ${primary} 50 c 30)`,
-  // warning = `oklch(from ${primary} 50 c 64)`,
-  // success = `oklch(from ${primary} 50 c 164)`,
-  // info = `oklch(from ${primary} 50 c 228)`,
-  // grey = `oklch(50 0 0)`
 ) {
   const res = {
-    //colors
-    primary, secondary, tertiary,
-    // error, warning, success, info, grey, //  red, green, blue, orange, grey
-    neutral,
-    //shades
+    //color roles
+    primary, secondary, tertiary, neutral,
+    //relieffs
     "bw-fg": 0, "bw-bg": 1,
     "text-fg": .23, "text-bg": .99,
     "box-fg": .23, "box-bg": .92,
     "flip-fg": .99, "flip-bg": .66,
     "darkflip-fg": .90, "darkflip-bg": .33,
     //chromas
-    pop: 2
+    chroma: new Color(primary).C,
+    pop: "calc(c * 2)"
   };
   return Object.fromEntries(Object.entries(res).map(
     ([k, v]) => [`--palette-${k}`, v]));
@@ -49,7 +44,8 @@ const ColorFuncs = {
   box: relieff("box"),
   flip: relieff("flip"),
   darkflip: relieff("darkflip"),
-  pop: c => `oklch(from ${c} l calc(c * var(--palette-pop)) h)`,
+  pop: c => `oklch(from ${c} l var(--palette-pop) h)`,
+  blend: c => `oklch(from ${c} l var(--palette-chroma) h)`,
   b: border(4),
   b0: border(0),
   b1: border(1),
@@ -68,10 +64,7 @@ const WWW = /azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burly
 function toColor(name) {
   const segs = name.split("-");
   let output = segs.reduce((res, a) => {
-    res.unshift(
-      ColorFuncs[a]?.(...res) ?? 
-      a.match(WWW)?.[0] ?? 
-      `var(--palette-${a})`);
+    res.unshift(ColorFuncs[a]?.(...res) ?? a.match(WWW)?.[0] ?? `var(--palette-${a})`);
     return res;
   },
     []).shift();
