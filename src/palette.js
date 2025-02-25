@@ -60,7 +60,7 @@ const ColorFuncs = {
 };
 
 function validColor(str) {
-  str = str.replaceAll(";", " ");
+  str = str.replaceAll(";", " ");  //todo if we 
   return CSS.supports("color", str) ? str : undefined;
 };
 

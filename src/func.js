@@ -212,8 +212,83 @@ const border = Assign({ "border-style": "solid" }, BorderSwitch(Merge(Dictionary
 
 const cursor = P("cursor", Word(/default|none|context-menu|help|pointer|progress|wait|cell|crosshair|text|vertical-text|alias|copy|move|no-drop|not-allowed|grab|grabbing|col-resize|row-resize|n-resize|s-resize|e-resize|w-resize|ne-resize|nw-resize|se-resize|sw-resize|ew-resize|ns-resize|nesw-resize|nwse-resize|zoom-in|zoom-out/));//auto is excluded
 
+function nativeCssFunction(x) {
+  const args = x.args.map(a => a.replaceAll?.("_", " ") ?? a);
+  return `${x.name}(${args.join(",")})`;
+}
+
+function nativeCssFunctionIdent(x) {
+  const args = x.args.map((a, i) => (typeof a == "string" && i) ? a.replaceAll("_", " ") : a);
+  return `${x.name}(${args.join(",")})`;
+}
+
+const NativeCssFunctions = {
+  var: nativeCssFunctionIdent,
+  counter: nativeCssFunction,
+  counters: nativeCssFunction,
+  element: nativeCssFunction,
+  paint: nativeCssFunction,
+
+  color: nativeCssFunction,  //todo potential problem in the first argument
+  "color-mix": nativeCssFunction, //todo potential problem in the first argument
+
+  attr: nativeCssFunction,
+  url: nativeCssFunction,
+  "image-set": nativeCssFunction,
+  calc: nativeCssFunction,
+  min: nativeCssFunction,
+  max: nativeCssFunction,
+  clamp: nativeCssFunction,
+  env: nativeCssFunction,
+  rgb: nativeCssFunction,
+  hsl: nativeCssFunction,
+  hwb: nativeCssFunction,
+  lab: nativeCssFunction,
+  lch: nativeCssFunction,
+  oklab: nativeCssFunction,
+  oklch: nativeCssFunction,
+  "linear-gradient": nativeCssFunction,
+  "repeating-linear-gradient": nativeCssFunction,
+  "radial-gradient": nativeCssFunction,
+  "repeating-radial-gradient": nativeCssFunction,
+  "conic-gradient": nativeCssFunction,
+  "repeating-conic-gradient": nativeCssFunction,
+  matrix: nativeCssFunction,
+  matrix3d: nativeCssFunction,
+  translate: nativeCssFunction,
+  translate3d: nativeCssFunction,
+  scale: nativeCssFunction,
+  scale3d: nativeCssFunction,
+  rotate: nativeCssFunction,
+  rotate3d: nativeCssFunction,
+  skew: nativeCssFunction,
+  blur: nativeCssFunction,
+  brightness: nativeCssFunction,
+  contrast: nativeCssFunction,
+  "drop-shadow": nativeCssFunction,
+  grayscale: nativeCssFunction,
+  "hue-rotate": nativeCssFunction,
+  invert: nativeCssFunction,
+  opacity: nativeCssFunction,
+  saturate: nativeCssFunction,
+  sepia: nativeCssFunction,
+  path: nativeCssFunction,
+  "translate-x": nativeCssFunction,
+  "translate-y": nativeCssFunction,
+  "translate-z": nativeCssFunction,
+  "scale-x": nativeCssFunction,
+  "scale-y": nativeCssFunction,
+  "scale-z": nativeCssFunction,
+  "rotate-x": nativeCssFunction,
+  "rotate-y": nativeCssFunction,
+  "rotate-z": nativeCssFunction,
+  "skew-x": nativeCssFunction,
+  "skew-y": nativeCssFunction,
+};
+
 export default {
   border,
   cursor,
   w, h,
+  // ...NativeCssFunctions
 }

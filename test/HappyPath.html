@@ -1,28 +1,28 @@
 <test-html title="border+color+items">
   <div class="
-  $palette[#ec1221]
+  $palette(#ec1221)
   
-  $border[solid,2px]
-  |*$border[double,2px,radius[0.25rem]]
-  |.new$border[solid,4px,radius[1rem]]
-  |.sale$border[dashed,3px,radius[0.5rem]]
+  $border(solid,2px)
+  |*$border(double,2px,radius(0.25rem))
+  |.new$border(solid,4px,radius(1rem))
+  |.sale$border(dashed,3px,radius(0.5rem))
                         
- $color[grey-text]
-  |*$color[primary]
-  |.new$color[secondary]
-  |.sale$color[tertiary]
+ $color(grey-text)
+  |*$color(primary)
+  |.new$color(secondary)
+  |.sale$color(tertiary)
            ">
 
     <div class="new">New Arrival: Product 1</div>
-    <div class="sale $h[300px] $w[600px] $border[r[10px,30px,60px]]">On Sale: Product 2</div>
+    <div class="sale $h(300px) $w(600px) $border(r(10px,30px,60px))">On Sale: Product 2</div>
     <div>Product 3</div>
     <div class="sale">On Sale: Product 4</div>
     <div class="new">New Arrival: Product 5</div>
   </div>
   <style>
     /*container 0*/
-    /*$palette[#ec1221]*/
-    :where(.\$palette\[\#ec1221\]) {
+    /*$palette(#ec1221)*/
+    :where(.\$palette\(\#ec1221\)) {
       --palette-primary: #ec1221;
       --palette-secondary: oklch(from #ec1221 50 c calc(h - 60));
       --palette-tertiary: oklch(from #ec1221 50 c calc(h + 60));
@@ -42,15 +42,15 @@
     }
 
     /*container 0*/
-    /*$border[solid,2px]*/
-    :where(.\$border\[solid\,2px\]) {
+    /*$border(solid,2px)*/
+    :where(.\$border\(solid\,2px\)) {
       border-style: solid;
       border-width: 2px;
     }
 
     /*item 0*/
-    /*|*$border[double,2px,radius[0.25rem]]*/
-    :where(.\|\*\$border\[double\,2px\,radius\[0\.25rem\]\])>
+    /*|*$border(double,2px,radius(0.25rem))*/
+    :where(.\|\*\$border\(double\,2px\,radius\(0\.25rem\)\))>
     :where(*) {
       border-style: double;
       border-width: 2px;
@@ -58,8 +58,8 @@
     }
 
     /*item 1*/
-    /*|.new$border[solid,4px,radius[1rem]]*/
-    :where(.\|\.new\$border\[solid\,4px\,radius\[1rem\]\])>
+    /*|.new$border(solid,4px,radius(1rem))*/
+    :where(.\|\.new\$border\(solid\,4px\,radius\(1rem\)\))>
     :where(.new) {
       border-style: solid;
       border-width: 4px;
@@ -67,8 +67,8 @@
     }
 
     /*item 1*/
-    /*|.sale$border[dashed,3px,radius[0.5rem]]*/
-    :where(.\|\.sale\$border\[dashed\,3px\,radius\[0\.5rem\]\])>
+    /*|.sale$border(dashed,3px,radius(0.5rem))*/
+    :where(.\|\.sale\$border\(dashed\,3px\,radius\(0\.5rem\)\))>
     :where(.sale) {
       border-style: dashed;
       border-width: 3px;
@@ -76,16 +76,16 @@
     }
 
     /*container 0*/
-    /*$color[grey-text]*/
-    :where(.\$color\[grey-text\]) {
+    /*$color(grey-text)*/
+    :where(.\$color\(grey-text\)) {
       color: oklch(from grey var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
       --background-color: oklch(from grey var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
       border-color: color-mix(in oklch, oklch(from grey var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from grey var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
     }
 
     /*item 0*/
-    /*|*$color[primary]*/
-    :where(.\|\*\$color\[primary\])>
+    /*|*$color(primary)*/
+    :where(.\|\*\$color\(primary\))>
     :where(*) {
       color: oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
       --background-color: oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
@@ -93,8 +93,8 @@
     }
 
     /*item 1*/
-    /*|.new$color[secondary]*/
-    :where(.\|\.new\$color\[secondary\])>
+    /*|.new$color(secondary)*/
+    :where(.\|\.new\$color\(secondary\))>
     :where(.new) {
       color: oklch(from var(--palette-secondary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
       --background-color: oklch(from var(--palette-secondary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
@@ -102,8 +102,8 @@
     }
 
     /*item 1*/
-    /*|.sale$color[tertiary]*/
-    :where(.\|\.sale\$color\[tertiary\])>
+    /*|.sale$color(tertiary)*/
+    :where(.\|\.sale\$color\(tertiary\))>
     :where(.sale) {
       color: oklch(from var(--palette-tertiary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
       --background-color: oklch(from var(--palette-tertiary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
@@ -111,20 +111,20 @@
     }
 
     /*container 0*/
-    /*$h[300px]*/
-    :where(.\$h\[300px\]) {
+    /*$h(300px)*/
+    :where(.\$h\(300px\)) {
       block-size: 300px;
     }
 
     /*container 0*/
-    /*$w[600px]*/
-    :where(.\$w\[600px\]) {
+    /*$w(600px)*/
+    :where(.\$w\(600px\)) {
       inline-size: 600px;
     }
 
     /*container 0*/
-    /*$border[r[10px,30px,60px]]*/
-    :where(.\$border\[r\[10px\,30px\,60px\]\]) {
+    /*$border(r(10px,30px,60px))*/
+    :where(.\$border\(r\(10px\,30px\,60px\)\)) {
       border-style: solid;
       border-top-left-radius: 10px 30px;
       border-top-right-radius: 10px 30px;
@@ -136,150 +136,165 @@
 <test-html title="border-radius">
   <style>
     /*container 0*/
-    /*$border[radius[1rem]]*/
-    :where(.\$border\[radius\[1rem\]\]) {
+    /*$border(radius(1rem))*/
+    :where(.\$border\(radius\(1rem\)\)) {
       border-style: solid;
       border-radius: 1rem;
     }
   </style>
-  <div class="$border[radius[1rem]]">hello</div>
+  <div class="$border(radius(1rem))">hello</div>
 </test-html>
 <test-html title="big border">
   <style>
     /*container 0*/
-    /*$border[w[,1px,2px,],s[,,solid,dashed]]*/
-    :where(.\$border\[w\[\,1px\,2px\,\]\,s\[\,\,solid\,dashed\]\]) {
+    /*$border(w(,1px,2px,),s(,,solid,dashed))*/
+    :where(.\$border\(w\(\,1px\,2px\,\)\,s\(\,\,solid\,dashed\)\)) {
       border-inline-start-width: 1px;
       border-block-end-width: 2px;
       border-block-end-style: solid;
       border-inline-end-style: dashed;
     }
   </style>
-  <div class="$border[w[,1px,2px,],s[,,solid,dashed]]">sunshine</div>
+  <div class="$border(w(,1px,2px,),s(,,solid,dashed))">sunshine</div>
 </test-html>
 <test-html title="border-thin">
   <style>
     /*container 0*/
-    /*$border[thin]*/
-    :where(.\$border\[thin\]) {
+    /*$border(thin)*/
+    :where(.\$border\(thin\)) {
       border-style: solid;
       border-width: thin;
     }
   </style>
-  <div class="$border[thin]">!!!</div>
+  <div class="$border(thin)">!!!</div>
 </test-html>
-<test-html title="color[3]">
+<test-html title="$color(oklch(from_green_.5_.85_h))">
+  <div class="$color(oklch(from_green_.5_.85_h))">
+    hello
+  </div>
   <style>
     /*container 0*/
-    /*$color[black,#123456]$color-border[red]*/
-    /*$color[black,#123456]$color-border[red]*/
-    :where(.\$color\[black\,\#123456\]\$color-border\[red\]) {
+    /*$color(black,#123456)$color-border(red)*/
+    /*$color(black,#123456)$color-border(red)*/
+    :where(.\$color\(black\,\#123456\)\$color-border\(red\)) {
       color: black;
       --background-color: #123456;
       border-color: red;
     }
   </style>
-  <div class="$color[black,#123456]$color-border[red]">
+</test-html>
+<test-html title="color(3)">
+  <style>
+    /*container 0*/
+    /*$color(black,#123456)$color-border(red)*/
+    /*$color(black,#123456)$color-border(red)*/
+    :where(.\$color\(black\,\#123456\)\$color-border\(red\)) {
+      color: black;
+      --background-color: #123456;
+      border-color: red;
+    }
+  </style>
+  <div class="$color(black,#123456)$color-border(red)">
     hello
   </div>
 </test-html>
-<test-html title="color[3b]">
+<test-html title="color(3b)">
   <style>
     /*container 0*/
-    /*$color[black,#123456,green]*/
-    :where(.\$color\[black\,\#123456\,green\]) {
+    /*$color(black,#123456,green)*/
+    :where(.\$color\(black\,\#123456\,green\)) {
       color: black;
       --background-color: #123456;
       border-color: green;
     }
   </style>
-  <div class="$color[black,#123456,green]">
+  <div class="$color(black,#123456,green)">
     hello
   </div>
 </test-html>
-<test-html title="$color[black,#123456,green:yellow]">
+<test-html title="$color(black,#123456,green:yellow)">
   <style>
     /*container 0*/
-    /*$color[black,#123456,green:yellow]*/
-    :where(.\$color\[black\,\#123456\,green\:yellow\]) {
+    /*$color(black,#123456,green:yellow)*/
+    :where(.\$color\(black\,\#123456\,green\:yellow\)) {
       color: black;
       --background-color: #123456;
       border-block-color: green;
       border-inline-color: yellow;
     }
   </style>
-  <div class="$color[black,#123456,green:yellow]">
+  <div class="$color(black,#123456,green:yellow)">
     hello
   </div>
 </test-html>
-<test-html title="$color[rgb[,0,12,255]]">
+<test-html title="$color(rgb(,0,12,255))">
   <style>
     /*container 0*/
-    /*$color[rgb(0,12,255)]*/
-    :where(.\$color\[rgb\(0\,12\,255\)\]) {
+    /*$color(rgb(0,12,255))*/
+    :where(.\$color\(rgb\(0\,12\,255\)\)) {
       color: rgb(0, 12, 255);
     }
   </style>
-  <div class="$color[rgb[,0,12,255]]">
+  <div class="$color(rgb(,0,12,255))">
     hello
   </div>
 </test-html>
-<test-html title="$w[min]">
+<test-html title="$w(min)">
   <style>
     /*container 0*/
-    /*$w[min]*/
-    :where(.\$w\[min\]) {
+    /*$w(min)*/
+    :where(.\$w\(min\)) {
       inline-size: min-content;
     }
   </style>
-  <div class="$w[min]">
+  <div class="$w(min)">
     hello
   </div>
 </test-html>
-<test-html title="$w[min,2px,max]">
+<test-html title="$w(min,2px,max)">
   <style>
     /*container 0*/
-    /*$w[min,2px,max]*/
-    :where(.\$w\[min\,2px\,max\]) {
+    /*$w(min,2px,max)*/
+    :where(.\$w\(min\,2px\,max\)) {
       min-inline-size: min-content;
       inline-size: 2px;
       max-inline-size: max-content;
     }
   </style>
-  <div class="$w[min,2px,max]">
+  <div class="$w(min,2px,max)">
     hello
   </div>
 </test-html>
-<test-html title="$w[1px,2px,]">
+<test-html title="$w(1px,2px,)">
   <style>
     /*container 0*/
-    /*$w[1px,2px,]*/
-    :where(.\$w\[1px\,2px\,\]) {
+    /*$w(1px,2px,)*/
+    :where(.\$w\(1px\,2px\,\)) {
       min-inline-size: 1px;
       inline-size: 2px;
     }
   </style>
-  <div class="$w[1px,2px,]">
+  <div class="$w(1px,2px,)">
     hello
   </div>
 </test-html>
-<test-html title="$h[,2px,]">
+<test-html title="$h(,2px,)">
   <style>
     /*container 0*/
-    /*$h[,2px,]*/
-    :where(.\$h\[\,2px\,\]) {
+    /*$h(,2px,)*/
+    :where(.\$h\(\,2px\,\)) {
       block-size: 2px;
     }
   </style>
-  <div class="$h[,2px,]">
+  <div class="$h(,2px,)">
     hello
   </div>
 </test-html>
-<test-html title="$flex[row-reverse,p[1%,,3%],gap[,3rem]]">
+<test-html title="$flex(row-reverse,p(1%,,3%),gap(,3rem))">
   <style>
     /*container 0*/
-    /*$flex[row-reverse,p[1%,,3%],gap[,3rem]]*/
-    :where(.\$flex\[row-reverse\,p\[1\%\,\,3\%\]\,gap\[\,3rem\]\]) {
+    /*$flex(row-reverse,p(1%,,3%),gap(,3rem))*/
+    :where(.\$flex\(row-reverse\,p\(1\%\,\,3\%\)\,gap\(\,3rem\)\)) {
       display: flex;
       flex-direction: row-reverse;
       padding-block-start: 1%;
@@ -287,15 +302,15 @@
       row-gap: 3rem;
     }
   </style>
-  <div class="$flex[row-reverse,p[1%,,3%],gap[,3rem]]">
+  <div class="$flex(row-reverse,p(1%,,3%),gap(,3rem))">
     hello
   </div>
 </test-html>
-<test-html title="$flex[...]|$_flex">
+<test-html title="$flex(...)|$_flex">
   <style>
     /*container 0*/
-    /*$flex[gap[4px],padding[22px,33px,44px]]|$_flex[margin[,0.1px,,20%]]*/
-    :where(.\$flex\[gap\[4px\]\,padding\[22px\,33px\,44px\]\]\|\$_flex\[margin\[\,0\.1px\,\,20\%\]\]) {
+    /*$flex(gap(4px),padding(22px,33px,44px))|$_flex(margin(,0.1px,,20%))*/
+    :where(.\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\)\|\$_flex\(margin\(\,0\.1px\,\,20\%\)\)) {
       display: flex;
       column-gap: 4px;
       padding-block-start: 22px;
@@ -304,41 +319,41 @@
     }
 
     /*item 0*/
-    /*$flex[gap[4px],padding[22px,33px,44px]]|$_flex[margin[,0.1px,,20%]]*/
-    :where(.\$flex\[gap\[4px\]\,padding\[22px\,33px\,44px\]\]\|\$_flex\[margin\[\,0\.1px\,\,20\%\]\])> :where(*) {
+    /*$flex(gap(4px),padding(22px,33px,44px))|$_flex(margin(,0.1px,,20%))*/
+    :where(.\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\)\|\$_flex\(margin\(\,0\.1px\,\,20\%\)\))> :where(*) {
       margin-inline-start: 0.1px;
       margin-inline-end: 20%;
     }
   </style>
-  <div class="$flex[gap[4px],padding[22px,33px,44px]]|$_flex[margin[,0.1px,,20%]]">
+  <div class="$flex(gap(4px),padding(22px,33px,44px))|$_flex(margin(,0.1px,,20%))">
     hello
   </div>
 </test-html>
-<test-html title="$flex[cc]|*$_flex[margin[10px]]">
+<test-html title="$flex(cc)|*$_flex(margin(10px))">
   <style>
     /*container 0*/
-    /*$flex[cc]|*$_flex[margin[10px]]*/
-    :where(.\$flex\[cc\]\|\*\$_flex\[margin\[10px\]\]) {
+    /*$flex(cc)|*$_flex(margin(10px))*/
+    :where(.\$flex\(cc\)\|\*\$_flex\(margin\(10px\)\)) {
       display: flex;
       align-content: center;
       justify-content: center;
     }
 
     /*item 0*/
-    /*$flex[cc]|*$_flex[margin[10px]]*/
-    :where(.\$flex\[cc\]\|\*\$_flex\[margin\[10px\]\])> :where(*) {
+    /*$flex(cc)|*$_flex(margin(10px))*/
+    :where(.\$flex\(cc\)\|\*\$_flex\(margin\(10px\)\))> :where(*) {
       margin: 10px;
     }
   </style>
-  <div class="$flex[cc]|*$_flex[margin[10px]]">
+  <div class="$flex(cc)|*$_flex(margin(10px))">
     hello
   </div>
 </test-html>
-<test-html title="$flex[ellipsis]">
+<test-html title="$flex(ellipsis)">
   <style>
     /*container 0*/
-    /*$flex[ellipsis]*/
-    :where(.\$flex\[ellipsis\]) {
+    /*$flex(ellipsis)*/
+    :where(.\$flex\(ellipsis\)) {
       display: flex;
       overflow-x: hidden;
       overflow-inline: hidden;
@@ -348,15 +363,15 @@
       white-space: nowrap;
     }
   </style>
-  <div class="$flex[ellipsis]">
+  <div class="$flex(ellipsis)">
     hello
   </div>
 </test-html>
 <test-html title="$flex|items">
   <style>
     /*container 0*/
-    /*$flex[gap[1rem],visible-auto,padding[1rem]]$w[80%]|*$_flex[0shrink,c]$w[7rem]$h[3rem]*/
-    :where(.\$flex\[gap\[1rem\]\,visible-auto\,padding\[1rem\]\]\$w\[80\%\]\|\*\$_flex\[0shrink\,c\]\$w\[7rem\]\$h\[3rem\]) {
+    /*$flex(gap(1rem),visible-auto,padding(1rem))$w(80%)|*$_flex(0shrink,c)$w(7rem)$h(3rem)*/
+    :where(.\$flex\(gap\(1rem\)\,visible-auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$_flex\(0shrink\,c\)\$w\(7rem\)\$h\(3rem\)) {
       display: flex;
       column-gap: 1rem;
       overflow-x: auto;
@@ -368,8 +383,8 @@
     }
 
     /*item 0*/
-    /*$flex[gap[1rem],visible-auto,padding[1rem]]$w[80%]|*$_flex[0shrink,c]$w[7rem]$h[3rem]*/
-    :where(.\$flex\[gap\[1rem\]\,visible-auto\,padding\[1rem\]\]\$w\[80\%\]\|\*\$_flex\[0shrink\,c\]\$w\[7rem\]\$h\[3rem\])> :where(*) {
+    /*$flex(gap(1rem),visible-auto,padding(1rem))$w(80%)|*$_flex(0shrink,c)$w(7rem)$h(3rem)*/
+    :where(.\$flex\(gap\(1rem\)\,visible-auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$_flex\(0shrink\,c\)\$w\(7rem\)\$h\(3rem\))> :where(*) {
       flex-shrink: 0;
       align-self: center;
       inline-size: 7rem;
@@ -377,7 +392,7 @@
     }
   </style>
   <div class="
-    $flex[gap[1rem],visible-auto,padding[1rem]]$w[80%]|*$_flex[0shrink,c]$w[7rem]$h[3rem]">
+    $flex(gap(1rem),visible-auto,padding(1rem))$w(80%)|*$_flex(0shrink,c)$w(7rem)$h(3rem)">
     hello
   </div>
 </test-html>

@@ -51,6 +51,7 @@ const AlignAliases = {
   _: "baseline",     //todo what about "(first|last) baseline"
   ".": undefined,
 };
+//$grid(ccc.) 
 const GRID_ALIGN = /([abcsuvw.])([abcsuvw.])([abcs_.])([abcs])/;
 const _GRID_ALIGN = /([abcs_.])([abcs])/;
 function doAlign(_, b, i, b2, i2) {

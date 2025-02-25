@@ -78,8 +78,8 @@ export function interpretClass(txt) {
 }
 
 const WORD = /[-a-z][a-z0-9-]*/;
-const CPP = /[,\[\]]/.source;
-const nCPP = /[^,\[\]]+/.source;
+const CPP = /[,()]/.source;
+const nCPP = /[^,()]+/.source;
 const QUOTE = /([`'"])(?:\\.|(?!\3).)*?\3/.source;
 const TOKENS = new RegExp(`(${QUOTE})|(\\s+)|(${CPP})|(${nCPP})`, "g");
 const SUPERSHORT = new RegExp(
@@ -90,7 +90,7 @@ function processToken([m, , , space]) {
   return space ? undefined : m;
 }
 
-const S = "[", E = "]";
+const S = "(", E = ")";
 function diveDeep(tokens, top) {
   const res = [];
   while (tokens.length) {
