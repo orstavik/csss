@@ -46,6 +46,27 @@ function prepareCssObject(cssProps) {
   return res;
 }
 
+const STACKABLES = {
+  background: ",",
+  transform: " ",
+};
+
+function mergeOrStack(shorts) {
+  const res = {};
+  for (const short of shorts) {
+    const obj = prepareCssObject(interpret(short));
+    for (const [k, v] of Object.entries(obj)) {
+      if (!(k in res))
+        res[k] = v;
+      else if (k in STACKABLES)
+        res[k] += STACKABLES[k] + v;
+      else
+        throw new SyntaxError(`CSS$ clash: ${k} = ${res[k]}  AND = ${v}.`);
+    }
+  }
+  return res;
+}
+
 function interpret(exp, scope = {}) {
   if (!(exp.name in scope || exp.name in shortFuncs))
     throw new SyntaxError(`Unknown short function: ${exp.name}`);
@@ -57,11 +78,9 @@ function interpret(exp, scope = {}) {
 
 export function interpretClass(txt) {
   const { container: { selector, shorts }, items } = parse$Expression(txt);
-  const res = {
-    [selector]: Object.assign({}, ...shorts.map(x => prepareCssObject(interpret(x))))
-  };
+  const res = { [selector]: mergeOrStack(shorts) };
   for (let { selector, shorts } of items)
-    res[selector] = Object.assign({}, ...shorts.map(x => prepareCssObject(interpret(x))));
+    res[selector] = mergeOrStack(shorts);
   return res;
   // const superShorts = container.shorts.map(s => superShorts[s.name]).filter(Boolean);
   //merge the superShorts objects with the .results objects from container and items

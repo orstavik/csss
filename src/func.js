@@ -153,10 +153,19 @@ const NativeCssFunctions = (function () {
     "attr", "url", "image-set", "env", "path",
     "calc", "min", "max", "clamp",
     "linear-gradient", "repeating-linear-gradient", "radial-gradient", "repeating-radial-gradient", "conic-gradient", "repeating-conic-gradient",
-    "matrix", "matrix3d", "translate", "translate3d", "scale", "scale3d", "rotate", "rotate3d", "skew",
     "blur", "brightness", "contrast", "drop-shadow", "grayscale", "hue-rotate", "invert", "opacity", "saturate", "sepia",
-    "translate-x", "translate-y", "translate-z", "scale-x", "scale-y", "scale-z", "rotate-x", "rotate-y", "rotate-z", "skew-x", "skew-y",
   ].map(k => [k, nativeCssFunction]));
+})();
+
+const NativeCssTransformFunctions = (function () {
+  function nativeTransformFunction(...args) {
+    return { transform: `${this.name}(${args.join(",")})` };
+  }
+  return Object.fromEntries([
+    "matrix", "matrix3d", "translate", "translate3d", "scale", "scale3d", "rotate", "rotate3d", "skew",
+    "translate-x", "translate-y", "translate-z", "scale-x", "scale-y", "scale-z", "rotate-x", "rotate-y", "rotate-z", "skew-x", "skew-y",
+    "translateX", "translateY", "translateZ", "scaleX", "scaleY", "scaleZ", "rotateX", "rotateY", "rotateZ", "skewX", "skewY",
+  ].map(k => [k, nativeTransformFunction]));
 })();
 
 const NativeColorsFunctions = (function () {
@@ -220,6 +229,7 @@ export default {
   ...NativeCssFunctions,
   ...NativeColorsFunctions,
   ...NativeCssFunctionsIdentity,
+  ...NativeCssTransformFunctions,
   border,
   w: (...args) => toSize("inline-size", ...args),
   h: (...args) => toSize("block-size", ...args),

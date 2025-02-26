@@ -413,3 +413,15 @@
     }
   </style>
 </test-html>
+<test-html title="$translate(10px)$rotate(45deg)">
+  <div class="$translate(10px)$rotate(45deg)">
+    hello
+  </div>
+  <style>
+    /*container 0*/
+    /*$translate(10px)$rotate(45deg)*/
+    :where(.\$translate\(10px\)\$rotate\(45deg\)) {
+      transform: translate(10px) rotate(45deg);
+    }
+  </style>
+</test-html>
