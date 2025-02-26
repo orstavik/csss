@@ -153,19 +153,34 @@ const NativeCssFunctions = (function () {
     "attr", "url", "image-set", "env", "path",
     "calc", "min", "max", "clamp",
     "linear-gradient", "repeating-linear-gradient", "radial-gradient", "repeating-radial-gradient", "conic-gradient", "repeating-conic-gradient",
-    "blur", "brightness", "contrast", "drop-shadow", "grayscale", "hue-rotate", "invert", "opacity", "saturate", "sepia",
   ].map(k => [k, nativeCssFunction]));
 })();
 
 const NativeCssTransformFunctions = (function () {
-  function nativeTransformFunction(...args) {
-    return { transform: `${this.name}(${args.join(",")})` };
-  }
   return Object.fromEntries([
-    "matrix", "matrix3d", "translate", "translate3d", "scale", "scale3d", "rotate", "rotate3d", "skew",
-    "translate-x", "translate-y", "translate-z", "scale-x", "scale-y", "scale-z", "rotate-x", "rotate-y", "rotate-z", "skew-x", "skew-y",
-    "translateX", "translateY", "translateZ", "scaleX", "scaleY", "scaleZ", "rotateX", "rotateY", "rotateZ", "skewX", "skewY",
-  ].map(k => [k, nativeTransformFunction]));
+    "matrix", "matrix3d", "translate", "translate3d",
+    "scale", "scale3d", "rotate", "rotate3d", "skew",
+    "translateX", "translateY", "translateZ", "scaleX", "scaleY", "scaleZ",
+    "rotateX", "rotateY", "rotateZ", "skewX", "skewY",
+  ].map(k => {
+    return [k, (...args) => ({ transform: `${k}(${args.join(",")})` })];
+  }));
+})();
+const NativeCssTransformFunctions2 = (function () {
+  return Object.fromEntries([
+    "translate-x", "translate-y", "translate-z", "scale-x", "scale-y", "scale-z",
+    "rotate-x", "rotate-y", "rotate-z", "skew-x", "skew-y",
+  ].map(k => {
+    const camel = k.replace(/-./g, x => x[1].toUpperCase()); //translate-x => translateX
+    return [k, (...args) => ({ transform: `${camel}(${args.join(",")})` })];
+  }));
+})();
+
+const NativeCssFilterFunctions = (function () {
+  return Object.fromEntries([
+    "blur", "brightness", "contrast", "drop-shadow", "grayscale",
+    "hue-rotate", "invert", "opacity", "saturate", "sepia",
+  ].map(k => [k, (...args) => ({ filter: `${k}(${args.join(" ")})` })]));
 })();
 
 const NativeColorsFunctions = (function () {
@@ -230,6 +245,8 @@ export default {
   ...NativeColorsFunctions,
   ...NativeCssFunctionsIdentity,
   ...NativeCssTransformFunctions,
+  ...NativeCssTransformFunctions2,
+  ...NativeCssFilterFunctions,
   border,
   w: (...args) => toSize("inline-size", ...args),
   h: (...args) => toSize("block-size", ...args),

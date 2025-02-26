@@ -48,7 +48,15 @@ function prepareCssObject(cssProps) {
 
 const STACKABLES = {
   background: ",",
+  transition: ",",
+  "font-family": ",",
+  "text-shadow": ",",
+  "box-shadow": ",",
+  animation: ",",
+  "font-feature-settings": ",",
+  
   transform: " ",
+  filter: " ",
 };
 
 function mergeOrStack(shorts) {
