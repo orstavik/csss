@@ -1,8 +1,6 @@
+import nativeAndMore from "./func.js";
 import layouts from "./layout.js";
-import borderCursorWH from "./func.js";
 import colorPalette from "./palette.js";
-// import colorFunctions from "./color.js";
-// import { color, bgColor, colorBorder, colorCaret, colorAccent, colorTextEmphasis, colorTextDecoration, colorColumnRule, colorOutline, colorTextShadow, colorDropShadow, colorShadow } from "./color.js";
 
 export class Expression {
 
@@ -18,17 +16,10 @@ export class Expression {
   }
 }
 
-// todo this is the function with the native property names
-// function getSupportedCSSProperties() {
-//   return Object.getOwnPropertyNames(document.createElement('div').style).map(p =>
-//     p.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^ms-/, '-ms-'));
-// }
-
 const shortFuncs = {
-  ...borderCursorWH,
+  ...nativeAndMore,
   ...colorPalette,
   ...layouts,
-  // ...colorFunctions,
 };
 for (let [k, v] of Object.entries(shortFuncs)) {
   const kebab = k.replace(/[A-Z]/g, "-$&").toLowerCase();

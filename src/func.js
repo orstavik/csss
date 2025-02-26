@@ -1,5 +1,3 @@
-import { Expression } from "./engine.js";
-
 export const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|in|pt|pc|ch|ex|%/.source;
 export const N = /-?[0-9]*\.?[0-9]+(?:e[+-]?[0-9]+)?/.source;
 export const NUM = `(${N})(?:\\/(${N}))?`; //num frac allows for -.5e+0/-122.5e-12
@@ -154,8 +152,6 @@ const NativeCssFunctions = (function () {
   return Object.fromEntries([
     "attr", "url", "image-set", "env", "path",
     "calc", "min", "max", "clamp",
-    "color", "color-mix", //todo potential problem in the first argument
-    "rgb", "hsl", "hwb", "lab", "lch", "oklab", "oklch",
     "linear-gradient", "repeating-linear-gradient", "radial-gradient", "repeating-radial-gradient", "conic-gradient", "repeating-conic-gradient",
     "matrix", "matrix3d", "translate", "translate3d", "scale", "scale3d", "rotate", "rotate3d", "skew",
     "blur", "brightness", "contrast", "drop-shadow", "grayscale", "hue-rotate", "invert", "opacity", "saturate", "sepia",
@@ -163,13 +159,52 @@ const NativeCssFunctions = (function () {
   ].map(k => [k, nativeCssFunction]));
 })();
 
+const NativeColorsFunctions = (function () {
+  function nativeCssColorFunction(...args) {
+    if (args.length < 3 || args.length > 5)
+      throw new SyntaxError(`rgb accepts 3 to 5 arguments: ${args}`);
+    let name = this.name;
+    const SEP = name.match(/^(rgba?|hsla?)$/) ? "," : " ";
+    if (args.length === 3 && name === "rgb" || name === "hsl")
+      return `${name}(${args.join(SEP)})`;
+    if (args.length === 5)
+      return `${name}(from ${args.slice(0, 4).join(" ")} / ${args[4]})`;
+    if (CSS.supports("color", args[0]))
+      return `${name}(from ${args[0]} ${args.slice(1).join(" ")})`;
+    name = name.replace(/^(rgb|hsl)(?!a)$/, '$1a');
+    return `${name}(${args.slice(0, 3).join(SEP)} / ${args[3]})`;
+  }
+  function nativeCssColorSpaceFunction(...args) {
+    if (args.length < 3 || args.length > 5)
+      throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
+    const from_ = CSS.supports("color", args[0]) ? `from ${args.shift()}` : "";
+    const _alpha = args.length == 4 ? ` / ${args.pop()}` : "";
+    return `${this.name}(${from_}${args.join(" ")}${_alpha})`;
+  }
+  function nativeCssColorMixFunction(method, ...args) {
+    method = "in " + method.replaceAll("_", " "); //we don't support _ in --var-names
+    let res = args.shift();
+    while (args.length)
+      res += (CSS.supports("color", a) ? ", " : " ") + args.shift();
+    return `color-mix(in ${method}, ${res})`;
+  }
+
+  const res = Object.fromEntries([
+    "rgb", "hsl", "rgba", "hsla", "hwb", "lab", "lch", "oklab", "oklch"
+  ].map(k => [k, nativeCssColorFunction]));
+  res.color = nativeCssColorSpaceFunction;
+  res["color-mix"] = nativeCssColorMixFunction;
+  return res;
+})();
+
 const NativeCssFunctionsIdentity = (function () {
   function nativeCssFunctionIdent(x) {
     const args = x.args.map((a, i) => (typeof a == "string" && i) ? a.replaceAll("_", " ") : a);
     return `${x.name}(${args.join(",")})`;
   }
-  return Object.fromEntries(["var", "counter", "counters", "element", "paint"].map(k =>
-    [k, nativeCssFunctionIdent]));
+  return Object.fromEntries([
+    "var", "counter", "counters", "element", "paint"
+  ].map(k => [k, nativeCssFunctionIdent]));
 })();
 
 const NativeCssProperties = (function () {
@@ -183,8 +218,9 @@ const NativeCssProperties = (function () {
 export default {
   ...NativeCssProperties,
   ...NativeCssFunctions,
+  ...NativeColorsFunctions,
   ...NativeCssFunctionsIdentity,
   border,
-  w: (...args) => toSize("inline-size", ...args), 
+  w: (...args) => toSize("inline-size", ...args),
   h: (...args) => toSize("block-size", ...args),
 }
