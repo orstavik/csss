@@ -162,14 +162,14 @@
   </style>
   <div class="$border(thin)">!!!</div>
 </test-html>
-<test-html title="$color(oklch(from_green_.5_.85_h))">
-  <div class="$color(oklch(from_green_.5_.85_h))">
+<test-html title="$color(oklch(green,.5,.85,h))">
+  <div class="$color(oklch(green,.5,.85,h))">
     hello
   </div>
   <style>
     /*container 0*/
-    /*$color(oklch(from_green_.5_.85_h))*/
-    :where(.\$color\(oklch\(from_green_\.5_\.85_h\)\)) {
+    /*$color(oklch(green,.5,.85,h))*/
+    :where(.\$color\(oklch\(green\,\.5\,\.85\,h\)\)) {
       color: oklch(from oklch(from green .5 .85 h) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
       --background-color: oklch(from oklch(from green .5 .85 h) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
       border-color: color-mix(in oklch, oklch(from oklch(from green .5 .85 h) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from oklch(from green .5 .85 h) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);

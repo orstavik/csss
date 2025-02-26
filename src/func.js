@@ -144,59 +144,100 @@ border.scope = {
   r: toLogicalEight.bind(null, "radius", 0),
 };
 
-const NativeCssFunctions = (function () {
-  function nativeCssFunction(...args) {
-    args = args.map(a => a.replaceAll?.("_", " ") ?? a);
-    return `${this.name}(${args.join(",")})`;
-  }
-  return Object.fromEntries([
-    "attr", "url", "image-set", "env", "path",
-    "calc", "min", "max", "clamp",
-    "linear-gradient", "repeating-linear-gradient", "radial-gradient", "repeating-radial-gradient", "conic-gradient", "repeating-conic-gradient",
-  ].map(k => [k, nativeCssFunction]));
-})();
+const NativeCssFunctions = {
+  var: (...args) => `var(${args.join(",")})`,
+  url: (...args) => `url(${args.join(",")})`,
+  calc: (...args) => `calc(${args.join(" ")})`,
+  min: (...args) => `min(${args.join(" ")})`,
+  max: (...args) => `max(${args.join(" ")})`,
+  clamp: (...args) => `clamp(${args.join(" ")})`,
+  counter: (...args) => `counter(${args.join(",")})`,
+  counters: (...args) => `counters(${args.join(",")})`,
+  element: (...args) => `element(${args.join(",")})`,
+  paint: (...args) => `paint(${args.join(",")})`,
+  env: (...args) => `env(${args.join(",")})`,
+  path: (...args) => `path(${args.join(",")})`,
+  //todo
+  // attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
+  // "image-set": (...args) => `image-set(${args.join(",")})`,
+};
 
-const NativeCssTransformFunctions = (function () {
-  return Object.fromEntries([
-    "matrix", "matrix3d", "translate", "translate3d",
-    "scale", "scale3d", "rotate", "rotate3d", "skew",
-    "translateX", "translateY", "translateZ", "scaleX", "scaleY", "scaleZ",
-    "rotateX", "rotateY", "rotateZ", "skewX", "skewY",
-  ].map(k => {
-    return [k, (...args) => ({ transform: `${k}(${args.join(",")})` })];
-  }));
-})();
-const NativeCssTransformFunctions2 = (function () {
-  return Object.fromEntries([
-    "translate-x", "translate-y", "translate-z", "scale-x", "scale-y", "scale-z",
-    "rotate-x", "rotate-y", "rotate-z", "skew-x", "skew-y",
-  ].map(k => {
-    const camel = k.replace(/-./g, x => x[1].toUpperCase()); //translate-x => translateX
-    return [k, (...args) => ({ transform: `${camel}(${args.join(",")})` })];
-  }));
-})();
+const NativeCssTransformFunctions = {
+  matrix: (...args) => ({ transform: `matrix(${args.join(",")})` }),
+  matrix3d: (...args) => ({ transform: `matrix3d(${args.join(",")})` }),
+  translate: (...args) => ({ transform: `translate(${args.join(",")})` }),
+  translate3d: (...args) => ({ transform: `translate3d(${args.join(",")})` }),
+  scale: (...args) => ({ transform: `scale(${args.join(",")})` }),
+  scale3d: (...args) => ({ transform: `scale3d(${args.join(",")})` }),
+  rotate: (...args) => ({ transform: `rotate(${args.join(",")})` }),
+  rotate3d: (...args) => ({ transform: `rotate3d(${args.join(",")})` }),
+  skew: (...args) => ({ transform: `skew(${args.join(",")})` }),
+  translateX: (...args) => ({ transform: `translateX(${args.join(",")})` }),
+  translateY: (...args) => ({ transform: `translateY(${args.join(",")})` }),
+  translateZ: (...args) => ({ transform: `translateZ(${args.join(",")})` }),
+  scaleX: (...args) => ({ transform: `scaleX(${args.join(",")})` }),
+  scaleY: (...args) => ({ transform: `scaleY(${args.join(",")})` }),
+  scaleZ: (...args) => ({ transform: `scaleZ(${args.join(",")})` }),
+  rotateX: (...args) => ({ transform: `rotateX(${args.join(",")})` }),
+  rotateY: (...args) => ({ transform: `rotateY(${args.join(",")})` }),
+  rotateZ: (...args) => ({ transform: `rotateZ(${args.join(",")})` }),
+  skewX: (...args) => ({ transform: `skewX(${args.join(",")})` }),
+  skewY: (...args) => ({ transform: `skewY(${args.join(",")})` }),
+  "translate-x": (...args) => ({ transform: `translateX(${args.join(",")})` }),
+  "translate-y": (...args) => ({ transform: `translateY(${args.join(",")})` }),
+  "translate-z": (...args) => ({ transform: `translateZ(${args.join(",")})` }),
+  "scale-x": (...args) => ({ transform: `scaleX(${args.join(",")})` }),
+  "scale-y": (...args) => ({ transform: `scaleY(${args.join(",")})` }),
+  "scale-z": (...args) => ({ transform: `scaleZ(${args.join(",")})` }),
+  "rotate-x": (...args) => ({ transform: `rotateX(${args.join(",")})` }),
+  "rotate-y": (...args) => ({ transform: `rotateY(${args.join(",")})` }),
+  "rotate-z": (...args) => ({ transform: `rotateZ(${args.join(",")})` }),
+  "skew-x": (...args) => ({ transform: `skewX(${args.join(",")})` }),
+  "skew-y": (...args) => ({ transform: `skewY(${args.join(",")})` }),
+};
 
-const NativeCssFilterFunctions = (function () {
-  return Object.fromEntries([
-    "blur", "brightness", "contrast", "drop-shadow", "grayscale",
-    "hue-rotate", "invert", "opacity", "saturate", "sepia",
-  ].map(k => [k, (...args) => ({ filter: `${k}(${args.join(" ")})` })]));
-})();
+const NativeCssFilterFunctions = {
+  blur: (...args) => ({ filter: `blur(${args.join(" ")})` }),
+  brightness: (...args) => ({ filter: `brightness(${args.join(" ")})` }),
+  contrast: (...args) => ({ filter: `contrast(${args.join(" ")})` }),
+  grayscale: (...args) => ({ filter: `grayscale(${args.join(" ")})` }),
+  invert: (...args) => ({ filter: `invert(${args.join(" ")})` }),
+  opacity: (...args) => ({ filter: `opacity(${args.join(" ")})` }),
+  saturate: (...args) => ({ filter: `saturate(${args.join(" ")})` }),
+  sepia: (...args) => ({ filter: `sepia(${args.join(" ")})` }),
+  "drop-shadow": (...args) => ({ filter: `drop-shadow(${args.join(" ")})` }),
+  "hue-rotate": (...args) => ({ filter: `hue-rotate(${args.join(" ")})` }),
+};
+
+const NativeCssGradientFunctions = {
+  "linear-gradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+  "radial-gradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+  "conic-gradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+  "repeating-linear-gradient": (...args) => ({ background: `repeating-linear-gradient(${args.join(",")})` }),
+  "repeating-radial-gradient": (...args) => ({ background: `repeating-radial-gradient(${args.join(",")})` }),
+  "repeating-conic-gradient": (...args) => ({ background: `repeating-conic-gradient(${args.join(",")})` }),
+  "radial": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+  "conic": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+  "repeating-linear": (...args) => ({ background: `repeating-linear-gradient(${args.join(",")})` }),
+  "repeating-radial": (...args) => ({ background: `repeating-radial-gradient(${args.join(",")})` }),
+  "repeating-conic": (...args) => ({ background: `repeating-conic-gradient(${args.join(",")})` }),
+  //collides with <transition: linear()>, but <transition: linear()> is limited to transition and animation scope. 
+  "linear": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+};
 
 const NativeColorsFunctions = (function () {
-  function nativeCssColorFunction(...args) {
+  function nativeCssColorFunction(name, ...args) {
     if (args.length < 3 || args.length > 5)
-      throw new SyntaxError(`rgb accepts 3 to 5 arguments: ${args}`);
-    let name = this.name;
+      throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
     const SEP = name.match(/^(rgba?|hsla?)$/) ? "," : " ";
-    if (args.length === 3 && name === "rgb" || name === "hsl")
+    if (args.length === 3)
       return `${name}(${args.join(SEP)})`;
     if (args.length === 5)
       return `${name}(from ${args.slice(0, 4).join(" ")} / ${args[4]})`;
     if (CSS.supports("color", args[0]))
-      return `${name}(from ${args[0]} ${args.slice(1).join(" ")})`;
-    name = name.replace(/^(rgb|hsl)(?!a)$/, '$1a');
-    return `${name}(${args.slice(0, 3).join(SEP)} / ${args[3]})`;
+      return `${name}(from ${args.join(" ")})`;
+    const a = name.match(/^(rgb|hsl)$/) ? "a" : "";
+    return `${name}${a}(${args.slice(0, 3).join(SEP)} / ${args[3]})`;
   }
   function nativeCssColorSpaceFunction(...args) {
     if (args.length < 3 || args.length > 5)
@@ -213,41 +254,48 @@ const NativeColorsFunctions = (function () {
     return `color-mix(in ${method}, ${res})`;
   }
 
-  const res = Object.fromEntries([
-    "rgb", "hsl", "rgba", "hsla", "hwb", "lab", "lch", "oklab", "oklch"
-  ].map(k => [k, nativeCssColorFunction]));
-  res.color = nativeCssColorSpaceFunction;
-  res["color-mix"] = nativeCssColorMixFunction;
-  return res;
-})();
-
-const NativeCssFunctionsIdentity = (function () {
-  function nativeCssFunctionIdent(x) {
-    const args = x.args.map((a, i) => (typeof a == "string" && i) ? a.replaceAll("_", " ") : a);
-    return `${x.name}(${args.join(",")})`;
-  }
-  return Object.fromEntries([
-    "var", "counter", "counters", "element", "paint"
-  ].map(k => [k, nativeCssFunctionIdent]));
+  return {
+    rgb: (...args) => nativeCssColorFunction("rgb", ...args),
+    rgba: (...args) => nativeCssColorFunction("rgba", ...args),
+    hsl: (...args) => nativeCssColorFunction("hsl", ...args),
+    hsla: (...args) => nativeCssColorFunction("hsla", ...args),
+    hwb: (...args) => nativeCssColorFunction("hwb", ...args),
+    lab: (...args) => nativeCssColorFunction("lab", ...args),
+    lch: (...args) => nativeCssColorFunction("lch", ...args),
+    oklab: (...args) => nativeCssColorFunction("oklab", ...args),
+    oklch: (...args) => nativeCssColorFunction("oklch", ...args),
+    color: nativeCssColorSpaceFunction,
+    "color-mix": nativeCssColorMixFunction,
+  };
 })();
 
 const NativeCssProperties = (function () {
   const style = document.createElement('div').style;
   const nativeProps = Object.getOwnPropertyNames(style)
     .map(p => p.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^ms-/, '-ms-'))
-    .map(k => [k, x => ({ [k]: x })]);
+    .map(k => [k, (...args) => ({ [k]: args.join(" ") })]);
   return Object.fromEntries(nativeProps);
 })();
+
+const EASING_FUNCTIONS = {
+  linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,
+  ease: (...args) => `ease(${args.join(",")})`,
+  steps: (...args) => `steps(${args.join(",")})`,
+  "cubic-bezier": (...args) => `cubic-bezier(${args.join(",")})`,
+};
+
+NativeCssProperties.transition.scope = EASING_FUNCTIONS;
+NativeCssProperties.animation.scope = EASING_FUNCTIONS;
 
 export default {
   ...NativeCssProperties,
   ...NativeCssFunctions,
   ...NativeColorsFunctions,
-  ...NativeCssFunctionsIdentity,
   ...NativeCssTransformFunctions,
-  ...NativeCssTransformFunctions2,
   ...NativeCssFilterFunctions,
+  ...NativeCssGradientFunctions,
   border,
+  em: a => ({ ["font-size"]: a }),
   w: (...args) => toSize("inline-size", ...args),
   h: (...args) => toSize("block-size", ...args),
 }
