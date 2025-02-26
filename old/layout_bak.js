@@ -1,4 +1,4 @@
-import { Debugger, NUM, PositiveLengthPercent, Word, P, ListOfSame, Merge, Assign, Dictionary, LogicalFour, CheckNum, ListOf } from "./func.js";
+import { Debugger, NUM, PositiveLengthPercent, Word, P, ListOfSame, Merge, Assign, Dictionary, LogicalFour, CheckNum, ListOf } from "../src/func.js";
 
 //wrap is a single word. ellipsis-scroll => block: ellipsis, inline: scroll
 const OVERFLOW = /(ellipsis|clip)|(auto|scroll|visible)(?:-(auto|scroll|hidden|visible))?/;
