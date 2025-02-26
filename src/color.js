@@ -51,26 +51,6 @@ const Color = (function (Color) {
 
 /*
 
-* { 
-  border-color: inherit;
-  border-block-color: inherit;
-  border-inline-color: inherit;
-  border-block-start-color: inherit;
-  border-block-end-color: inherit;
-  border-inline-start-color: inherit;
-  border-inline-end-color: inherit;
-  border-top-color: inherit; 
-  border-right-color: inherit;
-  border-bottom-color: inherit;
-  border-left-color: inherit;
-  text-decoration-color: inherit;
-  caret-color: inherit;
-  accent-color: inherit;
-  text-emphasis-color: inherit;
-  text-decoration-color: inherit;
-  column-rule-color: inherit;
-  outline-color: inherit;
-}
 */
 // const BG_PROPS = Array(8).fill().map((_, i) => `--color${i ? "-" + i : ""}`, Color);
 //singles of foreground+background+border colors

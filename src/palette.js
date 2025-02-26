@@ -1,6 +1,32 @@
 import { Color } from "./Color.js";
+import { toLogicalFour } from "./func.js";
 
-function toPalette(_,
+/**
+
+:where(*) { 
+  border-color: inherit;
+  border-block-color: inherit;
+  border-inline-color: inherit;
+  border-block-start-color: inherit;
+  border-block-end-color: inherit;
+  border-inline-start-color: inherit;
+  border-inline-end-color: inherit;
+  border-top-color: inherit; 
+  border-right-color: inherit;
+  border-bottom-color: inherit;
+  border-left-color: inherit;
+  text-decoration-color: inherit;
+  caret-color: inherit;
+  accent-color: inherit;
+  text-emphasis-color: inherit;
+  text-decoration-color: inherit;
+  column-rule-color: inherit;
+  outline-color: inherit;
+}
+
+*/
+
+function palette(
   primary,
   secondary = `oklch(from ${primary} 50 c calc(h - 60))`,
   tertiary = `oklch(from ${primary} 50 c calc(h + 60))`,
@@ -59,29 +85,28 @@ const ColorFuncs = {
   b9: border(9),
 };
 
-function validColor(str) {
-  str = str.replaceAll(";", " ");  //todo if we 
-  return CSS.supports("color", str) ? str : undefined;
-};
-
-function toColor(name) {
+function color(name) {
   const segs = name.split("-");
   let output = segs.reduce((res, a) => {
-    res.unshift(ColorFuncs[a]?.(...res) ?? validColor(a) ?? `var(--palette-${a})`);
+    res.unshift(
+      a in ColorFuncs ? ColorFuncs[a](...res) :
+        CSS.supports("color", a) ? a :
+          a.match(/^[a-z0-9_-]+$/) ? `var(--palette-${a})` :
+            a); //here there is a SyntaxError
     return res;
-  },
-    []).shift();
+  }, []).shift();
   if (typeof output == "string")
     output = ColorFuncs.text(output);
   if (!("border-color" in output))
     output = ColorFuncs.b(output);
-  //todo disperse backgrounds
+  
+  //TODO disperse backgrounds
+
   return output;
 }
 
-import { Word, ListOf, Merge } from "./func.js";
+const colorShadow = toLogicalFour.bind(null, "--box-shadow-color");
+const colorBorder = (...args) => borderSwitch(toLogicalFour("border-color", ...args));
 
-export default {
-  palette: Merge(ListOf(null, Word(/(\#[0-9a-f]{3,6})/, toPalette))),
-  color: Merge(ListOf(null, Word(/([a-z0-9-]+)/, toColor)))
-};
+
+export default { palette, color, colorBorder, colorShadow };

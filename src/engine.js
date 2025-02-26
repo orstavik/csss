@@ -55,22 +55,22 @@ function prepareCssObject(cssProps) {
   return res;
 }
 
-function interpret(exp) {
-  if (exp.name in shortFuncs)
-    return prepareCssObject(shortFuncs[exp.name](exp));
-  //todo begin here
-  // if (exp.name in nativeCSSProperties)
-  //   return prepareCssObject(nativeCssProp(...exp.args));
-  throw new SyntaxError(`Unknown short function: ${exp.name}`);
+function interpret(exp, scope = {}) {
+  if (!(exp.name in scope || exp.name in shortFuncs))
+    throw new SyntaxError(`Unknown short function: ${exp.name}`);
+  const shortFunc = scope[exp.name] ?? shortFuncs[exp.name];
+  const innerScope = Object.assign(scope, shortFunc.scope);
+  const args = exp.args.map(x => x instanceof Expression ? interpret(x, innerScope) : x);
+  return shortFunc.call(exp, ...args);
 }
 
 export function interpretClass(txt) {
   const { container: { selector, shorts }, items } = parse$Expression(txt);
   const res = {
-    [selector]: Object.assign({}, ...shorts.map(x => interpret(x)))
+    [selector]: Object.assign({}, ...shorts.map(x => prepareCssObject(interpret(x))))
   };
   for (let { selector, shorts } of items)
-    res[selector] = Object.assign({}, ...shorts.map(x => interpret(x)));
+    res[selector] = Object.assign({}, ...shorts.map(x => prepareCssObject(interpret(x))));
   return res;
   // const superShorts = container.shorts.map(s => superShorts[s.name]).filter(Boolean);
   //merge the superShorts objects with the .results objects from container and items

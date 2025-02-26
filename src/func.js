@@ -1,80 +1,10 @@
 import { Expression } from "./engine.js";
 
-export const Debugger = FUNC => x => { debugger; const res = FUNC(x); debugger; return res; };
-
-export function Word(rx, func) {
-  const RX = new RegExp(`^(?:${rx.source})$`);
-  return function word(x) {
-    const m = x.match?.(RX);
-    if (m)
-      return func ? func(...m) : x;
-    throw `Invalid argument: ${x} => ${rx.source}.`;
-  };
-}
-
 export const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|in|pt|pc|ch|ex|%/.source;
 export const N = /-?[0-9]*\.?[0-9]+(?:e[+-]?[0-9]+)?/.source;
 export const NUM = `(${N})(?:\\/(${N}))?`; //num frac allows for -.5e+0/-122.5e-12
 
-const Clamp = (INT, MIN, MAX) => (str, n, frac) => {
-  n = Number(n) / (frac ? Number(frac) : 1);
-  if ((!INT || Number.isInteger(n)) && (MIN == null || n >= MIN) && (MAX == null || n <= MAX))
-    return str;
-};
-
-export const CheckNum = (UNITS, MIN, MAX, IsINT) =>
-  Word(new RegExp(UNITS ? `${NUM}(${UNITS})` : NUM), Clamp(IsINT, MIN, MAX));
-
-function signature(x, ALIASES, MAX) {
-  if (x instanceof Expression) {
-    if (ALIASES == null || ALIASES.split("|").includes(x.name))
-      if (MAX == null || x.args.length <= MAX)
-        return x.args;
-  } else if (ALIASES.includes(""))
-    return [x];
-  throw `Signature mismatch: (${ALIASES})/1-${MAX} doesn't accept ${x}.`;
-}
-
-function shorthandSignature(x, ALIASES, SEP) {
-  if (typeof x === "string")
-    return x.split(SEP);
-  if (x instanceof Expression)
-    if (ALIASES == null || ALIASES.split("|").includes(x.name))
-      return x.args;
-  throw `Shorthand mismatch: (${ALIASES}) or ${SEP} doesn't accept ${x}.`;
-}
-
-function colonSplit(NAME, SEP, FUNC, x) {
-  const res = x.split(":").map(FUNC);
-  return res.length == 1 ? res[0] :
-    `${NAME}(${res.join(SEP)})`;
-}
-
-function oneOf(FUNCS, x) {
-  for (let func of FUNCS)
-    try { return func(x); } catch (e) { }
-  throw new SyntaxError(`No match for: ${x}`);
-}
-
-export const ListOfSame = (Aliases, FUNC) =>
-  x => signature(x, Aliases).map(a => a == null ? a : FUNC(a));
-export const ListOf = (Aliases, ...FUNCS) =>
-  x => signature(x, Aliases, FUNCS.length).map((a, i) => a == null ? a : FUNCS[i](a));
-export const ShorthandFunction = (SEP, NAME, FUNC) =>
-  x => shorthandSignature(x, NAME, SEP).map(a => a == null ? a : FUNC(a));
-export const ColonFunction = (NAME, SEP, FUNC) =>
-  x => colonSplit(NAME, SEP, FUNC, x);
-export const Either = (...FUNCS) =>
-  x => oneOf(FUNCS, x);
-export const Dictionary = (...FUNCS) =>
-  x => x.args.map(a => oneOf(FUNCS, a));
-
-
-function spaceJoin(x) {
-  return x instanceof Array ? x.join(" ") : x;
-}
-
-function toLogicalFour(NAME, ar) {
+export function toLogicalFour(NAME, ...ar) {
   if (!(ar instanceof Array))
     return { [NAME]: ar };
   if (ar.length === 1)
@@ -101,7 +31,7 @@ function toLogicalFour(NAME, ar) {
 //todo length == 2, I think that we could have top/bottom too
 //todo length == 3, then the third becomes all the inline ones
 //todo length === 4, then forth is the inline on the end side
-function toLogicalEight(NAME, DEFAULT, args) {
+function toLogicalEight(NAME, DEFAULT, ...args) {
   if (!(args instanceof Array))
     return { [NAME]: args };
   if (args.length === 1)
@@ -121,21 +51,6 @@ function toLogicalEight(NAME, DEFAULT, args) {
   return res;
 }
 
-function safeMerge(ar) {
-  const res = {};
-  for (let res2 of ar) {
-    for (let k in res2)
-      if (res2[k] == null)
-        delete res2[k];
-    for (let k in res)
-      for (let k2 in res2)
-        if (k === k2 || k.startsWith(k2 + "-") || k2.startsWith(k + "-"))
-          throw new SyntaxError(`Property crash: ${k} vs ${k2}`);
-    Object.assign(res, res2);
-  }
-  return res;
-}
-
 function borderSwitch(obj) {
   return Object.fromEntries(Object.entries(obj).map(([k, v]) => {
     const [wsr, ...dirs] = k.split("-");
@@ -143,152 +58,133 @@ function borderSwitch(obj) {
   }));
 }
 
-function toCssFunctionIf2(NAME, ar) {
-  return ar.length == 1 ? ar[0] :
-    `${NAME}(${ar.join(",")})`;
-}
-
-function assignIfNone(Defaults, res) {
-  const res2 = {};
-  main: for (let k in Defaults) {
-    if (k in res)
-      continue;
-    for (let k2 in res)
-      if (k2.match(new RegExp(`^(${k.replaceAll(/-/g, ".+")})$`)))
-        continue main;
-    res2[k] = Defaults[k];
-  }
-  return { ...res2, ...res };
-}
-
-export const P = (NAME, FUNC) => x => ({ [NAME]: spaceJoin(FUNC(x)) }); // PP([NAME], FUNC);//
-export const LogicalFour = (NAME, FUNC) => x => toLogicalFour(NAME, FUNC(x));
-export const CssFunction = (NAME, SEP, FUNC) => x => `${NAME}(${FUNC(x).join(SEP)})`;
-export const CssFunctionIf2 = (NAME, FUNC) => x => toCssFunctionIf2(NAME, FUNC(x));
-export const LogicalEight = (NAME, FUNC) => x => toLogicalEight(NAME, 0, FUNC(x));
-export const Merge = FUNC => x => safeMerge(FUNC(x));
-export const Assign = (OBJ, FUNC) => x => assignIfNone(OBJ, FUNC(x));
-export const BorderSwitch = FUNC => x => borderSwitch(FUNC(x));
-
-export const PositiveLengthPercent = CheckNum(LENGTHS_PER, 0);
-
-//todo remove the syntax checking... !!!
-export const PositiveSize = Either(
-  Word(/(min|max)(-content)?/, (_, m, c = "-content") => m + c),
-  PositiveLengthPercent
-);
-
-
 //enables us to write a min and max eiter as 2px:5px or max(2px,5px)
 //$w(50%)
 //$w(1,2) not allowed, only 1 or 3 arguments.
 //$w(30em:35%,50%,60cm:80vw:100%)
 //$w(max(30em,35%),50%,min(60cm,80vw,100%))
-const Size1 = NAME => P(NAME, ListOf(null, PositiveSize));
-const Size3 = NAME => Merge(ListOf(null,
-  P(`min-${NAME}`, ColonFunction("max", ",", PositiveSize)),
-  P(NAME, PositiveSize),
-  P(`max-${NAME}`, ColonFunction("min", ",", PositiveSize))
-));
-const Size = NAME => Either(Size1(NAME), Size3(NAME));
-const w = Size("inline-size");
-const h = Size("block-size");
+// const Size1 = NAME => P(NAME, ListOf(null, PositiveSize));
+// const Size3 = NAME => Merge(ListOf(null,
+//   P(`min-${NAME}`, ColonFunction("max", ",", PositiveSize)),
+//   P(NAME, PositiveSize),
+//   P(`max-${NAME}`, ColonFunction("min", ",", PositiveSize))
+// ));
+// const Size = NAME => Either(Size1(NAME), Size3(NAME));
+// const w = Size("inline-size");
+// const h = Size("block-size");
 
-
-//$border(solid)
-//$border(s(solid))
-
-//todo Dictionary should check that none of the properties coming out are already set.
-//border-colors controlled by $color
-const border = Assign({ "border-style": "solid" }, BorderSwitch(Merge(Dictionary(
-  LogicalFour("style", ListOfSame("style|s|", Word(/solid|dotted|dashed|double/))),
-  LogicalFour("width", Either(
-    ListOfSame("width|w|", PositiveLengthPercent),
-    Word(/thin|medium|thick/)
-  )),
-  LogicalEight("radius", ListOfSame("radius|r", PositiveLengthPercent)),
-  LogicalFour("radius", ListOfSame("r2|radius-og", PositiveLengthPercent))//NativeEight?
-))));
-
-const cursor = P("cursor", Word(/default|none|context-menu|help|pointer|progress|wait|cell|crosshair|text|vertical-text|alias|copy|move|no-drop|not-allowed|grab|grabbing|col-resize|row-resize|n-resize|s-resize|e-resize|w-resize|ne-resize|nw-resize|se-resize|sw-resize|ew-resize|ns-resize|nesw-resize|nwse-resize|zoom-in|zoom-out/));//auto is excluded
-
-function nativeCssFunction(x) {
-  const args = x.args.map(a => a.replaceAll?.("_", " ") ?? a);
-  return `${x.name}(${args.join(",")})`;
+function colonSplit2(NAME, SEP, x) {
+  if (x == null) return x;
+  const res = x.split(":");
+  return res.length == 1 ? res[0] :
+    `${NAME}(${res.join(SEP)})`;
 }
 
-function nativeCssFunctionIdent(x) {
-  const args = x.args.map((a, i) => (typeof a == "string" && i) ? a.replaceAll("_", " ") : a);
-  return `${x.name}(${args.join(",")})`;
+export function mergy(...res) {
+  res = res.filter(a => a != null);
+  for (const value of res)
+    if (typeof value !== "object")
+      throw new SyntaxError("unrecognized value: " + value);
+  const keys = res.map(o => Object.keys(o).map(k => k.split("-")[0]));
+  const test = new Set(keys.shift());
+  for (const ks of keys)
+    for (const k of ks)
+      if (test.has(k))
+        throw new SyntaxError(`Property crash: ${k}`);
+  return Object.assign(...res);
 }
 
-const NativeCssFunctions = {
-  var: nativeCssFunctionIdent,
-  counter: nativeCssFunction,
-  counters: nativeCssFunction,
-  element: nativeCssFunction,
-  paint: nativeCssFunction,
+export function defaultValues(Defaults, res) {
+  for (let k in Defaults)
+    if (k in res || Object.keys(res).some(k2 => k2.startsWith(k + "-")))
+      delete Defaults[k];
+  return Object.assign(Defaults, res);
+}
 
-  color: nativeCssFunction,  //todo potential problem in the first argument
-  "color-mix": nativeCssFunction, //todo potential problem in the first argument
+function toSize(NAME, ...args) {
+  args = args.map(a => a?.replace(/^(min|max)$/, "$&-content"));
+  if (args.length === 1)
+    return { [NAME]: args[0] };
+  if (args.length === 3)
+    return {
+      [`min-${NAME}`]: colonSplit2("max", ",", args[0]),
+      [NAME]: args[1],
+      [`max-${NAME}`]: colonSplit2("min", ",", args[2])
+    };
+  throw new SyntaxError(`$${NAME} accepts only 1 or 3 arguments: ${args}`);
+}
 
-  attr: nativeCssFunction,
-  url: nativeCssFunction,
-  "image-set": nativeCssFunction,
-  calc: nativeCssFunction,
-  min: nativeCssFunction,
-  max: nativeCssFunction,
-  clamp: nativeCssFunction,
-  env: nativeCssFunction,
-  rgb: nativeCssFunction,
-  hsl: nativeCssFunction,
-  hwb: nativeCssFunction,
-  lab: nativeCssFunction,
-  lch: nativeCssFunction,
-  oklab: nativeCssFunction,
-  oklch: nativeCssFunction,
-  "linear-gradient": nativeCssFunction,
-  "repeating-linear-gradient": nativeCssFunction,
-  "radial-gradient": nativeCssFunction,
-  "repeating-radial-gradient": nativeCssFunction,
-  "conic-gradient": nativeCssFunction,
-  "repeating-conic-gradient": nativeCssFunction,
-  matrix: nativeCssFunction,
-  matrix3d: nativeCssFunction,
-  translate: nativeCssFunction,
-  translate3d: nativeCssFunction,
-  scale: nativeCssFunction,
-  scale3d: nativeCssFunction,
-  rotate: nativeCssFunction,
-  rotate3d: nativeCssFunction,
-  skew: nativeCssFunction,
-  blur: nativeCssFunction,
-  brightness: nativeCssFunction,
-  contrast: nativeCssFunction,
-  "drop-shadow": nativeCssFunction,
-  grayscale: nativeCssFunction,
-  "hue-rotate": nativeCssFunction,
-  invert: nativeCssFunction,
-  opacity: nativeCssFunction,
-  saturate: nativeCssFunction,
-  sepia: nativeCssFunction,
-  path: nativeCssFunction,
-  "translate-x": nativeCssFunction,
-  "translate-y": nativeCssFunction,
-  "translate-z": nativeCssFunction,
-  "scale-x": nativeCssFunction,
-  "scale-y": nativeCssFunction,
-  "scale-z": nativeCssFunction,
-  "rotate-x": nativeCssFunction,
-  "rotate-y": nativeCssFunction,
-  "rotate-z": nativeCssFunction,
-  "skew-x": nativeCssFunction,
-  "skew-y": nativeCssFunction,
+function isLength(x) {
+  if (x === "0") return x;
+  const m = x.match?.(new RegExp(`^(${NUM})(${LENGTHS_PER})$`));
+  if (!m) return;
+  let [, , n, frac, unit] = m;
+  return frac ? (Number(n) / Number(frac)) + unit :
+    x;
+}
+
+function border(...args) {
+  args = args.map(a => {
+    if (!(typeof a === "string")) return a;
+    if (a.match(/thin|medium|thick/)) return { width: a };
+    const width = isLength(a);
+    if (width != null) return ({ width });
+    if (a.match(/solid|dotted|dashed|double|none/)) return { style: a };
+    return a;
+  });
+  let res = mergy(...args);
+  res = defaultValues({ style: "solid" }, res)
+  return borderSwitch(res);
+}
+
+border.scope = {
+  width: toLogicalFour.bind(null, "width"),
+  w: toLogicalFour.bind(null, "width"),
+  style: toLogicalFour.bind(null, "style"),
+  s: toLogicalFour.bind(null, "style"),
+  radius: toLogicalEight.bind(null, "radius", 0),
+  r: toLogicalEight.bind(null, "radius", 0),
 };
 
+const NativeCssFunctions = (function () {
+  function nativeCssFunction(...args) {
+    args = args.map(a => a.replaceAll?.("_", " ") ?? a);
+    return `${this.name}(${args.join(",")})`;
+  }
+  return Object.fromEntries([
+    "attr", "url", "image-set", "env", "path",
+    "calc", "min", "max", "clamp",
+    "color", "color-mix", //todo potential problem in the first argument
+    "rgb", "hsl", "hwb", "lab", "lch", "oklab", "oklch",
+    "linear-gradient", "repeating-linear-gradient", "radial-gradient", "repeating-radial-gradient", "conic-gradient", "repeating-conic-gradient",
+    "matrix", "matrix3d", "translate", "translate3d", "scale", "scale3d", "rotate", "rotate3d", "skew",
+    "blur", "brightness", "contrast", "drop-shadow", "grayscale", "hue-rotate", "invert", "opacity", "saturate", "sepia",
+    "translate-x", "translate-y", "translate-z", "scale-x", "scale-y", "scale-z", "rotate-x", "rotate-y", "rotate-z", "skew-x", "skew-y",
+  ].map(k => [k, nativeCssFunction]));
+})();
+
+const NativeCssFunctionsIdentity = (function () {
+  function nativeCssFunctionIdent(x) {
+    const args = x.args.map((a, i) => (typeof a == "string" && i) ? a.replaceAll("_", " ") : a);
+    return `${x.name}(${args.join(",")})`;
+  }
+  return Object.fromEntries(["var", "counter", "counters", "element", "paint"].map(k =>
+    [k, nativeCssFunctionIdent]));
+})();
+
+const NativeCssProperties = (function () {
+  const style = document.createElement('div').style;
+  const nativeProps = Object.getOwnPropertyNames(style)
+    .map(p => p.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^ms-/, '-ms-'))
+    .map(k => [k, x => ({ [k]: x })]);
+  return Object.fromEntries(nativeProps);
+})();
+
 export default {
+  ...NativeCssProperties,
+  ...NativeCssFunctions,
+  ...NativeCssFunctionsIdentity,
   border,
-  cursor,
-  w, h,
-  // ...NativeCssFunctions
+  w: (...args) => toSize("inline-size", ...args), 
+  h: (...args) => toSize("block-size", ...args),
 }

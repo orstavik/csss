@@ -1,45 +1,5 @@
-import { Debugger, NUM, PositiveLengthPercent, Word, P, ListOfSame, Merge, Assign, Dictionary, LogicalFour, CheckNum, ListOf } from "./func.js";
+import { mergy, toLogicalFour } from "./func.js";
 
-//wrap is a single word. ellipsis-scroll => block: ellipsis, inline: scroll
-const OVERFLOW = /(ellipsis|clip)|(auto|scroll|visible)(?:-(auto|scroll|hidden|visible))?/;
-//ellipsis/clip => hidden, //single setting means both
-function doOverflow(_, t, b = "hidden", i = b) {
-  return {
-    "overflow-x": i,
-    "overflow-inline": i,
-    "overflow-y": b,
-    "overflow-block": b,
-    "text-overflow": t,
-    "white-space": t ? "nowrap" : undefined
-  };
-};
-
-const LAYOUT = [
-  LogicalFour("padding", ListOfSame("padding|p", PositiveLengthPercent)),
-  Word(OVERFLOW, doOverflow),
-  LogicalFour("scroll-padding", ListOfSame("scroll-padding", PositiveLengthPercent)),
-  P("scroll-snap-type", Word(
-    /snap(?:-(block|inline))?(?:-(mandatory))?/,
-    (_, b = "both", m = "proximity") => `${b} ${m}`))
-];
-const _LAYOUT = [
-  LogicalFour("margin", ListOfSame("margin|m", PositiveLengthPercent)),
-  LogicalFour("scroll-margin", ListOfSame("scroll-margin", PositiveLengthPercent))
-];
-
-const block = Assign({ display: "block" }, Merge(Dictionary(
-  P("float", Word(/float-(start|end)/, (_, s) => "inline-" + s)),
-  ...LAYOUT,
-)));
-const _block = Merge(Dictionary(
-  ..._LAYOUT
-));
-
-//GRID
-const Gap = Merge(ListOf("gap|g",
-  P("column-gap", PositiveLengthPercent),
-  P("row-gap", PositiveLengthPercent)
-));
 const AlignAliases = {
   a: "start",
   b: "end",
@@ -51,9 +11,7 @@ const AlignAliases = {
   _: "baseline",     //todo what about "(first|last) baseline"
   ".": undefined,
 };
-//$grid(ccc.) 
-const GRID_ALIGN = /([abcsuvw.])([abcsuvw.])([abcs_.])([abcs])/;
-const _GRID_ALIGN = /([abcs_.])([abcs])/;
+
 function doAlign(_, b, i, b2, i2) {
   return {
     "align-content": AlignAliases[b],
@@ -69,42 +27,145 @@ function doAlignSelf(_, b, i) {
   };
 }
 
-const grid = Assign({ display: "grid" }, Merge(Dictionary(
-  // P("grid-template-areas",Word( "none")), //todo how do we want to write this in csss?
-  P("grid-auto-columns", ListOfSame("column|c", PositiveLengthPercent)),
-  P("grid-auto-rows", ListOfSame("row|r", PositiveLengthPercent)),
-  P("grid-auto-flow", Word(/(dense)-?(column)/, (_, d, c = "row") => `${d} ${c}`)),
-  Word(GRID_ALIGN, doAlign),
-  Gap,
-  ...LAYOUT
-)));
+//wrap is a single word. ellipsis-scroll => block: ellipsis, inline: scroll
+const OVERFLOW = /^(?:(ellipsis|clip)|(auto|scroll|visible)(?:-(auto|scroll|hidden|visible))?)$/;
+//ellipsis/clip => hidden, //single setting means both
+function doOverflow(_, t, b = "hidden", i = b) {
+  return {
+    "overflow-x": i,
+    "overflow-inline": i,
+    "overflow-y": b,
+    "overflow-block": b,
+    "text-overflow": t,
+    "white-space": t ? "nowrap" : undefined
+  };
+};
 
-const _grid = Merge(Dictionary(
-  Word(_GRID_ALIGN, doAlignSelf),
-  ..._LAYOUT
-));
+const LAYOUT = {
+  padding: toLogicalFour.bind(null, "padding"),
+  p: toLogicalFour.bind(null, "padding"),
+  "scroll-padding": toLogicalFour.bind(null, "scroll-padding"),
+};
 
-//FLEX
-const FLEX_ALIGN = /([abcsuvw.])([abcsuvw.])?([abcs_])?/;
-const _FLEX_ALIGN = /([abcs_])/;
+const _LAYOUT = {
+  margin: toLogicalFour.bind(null, "margin"),
+  m: toLogicalFour.bind(null, "margin"),
+  "scroll-margin": toLogicalFour.bind(null, "scroll-margin")
+};
 
-const flex = Assign({ display: "flex" }, Merge(Dictionary(
-  P("flex-direction", Word(/column|column-reverse|row-reverse/)),
-  P("flex-wrap", Word(/wrap|wrap-reverse/)),
-  Word(FLEX_ALIGN, doAlign),
-  Gap,
-  ...LAYOUT
-)));
+function toGap(...args) {
+  if (args.length === 1)
+    return { gap: args[0] };
+  if (args.length === 2)
+    return { "column-gap": args[0], "row-gap": args[1] };
+  throw new SyntaxError("gap only accepts 1 or 2 arguments");
+}
+const GAP = { gap: toGap, g: toGap };
 
-//todo safe
-const _flex = Merge(Dictionary(
+
+function block(...args) {
+  args = args.map(a => {
+    if (!(typeof a === "string")) return a;
+    let m;
+    if (m = a.match(/^float-(start|end)$/)) return { float: "inline-" + m[1] };
+    if (m = a.match(OVERFLOW)) return doOverflow(...m);
+    if (m = a.match(/snap(?:-(block|inline))?(?:-(mandatory))?/)) return { "scroll-snap-type": `${m[1] ?? "both"} ${m[2] ?? "proximity"}` };
+    return a;
+  });
+  return mergy({ display: "block" }, ...args);
+}
+block.scope = {
+  ...LAYOUT,
+};
+
+function _block(...args) {
+  return mergy(...args);
+}
+_block.scope = { ..._LAYOUT };
+
+const GRID_ALIGN = /^([abcsuvw.])([abcsuvw.])([abcs_.])([abcs])$/;
+const _GRID_ALIGN = /([abcs_.])([abcs])/;
+
+function grid(...args) {
+  args = args.map(a => {
+    if (!(typeof a === "string")) return a;
+    let m;
+    if (m = a.match(/(dense)-?(column)/))
+      return { ["grid-auto-flow"]: `${m[1]} ${m[2] || "row"}` };
+    if (m = a.match(GRID_ALIGN)) return doAlign(...m);
+    if (m = a.match(OVERFLOW)) return doOverflow(...m);
+    if (m = a.match(/snap(?:-(block|inline))?(?:-(mandatory))?/))
+      return { "scroll-snap-type": `${m[1] ?? "both"} ${m[2] ?? "proximity"}` };
+    return a;
+  });
+  return mergy({ display: "grid" }, ...args);
+}
+grid.scope = {
+  ["grid-auto-columns"]: (...args) => ({ ["grid-auto-columns"]: args.join(" ") }),
+  ["grid-auto-rows"]: (...args) => ({ ["grid-auto-rows"]: args.join(" ") }),
+  ["grid-template-areas"]: (...args) => ({ ["grid-template-areas"]: args.join(" ") }),
+  ...LAYOUT,
+  ...GAP
+};
+
+function _grid(...args) {
+  args = args.map(a => {
+    if (!(typeof a === "string")) return a;
+    let m;
+    if (m = a.match(_GRID_ALIGN)) return doAlignSelf(...m);
+    return a;
+  });
+  return mergy(...args);
+}
+_grid.scope = {
   ..._LAYOUT,
-  Word(_FLEX_ALIGN, doAlignSelf),
-  P("flex-basis", ListOf("basis", PositiveLengthPercent)),
-  P("order", Word(/(-?\d+)(order|o)/, (_, n) => n)),
-  P("flex-grow", Word(new RegExp(`(${NUM})(grow|g)`), (_, n) => n)),
-  P("flex-shrink", Word(new RegExp(`(${NUM})(shrink|s)`), (_, n) => n))
-));
+};
+
+
+
+
+function flex(...args) {
+  args = args.map(a => {
+    if (!(typeof a === "string")) return a;
+    let m;
+    if (m = a.match(/^(column|column-reverse|row-reverse|row)$/)) return { ["flex-direction"]: a };
+    if (m = a.match(/^(wrap|wrap-reverse|no-wrap)$/)) return { ["flex-wrap"]: a };
+    if (m = a.match(/^([abcsuvw.])([abcsuvw.])?([abcs_])?$/)) return doAlign(...m);
+    if (m = a.match(OVERFLOW)) return doOverflow(...m);
+    if (m = a.match(/snap(?:-(block|inline))?(?:-(mandatory))?/))
+      return { "scroll-snap-type": `${m[1] ?? "both"} ${m[2] ?? "proximity"}` };
+    return a;
+  });
+  return mergy({ display: "flex" }, ...args);
+}
+flex.scope = {
+  ...LAYOUT,
+  ...GAP
+};
+
+
+const GROW = /^([0-9.]+)(grow|g)$/;
+const SHRINK = /^([0-9.]+)(shrink|s)$/;
+const ORDER = /^(-?\d+)(order|o)$/;
+
+function _flex(...args) {
+  args = args.map(a => {
+    if (!(typeof a === "string")) return a;
+    let m;
+    if (m = a.match(GROW)) return { ["flex-grow"]: m[1] };
+    if (m = a.match(SHRINK)) return { ["flex-shrink"]: m[1] };
+    if (m = a.match(ORDER)) return { ["order"]: m[1] };
+    if (m = a.match(/([abcs_])/)) return doAlignSelf(...m);
+    //todo safe
+    return a;
+  });
+  return mergy(...args);
+}
+
+_flex.scope = {
+  ..._LAYOUT,
+  basis: a => ({ ["flex-basis"]: a })
+};
 
 export default {
   block,
