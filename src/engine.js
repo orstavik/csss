@@ -50,13 +50,19 @@ const STACKABLES = {
   background: ",",
   transition: ",",
   "font-family": ",",
+  "voice-family": ",",
   "text-shadow": ",",
   "box-shadow": ",",
   animation: ",",
+  mask: ",",
   "font-feature-settings": ",",
+  "will-change": ",",
   
   transform: " ",
   filter: " ",
+  "counter-reset": " ",
+  "counter-increment": " ",
+  // "font-variant": " ",//todo
 };
 
 function mergeOrStack(shorts) {
