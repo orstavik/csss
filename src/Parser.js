@@ -79,3 +79,16 @@ export function parse$Expression(txt) {
     .map(([sel, ...shorts], i) =>
       ([i ? "|" + sel : sel, shorts.map(parseNestedExpression)])));
 }
+
+const SUPER_HEAD = /([$:])([a-b0-9_-]+)\s*=/.source; // (type, name)
+const SUPER_LINE = /((["'`])(?:\\.|(?!\4).)*?\4|[^;]+);/.source; // (body1)
+const SUPER_BODY = /{((["'`])(?:\\.|(?!\6).)*?\6|[^}]+)}/.source;
+const SUPER = new RegExp(`${SUPER_HEAD}(?:${SUPER_LINE}|${SUPER_BODY})`);
+
+export function parse$SuperExpressions(txt) {
+  txt = txt.replace(/\/\*[\s\S]*?\*\//g, ""); // remove comments
+  const supers = { "$": {}, ":": {} };
+  for (let [, type, name, statement, , body = statement] of txt.matchAll(SUPER))
+    supers[type][name] = body.trim();
+  supers["$"] = Object2.mapValue(supers[$], parse$Expression);
+}

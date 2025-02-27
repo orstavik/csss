@@ -1,31 +1,13 @@
-import { parse$Expression, Expression } from "./Parser.js";
+import { Interpreter } from "./Interpreter.js";
 import nativeAndMore from "./func.js";
 import layouts from "./layout.js";
 import colorPalette from "./palette.js";
 
-const toCamel = str => str.replace(/[A-Z]/g, "-$&").toLowerCase();
-
-class Object2 {
-  static mapKey(CB, obj) { return Object.fromEntries(Object.entries(obj).map(([k, v]) => [CB(k), v])); }
-  static mapValue(CB, obj) { return Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, CB(v)])); }
-  static mapKeyValue(CB, obj) { return Object.fromEntries(Object.entries(obj).map(kv => CB(kv))); }
-  static filterKey(CB, obj) { return Object.fromEntries(Object.entries(obj).filter(([k, v]) => CB(k))); }
-  static filterValue(CB, obj) { return Object.fromEntries(Object.entries(obj).filter(([k, v]) => CB(v))); }
-  static filterKeyValue(CB, obj) { return Object.fromEntries(Object.entries(obj).filter(kv => CB(kv))); }
-};
-
-const SUPERSHORT = new RegExp(
-  `\\s*([^{]+)\\s*\\{((?:(["'])(?:\\\\.|(?!\\3).)*?\\3|[^}])+?)\\}`, "g");
-
-const shortFuncs = Object2.mapKey(toCamel, {
+const shortFuncs = new Interpreter({
   ...nativeAndMore,
   ...colorPalette,
   ...layouts,
-});
-
-export const toCss = txt => [...toCssText(txt, interpretClass(txt))].join("\n");
-
-const STACKABLES = {
+}, {
   background: ",",
   transition: ",",
   "font-family": ",",
@@ -42,48 +24,9 @@ const STACKABLES = {
   "counter-reset": " ",
   "counter-increment": " ",
   // "font-variant": " ",//todo
-};
+});
 
-function mergeOrStack(shorts) {
-  const res = {};
-  for (const short of shorts) {
-    const obj = interpret(short);
-    for (let [k, v] of Object.entries(obj)) {
-      if (v == null) continue;
-      k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
-      if (CSS.supports(k, "inherit"))
-        if (!CSS.supports(k, v))
-          throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
-      //else, the browser doesn't support the property, because the property is too modern.
-      if (!(k in res))
-        res[k] = v;
-      else if (k in STACKABLES)
-        res[k] += (STACKABLES[k] + v);
-      else
-        throw new SyntaxError(`CSS$ clash: ${k} = ${res[k]}  AND = ${v}.`);
-    }
-  }
-  return res;
-}
-
-function interpret(exp, scope = {}) {
-  if (!(exp.name in scope || exp.name in shortFuncs))
-    throw new SyntaxError(`Unknown short function: ${exp.name}`);
-  const shortFunc = scope[exp.name] ?? shortFuncs[exp.name];
-  const innerScope = Object.assign(scope, shortFunc.scope);
-  const args = exp.args.map(x => x instanceof Expression ? interpret(x, innerScope) : x);
-  return shortFunc.call(exp, ...args);
-}
-
-export function interpretClass(txt) {
-  return Object2.mapValue(mergeOrStack, parse$Expression(txt));
-}
-
-export function* parseSuperShorts(txt) {
-  txt = txt.replace(/\/\*[\s\S]*?\*\//g, ""); //remove comments
-  for (let [, name, body] of txt.matchAll(SUPERSHORT))
-    yield { [name]: parse$Expression(body) };
-}
+export const toCss = txt => [...toCssText(txt, shortFuncs.interpretClass(txt))].join("\n");
 
 export function cssClassName(shortName) {
   return "." + shortName.replaceAll(/[^a-z0-9_-]/g, "\\$&");;
