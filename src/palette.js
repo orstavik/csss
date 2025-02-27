@@ -1,5 +1,5 @@
 import { Color } from "./Color.js";
-import { toLogicalFour } from "./func.js";
+import { toLogicalFour, borderSwitch } from "./func.js";
 
 /**
 

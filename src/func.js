@@ -49,7 +49,7 @@ function toLogicalEight(NAME, DEFAULT, ...args) {
   return res;
 }
 
-function borderSwitch(obj) {
+export function borderSwitch(obj) {
   return Object.fromEntries(Object.entries(obj).map(([k, v]) => {
     const [wsr, ...dirs] = k.split("-");
     return [["border", ...dirs, wsr].join("-"), v];
