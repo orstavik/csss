@@ -74,20 +74,8 @@ function parseNestedExpression(short) {
 }
 
 export function parse$Expression(txt) {
-  return txt.split("|")
+  return Object.fromEntries(txt.split("|")
     .map(seg => seg.split("$"))
     .map(([sel, ...shorts], i) =>
-      ({ selector: i ? "|" + sel : sel, shorts: shorts.map(parseNestedExpression) }));
+      ([i ? "|" + sel : sel, shorts.map(parseNestedExpression)])));
 }
-// let [container, ...items] = txt.split("|").map(seg => seg.split("$"));
-// const [cSelect, ...cShorts] = container;
-// container = {
-//   selector: cSelect,
-//   shorts: cShorts.map(parseNestedExpression)
-// };
-// items = items.map(([iSelect, ...iShorts]) => ({
-//   selector: "|" + iSelect,
-//   shorts: iShorts.map(parseNestedExpression)
-// }));
-// return { container, items };
-// }

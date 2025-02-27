@@ -3,21 +3,25 @@ import nativeAndMore from "./func.js";
 import layouts from "./layout.js";
 import colorPalette from "./palette.js";
 
+const toCamel = str => str.replace(/[A-Z]/g, "-$&").toLowerCase();
+
+class Object2 {
+  static mapKey(CB, obj) { return Object.fromEntries(Object.entries(obj).map(([k, v]) => [CB(k), v])); }
+  static mapValue(CB, obj) { return Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, CB(v)])); }
+  static mapKeyValue(CB, obj) { return Object.fromEntries(Object.entries(obj).map(kv => CB(kv))); }
+  static filterKey(CB, obj) { return Object.fromEntries(Object.entries(obj).filter(([k, v]) => CB(k))); }
+  static filterValue(CB, obj) { return Object.fromEntries(Object.entries(obj).filter(([k, v]) => CB(v))); }
+  static filterKeyValue(CB, obj) { return Object.fromEntries(Object.entries(obj).filter(kv => CB(kv))); }
+};
+
 const SUPERSHORT = new RegExp(
   `\\s*([^{]+)\\s*\\{((?:(["'])(?:\\\\.|(?!\\3).)*?\\3|[^}])+?)\\}`, "g");
 
-const shortFuncs = {
+const shortFuncs = Object2.mapKey(toCamel, {
   ...nativeAndMore,
   ...colorPalette,
   ...layouts,
-};
-for (let [k, v] of Object.entries(shortFuncs)) {
-  const kebab = k.replace(/[A-Z]/g, "-$&").toLowerCase();
-  if (kebab !== k) {
-    shortFuncs[kebab] = v;
-    delete shortFuncs[k];
-  }
-}
+});
 
 export const toCss = txt => [...toCssText(txt, interpretClass(txt))].join("\n");
 
@@ -50,7 +54,7 @@ function mergeOrStack(shorts) {
       if (CSS.supports(k, "inherit"))
         if (!CSS.supports(k, v))
           throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
-      //else, the browser doesn't support the property, too old browser?
+      //else, the browser doesn't support the property, because the property is too modern.
       if (!(k in res))
         res[k] = v;
       else if (k in STACKABLES)
@@ -72,11 +76,7 @@ function interpret(exp, scope = {}) {
 }
 
 export function interpretClass(txt) {
-  const items = parse$Expression(txt);
-  const res = {};
-  for (let { selector, shorts } of items)
-    res[selector] = mergeOrStack(shorts);
-  return res;
+  return Object2.mapValue(mergeOrStack, parse$Expression(txt));
 }
 
 export function* parseSuperShorts(txt) {
