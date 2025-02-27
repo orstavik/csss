@@ -1,20 +1,10 @@
+import { parse$Expression, Expression } from "./Parser.js";
 import nativeAndMore from "./func.js";
 import layouts from "./layout.js";
 import colorPalette from "./palette.js";
 
-export class Expression {
-
-  constructor(name, args) {
-    this.args = args;
-    this.name = name;
-  }
-  toString() {
-    return `${this.name}(${this.args.join(",")})`;
-  }
-  get signature() {
-    return this.name + "/" + this.args.length;
-  }
-}
+const SUPERSHORT = new RegExp(
+  `\\s*([^{]+)\\s*\\{((?:(["'])(?:\\\\.|(?!\\3).)*?\\3|[^}])+?)\\}`, "g");
 
 const shortFuncs = {
   ...nativeAndMore,
@@ -28,7 +18,6 @@ for (let [k, v] of Object.entries(shortFuncs)) {
     delete shortFuncs[k];
   }
 }
-
 
 export const toCss = txt => [...toCssText(txt, interpretClass(txt))].join("\n");
 
@@ -83,89 +72,11 @@ function interpret(exp, scope = {}) {
 }
 
 export function interpretClass(txt) {
-  const { container: { selector, shorts }, items } = parse$Expression(txt);
-  const res = { [selector]: mergeOrStack(shorts) };
+  const items = parse$Expression(txt);
+  const res = {};
   for (let { selector, shorts } of items)
     res[selector] = mergeOrStack(shorts);
   return res;
-}
-
-const WORD = /[-a-z][a-z0-9-]*/;
-const CPP = /[,()]/.source;
-const nCPP = /[^,()]+/.source;
-const QUOTE = /([`'"])(?:\\.|(?!\3).)*?\3/.source;
-const TOKENS = new RegExp(`(${QUOTE})|(\\s+)|(${CPP})|(${nCPP})`, "g");
-const SUPERSHORT = new RegExp(
-  `\\s*([^{]+)\\s*\\{((?:(["'])(?:\\\\.|(?!\\3).)*?\\3|[^}])+?)\\}`, "g");
-
-
-function processToken([m, , , space]) {
-  return space ? undefined : m;
-}
-
-const S = "(", E = ")";
-function diveDeep(tokens, top) {
-  const res = [];
-  while (tokens.length) {
-    let a = tokens.shift();
-    if (top && a === ",") throw "can't start with ','";
-    if (top && a === E) throw "can't start with ')'";
-    if (a === "," || a === E) {         //empty
-      res.push(undefined);
-      if (a === E && !res.length)
-        throw new SyntaxError("empty function not allowed in CSSs");
-      if (a === E)
-        return res;
-      continue;
-    }
-    let b = tokens.shift();
-    if (top && b === ",") throw "top level can't list using ','";
-    if (top && b === E) throw "top level can't use ')'";
-    if (b === S && !a.match(WORD)) throw "invalid function name";
-    if (b === S) {
-      a = new Expression(a, diveDeep(tokens));
-      b = tokens.shift();
-    }
-    if (b === E || (top && b === undefined))
-      return res.push(a), res;
-    if (b == ",")
-      res.push(a);
-    else
-      throw "syntax error";
-  }
-  throw "missing ')'";
-}
-
-function parseNestedExpression(short) {
-  const tokensOG = [...short.matchAll(TOKENS)].map(processToken).filter(Boolean);
-  if (tokensOG.length === 1)
-    return tokensOG[0];
-  const tokens = tokensOG.slice();
-  try {
-    const res = diveDeep(tokens, true);
-    if (tokens.length)
-      throw "too many ')'";
-    return res[0];
-  } catch (e) {
-    const i = tokensOG.length - tokens.length;
-    tokensOG.splice(i, 0, `{{{${e}}}}`);
-    const msg = tokensOG.join("");
-    throw new SyntaxError("Invalid short: " + msg);
-  }
-}
-
-export function parse$Expression(txt) {
-  let [container, ...items] = txt.split("|").map(seg => seg.split("$"));
-  const [cSelect, ...cShorts] = container;
-  container = {
-    selector: parse$ContainerSelector(cSelect),
-    shorts: cShorts.map(parseNestedExpression)
-  };
-  items = items.map(([iSelect, ...iShorts]) => ({
-    selector: parse$ItemSelector(iSelect),
-    shorts: iShorts.map(parseNestedExpression)
-  }));
-  return { container, items };
 }
 
 export function* parseSuperShorts(txt) {
@@ -320,7 +231,7 @@ function parse$ContainerSelector(txt) {
 function parse$ItemSelector(txt) {
   if (txt.includes("%"))
     throw new SyntaxError("$short item selector cannot contain %: " + txt);
-  return "|" + (parse$Selector(txt || "*"));
+  return "|" + (parse$Selector(txt.slice(1) || "*"));
 }
 
 /**
@@ -338,6 +249,7 @@ function* toCssText(shortName, dict) {
   let specificity, sel, props, rule;
   //container
   [sel, props] = Object.entries(dict).find(([k]) => !k.startsWith("|"));
+  sel = parse$ContainerSelector(sel);
   [sel, specificity] = sel.split(/\$\$(\d+$)/);
   const conSel = `:where(${sel.replaceAll("%", cssName)})`;
   if (Object.keys(props).length) {
@@ -348,6 +260,7 @@ function* toCssText(shortName, dict) {
   for ([sel, props] of Object.entries(dict)) {
     if (!sel.startsWith("|"))
       continue;
+    sel = parse$ItemSelector(sel);
     [, sel, specificity] = sel.match(/\|(.*)\$\$(\d+)$/s);
     sel = `${conSel} >\n:where(${sel || "*"})`;
     rule = ruleToString(sel, props);
