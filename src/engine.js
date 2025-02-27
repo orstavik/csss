@@ -32,20 +32,6 @@ for (let [k, v] of Object.entries(shortFuncs)) {
 
 export const toCss = txt => [...toCssText(txt, interpretClass(txt))].join("\n");
 
-function prepareCssObject(cssProps) {
-  const res = {};
-  for (let [k, v] of Object.entries(cssProps)) {
-    if (v == null) continue;
-    k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
-    res[k] = v;
-    if (!CSS.supports(k, "inherit")) //invalid css property type. You need to transpile the css style.
-      continue;
-    if (!CSS.supports(k, v)) //invalid value. Error in value given to the $short.
-      throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
-  }
-  return res;
-}
-
 const STACKABLES = {
   background: ",",
   transition: ",",
@@ -57,7 +43,7 @@ const STACKABLES = {
   mask: ",",
   "font-feature-settings": ",",
   "will-change": ",",
-  
+
   transform: " ",
   filter: " ",
   "counter-reset": " ",
@@ -68,12 +54,18 @@ const STACKABLES = {
 function mergeOrStack(shorts) {
   const res = {};
   for (const short of shorts) {
-    const obj = prepareCssObject(interpret(short));
-    for (const [k, v] of Object.entries(obj)) {
+    const obj = interpret(short);
+    for (let [k, v] of Object.entries(obj)) {
+      if (v == null) continue;
+      k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
+      if (CSS.supports(k, "inherit"))
+        if (!CSS.supports(k, v))
+          throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
+      //else, the browser doesn't support the property, too old browser?
       if (!(k in res))
         res[k] = v;
       else if (k in STACKABLES)
-        res[k] += STACKABLES[k] + v;
+        res[k] += (STACKABLES[k] + v);
       else
         throw new SyntaxError(`CSS$ clash: ${k} = ${res[k]}  AND = ${v}.`);
     }
@@ -96,9 +88,6 @@ export function interpretClass(txt) {
   for (let { selector, shorts } of items)
     res[selector] = mergeOrStack(shorts);
   return res;
-  // const superShorts = container.shorts.map(s => superShorts[s.name]).filter(Boolean);
-  //merge the superShorts objects with the .results objects from container and items
-  // return { container, items };
 }
 
 const WORD = /[-a-z][a-z0-9-]*/;
