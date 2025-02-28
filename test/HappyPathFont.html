@@ -1,0 +1,74 @@
+<test-html title="$font()">
+  <main>
+    <p class="$font(times,serif,50px,800,ultra-expanded)">
+      $font(times,serif,50px,800,ultra-expanded)
+    </p>
+    Notes:
+    <ol class="$font(arial,sans-serif,20px,200,italic)">
+      <li>$font() - family, size, weight, stretch, style</li>
+      <li>$text() - text-align, text-transform, text-indent, text-wrap&hypens
+      <li>spacing() - letter spacing, word spacing, line-height</li>
+      </li>
+      <li>$shadow()</li>
+      <li>$language() - line break, word break, direction, vertical-align, writing-mode, text-combine-upright,
+        text-orientation, text-transform</li>
+      <li>$decoration()</li>
+      <li>$fontvar() - font-variant is a shorthand.</li>
+    </ol>
+  </main>
+  <style>
+    /*container 0*/
+    /*$font(times,serif,50px,800,ultra-expanded)*/
+    :where(.\$font\(times\,serif\,50px\,800\,ultra-expanded\)) {
+      font: Times, serif 50px 800 ultra-expanded;
+    }
+
+    /*container 0*/
+    /*$font(arial,sans-serif,20px,200,italic)*/
+    :where(.\$font\(arial\,sans-serif\,20px\,200\,italic\)) {
+      font: Arial, sans-serif 20px 200 italic;
+    }
+  </style>
+</test-html>
+<test-html title="">
+  <main>
+    <div class="$w(50%) $border(solid,2px)">
+      <p class="$text(c,indent(10%),spacing(0.1rem,0.5rem,2rem))">
+        $text(align(use the same abbreviations as align),
+        transform(), indent(), spacing(letter spacing, word spacing, line-height))
+      </p>
+    </div>
+  </main>
+  <style>
+    /*container 0*/
+    /*$border(2px)*/
+    :where(.\$border\(solid\,2px\)) {
+      border-style: solid;
+      border-width: 2px;
+    }
+
+    /*container 0*/
+    /*$w(50%)*/
+    :where(.\$w\(50\%\)) {
+      inline-size: 50%;
+    }
+
+    /*container 0*/
+    /*$text(align(c),indent(10%),spacing(0.1rem,1rem,2rem))*/
+    :where(.\$text\(align\(c\)\,indent\(10\%\)\,spacing\(0\.1rem\,0\.5rem\,2rem\)\)) {
+      text-align: center;
+      text-indent: 10%;  /*first word in first line bump. This is not to be inherit, likely in a child selector*/
+      letter-spacing: 0.1rem;
+      word-spacing: 0.5rem;
+      line-height: 2rem; /*is this part of $em(12px) ? fonts-size, and line-height? */
+    }
+  </style>
+</test-html>
+
+$text-container = {
+  $font(Abz)
+  |*$font(a)$text(b)
+  |.par$font(something)$text(else)
+  |.hea$font(something)$text(else)
+  |.info$font(c)$text(d)
+}
