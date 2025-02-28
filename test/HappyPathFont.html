@@ -20,13 +20,19 @@
     /*container 0*/
     /*$font(times,serif,50px,800,ultra-expanded)*/
     :where(.\$font\(times\,serif\,50px\,800\,ultra-expanded\)) {
-      font: Times, serif 50px 800 ultra-expanded;
+      font-family: Times, serif;
+      font-size: 50px;
+      font-weight: 800;
+      font-stretch: ultra-expanded;
     }
 
     /*container 0*/
     /*$font(arial,sans-serif,20px,200,italic)*/
     :where(.\$font\(arial\,sans-serif\,20px\,200\,italic\)) {
-      font: Arial, sans-serif 20px 200 italic;
+      font-family: Arial, sans-serif;
+      font-size: 20px;
+      font-weight: 200;
+      font-style: italic;
     }
   </style>
 </test-html>
@@ -54,21 +60,43 @@
     }
 
     /*container 0*/
-    /*$text(align(c),indent(10%),spacing(0.1rem,1rem,2rem))*/
-    :where(.\$text\(align\(c\)\,indent\(10\%\)\,spacing\(0\.1rem\,0\.5rem\,2rem\)\)) {
-      text-align: center;
-      text-indent: 10%;  /*first word in first line bump. This is not to be inherit, likely in a child selector*/
-      letter-spacing: 0.1rem;
-      word-spacing: 0.5rem;
-      line-height: 2rem; /*is this part of $em(12px) ? fonts-size, and line-height? */
+    /*$text(center,indent(10%),gap(0.1rem,1rem,2rem))*/
+    :where(.\$text\(center\,indent\(10\%\)\,gap\(0\.1rem\,0\.5rem\,2rem\)\)) {
+      text-align: center;  /*c|center|a|start|b|end|s|stretch*/ 
+      text-indent: 10%;  /*paragraphish indent(indent)*/
+
+      letter-spacing: 0.1rem; /* fontish, maybe emish? it can also be paragraphish? yes. no? */
+      word-spacing: 0.5rem; /* paragraphish */  
+      line-height: 2em; /* paragraphish */  
     }
   </style>
 </test-html>
+<pre>
+$bold, $italic, $oblique(number)  => this is definitively $text-ish
 
 $text-container = {
   $font(Abz)
-  |*$font(a)$text(b)
-  |.par$font(something)$text(else)
-  |.hea$font(something)$text(else)
-  |.info$font(c)$text(d)
+  |*$font(times)
+  |.par$normal_space_between_letters
+  |.hea$font(arial)$bold$wider_letter_space
+  |.info$font(600)$text(bold)$just_a_little_bit_wider_between_letters
 }
+
+/*gap|g(letter,word,line)*/
+/* gap(block,inline) or gap(inline,block) => inline is word spacing, block is line spacing */
+
+/*c|center|a|start|b|end|s|stretch*/ 
+
+/* font / text / em ? */
+/* is the paragraphing, is the text or font? is it a separate unit, $par? layout for text block? */
+/* will font / text / paragraph eat text to be gone? */
+/* inherit non-inherit default value for the different properties. 
+
+text = non-inherit                            vs font = inherit ?
+text = word and up (lines, text-block)        vs font = word and down (letters)
+text = word and down decoration (bold/italic) vs font = word and up decoration
+text-decoration = $text-decoration-color()
+*/
+/* $em(10px) */
+
+</pre>
