@@ -81,7 +81,7 @@ function parseNestedExpression(short) {
 }
 
 export function parse$Expression(txt) {
-  return Object.fromEntries(txt.split("|").map((s,i)=> i?"|"+s:s)
+  return Object.fromEntries(txt.split("|").map((s, i) => i ? "|" + s : s)
     .map(seg => seg.split("$"))
     .map(([sel, ...shorts]) =>
       ([sel, shorts.map(parseNestedExpression)])));
