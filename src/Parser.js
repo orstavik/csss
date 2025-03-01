@@ -1,3 +1,10 @@
+export function DictMap(dict, kCB, vCB) {
+  const res = {};
+  for (const [k, v] of Object.entries(dict))
+    res[kCB ? kCB(k) : k] = vCB ? vCB(v) : v;
+  return res;
+}
+
 export class Expression {
 
   constructor(name, args) {
@@ -74,10 +81,10 @@ function parseNestedExpression(short) {
 }
 
 export function parse$Expression(txt) {
-  return Object.fromEntries(txt.split("|")
+  return Object.fromEntries(txt.split("|").map((s,i)=> i?"|"+s:s)
     .map(seg => seg.split("$"))
-    .map(([sel, ...shorts], i) =>
-      ([i ? "|" + sel : sel, shorts.map(parseNestedExpression)])));
+    .map(([sel, ...shorts]) =>
+      ([sel, shorts.map(parseNestedExpression)])));
 }
 
 const SUPER_HEAD = /([$:])([a-b0-9_-]+)\s*=/.source; // (type, name)
@@ -91,4 +98,46 @@ export function parse$SuperExpressions(txt) {
   for (let [, type, name, statement, , body = statement] of txt.matchAll(SUPER))
     supers[type][name] = body.trim();
   supers["$"] = Object2.mapValue(supers[$], parse$Expression);
+}
+
+//todo we don't support nested :not(:has(...))
+//todo we don't do @support/scope/container. 
+//todo @support should be done in a transpile process on the <style> element.
+const media = /@(?:\([^)]+\)|[a-z][a-z0-9_-]*)/.source;
+const pseudo = /:[a-z][a-z0-9_-]*\([^)]+\)/.source;
+const at = /\[[a-z][a-z0-9_-]*(?:[$*~|^]?=(?:'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"))?\]/.source;
+const tag = /\[a-z][a-z0-9-]*/.source; //tag
+const clazz = /\.[a-z][a-z0-9_-]*/.source; //class
+const mop = /[,!]/.source;
+const op = />>|[>+~&]/.source;
+const selectorTokens = new RegExp(
+  `(${mop})|(${media})|(${op})|(${pseudo})|(${at})|(${tag})|(${clazz})|(\\*)|(\\s+)|(.)`, "g");
+
+function parseSelector(str) {
+  const tokens = [...str.matchAll(selectorTokens)];
+  let medias = [], selects = [], nowSelect = [], priority = "", trueMedia;
+  for (const T of tokens) {
+    const [t, mop, media, op, pseudo, at, tag, clazz, star, ws, error] = T;
+    if (error) throw `Bad selector token: ${error}`;
+    if (ws) continue;
+
+    priority += media ? "@" : pseudo ? ":" : at ? "[" : clazz ? "." : tag ? "<" : "";
+
+    //media-state
+    if (selects.length && media)
+      throw `media queries must precede selectors: ${selects.join("")} => ${t}`;
+    if (media)
+      trueMedia = medias.push(media);
+    if (mop)
+      selects.length ? selects.push(mop) : medias.push(mop);
+
+    //selector state
+    if (op === ",")
+      selects.push(nowSelect), nowSelect = [];
+    else
+      nowSelect.push(t); //keep the operator for now
+  }
+  if (!trueMedia && medias.length)
+    selects = [...medias, ...selects];
+  return { medias, selects, priority };
 }

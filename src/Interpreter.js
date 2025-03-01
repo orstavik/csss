@@ -1,20 +1,11 @@
-import { parse$Expression, Expression } from "./Parser.js";
+import { parse$Expression, Expression, DictMap } from "./Parser.js";
 
-const toCamel = str => str.replace(/[A-Z]/g, "-$&").toLowerCase();
-
-class Object2 {
-  static mapKey(CB, obj) { return Object.fromEntries(Object.entries(obj).map(([k, v]) => [CB(k), v])); }
-  static mapValue(CB, obj) { return Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, CB(v)])); }
-  static mapKeyValue(CB, obj) { return Object.fromEntries(Object.entries(obj).map(kv => CB(kv))); }
-  static filterKey(CB, obj) { return Object.fromEntries(Object.entries(obj).filter(([k, v]) => CB(k))); }
-  static filterValue(CB, obj) { return Object.fromEntries(Object.entries(obj).filter(([k, v]) => CB(v))); }
-  static filterKeyValue(CB, obj) { return Object.fromEntries(Object.entries(obj).filter(kv => CB(kv))); }
-};
+const toCamel = s => s.replace(/[A-Z]/g, "-$&").toLowerCase();
 
 export class Interpreter {
 
   constructor(shortFuncs, stackables) {
-    this.shortFuncs = Object2.mapKey(toCamel, shortFuncs);
+    this.shortFuncs = DictMap(shortFuncs, toCamel);
     this.stackables = stackables;
   }
 
@@ -50,6 +41,6 @@ export class Interpreter {
   }
 
   interpretClass(txt) {
-    return Object2.mapValue(shorts => this.mergeOrStack(shorts), parse$Expression(txt));
+    return DictMap(parse$Expression(txt), null, shs => this.mergeOrStack(shs));
   }
 }
