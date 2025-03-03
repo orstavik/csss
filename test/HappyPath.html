@@ -139,17 +139,18 @@
   <div class="$border(radius(1rem))">hello</div>
 </test-html>
 <test-html title="big border">
+  <div class="$border(w(,1px,2px,),s(,,solid,dashed))">sunshine</div>
   <style>
-    /*container 0*/
-    /*$border(w(,1px,2px,),s(,,solid,dashed))*/
-    :where(.\$border\(w\(\,1px\,2px\,\)\,s\(\,\,solid\,dashed\)\)) {
-      border-inline-start-width: 1px;
-      border-block-end-width: 2px;
-      border-block-end-style: solid;
-      border-inline-end-style: dashed;
+    @layer container, items;
+    @layer container {
+      .\$border\(w\(\,1px\,2px\,\)\,s\(\,\,solid\,dashed\)\) {
+        border-inline-start-width: 1px;
+        border-block-end-width: 2px;
+        border-block-end-style: solid;
+        border-inline-end-style: dashed;
+      }
     }
   </style>
-  <div class="$border(w(,1px,2px,),s(,,solid,dashed))">sunshine</div>
 </test-html>
 <test-html title="border-thin">
   <div class="$border(thin)">!!!</div>
