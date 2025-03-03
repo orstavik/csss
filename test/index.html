@@ -1,23 +1,22 @@
 <script type="test">
-  import { toCss } from "../src/engine.js";
+  import { SheetWrapper } from "../src/engine.js";
 
   (function happyTest() {
-    const res = [];
+    const style = document.querySelector('style');
+    const sheetWrapper = new SheetWrapper(style.sheet);
     for (let el of document.body.querySelectorAll('[class*="$"]'))
       for (let clazz of el.classList)
         if (clazz.includes("$"))
-          try {
-            res.push(toCss(clazz));
-          } catch (er) {
-            console.error(er);
-           }
-    document.querySelector('style').textContent = res.join('\n');
+          try { sheetWrapper.addRule(clazz); } catch (er) { console.error(er); }
+    
+    requestAnimationFrame(_ => sheetWrapper.cleanup());
   })();
+
 </script>
 
 <script type="module">
   for (let file of ["HappyPath.html"])
-    document.body.insertAdjacentHTML('beforeend', await(await fetch(file)).text());
+    document.body.insertAdjacentHTML('beforeend', await (await fetch(file)).text());
   const happy = document.querySelector('script[type="test"]').outerHTML;
   for (let test of document.querySelectorAll("test-html")) {
     test.querySelector('style').setAttribute("expected", "");

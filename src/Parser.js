@@ -80,25 +80,28 @@ function parseNestedExpression(short) {
   }
 }
 
-export function parse$Expression(txt) {
-  return Object.fromEntries(txt.split("|").map((s, i) => i ? "|" + s : s)
+export function parse$Expression(exp) {
+  const res = Object.fromEntries(exp.split("|").map((s, i) => i ? "|" + s : s)
     .map(seg => seg.split("$"))
     .map(([sel, ...shorts]) =>
-      ([sel, shorts.map(parseNestedExpression)])));
+      ([sel, shorts])));
+  for (const k in res)
+    res[k] = { shorts: res[k].map(parseNestedExpression), selector: parseSelector(k) };
+  return res;
 }
 
-const SUPER_HEAD = /([$:])([a-b0-9_-]+)\s*=/.source; // (type, name)
-const SUPER_LINE = /((["'`])(?:\\.|(?!\4).)*?\4|[^;]+);/.source; // (body1)
-const SUPER_BODY = /{((["'`])(?:\\.|(?!\6).)*?\6|[^}]+)}/.source;
-const SUPER = new RegExp(`${SUPER_HEAD}(?:${SUPER_LINE}|${SUPER_BODY})`);
+// const SUPER_HEAD = /([$:])([a-b0-9_-]+)\s*=/.source; // (type, name)
+// const SUPER_LINE = /((["'`])(?:\\.|(?!\4).)*?\4|[^;]+);/.source; // (body1)
+// const SUPER_BODY = /{((["'`])(?:\\.|(?!\6).)*?\6|[^}]+)}/.source;
+// const SUPER = new RegExp(`${SUPER_HEAD}(?:${SUPER_LINE}|${SUPER_BODY})`);
 
-export function parse$SuperExpressions(txt) {
-  txt = txt.replace(/\/\*[\s\S]*?\*\//g, ""); // remove comments
-  const supers = { "$": {}, ":": {} };
-  for (let [, type, name, statement, , body = statement] of txt.matchAll(SUPER))
-    supers[type][name] = body.trim();
-  supers["$"] = Object2.mapValue(supers[$], parse$Expression);
-}
+// export function parse$SuperExpressions(txt) {
+//   txt = txt.replace(/\/\*[\s\S]*?\*\//g, ""); // remove comments
+//   const supers = { "$": {}, ":": {} };
+//   for (let [, type, name, statement, , body = statement] of txt.matchAll(SUPER))
+//     supers[type][name] = body.trim();
+//   supers["$"] = Object2.mapValue(supers[$], parse$Expression);
+// }
 
 //todo we don't support nested :not(:has(...))
 //todo we don't do @support/scope/container. 
@@ -113,7 +116,7 @@ const op = />>|[>+~&]/.source;
 const selectorTokens = new RegExp(
   `(${mop})|(${media})|(${op})|(${pseudo})|(${at})|(${tag})|(${clazz})|(\\*)|(\\s+)|(.)`, "g");
 
-function parseSelector(str) {
+function parseSelectorBody(str) {
   const tokens = [...str.matchAll(selectorTokens)];
   let medias = [], selects = [], nowSelect = [], priority = "", trueMedia;
   for (const T of tokens) {
@@ -140,4 +143,10 @@ function parseSelector(str) {
   if (!trueMedia && medias.length)
     selects = [...medias, ...selects];
   return { medias, selects, priority };
+}
+
+export function parseSelector(exp) {
+  const item = exp[0] === "|";
+  if (item) exp = exp.slice(1);
+  return { exp, item, ...parseSelectorBody(exp) };
 }

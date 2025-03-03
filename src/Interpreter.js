@@ -1,4 +1,4 @@
-import { parse$Expression, Expression, DictMap } from "./Parser.js";
+import { Expression, DictMap } from "./Parser.js";
 
 const toCamel = s => s.replace(/[A-Z]/g, "-$&").toLowerCase();
 
@@ -39,8 +39,42 @@ export class Interpreter {
     }
     return res;
   }
+}
 
-  interpretClass(txt) {
-    return DictMap(parse$Expression(txt), null, shs => this.mergeOrStack(shs));
+export class InterpreterSelector {
+  constructor(supers) {
+    this.supers = supers;
+  }
+
+  static selectorNot(select) {
+    if (select.at(-1) === "!")
+      throw `Invalid selector: ${select.join("")}`;
+    const res = [];
+    for (let i = 0; i < select.length; i++)
+      res.push(select[i] === "!" ? `:not(${select[++i]})` : select[i]);
+    return res;
+  }
+
+  static selectorHas(select) {
+    const i = select.indexOf("&");
+    if (i == 0)
+      return res;
+    const has = `:has(${res.slice(0, i).join("")})`;
+    return [...res.slice(i), has];
+  }
+
+  static mediasToString(medias) {
+    medias = medias.map(m => m.replaceAll(/^@/, ""));
+    return medias.join(" and ").replaceAll(" and , and ", " , ");
+  }
+
+  interpret({ medias, selects }) {
+    const medias2 = InterpreterSelector.mediasToString(
+      medias.map(s => this.supers[s] ?? s));
+    const selects2 = selects.map(s => this.supers[s] ?? s)
+      .map(s => s === ">>" ? " " : s)
+      .map(InterpreterSelector.selectorNot)
+      .map(InterpreterSelector.selectorHas);
+    return { selects2, medias2 };
   }
 }
