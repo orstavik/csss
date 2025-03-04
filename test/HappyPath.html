@@ -116,6 +116,8 @@
         border-radius: 1rem;
       }
     }
+
+    @layer items {}
   </style>
   <div class="$border(radius(1rem))">hello</div>
 </test-html>
@@ -132,6 +134,8 @@
         border-inline-end-style: dashed;
       }
     }
+
+    @layer items {}
   </style>
 </test-html>
 <test-html title="border-thin">
@@ -145,6 +149,8 @@
         border-width: thin;
       }
     }
+
+    @layer items {}
   </style>
 </test-html>
 <test-html title="$color(oklch(green,.5,.85,h))">
@@ -161,6 +167,8 @@
         border-color: color-mix(in oklch, oklch(from oklch(from green .5 .85 h) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from oklch(from green .5 .85 h) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
       }
     }
+
+    @layer items {}
   </style>
 </test-html>
 <test-html title="color(3)">
@@ -176,6 +184,8 @@
         --background-color: #123456;
         border-color: red;
       }
+
+      @layer items {}
   </style>
   <div class="$color(black,#123456)$color-border(red)">
     hello
@@ -192,6 +202,8 @@
         border-color: green;
       }
     }
+
+    @layer items {}
   </style>
   <div class="$color(black,#123456,green)">
     hello
@@ -210,25 +222,30 @@
         border-inline-color: yellow;
       }
     }
+
+    @layer items {}
   </style>
   <div class="$color(black,#123456,green:yellow)">
     hello
   </div>
 </test-html>
-<test-html title="$color(rgb(,0,12,255))">
-  <style>
-    @layer container, items;
-
-    @layer container {
-
-      .\$color\(rgb\(0\,12\,255\)\) {
-        color: rgb(0, 12, 255);
-      }
-    }
-  </style>
-  <div class="$color(rgb(,0,12,255))">
+<test-html title="$color(rgb(0,12,255,.6))">
+  <div class="$color(rgb(0,12,255,.6))">
     hello
   </div>
+  <style>
+    @layer container {
+      .\$color\(rgb\(0\,12\,255\,\.6\)\) {
+        color: oklch(from rgba(0 12 255 / .6) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from rgba(0 12 255 / .6) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: color-mix(in oklch, oklch(from rgba(0 12 255 / .6) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from rgba(0 12 255 / .6) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+      }
+    }
+
+    @layer items {}
+
+    @layer container, items;
+  </style>
 </test-html>
 <test-html title="$w(min)">
   <div class="$w(min)">
@@ -242,7 +259,8 @@
         inline-size: min-content;
       }
     }
-    @layer items { }
+
+    @layer items {}
   </style>
 </test-html>
 <test-html title="$w(min,2px,max)">
@@ -257,6 +275,8 @@
         max-inline-size: max-content;
       }
     }
+
+    @layer items {}
   </style>
   <div class="$w(min,2px,max)">
     hello
@@ -272,6 +292,8 @@
         inline-size: 2px;
       }
     }
+
+    @layer items {}
   </style>
   <div class="$w(1px,2px,)">
     hello
@@ -286,6 +308,8 @@
         block-size: 2px;
       }
     }
+
+    @layer items {}
   </style>
   <div class="$h(,2px,)">
     hello
@@ -304,6 +328,8 @@
         row-gap: 3rem;
       }
     }
+
+    @layer items {}
   </style>
   <div class="$flex(row-reverse,p(1%,,3%),gap(,3rem))">
     hello
@@ -348,13 +374,15 @@
         align-content: center;
         justify-content: center;
       }
+    }
 
-      @layer items {
+    @layer items {
 
-        /*$flex(cc)|*$_flex(margin(10px))*/
-        :where(.\$flex\(cc\)\|\*\$_flex\(margin\(10px\)\))> :where(*) {
-          margin: 10px;
-        }
+      /*$flex(cc)|*$_flex(margin(10px))*/
+      :where(.\$flex\(cc\)\|\*\$_flex\(margin\(10px\)\))> :where(*) {
+        margin: 10px;
+      }
+    }
   </style>
   <div class="$flex(cc)|*$_flex(margin(10px))">
     hello
@@ -376,6 +404,9 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
+    }
+
+    @layer items {}
   </style>
   <div class="$flex(ellipsis)">
     hello
@@ -424,6 +455,8 @@
         cursor: pointer;
       }
     }
+
+    @layer items {}
   </style>
 </test-html>
 <test-html title="$cursor(ew-resize)">
@@ -438,6 +471,8 @@
         cursor: ew-resize;
       }
     }
+
+    @layer items {}
   </style>
 </test-html>
 <test-html title="$translate(10px)$rotate(45deg)">
@@ -452,6 +487,8 @@
         transform: translate(10px) rotate(45deg);
       }
     }
+
+    @layer items {}
   </style>
 </test-html>
 
@@ -491,5 +528,6 @@
     </div>
   </div>
   <style>
-  </style>
+      @layer items { }
+</style>
 </test-html> -->

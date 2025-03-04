@@ -229,7 +229,7 @@ const NativeColorsFunctions = (function () {
   function nativeCssColorFunction(name, ...args) {
     if (args.length < 3 || args.length > 5)
       throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
-    const SEP = name.match(/^(rgba?|hsla?)$/) ? "," : " ";
+    const SEP = name.match(/^(rgba?|hsla?)$/) ? " " : " ";
     if (args.length === 3)
       return `${name}(${args.join(SEP)})`;
     if (args.length === 5)

@@ -70,13 +70,13 @@ class Short {
     }
     this.container = this.units.find(u => !u.selector.item);
     this.items = this.units.filter(u => u !== this.container);
-    this.container.selectorStr = Short.containerSelector(this.container.selects2);
-    this.container.selectors = ["@layer container", this.container.medias2, this.container.selectorStr];
+    this.container.selectorStr = Short.containerSelector(this.container.selects2, this.clazz);
+    this.container.selectors = [this.container.medias2, this.container.selectorStr];
 
     for (const item of this.items) {
       item.selectorStr = this.container.selectorStr + ">" + Short.itemSelector(item.selects2);
       item.medias3 = [this.container.medias2, item.medias2].filter(Boolean).join(" and ");
-      item.selectors = ["@layer items", item.medias3, item.selectorStr];
+      item.selectors = [item.medias3, item.selectorStr];
     }
 
     for (const unit of this.units)
@@ -105,21 +105,24 @@ export class SheetWrapper {
 
   constructor(sheet) {
     this.sheet = sheet;
+    this.setupStatement();
     this.container = this.setupLayer("container", sheet);
     this.items = this.setupLayer("items", sheet);
-    for (const r of sheet.cssRules)
+  }
+
+  setupStatement(){
+    for (const r of this.sheet.cssRules)
       if (r instanceof CSSLayerStatementRule && "@layer container, items;" === r.cssText.replaceAll(/\s+/g, " "))
         return;
-    sheet.insertRule("@layer container, items;", sheet.cssRules.length);
+    this.sheet.insertRule("@layer container, items;", 0);
   }
 
   setupLayer(name, sheet) {
-    for (const rule of sheet.cssRules)
-      if (rule instanceof CSSLayerBlockRule && rule.name === name)
-        return { layer: rule, registry: SheetWrapper.layerMediaRules(rule) };
-    sheet.insertRule(`@layer ${name} {}`, sheet.cssRules.length);
-    const layer = sheet.cssRules[sheet.cssRules.length - 1];
-    return { layer, registry: new Map() };
+    for (const layer of this.sheet.cssRules)
+      if (layer instanceof CSSLayerBlockRule && layer.name === name)
+        return { layer, registry: SheetWrapper.layerMediaRules(layer) };
+    this.sheet.insertRule(`@layer ${name} {}`, 0);
+    return { layer: this.sheet.cssRules[0], registry: new Map() };
   }
 
   addRule(str) {
@@ -163,7 +166,7 @@ export class SheetWrapper {
     cleanupLayer(this.items.layer);
     this.sheet.ownerNode.textContent = [...this.sheet.cssRules].map(r => r.cssText).join('\n');
   }
-  
+
   cleanup() {
     this.#cleanTask ??= requestAnimationFrame(() => this.#cleanup());
   }
