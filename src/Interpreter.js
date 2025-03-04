@@ -48,7 +48,7 @@ export class InterpreterSelector {
 
   static selectorNot(select) {
     if (select.at(-1) === "!")
-      throw `Invalid selector: ${select.join("")}`;
+      throw `Invalid selector, not at the end: ${select.join("")}`;
     const res = [];
     for (let i = 0; i < select.length; i++)
       res.push(select[i] === "!" ? `:not(${select[++i]})` : select[i]);
@@ -57,15 +57,29 @@ export class InterpreterSelector {
 
   static selectorHas(select) {
     const i = select.indexOf("&");
-    if (i == 0)
-      return res;
-    const has = `:has(${res.slice(0, i).join("")})`;
-    return [...res.slice(i), has];
+    if (i <= 0)
+      return select;
+    const has = `:has(${select.slice(0, i).join("")})`; //todo do we need }*)`? at the end here?
+    return [...select.slice(i), has];
+  }
+
+  static impliedSelfStar(select) {
+    if (!select.length)
+      return ["*"];
+    if (select.some(t => t === "*"))
+      return select;
+    const first = select[0]?.[0].match(/[>+~]/);
+    const last = select.at(-1)?.[0].match(/[>+~]/);
+    if (first && last)
+      throw `Relationship selector both front and back: ${select.join("")}`;
+    if (last)// last will not work for recognizing the class name for the selector..
+      return [...select, "*"];
+    return ["*", ...select];
   }
 
   static mediasToString(medias) {
     medias = medias.map(m => m.replaceAll(/^@/, ""));
-    return medias.join(" and ").replaceAll(" and , and ", " , ");
+    return medias.join(" and ").replaceAll("and , and", ",");
   }
 
   interpret({ medias, selects }) {
@@ -74,7 +88,8 @@ export class InterpreterSelector {
     const selects2 = selects.map(s => this.supers[s] ?? s)
       .map(s => s === ">>" ? " " : s)
       .map(InterpreterSelector.selectorNot)
-      .map(InterpreterSelector.selectorHas);
+      .map(InterpreterSelector.selectorHas)
+      .map(InterpreterSelector.impliedSelfStar);
     return { selects2, medias2 };
   }
 }

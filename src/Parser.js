@@ -114,35 +114,32 @@ const clazz = /\.[a-z][a-z0-9_-]*/.source; //class
 const mop = /[,!]/.source;
 const op = />>|[>+~&]/.source;
 const selectorTokens = new RegExp(
-  `(${mop})|(${media})|(${op})|(${pseudo})|(${at})|(${tag})|(${clazz})|(\\*)|(\\s+)|(.)`, "g");
+  `(\\s+)|(${media})|(${mop})|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
 function parseSelectorBody(str) {
-  const tokens = [...str.matchAll(selectorTokens)];
-  let medias = [], selects = [], nowSelect = [], priority = "", trueMedia;
-  for (const T of tokens) {
-    const [t, mop, media, op, pseudo, at, tag, clazz, star, ws, error] = T;
-    if (error) throw `Bad selector token: ${error}`;
-    if (ws) continue;
+  let tokens = [...str.matchAll(selectorTokens)];
+  const badToken = tokens.find(([t, ws, media, mop, select, error]) => error);
+  if (badToken)
+    throw `Bad selector token: ${badToken[0]}`;
+  tokens = tokens.filter(([t, ws]) => !ws);
+  let lastMedia = tokens.findLastIndex(([, , media]) => media);
+  if (lastMedia === -1) lastMedia = 0; // If none found, assume media section is empty.
+  let firstSelector = tokens.findIndex(([, , media, mop]) => !(media || mop));
+  if (firstSelector === -1) firstSelector = tokens.length;
 
-    priority += media ? "@" : pseudo ? ":" : at ? "[" : clazz ? "." : tag ? "<" : "";
+  tokens = tokens.map(([t]) => t);
+  if (firstSelector < lastMedia)
+    throw `media queries must come before selectors: 
+  ...${tokens.slice(firstSelector, lastMedia).join("")}...`;
 
-    //media-state
-    if (selects.length && media)
-      throw `media queries must precede selectors: ${selects.join("")} => ${t}`;
-    if (media)
-      trueMedia = medias.push(media);
-    if (mop)
-      selects.length ? selects.push(mop) : medias.push(mop);
-
-    //selector state
-    if (op === ",")
-      selects.push(nowSelect), nowSelect = [];
-    else
-      nowSelect.push(t); //keep the operator for now
+  const medias = tokens.slice(0, lastMedia);
+  const selects = [[]];
+  for (const t of tokens.slice(lastMedia)) {
+    t === "," ?
+      selects.push([]):
+      selects.at(-1).push(t);
   }
-  if (!trueMedia && medias.length)
-    selects = [...medias, ...selects];
-  return { medias, selects, priority };
+  return { medias, selects };
 }
 
 export function parseSelector(exp) {

@@ -45,13 +45,15 @@ const SelectorSupers = {
 const shortSelector = new InterpreterSelector(SelectorSupers);
 
 class Short {
-  static selectToString(selects, selfClazz) {
-    return selects.length ?
-      `${selfClazz}:where(${selects.map(s => s === "&" ? selfClazz : s).join(" ")})` :
-      selfClazz;
+  static wrapWhereNeeded(selects) {
+    return selects.length === 1 ? selects[0] : `:where(\n${selects.join(",\n")}\n)`;
   }
 
-  static containerToString(selectors, body) {
+  // static itemSelector(selects) {
+  //   return selects.length ? `>*:where(${selects.join("")})` : ">*";
+  // }
+
+  static ruleToString(selectors, body) {
     selectors = selectors.filter(Boolean);
     return `${selectors.join(" { ")} { ${body}${" }".repeat(selectors.length)}`;
   }
@@ -64,33 +66,23 @@ class Short {
       unit.body = Object.entries(unit.shorts2).map(([k, v]) => `${k}: ${v};`).join(" ");
       Object.assign(unit, shortSelector.interpret(unit.selector));
     }
-    this.container = this.units.find(u => !u.items);
-    this.items = this.units.filter(u => u.items);
-
-    this.container.selector = Short.selectToString(this.container.selects2, this.clazz);
-    this.container.selectors = ["@layer container", this.container.medias2, this.container.selector];
+    this.container = this.units.find(u => !u.selector.item);
+    this.items = this.units.filter(u => u.selector.item);
+    this.container.selects3 = this.container.selects2.map(cs => cs.map(s => s === "*" ? this.clazz : s).join(""));
+    this.container.selectorStr = this.container.selects3.join(",\n");
+    this.container.selectors = ["@layer container", this.container.medias2, this.container.selectorStr];
 
     for (const item of this.items) {
-      item.selector = this.container.selector + ">*" + Short.selectToString(item.selects2, this.clazz);
+      item.selects3 = Short.wrapWhereNeeded(item.selects2.map(commas => commas.join("")));
+      item.selectorStr = this.container.selectorStr + ">" + item.selects3;
       item.medias3 = [this.container.medias2, item.medias2].filter(Boolean).join(" and ");
-      item.selectors = ["@layer items", item.medias3, item.selector];
+      item.selectors = ["@layer items", item.medias3, item.selectorStr];
     }
 
     for (const unit of this.units)
-      unit.rule = Short.containerToString(unit.selectors, unit.body);
+      unit.rule = Short.ruleToString(unit.selectors, unit.body);
   }
 }
-
-
-// const __testSheet = new CSSStyleSheet();
-// function normalizeCssText(rule) {
-//   __testSheet.insertRule(rule, 0);
-//   const res = __testSheet.cssRules[0].cssText;
-//   __testSheet.deleteRule(0);
-//   return res;
-// }
-// rule = normalizeCssText(rule);
-
 
 export class SheetWrapper {
   #count = 0;
@@ -131,7 +123,8 @@ export class SheetWrapper {
 
   addRule(str) {
     const short = new Short(str);
-    for (const unit of short.units)
+    const units = short.units.filter(({ body }) => !!body.trim());
+    for (const unit of units)
       this.#addRule(unit.rule);
   }
 
@@ -142,7 +135,7 @@ export class SheetWrapper {
     const pos = this.sheet.cssRules.length;
     this.sheet.insertRule(rule, pos);
     let obj = this.sheet.cssRules[pos];
-    while(obj instanceof CSSGroupingRule)
+    while (obj instanceof CSSGroupingRule)
       obj = obj.cssRules[0];
     return this.rules[rule] = { rule: obj, count: this.#count++ };
   }
@@ -152,22 +145,45 @@ export class SheetWrapper {
     this.#cleanTask ??= requestAnimationFrame(() => this.#cleanup());
   }
 
-  #deleteRuleRecursive(rule) {
-    const parent = rule.parentRule || rule.parentStyleSheet;
-    const index = [...parent.cssRules].findIndex(r => r === rule);
-    parent.deleteRule(index);
-    if (parent instanceof CSSGroupingRule && parent.cssRules.length === 0) 
-      this.#deleteRuleRecursive(parent);
-  }
-
-
   #cleanup() {
-    this.#cleanTask = null;
-    for (const { rule } of Object.values(this.rules)) {
-      const className = rule.selectorText.match(/^\.((\\.|[a-z0-9_-])+)/)[1].replaceAll(/\\(.)/g, "$1");
-      if (!document.querySelector(`[class~="${className}"]`))
-        this.#deleteRuleRecursive(rule);
+    const findFirstLayer = name => {
+      for (const rule of this.sheet.cssRules)
+        if (rule instanceof CSSLayerBlockRule && rule.name === name)
+          return rule;
+    };
+
+    const flattenLayerBlocks = firstLayer => {
+      for (let i = this.sheet.cssRules.length - 1; i >= 0; i--) {
+        const topRule = this.sheet.cssRules[i];
+        if (topRule === firstLayer)
+          break;
+        if (!(topRule instanceof CSSLayerBlockRule) || topRule.name !== firstLayer.name)
+          continue;
+        for (const r of topRule.cssRules)
+          firstLayer.insertRule(r.cssText, firstLayer.cssRules.length);
+        this.sheet.deleteRule(i);
+      }
     }
+
+    const isInUse = rule => {
+      const selector = rule.selectorText ?? rule.cssRules[0]?.selectorText;
+      const className = selector.match(/^\.((\\.|[a-z0-9_-])+)/)[1].replaceAll(/\\(.)/g, "$1");
+      return document.querySelector(`[class~="${className}"]`);
+    }
+
+    const cleanupLayer = (name) => {
+      const firstLayer = findFirstLayer(name);
+      if (!firstLayer)
+        return;
+      flattenLayerBlocks(firstLayer);
+      for (let i = firstLayer.cssRules.length - 1; i >= 0; i--)
+        if (!isInUse(firstLayer.cssRules[i]))
+          firstLayer.cssRules.deleteRule(i);
+    }
+
+    this.#cleanTask = null;
+    cleanupLayer("container");
+    cleanupLayer("items");
     this.sheet.ownerNode.textContent = [...this.sheet.cssRules].map(r => r.cssText).join('\n');
   }
 }

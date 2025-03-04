@@ -20,120 +20,101 @@
     <div class="new">New Arrival: Product 5</div>
   </div>
   <style>
-    /*container 0*/
-    /*$palette(#ec1221)*/
-    :where(.\$palette\(\#ec1221\)) {
-      --palette-primary: #ec1221;
-      --palette-secondary: oklch(from #ec1221 50 c calc(h - 60));
-      --palette-tertiary: oklch(from #ec1221 50 c calc(h + 60));
-      --palette-neutral: oklch(from #ec1221 50 0.02 h);
-      --palette-bw-fg: 0;
-      --palette-bw-bg: 1;
-      --palette-text-fg: 0.23;
-      --palette-text-bg: 0.99;
-      --palette-box-fg: 0.23;
-      --palette-box-bg: 0.92;
-      --palette-flip-fg: 0.99;
-      --palette-flip-bg: 0.66;
-      --palette-darkflip-fg: 0.9;
-      --palette-darkflip-bg: 0.33;
-      --palette-chroma: 0.23746015283192687;
-      --palette-pop: calc(c * 2);
+    @layer container, items;
+
+    @layer container {
+      .\$palette\(\#ec1221\) {
+        --palette-primary: #ec1221;
+        --palette-secondary: oklch(from #ec1221 50 c calc(h - 60));
+        --palette-tertiary: oklch(from #ec1221 50 c calc(h + 60));
+        --palette-neutral: oklch(from #ec1221 50 0.02 h);
+        --palette-bw-fg: 0;
+        --palette-bw-bg: 1;
+        --palette-text-fg: 0.23;
+        --palette-text-bg: 0.99;
+        --palette-box-fg: 0.23;
+        --palette-box-bg: 0.92;
+        --palette-flip-fg: 0.99;
+        --palette-flip-bg: 0.66;
+        --palette-darkflip-fg: 0.9;
+        --palette-darkflip-bg: 0.33;
+        --palette-chroma: 0.23746015283192687;
+        --palette-pop: calc(c * 2);
+      }
+
+      .\$border\(r\(10px\,30px\,60px\)\) {
+        border-style: solid;
+        border-radius: 10px 10px 60px 60px / 30px;
+      }
+
+      .\$w\(600px\) {
+        inline-size: 600px;
+      }
+
+      .\$h\(300px\) {
+        block-size: 300px;
+      }
+
+      .\$color\(grey-text\) {
+        color: oklch(from grey var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from grey var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: color-mix(in oklch, oklch(from grey var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from grey var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+      }
+
+      .\$border\(solid\,2px\) {
+        border-style: solid;
+        border-width: 2px;
+      }
     }
 
-    /*container 0*/
-    /*$border(solid,2px)*/
-    :where(.\$border\(solid\,2px\)) {
-      border-style: solid;
-      border-width: 2px;
-    }
+    @layer items {
+      .\|\*\$border\(double\,2px\,radius\(0\.25rem\)\)>* {
+        border-style: double;
+        border-width: 2px;
+        border-radius: 0.25rem;
+      }
 
-    /*item 0*/
-    /*|*$border(double,2px,radius(0.25rem))*/
-    :where(.\|\*\$border\(double\,2px\,radius\(0\.25rem\)\))> :where(*) {
-      border-style: double;
-      border-width: 2px;
-      border-radius: 0.25rem;
-    }
+      .\|\.sale\$color\(tertiary\)>.sale {
+        color: oklch(from var(--palette-tertiary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from var(--palette-tertiary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: color-mix(in oklch, oklch(from var(--palette-tertiary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-tertiary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+      }
 
-    /*item 1*/
-    /*|.new$border(solid,4px,radius(1rem))*/
-    :where(.\|\.new\$border\(solid\,4px\,radius\(1rem\)\))> :where(.new) {
-      border-style: solid;
-      border-width: 4px;
-      border-radius: 1rem;
-    }
+      .\|\.new\$color\(secondary\)>.new {
+        color: oklch(from var(--palette-secondary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from var(--palette-secondary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: color-mix(in oklch, oklch(from var(--palette-secondary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-secondary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+      }
 
-    /*item 1*/
-    /*|.sale$border(dashed,3px,radius(0.5rem))*/
-    :where(.\|\.sale\$border\(dashed\,3px\,radius\(0\.5rem\)\))> :where(.sale) {
-      border-style: dashed;
-      border-width: 3px;
-      border-radius: 0.5rem;
-    }
+      .\|\*\$color\(primary\)>* {
+        color: oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+      }
 
-    /*container 0*/
-    /*$color(grey-text)*/
-    :where(.\$color\(grey-text\)) {
-      color: oklch(from grey var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-      --background-color: oklch(from grey var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-      border-color: color-mix(in oklch, oklch(from grey var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from grey var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
-    }
+      .\|\.sale\$border\(dashed\,3px\,radius\(0\.5rem\)\)>.sale {
+        border-style: dashed;
+        border-width: 3px;
+        border-radius: 0.5rem;
+      }
 
-    /*item 0*/
-    /*|*$color(primary)*/
-    :where(.\|\*\$color\(primary\))> :where(*) {
-      color: oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-      --background-color: oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-      border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
-    }
-
-    /*item 1*/
-    /*|.new$color(secondary)*/
-    :where(.\|\.new\$color\(secondary\))> :where(.new) {
-      color: oklch(from var(--palette-secondary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-      --background-color: oklch(from var(--palette-secondary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-      border-color: color-mix(in oklch, oklch(from var(--palette-secondary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-secondary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
-    }
-
-    /*item 1*/
-    /*|.sale$color(tertiary)*/
-    :where(.\|\.sale\$color\(tertiary\))> :where(.sale) {
-      color: oklch(from var(--palette-tertiary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-      --background-color: oklch(from var(--palette-tertiary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-      border-color: color-mix(in oklch, oklch(from var(--palette-tertiary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-tertiary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
-    }
-
-    /*container 0*/
-    /*$h(300px)*/
-    :where(.\$h\(300px\)) {
-      block-size: 300px;
-    }
-
-    /*container 0*/
-    /*$w(600px)*/
-    :where(.\$w\(600px\)) {
-      inline-size: 600px;
-    }
-
-    /*container 0*/
-    /*$border(r(10px,30px,60px))*/
-    :where(.\$border\(r\(10px\,30px\,60px\)\)) {
-      border-style: solid;
-      border-top-left-radius: 10px 30px;
-      border-top-right-radius: 10px 30px;
-      border-bottom-left-radius: 60px 30px;
-      border-bottom-right-radius: 60px 30px;
+      .\|\.new\$border\(solid\,4px\,radius\(1rem\)\)>.new {
+        border-style: solid;
+        border-width: 4px;
+        border-radius: 1rem;
+      }
     }
   </style>
 </test-html>
 <test-html title="border-radius">
   <style>
-    /*container 0*/
-    /*$border(radius(1rem))*/
-    :where(.\$border\(radius\(1rem\)\)) {
-      border-style: solid;
-      border-radius: 1rem;
+    @layer container, items;
+
+    @layer container {
+      .\$border\(radius\(1rem\)\) {
+        border-style: solid;
+        border-radius: 1rem;
+      }
     }
   </style>
   <div class="$border(radius(1rem))">hello</div>
@@ -142,6 +123,7 @@
   <div class="$border(w(,1px,2px,),s(,,solid,dashed))">sunshine</div>
   <style>
     @layer container, items;
+
     @layer container {
       .\$border\(w\(\,1px\,2px\,\)\,s\(\,\,solid\,dashed\)\) {
         border-inline-start-width: 1px;
@@ -156,6 +138,7 @@
   <div class="$border(thin)">!!!</div>
   <style>
     @layer container, items;
+
     @layer container {
       .\$border\(thin\) {
         border-style: solid;
