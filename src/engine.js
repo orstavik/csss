@@ -117,7 +117,7 @@ export class SheetWrapper {
     this.sheet.insertRule("@layer container, items;", 0);
   }
 
-  setupLayer(name, sheet) {
+  setupLayer(name) {
     for (const layer of this.sheet.cssRules)
       if (layer instanceof CSSLayerBlockRule && layer.name === name)
         return { layer, registry: SheetWrapper.layerMediaRules(layer) };
