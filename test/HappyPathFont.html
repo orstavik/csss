@@ -117,49 +117,42 @@
     </div>
   </main>
   <style>
-    /*container 0*/
-    /*$w(50%)*/
-    :where(.\$w\(70\%\)) {
-      inline-size: 70%;
-    }
+    @layer container, items;
 
-    /*container 0*/
-    /*$border(2px)*/
-    :where(.\$border\(solid\,2px\)) {
-      border-style: solid;
-      border-width: 2px;
-    }
+    @layer container {
+      .\$w\(70\%\) {
+        inline-size: 70%;
+      }
 
-    /*container 0*/
-    /*$font(justify)*/
-    :where(.\$font\(justify\)) {
-      text-align: justify;
-    }
+      .\$border\(solid\,2px\) {
+        border-style: solid;
+        border-width: 2px;
+      }
 
-    /*container 0*/
-    /*$padding(1rem)*/
-    :where(.\$padding\(1rem\)) {
-      padding: 1rem;
-    }
+      .\$font\(justify\) {
+        text-align: justify;
+      }
 
-    /*container 0*/
-    /*$text(uppercase, condensed, indent(20%))*/
-    :where(.\$text\(uppercase\,condensed\,indent\(20\%\)\)) {
-      text-transform: uppercase;
-      font-stretch: condensed;
-      text-indent: 20%;
-    }
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
 
-    /*container 0*/
-    /*$spacing(0.1rem,0.5rem,2rem)*/
-    :where(.\$spacing\(0\.1rem\,0\.5rem\,2rem\)) {
-      letter-spacing: 0.1rem;
-      /* inline */
-      word-spacing: 0.5rem;
-      /* inline*/
-      line-height: 2em;
-      /* block */
+      .\$text\(uppercase\,condensed\,indent\(20\%\)\) {
+        text-transform: uppercase;
+        font-stretch: condensed;
+        text-indent: 20%;
+      }
+
+      .\$spacing\(0\.1rem\,0\.5rem\,2rem\) {
+        letter-spacing: 0.1rem;
+        /* inline */
+        word-spacing: 0.5rem;
+        /* inline*/
+        line-height: 2em;
+        /* block */
+      }
     }
+    @layer items {}
   </style>
 </test-html>
 <test-html title="Paragraph Sample ($font, $spacing, $text, $bold, container-item)">
@@ -189,60 +182,49 @@
     </div>
   </main>
   <style>
-    /*item 0*/
-    /*|*$_margin(auto)*/
-    :where(.\|\*\$\_margin\(auto\) > *) {
-      margin: auto;
-    }
+    @layer container, items;
 
-    /*container 0*/
-    /*$width(100%)*/
-    :where(.\$width\(100\%\)) {
-      inline-size: 100%;
-    }
+    @layer container {
+      .\|\*\$\_margin\(auto\)>* {
+        margin: auto;
+      }
 
-    /*container 0*/
-    /*$spacing(0.1rem,0.5rem,2rem)*/
-    :where(.\$spacing\(0\.1em\,0\.3em\,1em\)) {
-      letter-spacing: 0.1em;
-      /* inline */
-      word-spacing: 0.3em;
-      /* inline*/
-      line-height: 1em;
-      /* block */
-    }
+      .\$width\(100\%\) {
+        inline-size: 100%;
+      }
 
-    /*container 0*/
-    /*$font((Arial,serif),justify,15px)|*$_text(indent(15%),capitalize)*/
-    :where(.\$font\(\(verdana\,serif\)\,justify\,15px\)\|\*\$\_text\(indent\(15\%\)\,transform\(capitalize\)\)) {
-      font-family: Verdana, serif;
-      text-align: justify;
-      font-size: 15px;
-    }
+      .\$spacing\(0\.1em\,0\.3em\,1em\) {
+        letter-spacing: 0.1em;
+        /* inline */
+        word-spacing: 0.3em;
+        /* inline*/
+        line-height: 1em;
+        /* block */
+      }
 
-    /*item 0*/
-    /*$font((Arial,serif),justify,15px)|*$_text(indent(15%),capitalize)*/
-    :where(.\$font\(\(verdana\,serif\)\,justify\,15px\)\|\*\$\_text\(indent\(15\%\)\,capitalize\) > *) {
-      text-indent: 15%;
-      text-transform: capitalize;
-    }
+      .\$font\(\(verdana\,serif\)\,justify\,15px\)\|\*\$\_text\(indent\(15\%\)\,transform\(capitalize\)\) {
+        font-family: Verdana, serif;
+        text-align: justify;
+        font-size: 15px;
+      }
 
-    /*item 0*/
-    /*|.head$_font(center,40px)$oblique(5deg)*/
-    :where(.\|\.head\$\_font\(center\,40px\)\$oblique\(5deg\) > .head) {
-      text-align: center;
-      font-size: 40px;
-      font-style: oblique 5deg;
-    }
+      .\$font\(\(verdana\,serif\)\,justify\,15px\)\|\*\$\_text\(indent\(15\%\)\,capitalize\)>* {
+        text-indent: 15%;
+        text-transform: capitalize;
+      }
 
-    /*item 0*/
-    /* |.subheading$_font(end,15px,200)$italic*/
-    :where(.\|\.subheading\$\_font\(end\,15px\,200\)\$italic > .subheading) {
-      text-align: end;
-      font-size: 15px;
-      font-weight: 200;
-      font-style: italic;
-    }
+      .\|\.head\$\_font\(center\,40px\)\$oblique\(5deg\)>.head {
+        text-align: center;
+        font-size: 40px;
+        font-style: oblique 5deg;
+      }
+
+      .\|\.subheading\$\_font\(end\,15px\,200\)\$italic>.subheading {
+        text-align: end;
+        font-size: 15px;
+        font-weight: 200;
+        font-style: italic;
+      }
   </style>
 </test-html>
 <test-html title="$text-decoration() and $color() 1">
@@ -258,46 +240,40 @@
     </p>
   </main>
   <style>
-    /*container 0*/
-    /*$text-decoration(underline,dotted,4px)*/
-    :where(.\$text\-decoration\(underline\,dotted\,4px\)) {
-      text-decoration-line: underline;
-      text-decoration-style: dotted;
-      text-decoration-thickness: 4px;
+    @layer container, items;
+
+    @layer container {
+      .\$text\-decoration\(underline\,dotted\,4px\) {
+        text-decoration-line: underline;
+        text-decoration-style: dotted;
+        text-decoration-thickness: 4px;
+      }
+
+      .\$color\(\,\,\,orange\) {
+        text-decoration-color: orange;
+      }
+
+      .\$text\-decoration\(overline\,solid\) {
+        text-decoration-line: overline;
+        text-decoration-style: solid;
+      }
+
+      .\$color\(\,\,\,blue\) {
+        text-decoration-color: blue;
+      }
+
+      .\$text\-decoration\(linethrough\,underline\,wavy\,2px\) {
+        text-decoration-line: line-through underline;
+        text-decoration-style: wavy;
+        text-decoration-thickness: 2px;
+      }
+
+      .\$color\(\,\,\,\#ff1493\) {
+        text-decoration-color: #ff1493;
+      }
     }
 
-    /*container 0*/
-    /*$color(,,,orange)*/
-    :where(.\$color\(\,\,\,orange\)) {
-      text-decoration-color: orange;
-    }
-
-    /*container 0*/
-    /*$text-decoration(overline,solid)*/
-    :where(.\$text\-decoration\(overline\,solid\)) {
-      text-decoration-line: overline;
-      text-decoration-style: solid;
-    }
-
-    /*container 0*/
-    /*$color(,,,blue)*/
-    :where(.\$color\(\,\,\,blue\)) {
-      text-decoration-color: blue;
-    }
-
-    /*container 0*/
-    /*$text-decoration(linethrough,underline,wavy,2px)*/
-    :where(.\$text\-decoration\(linethrough\,underline\,wavy\,2px\)) {
-      text-decoration-line: line-through underline;
-      text-decoration-style: wavy;
-      text-decoration-thickness: 2px;
-    }
-
-    /*container 0*/
-    /*$color(,,,green)*/
-    :where(.\$color\(\,\,\,\#ff1493\)) {
-      text-decoration-color: #ff1493;
-    }
+    @layer items {}
   </style>
 </test-html>
 <test-html title="$text-decoration() and $color() 2">
@@ -317,61 +293,51 @@
       Not inherited. </h4>
   </main>
   <style>
-    /*container 0*/
-    /*$text-decoration(underline,solid,2px)*/
-    :where(.\$text\-decoration\(underline\,solid\,4px\)) {
-      text-decoration-line: underline;
-      text-decoration-style: solid;
-      text-decoration-thickness: 4px;
+    @layer container, items;
+
+    @layer container {
+      .\$text\-decoration\(underline\,solid\,4px\) {
+        text-decoration-line: underline;
+        text-decoration-style: solid;
+        text-decoration-thickness: 4px;
+      }
+
+      .\$color\(\,\,\,yellow\) {
+        text-decoration-color: yellow;
+      }
+
+      .\$text\-decoration\(none\) {
+        text-decoration: none;
+      }
+
+      .\$text\-decoration\(line\-through\,dashed\,0\.5\%\) {
+        text-decoration-line: line-through;
+        text-decoration-style: dashed;
+        text-decoration-thickness: 0.5%;
+      }
+
+      .\$text\-decoration\(overline\,underline\,wavy\,20\%\) {
+        text-decoration-line: overline underline;
+        text-decoration-style: wavy;
+        text-decoration-thickness: 20%;
+      }
+
+      .\$color\(green\) {
+        color: green;
+      }
+
+      .\$text\-decoration\(underline\,double\,4px\) {
+        text-decoration-line: underline;
+        text-decoration-style: double;
+        text-decoration-thickness: 4px;
+      }
+
+      .\$color\(\,\,\,red\) {
+        text-decoration-color: red;
+      }
     }
 
-    /*container 0*/
-    /*$color(,,,yellow)*/
-    :where(.\$color\(\,\,\,yellow\)) {
-      text-decoration-color: yellow;
-    }
-
-    /*container 0*/
-    /*$text-decoration(none)*/
-    :where(.\$text\-decoration\(none\)) {
-      text-decoration: none;
-    }
-
-    /*container 0*/
-    /*$text-decoration(line-through,dashed,0.5%)*/
-    :where(.\$text\-decoration\(line\-through\,dashed\,0\.5\%\)) {
-      text-decoration-line: line-through;
-      text-decoration-style: dashed;
-      text-decoration-thickness: 0.5%;
-    }
-
-    /*container 0*/
-    /*$text-decoration(overline,underline,wavy,10%)*/
-    :where(.\$text\-decoration\(overline\,underline\,wavy\,20\%\)) {
-      text-decoration-line: overline underline;
-      text-decoration-style: wavy;
-      text-decoration-thickness: 20%;
-    }
-
-    /*container 0*/
-    /*$color(pink)*/
-    :where(.\$color\(green\)) {
-      color: green;
-    }
-
-    /*container 0*/
-    /*$text-decoration(underline,double,4px)*/
-    :where(.\$text\-decoration\(underline\,double\,4px\)) {
-      text-decoration-line: underline;
-      text-decoration-style: double;
-      text-decoration-thickness: 4px;
-    }
-
-    /*container 0*/
-    /*$color(,,,red)*/
-    :where(.\$color\(\,\,\,red\)) {
-      text-decoration-color: red;
-    }
+    @layer items {}
   </style>
 </test-html>
 <test-html title="$text-shadow()">
@@ -385,28 +351,26 @@
     </p>
   </main>
   <style>
-    /*container 0*/
-    /*$text-shadow((2px,4px,6px),(4px,6px,8px))*/
-    :where(.\$text\-shadow\(\(2px\,4px\,6px\)\,\(4px\,6px\,8px\)\)) {
-      text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5), 4px 6px 8px rgba(0, 128, 0, 0.3);
+    @layer container, items;
+
+    @layer container {
+      .\$text\-shadow\(\(2px\,4px\,6px\)\,\(4px\,6px\,8px\)\) {
+        text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5), 4px 6px 8px rgba(0, 128, 0, 0.3);
+      }
+
+      .\$color\(\,white\,\,\,rgba\(0\,0\,0\,0\.5\)\/rgba\(0\,128\,0\,0\.3\)\) {
+        background-color: white;
+      }
+
+      .\$text\-shadow\(1px\,2px\,5px\) {
+        text-shadow: 1px 2px 5px pink;
+      }
+
+      .\$color\(\,\,\,\,pink\) {
+        color: pink;
+      }
     }
 
-    /*container 0*/
-    /*$color(,white,,,rgba(0,0,0,0.5)/rgba(0,128,0,0.3))*/
-    :where(.\$color\(\,white\,\,\,rgba\(0\,0\,0\,0\.5\)\/rgba\(0\,128\,0\,0\.3\)\)) {
-      background-color: white;
-    }
-
-    /*container 0*/
-    /*$text-shadow(1px,2px,5px)*/
-    :where(.\$text\-shadow\(1px\,2px\,5px\)) {
-      text-shadow: 1px 2px 5px pink;
-    }
-
-    /*container 0*/
-    /*$color(,,,,pink)*/
-    :where(.\$color\(\,\,\,\,pink\)) {
-      color: pink;
-    }
+    @layer items {}
   </style>
 </test-html>
