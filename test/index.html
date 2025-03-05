@@ -15,8 +15,9 @@
 </script>
 
 <script type="module">
-  for (let file of ["HappyPath.html"])
-    document.body.insertAdjacentHTML('beforeend', await (await fetch(file)).text());
+  const paths = (location.hash.slice(1) || "HappyPath").split(",").map(p => p + ".html");
+  for (let file of paths)
+    document.body.insertAdjacentHTML('beforeend', await(await fetch(file)).text());
   const happy = document.querySelector('script[type="test"]').outerHTML;
   for (let test of document.querySelectorAll("test-html")) {
     test.querySelector('style').setAttribute("expected", "");

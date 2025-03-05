@@ -101,9 +101,14 @@ function grid(...args) {
   return mergy({ display: "grid" }, ...args);
 }
 grid.scope = {
-  ["grid-auto-columns"]: (...args) => ({ ["grid-auto-columns"]: args.join(" ") }),
   ["grid-auto-rows"]: (...args) => ({ ["grid-auto-rows"]: args.join(" ") }),
+  ["grid-auto-columns"]: (...args) => ({ ["grid-auto-columns"]: args.join(" ") }),
+  ["grid-template-rows"]: (...args) => ({ ["grid-template-rows"]: args.join(" ") }),
+  ["grid-template-columns"]: (...args) => ({ ["grid-template-columns"]: args.join(" ") }),
+  cols: (...args) => ({ ["grid-template-columns"]: args.join(" ") }),
+  rows: (...args) => ({ ["grid-template-rows"]: args.join(" ") }),
   ["grid-template-areas"]: (...args) => ({ ["grid-template-areas"]: args.join(" ") }),
+  areas: (...args) => ({ ["grid-template-areas"]: args.join(" ") }),
   ...LAYOUT,
   ...GAP
 };

@@ -1,12 +1,12 @@
 <test-html title="ttv">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <main class="$palette(#14a69b)">
-    <div class="$block$w(,,100%)|*$block(margin(0,auto))">
+    <div class="$block$w(,,100%)|*$margin(0,auto)">
       <a href="">
         <img src="https://i.imgur.com/tEhZDun.png" alt="home icon" width="110" height="35" class="logo">
       </a>
       <div
-        class="$grid(cols(1fr),gap(1.5rem),padding(1.5rem)) $border(solid,width(3px),radius(0.5rem)) $w(,,1280px) $color(primary-bw)">
+        class="$grid(cols(1fr,2fr),gap(1.5rem),padding(1.5rem)) $border(solid,width(3px),radius(0.5rem)) $w(,,1280px) $color(primary-bw)">
 
         <div class="$flex(.c)">
           <div class="$w(,100%,1024px) $border(radius(0.5rem)) $color(primary-box)"></div>
@@ -56,12 +56,12 @@
         --palette-pop: calc(c * 2);
       }
 
-      .\$block\$w\(\,\,100\%\)\|\*\$block\(margin\(0\,auto\)\) {
+      .\$block\$w\(\,\,100\%\)\|\*\$margin\(0\,auto\) {
         display: block;
         max-inline-size: 100%;
       }
 
-      .\$grid\(cols\(1fr\)\,gap\(1\.5rem\)\,padding\(1\.5rem\)\) {
+      .\$grid\(cols\(1fr\,2fr\)\,gap\(1\.5rem\)\,padding\(1\.5rem\)\) {
         display: grid;
         grid-template-columns: 1fr 2fr;
         gap: 1.5rem;
@@ -84,7 +84,7 @@
         border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-bw-bg) calc(c - (c * max(var(--palette-bw-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-bw-fg) calc(c - (c * max(var(--palette-bw-fg) - .8, 0) * 5)) h) 30%);
       }
 
-      .\$flex\(c\,\,\) {
+      .\$flex\(\.c\) {
         display: flex;
         justify-content: center;
       }
@@ -105,14 +105,14 @@
         border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%);
       }
 
-      .\$flex\(column\,\(\,a\,\)\,gap\(1rem\)\) {
+      .\$flex\(column\,\.a\,gap\(1rem\)\) {
         display: flex;
         flex-direction: column;
-        justify-content: flex-start;
+        justify-content: start;
         gap: 1rem;
       }
 
-      .\$flex\(gap\(1rem\)\,\(\,\,c\)\) {
+      .\$flex\(gap\(1rem\)\,\.\.c\) {
         display: flex;
         gap: 1rem;
         align-items: center;
@@ -124,7 +124,7 @@
         border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-darkflip-bg) calc(c - (c * max(var(--palette-darkflip-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-darkflip-fg) calc(c - (c * max(var(--palette-darkflip-fg) - .8, 0) * 5)) h) 30%);
       }
 
-      .\$flex\(gap\(0\.5rem\)\,padding\(0\.5rem\,1rem\)\,\(\,\,c\)\) {
+      .\$flex\(gap\(0\.5rem\)\,padding\(0\.5rem\,1rem\)\,\.\.c\) {
         display: flex;
         gap: 0.5rem;
         padding-block: 0.5rem;
@@ -143,11 +143,9 @@
     }
 
     @layer items {
-      .\$block\$w\(\,\,100\%\)\|\*\$block\(margin\(0\,auto\)\) > * {
-        margin-block: 0;
-        margin-inline: auto;
+      .\$block\$w\(\,\,100\%\)\|\*\$margin\(0\,auto\)>* {
+        margin: 0px auto;
       }
-
     }
   </style>
 </test-html>
