@@ -6,21 +6,21 @@
         <img src="https://i.imgur.com/tEhZDun.png" alt="home icon" width="110" height="35" class="logo">
       </a>
       <div
-        class="$grid(cols(1fr,2fr),gap(1.5rem),padding(1.5rem)) $border(solid,width(3px),radius(0.5rem)) $w(,,1280px) $color(primary-bw)">
+        class="$grid(cols(1fr,2fr),gap(1.5rem),padding(1.5rem)) $border(solid,width(3px),radius(0.5rem)) $w(,,1280px) $color(primary-bw) $bg">
 
         <div class="$flex(.c)">
-          <div class="$w(,100%,1024px) $border(radius(0.5rem)) $color(primary-box)"></div>
+          <div class="$w(,100%,1024px) $border(radius(0.5rem)) $color(primary-box) $bg"></div>
         </div>
 
         <div class="$flex(column,.a,gap(1rem))">
           <h4 closs="">Now Playing</h4>
           <div class="$flex(gap(1rem),..c)">
-            <a href="" class="$color(primary-darkflip)">
+            <a href="" class="$color(primary) $bg">
               <i class="fa-solid fa-circle-play $color(primary-bw)"></i>
             </a>
             <a href="">
               <button
-                class="$flex(gap(0.5rem),padding(0.5rem,1rem),..c) $border(none,radius(0.375rem)) $cursor(pointer) $color(primary-darkflip)">
+                class="$flex(gap(0.5rem),padding(0.5rem,1rem),..c) $border(none,radius(0.375rem)) $cursor(pointer) $color(primary-darkflip) $bg">
                 <i class="fa-solid fa-plus"></i>
                 <span>MORE INFO</span>
               </button>
@@ -84,6 +84,10 @@
         border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-bw-bg) calc(c - (c * max(var(--palette-bw-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-bw-fg) calc(c - (c * max(var(--palette-bw-fg) - .8, 0) * 5)) h) 30%);
       }
 
+      .\$bg {
+        background: var(--background-color);
+      }
+
       .\$flex\(\.c\) {
         display: flex;
         justify-content: center;
@@ -118,12 +122,6 @@
         align-items: center;
       }
 
-      .\$color\(primary-darkflip\) {
-        color: oklch(from var(--palette-primary) var(--palette-darkflip-fg) calc(c - (c * max(var(--palette-darkflip-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from var(--palette-primary) var(--palette-darkflip-bg) calc(c - (c * max(var(--palette-darkflip-bg) - .8, 0) * 5)) h);
-        border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-darkflip-bg) calc(c - (c * max(var(--palette-darkflip-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-darkflip-fg) calc(c - (c * max(var(--palette-darkflip-fg) - .8, 0) * 5)) h) 30%);
-      }
-
       .\$flex\(gap\(0\.5rem\)\,padding\(0\.5rem\,1rem\)\,\.\.c\) {
         display: flex;
         gap: 0.5rem;
@@ -139,6 +137,18 @@
 
       .\$cursor\(pointer\) {
         cursor: pointer;
+      }
+
+      .\$color\(primary\) {
+        color: oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+      }
+
+      .\$color\(primary-darkflip\) {
+        color: oklch(from var(--palette-primary) var(--palette-darkflip-fg) calc(c - (c * max(var(--palette-darkflip-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from var(--palette-primary) var(--palette-darkflip-bg) calc(c - (c * max(var(--palette-darkflip-bg) - .8, 0) * 5)) h);
+        border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-darkflip-bg) calc(c - (c * max(var(--palette-darkflip-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-darkflip-fg) calc(c - (c * max(var(--palette-darkflip-fg) - .8, 0) * 5)) h) 30%);
       }
     }
 

@@ -287,6 +287,8 @@ const EASING_FUNCTIONS = {
 NativeCssProperties.transition.scope = EASING_FUNCTIONS;
 NativeCssProperties.animation.scope = EASING_FUNCTIONS;
 
+const bg = (...args) => ({ background: args.join(" ") || "var(--background-color)" });
+
 export default {
   ...NativeCssProperties,
   ...NativeCssFunctions,
@@ -295,7 +297,9 @@ export default {
   ...NativeCssFilterFunctions,
   ...NativeCssGradientFunctions,
   border,
-  em: a => ({ ["font-size"]: a }),
+  bg,
+  background: bg,
+  em: NativeCssProperties["font-size"],
   w: (...args) => toSize("inline-size", ...args),
   h: (...args) => toSize("block-size", ...args),
 }
