@@ -55,9 +55,9 @@ class Short {
     return selects2.join(",\n");
   }
 
-  static ruleToString(selectors, body) {
-    selectors = selectors.filter(Boolean);
-    return `${selectors.join(" { ")} { ${body}${" }".repeat(selectors.length)}`;
+  static ruleToString({ medias2, medias3 = medias2, selectorStr, body }) {
+    body = `${selectorStr} { ${body} }`;
+    return medias3 ? `@media ${medias3} {  ${body} }` : body;
   }
 
   constructor(str) {
@@ -71,24 +71,29 @@ class Short {
     this.container = this.units.find(u => !u.selector.item);
     this.items = this.units.filter(u => u !== this.container);
     this.container.selectorStr = Short.containerSelector(this.container.selects2, this.clazz);
-    this.container.selectors = [this.container.medias2, this.container.selectorStr];
-
     for (const item of this.items) {
       item.selectorStr = this.container.selectorStr + ">" + Short.itemSelector(item.selects2);
       item.medias3 = [this.container.medias2, item.medias2].filter(Boolean).join(" and ");
-      item.selectors = [item.medias3, item.selectorStr];
     }
-
     for (const unit of this.units)
-      unit.rule = Short.ruleToString(unit.selectors, unit.body);
+      unit.rule = Short.ruleToString(unit);
   }
 }
 
 export class SheetWrapper {
   rules = {};
 
-  static normalize = rule => rule.replaceAll(/\s+/g, " "); //todo exclude spaces inside "quotes'"
-  static mediaString = (media, rule) => SheetWrapper.normalize(`@media ${media} { ${rule} }`);
+  static #formatter = new CSSStyleSheet();
+  static getKey(r) {
+    if (typeof r === "string") {
+      this.#formatter.insertRule(r, 0);
+      r = this.#formatter.cssRules[0];
+      r = r.cssRules[0] ?? r;
+      this.#formatter.deleteRule(0);
+    }
+    const m = r.parentRule?.media?.mediaText;
+    return (m ? m + "{" : "") + r.selectorText;
+  }
 
   static layerMediaRules(layer) {
     const res = new Map();
@@ -96,21 +101,21 @@ export class SheetWrapper {
       if (a instanceof CSSMediaRule) {
         for (const b of a.cssRules)
           if (b instanceof CSSStyleRule)
-            res.set(SheetWrapper.mediaString(a.mediaText, b.cssText), b);
+            res.set(SheetWrapper.getKey(b), b);
       } else if (a instanceof CSSStyleRule)
-        res.set(SheetWrapper.normalize(a.cssText), a);
+        res.set(SheetWrapper.getKey(a), a);
     }
     return res;
   }
 
   constructor(sheet) {
     this.sheet = sheet;
-    this.setupStatement();
-    this.container = this.setupLayer("container", sheet);
     this.items = this.setupLayer("items", sheet);
+    this.container = this.setupLayer("container", sheet);
+    this.setupStatement();
   }
 
-  setupStatement(){
+  setupStatement() {
     for (const r of this.sheet.cssRules)
       if (r instanceof CSSLayerStatementRule && "@layer container, items;" === r.cssText.replaceAll(/\s+/g, " "))
         return;
@@ -127,35 +132,31 @@ export class SheetWrapper {
 
   addRule(str) {
     const short = new Short(str);
-    for (const { item, shorts, rule } of short.units)
+    for (const { selector: { item }, shorts, rule } of short.units)
       if (shorts.length)
         this.addRuleImpl(rule, item ? this.items : this.container);
   }
 
   addRuleImpl(rule, { layer, registry }) {
-    rule = SheetWrapper.normalize(rule);
-    let pos = Array.from(registry.keys()).indexOf(rule);
+    const key = SheetWrapper.getKey(rule);
+    let pos = Array.from(registry.keys()).indexOf(key);
     if (pos >= 0)
       return pos;
     layer.insertRule(rule, layer.cssRules.length);
-    const obj = layer.cssRules[layer.cssRules.length - 1];
-    registry.set(rule, obj);
-    pos = registry.size - 1;
-    return pos;
+    registry.set(key, layer.cssRules[layer.cssRules.length - 1]);
+    return registry.size - 1;
   }
 
   #cleanTask;
   #cleanup() {
-    const isInUse = rule => {
-      if (rule instanceof CSSMediaRule)
-        rule = rule.cssRules[0];
-      if (!(rule instanceof CSSStyleRule))
-        return false;
-      const className = rule.selectorText.match(/^\.((\\.|[a-z0-9_-])+)/)?.[1].replaceAll(/\\(.)/g, "$1");
+    const isInUse = r => {
+      if (r instanceof CSSMediaRule) r = r.cssRules[0];
+      if (!(r instanceof CSSStyleRule)) return false;
+      const className = r.selectorText.match(/^\.((\\.|[a-z0-9_-])+)/)?.[1].replaceAll(/\\(.)/g, "$1");
       return className && document.querySelector(`[class~="${className}"]`);
     }
 
-    const cleanupLayer = (layer) => {
+    const cleanupLayer = layer => {
       for (let i = layer.cssRules.length - 1; i >= 0; i--)
         if (!isInUse(layer.cssRules[i]))
           layer.deleteRule(i);
@@ -171,95 +172,6 @@ export class SheetWrapper {
     this.#cleanTask ??= requestAnimationFrame(() => this.#cleanup());
   }
 }
-
-// function selectorText(rule) {
-//   return rule.selectorText ??
-//     (rule instanceof CSSLayerBlockRule ? `@layer ${rule.name} ` :
-//       rule instanceof CSSMediaRule ? `@media ${rule.media.mediaText} ` :
-//         undefined);
-// }
-
-// function sheetHas(selectors, rules, pos = 0) {
-//   for (let rule of rules) {
-//     if (selectors[0] === selectorText(rule)) {
-//       if (selectors.length === 1)
-//         return [pos, rule];
-//       if (selectors.length > 1)
-//         if ((rule = sheetHas(selectors.slice(1), rule.cssRules, pos))[1] != null)
-//           return rule;
-//     }
-//     pos++;
-//   }
-//   return [pos, null];
-// }
-
-// function fullText(rule) {
-//   let test = rule.cssText;
-//   while (rule.parentRule)
-//     test = `${selectorText(rule = rule.parentRule)} {${test} } `;
-//   return test;
-// }
-
-// const cache = {};
-// function appendRule(sheet, selectors, rule) {
-//   if (rule in cache)
-//     return cache[rule];
-//   let [pos, res] = sheetHas(selectors, sheet.cssRules);
-//   res &&= fullText(res);
-//   if (res && res.replaceAll(/\s/g, "") === rule.replaceAll(/\s/g, ""))
-//     return cache[rule] = pos;
-//   if (res)
-//     console.warn("Existing rule differs: \n" + res.cssText + "\n\n vs.\n\n " + rule);
-//   sheet.insertRule(rule, sheet.cssRules.length);
-//   return cache[rule] = pos;
-// }
-
-// export class StyleWrapper {
-
-//   constructor(styleEl) {
-//     const styleSheet = styleEl.sheet;
-//     this.styleSheet = styleSheet;
-//     this.styler = new SheetWrapper(styleSheet);
-//   }
-
-//   addRule(str) {
-//     const short = new Short(str);
-//     for (const unit of short.units)
-//       this.styler.addRule(unit.rule);
-// const clazz = "." + str.replaceAll(/[^a-z0-9_-]/g, "\\$&");;
-// let exp = parse$Expression(str);
-// for (let unit of Object.values(exp)) {
-//   unit.shorts2 = shortFuncs.mergeOrStack(unit.shorts);
-//   Object.assign(unit, shortSelector.interpret(unit.selector));
-// }
-// const container = Object.values(exp).find(u => !u.items);
-// const { selects2, medias2, shorts2 } = container;
-// const containerSelector = StyleWrapper.selectToString(selects2, clazz);
-// const selectors = ["@layer container", medias2, containerSelector].filter(Boolean);
-// const shortsBody = Object.entries(shorts2).map(([k, v]) => `${k}:${v};`).join("");
-// const rule = StyleWrapper.containerToString(selectors, shortsBody);
-// debugger
-// this.styler.addRule(rule);
-
-// for (const item of Object.values(exp).filter(u => u.items)) {
-//   const { selects2, medias2, shorts2 } = item;
-//   const itemSelector = containerSelector + ">*" + StyleWrapper.selectToString(selects2, clazz);
-//   const medias3 = [container.medias2, medias2].filter(Boolean).join(" and ");
-//   const selectors = ["@layer items", medias3, itemSelector].filter(Boolean);
-//   const shortsBody = Object.entries(shorts2).map(([k, v]) => `${k}:${v};`).join("");
-//   const rule = StyleWrapper.containerToString(selectors, shortsBody);
-//   this.styler.addRule(rule);
-// }
-//   }
-// }
-
-
-
-// export const toCss = txt => shortSelector.toCssText(shortFuncs.interpretClass(parse$Expression(txt)));
-
-// export function cssClassName(shortName) {
-//   return "." + shortName.replaceAll(/[^a-z0-9_-]/g, "\\$&");;
-// }
 
 /**
  * $short specificity

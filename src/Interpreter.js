@@ -78,7 +78,7 @@ export class InterpreterSelector {
   }
 
   static mediasToString(medias) {
-    medias = medias.map(m => m.replaceAll(/^@/, ""));
+    medias = medias.map(m => m.replace(/^@/, ""));
     return medias.join(" and ").replaceAll("and , and", ",");
   }
 

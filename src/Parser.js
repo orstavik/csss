@@ -107,7 +107,7 @@ export function parse$Expression(exp) {
 //todo we don't do @support/scope/container. 
 //todo @support should be done in a transpile process on the <style> element.
 const media = /@(?:\([^)]+\)|[a-z][a-z0-9_-]*)/.source;
-const pseudo = /:[a-z][a-z0-9_-]*\([^)]+\)/.source;
+const pseudo = /:[a-z][a-z0-9_-]*(?:\([^)]+\))?/.source;
 const at = /\[[a-z][a-z0-9_-]*(?:[$*~|^]?=(?:'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"))?\]/.source;
 const tag = /\[a-z][a-z0-9-]*/.source; //tag
 const clazz = /\.[a-z][a-z0-9_-]*/.source; //class
@@ -122,11 +122,9 @@ function parseSelectorBody(str) {
   if (badToken)
     throw `Bad selector token: ${badToken[0]}`;
   tokens = tokens.filter(([t, ws]) => !ws);
-  let lastMedia = tokens.findLastIndex(([, , media]) => media);
-  if (lastMedia === -1) lastMedia = 0; // If none found, assume media section is empty.
-  let firstSelector = tokens.findIndex(([, , media, mop]) => !(media || mop));
-  if (firstSelector === -1) firstSelector = tokens.length;
-
+  const lastMedia = tokens.findLastIndex(([, , media]) => media) + 1;
+  const firstSelector = (tokens.findIndex(([, , media, mop]) => !(media || mop)) + 1) || tokens.length;
+  
   tokens = tokens.map(([t]) => t);
   if (firstSelector < lastMedia)
     throw `media queries must come before selectors: 
