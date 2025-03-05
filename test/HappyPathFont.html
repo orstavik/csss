@@ -1,51 +1,128 @@
+<!-- <pre>
+
+  $text-container = {
+    $font(Abz)
+    |*$font(times)
+    |.par$normal_space_between_letters
+    |.hea$font(arial)$bold$wider_letter_space
+    |.info$font(600)$text(bold)$just_a_little_bit_wider_between_letters
+  }
+  
+  /*gap|g(letter,word,line)*/
+  /* gap(block,inline) or gap(inline,block) => inline is word and letter spacing, block is line height */
+  
+  text-align - /*c|center|a|start|b|end|l|left|r|right|j|justify|m|match-parent*/ 
+  
+  /* font / text / em ? */
+  /* is the paragraphing, is the text or font? is it a separate unit, $par? layout for text block? */
+  /* will font / text / paragraph eat text to be gone? */
+  /* inherit non-inherit default value for the different properties. 
+  
+  text = non-inherit                            vs font = inherit ?
+  text = word and up (lines, text-block)        vs font = word and down (letters)
+  text = word and down style (bold/italic) vs font = word and up decoration
+  text-decoration = $text-decoration-color()
+  */
+  /* $em(10px) */
+  
+  --
+  
+  Okay so what should I consider?
+  1. Inheritance
+  2. Block or inline? Paragprah or Font?
+  3. Groupings
+  
+</pre> -->
 <test-html title="$font()">
   <main>
-    <p class="$font(times,serif,50px,800,ultra-expanded)">
-      $font(times,serif,50px,800,ultra-expanded)
+    <p class="$font((times:serif),50px,700,center) $bold">
+      $font(family, size?, weight , text align)
     </p>
     Notes:
-    <ol class="$font(arial,sans-serif,20px,200,italic)">
-      <li>$font() - family, size, weight, stretch, style</li>
-      <li>$text() - text-align, text-transform, text-indent, text-wrap&hypens
-      <li>spacing() - letter spacing, word spacing, line-height</li>
+    <ol class="$font((arial:sans-serif),20px,200,start) $italic">
+      <li>$font() - family, size?, weight , text align because inherited</li>
+      <li>$text() - text-transform, text-indent, stretch
+      <li>$bold, $italic, $oblique(number)</li>
+      <li>$spacing() - letter spacing, word spacing, line-height</li>
+      <li>$decoration() - text-decoration-style, text-decoration-line, text-decoration-thickness</li>
+      <li>$fontvar() - font-variant-caps, font-variant-east-asian, font-variant-ligatures,
+        font-variant-numeric.
+        <ul>
+          <li>East Asian could be used in language</li>
+        </ul>
       </li>
-      <li>$shadow()</li>
-      <li>$language() - line break, word break, direction, vertical-align, writing-mode, text-combine-upright,
-        text-orientation, text-transform</li>
-      <li>$decoration()</li>
-      <li>$fontvar() - font-variant is a shorthand.</li>
+      <li>$language() - line break, direction, writing-mode, text-combine-upright,
+        text-orientation, text-transform
+        <ul>
+          <li>word-break is also used in language but can also be used in english so this should be a
+            standalone dollar short?</li>
+          <li>direction is also used in language but can also be used in flex rows and table columns so
+            I feel this should be a standalone dollar short? plus for japanese, writing mode is rather used.</li>
+          <li>vertical-align is not related to language but it gets affected when you set a language in different
+            direction.</li>
+          <li>text-transform is generally used in other stuff too but it has properties that can be
+            added in language.
+            so maybe this can a property that is grouped in two things text() and language()?
+          </li>
+        </ul>
+      </li>
+      <li>For future maybe because they are not widely supported: text-wrap&hypens</li>
     </ol>
   </main>
   <style>
-    /*container 0*/
-    /*$font(times,serif,50px,800,ultra-expanded)*/
-    :where(.\$font\(times\,serif\,50px\,800\,ultra-expanded\)) {
-      font-family: Times, serif;
-      font-size: 50px;
-      font-weight: 800;
-      font-stretch: ultra-expanded;
+    @layer container, items;
+
+    @layer container {
+
+      .\$font\(\(times\:serif\)\,50px\,700\,center\) {
+        font-family: Times, serif;
+        font-size: 50px;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .\$bold {
+        font-style: bold;
+      }
+
+      .\$font\(\(arial\,sans\-serif\)\,20px\,200\,start\) {
+        font-family: Arial, sans-serif;
+        font-size: 20px;
+        font-weight: 200;
+        font-style: italic;
+      }
+
+      .\$italic {
+        font-style: italic;
+      }
     }
 
-    /*container 0*/
-    /*$font(arial,sans-serif,20px,200,italic)*/
-    :where(.\$font\(arial\,sans-serif\,20px\,200\,italic\)) {
-      font-family: Arial, sans-serif;
-      font-size: 20px;
-      font-weight: 200;
-      font-style: italic;
-    }
+    @layer items {}
   </style>
 </test-html>
-<test-html title="">
+<test-html title="$text, $font, $spacing">
   <main>
-    <div class="$w(50%) $border(solid,2px)">
-      <p class="$text(c,indent(10%),spacing(0.1rem,0.5rem,2rem))">
-        $text(align(use the same abbreviations as align),
-        transform(), indent(), spacing(letter spacing, word spacing, line-height))
+    <div class="$w(70%) $border(solid,2px) $padding(1rem) $font(justify)">
+      <p class="$text(uppercase,condensed,indent(20%)) $spacing(0.1rem,0.5rem,2rem)">
+        Lorem ipsum dolor sit amet. Et quia temporibus est officia ipsam a sunt voluptatem et autem ullam sit
+        voluptate libero hic doloremque nobis eum dolor quas. Id magni tenetur aut exercitationem voluptates ut
+        voluptates distinctio aut doloribus voluptatibus aut ipsa iusto eos asperiores velit aut rerum facilis.
+        Ut itaque obcaecati et expedita voluptatibus et voluptas incidunt ut incidunt sunt vel totam laudantium eos
+        velit veritatis. Ut incidunt cumque in perspiciatis reiciendis sed dolorum temporibus? Ut harum
+        laudantium quo perferendis sint in laborum molestias qui aliquam dolore non consequatur enim aut
+        eaque harum. Et minima dolores id pariatur quia ut accusamus placeat et odit quia sit cumque natus. Eum veniam
+        laboriosam aut quia tempora et quas debitis et nulla minima ut autem assumenda.
+        Eos nemo perferendis id libero numquam et maiores quam aut quis quis.
       </p>
     </div>
   </main>
   <style>
+    /*container 0*/
+    /*$w(50%)*/
+    :where(.\$w\(70\%\)) {
+      inline-size: 70%;
+    }
+
     /*container 0*/
     /*$border(2px)*/
     :where(.\$border\(solid\,2px\)) {
@@ -54,49 +131,282 @@
     }
 
     /*container 0*/
-    /*$w(50%)*/
-    :where(.\$w\(50\%\)) {
-      inline-size: 50%;
+    /*$font(justify)*/
+    :where(.\$font\(justify\)) {
+      text-align: justify;
     }
 
     /*container 0*/
-    /*$text(center,indent(10%),gap(0.1rem,1rem,2rem))*/
-    :where(.\$text\(center\,indent\(10\%\)\,gap\(0\.1rem\,0\.5rem\,2rem\)\)) {
-      text-align: center;  /*c|center|a|start|b|end|s|stretch*/ 
-      text-indent: 10%;  /*paragraphish indent(indent)*/
+    /*$padding(1rem)*/
+    :where(.\$padding\(1rem\)) {
+      padding: 1rem;
+    }
 
-      letter-spacing: 0.1rem; /* fontish, maybe emish? it can also be paragraphish? yes. no? */
-      word-spacing: 0.5rem; /* paragraphish */  
-      line-height: 2em; /* paragraphish */  
+    /*container 0*/
+    /*$text(uppercase, condensed, indent(20%))*/
+    :where(.\$text\(uppercase\,condensed\,indent\(20\%\)\)) {
+      text-transform: uppercase;
+      font-stretch: condensed;
+      text-indent: 20%;
+    }
+
+    /*container 0*/
+    /*$spacing(0.1rem,0.5rem,2rem)*/
+    :where(.\$spacing\(0\.1rem\,0\.5rem\,2rem\)) {
+      letter-spacing: 0.1rem;
+      /* inline */
+      word-spacing: 0.5rem;
+      /* inline*/
+      line-height: 2em;
+      /* block */
     }
   </style>
 </test-html>
-<pre>
-$bold, $italic, $oblique(number)  => this is definitively $text-ish
+<test-html title="Paragraph Sample ($font, $spacing, $text, $bold, container-item)">
+  <main class="|*$_margin(auto)">
+    <div class="$width(100%) $spacing(0.1em,0.3em,1em) 
+    $font((verdana:serif),justify,15px)|*$_text(indent(15%),capitalize)
+    |.head$_font(center,40px)$oblique(5deg)
+    |.subheading$_font(end,15px,200)$italic
+    ">
+      <h1 class="head">The Article Heading</h1>
+      <h4 class="subheading">Sub-information... Lorem ipsum dolor sit amet. Et quia temporibus est officia ipsam a sunt
+        voluptatem et autem ullam sit voluptate libero hic doloremque nobis eum dolor quas.
+      </h4>
+      <p>Lorem ipsum dolor sit amet. Et quia temporibus est officia ipsam a sunt voluptatem et autem ullam sit
+        voluptate libero hic doloremque nobis eum dolor quas. Id magni tenetur aut exercitationem voluptates ut
+        voluptates distinctio aut doloribus voluptatibus aut ipsa iusto eos asperiores velit aut rerum facilis.
+        Ut itaque obcaecati et expedita voluptatibus et voluptas incidunt ut incidunt sunt vel totam laudantium eos
+        velit veritatis.
+      </p>
+      <p>Ut incidunt cumque in perspiciatis reiciendis sed dolorum temporibus? Ut harum
+        laudantium quo perferendis sint in laborum molestias qui aliquam dolore non consequatur enim aut
+        eaque harum. Et minima dolores id pariatur quia ut accusamus placeat et odit quia sit cumque natus.
+      </p>
+      <p>Eum veniam laboriosam aut quia tempora et quas debitis et nulla minima ut autem assumenda.
+        Eos nemo perferendis id libero numquam et maiores quam aut quis quis.
+      </p>
+    </div>
+  </main>
+  <style>
+    /*item 0*/
+    /*|*$_margin(auto)*/
+    :where(.\|\*\$\_margin\(auto\) > *) {
+      margin: auto;
+    }
 
-$text-container = {
-  $font(Abz)
-  |*$font(times)
-  |.par$normal_space_between_letters
-  |.hea$font(arial)$bold$wider_letter_space
-  |.info$font(600)$text(bold)$just_a_little_bit_wider_between_letters
-}
+    /*container 0*/
+    /*$width(100%)*/
+    :where(.\$width\(100\%\)) {
+      inline-size: 100%;
+    }
 
-/*gap|g(letter,word,line)*/
-/* gap(block,inline) or gap(inline,block) => inline is word spacing, block is line spacing */
+    /*container 0*/
+    /*$spacing(0.1rem,0.5rem,2rem)*/
+    :where(.\$spacing\(0\.1em\,0\.3em\,1em\)) {
+      letter-spacing: 0.1em;
+      /* inline */
+      word-spacing: 0.3em;
+      /* inline*/
+      line-height: 1em;
+      /* block */
+    }
 
-/*c|center|a|start|b|end|s|stretch*/ 
+    /*container 0*/
+    /*$font((Arial,serif),justify,15px)|*$_text(indent(15%),capitalize)*/
+    :where(.\$font\(\(verdana\,serif\)\,justify\,15px\)\|\*\$\_text\(indent\(15\%\)\,transform\(capitalize\)\)) {
+      font-family: Verdana, serif;
+      text-align: justify;
+      font-size: 15px;
+    }
 
-/* font / text / em ? */
-/* is the paragraphing, is the text or font? is it a separate unit, $par? layout for text block? */
-/* will font / text / paragraph eat text to be gone? */
-/* inherit non-inherit default value for the different properties. 
+    /*item 0*/
+    /*$font((Arial,serif),justify,15px)|*$_text(indent(15%),capitalize)*/
+    :where(.\$font\(\(verdana\,serif\)\,justify\,15px\)\|\*\$\_text\(indent\(15\%\)\,capitalize\) > *) {
+      text-indent: 15%;
+      text-transform: capitalize;
+    }
 
-text = non-inherit                            vs font = inherit ?
-text = word and up (lines, text-block)        vs font = word and down (letters)
-text = word and down decoration (bold/italic) vs font = word and up decoration
-text-decoration = $text-decoration-color()
-*/
-/* $em(10px) */
-test
-</pre>
+    /*item 0*/
+    /*|.head$_font(center,40px)$oblique(5deg)*/
+    :where(.\|\.head\$\_font\(center\,40px\)\$oblique\(5deg\) > .head) {
+      text-align: center;
+      font-size: 40px;
+      font-style: oblique 5deg;
+    }
+
+    /*item 0*/
+    /* |.subheading$_font(end,15px,200)$italic*/
+    :where(.\|\.subheading\$\_font\(end\,15px\,200\)\$italic > .subheading) {
+      text-align: end;
+      font-size: 15px;
+      font-weight: 200;
+      font-style: italic;
+    }
+  </style>
+</test-html>
+<test-html title="$text-decoration() and $color() 1">
+  <main>
+    <h2 class="$text-decoration(underline,dotted,4px) $color(,,,orange)">
+      Hello!
+    </h2>
+    <h3 class="$text-decoration(overline,solid) $color(,,,blue)">
+      Sunshine!!!
+    </h3>
+    <p class="$text-decoration(linethrough,underline,wavy,2px) $color(,,,#ff1493)">
+      I am a text decoration.
+    </p>
+  </main>
+  <style>
+    /*container 0*/
+    /*$text-decoration(underline,dotted,4px)*/
+    :where(.\$text\-decoration\(underline\,dotted\,4px\)) {
+      text-decoration-line: underline;
+      text-decoration-style: dotted;
+      text-decoration-thickness: 4px;
+    }
+
+    /*container 0*/
+    /*$color(,,,orange)*/
+    :where(.\$color\(\,\,\,orange\)) {
+      text-decoration-color: orange;
+    }
+
+    /*container 0*/
+    /*$text-decoration(overline,solid)*/
+    :where(.\$text\-decoration\(overline\,solid\)) {
+      text-decoration-line: overline;
+      text-decoration-style: solid;
+    }
+
+    /*container 0*/
+    /*$color(,,,blue)*/
+    :where(.\$color\(\,\,\,blue\)) {
+      text-decoration-color: blue;
+    }
+
+    /*container 0*/
+    /*$text-decoration(linethrough,underline,wavy,2px)*/
+    :where(.\$text\-decoration\(linethrough\,underline\,wavy\,2px\)) {
+      text-decoration-line: line-through underline;
+      text-decoration-style: wavy;
+      text-decoration-thickness: 2px;
+    }
+
+    /*container 0*/
+    /*$color(,,,green)*/
+    :where(.\$color\(\,\,\,\#ff1493\)) {
+      text-decoration-color: #ff1493;
+    }
+  </style>
+</test-html>
+<test-html title="$text-decoration() and $color() 2">
+  <main>
+    <ul>
+      <li class="$text-decoration(underline,solid,4px) $color(,,,yellow)">$text-decoration(line/s,style,thickness)</li>
+      <br>
+      <a href="" class="$text-decoration(none)">
+        <li>Underline, overline, and line-through can be stacked on top of each other.</li>
+      </a>
+      <li class="$text-decoration(line-through,dashed,0.5%)">If they're stacked, they share the same style.</li>
+      <br>
+      <li class="$text-decoration(overline,underline,wavy,20%) $color(green)">Like this.</li>
+    </ul>
+
+    <h4> This property shoould be <span class="$text-decoration(underline,double,4px) $color(,,,red)">specific</span>.
+      Not inherited. </h4>
+  </main>
+  <style>
+    /*container 0*/
+    /*$text-decoration(underline,solid,2px)*/
+    :where(.\$text\-decoration\(underline\,solid\,4px\)) {
+      text-decoration-line: underline;
+      text-decoration-style: solid;
+      text-decoration-thickness: 4px;
+    }
+
+    /*container 0*/
+    /*$color(,,,yellow)*/
+    :where(.\$color\(\,\,\,yellow\)) {
+      text-decoration-color: yellow;
+    }
+
+    /*container 0*/
+    /*$text-decoration(none)*/
+    :where(.\$text\-decoration\(none\)) {
+      text-decoration: none;
+    }
+
+    /*container 0*/
+    /*$text-decoration(line-through,dashed,0.5%)*/
+    :where(.\$text\-decoration\(line\-through\,dashed\,0\.5\%\)) {
+      text-decoration-line: line-through;
+      text-decoration-style: dashed;
+      text-decoration-thickness: 0.5%;
+    }
+
+    /*container 0*/
+    /*$text-decoration(overline,underline,wavy,10%)*/
+    :where(.\$text\-decoration\(overline\,underline\,wavy\,20\%\)) {
+      text-decoration-line: overline underline;
+      text-decoration-style: wavy;
+      text-decoration-thickness: 20%;
+    }
+
+    /*container 0*/
+    /*$color(pink)*/
+    :where(.\$color\(green\)) {
+      color: green;
+    }
+
+    /*container 0*/
+    /*$text-decoration(underline,double,4px)*/
+    :where(.\$text\-decoration\(underline\,double\,4px\)) {
+      text-decoration-line: underline;
+      text-decoration-style: double;
+      text-decoration-thickness: 4px;
+    }
+
+    /*container 0*/
+    /*$color(,,,red)*/
+    :where(.\$color\(\,\,\,red\)) {
+      text-decoration-color: red;
+    }
+  </style>
+</test-html>
+<test-html title="$text-shadow()">
+  <main>
+    Option 1:
+    <h2 class="$text-shadow((2px,4px,6px),(4px,6px,8px)) $color(,white,,,rgba(0,0,0,0.5)/rgba(0,128,0,0.3))">
+      Text Shadows are awesome?!
+    </h2>
+    <p class="$text-shadow(1px,2px,5px) $color(,,,,pink)">
+      I have a shadow colored pink.
+    </p>
+  </main>
+  <style>
+    /*container 0*/
+    /*$text-shadow((2px,4px,6px),(4px,6px,8px))*/
+    :where(.\$text\-shadow\(\(2px\,4px\,6px\)\,\(4px\,6px\,8px\)\)) {
+      text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5), 4px 6px 8px rgba(0, 128, 0, 0.3);
+    }
+
+    /*container 0*/
+    /*$color(,white,,,rgba(0,0,0,0.5)/rgba(0,128,0,0.3))*/
+    :where(.\$color\(\,white\,\,\,rgba\(0\,0\,0\,0\.5\)\/rgba\(0\,128\,0\,0\.3\)\)) {
+      background-color: white;
+    }
+
+    /*container 0*/
+    /*$text-shadow(1px,2px,5px)*/
+    :where(.\$text\-shadow\(1px\,2px\,5px\)) {
+      text-shadow: 1px 2px 5px pink;
+    }
+
+    /*container 0*/
+    /*$color(,,,,pink)*/
+    :where(.\$color\(\,\,\,\,pink\)) {
+      color: pink;
+    }
+  </style>
+</test-html>
