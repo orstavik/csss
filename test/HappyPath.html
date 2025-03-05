@@ -172,24 +172,23 @@
   </style>
 </test-html>
 <test-html title="color(3)">
+  <div class="$color(black,#123456)$border-color(red)">
+    hello
+  </div>
   <style>
     @layer container, items;
 
     @layer container {
-
-      /*$color(black,#123456)$color-border(red)*/
-      /*$color(black,#123456)$color-border(red)*/
-      :where(.\$color\(black\,\#123456\)\$color-border\(red\)) {
-        color: black;
-        --background-color: #123456;
-        border-color: red;
+      .\$color\(black\,\#123456\)\$border-color\(red\) {
+        color: oklch(from black var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from black var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: color-mix(in oklch, oklch(from black var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from black var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+        border-color: red;/*why?*/
       }
+    }
 
-      @layer items {}
+    @layer items {}
   </style>
-  <div class="$color(black,#123456)$color-border(red)">
-    hello
-  </div>
 </test-html>
 <test-html title="color(3b)">
   <style>
@@ -205,11 +204,11 @@
 
     @layer items {}
   </style>
-  <div class="\$color\(black\,\#123456\,green\)">
+  <div class="$color(black,#123456,green)">
     hello
   </div>
 </test-html>
-<test-html title="\$color\(black\,\#123456\,green\:yellow)">
+<test-html title="$color(black,#123456,green:yellow)">
   <style>
     @layer container, items;
 
@@ -368,8 +367,7 @@
     @layer container {
       .\$flex\(cc\)\|\*\$_flex\(margin\(10px\)\) {
         display: flex;
-        align-content: center;
-        justify-content: center;
+        place-content: center;
       }
     }
 
@@ -387,10 +385,7 @@
     @layer container {
       .\$flex\(ellipsis\) {
         display: flex;
-        overflow-x: hidden;
-        overflow-inline: hidden;
-        overflow-y: hidden;
-        overflow-block: hidden;
+        overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
@@ -482,6 +477,7 @@
 <test-html title="@print:hover$border(solid,2px)|@screen:valid$border(dotted,2px)|.first$border(dashed,2px)">
   <style>
     @layer container, items;
+
     @layer container {
       @media print {
         .\@print\:hover\$border\(solid\,2px\)\|\@screen\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):hover {
