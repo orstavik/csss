@@ -83,6 +83,15 @@ export function mergy(...res) {
   for (const value of res)
     if (typeof value !== "object")
       throw new SyntaxError("unrecognized value: " + value);
+  for (const obj of res) {
+    for (const key in obj) {
+      const kebab = key.replace(/[A-Z]/g, "-$&").toLowerCase();
+      if (kebab !== key) {
+        obj[kebab] = obj[key];
+        delete obj[key];
+      }
+    }
+  }
   const keys = res.map(o => Object.keys(o).map(k => k.split("-")[0]));
   const test = new Set(keys.shift());
   for (const ks of keys)
@@ -288,6 +297,34 @@ NativeCssProperties.transition.scope = EASING_FUNCTIONS;
 NativeCssProperties.animation.scope = EASING_FUNCTIONS;
 
 const bg = (...args) => ({ background: args.join(" ") || "var(--background-color)" });
+
+const SPECIAL_FONT = {
+  //fonts
+  //add the font families here too.. $times $helvetica $arial $courier $georgia $palatino $serif etc.
+  bold: (...args) => { if (args.length) throw "bold cannot have any arguments"; return { font: "bold" }; },
+  italic: (...args) => { if (args.length) throw "italic cannot have any arguments"; return { font: "italic" }; },
+  oblique: (...args) => ({ font: ["oblique", ...args].join(" ") }),
+  "small-caps": (...args) => { if (args.length) throw "small-caps cannot have any arguments"; return { font: "small-caps" }; },
+  "all-small-caps": (...args) => { if (args.length) throw "all-small-caps cannot have any arguments"; return { font: "all-small-caps" }; },
+  "petite-caps": (...args) => { if (args.length) throw "petite-caps cannot have any arguments"; return { font: "petite-caps" }; },
+  "all-petite-caps": (...args) => { if (args.length) throw "all-petite-caps cannot have any arguments"; return { font: "all-petite-caps" }; },
+  "unicase": (...args) => { if (args.length) throw "unicase cannot have any arguments"; return { font: "unicase" }; },
+  "titling-caps": (...args) => { if (args.length) throw "titling-caps cannot have any arguments"; return { font: "titling-caps" }; },
+
+  //text-transform
+  capitalize: (...args) => { if (args.length) throw "capitalize cannot have any arguments"; return { "text-transform": "capitalize" }; },
+  uppercase: (...args) => { if (args.length) throw "uppercase cannot have any arguments"; return { "text-transform": "uppercase" }; },
+  lowercase: (...args) => { if (args.length) throw "lowercase cannot have any arguments"; return { "text-transform": "lowercase" }; },
+  "full-width": (...args) => { if (args.length) throw "full-width cannot have any arguments"; return { "text-transform": "full-width" }; },
+  "full-size-kana": (...args) => { if (args.length) throw "full-size-kana cannot have any arguments"; return { "text-transform": "full-size-kana" }; },
+  "math-auto": (...args) => { if (args.length) throw "math-auto cannot have any arguments"; return { "text-transform": "math-auto" }; },
+
+  //text-decoration
+  underline: (...args) => { if (args.length) throw "underline cannot have any arguments"; return { "text-decoration": "underline" }; },
+  overline: (...args) => { if (args.length) throw "overline cannot have any arguments"; return { "text-decoration": "overline" }; },
+  "line-through": (...args) => { if (args.length) throw "line-through cannot have any arguments"; return { "text-decoration": "line-through" }; },
+
+}
 
 export default {
   ...NativeCssProperties,
