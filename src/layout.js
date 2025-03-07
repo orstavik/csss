@@ -1,7 +1,7 @@
 import { mergy, defaultValues, toLogicalFour } from "./func.js";
 
-const O2 = "(?:(visible|hidden|clip)|(auto|scroll)(?:-snap(?:-mandatory)?)?)$"; 
-const OVERFLOW2 = new RegExp(`^${O2}(?:\:${O2})?$`); //$block(hidden:scroll-snap-mandatory,...)
+const O2 = "(?:(visible|hidden|clip)|(auto|scroll)(?:-snap(?:-mandatory)?)?)";
+const OVERFLOW2 = new RegExp(`^${O2}(?::${O2})?$`); //$block(hidden:scroll-snap-mandatory,...)
 
 //todo rename the text block layout unit to $page
 

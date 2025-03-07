@@ -20,8 +20,8 @@ export class Expression {
 }
 
 const WORD = /[-a-zA-Z][a-zA-Z0-9-]*/;
-const CPP = /[,()]/.source;
-const nCPP = /[^,()]+/.source;
+const CPP = /[,()|$=;{}]/.source;
+const nCPP = /[^,()|$=;{}]+/.source;
 const QUOTE = /([`'"])(?:\\.|(?!\2).)*?\2/.source;
 const TOKENS = new RegExp(`(${QUOTE})|(\\s+)|(${CPP})|(${nCPP})`, "g");
 
@@ -83,25 +83,21 @@ function parseNestedExpression(short) {
 export function parse$Expression(exp) {
   const res = Object.fromEntries(exp.split("|").map((s, i) => i ? "|" + s : s)
     .map(seg => seg.split("$"))
-    .map(([sel, ...shorts]) =>
-      ([sel, shorts])));
+    .map(([sel, ...shorts]) => [sel, shorts]));
   for (const k in res)
     res[k] = { shorts: res[k].map(parseNestedExpression), selector: parseSelector(k) };
   return res;
 }
 
-// const SUPER_HEAD = /([$:])([a-b0-9_-]+)\s*=/.source; // (type, name)
-// const SUPER_LINE = /((["'`])(?:\\.|(?!\4).)*?\4|[^;]+);/.source; // (body1)
-// const SUPER_BODY = /{((["'`])(?:\\.|(?!\6).)*?\6|[^}]+)}/.source;
-// const SUPER = new RegExp(`${SUPER_HEAD}(?:${SUPER_LINE}|${SUPER_BODY})`);
+const SUPER_HEAD = /([$:@][a-b_][a-b0-9_-]+)\s*=/.source; // (name)
+const SUPER_LINE = /((["'`])(?:\\.|(?!\3).)*?\3|\/\*[\s\S]*?\*\/|[^;]+);/.source; // (body1, quoteSign)
+const SUPER_BODY = /{((["'`])(?:\\.|(?!\5).)*?\5|\/\*[\s\S]*?\*\/|[^}]+)}/.source;// (body2, quoteSign)
+const SUPER = new RegExp(`${SUPER_HEAD}(?:${SUPER_LINE}|${SUPER_BODY})`, "g");
 
-// export function parse$SuperExpressions(txt) {
-//   txt = txt.replace(/\/\*[\s\S]*?\*\//g, ""); // remove comments
-//   const supers = { "$": {}, ":": {} };
-//   for (let [, type, name, statement, , body = statement] of txt.matchAll(SUPER))
-//     supers[type][name] = body.trim();
-//   supers["$"] = Object2.mapValue(supers[$], parse$Expression);
-// }
+export function* findStatements(txt) {
+  for (let [, name, _body, , body = _body] of txt.matchAll(SUPER))
+    yield { name, body };
+}
 
 //todo we don't support nested :not(:has(...))
 //todo we don't do @support/scope/container. 
@@ -124,7 +120,7 @@ function parseSelectorBody(str) {
   tokens = tokens.filter(([t, ws]) => !ws);
   const lastMedia = tokens.findLastIndex(([, , media]) => media) + 1;
   const firstSelector = (tokens.findIndex(([, , media, mop]) => !(media || mop)) + 1) || tokens.length;
-  
+
   tokens = tokens.map(([t]) => t);
   if (firstSelector < lastMedia)
     throw `media queries must come before selectors: 
@@ -134,7 +130,7 @@ function parseSelectorBody(str) {
   const selects = [[]];
   for (const t of tokens.slice(lastMedia)) {
     t === "," ?
-      selects.push([]):
+      selects.push([]) :
       selects.at(-1).push(t);
   }
   return { medias, selects };

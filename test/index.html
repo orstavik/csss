@@ -3,6 +3,7 @@
 
   (function happyTest() {
     const style = document.querySelector('style');
+    style.textContent = "";
     const sheetWrapper = new SheetWrapper(style.sheet);
     for (let el of document.body.querySelectorAll('[class*="$"]'))
       for (let clazz of el.classList)
