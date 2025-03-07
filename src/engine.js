@@ -4,30 +4,11 @@ import nativeAndMore from "./func.js";
 import layouts from "./layout.js";
 import colorPalette from "./palette.js";
 
-const STACKABLE_PROPERTIES = {
-  background: ",",
-  transition: ",",
-  "font-family": ",",
-  "voice-family": ",",
-  "text-shadow": ",",
-  "box-shadow": ",",
-  animation: ",",
-  mask: ",",
-  "font-feature-settings": ",",
-  "will-change": ",",
-
-  transform: " ",
-  filter: " ",
-  "counter-reset": " ",
-  "counter-increment": " ",
-  "font-variant": " ",
-};
-
-const shortFuncs = new Interpreter({
+const SHORTS = {
   ...nativeAndMore,
   ...colorPalette,
   ...layouts,
-}, STACKABLE_PROPERTIES);
+};
 
 const SelectorSupers = {
   "@sm": "(min-width:640px)",
@@ -41,7 +22,8 @@ const SelectorSupers = {
   ":edge": ":is(:first-child,:last-child)",
 };
 
-const shortSelector = new InterpreterSelector(SelectorSupers);
+// const shortSelector = new InterpreterSelector(SelectorSupers);
+const shortFuncs = new Interpreter(SHORTS);
 
 class Short {
   static itemSelector(selects) {
@@ -65,7 +47,7 @@ class Short {
     for (let unit of this.units) {
       unit.shorts2 = shortFuncs.mergeOrStack(unit.shorts);
       unit.body = Object.entries(unit.shorts2).map(([k, v]) => `${k}: ${v};`).join(" ");
-      Object.assign(unit, shortSelector.interpret(unit.selector));
+      Object.assign(unit, InterpreterSelector.interpret(SelectorSupers, unit.selector));
     }
     this.container = this.units.find(u => !u.selector.item);
     this.items = this.units.filter(u => u !== this.container);

@@ -2,19 +2,38 @@ import { Expression, DictMap } from "./Parser.js";
 
 const toCamel = s => s.replace(/[A-Z]/g, "-$&").toLowerCase();
 
+const STACKABLE_PROPERTIES = {
+  background: ",",
+  transition: ",",
+  "font-family": ",",
+  "voice-family": ",",
+  "text-shadow": ",",
+  "box-shadow": ",",
+  animation: ",",
+  mask: ",",
+  "font-feature-settings": ",",
+  "will-change": ",",
+
+  transform: " ",
+  filter: " ",
+  "counter-reset": " ",
+  "counter-increment": " ",
+  "font-variant": " ",
+};
+
 export class Interpreter {
 
-  constructor(shortFuncs, stackables) {
+  constructor(shortFuncs) {
     this.shortFuncs = DictMap(shortFuncs, toCamel);
-    this.stackables = stackables;
+    this.stackables = STACKABLE_PROPERTIES;
   }
 
-  interpretExp(exp, scope = {}) {
+  interpretExp(exp, scope) {
     if (typeof exp == "string") exp = new Expression(exp, []);
-    const cb = scope[exp.name] ?? this.shortFuncs[exp.name];
+    const cb = scope[exp.name];// ?? this.shortFuncs[exp.name];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${exp.name}`);
-    const innerScope = Object.assign(scope, cb.scope);
+    const innerScope = !cb.scope ? scope : Object.assign({}, scope, cb.scope);
     const args = exp.args.map(x => x instanceof Expression ? this.interpretExp(x, innerScope) : x);
     return cb.call(exp, ...args);
   }
@@ -22,7 +41,7 @@ export class Interpreter {
   mergeOrStack(shorts) {
     const res = {};
     for (const short of shorts) {
-      const obj = this.interpretExp(short);
+      const obj = this.interpretExp(short, this.shortFuncs);
       for (let [k, v] of Object.entries(obj)) {
         if (v == null) continue;
         k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
@@ -83,10 +102,10 @@ export class InterpreterSelector {
     return medias.join(" and ").replaceAll("and , and", ",");
   }
 
-  interpret({ medias, selects }) {
+  static interpret(supers, { medias, selects }) {
     const medias2 = InterpreterSelector.mediasToString(
-      medias.map(s => this.supers[s] ?? s));
-    const selects2 = selects.map(s => this.supers[s] ?? s)
+      medias.map(s => supers[s] ?? s));
+    const selects2 = selects.map(s => supers[s] ?? s)
       .map(s => s === ">>" ? " " : s)
       .map(InterpreterSelector.selectorNot)
       .map(InterpreterSelector.selectorHas)
