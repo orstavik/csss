@@ -56,21 +56,6 @@ export function borderSwitch(obj) {
   }));
 }
 
-//enables us to write a min and max eiter as 2px:5px or max(2px,5px)
-//$w(50%)
-//$w(1,2) not allowed, only 1 or 3 arguments.
-//$w(30em:35%,50%,60cm:80vw:100%)
-//$w(max(30em,35%),50%,min(60cm,80vw,100%))
-// const Size1 = NAME => P(NAME, ListOf(null, PositiveSize));
-// const Size3 = NAME => Merge(ListOf(null,
-//   P(`min-${NAME}`, ColonFunction("max", ",", PositiveSize)),
-//   P(NAME, PositiveSize),
-//   P(`max-${NAME}`, ColonFunction("min", ",", PositiveSize))
-// ));
-// const Size = NAME => Either(Size1(NAME), Size3(NAME));
-// const w = Size("inline-size");
-// const h = Size("block-size");
-
 function colonSplit2(NAME, SEP, x) {
   if (x == null) return x;
   const res = x.split(":");
@@ -108,6 +93,11 @@ export function defaultValues(Defaults, res) {
   return Object.assign(Defaults, res);
 }
 
+//enables us to write a min and max eiter as 2px:5px or max(2px,5px)
+//$w(50%)
+//$w(1,2) not allowed, only 1 or 3 arguments.
+//$w(30em:35%,50%,60cm:80vw:100%)
+//$w(max(30em,35%),50%,min(60cm,80vw,100%))
 function toSize(NAME, ...args) {
   args = args.map(a => a?.replace(/^(min|max)$/, "$&-content"));
   if (args.length === 1)
@@ -296,35 +286,61 @@ const EASING_FUNCTIONS = {
 NativeCssProperties.transition.scope = EASING_FUNCTIONS;
 NativeCssProperties.animation.scope = EASING_FUNCTIONS;
 
-const bg = (...args) => ({ background: args.join(" ") || "var(--background-color)" });
-
-const SPECIAL_FONT = {
-  //fonts
-  //add the font families here too.. $times $helvetica $arial $courier $georgia $palatino $serif etc.
-  bold: (...args) => { if (args.length) throw "bold cannot have any arguments"; return { font: "bold" }; },
-  italic: (...args) => { if (args.length) throw "italic cannot have any arguments"; return { font: "italic" }; },
-  oblique: (...args) => ({ font: ["oblique", ...args].join(" ") }),
-  "small-caps": (...args) => { if (args.length) throw "small-caps cannot have any arguments"; return { font: "small-caps" }; },
-  "all-small-caps": (...args) => { if (args.length) throw "all-small-caps cannot have any arguments"; return { font: "all-small-caps" }; },
-  "petite-caps": (...args) => { if (args.length) throw "petite-caps cannot have any arguments"; return { font: "petite-caps" }; },
-  "all-petite-caps": (...args) => { if (args.length) throw "all-petite-caps cannot have any arguments"; return { font: "all-petite-caps" }; },
-  "unicase": (...args) => { if (args.length) throw "unicase cannot have any arguments"; return { font: "unicase" }; },
-  "titling-caps": (...args) => { if (args.length) throw "titling-caps cannot have any arguments"; return { font: "titling-caps" }; },
-
-  //text-transform
-  capitalize: (...args) => { if (args.length) throw "capitalize cannot have any arguments"; return { "text-transform": "capitalize" }; },
-  uppercase: (...args) => { if (args.length) throw "uppercase cannot have any arguments"; return { "text-transform": "uppercase" }; },
-  lowercase: (...args) => { if (args.length) throw "lowercase cannot have any arguments"; return { "text-transform": "lowercase" }; },
-  "full-width": (...args) => { if (args.length) throw "full-width cannot have any arguments"; return { "text-transform": "full-width" }; },
-  "full-size-kana": (...args) => { if (args.length) throw "full-size-kana cannot have any arguments"; return { "text-transform": "full-size-kana" }; },
-  "math-auto": (...args) => { if (args.length) throw "math-auto cannot have any arguments"; return { "text-transform": "math-auto" }; },
-
-  //text-decoration
-  underline: (...args) => { if (args.length) throw "underline cannot have any arguments"; return { "text-decoration": "underline" }; },
-  overline: (...args) => { if (args.length) throw "overline cannot have any arguments"; return { "text-decoration": "overline" }; },
-  "line-through": (...args) => { if (args.length) throw "line-through cannot have any arguments"; return { "text-decoration": "line-through" }; },
-
+const KNOWN_BAD_FONT_NAMES = {
+  "comic": "Comic Sans MS",
+  "comic+sans": "Comic Sans MS",
+  "times": "Times New Roman",
+  "courier": "Courier New",
+  "palatino": "Palatino Linotype",
+  "helvetica": "Helvetica Neue",
+  "lucida": "Lucida Sans Unicode",
 }
+//$font("Arial+Black",serif,bold,small-caps,ultra-condensed,capitalize,sans-serif,oblique(-10deg),ui-sans-serif)
+//$font("Arial+Black",sans-serif,ui-sans-serif,900,small-caps,ultra-condensed,capitalize,oblique(10deg))
+function font(...args) {
+  const res = {
+    fontFamily: [],
+    fontStyle: "",
+    fontWeight: "",
+    fontVariant: "",
+    fontStretch: "",
+    textTransform: "",
+    letterSpacing: ""
+  };
+  for (const A of args) {
+    const a = A.toLowerCase();
+    if (a in KNOWN_BAD_FONT_NAMES)
+      res.fontFamily.push(KNOWN_BAD_FONT_NAMES[a]);
+    else if (a.match(/^(serif|sans-serif|monospace|cursive|fantasy|system-ui|ui-serif|ui-sans-serif|ui-monospace|ui-rounded|emoji|math|fangsong|Arial|Arial+Black|Calibri|Cambria|Candara|Comic+Sans+MS|Consolas|Constantia|Corbel|Courier+New|Georgia|Impact|Lucida+Console|Lucida+Sans+Unicode|Palatino+Linotype|Segoe+UI|Tahoma|Times+New+Roman|Trebuchet+MS|Verdana|Book+Antiqua|Century+Gothic|Franklin+Gothic+Medium|Garamond|Bookman+Old+Style|Brush+Script+MT|Helvetica|Helvetica+Neue|Courier+Monaco|Geneva|Lucida+Grande|Didot|Hoefler+Text|American+Typewriter|Gill+Sans|Optima|Futura|Baskerville|Copperplate|Menlo|Monaco|Apple+Chancery|Marker+Felt|Chalkboard|Andale+Mono|Palatino+Times|DejaVu+Sans|DejaVu+Serif|DejaVu+Sans+Mono|Liberation+Sans|Liberation+Serif|Liberation+Mono|Nimbus+Roman+No9+L|Nimbus+Sans+L|Nimbus+Mono+L|Century+Schoolbook+L|URW+Chancery+L|URW+Gothic+L|URW+Bookman+L|Wingdings|Webdings|Symbol|Zapf+Dingbats|-apple-system|BlinkMacSystemFont|Roboto)$/i))
+      res.fontFamily.push(A);
+    else if (a.match(/^["']/))
+      res.fontFamily.push(A);
+    else if (a.match(/^(italic|oblique(\s.*)?)$/))
+      res.fontStyle += a;
+    else if (a.match(/^(bold|bolder|lighter|[1-9]00)$/))
+      res.fontWeight += a;
+    else if (a.match(/^(small-caps|all-small-caps|petite-caps|all-petite-caps|unicase|titling-caps)$/))
+      res.fontVariant += a;
+    else if (a.match(/^(ultra-condensed|extra-condensed|condensed|semi-condensed|normal|semi-expanded|expanded|extra-expanded|ultra-expanded)$/))
+      res.fontStretch += a;
+    else if (a.match(/^(capitalize|uppercase|lowercase|full-width|full-size-kana|math-auto)$/))
+      res.textTransform += a;
+    else if (a.match(/^-?[0-9]*\.?[0-9]+([a-z]+|%)$/))
+      res.letterSpacing += a;
+    else
+      throw `Unrecognized font property: ${A}`;
+  }
+  res.fontFamily = res.fontFamily.map(s => s.replaceAll("+", " ")).join(", ");
+  for (const k in res)
+    if (!res[k])
+      res[k] = "initial";
+  return res;
+}
+font.scope = {
+  oblique: (...args) => ["oblique", ...args].join(" "),
+}
+
+const bg = (...args) => ({ background: args.join(" ") || "var(--background-color)" });
 
 export default {
   ...NativeCssProperties,
@@ -334,9 +350,52 @@ export default {
   ...NativeCssFilterFunctions,
   ...NativeCssGradientFunctions,
   border,
+  font,
   bg,
   background: bg,
   em: NativeCssProperties["font-size"],
   w: (...args) => toSize("inline-size", ...args),
   h: (...args) => toSize("block-size", ...args),
 }
+
+const todo = `
+$bold = $font-weight(bold)
+$italic = $font-style(italic)
+$oblique = $font-style(oblique)
+
+$small-caps = $font-variant(small-caps)
+$all-small-caps = $font-variant(all-small-caps)
+$petite-caps = $font-variant(petite-caps)
+$all-petite-caps = $font-variant(all-petite-caps)
+$unicase = $font-variant(unicase)
+$titling-caps = $font-variant(titling-caps)
+
+$capitalize = $text-transform(capitalize)
+$uppercase = $text-transform(uppercase)
+$lowercase = $text-transform(lowercase)
+$full-width = $text-transform(full-width)
+$full-size-kana = $text-transform(full-size-kana)
+$math-auto = $text-transform(math-auto)
+
+$underline = $text-decoration(underline)
+$overline = $text-decoration(overline)
+$line-through = $text-decoration(line-through)
+
+$ultra-condensed = $font-stretch(ultra-condensed)
+$extra-condensed = $font-stretch(extra-condensed)
+$condensed = $font-stretch(condensed)
+$semi-condensed = $font-stretch(semi-condensed)
+$semi-expanded = $font-stretch(semi-expanded)
+$expanded = $font-stretch(expanded)
+$extra-expanded = $font-stretch(extra-expanded)
+$ultra-expanded = $font-stretch(ultra-expanded)
+
+$serif = $font-family(serif)
+$sans-serif = $font-family(sans-serif)
+$monospace = $font-family(monospace)
+$cursive = $font-family(cursive)
+$fantasy = $font-family(fantasy)
+$system-ui = $font-family(system-ui)
+$ui-serif = $font-family(ui-serif)
+$ui-sans-serif = $font-family(ui-sans-serif)
+`;

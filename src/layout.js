@@ -3,6 +3,8 @@ import { mergy, defaultValues, toLogicalFour } from "./func.js";
 const O2 = "(?:(visible|hidden|clip)|(auto|scroll)(?:-snap(?:-mandatory)?)?)$"; 
 const OVERFLOW2 = new RegExp(`^${O2}(?:\:${O2})?$`); //$block(hidden:scroll-snap-mandatory,...)
 
+//todo rename the text block layout unit to $page
+
 function overflow(a) {
   const m = a.match(OVERFLOW2);
   if (!m) return;
@@ -64,6 +66,7 @@ const BLOCK_RESET = {
   "text-align": "initial",
   "text-indent": "initial",
   "text-transform": "none",
+  "text-shadow": "none",
   // "text-decoration": "none", already doesn't inherit.
 }
 const TextAlignAliases = {

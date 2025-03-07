@@ -507,6 +507,123 @@
     hello
   </div>
 </test-html>
+<test-html title="$font(times,serif,700,capitalize)">
+  <main class="$font(times,serif,500,2px,italic)">
+    <h2 class="$font(helvetica,arial,sans-serif,900,capitalize)">
+      $font(fontFamily[], fontStyle, fontWeight, fontVariant, fontStretch, textTransform, letterSpacing)
+    </h2>
+    Notes:
+    <p>
+      For future maybe because they are not widely supported: text-wrap&hypens
+    </p>
+    <p class="$font(comic+sans,lucida,'DejaVu+Sans+Mono')">goofy</p>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$font\(times\,serif\,500\,2px\,italic\) {
+        font-family: "Times New Roman", serif;
+        font-style: italic;
+        font-weight: 500;
+        font-variant: initial;
+        font-stretch: initial;
+        text-transform: initial;
+        letter-spacing: 2px;
+      }
+
+      .\$font\(helvetica\,arial\,sans-serif\,900\,capitalize\) {
+        font-family: "Helvetica Neue", arial, sans-serif;
+        font-style: initial;
+        font-weight: 900;
+        font-variant: initial;
+        font-stretch: initial;
+        text-transform: capitalize;
+        letter-spacing: initial;
+      }
+
+      .\$font\(comic\+sans\,lucida\,\'DejaVu\+Sans\+Mono\'\) {
+        font-family: "Comic Sans MS", "Lucida Sans Unicode", "DejaVu Sans Mono";
+        font-style: initial;
+        font-weight: initial;
+        font-variant: initial;
+        font-stretch: initial;
+        text-transform: initial;
+        letter-spacing: initial;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Simple Paragraph Sample ($block with container-item)">
+  <div class=" 
+    $w(100%)
+    $em(15px)
+    
+    $block(s,gap(0.3em,1em))
+    |*$_block(indent(15%))
+    |.head$_block(indent(-5%))
+    |.subheading$_block(indent(0))
+    ">
+    <h1 class="head">The Article Heading</h1>
+    <h4 class="subheading">Sub-information... Lorem ipsum dolor sit amet. Et quia temporibus est officia ipsam a sunt
+      voluptatem et autem ullam sit voluptate libero hic doloremque nobis eum dolor quas.
+    </h4>
+    <p>Lorem ipsum dolor sit amet. Et quia temporibus est officia ipsam a sunt voluptatem et autem ullam sit
+      voluptate libero hic doloremque nobis eum dolor quas. Id magni tenetur aut exercitationem voluptates ut
+      voluptates distinctio aut doloribus voluptatibus aut ipsa iusto eos asperiores velit aut rerum facilis.
+      Ut itaque obcaecati et expedita voluptatibus et voluptas incidunt ut incidunt sunt vel totam laudantium eos
+      velit veritatis.
+    </p>
+    <p>Ut incidunt cumque in perspiciatis reiciendis sed dolorum temporibus? Ut harum
+      laudantium quo perferendis sint in laborum molestias qui aliquam dolore non consequatur enim aut
+      eaque harum. Et minima dolores id pariatur quia ut accusamus placeat et odit quia sit cumque natus.
+    </p>
+    <p>Eum veniam laboriosam aut quia tempora et quas debitis et nulla minima ut autem assumenda.
+      Eos nemo perferendis id libero numquam et maiores quam aut quis quis.
+    </p>
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(100\%\) {
+        inline-size: 100%;
+      }
+
+      .\$em\(15px\) {
+        font-size: 15px;
+      }
+
+      .\$block\(s\,gap\(0\.3em\,1em\)\) {
+        display: block;
+        white-space: initial;
+        hyphens: initial;
+        text-indent: initial;
+        text-transform: none;
+        text-align: justify;
+        word-spacing: 0.3em;
+        line-height: 1em;
+      }
+    }
+
+    @layer items {
+      .\|\*\$_block\(indent\(15\%\)\)>* {
+        text-indent: 15%;
+      }
+
+      .\|\.head\$_block\(indent\(-5\%\)\)>.head {
+        text-indent: -5%;
+      }
+
+      .\|\.subheading\$_block\(indent\(0\)\)>.subheading {
+        text-indent: 0px;
+      }
+    }
+  </style>
+</test-html>
+
 <!--
 <test-html title=":dark=@media(prefers-color-scheme:dark);">
   <div css=":dark=@media(prefers-color-scheme:dark);">

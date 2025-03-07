@@ -61,7 +61,7 @@ class Short {
   }
 
   constructor(str) {
-    this.clazz = "." + str.replaceAll(/[^a-z0-9_-]/g, "\\$&");;
+    this.clazz = "." + str.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");;
     this.units = Object.values(parse$Expression(str));
     for (let unit of this.units) {
       unit.shorts2 = shortFuncs.mergeOrStack(unit.shorts);
@@ -152,7 +152,7 @@ export class SheetWrapper {
     const isInUse = r => {
       if (r instanceof CSSMediaRule) r = r.cssRules[0];
       if (!(r instanceof CSSStyleRule)) return false;
-      const className = r.selectorText.match(/^\.((\\.|[a-z0-9_-])+)/)?.[1].replaceAll(/\\(.)/g, "$1");
+      const className = r.selectorText.match(/^\.((\\.|[a-zA-Z0-9_-])+)/)?.[1].replaceAll(/\\(.)/g, "$1");
       return className && document.querySelector(`[class~="${className}"]`);
     }
 

@@ -19,10 +19,10 @@ export class Expression {
   }
 }
 
-const WORD = /[-a-z][a-z0-9-]*/;
+const WORD = /[-a-zA-Z][a-zA-Z0-9-]*/;
 const CPP = /[,()]/.source;
 const nCPP = /[^,()]+/.source;
-const QUOTE = /([`'"])(?:\\.|(?!\3).)*?\3/.source;
+const QUOTE = /([`'"])(?:\\.|(?!\2).)*?\2/.source;
 const TOKENS = new RegExp(`(${QUOTE})|(\\s+)|(${CPP})|(${nCPP})`, "g");
 
 function processToken([m, , , space]) {
@@ -106,11 +106,11 @@ export function parse$Expression(exp) {
 //todo we don't support nested :not(:has(...))
 //todo we don't do @support/scope/container. 
 //todo @support should be done in a transpile process on the <style> element.
-const media = /@(?:\([^)]+\)|[a-z][a-z0-9_-]*)/.source;
-const pseudo = /:[a-z][a-z0-9_-]*(?:\([^)]+\))?/.source;
-const at = /\[[a-z][a-z0-9_-]*(?:[$*~|^]?=(?:'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"))?\]/.source;
-const tag = /\[a-z][a-z0-9-]*/.source; //tag
-const clazz = /\.[a-z][a-z0-9_-]*/.source; //class
+const media = /@(?:\([^)]+\)|[a-zA-Z][a-zA-Z0-9_-]*)/.source;
+const pseudo = /:[a-zA-Z][a-zA-Z0-9_-]*(?:\([^)]+\))?/.source;
+const at = /\[[a-zA-Z][a-zA-Z0-9_-]*(?:[$*~|^]?=(?:'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"))?\]/.source;
+const tag = /\[a-zA-Z][a-zA-Z0-9-]*/.source; //tag
+const clazz = /\.[a-zA-Z][a-zA-Z0-9_-]*/.source; //class
 const mop = /[,!]/.source;
 const op = />>|[>+~&]/.source;
 const selectorTokens = new RegExp(
