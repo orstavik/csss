@@ -20,7 +20,7 @@ const STACKABLE_PROPERTIES = {
   filter: " ",
   "counter-reset": " ",
   "counter-increment": " ",
-  // "font-variant": " ",//todo
+  "font-variant": " ",
 };
 
 const shortFuncs = new Interpreter({
@@ -29,7 +29,6 @@ const shortFuncs = new Interpreter({
   ...layouts,
 }, STACKABLE_PROPERTIES);
 
-//todo missing specificity
 const SelectorSupers = {
   "@sm": "(min-width:640px)",
   "@md": "(min-width:768px)",
@@ -147,28 +146,26 @@ export class SheetWrapper {
     return registry.size - 1;
   }
 
-  #cleanTask;
-  #cleanup() {
-    const isInUse = r => {
-      if (r instanceof CSSMediaRule) r = r.cssRules[0];
-      if (!(r instanceof CSSStyleRule)) return false;
-      const className = r.selectorText.match(/^\.((\\.|[a-zA-Z0-9_-])+)/)?.[1].replaceAll(/\\(.)/g, "$1");
-      return className && document.querySelector(`[class~="${className}"]`);
-    }
-
-    const cleanupLayer = layer => {
-      for (let i = layer.cssRules.length - 1; i >= 0; i--)
-        if (!isInUse(layer.cssRules[i]))
-          layer.deleteRule(i);
-    }
-
-    this.#cleanTask = null;
-    cleanupLayer(this.container.layer);
-    cleanupLayer(this.items.layer);
-    this.sheet.ownerNode.textContent = [...this.sheet.cssRules].map(r => r.cssText).join('\n');
+  #isInUse(r) {
+    if (r instanceof CSSMediaRule) r = r.cssRules[0];
+    if (!(r instanceof CSSStyleRule)) return false;
+    const className = r.selectorText.match(/^\.((\\.|[a-zA-Z0-9_-])+)/)?.[1].replaceAll(/\\(.)/g, "$1");
+    return className && this.sheet.ownerNode.getRootNode().querySelector(`[class~="${className}"]`);
   }
 
+  #removeUnused(layer) {
+    for (let i = layer.cssRules.length - 1; i >= 0; i--)
+      if (!this.#isInUse(layer.cssRules[i]))
+        layer.deleteRule(i);
+  }
+
+  #cleanTask;
   cleanup() {
-    this.#cleanTask ??= requestAnimationFrame(() => this.#cleanup());
+    this.#cleanTask ??= requestAnimationFrame(_ => {
+      this.#cleanTask = null;
+      this.#removeUnused(this.container.layer);
+      this.#removeUnused(this.items.layer);
+      this.sheet.ownerNode.textContent = [...this.sheet.cssRules].map(r => r.cssText).join('\n');  
+    });
   }
 }

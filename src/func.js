@@ -302,7 +302,7 @@ function font(...args) {
     fontFamily: [],
     fontStyle: "",
     fontWeight: "",
-    fontVariant: "",
+    fontVariant: [],
     fontStretch: "",
     textTransform: "",
     letterSpacing: ""
@@ -320,7 +320,7 @@ function font(...args) {
     else if (a.match(/^(bold|bolder|lighter|[1-9]00)$/))
       res.fontWeight += a;
     else if (a.match(/^(small-caps|all-small-caps|petite-caps|all-petite-caps|unicase|titling-caps)$/))
-      res.fontVariant += a;
+      res.fontVariant.push(a);
     else if (a.match(/^(ultra-condensed|extra-condensed|condensed|semi-condensed|normal|semi-expanded|expanded|extra-expanded|ultra-expanded)$/))
       res.fontStretch += a;
     else if (a.match(/^(capitalize|uppercase|lowercase|full-width|full-size-kana|math-auto)$/))
@@ -331,6 +331,7 @@ function font(...args) {
       throw `Unrecognized font property: ${A}`;
   }
   res.fontFamily = res.fontFamily.map(s => s.replaceAll("+", " ")).join(", ");
+  res.fontVariant = res.fontVariant.join(" ");
   for (const k in res)
     if (!res[k])
       res[k] = "initial";
