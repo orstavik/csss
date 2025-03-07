@@ -234,17 +234,17 @@
     hello
   </div>
   <style>
+    @layer container, items;
+
     @layer container {
       .\$color\(rgb\(0\,12\,255\,0\.6\)\) {
         color: oklch(from rgba(0 12 255 / 0.6) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
         --background-color: oklch(from rgba(0 12 255 / 0.6) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: color-mix(in oklch, oklch(from rgba(0 12 255 / 0.6) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from rgba(0 12 255 / .6) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+        border-color: color-mix(in oklch, oklch(from rgba(0 12 255 / 0.6) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from rgba(0 12 255 / 0.6) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
       }
     }
 
     @layer items {}
-
-    @layer container, items;
   </style>
 </test-html>
 <test-html title="$w(min)">
@@ -641,6 +641,7 @@
         hyphens: initial;
         text-indent: initial;
         text-transform: none;
+        text-shadow: none;
         text-align: justify;
         word-spacing: 0.3em;
         line-height: 1em;
