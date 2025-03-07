@@ -1,6 +1,50 @@
-import { Expression, DictMap } from "./Parser.js";
+import { parse$Expression, Expression, DictMap } from "./Parser.js";
+import nativeAndMore from "./func.js";
+import layouts from "./layout.js";
+import colorPalette from "./palette.js";
 
 const toCamel = s => s.replace(/[A-Z]/g, "-$&").toLowerCase();
+const SHORTS = DictMap({
+  ...nativeAndMore,
+  ...colorPalette,
+  ...layouts,
+}, toCamel);
+
+export class Short {
+  static itemSelector(selects) {
+    selects = selects.map(s => s.join(""));
+    return selects.length === 1 ? selects[0] : `:where(\n${selects.join(", ")}\n)`;
+  }
+
+  static containerSelector(selects2, clazz) {
+    selects2 = selects2.map(cs => cs.map(s => s === "*" ? clazz : s).join(""));
+    return selects2.join(",\n");
+  }
+
+  static ruleToString({ medias2, medias3 = medias2, selectorStr, body }) {
+    body = `${selectorStr} { ${body} }`;
+    return medias3 ? `@media ${medias3} {  ${body} }` : body;
+  }
+
+  constructor(supers, str) {
+    this.clazz = "." + str.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");;
+    this.units = Object.values(parse$Expression(str));
+    for (let unit of this.units) {
+      unit.shorts2 = Interpreter.mergeOrStack(SHORTS, unit.shorts);
+      unit.body = Object.entries(unit.shorts2).map(([k, v]) => `${k}: ${v};`).join(" ");
+      Object.assign(unit, InterpreterSelector.interpret(supers, unit.selector));
+    }
+    this.container = this.units.find(u => !u.selector.item);
+    this.items = this.units.filter(u => u !== this.container);
+    this.container.selectorStr = Short.containerSelector(this.container.selects2, this.clazz);
+    for (const item of this.items) {
+      item.selectorStr = this.container.selectorStr + ">" + Short.itemSelector(item.selects2);
+      item.medias3 = [this.container.medias2, item.medias2].filter(Boolean).join(" and ");
+    }
+    for (const unit of this.units)
+      unit.rule = Short.ruleToString(unit);
+  }
+}
 
 const STACKABLE_PROPERTIES = {
   background: ",",
@@ -21,27 +65,22 @@ const STACKABLE_PROPERTIES = {
   "font-variant": " ",
 };
 
-export class Interpreter {
+class Interpreter {
 
-  constructor(shortFuncs) {
-    this.shortFuncs = DictMap(shortFuncs, toCamel);
-    this.stackables = STACKABLE_PROPERTIES;
-  }
-
-  interpretExp(exp, scope) {
+  static interpretExp(exp, scope) {
     if (typeof exp == "string") exp = new Expression(exp, []);
-    const cb = scope[exp.name];// ?? this.shortFuncs[exp.name];
+    const cb = scope[exp.name];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${exp.name}`);
     const innerScope = !cb.scope ? scope : Object.assign({}, scope, cb.scope);
-    const args = exp.args.map(x => x instanceof Expression ? this.interpretExp(x, innerScope) : x);
+    const args = exp.args.map(x => x instanceof Expression ? Interpreter.interpretExp(x, innerScope) : x);
     return cb.call(exp, ...args);
   }
 
-  mergeOrStack(shorts) {
+  static mergeOrStack(scope, shorts) {
     const res = {};
     for (const short of shorts) {
-      const obj = this.interpretExp(short, this.shortFuncs);
+      const obj = Interpreter.interpretExp(short, scope);
       for (let [k, v] of Object.entries(obj)) {
         if (v == null) continue;
         k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
@@ -51,8 +90,8 @@ export class Interpreter {
         //else, the browser doesn't support the property, because the property is too modern.
         if (!(k in res))
           res[k] = v;
-        else if (k in this.stackables)
-          res[k] += (this.stackables[k] + v);
+        else if (k in STACKABLE_PROPERTIES)
+          res[k] += (STACKABLE_PROPERTIES[k] + v);
         else
           throw new SyntaxError(`CSS$ clash: ${k} = ${res[k]}  AND = ${v}.`);
       }
@@ -61,10 +100,7 @@ export class Interpreter {
   }
 }
 
-export class InterpreterSelector {
-  constructor(supers) {
-    this.supers = supers;
-  }
+class InterpreterSelector {
 
   static selectorNot(select) {
     if (select.at(-1) === "!")
