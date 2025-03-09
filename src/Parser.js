@@ -88,8 +88,9 @@ function parseNestedExpression(short) {
 export function parse$Expression(exp) {
   return exp.split("|").map(seg => seg.split("$"))
     .map(([sel, ...shorts], i) => ({
-      selector: parseSelector(sel, !!i),
-      shorts: shorts.map(parseNestedExpression)
+      selector: parseSelectorBody(sel),
+      shorts: shorts.map(parseNestedExpression),
+      item: !!i,
     }));
 }
 
@@ -138,8 +139,4 @@ function parseSelectorBody(str) {
       selects.at(-1).push(t);
   }
   return { medias, selects };
-}
-
-export function parseSelector(exp, item) {
-  return { exp,  item, ...parseSelectorBody(exp) };
 }

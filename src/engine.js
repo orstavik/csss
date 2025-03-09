@@ -67,7 +67,7 @@ export class SheetWrapper {
 
   addRule(str) {
     const short = new Short(SelectorSupers, str);
-    for (const { selector: { item }, shorts, rule } of short.units)
+    for (const { item, shorts, rule } of short.units)
       if (shorts.length)
         this.addRuleImpl(rule, item ? this.items : this.container);
   }
