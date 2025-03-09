@@ -1,14 +1,4 @@
-import { parse$Expression, Expression, DictMap } from "./Parser.js";
-import nativeAndMore from "./func.js";
-import layouts from "./layout.js";
-import colorPalette from "./palette.js";
-
-const toCamel = s => s.replace(/[A-Z]/g, "-$&").toLowerCase();
-const SHORTS = DictMap({
-  ...nativeAndMore,
-  ...colorPalette,
-  ...layouts,
-}, toCamel);
+import { parse$Expression, Expression} from "./Parser.js";
 
 export class Short {
   static itemSelector(selects) {
@@ -26,12 +16,9 @@ export class Short {
     return medias3 ? `@media ${medias3} {  ${body} }` : body;
   }
 
-  constructor(supers, str) {
+  constructor(SHORTS, supers, str) {
     this.clazz = "." + str.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");;
     [this.container, ...this.items] = this.units = parse$Expression(str);
-    //todo here we need to take the super short.
-    //todo here we need the name of the func, and then the name of the 
-    //unit.superShort = Interpreter.mergeOrStack(supers[unit.superShort] ?? unit.superShort;
 
     for (let unit of this.units) {
       const shortsI = unit.shorts.map(short => Interpreter.interpretExp(SHORTS, short));

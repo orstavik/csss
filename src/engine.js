@@ -1,6 +1,25 @@
 import { findStatements } from "./Parser.js";
 import { Short } from "./Interpreter.js";
 
+function DictMap(dict, kCB, vCB) {
+  const res = {};
+  for (const [k, v] of Object.entries(dict))
+    res[kCB ? kCB(k) : k] = vCB ? vCB(v) : v;
+  return res;
+}
+
+import nativeAndMore from "./func.js";
+import layouts from "./layout.js";
+import colorPalette from "./palette.js";
+
+const toCamel = s => s.replace(/[A-Z]/g, "-$&").toLowerCase();
+const SHORTS = DictMap({
+  ...nativeAndMore,
+  ...colorPalette,
+  ...layouts,
+}, toCamel);
+
+
 const SelectorSupers = `
   @sm = (min-width:640px);
   @md = (min-width:768px);
@@ -66,7 +85,7 @@ export class SheetWrapper {
   }
 
   addRule(str) {
-    const short = new Short(SelectorSupers, str);
+    const short = new Short(SHORTS, SelectorSupers, str);
     for (const { item, shorts, rule } of short.units)
       if (shorts.length)
         this.addRuleImpl(rule, item ? this.items : this.container);
@@ -87,8 +106,10 @@ export class SheetWrapper {
       if (name in this.supers)
         console.warn(`Super ${name} overwritten.`);
       this.supers[name] = body;
-      if (name[0] === "$")
+      if (name[0] === "$"){
         this.supers[name] = new Short(this.supers, body);
+        //todo here we need to add the name to the SHORTS too.
+      }
     }
   }
 

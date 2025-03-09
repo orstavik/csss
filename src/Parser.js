@@ -1,10 +1,3 @@
-export function DictMap(dict, kCB, vCB) {
-  const res = {};
-  for (const [k, v] of Object.entries(dict))
-    res[kCB ? kCB(k) : k] = vCB ? vCB(v) : v;
-  return res;
-}
-
 export class Expression {
 
   constructor(name, args) {
