@@ -44,13 +44,18 @@ function diveDeep(tokens, top) {
         return res;
       continue;
     }
-    let b = tokens.shift();
-    if (top && b === ",") throw "top level can't list using ','";
-    if (top && b === E) throw "top level can't use ')'";
-    if (b === S && !a.match(WORD)) throw "invalid function name";
-    if (b === S) {
-      a = new Expression(a, diveDeep(tokens));
+    let b;
+    if (a === S) {
+      a = new Expression("", diveDeep(tokens));
       b = tokens.shift();
+    } else {
+      b = tokens.shift(); if (top && b === ",") throw "top level can't list using ','";
+      if (top && b === E) throw "top level can't use ')'";
+      if (b === S && !a.match(WORD)) throw "invalid function name";
+      if (b === S) {
+        a = new Expression(a, diveDeep(tokens));
+        b = tokens.shift();
+      }
     }
     if (b === E || (top && b === undefined))
       return res.push(a), res;

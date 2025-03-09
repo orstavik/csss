@@ -28,13 +28,17 @@ export class Short {
 
   constructor(supers, str) {
     this.clazz = "." + str.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");;
-    this.units = parse$Expression(str);
+    [this.container, ...this.items] = this.units = parse$Expression(str);
+    //todo here we need to take the super short.
+    //todo here we need the name of the func, and then the name of the 
+    //unit.superShort = Interpreter.mergeOrStack(supers[unit.superShort] ?? unit.superShort;
+
     for (let unit of this.units) {
-      unit.shorts2 = Interpreter.mergeOrStack(SHORTS, unit.shorts);
+      const shortsI = unit.shorts.map(short => Interpreter.interpretExp(SHORTS, short));
+      unit.shorts2 = Interpreter.mergeOrStack(shortsI);
       unit.body = Object.entries(unit.shorts2).map(([k, v]) => `${k}: ${v};`).join(" ");
       Object.assign(unit, InterpreterSelector.interpret(supers, unit.selector));
     }
-    [this.container, ...this.items] = this.units;
     this.container.selectorStr = Short.containerSelector(this.container.selects2, this.clazz);
     for (const item of this.items) {
       item.selectorStr = this.container.selectorStr + ">" + Short.itemSelector(item.selects2);
@@ -66,20 +70,20 @@ const STACKABLE_PROPERTIES = {
 
 class Interpreter {
 
-  static interpretExp(exp, scope) {
+  static interpretExp(scope, exp) {
     if (typeof exp == "string") exp = new Expression(exp, []);
     const cb = scope[exp.name];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${exp.name}`);
     const innerScope = !cb.scope ? scope : Object.assign({}, scope, cb.scope);
-    const args = exp.args.map(x => x instanceof Expression ? Interpreter.interpretExp(x, innerScope) : x);
+    const args = exp.args.map(x => x instanceof Expression ? Interpreter.interpretExp(innerScope, x) : x);
     return cb.call(exp, ...args);
   }
 
-  static mergeOrStack(scope, shorts) {
+  static mergeOrStack(shortsI) {
     const res = {};
-    for (const short of shorts) {
-      const obj = Interpreter.interpretExp(short, scope);
+    for (const obj of shortsI) {
+      // const obj = Interpreter.interpretExp(scope, short);
       for (let [k, v] of Object.entries(obj)) {
         if (v == null) continue;
         k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
