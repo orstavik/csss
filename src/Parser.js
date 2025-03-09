@@ -50,6 +50,7 @@ function diveDeep(tokens, top) {
       b = tokens.shift();
     } else {
       b = tokens.shift(); if (top && b === ",") throw "top level can't list using ','";
+      if (top && b === undefined) return [new Expression(a, [])];
       if (top && b === E) throw "top level can't use ')'";
       if (b === S && !a.match(WORD)) throw "invalid function name";
       if (b === S) {

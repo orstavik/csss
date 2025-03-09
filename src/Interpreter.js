@@ -71,7 +71,6 @@ const STACKABLE_PROPERTIES = {
 class Interpreter {
 
   static interpretExp(scope, exp) {
-    if (typeof exp == "string") exp = new Expression(exp, []);
     const cb = scope[exp.name];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${exp.name}`);
