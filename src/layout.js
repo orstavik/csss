@@ -36,7 +36,7 @@ function overflowWrap(a) { //$block(break-word,...)
 }
 
 function wordBreak(a) { //$block(break-all,...)
-  const m = a.match(/^(break-all|keep-all|break-word)$/);
+  const m = a.match(/^(break-all|keep-all)$/);
   if (m) return { "word-break": m[0] };
 }
 

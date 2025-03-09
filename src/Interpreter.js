@@ -28,14 +28,13 @@ export class Short {
 
   constructor(supers, str) {
     this.clazz = "." + str.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");;
-    this.units = Object.values(parse$Expression(str));
+    this.units = parse$Expression(str);
     for (let unit of this.units) {
       unit.shorts2 = Interpreter.mergeOrStack(SHORTS, unit.shorts);
       unit.body = Object.entries(unit.shorts2).map(([k, v]) => `${k}: ${v};`).join(" ");
       Object.assign(unit, InterpreterSelector.interpret(supers, unit.selector));
     }
-    this.container = this.units.find(u => !u.selector.item);
-    this.items = this.units.filter(u => u !== this.container);
+    [this.container, ...this.items] = this.units;
     this.container.selectorStr = Short.containerSelector(this.container.selects2, this.clazz);
     for (const item of this.items) {
       item.selectorStr = this.container.selectorStr + ">" + Short.itemSelector(item.selects2);

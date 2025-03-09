@@ -81,15 +81,15 @@ function parseNestedExpression(short) {
 }
 
 export function parse$Expression(exp) {
-  const res = Object.fromEntries(exp.split("|").map((s, i) => i ? "|" + s : s)
+  return exp.split("|").map((s, i) => i ? "|" + s : s)
     .map(seg => seg.split("$"))
-    .map(([sel, ...shorts]) => [sel, shorts]));
-  for (const k in res)
-    res[k] = { shorts: res[k].map(parseNestedExpression), selector: parseSelector(k) };
-  return res;
+    .map(([sel, ...shorts]) => ({
+      selector: parseSelector(sel),
+      shorts: shorts.map(parseNestedExpression)
+    }));
 }
 
-const SUPER_HEAD = /([$:@][a-b_][a-b0-9_-]+)\s*=/.source; // (name)
+const SUPER_HEAD = /([$:@][a-z_][a-z0-9_-]*)\s*=/.source; // (name)
 const SUPER_LINE = /((["'`])(?:\\.|(?!\3).)*?\3|\/\*[\s\S]*?\*\/|[^;]+);/.source; // (body1, quoteSign)
 const SUPER_BODY = /{((["'`])(?:\\.|(?!\5).)*?\5|\/\*[\s\S]*?\*\/|[^}]+)}/.source;// (body2, quoteSign)
 const SUPER = new RegExp(`${SUPER_HEAD}(?:${SUPER_LINE}|${SUPER_BODY})`, "g");

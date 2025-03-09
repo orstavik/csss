@@ -1,16 +1,17 @@
+import { findStatements } from "./Parser.js";
 import { Short } from "./Interpreter.js";
 
-const SelectorSupers = {
-  "@sm": "(min-width:640px)",
-  "@md": "(min-width:768px)",
-  "@lg": "(min-width:1024px)",
-  "@xl": "(min-width:1280px)",
-  "@2xl": "(min-width:1536px)",
-  "@dark": "(prefers-color-scheme:dark)",
-  ":first": ":first-child",
-  ":last": ":last-child",
-  ":edge": ":is(:first-child,:last-child)",
-};
+const SelectorSupers = `
+  @sm = (min-width:640px);
+  @md = (min-width:768px);
+  @lg = (min-width:1024px);
+  @xl = (min-width:1280px);
+  @2xl = (min-width:1536px);
+  @dark = (prefers-color-scheme:dark);
+  :first = :first-child;
+  :last = :last-child;
+  :edge = :is(:first-child,:last-child);
+`;
 
 export class SheetWrapper {
   rules = {};
@@ -42,9 +43,11 @@ export class SheetWrapper {
 
   constructor(sheet) {
     this.sheet = sheet;
+    this.supers = {};
     this.items = this.setupLayer("items", sheet);
     this.container = this.setupLayer("container", sheet);
     this.setupStatement();
+    this.readSupers(SelectorSupers);
   }
 
   setupStatement() {
@@ -77,6 +80,16 @@ export class SheetWrapper {
     layer.insertRule(rule, layer.cssRules.length);
     registry.set(key, layer.cssRules[layer.cssRules.length - 1]);
     return registry.size - 1;
+  }
+
+  readSupers(txt) {
+    for (const { name, body } of findStatements(txt)) {
+      if (name in this.supers)
+        console.warn(`Super ${name} overwritten.`);
+      this.supers[name] = body;
+      if (name[0] === "$")
+        this.supers[name] = new Short(this.supers, body);
+    }
   }
 
   #isInUse(r) {
