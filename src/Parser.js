@@ -86,10 +86,9 @@ function parseNestedExpression(short) {
 }
 
 export function parse$Expression(exp) {
-  return exp.split("|").map((s, i) => i ? "|" + s : s)
-    .map(seg => seg.split("$"))
-    .map(([sel, ...shorts]) => ({
-      selector: parseSelector(sel),
+  return exp.split("|").map(seg => seg.split("$"))
+    .map(([sel, ...shorts], i) => ({
+      selector: parseSelector(sel, !!i),
       shorts: shorts.map(parseNestedExpression)
     }));
 }
@@ -141,8 +140,6 @@ function parseSelectorBody(str) {
   return { medias, selects };
 }
 
-export function parseSelector(exp) {
-  const item = exp[0] === "|";
-  if (item) exp = exp.slice(1);
-  return { exp, item, ...parseSelectorBody(exp) };
+export function parseSelector(exp, item) {
+  return { exp,  item, ...parseSelectorBody(exp) };
 }
