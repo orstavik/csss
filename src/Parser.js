@@ -10,6 +10,14 @@ export class Expression {
   get signature() {
     return this.name + "/" + this.args.length;
   }
+  interpret(scope) {
+    const cb = scope[this.name];
+    if (!cb)
+      throw new SyntaxError(`Unknown short function: ${this.name}`);
+    const innerScope = !cb.scope ? scope : Object.assign({}, scope, cb.scope);
+    const args = this.args.map(x => x instanceof Expression ? x.interpret(innerScope) : x);
+    return cb.call(this, ...args);
+  }
 }
 
 const WORD = /[-a-zA-Z][a-zA-Z0-9-]*/;
