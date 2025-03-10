@@ -1,27 +1,82 @@
 import { parse$Expression, Expression } from "./Parser.js";
 
 class Selector {
-  constructor({medias, selects}, supers) {
+
+  static impliedSelfStar(select) {
+    if (!select.length)
+      return ["*"];
+    if (select.some(t => t === "*"))
+      return select;
+    const first = select[0].match(/^[>+~]$/);
+    const last = select.at(-1).match(/^[>+~]$/);
+    if (first && last)
+      throw `Relationship selector both front and back: ${select.join("")}`;
+    if (last)// last will not work for recognizing the class name for the selector..
+      return [...select, "*"];
+    return ["*", ...select];
+  }
+
+  static selectorNot(select) {
+    if (select.at(-1) === "!")
+      throw `Invalid selector, not at the end: ${select.join("")}`;
+    const res = [];
+    for (let i = 0; i < select.length; i++)
+      res.push(select[i] === "!" ? `:not(${select[++i]})` : select[i]);
+    return res;
+  }
+
+  static selectorHas(select) {
+    if (select.length === 0)
+      return select;
+    const res = select.slice();
+    for (let i = res.length - 1; i >= 0; i--) {
+      const s = res[i];
+      if (s === "*") return res;
+      if (s === ">" || s === "+" || s === "~" || s === " ")
+        res.splice(i, res.length - i, `:where(:has(${res.slice(i).join("")}))`);
+    }
+    return res;
+  }
+
+  static selectorHead(select) {
+    if (select.length === 0)
+      return select;
+    const starI = select.indexOf("*");
+    if (starI <= 0)
+      return select;
+    const head = select.slice(0, starI);
+    const tail = select.slice(starI);
+    return [`:where(${head.join("")})`, ...tail];
+  }
+
+  constructor({ medias, selects }, supers, clazz) {
     this.medias = medias;
     this.selects = selects;
 
-    this.medias2 = InterpreterSelector.mediasToString(
-      medias.map(s => supers[s] ?? s));
-    this.selects2 = selects.map(s => supers[s] ?? s)
+    this.selects2 = selects.map(s => supers[s] ?? s) 
+    //todo supers[s] should return an array, and this we should splice into selects, instead of just adding as we do here.
       .map(s => s === ">>" ? " " : s)
-      .map(InterpreterSelector.selectorNot)
-      .map(InterpreterSelector.selectorHas)
-      .map(InterpreterSelector.impliedSelfStar);
+      .map(Selector.selectorNot)
+      .map(Selector.impliedSelfStar)
+      .map(Selector.selectorHas)
+      .map(Selector.selectorHead);
+    this.medias2 = medias.map(s => supers[s] ?? s)
+      .map(m => m.replace(/^@/, ""))
+      .join(" and ").replaceAll("and , and", ",");
+    // if (clazz)
+    //   this.selects2 = this.selects2.map(cs => cs.map(s => s === "*" ? clazz : s));
   }
 }
 
 export class Short {
   static itemSelector(selects) {
     selects = selects.map(s => s.join(""));
-    return selects.length === 1 && selects[0] === "*"? "*" : `:where(\n${selects.join(", ")}\n)`;
+    return selects.length === 1 && selects[0] === "*" ? "*" : `:where(\n${selects.join(", ")}\n)`;
   }
 
   static containerSelector(selects2, clazz) {
+    let selector = this.itemSelector(selects2);
+
     selects2 = selects2.map(cs => cs.map(s => s === "*" ? clazz : s).join(""));
     return selects2.join(",\n");
   }
@@ -101,55 +156,5 @@ class Interpreter {
       }
     }
     return res;
-  }
-}
-
-class InterpreterSelector {
-
-  static selectorNot(select) {
-    if (select.at(-1) === "!")
-      throw `Invalid selector, not at the end: ${select.join("")}`;
-    const res = [];
-    for (let i = 0; i < select.length; i++)
-      res.push(select[i] === "!" ? `:not(${select[++i]})` : select[i]);
-    return res;
-  }
-
-  static selectorHas(select) {
-    const i = select.indexOf("&");
-    if (i <= 0)
-      return select;
-    const has = `:has(${select.slice(0, i).join("")})`; //todo do we need }*)`? at the end here?
-    return [...select.slice(i), has];
-  }
-
-  static impliedSelfStar(select) {
-    if (!select.length)
-      return ["*"];
-    if (select.some(t => t === "*"))
-      return select;
-    const first = select[0]?.[0].match(/[>+~]/);
-    const last = select.at(-1)?.[0].match(/[>+~]/);
-    if (first && last)
-      throw `Relationship selector both front and back: ${select.join("")}`;
-    if (last)// last will not work for recognizing the class name for the selector..
-      return [...select, "*"];
-    return ["*", ...select];
-  }
-
-  static mediasToString(medias) {
-    medias = medias.map(m => m.replace(/^@/, ""));
-    return medias.join(" and ").replaceAll("and , and", ",");
-  }
-
-  static interpret(supers, { medias, selects }) {
-    const medias2 = InterpreterSelector.mediasToString(
-      medias.map(s => supers[s] ?? s));
-    const selects2 = selects.map(s => supers[s] ?? s)
-      .map(s => s === ">>" ? " " : s)
-      .map(InterpreterSelector.selectorNot)
-      .map(InterpreterSelector.selectorHas)
-      .map(InterpreterSelector.impliedSelfStar);
-    return { selects2, medias2 };
   }
 }
