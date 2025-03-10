@@ -3,8 +3,6 @@ import { parse$Expression, Expression } from "./Parser.js";
 class Selector {
 
   static wherify(select) {
-    if (select.length === 1)
-      return select;
     const i = select.indexOf("*");
     const head = i && `:where(${select.slice(0, i).join("")})`;
     let tail = select.slice(i + 1);
@@ -18,7 +16,7 @@ class Selector {
     }
     tail = tail.length && `:where(${tail.join("")})`;
     tail2 &&= `:where(${tail2})`;
-    return ["*", head, tail, tail2].filter(Boolean);
+    return [head, tail, tail2].filter(Boolean);
   }
 
   static impliedSelfStar(select) {
@@ -44,16 +42,18 @@ class Selector {
     return res;
   }
 
-  constructor({ medias, selects }, supers, clazz) {
+  constructor({ medias, selects }, supers) {
     this.medias = medias;
     this.selects = selects;
 
     this.selects2 = selects.map(s => supers[s] ?? s)
       //todo supers[s] should return an array, and this we should splice into selects, instead of just adding as we do here.
       .map(s => s === ">>" ? " " : s)
-      .map(Selector.selectorNot)
       .map(Selector.impliedSelfStar)
+      .map(Selector.selectorNot)
       .map(Selector.wherify);
+    const strs = this.selects2.map(s => s.join(""));
+    this.selects3 = strs.length === 1 ? strs[0] : `:where(\n${strs.join(", ")}\n)`;
     this.medias2 = medias.map(s => supers[s] ?? s)
       .map(m => m.replace(/^@/, ""))
       .join(" and ").replaceAll("and , and", ",");
@@ -63,15 +63,6 @@ class Selector {
 }
 
 export class Short {
-  static itemSelector(selects) {
-    selects = selects.map(s => s.join(""));
-    return selects.length === 1 ? selects[0] : `:where(\n${selects.join(", ")}\n)`;
-  }
-
-  static containerSelector(selects2, clazz) {
-    selects2 = selects2.map(cs => cs.map(s => s === "*" ? clazz : s).join(""));
-    return selects2.join(",\n");
-  }
 
   static ruleToString({ medias2, medias3 = medias2, selectorStr, body }) {
     body = `${selectorStr} { ${body} }`;
@@ -88,9 +79,9 @@ export class Short {
       unit.body = Object.entries(unit.shorts2).map(([k, v]) => `${k}: ${v};`).join(" ");
       Object.assign(unit, new Selector(unit.selector, supers));//InterpreterSelector.interpret(supers, unit.selector));
     }
-    this.container.selectorStr = Short.containerSelector(this.container.selects2, this.clazz);
+    this.container.selectorStr = this.clazz + this.container.selects3;
     for (const item of this.items) {
-      item.selectorStr = this.container.selectorStr + ">" + Short.itemSelector(item.selects2);
+      item.selectorStr = this.container.selectorStr + ">*" + item.selects3;
       item.medias3 = [this.container.medias2, item.medias2].filter(Boolean).join(" and ");
     }
     for (const unit of this.units)
