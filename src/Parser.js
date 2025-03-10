@@ -139,7 +139,6 @@ function parseSelectorBody(str) {
     t === "," ? selects.push([]) : selects.at(-1).push(t);
 
   return new SelectorGroup(selects, medias);
-  // return { medias, selects, selectorGroup };
 }
 
 
@@ -190,13 +189,11 @@ class Selector {
     return last ? [select] : [null, ...Selector.findTail(select)];
   }
 
-  static selectorNot(select) {
-    if (select.at(-1) === "!")
-      throw `Invalid selector, not at the end: ${select.join("")}`;
-    const res = [];
-    for (let i = 0; i < select.length; i++)
-      res.push(select[i] === "!" ? `:not(${select[++i]})` : select[i]);
-    return res;
+  static superAndNots(select, supers) {
+    return select?.map(s => supers[s] ?? s)
+      .map((el, i, ar) => ar[i - 1] === "!" ? `:not(${el})` : el)
+      .filter(el => el !== "!")
+      .join("");
   }
 
   constructor(select) {
@@ -210,12 +207,9 @@ class Selector {
   }
 
   interpret(supers) {
-    let head = this.head?.map(s => supers[s] ?? s);
-    let body = this.body?.map(s => supers[s] ?? s);
-    let tail = this.tail?.map(s => supers[s] ?? s);
-    head &&= Selector.selectorNot(head).join("");
-    body &&= Selector.selectorNot(body).join("");
-    tail &&= Selector.selectorNot(tail).join("");
+    let head = Selector.superAndNots(this.head, supers);
+    let body = Selector.superAndNots(this.body, supers);
+    let tail = Selector.superAndNots(this.tail, supers);
     tail &&= `:has(${tail})`;
     head &&= `:where(${head})`;
     return [head, body, tail].filter(Boolean).join("");

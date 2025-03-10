@@ -23,7 +23,6 @@ export class Short {
   static mergeOrStack(shortsI) {
     const res = {};
     for (const obj of shortsI) {
-      // const obj = Interpreter.interpretExp(scope, short);
       for (let [k, v] of Object.entries(obj)) {
         if (v == null) continue;
         k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
