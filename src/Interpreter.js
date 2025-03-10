@@ -62,20 +62,19 @@ class Selector {
     const strs = this.selects2.map(s => s.join(""));
     this.selects3 = strs.length === 1 ? strs[0] : `:where(\n${strs.join(", ")}\n)`;
 
-    const media = this.allMedias
+    this.medias2 =  this.allMedias
       .map(s => supers[s] ?? s)
       .map(m => m.replace(/^@/, ""))
       .join(" and ").replaceAll("and , and", ",");
-    this.medias2 = media && `@media ${media}`;
     return this;
   }
 
   toString(clazz, body) {
-    let selectorStr = this.container ?
+    const selectorStr = this.container ?
       clazz + this.container.selects3 + ">*" + this.selects3 :
       clazz + this.selects3;
     return this.medias2 ?
-      `${this.medias2} { ${selectorStr} { ${body} } }` :
+      `@media ${this.medias2} { ${selectorStr} { ${body} } }` :
       `${selectorStr} { ${body} }`;
   }
 }
