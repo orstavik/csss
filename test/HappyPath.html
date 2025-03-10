@@ -74,13 +74,13 @@
         border-radius: 0.25rem;
       }
 
-      .\|\.new\$border\(solid\,4px\,radius\(1rem\)\)>.new {
+      .\|\.new\$border\(solid\,4px\,radius\(1rem\)\)> :where(.new) {
         border-style: solid;
         border-width: 4px;
         border-radius: 1rem;
       }
 
-      .\|\.sale\$border\(dashed\,3px\,radius\(0\.5rem\)\)>.sale {
+      .\|\.sale\$border\(dashed\,3px\,radius\(0\.5rem\)\)> :where(.sale) {
         border-style: dashed;
         border-width: 3px;
         border-radius: 0.5rem;
@@ -92,13 +92,13 @@
         border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
       }
 
-      .\|\.new\$color\(secondary\)>.new {
+      .\|\.new\$color\(secondary\)> :where(.new) {
         color: oklch(from var(--palette-secondary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
         --background-color: oklch(from var(--palette-secondary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
         border-color: color-mix(in oklch, oklch(from var(--palette-secondary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-secondary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
       }
 
-      .\|\.sale\$color\(tertiary\)>.sale {
+      .\|\.sale\$color\(tertiary\)> :where(.sale) {
         color: oklch(from var(--palette-tertiary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
         --background-color: oklch(from var(--palette-tertiary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
         border-color: color-mix(in oklch, oklch(from var(--palette-tertiary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-tertiary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
@@ -470,14 +470,14 @@
 
     @layer items {
       @media not all {
-        .\@print\:hover\$border\(solid\,2px\)\|\@screen\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):hover> :valid {
+        .\@print\:hover\$border\(solid\,2px\)\|\@screen\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):hover> :where(:valid) {
           border-style: dotted;
           border-width: 2px;
         }
       }
 
       @media print {
-        .\@print\:hover\$border\(solid\,2px\)\|\@screen\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):hover>.first {
+        .\@print\:hover\$border\(solid\,2px\)\|\@screen\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):hover> :where(.first) {
           border-style: dashed;
           border-width: 2px;
         }
@@ -595,11 +595,11 @@
         text-indent: 15%;
       }
 
-      .\|\.head\$_block\(indent\(-5\%\)\)>.head {
+      .\|\.head\$_block\(indent\(-5\%\)\)> :where(.head) {
         text-indent: -5%;
       }
 
-      .\|\.subheading\$_block\(indent\(0\)\)>.subheading {
+      .\|\.subheading\$_block\(indent\(0\)\)> :where(.subheading) {
         text-indent: 0px;
       }
     }
@@ -616,7 +616,7 @@
   <style>
   </style>
 </test-html>
--->
+
 
 <test-html title="color(3)">
   <div class="$color(black,#123456)$border-color(red)">
@@ -676,3 +676,4 @@
     hello
   </div>
 </test-html>
+-->

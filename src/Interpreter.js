@@ -1,9 +1,24 @@
-import { parse$Expression, Expression} from "./Parser.js";
+import { parse$Expression, Expression } from "./Parser.js";
+
+class Selector {
+  constructor({medias, selects}, supers) {
+    this.medias = medias;
+    this.selects = selects;
+
+    this.medias2 = InterpreterSelector.mediasToString(
+      medias.map(s => supers[s] ?? s));
+    this.selects2 = selects.map(s => supers[s] ?? s)
+      .map(s => s === ">>" ? " " : s)
+      .map(InterpreterSelector.selectorNot)
+      .map(InterpreterSelector.selectorHas)
+      .map(InterpreterSelector.impliedSelfStar);
+  }
+}
 
 export class Short {
   static itemSelector(selects) {
     selects = selects.map(s => s.join(""));
-    return selects.length === 1 ? selects[0] : `:where(\n${selects.join(", ")}\n)`;
+    return selects.length === 1 && selects[0] === "*"? "*" : `:where(\n${selects.join(", ")}\n)`;
   }
 
   static containerSelector(selects2, clazz) {
@@ -24,7 +39,7 @@ export class Short {
       const shortsI = unit.shorts.map(short => Interpreter.interpretExp(SHORTS, short));
       unit.shorts2 = Interpreter.mergeOrStack(shortsI);
       unit.body = Object.entries(unit.shorts2).map(([k, v]) => `${k}: ${v};`).join(" ");
-      Object.assign(unit, InterpreterSelector.interpret(supers, unit.selector));
+      Object.assign(unit, new Selector(unit.selector, supers));//InterpreterSelector.interpret(supers, unit.selector));
     }
     this.container.selectorStr = Short.containerSelector(this.container.selects2, this.clazz);
     for (const item of this.items) {
