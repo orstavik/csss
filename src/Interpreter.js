@@ -45,8 +45,11 @@ class Selector {
   constructor({ medias, selects }, supers) {
     this.medias = medias;
     this.selects = selects;
+    this.interpret(supers);
+  }
 
-    this.selects2 = selects.map(s => supers[s] ?? s)
+  interpret(supers){
+    this.selects2 = this.selects.map(s => supers[s] ?? s)
       //todo supers[s] should return an array, and this we should splice into selects, instead of just adding as we do here.
       .map(s => s === ">>" ? " " : s)
       .map(Selector.impliedSelfStar)
@@ -54,7 +57,7 @@ class Selector {
       .map(Selector.wherify);
     const strs = this.selects2.map(s => s.join(""));
     this.selects3 = strs.length === 1 ? strs[0] : `:where(\n${strs.join(", ")}\n)`;
-    this.medias2 = medias.map(s => supers[s] ?? s)
+    this.medias2 = this.medias.map(s => supers[s] ?? s)
       .map(m => m.replace(/^@/, ""))
       .join(" and ").replaceAll("and , and", ",");
     // if (clazz)
@@ -70,7 +73,6 @@ export class Short {
   }
 
   constructor(SHORTS, supers, str) {
-    this.clazz = "." + str.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");;
     [this.container, ...this.items] = this.units = parse$Expression(str);
 
     for (let unit of this.units) {
@@ -79,6 +81,7 @@ export class Short {
       unit.body = Object.entries(unit.shorts2).map(([k, v]) => `${k}: ${v};`).join(" ");
       Object.assign(unit, new Selector(unit.selector, supers));//InterpreterSelector.interpret(supers, unit.selector));
     }
+    this.clazz = "." + str.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");;
     this.container.selectorStr = this.clazz + this.container.selects3;
     for (const item of this.items) {
       item.selectorStr = this.container.selectorStr + ">*" + item.selects3;
