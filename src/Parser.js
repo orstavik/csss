@@ -127,10 +127,89 @@ function parseSelectorBody(str) {
 
   const medias = tokens.slice(0, lastMedia);
   const selects = [[]];
-  for (const t of tokens.slice(lastMedia)) {
-    t === "," ?
-      selects.push([]) :
-      selects.at(-1).push(t);
+  for (const t of tokens.slice(lastMedia))
+    t === "," ? selects.push([]) : selects.at(-1).push(t);
+
+  return new SelectorGroup(selects, medias);
+  // return { medias, selects, selectorGroup };
+}
+
+
+class SelectorGroup {
+  constructor(selectors, medias) {
+    this.selectors = selectors.map(s => new Selector(s));
+    this.medias = medias;
   }
-  return { medias, selects };
+
+  interpret(supers) {
+    let selector = this.selectors.map(s => s.interpret(supers)).join(", ");
+    if (selector)
+      selector = `:where(\n${selector}\n)`;
+    const medias = this.medias
+      .map(s => supers[s] ?? s)
+      .map(m => m.replace(/^@/, ""))
+      .join(" and ").replaceAll("and , and", ",");
+    //todo fix ! not in medias
+    return { selector, medias };
+  }
+}
+
+class Selector {
+
+  static findTail(body) {
+    const j = body.findIndex(s => s === ">" || s === "+" || s === "~" || s === " ");
+    if (j < 0)
+      return [body];
+    if (j === 0)
+      return [null, body];
+    const tail = body.slice(j);
+    body = body.slice(0, j);
+    return [body, tail];
+  }
+
+  static whereIsStar(select) {
+    let i = select.indexOf("*");
+    if (i === select.length - 1)
+      return [select];
+    if (i === 0)
+      return [null, ...Selector.findTail(select)];
+    if (i > 0)
+      return [select.slice(0, i), ...Selector.findTail(select.slice(i + 1))];
+    const first = select[0].match(/^[>+~]$/);
+    const last = select.at(-1).match(/^[>+~]$/);
+    if (first && last)
+      throw `Relationship selector both front and back: ${select.join("")}`;
+    return last ? [select] : [null, ...Selector.findTail(select)];
+  }
+
+  static selectorNot(select) {
+    if (select.at(-1) === "!")
+      throw `Invalid selector, not at the end: ${select.join("")}`;
+    const res = [];
+    for (let i = 0; i < select.length; i++)
+      res.push(select[i] === "!" ? `:not(${select[++i]})` : select[i]);
+    return res;
+  }
+
+  constructor(select) {
+    select = select.map(s => s == ">>" ? " " : s);
+    if (!select.length || select.length === 1 && select[0] === "*")
+      return;
+    let [head, body, tail] = Selector.whereIsStar(select);
+    this.head = head;
+    this.body = body;
+    this.tail = tail;
+  }
+
+  interpret(supers) {
+    let head = this.head?.map(s => supers[s] ?? s);
+    let body = this.body?.map(s => supers[s] ?? s);
+    let tail = this.tail?.map(s => supers[s] ?? s);
+    head &&= Selector.selectorNot(head).join("");
+    body &&= Selector.selectorNot(body).join("");
+    tail &&= Selector.selectorNot(tail).join("");
+    tail &&= `:has(${tail})`;
+    head &&= `:where(${head})`;
+    return [head, body, tail].filter(Boolean).join("");
+  }
 }
