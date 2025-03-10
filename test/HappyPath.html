@@ -461,7 +461,7 @@
 
     @layer container {
       @media print {
-        .\@print\:hover\$border\(solid\,2px\)\|\@screen\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):hover {
+        .\@print\:hover\$border\(solid\,2px\)\|\@screen\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):where(:hover) {
           border-style: solid;
           border-width: 2px;
         }
@@ -470,14 +470,14 @@
 
     @layer items {
       @media not all {
-        .\@print\:hover\$border\(solid\,2px\)\|\@screen\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):hover> :where(:valid) {
+        .\@print\:hover\$border\(solid\,2px\)\|\@screen\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):where(:hover)> :where(:valid) {
           border-style: dotted;
           border-width: 2px;
         }
       }
 
       @media print {
-        .\@print\:hover\$border\(solid\,2px\)\|\@screen\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):hover> :where(.first) {
+        .\@print\:hover\$border\(solid\,2px\)\|\@screen\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):where(:hover)> :where(.first) {
           border-style: dashed;
           border-width: 2px;
         }

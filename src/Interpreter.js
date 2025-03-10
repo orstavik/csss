@@ -2,6 +2,25 @@ import { parse$Expression, Expression } from "./Parser.js";
 
 class Selector {
 
+  static wherify(select) {
+    if (select.length === 1)
+      return select;
+    const i = select.indexOf("*");
+    const head = i && `:where(${select.slice(0, i).join("")})`;
+    let tail = select.slice(i + 1);
+    let tail2 = "";
+    for (let i = tail.length - 1; i >= 0; i--) {
+      const s = tail[i];
+      if (s === ">" || s === "+" || s === "~" || s === " ") {
+        tail2 = `:has(${[...tail.slice(i), tail2].join("")}))`;
+        tail = tail.slice(0, i);
+      }
+    }
+    tail = tail.length && `:where(${tail.join("")})`;
+    tail2 &&= `:where(${tail2})`;
+    return ["*", head, tail, tail2].filter(Boolean);
+  }
+
   static impliedSelfStar(select) {
     if (!select.length)
       return ["*"];
@@ -25,41 +44,16 @@ class Selector {
     return res;
   }
 
-  static selectorHas(select) {
-    if (select.length === 0)
-      return select;
-    const res = select.slice();
-    for (let i = res.length - 1; i >= 0; i--) {
-      const s = res[i];
-      if (s === "*") return res;
-      if (s === ">" || s === "+" || s === "~" || s === " ")
-        res.splice(i, res.length - i, `:where(:has(${res.slice(i).join("")}))`);
-    }
-    return res;
-  }
-
-  static selectorHead(select) {
-    if (select.length === 0)
-      return select;
-    const starI = select.indexOf("*");
-    if (starI <= 0)
-      return select;
-    const head = select.slice(0, starI);
-    const tail = select.slice(starI);
-    return [`:where(${head.join("")})`, ...tail];
-  }
-
   constructor({ medias, selects }, supers, clazz) {
     this.medias = medias;
     this.selects = selects;
 
-    this.selects2 = selects.map(s => supers[s] ?? s) 
-    //todo supers[s] should return an array, and this we should splice into selects, instead of just adding as we do here.
+    this.selects2 = selects.map(s => supers[s] ?? s)
+      //todo supers[s] should return an array, and this we should splice into selects, instead of just adding as we do here.
       .map(s => s === ">>" ? " " : s)
       .map(Selector.selectorNot)
       .map(Selector.impliedSelfStar)
-      .map(Selector.selectorHas)
-      .map(Selector.selectorHead);
+      .map(Selector.wherify);
     this.medias2 = medias.map(s => supers[s] ?? s)
       .map(m => m.replace(/^@/, ""))
       .join(" and ").replaceAll("and , and", ",");
@@ -71,12 +65,10 @@ class Selector {
 export class Short {
   static itemSelector(selects) {
     selects = selects.map(s => s.join(""));
-    return selects.length === 1 && selects[0] === "*" ? "*" : `:where(\n${selects.join(", ")}\n)`;
+    return selects.length === 1 ? selects[0] : `:where(\n${selects.join(", ")}\n)`;
   }
 
   static containerSelector(selects2, clazz) {
-    let selector = this.itemSelector(selects2);
-
     selects2 = selects2.map(cs => cs.map(s => s === "*" ? clazz : s).join(""));
     return selects2.join(",\n");
   }
