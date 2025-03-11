@@ -73,6 +73,18 @@ class ShortGroup {
   }
 }
 
+class Short {
+  constructor(selectorGroup, shortGroup) {
+    this.selectorGroup = selectorGroup;
+    this.shortGroup = shortGroup;
+  }
+  interpret(SHORTS, supers) {
+    const shorts = this.shortGroup.interpret(SHORTS, supers);
+    const { selector, medias } = this.selectorGroup.interpret(supers);
+    return { selector, medias, shorts };
+  }
+}
+
 const WORD = /[-a-zA-Z][a-zA-Z0-9-]*/;
 const CPP = /[,()|$=;{}]/.source;
 const nCPP = /[^,()|$=;{}]+/.source;
@@ -142,11 +154,10 @@ function parseNestedExpression(short) {
 
 export function parse$Expression(exp) {
   return exp.split("|").map(seg => seg.split("$"))
-    .map(([sel, ...shorts], i) => ({
-      selector: new SelectorGroup(parseSelectorBody(sel)),
-      shorts: new ShortGroup(shorts.map(parseNestedExpression)),
-      item: !!i,
-    }));
+    .map(([sel, ...shorts]) => new Short(
+      new SelectorGroup(parseSelectorBody(sel)),
+      new ShortGroup(shorts.map(parseNestedExpression)),
+    ));
 }
 
 const SUPER_HEAD = /([$:@][a-z_][a-z0-9_-]*)\s*=/.source; // (name)
@@ -191,12 +202,12 @@ function parseSelectorBody(str) {
   for (const t of tokens.slice(lastMedia))
     t === "," ? selects.push([]) : selects.at(-1).push(t);
 
-  return {selects, medias};
+  return { selects, medias };
 }
 
 
 class SelectorGroup {
-  constructor({selects, medias}) {
+  constructor({ selects, medias }) {
     this.selectors = selects.map(s => new Selector(s));
     this.medias = medias;
   }

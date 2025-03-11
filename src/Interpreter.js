@@ -1,61 +1,22 @@
 import { parse$Expression } from "./Parser.js";
 
-const STACKABLE_PROPERTIES = {
-  background: ",",
-  transition: ",",
-  "font-family": ",",
-  "voice-family": ",",
-  "text-shadow": ",",
-  "box-shadow": ",",
-  animation: ",",
-  mask: ",",
-  "font-feature-settings": ",",
-  "will-change": ",",
+export class Shorts {
 
-  transform: " ",
-  filter: " ",
-  "counter-reset": " ",
-  "counter-increment": " ",
-  "font-variant": " ",
-};
-
-export class Short {
-  static mergeOrStack(shortsI) {
-    const res = {};
-    for (const obj of shortsI) {
-      for (let [k, v] of Object.entries(obj)) {
-        if (v == null) continue;
-        k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
-        if (CSS.supports(k, "inherit"))
-          if (!CSS.supports(k, v))
-            throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
-        //else, the browser doesn't support the property, because the property is too modern.
-        if (!(k in res))
-          res[k] = v;
-        else if (k in STACKABLE_PROPERTIES)
-          res[k] += (STACKABLE_PROPERTIES[k] + v);
-        else
-          throw new SyntaxError(`CSS$ clash: ${k} = ${res[k]}  AND = ${v}.`);
-      }
-    }
-    return res;
-  }
-
-  constructor(str) {
-    this.units = parse$Expression(str);
-    this.clazz = "." + str.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
+  constructor(exp) {
+    this.exp = exp;
+    this.clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
+    this.units = parse$Expression(exp);
   }
 
   interpret(SHORTS, supers) {
+    const shorts = this.units.map(unit => unit.interpret(SHORTS, supers));
     let containerSelector, containerMedias;
-    return this.units.map(unit => {
-      const shorts2 = unit.shorts.interpret(SHORTS, supers);
-      let { medias, selector } = unit.selector.interpret(supers);
+    return shorts.map(({medias, selector, shorts}, i) => {
       medias = containerMedias ? [medias, containerMedias].filter(Boolean).join(" and ") : medias;
       selector = containerSelector ? containerSelector + ">*" + selector : this.clazz + selector;
       containerSelector ??= selector;
       containerMedias ??= medias;
-      return new Rule(medias, selector, shorts2, unit.item);
+      return new Rule(medias, selector, shorts, !!i);
     });
   }
 }

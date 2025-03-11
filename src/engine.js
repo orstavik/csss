@@ -1,5 +1,5 @@
 import { findStatements } from "./Parser.js";
-import { Short } from "./Interpreter.js";
+import { Shorts } from "./Interpreter.js";
 
 function DictMap(dict, kCB, vCB) {
   const res = {};
@@ -85,7 +85,7 @@ export class SheetWrapper {
   }
 
   addRule(str) {
-    const units = new Short(str).interpret(SHORTS, this.supers);
+    const units = new Shorts(str).interpret(SHORTS, this.supers);
     for (const { item, body, rule } of units)
       if (body)
         this.addRuleImpl(rule, item ? this.items : this.container);
@@ -107,7 +107,7 @@ export class SheetWrapper {
         console.warn(`Super ${name} overwritten.`);
       this.supers[name] = body;
       if (name[0] === "$"){
-        this.supers[name] = new Short(this.supers, body);
+        this.supers[name] = new Shorts(this.supers, body);
         //todo here we need to add the name to the SHORTS too.
       }
     }
