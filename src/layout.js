@@ -215,7 +215,8 @@ function flex(...args) {
     if (m = wrap(a)) return m;
     return a;
   });
-  return defaultValues({ display: "flex", ...BLOCK_RESET }, mergy(...args));
+  return mergy(...args);
+  // return defaultValues({ display: "flex", ...BLOCK_RESET }, mergy(...args));
 }
 flex.scope = {
   ...LAYOUT,

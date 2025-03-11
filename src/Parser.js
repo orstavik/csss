@@ -62,14 +62,13 @@ class Expression {
     return this.name + "/" + this.args.length;
   }
   interpret(scope, supers) {
-    const supersname = supers[this.name]?.func;
-    const cb = scope[this.name] ?? scope[supersname];
+    const cb = scope[this.name] ?? scope[supers[this.name]?.func];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${this.name}`);
     const innerScope = !cb.scope ? scope : Object.assign({}, scope, cb.scope);
     const args = this.args.map(x => x instanceof Expression ? x.interpret(innerScope, supers) : x);
-    const supersObj = supers[supersname]?.obj;
     const res = cb.call(this, ...args);
+    const supersObj = supers["$" + this.name]?.shorts;
     return supersObj ? Object.assign({}, supersObj, res) : res;
   }
 }
@@ -233,25 +232,25 @@ const SUPER_LINE = /((["'`])(?:\\.|(?!\3).)*?\3|\/\*[\s\S]*?\*\/|[^;]+);/.source
 const SUPER_BODY = /{((["'`])(?:\\.|(?!\5).)*?\5|\/\*[\s\S]*?\*\/|[^}]+)}/.source;// (body2, quoteSign)
 const SUPER = new RegExp(`${SUPER_HEAD}(?:${SUPER_LINE}|${SUPER_BODY})`, "g");
 
+function checkSuperBody(name, { media, shorts: selectorShorts }) {
+  const type = name[0];
+  if (!media && !selectorShorts) throw `is empty`;
+  if (media && selectorShorts) throw `contains both media and selector/shorts`;
+  if (media && type !== "@") throw `type error: did you mean "${type}${name.slice(1)}"?`;
+  if (media) return { media };
+  const [{ selector, shorts }, tooManyItems] = selectorShorts;
+  if (selector && shorts) throw `contains both selector and shorts`;
+  if (tooManyItems) throw `contains too many items`;
+  if (selector && type !== ":") throw `type error: did you mean "${type}${name.slice(1)}"?`;
+  if (selector) return { selector };
+  if (shorts && type !== "$") throw `type error: did you mean "${type}${name.slice(1)}"?`;
+  return { shorts };
+}
+
 function interpretSuper(name, body, SHORTS) {
   const parsed = new Shorts(body);
-  const { media, shorts } = parsed.interpret(SHORTS, {});
-  if (!media && !shorts)
-    throw `Super ${name} is empty.`;
-  if (media && shorts)
-    throw `Super ${name} contains both @media and selector$shorts: ${body}.`;
-  if (media && !name.startsWith("@"))
-    throw `Super ${name} is given an @media: ${body}.\n Did you mean "@${name.slice(1)}"?`;
-  if (media)
-    return media.slice(7);
-  if (shorts[0].selector) {
-    if (shorts.length > 1)
-      throw `Super ${name} cannot contain items: ${body}.`;
-    if (shorts[0].shorts)
-      throw `Super ${name} cannot contain shorts: ${body}.`;
-    return shorts[0].selector;
-  }
-  return { obj: shorts, func: parsed.shorts[0].shortGroup.shorts[0].name };
+  const { media, selector, shorts } = checkSuperBody(name, parsed.interpret(SHORTS, {}));
+  return selector || (media ? media.slice(7) : { shorts, func: parsed.shorts[0].shortGroup.shorts[0].name });
 }
 
 export function extractSuperShorts(txt, SHORTS) {

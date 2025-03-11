@@ -329,10 +329,10 @@
         line-height: initial;
         white-space: initial;
         hyphens: initial;
+        text-align: center;
         text-indent: initial;
         text-transform: none;
         text-shadow: none;
-        text-align: center;
         place-content: center;
       }
     }
@@ -345,6 +345,9 @@
   </style>
 </test-html>
 <test-html title="$flex(ellipsis)">
+  <div class="$flex(ellipsis)">
+    hello
+  </div>
   <style>
     @layer container, items;
 
@@ -353,21 +356,18 @@
         display: flex;
         word-spacing: initial;
         line-height: initial;
+        white-space: nowrap;
         hyphens: initial;
         text-align: initial;
         text-indent: initial;
         text-transform: none;
         text-shadow: none;
-        white-space: nowrap;
         text-overflow: ellipsis;
       }
     }
 
     @layer items {}
   </style>
-  <div class="$flex(ellipsis)">
-    hello
-  </div>
 </test-html>
 <test-html title="$flex|items">
   <style>
