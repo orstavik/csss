@@ -231,7 +231,8 @@ const SUPER_BODY = /{((["'`])(?:\\.|(?!\5).)*?\5|\/\*[\s\S]*?\*\/|[^}]+)}/.sourc
 const SUPER = new RegExp(`${SUPER_HEAD}(?:${SUPER_LINE}|${SUPER_BODY})`, "g");
 
 function interpretSuper(name, body, SHORTS) {
-  const { media, shorts } = new Shorts(body).interpret(SHORTS, {});
+  const parsed = new Shorts(body);
+  const { media, shorts } = parsed.interpret(SHORTS, {});
   if (!media && !shorts)
     throw `Super ${name} is empty.`;
   if (media && shorts)
@@ -247,7 +248,7 @@ function interpretSuper(name, body, SHORTS) {
       throw `Super ${name} cannot contain shorts: ${body}.`;
     return shorts[0].selector;
   }
-  return shorts;
+  return {shorts, func: parsed.shorts[0].shortGroup.shorts[0].name};
 }
 
 export function extractSuperShorts(txt, SHORTS) {

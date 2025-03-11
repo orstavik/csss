@@ -136,7 +136,8 @@ export class SheetWrapper {
   }
 
   readSupers(txt) {
-    Object.assign(this.supers, extractSuperShorts(txt, SHORTS));
+    const supers = extractSuperShorts(txt, SHORTS);
+    Object.assign(this.supers, supers);
   }
 
   #isInUse(r) {
