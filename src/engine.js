@@ -1,5 +1,4 @@
-import { findStatements } from "./Parser.js";
-import { Shorts } from "./Interpreter.js";
+import { findStatements, Shorts } from "./Parser.js";
 
 function DictMap(dict, kCB, vCB) {
   const res = {};
@@ -85,10 +84,9 @@ export class SheetWrapper {
   }
 
   addRule(str) {
-    const units = new Shorts(str).interpret(SHORTS, this.supers);
-    for (const { item, body, rule } of units)
-      if (body)
-        this.addRuleImpl(rule, item ? this.items : this.container);
+    const shorts = new Shorts(str);
+    for (const { item, rule } of shorts.rules(SHORTS, this.supers))
+      this.addRuleImpl(rule, item ? this.items : this.container);
   }
 
   addRuleImpl(rule, { layer, registry }) {

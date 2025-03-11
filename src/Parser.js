@@ -1,3 +1,50 @@
+export class Shorts {
+
+  constructor(exp) {
+    this.exp = exp;
+    this.clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
+    this.units = parse$Expression(exp);
+  }
+
+  interpret(SHORTS, supers) {
+    return this.units.map(unit => unit.interpret(SHORTS, supers));
+  }
+
+  *rules(SHORTS, supers) {
+    const [container, ...items] = this.interpret(SHORTS, supers);
+    const cRule = new Rule(container.medias, this.clazz + container.selector, container.shorts);
+    if (!cRule.isEmpty)
+      yield cRule;
+    for (const item of items)
+      if (Object.keys(item.shorts).length)
+        yield new Rule(
+          [item.medias, cRule.medias].filter(Boolean).join(" and "),
+          cRule.selector + ">*" + item.selector,
+          item.shorts,
+          true);
+  }
+}
+
+class Rule {
+  constructor(medias, selector, shorts, item) {
+    this.medias = medias;
+    this.selector = selector;
+    this.shorts = shorts;
+    this.item = item;
+  }
+  get isEmpty() {
+    return !Object.keys(this.shorts).length;
+  }
+  get body() {
+    return Object.entries(this.shorts).map(([k, v]) => `${k}: ${v};`).join(" ");
+  }
+  get rule() {
+    return this.medias ?
+      `@media ${this.medias} { ${this.selector} { ${this.body} } }` :
+      `${this.selector} { ${this.body} }`;
+  }
+}
+
 class Expression {
 
   constructor(name, args) {
@@ -152,7 +199,7 @@ function parseNestedExpression(short) {
   }
 }
 
-export function parse$Expression(exp) {
+function parse$Expression(exp) {
   return exp.split("|").map(seg => seg.split("$"))
     .map(([sel, ...shorts]) => new Short(
       new SelectorGroup(parseSelectorBody(sel)),
