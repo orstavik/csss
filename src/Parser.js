@@ -15,7 +15,7 @@ export class Shorts {
       .join(" and ").replaceAll("and , and", ",").replaceAll("not and ", "not ");
     if (media)
       media = `@media ${media}`;
-    const shorts = this.shorts?.map(short => short.interpret(SHORTS, supers))
+    const shorts = this.shorts?.map(short => short.interpret(SHORTS, supers));
     return { media, shorts };
   }
 
@@ -61,13 +61,16 @@ class Expression {
   get signature() {
     return this.name + "/" + this.args.length;
   }
-  interpret(scope) {
-    const cb = scope[this.name];
+  interpret(scope, supers) {
+    const supersname = supers[this.name]?.func;
+    const cb = scope[this.name] ?? scope[supersname];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${this.name}`);
     const innerScope = !cb.scope ? scope : Object.assign({}, scope, cb.scope);
-    const args = this.args.map(x => x instanceof Expression ? x.interpret(innerScope) : x);
-    return cb.call(this, ...args);
+    const args = this.args.map(x => x instanceof Expression ? x.interpret(innerScope, supers) : x);
+    const supersObj = supers[supersname]?.obj;
+    const res = cb.call(this, ...args);
+    return supersObj ? Object.assign({}, supersObj, res) : res;
   }
 }
 const mergeOrStack = (function () {
@@ -120,7 +123,7 @@ class ShortGroup {
   interpret(SHORTS, supers) {
     if (!this.shorts.length)
       return null;
-    const shortsI = this.shorts.map(s => s.interpret(SHORTS));
+    const shortsI = this.shorts.map(s => s.interpret(SHORTS, supers));
     return mergeOrStack(shortsI);
   }
 }
@@ -248,7 +251,7 @@ function interpretSuper(name, body, SHORTS) {
       throw `Super ${name} cannot contain shorts: ${body}.`;
     return shorts[0].selector;
   }
-  return {shorts, func: parsed.shorts[0].shortGroup.shorts[0].name};
+  return { obj: shorts, func: parsed.shorts[0].shortGroup.shorts[0].name };
 }
 
 export function extractSuperShorts(txt, SHORTS) {

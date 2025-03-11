@@ -20,7 +20,7 @@
     await new Promise(r => setTimeout(r, time));
     for (let t of document.querySelectorAll('test-html[state="error"]')) {
       t.setAttribute("active", "");
-      setTimeout(_ => t.removeAttribute("active"), 1000);
+      setTimeout(_ => t.removeAttribute("active"), 500);
     }
   }
 
@@ -34,7 +34,7 @@
   }
 
   (async function () {
-    await openTsts(2000);
+    await openTsts(3000);
   })();
   import("https://cdn.jsdelivr.net/gh/orstavik/TestHTML@v1.2.5/TestHTMLexpected.js");
 </script>
