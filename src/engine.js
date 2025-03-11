@@ -19,16 +19,16 @@ const SHORTS = DictMap({
 }, toCamel);
 
 
-const SelectorSupers = `
-  @sm = (min-width:640px);
-  @md = (min-width:768px);
-  @lg = (min-width:1024px);
-  @xl = (min-width:1280px);
-  @2xl = (min-width:1536px);
-  @dark = (prefers-color-scheme:dark);
+const BuiltinSuperSelectors = `
+  @sm = @(min-width:640px);
+  @md = @(min-width:768px);
+  @lg = @(min-width:1024px);
+  @xl = @(min-width:1280px);
+  @2xl = @(min-width:1536px);
+  @dark = @(prefers-color-scheme:dark);
   :first = :first-child;
   :last = :last-child;
-  :edge = :is(:first-child,:last-child);
+  :edge = :first-child,:last-child;
 `;
 
 export class SheetWrapper {
@@ -65,7 +65,7 @@ export class SheetWrapper {
     this.items = this.setupLayer("items", sheet);
     this.container = this.setupLayer("container", sheet);
     this.setupStatement();
-    this.readSupers(SelectorSupers);
+    this.readSupers(BuiltinSuperSelectors);
   }
 
   setupStatement() {
@@ -103,10 +103,27 @@ export class SheetWrapper {
     for (const { name, body } of findStatements(txt)) {
       if (name in this.supers)
         console.warn(`Super ${name} overwritten.`);
-      this.supers[name] = body;
-      if (name[0] === "$"){
-        this.supers[name] = new Shorts(this.supers, body);
-        //todo here we need to add the name to the SHORTS too.
+      const shorts = new Shorts(body).interpret(SHORTS, this.supers);
+      if(name[0] === "@"){
+        if(shorts.length > 1)
+          throw `Super ${name} has |items clause: ${shorts[0].exp}.`;
+        if(shorts[0].selector)
+          throw `Super ${name} has selector: ${shorts[0].selector}.`;
+        if(shorts[0].shorts)
+          throw `Super ${name} has shorts: ${shorts[0].shorts}.`;
+        this.supers[name] = shorts[0].medias;
+      } else if (name[0] === ":"){
+        if(shorts.length > 1)
+          throw `Super ${name} has |items clause: ${shorts[0].exp}.`;
+        if(shorts[0].medias)
+          throw `Super ${name} has medias: ${shorts[0].medias}.`;
+        if(shorts[0].shorts)
+          throw `Super ${name} has shorts: ${shorts[0].shorts}.`;
+        this.supers[name] = shorts[0].selector;
+      } else {//if (name[0] === "$"){
+        //debugger
+      //   this.supers[name] = new Shorts(body);
+      //   //todo here we need to add the name to the SHORTS too.
       }
     }
   }

@@ -13,7 +13,7 @@ export class Shorts {
   *rules(SHORTS, supers) {
     const [container, ...items] = this.interpret(SHORTS, supers);
     const cRule = new Rule(container.medias, this.clazz + container.selector, container.shorts);
-    if (!cRule.isEmpty)
+    if (cRule.shorts)
       yield cRule;
     for (const item of items)
       if (Object.keys(item.shorts).length)
@@ -31,9 +31,6 @@ class Rule {
     this.selector = selector;
     this.shorts = shorts;
     this.item = item;
-  }
-  get isEmpty() {
-    return !Object.keys(this.shorts).length;
   }
   get body() {
     return Object.entries(this.shorts).map(([k, v]) => `${k}: ${v};`).join(" ");
@@ -114,9 +111,10 @@ class ShortGroup {
   }
 
   interpret(SHORTS, supers) {
+    if(!this.shorts.length)
+      return null;
     const shortsI = this.shorts.map(s => s.interpret(SHORTS));
-    const res = mergeOrStack(shortsI);
-    return res;
+    return mergeOrStack(shortsI);
   }
 }
 
@@ -262,7 +260,7 @@ class SelectorGroup {
   interpret(supers) {
     let selector = this.selectors.map(s => s.interpret(supers)).join(", ");
     if (selector)
-      selector = `:where(\n${selector}\n)`;
+      selector = `:where(${selector})`;
     const medias = this.medias
       .map(s => supers[s] ?? s)
       .map(m => m.replace(/^@/, ""))
