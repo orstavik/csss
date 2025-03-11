@@ -1,4 +1,4 @@
-export class Expression {
+class Expression {
 
   constructor(name, args) {
     this.args = args;
@@ -17,6 +17,16 @@ export class Expression {
     const innerScope = !cb.scope ? scope : Object.assign({}, scope, cb.scope);
     const args = this.args.map(x => x instanceof Expression ? x.interpret(innerScope) : x);
     return cb.call(this, ...args);
+  }
+}
+
+class ShortGroup {
+  constructor(shorts) {
+    this.shorts = shorts;
+  }
+
+  interpret(SHORTS, supers) {
+    const units = this.shorts.map(s => s.interpret(SHORTS));
   }
 }
 
