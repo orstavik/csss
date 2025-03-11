@@ -19,6 +19,47 @@ class Expression {
     return cb.call(this, ...args);
   }
 }
+const mergeOrStack = (function () {
+  const STACKABLE_PROPERTIES = {
+    background: ",",
+    transition: ",",
+    "font-family": ",",
+    "voice-family": ",",
+    "text-shadow": ",",
+    "box-shadow": ",",
+    animation: ",",
+    mask: ",",
+    "font-feature-settings": ",",
+    "will-change": ",",
+
+    transform: " ",
+    filter: " ",
+    "counter-reset": " ",
+    "counter-increment": " ",
+    "font-variant": " ",
+  };
+
+  return function mergeOrStack(shortsI) {
+    const res = {};
+    for (const obj of shortsI) {
+      for (let [k, v] of Object.entries(obj)) {
+        if (v == null) continue;
+        k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
+        if (CSS.supports(k, "inherit"))
+          if (!CSS.supports(k, v))
+            throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
+        //else, the browser doesn't support the property, because the property is too modern.
+        if (!(k in res))
+          res[k] = v;
+        else if (k in STACKABLE_PROPERTIES)
+          res[k] += (STACKABLE_PROPERTIES[k] + v);
+        else
+          throw new SyntaxError(`CSS$ clash: ${k} = ${res[k]}  AND = ${v}.`);
+      }
+    }
+    return res;
+  }
+})();
 
 class ShortGroup {
   constructor(shorts) {
@@ -26,7 +67,9 @@ class ShortGroup {
   }
 
   interpret(SHORTS, supers) {
-    const units = this.shorts.map(s => s.interpret(SHORTS));
+    const shortsI = this.shorts.map(s => s.interpret(SHORTS));
+    const res = mergeOrStack(shortsI);
+    return res;
   }
 }
 
@@ -100,8 +143,8 @@ function parseNestedExpression(short) {
 export function parse$Expression(exp) {
   return exp.split("|").map(seg => seg.split("$"))
     .map(([sel, ...shorts], i) => ({
-      selector: parseSelectorBody(sel),
-      shorts: shorts.map(parseNestedExpression),
+      selector: new SelectorGroup(parseSelectorBody(sel)),
+      shorts: new ShortGroup(shorts.map(parseNestedExpression)),
       item: !!i,
     }));
 }
@@ -148,13 +191,13 @@ function parseSelectorBody(str) {
   for (const t of tokens.slice(lastMedia))
     t === "," ? selects.push([]) : selects.at(-1).push(t);
 
-  return new SelectorGroup(selects, medias);
+  return {selects, medias};
 }
 
 
 class SelectorGroup {
-  constructor(selectors, medias) {
-    this.selectors = selectors.map(s => new Selector(s));
+  constructor({selects, medias}) {
+    this.selectors = selects.map(s => new Selector(s));
     this.medias = medias;
   }
 

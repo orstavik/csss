@@ -48,22 +48,15 @@ export class Short {
 
   interpret(SHORTS, supers) {
     let containerSelector, containerMedias;
-    const res = [];
-    for (let unit of this.units) {
-      const shortsI = unit.shorts.map(exp => exp.interpret(SHORTS));
-      const shorts2 = Short.mergeOrStack(shortsI);
-      // const body = Object.entries(shorts2).map(([k, v]) => `${k}: ${v};`).join(" ");
+    return this.units.map(unit => {
+      const shorts2 = unit.shorts.interpret(SHORTS, supers);
       let { medias, selector } = unit.selector.interpret(supers);
       medias = containerMedias ? [medias, containerMedias].filter(Boolean).join(" and ") : medias;
       selector = containerSelector ? containerSelector + ">*" + selector : this.clazz + selector;
-      // const rule = medias ?
-      //   `@media ${medias} { ${selector} { ${body} } }` :
-      //   `${selector} { ${body} }`;
       containerSelector ??= selector;
       containerMedias ??= medias;
-      res.push(new Rule(medias, selector, shorts2, unit.item));
-    }
-    return res;
+      return new Rule(medias, selector, shorts2, unit.item);
+    });
   }
 }
 
