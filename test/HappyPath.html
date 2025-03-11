@@ -455,39 +455,6 @@
   </style>
 </test-html>
 
-<test-html title="@print:hover$border(solid,2px)|@screen:valid$border(dotted,2px)|.first$border(dashed,2px)">
-  <style>
-    @layer container, items;
-
-    @layer container {
-      @media print {
-        .\@print\:hover\$border\(solid\,2px\)\|\@screen\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):where(:hover) {
-          border-style: solid;
-          border-width: 2px;
-        }
-      }
-    }
-
-    @layer items {
-      @media not all {
-        .\@print\:hover\$border\(solid\,2px\)\|\@screen\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):where(:hover)> :where(:valid) {
-          border-style: dotted;
-          border-width: 2px;
-        }
-      }
-
-      @media print {
-        .\@print\:hover\$border\(solid\,2px\)\|\@screen\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):where(:hover)> :where(.first) {
-          border-style: dashed;
-          border-width: 2px;
-        }
-      }
-    }
-  </style>
-  <div debugger class="@print:hover$border(solid,2px)|@screen:valid$border(dotted,2px)|.first$border(dashed,2px)">
-    hello
-  </div>
-</test-html>
 <test-html title="$font(times,serif,700,capitalize)">
   <main class="$font(times,serif,500,2px,italic)">
     <h2 class="$font(helvetica,arial,sans-serif,900,capitalize)">
@@ -606,6 +573,45 @@
   </style>
 </test-html>
 
+<test-html title="@print,@screen:hover$border(solid,2px)|:valid$border(dotted,2px)|.first$border(dashed,2px)">
+  <style>
+    @layer container, items;
+
+    @layer container {
+
+      @media print,
+      screen {
+        .\@print\,\@screen\:hover\$border\(solid\,2px\)\|\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):where(:hover) {
+          border-style: solid;
+          border-width: 2px;
+        }
+      }
+    }
+
+    @layer items {
+
+      @media print,
+      screen {
+        .\@print\,\@screen\:hover\$border\(solid\,2px\)\|\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):where(:hover)> :where(:valid) {
+          border-style: dotted;
+          border-width: 2px;
+        }
+      }
+
+      @media print,
+      screen {
+        .\@print\,\@screen\:hover\$border\(solid\,2px\)\|\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):where(:hover)> :where(.first) {
+          border-style: dashed;
+          border-width: 2px;
+        }
+      }
+    }
+  </style>
+  <div class="@print,@screen:hover$border(solid,2px)|:valid$border(dotted,2px)|.first$border(dashed,2px)">
+    hello
+  </div>
+</test-html>
+
 <!--
 <test-html title=":dark=@media(prefers-color-scheme:dark);">
   <div css=":dark=@media(prefers-color-scheme:dark);">
@@ -615,65 +621,5 @@
   </div>
   <style>
   </style>
-</test-html>
-
-
-<test-html title="color(3)">
-  <div class="$color(black,#123456)$border-color(red)">
-    hello
-  </div>
-  <style>
-    @layer container, items;
-
-    @layer container {
-      .\$color\(black\,\#123456\)\$border-color\(red\) {
-        color: oklch(from black var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from black var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: color-mix(in oklch, oklch(from black var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from black var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
-        border-color: red;
-        /*why?*/
-      }
-    }
-
-    @layer items {}
-  </style>
-</test-html>
-<test-html title="color(3b)">
-  <style>
-    @layer container, items;
-
-    @layer container {
-      .\$color\(black\,\#123456\,green\) {
-        color: black;
-        --background-color: #123456;
-        border-color: green;
-      }
-    }
-
-    @layer items {}
-  </style>
-  <div class="$color(black,#123456,green)">
-    hello
-  </div>
-</test-html>
-<test-html title="$color(black,#123456,green:yellow)">
-  <style>
-    @layer container, items;
-
-    @layer container {
-
-      .\$color\(black\,\#123456\,green\:yellow\) {
-        color: black;
-        --background-color: #123456;
-        border-block-color: green;
-        border-inline-color: yellow;
-      }
-    }
-
-    @layer items {}
-  </style>
-  <div class="$color(black,#123456,green:yellow)">
-    hello
-  </div>
 </test-html>
 -->

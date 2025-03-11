@@ -3,31 +3,38 @@ export class Shorts {
   constructor(exp) {
     this.exp = exp;
     this.clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
-    this.units = parse$Expression(exp);
+    const { medias, shorts } = parse$Expression(exp);
+    this.medias = medias;
+    this.shorts = shorts;
   }
 
   interpret(SHORTS, supers) {
-    return this.units.map(unit => unit.interpret(SHORTS, supers));
+    let media = this.medias?.map(m => supers[m] ?? m)
+      .map(m => m.replace(/^@/, ""))
+      .map(m => m === "!" ? "not" : m)
+      .join(" and ").replaceAll("and , and", ",").replaceAll("not and ", "not ");
+    if (media)
+      media = `@media ${media}`;
+    const shorts = this.shorts?.map(short => short.interpret(SHORTS, supers))
+    return { media, shorts };
   }
 
   *rules(SHORTS, supers) {
-    const [container, ...items] = this.interpret(SHORTS, supers);
-    const cRule = new Rule(container.medias, this.clazz + container.selector, container.shorts);
+    let { media, shorts } = this.interpret(SHORTS, supers);
+    if (!shorts) return;
+    let [container, ...items] = shorts;
+    items = items.filter(item => item.shorts);
+    const cRule = new Rule(media, this.clazz + container.selector, container.shorts);
     if (cRule.shorts)
       yield cRule;
     for (const item of items)
-      if (Object.keys(item.shorts).length)
-        yield new Rule(
-          [item.medias, cRule.medias].filter(Boolean).join(" and "),
-          cRule.selector + ">*" + item.selector,
-          item.shorts,
-          true);
+      yield new Rule(media, cRule.selector + ">*" + item.selector, item.shorts, true);
   }
 }
 
 class Rule {
-  constructor(medias, selector, shorts, item) {
-    this.medias = medias;
+  constructor(media, selector, shorts, item) {
+    this.media = media;
     this.selector = selector;
     this.shorts = shorts;
     this.item = item;
@@ -36,8 +43,8 @@ class Rule {
     return Object.entries(this.shorts).map(([k, v]) => `${k}: ${v};`).join(" ");
   }
   get rule() {
-    return this.medias ?
-      `@media ${this.medias} { ${this.selector} { ${this.body} } }` :
+    return this.media ?
+      `${this.media} { ${this.selector} { ${this.body} } }` :
       `${this.selector} { ${this.body} }`;
   }
 }
@@ -111,7 +118,7 @@ class ShortGroup {
   }
 
   interpret(SHORTS, supers) {
-    if(!this.shorts.length)
+    if (!this.shorts.length)
       return null;
     const shortsI = this.shorts.map(s => s.interpret(SHORTS));
     return mergeOrStack(shortsI);
@@ -125,8 +132,8 @@ class Short {
   }
   interpret(SHORTS, supers) {
     const shorts = this.shortGroup.interpret(SHORTS, supers);
-    const { selector, medias } = this.selectorGroup.interpret(supers);
-    return { selector, medias, shorts };
+    const selector = this.selectorGroup.interpret(supers);
+    return { selector, shorts };
   }
 }
 
@@ -197,12 +204,25 @@ function parseNestedExpression(short) {
   }
 }
 
+function parseMediaHead(str) {
+  let medias;
+  for (const m of str.matchAll(/(@(?:\([^)]+\)|[a-zA-Z][a-zA-Z0-9_-]*))|([,!])|\s|(.)/g)) {
+    if (m[3])
+      return { medias, rest: str.slice(m.index) || undefined };
+    if (m[1] ?? m[2])
+      (medias ??= []).push(m[1] ?? m[2]);
+  }
+  return { medias };
+}
+
 function parse$Expression(exp) {
-  return exp.split("|").map(seg => seg.split("$"))
+  const { medias, rest } = parseMediaHead(exp);
+  const shorts = rest?.split("|").map(seg => seg.split("$"))
     .map(([sel, ...shorts]) => new Short(
       new SelectorGroup(parseSelectorBody(sel)),
       new ShortGroup(shorts.map(parseNestedExpression)),
     ));
+  return { shorts, medias };
 }
 
 const SUPER_HEAD = /([$:@][a-z_][a-z0-9_-]*)\s*=/.source; // (name)
@@ -210,63 +230,63 @@ const SUPER_LINE = /((["'`])(?:\\.|(?!\3).)*?\3|\/\*[\s\S]*?\*\/|[^;]+);/.source
 const SUPER_BODY = /{((["'`])(?:\\.|(?!\5).)*?\5|\/\*[\s\S]*?\*\/|[^}]+)}/.source;// (body2, quoteSign)
 const SUPER = new RegExp(`${SUPER_HEAD}(?:${SUPER_LINE}|${SUPER_BODY})`, "g");
 
-export function* findStatements(txt) {
-  for (let [, name, _body, , body = _body] of txt.matchAll(SUPER))
-    yield { name, body };
+function interpretSuper(name, body, SHORTS) {
+  const { media, shorts } = new Shorts(body).interpret(SHORTS, {});
+  if (!media && !shorts)
+    throw `Super ${name} is empty.`;
+  if (media && shorts)
+    throw `Super ${name} contains both @media and selector$shorts: ${body}.`;
+  if (media && !name.startsWith("@"))
+    throw `Super ${name} is given an @media: ${body}.\n Did you mean "@${name.slice(1)}"?`;
+  if (media)
+    return media.slice(7);
+  if (shorts[0].selector) {
+    if (shorts.length > 1)
+      throw `Super ${name} cannot contain items: ${body}.`;
+    if (shorts[0].shorts)
+      throw `Super ${name} cannot contain shorts: ${body}.`;
+    return shorts[0].selector;
+  }
+  return shorts;
+}
+
+export function extractSuperShorts(txt, SHORTS) {
+  return Object.fromEntries(
+    [...txt.matchAll(SUPER)]
+      .map(([, name, b, , body = b]) => [name, interpretSuper(name, body, SHORTS)]));
 }
 
 //todo we don't support nested :not(:has(...))
-//todo we don't do @support/scope/container. 
-//todo @support should be done in a transpile process on the <style> element.
-const media = /@(?:\([^)]+\)|[a-zA-Z][a-zA-Z0-9_-]*)/.source;
 const pseudo = /:[a-zA-Z][a-zA-Z0-9_-]*(?:\([^)]+\))?/.source;
 const at = /\[[a-zA-Z][a-zA-Z0-9_-]*(?:[$*~|^]?=(?:'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"))?\]/.source;
 const tag = /\[a-zA-Z][a-zA-Z0-9-]*/.source; //tag
 const clazz = /\.[a-zA-Z][a-zA-Z0-9_-]*/.source; //class
-const mop = /[,!]/.source;
-const op = />>|[>+~&]/.source;
-const selectorTokens = new RegExp(
-  `(\\s+)|(${media})|(${mop})|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
+const op = />>|[>+~&,!]/.source;
+const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
 function parseSelectorBody(str) {
   let tokens = [...str.matchAll(selectorTokens)];
-  const badToken = tokens.find(([t, ws, media, mop, select, error]) => error);
+  const badToken = tokens.find(([t, ws, select, error]) => error);
   if (badToken)
     throw `Bad selector token: ${badToken[0]}`;
   tokens = tokens.filter(([t, ws]) => !ws);
-  const lastMedia = tokens.findLastIndex(([, , media]) => media) + 1;
-  const firstSelector = (tokens.findIndex(([, , media, mop]) => !(media || mop)) + 1) || tokens.length;
-
-  tokens = tokens.map(([t]) => t);
-  if (firstSelector < lastMedia)
-    throw `media queries must come before selectors: 
-  ...${tokens.slice(firstSelector, lastMedia).join("")}...`;
-
-  const medias = tokens.slice(0, lastMedia);
   const selects = [[]];
-  for (const t of tokens.slice(lastMedia))
+  for (const [t] of tokens)
     t === "," ? selects.push([]) : selects.at(-1).push(t);
-
-  return { selects, medias };
+  return selects;
 }
 
 
 class SelectorGroup {
-  constructor({ selects, medias }) {
+  constructor(selects) {
     this.selectors = selects.map(s => new Selector(s));
-    this.medias = medias;
   }
 
   interpret(supers) {
     let selector = this.selectors.map(s => s.interpret(supers)).join(", ");
     if (selector)
       selector = `:where(${selector})`;
-    const medias = this.medias
-      .map(s => supers[s] ?? s)
-      .map(m => m.replace(/^@/, ""))
-      .join(" and ").replaceAll("and , and", ",");
-    //todo fix ! not in medias
-    return { selector, medias };
+    return selector;
   }
 }
 

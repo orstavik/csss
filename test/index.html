@@ -18,9 +18,9 @@
 <script type="module">
   async function openTsts(time) {
     await new Promise(r => setTimeout(r, time));
-    for (let t of document.querySelectorAll('test-html:not([state="ok"])')) {
+    for (let t of document.querySelectorAll('test-html[state="error"]')) {
       t.setAttribute("active", "");
-      setTimeout(_ => t.removeAttribute("active"), 2000);
+      setTimeout(_ => t.removeAttribute("active"), 1000);
     }
   }
 
@@ -34,7 +34,7 @@
   }
 
   (async function () {
-    await openTsts(5000);
+    await openTsts(2000);
   })();
-  import("https://cdn.jsdelivr.net/gh/orstavik/TestHTML@v1.2.4/TestHTMLexpected.js");
+  import("https://cdn.jsdelivr.net/gh/orstavik/TestHTML@v1.2.5/TestHTMLexpected.js");
 </script>

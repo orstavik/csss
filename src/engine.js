@@ -1,4 +1,4 @@
-import { findStatements, Shorts } from "./Parser.js";
+import { extractSuperShorts, Shorts } from "./Parser.js";
 
 function DictMap(dict, kCB, vCB) {
   const res = {};
@@ -34,16 +34,8 @@ const BuiltinSuperSelectors = `
 export class SheetWrapper {
   rules = {};
 
-  static #formatter = new CSSStyleSheet();
   static getKey(r) {
-    if (typeof r === "string") {
-      this.#formatter.insertRule(r, 0);
-      r = this.#formatter.cssRules[0];
-      r = r.cssRules[0] ?? r;
-      this.#formatter.deleteRule(0);
-    }
-    const m = r.parentRule?.media?.mediaText;
-    return (m ? m + "{" : "") + r.selectorText;
+    return [r.parentRule?.media?.mediaText, r.selectorText].filter(Boolean).join(" { ");
   }
 
   static layerMediaRules(layer) {
@@ -85,47 +77,23 @@ export class SheetWrapper {
 
   addRule(str) {
     const shorts = new Shorts(str);
-    for (const { item, rule } of shorts.rules(SHORTS, this.supers))
-      this.addRuleImpl(rule, item ? this.items : this.container);
+    for (const rule of shorts.rules(SHORTS, this.supers))
+      this.addRuleImpl(rule);
   }
 
-  addRuleImpl(rule, { layer, registry }) {
-    const key = SheetWrapper.getKey(rule);
+  addRuleImpl(rule) {
+    const { layer, registry } = rule.item ? this.items : this.container;
+    const key = [rule.media, rule.selector].filter(Boolean).join(" { ");
     let pos = Array.from(registry.keys()).indexOf(key);
     if (pos >= 0)
       return pos;
-    layer.insertRule(rule, layer.cssRules.length);
+    layer.insertRule(rule.rule, layer.cssRules.length);
     registry.set(key, layer.cssRules[layer.cssRules.length - 1]);
     return registry.size - 1;
   }
 
   readSupers(txt) {
-    for (const { name, body } of findStatements(txt)) {
-      if (name in this.supers)
-        console.warn(`Super ${name} overwritten.`);
-      const shorts = new Shorts(body).interpret(SHORTS, this.supers);
-      if(name[0] === "@"){
-        if(shorts.length > 1)
-          throw `Super ${name} has |items clause: ${shorts[0].exp}.`;
-        if(shorts[0].selector)
-          throw `Super ${name} has selector: ${shorts[0].selector}.`;
-        if(shorts[0].shorts)
-          throw `Super ${name} has shorts: ${shorts[0].shorts}.`;
-        this.supers[name] = shorts[0].medias;
-      } else if (name[0] === ":"){
-        if(shorts.length > 1)
-          throw `Super ${name} has |items clause: ${shorts[0].exp}.`;
-        if(shorts[0].medias)
-          throw `Super ${name} has medias: ${shorts[0].medias}.`;
-        if(shorts[0].shorts)
-          throw `Super ${name} has shorts: ${shorts[0].shorts}.`;
-        this.supers[name] = shorts[0].selector;
-      } else {//if (name[0] === "$"){
-        //debugger
-      //   this.supers[name] = new Shorts(body);
-      //   //todo here we need to add the name to the SHORTS too.
-      }
-    }
+    Object.assign(this.supers, extractSuperShorts(txt, SHORTS));
   }
 
   #isInUse(r) {
