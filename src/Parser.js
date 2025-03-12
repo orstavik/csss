@@ -194,7 +194,7 @@ function diveDeep(tokens, top) {
 function parseNestedExpression(short) {
   const tokensOG = [...short.matchAll(TOKENS)].map(processToken).filter(Boolean);
   if (tokensOG.length === 1)
-    return tokensOG[0];
+    return new Expression(tokensOG[0], []);
   const tokens = tokensOG.slice();
   try {
     const res = diveDeep(tokens, true);
