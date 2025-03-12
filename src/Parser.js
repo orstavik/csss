@@ -51,6 +51,13 @@ class Rule {
 
 class Expression {
 
+  // function defaultValues(Defaults, res) {
+  //   for (let k in Defaults)
+  //     if (k in res || Object.keys(res).some(k2 => k2.startsWith(k + "-")))
+  //       delete Defaults[k];
+  //   return Object.assign(Defaults, res);
+  // }
+  
   constructor(name, args) {
     this.args = args;
     this.name = name;

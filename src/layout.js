@@ -1,4 +1,4 @@
-import { mergy, defaultValues, toLogicalFour } from "./func.js";
+import { mergy, toLogicalFour } from "./func.js";
 
 const O2 = "(?:(visible|hidden|clip)|(auto|scroll)(?:-snap(?:-mandatory)?)?)";
 const OVERFLOW2 = new RegExp(`^${O2}(?::${O2})?$`); //$block(hidden:scroll-snap-mandatory,...)
@@ -58,17 +58,17 @@ const LineClamp = { //$block(line-clamp(3),...)
   clamp: toLineClamp,
 }
 
-const BLOCK_RESET = {
-  "word-spacing": "initial",
-  "line-height": "initial",
-  "white-space": "initial",
-  hyphens: "initial",
-  "text-align": "initial",
-  "text-indent": "initial",
-  "text-transform": "none",
-  "text-shadow": "none",
-  // "text-decoration": "none", already doesn't inherit.
-}
+// const BLOCK_RESET = {
+//   "word-spacing": "initial",
+//   "line-height": "initial",
+//   "white-space": "initial",
+//   hyphens: "initial",
+//   "text-align": "initial",
+//   "text-indent": "initial",
+//   "text-transform": "none",
+//   "text-shadow": "none",
+//   // "text-decoration": "none", already doesn't inherit.
+// }
 const TextAlignAliases = {
   a: "start",
   b: "end",
@@ -84,12 +84,12 @@ const AlignAliases = {
   v: "space-evenly", //medium stretch
   w: "space-between",//wide stretch
   _: "baseline",     //todo what about "(first|last) baseline"
-  ".": undefined,
+  ".": "unset",
 };
 
 function doAlign(_, b, i, b2, i2) {
   return {
-    "text-align": TextAlignAliases[i] ?? "initial",
+    "text-align": TextAlignAliases[i] ?? "unset",
     "align-content": AlignAliases[b],
     "justify-content": AlignAliases[i],
     "align-items": AlignAliases[b2],
@@ -98,7 +98,7 @@ function doAlign(_, b, i, b2, i2) {
 }
 function doAlignSelf(_, b, i) {
   return {
-    "text-align": TextAlignAliases[i] ?? "initial",
+    "text-align": TextAlignAliases[i] ?? "unset",
     "align-self": AlignAliases[b],
     "justify-self": AlignAliases[i],
   };
@@ -132,16 +132,16 @@ function doFloat(a) {
 
 function textAlign(a) {
   if (a = a.match(/^[abcs]$/))
-    return ({ textAlign: TextAlignAliases[a[0]] });
+    return ({ "text-align": TextAlignAliases[a[0]] });
 }
 
 function toBlockGap(wordSpacing, lineHeight) {
-  return { wordSpacing, lineHeight };
+  return { "word-spacing": wordSpacing, "line-height": lineHeight };
 }
 
 function block(...args) {
-  args = args.map(a => typeof a === "string" ?  wrap(a) ?? textAlign(a) : a);
-  return defaultValues({ display: "block", ...BLOCK_RESET }, mergy(...args));
+  args = args.map(a => typeof a === "string" ? wrap(a) ?? textAlign(a) : a);
+  return mergy(...args);
 }
 block.scope = {
   ...LAYOUT,
@@ -173,7 +173,7 @@ function grid(...args) {
     if (m = a.match(GRID_ALIGN)) return doAlign(...m);
     return a;
   });
-  return defaultValues({ display: "grid", ...BLOCK_RESET }, mergy(...args));
+  return mergy(...args);
 }
 grid.scope = {
   ["grid-auto-rows"]: (...args) => ({ ["grid-auto-rows"]: args.join(" ") }),

@@ -63,20 +63,22 @@ function colonSplit2(NAME, SEP, x) {
     `${NAME}(${res.join(SEP)})`;
 }
 
+//todo remove mergy. It is now mostly done manually or elsewhere i think.
 export function mergy(...res) {
   res = res.filter(a => a != null);
   for (const value of res)
     if (typeof value !== "object")
       throw new SyntaxError("unrecognized value: " + value);
-  for (const obj of res) {
-    for (const key in obj) {
-      const kebab = key.replace(/[A-Z]/g, "-$&").toLowerCase();
-      if (kebab !== key) {
-        obj[kebab] = obj[key];
-        delete obj[key];
-      }
-    }
-  }
+  // for (const obj of res) {
+  //   for (const key in obj) {
+  //     const kebab = key.replace(/[A-Z]/g, "-$&").toLowerCase();
+  //     if (kebab !== key) {
+  //       obj[kebab] = obj[key];
+  //       delete obj[key];
+  //     }
+  //   }
+  // }
+  //todo not sure that we need this now??
   const keys = res.map(o => Object.keys(o).map(k => k.split("-")[0]));
   const test = new Set(keys.shift());
   for (const ks of keys)
@@ -84,13 +86,6 @@ export function mergy(...res) {
       if (test.has(k))
         throw new SyntaxError(`Property crash: ${k}`);
   return Object.assign(...res);
-}
-
-export function defaultValues(Defaults, res) {
-  for (let k in Defaults)
-    if (k in res || Object.keys(res).some(k2 => k2.startsWith(k + "-")))
-      delete Defaults[k];
-  return Object.assign(Defaults, res);
 }
 
 //enables us to write a min and max eiter as 2px:5px or max(2px,5px)
@@ -129,9 +124,7 @@ function border(...args) {
     if (a.match(/solid|dotted|dashed|double|none/)) return { style: a };
     return a;
   });
-  let res = mergy(...args);
-  // res = defaultValues({ style: "solid" }, res)
-  return borderSwitch(res);
+  return borderSwitch(mergy(...args));
 }
 
 border.scope = {
@@ -297,44 +290,34 @@ const KNOWN_BAD_FONT_NAMES = {
 }
 //$font("Arial+Black",serif,bold,small-caps,ultra-condensed,capitalize,sans-serif,oblique(-10deg),ui-sans-serif)
 //$font("Arial+Black",sans-serif,ui-sans-serif,900,small-caps,ultra-condensed,capitalize,oblique(10deg))
+const FONT = [
+  ["font-family", /^(serif|sans-serif|monospace|cursive|fantasy|system-ui|ui-serif|ui-sans-serif|ui-monospace|ui-rounded|emoji|math|fangsong|Arial|Arial\+Black|Calibri|Cambria|Candara|Comic\+Sans\+MS|Consolas|Constantia|Corbel|Courier\+New|Georgia|Impact|Lucida\+Console|Lucida\+Sans\+Unicode|Palatino\+Linotype|Segoe\+UI|Tahoma|Times\+New\+Roman|Trebuchet\+MS|Verdana|Book\+Antiqua|Century\+Gothic|Franklin\+Gothic\+Medium|Garamond|Bookman\+Old\+Style|Brush\+Script\+MT|Helvetica|Helvetica\+Neue|Courier\+Monaco|Geneva|Lucida\+Grande|Didot|Hoefler\+Text|American\+Typewriter|Gill\+Sans|Optima|Futura|Baskerville|Copperplate|Menlo|Monaco|Apple\+Chancery|Marker\+Felt|Chalkboard|Andale\+Mono|Palatino\+Times|DejaVu\+Sans|DejaVu\+Serif|DejaVu\+Sans\+Mono|Liberation\+Sans|Liberation\+Serif|Liberation\+Mono|Nimbus\+Roman\+No9\+L|Nimbus\+Sans\+L|Nimbus\+Mono\+L|Century\+Schoolbook\+L|URW\+Chancery\+L|URW\+Gothic\+L|URW\+Bookman\+L|Wingdings|Webdings|Symbol|Zapf\+Dingbats|-apple-system|BlinkMacSystemFont|Roboto)$/i],
+  ["font-family", /^["']/i],
+  ["font-style", /^(italic|oblique)$/i],
+  ["font-weight", /^(bold|bolder|lighter|[1-9]00)$/i],
+  ["font-variant-caps", /^(small-caps|all-small-caps|petite-caps|all-petite-caps|unicase|titling-caps)$/i],
+  ["font-stretch", /^(ultra-condensed|extra-condensed|condensed|semi-condensed|normal|semi-expanded|expanded|extra-expanded|ultra-expanded)$/i],
+  ["text-transform", /^(capitalize|uppercase|lowercase|full-width|full-size-kana|math-auto)$/i],
+  ["letter-spacing", /^-?[0-9]*\.?[0-9]+([a-z]+|%)$/i],
+];
+
 function font(...args) {
-  const res = {
-    fontFamily: [],
-    fontStyle: "",
-    fontWeight: "",
-    fontVariant: [],
-    fontStretch: "",
-    textTransform: "",
-    letterSpacing: ""
-  };
-  for (const A of args) {
-    const a = A.toLowerCase();
-    if (a in KNOWN_BAD_FONT_NAMES)
-      res.fontFamily.push(KNOWN_BAD_FONT_NAMES[a]);
-    else if (a.match(/^(serif|sans-serif|monospace|cursive|fantasy|system-ui|ui-serif|ui-sans-serif|ui-monospace|ui-rounded|emoji|math|fangsong|Arial|Arial+Black|Calibri|Cambria|Candara|Comic+Sans+MS|Consolas|Constantia|Corbel|Courier+New|Georgia|Impact|Lucida+Console|Lucida+Sans+Unicode|Palatino+Linotype|Segoe+UI|Tahoma|Times+New+Roman|Trebuchet+MS|Verdana|Book+Antiqua|Century+Gothic|Franklin+Gothic+Medium|Garamond|Bookman+Old+Style|Brush+Script+MT|Helvetica|Helvetica+Neue|Courier+Monaco|Geneva|Lucida+Grande|Didot|Hoefler+Text|American+Typewriter|Gill+Sans|Optima|Futura|Baskerville|Copperplate|Menlo|Monaco|Apple+Chancery|Marker+Felt|Chalkboard|Andale+Mono|Palatino+Times|DejaVu+Sans|DejaVu+Serif|DejaVu+Sans+Mono|Liberation+Sans|Liberation+Serif|Liberation+Mono|Nimbus+Roman+No9+L|Nimbus+Sans+L|Nimbus+Mono+L|Century+Schoolbook+L|URW+Chancery+L|URW+Gothic+L|URW+Bookman+L|Wingdings|Webdings|Symbol|Zapf+Dingbats|-apple-system|BlinkMacSystemFont|Roboto)$/i))
-      res.fontFamily.push(A);
-    else if (a.match(/^["']/))
-      res.fontFamily.push(A);
-    else if (a.match(/^(italic|oblique(\s.*)?)$/))
-      res.fontStyle += a;
-    else if (a.match(/^(bold|bolder|lighter|[1-9]00)$/))
-      res.fontWeight += a;
-    else if (a.match(/^(small-caps|all-small-caps|petite-caps|all-petite-caps|unicase|titling-caps)$/))
-      res.fontVariant.push(a);
-    else if (a.match(/^(ultra-condensed|extra-condensed|condensed|semi-condensed|normal|semi-expanded|expanded|extra-expanded|ultra-expanded)$/))
-      res.fontStretch += a;
-    else if (a.match(/^(capitalize|uppercase|lowercase|full-width|full-size-kana|math-auto)$/))
-      res.textTransform += a;
-    else if (a.match(/^-?[0-9]*\.?[0-9]+([a-z]+|%)$/))
-      res.letterSpacing += a;
-    else
-      throw `Unrecognized font property: ${A}`;
+  const res = {};
+  main: for (const a of args) {
+    const badFont = KNOWN_BAD_FONT_NAMES[a.toLowerCase()];
+    if (badFont) {
+      (res["font-family"] ??= []).push(badFont);
+      continue main;
+    }
+    for (const [TYPE, WORD] of FONT) {
+      if (a.match(WORD)) {
+        TYPE === "font-family" ? (res[TYPE] ??= []).push(a) : res[TYPE] = a;
+        continue main;
+      }
+    }
+    throw `Unrecognized font property: ${a}`;
   }
-  res.fontFamily = res.fontFamily.map(s => s.replaceAll("+", " ")).join(", ");
-  res.fontVariant = res.fontVariant.join(" ");
-  for (const k in res)
-    if (!res[k])
-      res[k] = "initial";
+  res["font-family"] = res["font-family"].join(", ").replaceAll("+", " ");
   return res;
 }
 font.scope = {

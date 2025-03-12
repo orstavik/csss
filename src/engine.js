@@ -70,7 +70,12 @@ $ui-serif = $font-family(ui-serif);
 $ui-sans-serif = $font-family(ui-sans-serif);
 
 $border = $border(solid, medium);
-$flex = $display(flex)$word-spacing(initial)$line-height(initial)$white-space(initial)$hyphens(initial)$text-align(initial)$text-indent(initial)$text-transform(none)$text-shadow(none);
+$block = $display(block)$word-spacing(.)$line-height(.)$white-space(.)$hyphens(.)$text-align(.)$text-indent(.);
+$grid = $display(grid)$word-spacing(.)$line-height(.)$white-space(.)$hyphens(.)$text-align(.)$text-indent(.);
+$flex = $display(flex)$word-spacing(.)$line-height(.)$white-space(.)$hyphens(.)$text-align(.)$text-indent(.);
+//font that breaks inheritance chain
+$font = $font-family(initial)$font-style(initial)$font-weight(initial)$font-variant(initial)$font-stretch(initial)$text-transform(initial)$letter-spacing(initial);
+$font-inherit = $font-family(inherit)$font-style(inherit)$font-weight(inherit)$font-variant(inherit)$font-stretch(inherit)$text-transform(inherit)$letter-spacing(inherit);
 `;
 //$full-width = $text-transform(full-width);
 //$full-size-kana = $text-transform(full-size-kana);
