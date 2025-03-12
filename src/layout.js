@@ -58,17 +58,6 @@ const LineClamp = { //$block(line-clamp(3),...)
   clamp: toLineClamp,
 }
 
-// const BLOCK_RESET = {
-//   "word-spacing": "initial",
-//   "line-height": "initial",
-//   "white-space": "initial",
-//   hyphens: "initial",
-//   "text-align": "initial",
-//   "text-indent": "initial",
-//   "text-transform": "none",
-//   "text-shadow": "none",
-//   // "text-decoration": "none", already doesn't inherit.
-// }
 const TextAlignAliases = {
   a: "start",
   b: "end",
@@ -216,7 +205,6 @@ function flex(...args) {
     return a;
   });
   return mergy(...args);
-  // return defaultValues({ display: "flex", ...BLOCK_RESET }, mergy(...args));
 }
 flex.scope = {
   ...LAYOUT,

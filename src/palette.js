@@ -99,7 +99,7 @@ function color(name) {
     output = ColorFuncs.text(output);
   if (!("border-color" in output))
     output = ColorFuncs.b(output);
-  
+
   //TODO disperse backgrounds
 
   return output;
@@ -109,4 +109,9 @@ const colorShadow = toLogicalFour.bind(null, "--box-shadow-color");
 const colorBorder = (...args) => borderSwitch(toLogicalFour("border-color", ...args));
 
 
-export default { palette, color, colorBorder, colorShadow };
+export default {
+  palette,
+  color,
+  "color-border": colorBorder,
+  "color-shadow": colorShadow
+};
