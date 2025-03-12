@@ -130,7 +130,7 @@ function border(...args) {
     return a;
   });
   let res = mergy(...args);
-  res = defaultValues({ style: "solid" }, res)
+  // res = defaultValues({ style: "solid" }, res)
   return borderSwitch(res);
 }
 

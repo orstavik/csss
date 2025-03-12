@@ -66,7 +66,10 @@ class Expression {
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${this.name}`);
     const innerScope = !cb.scope ? scope : Object.assign({}, scope, cb.scope);
-    const args = this.args.map(x => x instanceof Expression ? x.interpret(innerScope, supers) : x);
+    const args = this.args.map(x =>
+      x instanceof Expression ? x.interpret(innerScope, supers) :
+        x === "." ? "unset" :
+          x);
     const res = cb.call(this, ...args);
     const supersObj = supers["$" + this.name]?.shorts;
     return supersObj ? Object.assign({}, supersObj, res) : res;

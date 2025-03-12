@@ -63,6 +63,7 @@
 
       .\$border\(r\(10px\,30px\,60px\)\) {
         border-style: solid;
+        border-width: medium;
         border-radius: 10px 10px 60px 60px / 30px;
       }
     }
@@ -107,29 +108,34 @@
   </style>
 </test-html>
 <test-html title="border-radius">
+  <div class="$border(0,radius(1rem))">hello</div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$border\(radius\(1rem\)\) {
+      .\$border\(0\,radius\(1rem\)\) {
         border-style: solid;
+        border-width: 0px;
         border-radius: 1rem;
       }
     }
 
     @layer items {}
   </style>
-  <div class="$border(radius(1rem))">hello</div>
 </test-html>
 <test-html title="big border">
-  <div class="$border(w(,1px,2px,),s(,,solid,dashed))">sunshine</div>
+  <div class="$border(w(0,1px,2px,),s(.,.,solid,dashed))">sunshine</div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$border\(w\(\,1px\,2px\,\)\,s\(\,\,solid\,dashed\)\) {
+      .\$border\(w\(0\,1px\,2px\,\)\,s\(\.\,\.\,solid\,dashed\)\) {
+        border-style: solid;
+        border-width: medium;
+        border-block-width: 0px 2px;
         border-inline-start-width: 1px;
-        border-block-end-width: 2px;
+        border-block-start-style: unset;
+        border-inline-start-style: unset;
         border-block-end-style: solid;
         border-inline-end-style: dashed;
       }

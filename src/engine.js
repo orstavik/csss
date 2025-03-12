@@ -69,6 +69,7 @@ $system-ui = $font-family(system-ui);
 $ui-serif = $font-family(ui-serif);
 $ui-sans-serif = $font-family(ui-sans-serif);
 
+$border = $border(solid, medium);
 $flex = $display(flex)$word-spacing(initial)$line-height(initial)$white-space(initial)$hyphens(initial)$text-align(initial)$text-indent(initial)$text-transform(none)$text-shadow(none);
 `;
 //$full-width = $text-transform(full-width);
