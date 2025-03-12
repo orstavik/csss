@@ -66,6 +66,7 @@ function colonSplit2(NAME, SEP, x) {
 //todo remove mergy. It is now mostly done manually or elsewhere i think.
 export function mergy(...res) {
   res = res.filter(a => a != null);
+  if (!res.length) return {};
   for (const value of res)
     if (typeof value !== "object")
       throw new SyntaxError("unrecognized value: " + value);

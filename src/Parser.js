@@ -25,7 +25,7 @@ export class Shorts {
     let [container, ...items] = shorts;
     items = items.filter(item => item.shorts);
     const cRule = new Rule(media, this.clazz + container.selector, container.shorts);
-    if (cRule.shorts)
+    if (cRule.shorts) //todo this we can't do, because we need the sequence data for the empty rules too.
       yield cRule;
     for (const item of items)
       yield new Rule(media, cRule.selector + ">*" + item.selector, item.shorts, true);
@@ -50,7 +50,7 @@ class Rule {
 }
 
 class Expression {
-  
+
   constructor(name, args) {
     this.args = args;
     this.name = name;
@@ -62,7 +62,7 @@ class Expression {
     return this.name + "/" + this.args.length;
   }
   interpret(scope, supers) {
-    const cb = scope[this.name] ?? scope[supers[this.name]?.func];
+    const cb = scope[this.name] ?? scope[supers["$" + this.name]?.func];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${this.name}`);
     const innerScope = !cb.scope ? scope : Object.assign({}, scope, cb.scope);

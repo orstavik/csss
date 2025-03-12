@@ -33,6 +33,7 @@ export class SheetWrapper {
   constructor(sheet) {
     this.sheet = sheet;
     this.supers = {};
+    this.shorts = { ...SHORTS };
     this.items = this.setupLayer("items", sheet);
     this.container = this.setupLayer("container", sheet);
     this.setupStatement();
@@ -56,19 +57,22 @@ export class SheetWrapper {
 
   addRule(str) {
     const shorts = new Shorts(str);
-    for (const rule of shorts.rules(SHORTS, this.supers))
+    const rules = [...shorts.rules(this.shorts, this.supers)];
+    for (const rule of rules)
       this.addRuleImpl(rule);
+    return rules[0];
   }
 
   addRuleImpl(rule) {
     const { layer, registry } = rule.item ? this.items : this.container;
     const key = [rule.media, rule.selector].filter(Boolean).join(" { ");
-    let pos = Array.from(registry.keys()).indexOf(key);
-    if (pos >= 0)
-      return pos;
-    layer.insertRule(rule.rule, layer.cssRules.length);
-    registry.set(key, layer.cssRules[layer.cssRules.length - 1]);
-    return registry.size - 1;
+    let ruleAndPos = registry.get(key);
+    if (!ruleAndPos) {
+      layer.insertRule(rule.rule, layer.cssRules.length);
+      ruleAndPos = { rule, css: layer.cssRules[layer.cssRules.length - 1], pos: layer.cssRules.length - 1 };
+      registry.set(key, ruleAndPos);
+    }
+    return ruleAndPos;
   }
 
   readSupers(txt) {
