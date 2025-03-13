@@ -241,7 +241,7 @@ function checkSuperBody(name, { media, shorts: selectorShorts }) {
 function interpretSuper(name, body, SHORTS) {
   const parsed = new ShortBlock(body);
   const { media, selector, shorts } = checkSuperBody(name, parsed.interpret(SHORTS, {}));
-  return selector || (media ? media.slice(7) : { shorts, func: parsed.shorts[0].exprs[0].name });
+  return selector || (media ? media.slice(7) : { shorts, func: parsed.shorts[0].exprList[0].name });
 }
 
 export function extractSuperShorts(txt, SHORTS) {
