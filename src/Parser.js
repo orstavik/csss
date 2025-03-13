@@ -75,7 +75,7 @@ class Expression {
     return supersObj ? Object.assign({}, supersObj, res) : res;
   }
 }
-const mergeOrStack = (function () {
+const clashOrStack = (function () {
   const STACKABLE_PROPERTIES = {
     background: ",",
     transition: ",",
@@ -95,7 +95,7 @@ const mergeOrStack = (function () {
     "font-variant": " ",
   };
 
-  return function mergeOrStack(shortsI) {
+  return function clashOrStack(shortsI) {
     const res = {};
     for (const obj of shortsI) {
       for (let [k, v] of Object.entries(obj)) {
@@ -117,27 +117,27 @@ const mergeOrStack = (function () {
   }
 })();
 
-class ShortGroup {
-  constructor(shorts) {
-    this.shorts = shorts;
-  }
+// class ShortGroup {
+//   constructor(shorts) {
+//     this.shorts = shorts;
+//   }
 
-  interpret(SHORTS, supers) {
-    if (!this.shorts.length)
-      return null;
-    const shortsI = this.shorts.map(s => s.interpret(SHORTS, supers));
-    return mergeOrStack(shortsI);
-  }
-}
+//   interpret(SHORTS, supers) {
+//     if (!this.shorts.length)
+//       return null;
+//     const shortsI = this.shorts.map(s => s.interpret(SHORTS, supers));
+//     return clashOrStack(shortsI);
+//   }
+// }
 
 class Short {
-  constructor(selectorGroup, shortGroup) {
+  constructor(selectorGroup, shorts) {
     this.selectorGroup = selectorGroup;
-    this.shortGroup = shortGroup;
+    this.shorts = shorts;
   }
   interpret(SHORTS, supers) {
-    const shorts = this.shortGroup.interpret(SHORTS, supers);
-    const selector = this.selectorGroup.interpret(supers);
+    const shorts = this.shorts && clashOrStack(this.shorts.map(s => s.interpret(SHORTS, supers)));
+    const selector = this.selectorGroup && this.selectorGroup.interpret(supers);
     return { selector, shorts };
   }
 }
@@ -224,8 +224,8 @@ function parse$Expression(exp) {
   const { medias, rest } = parseMediaHead(exp);
   const shorts = rest?.split("|").map(seg => seg.split("$"))
     .map(([sel, ...shorts]) => new Short(
-      new SelectorGroup(parseSelectorBody(sel)),
-      new ShortGroup(shorts.map(parseNestedExpression)),
+      sel && new SelectorGroup(parseSelectorBody(sel)),
+      shorts.length && shorts.map(parseNestedExpression)
     ));
   return { shorts, medias };
 }
@@ -253,7 +253,7 @@ function checkSuperBody(name, { media, shorts: selectorShorts }) {
 function interpretSuper(name, body, SHORTS) {
   const parsed = new Shorts(body);
   const { media, selector, shorts } = checkSuperBody(name, parsed.interpret(SHORTS, {}));
-  return selector || (media ? media.slice(7) : { shorts, func: parsed.shorts[0].shortGroup.shorts[0].name });
+  return selector || (media ? media.slice(7) : { shorts, func: parsed.shorts[0].shorts[0].name });
 }
 
 export function extractSuperShorts(txt, SHORTS) {
