@@ -1,4 +1,4 @@
-import { extractSuperShorts, Shorts } from "./Parser.js";
+import { extractSuperShorts, ShortBlock } from "./Parser.js";
 import nativeAndMore from "./func.js";
 import layouts from "./layout.js";
 import colorPalette from "./palette.js";
@@ -56,7 +56,7 @@ export class SheetWrapper {
   }
 
   addRule(str) {
-    const shorts = new Shorts(str);
+    const shorts = new ShortBlock(str);
     const rules = [...shorts.rules(this.shorts, this.supers)];
     for (const rule of rules)
       this.addRuleImpl(rule);

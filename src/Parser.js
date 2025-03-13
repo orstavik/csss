@@ -1,4 +1,4 @@
-export class Shorts {
+export class ShortBlock {
 
   constructor(exp) {
     this.exp = exp;
@@ -117,27 +117,15 @@ const clashOrStack = (function () {
   }
 })();
 
-// class ShortGroup {
-//   constructor(shorts) {
-//     this.shorts = shorts;
-//   }
-
-//   interpret(SHORTS, supers) {
-//     if (!this.shorts.length)
-//       return null;
-//     const shortsI = this.shorts.map(s => s.interpret(SHORTS, supers));
-//     return clashOrStack(shortsI);
-//   }
-// }
-
 class Short {
-  constructor(selectorGroup, shorts) {
-    this.selectorGroup = selectorGroup;
-    this.shorts = shorts;
+  constructor(selectorList, exprList) {
+    this.selectorList = selectorList;
+    this.exprList = exprList;
   }
   interpret(SHORTS, supers) {
-    const shorts = this.shorts && clashOrStack(this.shorts.map(s => s.interpret(SHORTS, supers)));
-    const selector = this.selectorGroup && this.selectorGroup.interpret(supers);
+    const shorts = this.exprList && clashOrStack(this.exprList.map(s => s.interpret(SHORTS, supers)));
+    let selector = this.selectorList && this.selectorList.map(s => s.interpret(supers)).join(", ");
+    selector &&= `:where(${selector})`;
     return { selector, shorts };
   }
 }
@@ -224,7 +212,7 @@ function parse$Expression(exp) {
   const { medias, rest } = parseMediaHead(exp);
   const shorts = rest?.split("|").map(seg => seg.split("$"))
     .map(([sel, ...shorts]) => new Short(
-      sel && new SelectorGroup(parseSelectorBody(sel)),
+      sel && parseSelectorBody(sel)?.map(s => new Selector(s)),
       shorts.length && shorts.map(parseNestedExpression)
     ));
   return { shorts, medias };
@@ -251,9 +239,9 @@ function checkSuperBody(name, { media, shorts: selectorShorts }) {
 }
 
 function interpretSuper(name, body, SHORTS) {
-  const parsed = new Shorts(body);
+  const parsed = new ShortBlock(body);
   const { media, selector, shorts } = checkSuperBody(name, parsed.interpret(SHORTS, {}));
-  return selector || (media ? media.slice(7) : { shorts, func: parsed.shorts[0].shorts[0].name });
+  return selector || (media ? media.slice(7) : { shorts, func: parsed.shorts[0].exprs[0].name });
 }
 
 export function extractSuperShorts(txt, SHORTS) {
@@ -280,20 +268,6 @@ function parseSelectorBody(str) {
   for (const [t] of tokens)
     t === "," ? selects.push([]) : selects.at(-1).push(t);
   return selects;
-}
-
-
-class SelectorGroup {
-  constructor(selects) {
-    this.selectors = selects.map(s => new Selector(s));
-  }
-
-  interpret(supers) {
-    let selector = this.selectors.map(s => s.interpret(supers)).join(", ");
-    if (selector)
-      selector = `:where(${selector})`;
-    return selector;
-  }
 }
 
 class Selector {
