@@ -2,6 +2,18 @@ export const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|in|pt|pc|ch|ex|%/.so
 export const N = /-?[0-9]*\.?[0-9]+(?:e[+-]?[0-9]+)?/.source;
 export const NUM = `(${N})(?:\\/(${N}))?`; //num frac allows for -.5e+0/-122.5e-12
 
+export function toRadiusFour(NAME, ...ar) {
+  if (!(ar instanceof Array))
+    return { [NAME]: ar };
+  if (ar.length === 1)
+    return { [NAME]: ar[0] };
+  return {
+    [NAME + "-start-start"]: ar[0],
+    [NAME + "-end-end"]: ar[2] ?? ar[0],
+    [NAME + "-start-end"]: ar[1],
+    [NAME + "-end-start"]: ar[3] ?? ar[1],
+  };
+}
 export function toLogicalFour(NAME, ...ar) {
   if (!(ar instanceof Array))
     return { [NAME]: ar };
@@ -133,8 +145,10 @@ border.scope = {
   w: toLogicalFour.bind(null, "width"),
   style: toLogicalFour.bind(null, "style"),
   s: toLogicalFour.bind(null, "style"),
-  radius: toLogicalEight.bind(null, "radius", 0),
-  r: toLogicalEight.bind(null, "radius", 0),
+  radius: toRadiusFour.bind(null, "radius"),
+  r: toRadiusFour.bind(null, "radius"),
+  r4: toRadiusFour.bind(null, "radius"),
+  r8: toLogicalEight.bind(null, "radius", 0),
 };
 
 const NativeCssFunctions = {
