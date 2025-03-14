@@ -26,6 +26,7 @@
     border-style: solid;
     text-align: center;
   }
+
   .innerbox {
     width: 180px;
     line-height: 60px;
@@ -33,6 +34,7 @@
     margin: 10px;
     padding: 10px;
   }
+
   .outerbox {
     display: flex;
     flex-direction: column;
@@ -60,18 +62,14 @@
   document.querySelector("main").insertAdjacentHTML("beforeend", divs.join("\n"));
 </script>
 <script type="module">
-  import { toCss } from "../src/engine.js";
+  import { SheetWrapper } from "../src/engine.js";
+  const sheetWrapper = new SheetWrapper(document.querySelector('style').sheet);
 
   (function happyTest() {
     const res = [];
     for (let el of document.body.querySelectorAll('[class*="$"]'))
       for (let clazz of el.classList)
         if (clazz.includes("$"))
-          try {
-            res.push(toCss(clazz));
-          } catch (er) {
-            console.log(er);
-          }
-    document.querySelector('style').textContent += res.join('\n');
+          try { sheetWrapper.addRule(clazz) } catch (er) { console.log(er); }
   })();
 </script>
