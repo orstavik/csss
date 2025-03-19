@@ -151,6 +151,16 @@ function diveDeep(tokens, top) {
   const res = [];
   main: while (tokens.length) {
     let a = tokens.shift();
+    if (top && a === ",") throw "can't start with ','";
+    if (top && a === E) throw "can't start with ')'";
+    if (a === "," || a === E) {         //empty
+      res.push(undefined);
+      if (a === E && !res.length)
+        throw new SyntaxError("empty function not allowed in CSSs");
+      if (a === E)
+        return res;
+      continue;
+    }
 
     // let parStart = +(a === S);
     // if(parStart || a.match(calcOp) || tokens[0]?.match(calcOp)) {
@@ -186,16 +196,11 @@ function diveDeep(tokens, top) {
     //  --klaj-ldkjf /[+/*<>]/ (
 
 
-    if (top && a === ",") throw "can't start with ','";
-    if (top && a === E) throw "can't start with ')'";
-    if (a === "," || a === E) {         //empty
-      res.push(undefined);
-      if (a === E && !res.length)
-        throw new SyntaxError("empty function not allowed in CSSs");
-      if (a === E)
-        return res;
-      continue;
-    }
+    // if (a === S)
+    //   a = extractCalc("", [a, ...tokens]);
+    // if (a.match(/[+/*<>]/))  //here we need to add a test for the [a-z]-1|1-[a-z] cases
+    //   a = extractCalc(a, tokens);
+
     let b;
     if (a === S) {
       a = new Expression("", diveDeep(tokens));
