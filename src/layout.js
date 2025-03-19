@@ -1,4 +1,4 @@
-import { mergy, toLogicalFour } from "./func.js";
+import { toLogicalFour } from "./func.js";
 
 const O2 = "(?:(visible|hidden|clip)|(auto|scroll)(?:-snap(?:-mandatory)?)?)";
 const OVERFLOW2 = new RegExp(`^${O2}(?::${O2})?$`); //$block(hidden:scroll-snap-mandatory,...)
@@ -130,7 +130,7 @@ function toBlockGap(wordSpacing, lineHeight) {
 
 function block(...args) {
   args = args.map(a => typeof a === "string" ? wrap(a) ?? textAlign(a) : a);
-  return mergy(...args);
+  return Object.assign(...args);
 }
 block.scope = {
   ...LAYOUT,
@@ -141,7 +141,7 @@ block.scope = {
 
 function _block(...args) {
   args = args.map(a => typeof a === "string" ? doFloat(a) : a);
-  return mergy(...args);
+  return Object.assign(...args);
 }
 _block.scope = {   //$_block(indent(1em),...)
   ..._LAYOUT,
@@ -162,7 +162,7 @@ function grid(...args) {
     if (m = a.match(GRID_ALIGN)) return doAlign(...m);
     return a;
   });
-  return mergy(...args);
+  return Object.assign(...args);
 }
 grid.scope = {
   ["grid-auto-rows"]: (...args) => ({ ["grid-auto-rows"]: args.join(" ") }),
@@ -184,7 +184,7 @@ function _grid(...args) {
     if (m = a.match(_GRID_ALIGN)) return doAlignSelf(...m);
     return a;
   });
-  return mergy(...args);
+  return Object.assign(...args);
 }
 _grid.scope = {
   ..._LAYOUT,
@@ -204,7 +204,7 @@ function flex(...args) {
     if (m = wrap(a)) return m;
     return a;
   });
-  return mergy(...args);
+  return Object.assign(...args);
 }
 flex.scope = {
   ...LAYOUT,
@@ -227,7 +227,7 @@ function _flex(...args) {
     //todo safe
     return a;
   });
-  return mergy(...args);
+  return Object.assign(...args);
 }
 
 _flex.scope = {

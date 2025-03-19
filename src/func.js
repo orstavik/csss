@@ -75,32 +75,6 @@ function colonSplit2(NAME, SEP, x) {
     `${NAME}(${res.join(SEP)})`;
 }
 
-//todo remove mergy. It is now mostly done manually or elsewhere i think.
-export function mergy(...res) {
-  res = res.filter(a => a != null);
-  if (!res.length) return {};
-  for (const value of res)
-    if (typeof value !== "object")
-      throw new SyntaxError("unrecognized value: " + value);
-  // for (const obj of res) {
-  //   for (const key in obj) {
-  //     const kebab = key.replace(/[A-Z]/g, "-$&").toLowerCase();
-  //     if (kebab !== key) {
-  //       obj[kebab] = obj[key];
-  //       delete obj[key];
-  //     }
-  //   }
-  // }
-  //todo not sure that we need this now??
-  const keys = res.map(o => Object.keys(o).map(k => k.split("-")[0]));
-  const test = new Set(keys.shift());
-  for (const ks of keys)
-    for (const k of ks)
-      if (test.has(k))
-        throw new SyntaxError(`Property crash: ${k}`);
-  return Object.assign(...res);
-}
-
 //enables us to write a min and max eiter as 2px:5px or max(2px,5px)
 //$w(50%)
 //$w(1,2) not allowed, only 1 or 3 arguments.
@@ -137,7 +111,7 @@ function border(...args) {
     if (a.match(/solid|dotted|dashed|double|none/)) return { style: a };
     return a;
   });
-  return borderSwitch(mergy(...args));
+  return borderSwitch(Object.assign(...args));
 }
 
 border.scope = {
