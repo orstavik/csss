@@ -1,5 +1,5 @@
 import { Color } from "./Color.js";
-import { toLogicalFour, borderSwitch } from "./func.js";
+import { toLogicalFour, borderSwitch, NativeColorsFunctions } from "./func.js";
 
 /**
 
@@ -59,7 +59,7 @@ const relieff = name => c => ({
 const border = num => {
   num = Math.round(Math.pow(num / 9, 1.5) * 100);
   return function border(o) {
-    o["border-color"] = `color-mix(in oklch, ${o["--background-color"]}, ${o.color} ${num}%)`;
+    o.borderColor = `color-mix(in oklch, ${o["--background-color"]}, ${o.color} ${num}%)`;
     return o;
   }
 }
@@ -97,7 +97,7 @@ function color(name) {
   }, []).shift();
   if (typeof output == "string")
     output = ColorFuncs.text(output);
-  if (!("border-color" in output))
+  if (!("borderColor" in output))
     output = ColorFuncs.b(output);
 
   //TODO disperse backgrounds
@@ -106,12 +106,15 @@ function color(name) {
 }
 
 const colorShadow = toLogicalFour.bind(null, "--box-shadow-color");
-const colorBorder = (...args) => borderSwitch(toLogicalFour("border-color", ...args));
+const colorBorder = (...args) => borderSwitch(toLogicalFour("borderColor", ...args));
 
 
-export default {
+const colorFunctions = {
   palette,
   color,
-  "color-border": colorBorder,
-  "color-shadow": colorShadow
+  colorBorder,
+  colorShadow
 };
+for (const name in colorFunctions) 
+  colorFunctions[name].scope = NativeColorsFunctions;
+export default colorFunctions;

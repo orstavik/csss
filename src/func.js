@@ -8,10 +8,10 @@ export function toRadiusFour(NAME, ...ar) {
   if (ar.length === 1)
     return { [NAME]: ar[0] };
   return {
-    [NAME + "-start-start"]: ar[0],
-    [NAME + "-end-end"]: ar[2] ?? ar[0],
-    [NAME + "-start-end"]: ar[1],
-    [NAME + "-end-start"]: ar[3] ?? ar[1],
+    [NAME + "StartStart"]: ar[0],
+    [NAME + "EndEnd"]: ar[2] ?? ar[0],
+    [NAME + "StartEnd"]: ar[1],
+    [NAME + "EndStart"]: ar[3] ?? ar[1],
   };
 }
 export function toLogicalFour(NAME, ...ar) {
@@ -21,20 +21,20 @@ export function toLogicalFour(NAME, ...ar) {
     return { [NAME]: ar[0] };
   if (ar.length === 2)
     return {
-      [NAME + "-block"]: ar[0],
-      [NAME + "-inline"]: ar[1],
+      [NAME + "Block"]: ar[0],
+      [NAME + "Inline"]: ar[1],
     };
   if (ar.length === 3)
     return {
-      [NAME + "-block-start"]: ar[0],
-      [NAME + "-inline"]: ar[1],
-      [NAME + "-block-end"]: ar[2],
+      [NAME + "BlockStart"]: ar[0],
+      [NAME + "Inline"]: ar[1],
+      [NAME + "BlockEnd"]: ar[2],
     };
   return {
-    [NAME + "-block-start"]: ar[0],
-    [NAME + "-inline-start"]: ar[1],
-    [NAME + "-block-end"]: ar[2],
-    [NAME + "-inline-end"]: ar[3]
+    [NAME + "BlockStart"]: ar[0],
+    [NAME + "InlineStart"]: ar[1],
+    [NAME + "BlockEnd"]: ar[2],
+    [NAME + "InlineEnd"]: ar[3]
   };
 }
 //todo there are different ways to do the logic here..
@@ -54,17 +54,17 @@ function toLogicalEight(NAME, DEFAULT, ...args) {
   if (args.length === 6) iee = ies, bee = bes;
   if (args.length === 7) iee = ies;
   const res = {};
-  if (bss || iss) res[NAME + "-top-left"] = `${bss ?? DEFAULT} ${iss ?? DEFAULT}`;
-  if (bse || ies) res[NAME + "-top-right"] = `${bse ?? DEFAULT} ${ies ?? DEFAULT}`;
-  if (bes || ise) res[NAME + "-bottom-left"] = `${bes ?? DEFAULT} ${ise ?? DEFAULT}`;
-  if (bee || iee) res[NAME + "-bottom-right"] = `${bee ?? DEFAULT} ${iee ?? DEFAULT}`;
+  if (bss || iss) res[NAME + "TopLeft"] = `${bss ?? DEFAULT} ${iss ?? DEFAULT}`;
+  if (bse || ies) res[NAME + "TopRight"] = `${bse ?? DEFAULT} ${ies ?? DEFAULT}`;
+  if (bes || ise) res[NAME + "BottomLeft"] = `${bes ?? DEFAULT} ${ise ?? DEFAULT}`;
+  if (bee || iee) res[NAME + "BottomRight"] = `${bee ?? DEFAULT} ${iee ?? DEFAULT}`;
   return res;
 }
 
 export function borderSwitch(obj) {
   return Object.fromEntries(Object.entries(obj).map(([k, v]) => {
-    const [wsr, ...dirs] = k.split("-");
-    return [["border", ...dirs, wsr].join("-"), v];
+    const [wsr, ...dirs] = k.split(/(?=[A-Z])/);
+    return [["border", ...dirs, wsr].join(""), v];
   }));
 }
 
@@ -84,13 +84,14 @@ function toSize(NAME, ...args) {
   args = args.map(a => a?.replace(/^(min|max)$/, "$&-content"));
   if (args.length === 1)
     return { [NAME]: args[0] };
-  if (args.length === 3)
+  if (args.length === 3) {
+    const NAME2 = NAME.replace(/^./, c => c.toUpperCase());
     return {
-      [`min-${NAME}`]: colonSplit2("max", ",", args[0]),
+      [`min${NAME2}`]: colonSplit2("max", ",", args[0]),
       [NAME]: args[1],
-      [`max-${NAME}`]: colonSplit2("min", ",", args[2])
+      [`max${NAME2}`]: colonSplit2("min", ",", args[2])
     };
-  throw new SyntaxError(`$${NAME} accepts only 1 or 3 arguments: ${args}`);
+  } throw new SyntaxError(`$${NAME} accepts only 1 or 3 arguments: ${args}`);
 }
 
 function isLength(x) {
@@ -105,33 +106,40 @@ function isLength(x) {
 function border(...args) {
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
-    if (a.match(/thin|medium|thick/)) return { width: a };
-    const width = isLength(a);
-    if (width != null) return ({ width });
-    if (a.match(/solid|dotted|dashed|double|none/)) return { style: a };
+    if (a.match(/thin|medium|thick/)) return { Width: a };
+    const Width = isLength(a);
+    if (Width != null) return ({ Width });
+    if (a.match(/solid|dotted|dashed|double|none/)) return { Style: a };
     return a;
   });
   return borderSwitch(Object.assign(...args));
 }
 
 border.scope = {
-  width: toLogicalFour.bind(null, "width"),
-  w: toLogicalFour.bind(null, "width"),
-  style: toLogicalFour.bind(null, "style"),
-  s: toLogicalFour.bind(null, "style"),
-  radius: toRadiusFour.bind(null, "radius"),
-  r: toRadiusFour.bind(null, "radius"),
-  r4: toRadiusFour.bind(null, "radius"),
-  r8: toLogicalEight.bind(null, "radius", 0),
+  width: toLogicalFour.bind(null, "Width"),
+  w: toLogicalFour.bind(null, "Width"),
+  style: toLogicalFour.bind(null, "Style"),
+  s: toLogicalFour.bind(null, "Style"),
+  radius: toRadiusFour.bind(null, "Radius"),
+  r: toRadiusFour.bind(null, "Radius"),
+  r4: toRadiusFour.bind(null, "Radius"),
+  r8: toLogicalEight.bind(null, "Radius", 0),
 };
 
-const NativeCssFunctions = {
-  var: (...args) => `var(${args.join(",")})`,
-  url: (...args) => `url(${args.join(",")})`,
-  calc: (...args) => `calc(${args.join(" ")})`,
-  min: (...args) => `min(${args.join(" ")})`,
-  max: (...args) => `max(${args.join(" ")})`,
-  clamp: (...args) => `clamp(${args.join(" ")})`,
+//first, recognize calc */-+ and - has to be not double minus.
+//second, inside calc, recognize var(--var-name) and var(--var-name*2px)
+//third recognize var(--) without calc.
+//add a rule that says 2--3 is not allowed, it has to be 2+3.
+export const NativeCssFunctions = {
+  var: (...args) => `var(${args.join(",")})`,   //--var-name*2px+--another-var
+  url: (...args) => `url(${args.join(",")})`,    //this one goes to "" quotes
+  
+  calc: (...args) => `calc(${args.join(" ")})`,    //2px**2 => calc(2px * 2px)
+  min: (...args) => `min(${args.join(" ")})`,      // 2px*1<--var<3  2px*clamp(1,--var,3)
+  max: (...args) => `max(${args.join(" ")})`,      //1<2<
+  clamp: (...args) => `clamp(${args.join(" ")})`,  //1<=?<=3  --var:black
+
+
   counter: (...args) => `counter(${args.join(",")})`,
   counters: (...args) => `counters(${args.join(",")})`,
   element: (...args) => `element(${args.join(",")})`,
@@ -164,17 +172,6 @@ const NativeCssTransformFunctions = {
   rotateZ: (...args) => ({ transform: `rotateZ(${args.join(",")})` }),
   skewX: (...args) => ({ transform: `skewX(${args.join(",")})` }),
   skewY: (...args) => ({ transform: `skewY(${args.join(",")})` }),
-  "translate-x": (...args) => ({ transform: `translateX(${args.join(",")})` }),
-  "translate-y": (...args) => ({ transform: `translateY(${args.join(",")})` }),
-  "translate-z": (...args) => ({ transform: `translateZ(${args.join(",")})` }),
-  "scale-x": (...args) => ({ transform: `scaleX(${args.join(",")})` }),
-  "scale-y": (...args) => ({ transform: `scaleY(${args.join(",")})` }),
-  "scale-z": (...args) => ({ transform: `scaleZ(${args.join(",")})` }),
-  "rotate-x": (...args) => ({ transform: `rotateX(${args.join(",")})` }),
-  "rotate-y": (...args) => ({ transform: `rotateY(${args.join(",")})` }),
-  "rotate-z": (...args) => ({ transform: `rotateZ(${args.join(",")})` }),
-  "skew-x": (...args) => ({ transform: `skewX(${args.join(",")})` }),
-  "skew-y": (...args) => ({ transform: `skewY(${args.join(",")})` }),
 };
 
 const NativeCssFilterFunctions = {
@@ -186,27 +183,27 @@ const NativeCssFilterFunctions = {
   opacity: (...args) => ({ filter: `opacity(${args.join(" ")})` }),
   saturate: (...args) => ({ filter: `saturate(${args.join(" ")})` }),
   sepia: (...args) => ({ filter: `sepia(${args.join(" ")})` }),
-  "drop-shadow": (...args) => ({ filter: `drop-shadow(${args.join(" ")})` }),
-  "hue-rotate": (...args) => ({ filter: `hue-rotate(${args.join(" ")})` }),
+  dropShadow: (...args) => ({ filter: `drop-shadow(${args.join(" ")})` }),
+  hueRotate: (...args) => ({ filter: `hue-rotate(${args.join(" ")})` }),
 };
 
 const NativeCssGradientFunctions = {
-  "linear-gradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "radial-gradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "conic-gradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "repeating-linear-gradient": (...args) => ({ background: `repeating-linear-gradient(${args.join(",")})` }),
-  "repeating-radial-gradient": (...args) => ({ background: `repeating-radial-gradient(${args.join(",")})` }),
-  "repeating-conic-gradient": (...args) => ({ background: `repeating-conic-gradient(${args.join(",")})` }),
+  "linearGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+  "radialGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+  "conicGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+  "repeatingLinearGradient": (...args) => ({ background: `repeating-linear-gradient(${args.join(",")})` }),
+  "repeatingRadialGradient": (...args) => ({ background: `repeating-radial-gradient(${args.join(",")})` }),
+  "repeatingConicGradient": (...args) => ({ background: `repeating-conic-gradient(${args.join(",")})` }),
   "radial": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
   "conic": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "repeating-linear": (...args) => ({ background: `repeating-linear-gradient(${args.join(",")})` }),
-  "repeating-radial": (...args) => ({ background: `repeating-radial-gradient(${args.join(",")})` }),
-  "repeating-conic": (...args) => ({ background: `repeating-conic-gradient(${args.join(",")})` }),
+  "repeatingLinear": (...args) => ({ background: `repeating-linear-gradient(${args.join(",")})` }),
+  "repeatingRadial": (...args) => ({ background: `repeating-radial-gradient(${args.join(",")})` }),
+  "repeatingConic": (...args) => ({ background: `repeating-conic-gradient(${args.join(",")})` }),
   //collides with <transition: linear()>, but <transition: linear()> is limited to transition and animation scope. 
   "linear": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
 };
 
-const NativeColorsFunctions = (function () {
+export const NativeColorsFunctions = (function () {
   function nativeCssColorFunction(name, ...args) {
     if (args.length < 3 || args.length > 5)
       throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
@@ -246,14 +243,13 @@ const NativeColorsFunctions = (function () {
     oklab: (...args) => nativeCssColorFunction("oklab", ...args),
     oklch: (...args) => nativeCssColorFunction("oklch", ...args),
     color: nativeCssColorSpaceFunction,
-    "color-mix": nativeCssColorMixFunction,
+    colorMix: nativeCssColorMixFunction,
   };
 })();
 
 const NativeCssProperties = (function () {
   const style = document.createElement('div').style;
   const nativeProps = Object.getOwnPropertyNames(style)
-    .map(p => p.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^ms-/, '-ms-'))
     .map(k => [k, (...args) => ({ [k]: args.join(" ") })]);
   return Object.fromEntries(nativeProps);
 })();
@@ -262,7 +258,7 @@ const EASING_FUNCTIONS = {
   linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,
   ease: (...args) => `ease(${args.join(",")})`,
   steps: (...args) => `steps(${args.join(",")})`,
-  "cubic-bezier": (...args) => `cubic-bezier(${args.join(",")})`,
+  cubicBezier: (...args) => `cubic-bezier(${args.join(",")})`,
 };
 
 NativeCssProperties.transition.scope = EASING_FUNCTIONS;
@@ -280,14 +276,14 @@ const KNOWN_BAD_FONT_NAMES = {
 //$font("Arial+Black",serif,bold,small-caps,ultra-condensed,capitalize,sans-serif,oblique(-10deg),ui-sans-serif)
 //$font("Arial+Black",sans-serif,ui-sans-serif,900,small-caps,ultra-condensed,capitalize,oblique(10deg))
 const FONT = [
-  ["font-family", /^(serif|sans-serif|monospace|cursive|fantasy|system-ui|ui-serif|ui-sans-serif|ui-monospace|ui-rounded|emoji|math|fangsong|Arial|Arial\+Black|Calibri|Cambria|Candara|Comic\+Sans\+MS|Consolas|Constantia|Corbel|Courier\+New|Georgia|Impact|Lucida\+Console|Lucida\+Sans\+Unicode|Palatino\+Linotype|Segoe\+UI|Tahoma|Times\+New\+Roman|Trebuchet\+MS|Verdana|Book\+Antiqua|Century\+Gothic|Franklin\+Gothic\+Medium|Garamond|Bookman\+Old\+Style|Brush\+Script\+MT|Helvetica|Helvetica\+Neue|Courier\+Monaco|Geneva|Lucida\+Grande|Didot|Hoefler\+Text|American\+Typewriter|Gill\+Sans|Optima|Futura|Baskerville|Copperplate|Menlo|Monaco|Apple\+Chancery|Marker\+Felt|Chalkboard|Andale\+Mono|Palatino\+Times|DejaVu\+Sans|DejaVu\+Serif|DejaVu\+Sans\+Mono|Liberation\+Sans|Liberation\+Serif|Liberation\+Mono|Nimbus\+Roman\+No9\+L|Nimbus\+Sans\+L|Nimbus\+Mono\+L|Century\+Schoolbook\+L|URW\+Chancery\+L|URW\+Gothic\+L|URW\+Bookman\+L|Wingdings|Webdings|Symbol|Zapf\+Dingbats|-apple-system|BlinkMacSystemFont|Roboto)$/i],
-  ["font-family", /^["']/i],
-  ["font-style", /^(italic|oblique)$/i],
-  ["font-weight", /^(bold|bolder|lighter|[1-9]00)$/i],
-  ["font-variant-caps", /^(small-caps|all-small-caps|petite-caps|all-petite-caps|unicase|titling-caps)$/i],
-  ["font-stretch", /^(ultra-condensed|extra-condensed|condensed|semi-condensed|normal|semi-expanded|expanded|extra-expanded|ultra-expanded)$/i],
-  ["text-transform", /^(capitalize|uppercase|lowercase|full-width|full-size-kana|math-auto)$/i],
-  ["letter-spacing", /^-?[0-9]*\.?[0-9]+([a-z]+|%)$/i],
+  ["fontFamily", /^(serif|sans-serif|monospace|cursive|fantasy|system-ui|ui-serif|ui-sans-serif|ui-monospace|ui-rounded|emoji|math|fangsong|Arial|Arial\+Black|Calibri|Cambria|Candara|Comic\+Sans\+MS|Consolas|Constantia|Corbel|Courier\+New|Georgia|Impact|Lucida\+Console|Lucida\+Sans\+Unicode|Palatino\+Linotype|Segoe\+UI|Tahoma|Times\+New\+Roman|Trebuchet\+MS|Verdana|Book\+Antiqua|Century\+Gothic|Franklin\+Gothic\+Medium|Garamond|Bookman\+Old\+Style|Brush\+Script\+MT|Helvetica|Helvetica\+Neue|Courier\+Monaco|Geneva|Lucida\+Grande|Didot|Hoefler\+Text|American\+Typewriter|Gill\+Sans|Optima|Futura|Baskerville|Copperplate|Menlo|Monaco|Apple\+Chancery|Marker\+Felt|Chalkboard|Andale\+Mono|Palatino\+Times|DejaVu\+Sans|DejaVu\+Serif|DejaVu\+Sans\+Mono|Liberation\+Sans|Liberation\+Serif|Liberation\+Mono|Nimbus\+Roman\+No9\+L|Nimbus\+Sans\+L|Nimbus\+Mono\+L|Century\+Schoolbook\+L|URW\+Chancery\+L|URW\+Gothic\+L|URW\+Bookman\+L|Wingdings|Webdings|Symbol|Zapf\+Dingbats|-apple-system|BlinkMacSystemFont|Roboto)$/i],
+  ["fontFamily", /^["']/i],
+  ["fontStyle", /^(italic|oblique)$/i],
+  ["fontWeight", /^(bold|bolder|lighter|[1-9]00)$/i],
+  ["fontVariantCaps", /^(small-caps|all-small-caps|petite-caps|all-petite-caps|unicase|titling-caps)$/i],
+  ["fontStretch", /^(ultra-condensed|extra-condensed|condensed|semi-condensed|normal|semi-expanded|expanded|extra-expanded|ultra-expanded)$/i],
+  ["textTransform", /^(capitalize|uppercase|lowercase|full-width|full-size-kana|math-auto)$/i],
+  ["letterSpacing", /^-?[0-9]*\.?[0-9]+([a-z]+|%)$/i],
 ];
 
 function font(...args) {
@@ -295,18 +291,18 @@ function font(...args) {
   main: for (const a of args) {
     const badFont = KNOWN_BAD_FONT_NAMES[a.toLowerCase()];
     if (badFont) {
-      (res["font-family"] ??= []).push(badFont);
+      (res.fontFamily ??= []).push(badFont);
       continue main;
     }
     for (const [TYPE, WORD] of FONT) {
       if (a.match(WORD)) {
-        TYPE === "font-family" ? (res[TYPE] ??= []).push(a) : res[TYPE] = a;
+        TYPE === "fontFamily" ? (res[TYPE] ??= []).push(a) : res[TYPE] = a;
         continue main;
       }
     }
     throw `Unrecognized font property: ${a}`;
   }
-  res["font-family"] = res["font-family"].join(", ").replaceAll("+", " ");
+  res.fontFamily = res.fontFamily.join(", ").replaceAll("+", " ");
   return res;
 }
 font.scope = {
@@ -326,7 +322,7 @@ export default {
   font,
   bg,
   background: bg,
-  em: NativeCssProperties["font-size"],
-  w: (...args) => toSize("inline-size", ...args),
-  h: (...args) => toSize("block-size", ...args),
+  em: NativeCssProperties.fontSize,
+  w: (...args) => toSize("inlineSize", ...args),
+  h: (...args) => toSize("blockSize", ...args),
 }

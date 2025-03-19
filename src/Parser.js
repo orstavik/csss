@@ -1,3 +1,5 @@
+// import { NativeCssFunctions } from "./func.js";
+
 export class ShortBlock {
 
   constructor(exp) {
@@ -40,7 +42,8 @@ class Rule {
     this.item = item;
   }
   get body() {
-    return Object.entries(this.shorts).map(([k, v]) => `${k}: ${v};`).join(" ");
+    return Object.entries(this.shorts)
+      .map(([k, v]) => `${k.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase())}: ${v};`).join(" ");
   }
   get rule() {
     return this.media ?
@@ -62,12 +65,14 @@ class Expression {
     return this.name + "/" + this.args.length;
   }
   interpret(scope, supers) {
-    const cb = scope[this.name] ?? scope[supers["$" + this.name]?.func];
+    const cb =
+      // NativeCssFunctions[this.name] ??
+      scope?.[this.name] ?? scope?.[supers["$" + this.name]?.func];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${this.name}`);
-    const innerScope = !cb.scope ? scope : Object.assign({}, scope, cb.scope);
+    // const innerScope = !cb.scope ? scope : Object.assign({}, scope, cb.scope);
     const args = this.args.map(x =>
-      x instanceof Expression ? x.interpret(innerScope, supers) :
+      x instanceof Expression ? x.interpret(cb.scope, supers) :
         x === "." ? "unset" :
           x);
     const res = cb.call(this, ...args);
@@ -79,20 +84,20 @@ const clashOrStack = (function () {
   const STACKABLE_PROPERTIES = {
     background: ",",
     transition: ",",
-    "font-family": ",",
-    "voice-family": ",",
-    "text-shadow": ",",
-    "box-shadow": ",",
+    fontFamily: ",",
+    voiceFamily: ",",
+    textShadow: ",",
+    boxShadow: ",",
     animation: ",",
     mask: ",",
-    "font-feature-settings": ",",
-    "will-change": ",",
+    fontFeatureSettings: ",",
+    willChange: ",",
 
     transform: " ",
     filter: " ",
-    "counter-reset": " ",
-    "counter-increment": " ",
-    "font-variant": " ",
+    counterReset: " ",
+    counterIncrement: " ",
+    fontVariant: " ",
   };
 
   return function clashOrStack(shortsI) {
@@ -100,9 +105,9 @@ const clashOrStack = (function () {
     for (const obj of shortsI) {
       for (let [k, v] of Object.entries(obj)) {
         if (v == null) continue;
-        k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
-        if (CSS.supports(k, "inherit"))
-          if (!CSS.supports(k, v))
+        const k2 = k.replace(/[A-Z]/g, "-$&").toLowerCase();
+        if (CSS.supports(k2, "inherit"))
+          if (!CSS.supports(k2, v))
             throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
         //else, the browser doesn't support the property, because the property is too modern.
         if (!(k in res))
@@ -130,8 +135,9 @@ class Short {
   }
 }
 
-const WORD = /[-a-zA-Z][a-zA-Z0-9-]*/;
+const WORD = /[a-zA-Z][a-zA-Z0-9]*/;
 const CPP = /[,()|$=;{}]/.source;
+// const calcOp = /[+/*<>-]/.source;
 const nCPP = /[^,()|$=;{}]+/.source;
 const QUOTE = /([`'"])(?:\\.|(?!\2).)*?\2/.source;
 const TOKENS = new RegExp(`(${QUOTE})|(\\s+)|(${CPP})|(${nCPP})`, "g");
@@ -143,8 +149,43 @@ function processToken([m, , , space]) {
 const S = "(", E = ")";
 function diveDeep(tokens, top) {
   const res = [];
-  while (tokens.length) {
+  main: while (tokens.length) {
     let a = tokens.shift();
+
+    // let parStart = +(a === S);
+    // if(parStart || a.match(calcOp) || tokens[0]?.match(calcOp)) {
+    //   let calcs = [a];
+    //   while (tokens.length) {
+    //     a = tokens.shift();
+    //     if (a === S) 
+    //       parStart++;
+    //     calcs.push(a);
+    //     if (a === E) {
+    //       if (!parStart--){
+    //         res.push(new CalcExpression(diveDeep(calcs)));
+    //         continue main;
+    //       }
+    //     } 
+    //   }
+    // }
+
+    // --var-value123-123_123.... recognize this first. and extract them.
+    //
+    // -after:  + ( 1230 .123 1e123 var(something)..
+    // before-: + ) 1230 .123 1e123 var(something)..
+    //
+    // not calc [a-z]-1|1-[a-z]
+    // space-between = [a-z]-[a-z], and this cannot be calc()
+    // if the last character is an operator /[+/*<>]/, then we need to eat all tokens 
+    // until we find the matching closing bracket.
+    // 
+    // --var-bob+---var-alice*(--var-joe+--var-jane);
+    //if we stumble upon a [+/*<>], in a, then we need to step into a
+    //calc expression style
+    //or, if name is empty. and we cannot be on the top level.
+    //  --klaj-ldkjf /[+/*<>]/ (
+
+
     if (top && a === ",") throw "can't start with ','";
     if (top && a === E) throw "can't start with ')'";
     if (a === "," || a === E) {         //empty

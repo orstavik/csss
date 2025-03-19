@@ -1,4 +1,4 @@
-import { toLogicalFour } from "./func.js";
+import { toLogicalFour, default as AllFunctions } from "./func.js";
 
 const O2 = "(?:(visible|hidden|clip)|(auto|scroll)(?:-snap(?:-mandatory)?)?)";
 const OVERFLOW2 = new RegExp(`^${O2}(?::${O2})?$`); //$block(hidden:scroll-snap-mandatory,...)
@@ -26,18 +26,18 @@ function hyphens(a) { //$block(shy,...)
 
 function whiteSpace(a) { //$block(pre-wrap,...)
   const m = a.match(/^(nowrap|pre|pre-wrap|pre-line|break-spaces|ellipsis)$/);
-  if (m?.[0] === "ellipsis") return { "white-space": "nowrap", "text-overflow": m[0] };
-  if (m) return { "white-space": m[0] };
+  if (m?.[0] === "ellipsis") return { whiteSpace: "nowrap", textOverflow: m[0] };
+  if (m) return { whiteSpace: m[0] };
 }
 
 function overflowWrap(a) { //$block(break-word,...)
   const m = a.match(/^(break-word|anywhere)$/);
-  if (m) return { "overflow-wrap": m[0] };
+  if (m) return { overflowWrap: m[0] };
 }
 
 function wordBreak(a) { //$block(break-all,...)
   const m = a.match(/^(break-all|keep-all)$/);
-  if (m) return { "word-break": m[0] };
+  if (m) return { wordBreak: m[0] };
 }
 
 function wrap(a) {
@@ -47,14 +47,14 @@ function wrap(a) {
 function toLineClamp(num, ...ignored) {
   return {
     "display": "-webkit-box",
-    "-webkit-line-clamp": num,
-    "-webkit-box-orient": "vertical",
-    "overflow-block": "hidden",
+    WebkitLineClamp: num,
+    WebkitBoxOrient: "vertical",
+    overflowBlock: "hidden",
   }
 }
 
-const LineClamp = { //$block(line-clamp(3),...)
-  "line-clamp": toLineClamp,
+const LineClamp = { //$block(lineClamp(3),...)
+  lineClamp: toLineClamp,
   clamp: toLineClamp,
 }
 
@@ -78,38 +78,39 @@ const AlignAliases = {
 
 function doAlign(_, b, i, b2, i2) {
   return {
-    "text-align": TextAlignAliases[i] ?? "unset",
-    "align-content": AlignAliases[b],
-    "justify-content": AlignAliases[i],
-    "align-items": AlignAliases[b2],
-    "justify-items": AlignAliases[i2],
+    textAlign: TextAlignAliases[i] ?? "unset",
+    alignContent: AlignAliases[b],
+    justifyContent: AlignAliases[i],
+    alignItems: AlignAliases[b2],
+    justifyItems: AlignAliases[i2],
   };
 }
 function doAlignSelf(_, b, i) {
   return {
-    "text-align": TextAlignAliases[i] ?? "unset",
-    "align-self": AlignAliases[b],
-    "justify-self": AlignAliases[i],
+    textAlign: TextAlignAliases[i] ?? "unset",
+    alignSelf: AlignAliases[b],
+    justifySelf: AlignAliases[i],
   };
 }
-
+// todo this doesn't need to be in the scope here.
+//todo because we only 
 const LAYOUT = {
   padding: toLogicalFour.bind(null, "padding"),
   p: toLogicalFour.bind(null, "padding"),
-  "scroll-padding": toLogicalFour.bind(null, "scroll-padding"),
+  scrollPadding: toLogicalFour.bind(null, "scroll-padding"),
 };
 
 const _LAYOUT = {
   margin: toLogicalFour.bind(null, "margin"),
   m: toLogicalFour.bind(null, "margin"),
-  "scroll-margin": toLogicalFour.bind(null, "scroll-margin")
+  scrollMargin: toLogicalFour.bind(null, "scroll-margin")
 };
 
 function toGap(...args) {
   if (args.length === 1)
     return { gap: args[0] };
   if (args.length === 2)
-    return { "column-gap": args[0], "row-gap": args[1] };
+    return { columnGap: args[0], rowGap: args[1] };
   throw new SyntaxError("gap only accepts 1 or 2 arguments");
 }
 const GAP = { gap: toGap, g: toGap };
@@ -121,11 +122,11 @@ function doFloat(a) {
 
 function textAlign(a) {
   if (a = a.match(/^[abcs]$/))
-    return ({ "text-align": TextAlignAliases[a[0]] });
+    return ({ textAlign: TextAlignAliases[a[0]] });
 }
 
 function toBlockGap(wordSpacing, lineHeight) {
-  return { "word-spacing": wordSpacing, "line-height": lineHeight };
+  return { wordSpacing, lineHeight };
 }
 
 function block(...args) {
@@ -145,8 +146,10 @@ function _block(...args) {
 }
 _block.scope = {   //$_block(indent(1em),...)
   ..._LAYOUT,
-  "text-indent": (...args) => ({ "text-indent": args.join(" ") }),
-  indent: (...args) => ({ "text-indent": args.join(" ") }),
+  //todo these are not necessary. they are native functions?
+  //todo the thing we need instead is a filter that says which properties are valid when we mergy the different layout 
+  // textIndent: (...args) => ({ textIndent: args.join(" ") }), 
+  indent: (...args) => ({ textIndent: args.join(" ") }),
 };
 
 const GRID_ALIGN = /^([abcsuvw.])([abcsuvw.])([abcs_.])([abcs])$/;
@@ -158,21 +161,19 @@ function grid(...args) {
     let m = wrap(a);
     if (m) return m;
     if (m = a.match(/(dense)-?(column)/))
-      return { ["grid-auto-flow"]: `${m[1]} ${m[2] || "row"}` };
+      return { gridAutoFlow: `${m[1]} ${m[2] || "row"}` };
     if (m = a.match(GRID_ALIGN)) return doAlign(...m);
     return a;
   });
   return Object.assign(...args);
 }
+const nativeGrid = Object.fromEntries(Object.entries(AllFunctions).filter(
+  ([k]) => k.match(/^grid[A-Z]/)));
 grid.scope = {
-  ["grid-auto-rows"]: (...args) => ({ ["grid-auto-rows"]: args.join(" ") }),
-  ["grid-auto-columns"]: (...args) => ({ ["grid-auto-columns"]: args.join(" ") }),
-  ["grid-template-rows"]: (...args) => ({ ["grid-template-rows"]: args.join(" ") }),
-  ["grid-template-columns"]: (...args) => ({ ["grid-template-columns"]: args.join(" ") }),
-  cols: (...args) => ({ ["grid-template-columns"]: args.join(" ") }),
-  rows: (...args) => ({ ["grid-template-rows"]: args.join(" ") }),
-  ["grid-template-areas"]: (...args) => ({ ["grid-template-areas"]: args.join(" ") }),
-  areas: (...args) => ({ ["grid-template-areas"]: args.join(" ") }),
+  ...nativeGrid,
+  cols: nativeGrid.gridTemplateColumns,
+  rows: nativeGrid.gridTemplateRows,
+  areas: nativeGrid.gridTemplateAreas,
   ...LAYOUT,
   ...GAP
 };

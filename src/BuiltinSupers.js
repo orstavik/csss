@@ -13,51 +13,51 @@ export const BuiltinSupers = `
 
 
 
-$bold = $font-weight(bold);
-$italic = $font-style(italic);
-$oblique = $font-style(oblique);
+$bold = $fontWeight(bold);
+$italic = $fontStyle(italic);
+$oblique = $fontStyle(oblique);
 
-$small-caps = $font-variant(small-caps);
-$all-small-caps = $font-variant(all-small-caps);
-$petite-caps = $font-variant(petite-caps);
-$all-petite-caps = $font-variant(all-petite-caps);
-$unicase = $font-variant(unicase);
-$titling-caps = $font-variant(titling-caps);
+$smallCaps = $fontVariant(small-caps);
+$allSmallCaps = $fontVariant(all-small-caps);
+$petiteCaps = $fontVariant(petite-caps);
+$allPetiteCaps = $fontVariant(all-petite-caps);
+$unicase = $fontVariant(unicase);
+$titlingCaps = $fontVariant(titling-caps);
 
-$capitalize = $text-transform(capitalize);
-$uppercase = $text-transform(uppercase);
-$lowercase = $text-transform(lowercase);
-$math-auto = $text-transform(math-auto);
+$capitalize = $textTransform(capitalize);
+$uppercase = $textTransform(uppercase);
+$lowercase = $textTransform(lowercase);
+$mathAuto = $textTransform(math-auto);
 
-$underline = $text-decoration(underline);
-$overline = $text-decoration(overline);
-$line-through = $text-decoration(line-through);
+$underline = $textDecoration(underline);
+$overline = $textDecoration(overline);
+$lineThrough = $textDecoration(line-through);
 
-$ultra-condensed = $font-stretch(ultra-condensed);
-$extra-condensed = $font-stretch(extra-condensed);
-$condensed = $font-stretch(condensed);
-$semi-condensed = $font-stretch(semi-condensed);
-$semi-expanded = $font-stretch(semi-expanded);
-$expanded = $font-stretch(expanded);
-$extra-expanded = $font-stretch(extra-expanded);
-$ultra-expanded = $font-stretch(ultra-expanded);
+$ultraCondensed = $fontStretch(ultra-condensed);
+$extraCondensed = $fontStretch(extra-condensed);
+$condensed = $fontStretch(condensed);
+$semiCondensed = $fontStretch(semi-condensed);
+$semiExpanded = $fontStretch(semi-expanded);
+$expanded = $fontStretch(expanded);
+$extraExpanded = $fontStretch(extra-expanded);
+$ultraExpanded = $fontStretch(ultra-expanded);
 
-$serif = $font-family(serif);
-$sans-serif = $font-family(sans-serif);
-$monospace = $font-family(monospace);
-$cursive = $font-family(cursive);
-$fantasy = $font-family(fantasy);
-$system-ui = $font-family(system-ui);
-$ui-serif = $font-family(ui-serif);
-$ui-sans-serif = $font-family(ui-sans-serif);
+$serif = $fontFamily(serif);
+$sansSerif = $fontFamily(sans-serif);
+$monospace = $fontFamily(monospace);
+$cursive = $fontFamily(cursive);
+$fantasy = $fontFamily(fantasy);
+$systemUi = $fontFamily(system-ui);
+$uiSerif = $fontFamily(ui-serif);
+$uiSansSerif = $fontFamily(ui-sans-serif);
 
 $border = $border(solid, medium);
-$block = $display(block)$word-spacing(.)$line-height(.)$white-space(.)$hyphens(.)$text-align(.)$text-indent(.);
-$grid = $display(grid)$word-spacing(.)$line-height(.)$white-space(.)$hyphens(.)$text-align(.)$text-indent(.);
-$flex = $display(flex)$word-spacing(.)$line-height(.)$white-space(.)$hyphens(.)$text-align(.)$text-indent(.);
+$block = $display(block)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.);
+$grid = $display(grid)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.);
+$flex = $display(flex)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.);
 //font that breaks inheritance chain
-$font = $font-family(initial)$font-style(initial)$font-weight(initial)$font-variant(initial)$font-stretch(initial)$text-transform(initial)$letter-spacing(initial);
-$font-inherit = $font-family(inherit)$font-style(inherit)$font-weight(inherit)$font-variant(inherit)$font-stretch(inherit)$text-transform(inherit)$letter-spacing(inherit);
+$font = $fontFamily(initial)$fontStyle(initial)$fontWeight(initial)$fontVariant(initial)$fontStretch(initial)$textTransform(initial)$letterSpacing(initial);
+$fontInherit = $fontFamily(inherit)$fontStyle(inherit)$fontWeight(inherit)$fontVariant(inherit)$fontStretch(inherit)$textTransform(inherit)$letterSpacing(inherit);
 `;
 //$full-width = $text-transform(full-width);
 //$full-size-kana = $text-transform(full-size-kana);
