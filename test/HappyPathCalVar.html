@@ -1,0 +1,267 @@
+<test-html title="Basic CSS Variables">
+  <div style="--my-color: blue;"
+  class="$bg(--my-color)">
+    This text should be blue from a CSS variable
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$bg\(--my-color\) {
+        background: var(--my-color);
+      }
+    }
+    @layer items {
+
+    }
+  </style>
+</test-html>
+<test-html title="CSS Variables with Fallbacks">
+  <main style="--primary: red; --secondary: blue;">
+    <div class="$bg(--undefined:--primary)">
+      This text should use the fallback variable
+    </div>
+  </main>  
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$bg\(--undefined\:--primary\) { 
+        background: var(--undefined, --primary);
+      }
+    }
+    @layer items {
+
+    }
+  </style>
+</test-html>
+<test-html title="Simple Calc Expression">
+  <div class="$width(100px+20px)">
+    This div should be 120px wide
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$width\(100px\+20px\) {
+        width: calc(120px);
+      }
+    }
+    @layer items {
+
+    }
+  </style>
+</test-html>
+<test-html title="Calc with Different Units">
+  <div class="$width(100%-20px) $height(2rem+1em) ">
+    This div should have width and height from calc expressions
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$width\(100\%-20px\) {
+        width: calc(100% - 20px);
+      }
+
+      .\$height\(2rem\+1em\) {
+        height: calc(2rem + 1em);
+      }
+    }
+
+    @layer items {
+    
+    }
+  </style>
+</test-html>
+<test-html title="Calc with Multiple Operations">
+  <div class="$margin(10px+5px*2) $padding(1rem+2px/2)">
+    Testing multiple operations in calc
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$margin\(10px\+5px\*2\) {
+        margin: calc(10px + 5px * 2);
+      }
+
+      .\$padding\(1rem\+2px\/2\) {
+        padding: calc(1rem + 2px / 2);
+      }
+    }
+    @layer items {
+    
+    }
+  </style>
+</test-html>
+<test-html title="Calc with Parentheses">
+  <div class="$width((100px+50px)*2) $height(3rem*(1+0.5))">
+    Testing calc with parentheses
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$width\(\(100px\+50px\)\*2\) {
+        width: calc((100px + 50px) * 2);
+      }
+
+      .\$height\(3rem\*\(1\+0\.5\)\) {
+        height: calc(3rem * (1 + 0.5));
+      }
+    }
+    @layer items {
+    
+    }
+  </style>
+</test-html>
+<test-html title="CSS Variables in Calc">
+  <main style="--base-size: 16px;">
+    <div class="$width((--base-size)*2) $height((--base-size)+10px)">
+      Testing CSS variables inside calc
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$var\(--base-size\,\ 16px\) {
+        --base-size: 16px;
+      }
+
+      .\$width\(var\(--base-size\)\*2\) {
+        width: calc(var(--base-size) * 2);
+      }
+
+      .\$height\(var\(--base-size\)\+10px\) {
+        height: calc(var(--base-size) + 10px);
+      }
+    }
+    
+    @layer items {
+    
+    }
+  </style>
+</test-html>
+<test-html title="Negative Values in Calc">
+  <div class="$margin(-10px+20px) $padding(1rem-5px)">
+    Testing negative values in calc
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$margin\(-10px\+20px\) {
+        margin: calc(-10px + 20px);
+      }
+
+      .\$padding\(1rem-5px\) {
+        padding: calc(1rem - 5px);
+      }
+    }
+    @layer items {
+    
+  }
+  </style>
+</test-html>
+<test-html title="Complex Nested Calc">
+  <div class="$width((100px+50px)*(2-0.5))">
+    Testing complex nested calc expressions
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$width\(\(100px\+50px\)\*\(2-0\.5\)\) {
+        width: calc((100px + 50px) * (2 - 0.5));
+      }
+    }
+    @layer items {
+    
+  }
+  </style>
+</test-html>
+<test-html title="CSS Variables with Multiple Fallbacks">
+  <main style="--primary: red; --secondary: blue;">
+    <div class="$bg(var(--undefined1:--primary:--secondary))">
+      Testing multiple fallbacks in CSS variables
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$bg\(var\(--undefined1:--primary:--secondary\) {
+        background: var(--undefined1, var(--undefined2, var(--primary)));
+      }
+    }
+  </style>
+</test-html>
+<test-html title="Simple Division Expression (1em/1vw)">
+  <div class="$width(1em/1vw)">
+    Testing Simple Division expression
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$width\(1em\/1vw\) {
+        width: calc(1em / 1vw);
+      }
+    }
+    @layer items {
+    
+    }
+  </style>
+</test-html>
+<test-html title="Complex Expression with Operations ((1em+20px)*20+40px)">
+  <div class="$width((1em+20px)*20+40px) $bg(lightblue) $padding(1rem)">
+    Testing complex expression with operations outside parentheses
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$width\(\(1em\+20px\)\*20\+40px\) {
+        width: calc((1em + 20px) * 20 + 40px);
+      }
+
+      .\$bg\(lightblue\) {
+        background: lightblue;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+    }
+    @layer items {
+    
+  }
+  </style>
+</test-html>
+<test-html title="With Nested Calculation (2px+5px*(3px+2px))">
+  <div class="$margin(2px+5px*(3px+2px)) $border(solid,1px) $padding(1rem)">
+    With nested calculation
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$margin\(2px\+5px\*\(3px\+2px\)\) {
+        margin: calc(2px + 5px * (3px + 2px));
+      }
+
+      .\$border\(solid\,\ 1px\) {
+        border: solid 1px;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+    }
+    @layer items {
+    
+    }
+  </style>
+</test-html>
