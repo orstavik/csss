@@ -609,6 +609,83 @@
   </div>
 </test-html>
 
+<test-html title="Border 8 - Calc Expressions">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$border(solid,w(1px+1em)) $padding(1rem)">Calc width</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(solid\,w\(1px\+1em\)\) {
+        border-style: solid;
+        border-width: calc(1em + 1px);
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+
+<test-html title="Border 13 - Test on Auto Wrapping of var and calc">
+  <main style="--border-width: 3px;">
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$border(solid,w(--border-width)) $padding(1rem)">CSS Variable Auto-Wrap</div>
+      <div class="$border(solid,w(1px+2px)) $padding(1rem)">Calculation Auto-Wrap</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(solid\,w\(--border-width\)\) {
+        border-style: solid;
+        border-width: var(--border-width);
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$border\(solid\,w\(1px\+2px\)\) {
+        border-style: solid;
+        border-width: calc(3px);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
 <!--
 <test-html title=":dark=@media(prefers-color-scheme:dark);">
   <div css=":dark=@media(prefers-color-scheme:dark);">

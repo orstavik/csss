@@ -52,10 +52,35 @@ class Rule {
   }
 }
 
+function wrapVar(str) {
+  //todo make this better
+  return str.replaceAll(/--[a-z][a-z0-9_:-]*/g, (c) => {
+    const [name, ...fallbacks] = c.split(":");
+    const head = "var(".repeat(fallbacks.length || 1);
+    const tail = fallbacks.map(f => `, ${f}`).join(")") + ")";
+    return `${head}${name}${tail}`;
+  });
+}
+
 class Expression {
 
-  static make(name, args) {
-    return new Expression(name, args);
+  static makeCalc(name, args) {
+    args = args.join(" * ");
+    name = wrapVar(name);
+    if(!args && name.match(/^var\(.+\)$/))
+      return name;
+    name = name.replaceAll(/[+*/]/g, " $& ");
+    // //missing - that is not preceded by either ^ or [+*/]
+    const op = (args.length && !name.endsWith(" ")) ? " * " : "";
+    //todo add clamp and min/max
+    return `calc(${name}${op}${args})`;
+  }
+
+  static extendCalc(a, b) {
+    a = a.slice(0, -1);
+    if (a.endsWith("   ")) //we have an operator, 
+      //todo if the a is a clamp/min/max, then we need to add it. If it is a calc, then we need to 
+      debugger
   }
 
   constructor(name, args) {
@@ -166,23 +191,30 @@ function diveDeep(tokens, top) {
     }
     let b;
     if (a === S) {
-      a = Expression.make("", diveDeep(tokens)); //todo must be calc
+      debugger
+      a = Expression.makeCalc("", diveDeep(tokens)); //(1em/1vw) ...
       b = tokens.shift();
     } else {
       b = tokens.shift();
       while (b.match(/^[+/*<>-]/)) {
-        a = Expression.extend(a, b);  //todo must extend calc
+        debugger;
+        a = Expression.extendCalc(a, b);   //(1em+20px)*20+40px
         b = tokens.shift();
       }
       if (top && b === ",") throw "top level can't list using ','";
-      if (top && b === undefined) return [new Expression(a, [])]; //todo no calc top level
       if (top && b === E) throw "top level can't use ')'";
-      if (b === S && !a.match(WORD)) throw "invalid function name";
       if (b === S) {
-        a = Expression.make(a, diveDeep(tokens));
+        a = a.match(WORD) ?
+          new Expression(a, diveDeep(tokens)) :
+          Expression.makeCalc(a, diveDeep(tokens)); //2px+5px*(3px+2px)
         b = tokens.shift();
       }
     }
+    //todo handle -!!
+    if (typeof a === "string" && a[0].match(/^[^"']/) &&
+      (a.match(/[+/*<>]/) || a.match(/^--[a-z]/))
+    )
+      a = Expression.makeCalc(a, []); //2px+5em
     if (b === E || (top && b === undefined))
       return res.push(a), res;
     if (b == ",")
@@ -340,37 +372,18 @@ class Selector {
 }
 
 
-
-    // let parStart = +(a === S);
-    // if(parStart || a.match(calcOp) || tokens[0]?.match(calcOp)) {
-    //   let calcs = [a];
-    //   while (tokens.length) {
-    //     a = tokens.shift();
-    //     if (a === S) 
-    //       parStart++;
-    //     calcs.push(a);
-    //     if (a === E) {
-    //       if (!parStart--){
-    //         res.push(new CalcExpression(diveDeep(calcs)));
-    //         continue main;
-    //       }
-    //     } 
-    //   }
-    // }
-
-    // --var-value123-123_123.... recognize this first. and extract them.
-    //
-    // -after:  + ( 1230 .123 1e123 var(something)..
-    // before-: + ) 1230 .123 1e123 var(something)..
-    //
-    // not calc [a-z]-1|1-[a-z]
-    // space-between = [a-z]-[a-z], and this cannot be calc()
-    // if the last character is an operator /[+/*<>]/, then we need to eat all tokens 
-    // until we find the matching closing bracket.
-    // 
-    // --var-bob+---var-alice*(--var-joe+--var-jane);
-    //if we stumble upon a [+/*<>], in a, then we need to step into a
-    //calc expression style
-    //or, if name is empty. and we cannot be on the top level.
-    //  --klaj-ldkjf /[+/*<>]/ (
-
+// --var-value123-123_123.... recognize this first. and extract them.
+//
+// -after:  + ( 1230 .123 1e123 var(something)..
+// before-: + ) 1230 .123 1e123 var(something)..
+//
+// not calc [a-z]-1|1-[a-z]
+// space-between = [a-z]-[a-z], and this cannot be calc()
+// if the last character is an operator /[+/*<>]/, then we need to eat all tokens
+// until we find the matching closing bracket.
+//
+// --var-bob+---var-alice*(--var-joe+--var-jane);
+//if we stumble upon a [+/*<>], in a, then we need to step into a
+//calc expression style
+//or, if name is empty. and we cannot be on the top level.
+//  --klaj-ldkjf /[+/*<>]/ (
