@@ -54,6 +54,10 @@ class Rule {
 
 class Expression {
 
+  static make(name, args) {
+    return new Expression(name, args);
+  }
+
   constructor(name, args) {
     this.args = args;
     this.name = name;
@@ -135,9 +139,8 @@ class Short {
   }
 }
 
-const WORD = /[a-zA-Z][a-zA-Z0-9]*/;
+const WORD = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 const CPP = /[,()|$=;{}]/.source;
-// const calcOp = /[+/*<>-]/.source;
 const nCPP = /[^,()|$=;{}]+/.source;
 const QUOTE = /([`'"])(?:\\.|(?!\2).)*?\2/.source;
 const TOKENS = new RegExp(`(${QUOTE})|(\\s+)|(${CPP})|(${nCPP})`, "g");
@@ -149,7 +152,7 @@ function processToken([m, , , space]) {
 const S = "(", E = ")";
 function diveDeep(tokens, top) {
   const res = [];
-  main: while (tokens.length) {
+  while (tokens.length) {
     let a = tokens.shift();
     if (top && a === ",") throw "can't start with ','";
     if (top && a === E) throw "can't start with ')'";
@@ -161,57 +164,22 @@ function diveDeep(tokens, top) {
         return res;
       continue;
     }
-
-    // let parStart = +(a === S);
-    // if(parStart || a.match(calcOp) || tokens[0]?.match(calcOp)) {
-    //   let calcs = [a];
-    //   while (tokens.length) {
-    //     a = tokens.shift();
-    //     if (a === S) 
-    //       parStart++;
-    //     calcs.push(a);
-    //     if (a === E) {
-    //       if (!parStart--){
-    //         res.push(new CalcExpression(diveDeep(calcs)));
-    //         continue main;
-    //       }
-    //     } 
-    //   }
-    // }
-
-    // --var-value123-123_123.... recognize this first. and extract them.
-    //
-    // -after:  + ( 1230 .123 1e123 var(something)..
-    // before-: + ) 1230 .123 1e123 var(something)..
-    //
-    // not calc [a-z]-1|1-[a-z]
-    // space-between = [a-z]-[a-z], and this cannot be calc()
-    // if the last character is an operator /[+/*<>]/, then we need to eat all tokens 
-    // until we find the matching closing bracket.
-    // 
-    // --var-bob+---var-alice*(--var-joe+--var-jane);
-    //if we stumble upon a [+/*<>], in a, then we need to step into a
-    //calc expression style
-    //or, if name is empty. and we cannot be on the top level.
-    //  --klaj-ldkjf /[+/*<>]/ (
-
-
-    // if (a === S)
-    //   a = extractCalc("", [a, ...tokens]);
-    // if (a.match(/[+/*<>]/))  //here we need to add a test for the [a-z]-1|1-[a-z] cases
-    //   a = extractCalc(a, tokens);
-
     let b;
     if (a === S) {
-      a = new Expression("", diveDeep(tokens));
+      a = Expression.make("", diveDeep(tokens)); //todo must be calc
       b = tokens.shift();
     } else {
-      b = tokens.shift(); if (top && b === ",") throw "top level can't list using ','";
-      if (top && b === undefined) return [new Expression(a, [])];
+      b = tokens.shift();
+      while (b.match(/^[+/*<>-]/)) {
+        a = Expression.extend(a, b);  //todo must extend calc
+        b = tokens.shift();
+      }
+      if (top && b === ",") throw "top level can't list using ','";
+      if (top && b === undefined) return [new Expression(a, [])]; //todo no calc top level
       if (top && b === E) throw "top level can't use ')'";
       if (b === S && !a.match(WORD)) throw "invalid function name";
       if (b === S) {
-        a = new Expression(a, diveDeep(tokens));
+        a = Expression.make(a, diveDeep(tokens));
         b = tokens.shift();
       }
     }
@@ -228,7 +196,7 @@ function diveDeep(tokens, top) {
 function parseNestedExpression(short) {
   const tokensOG = [...short.matchAll(TOKENS)].map(processToken).filter(Boolean);
   if (tokensOG.length === 1)
-    return new Expression(tokensOG[0], []);
+    return new Expression(tokensOG[0], []); //todo no calc top level
   const tokens = tokensOG.slice();
   try {
     const res = diveDeep(tokens, true);
@@ -370,3 +338,39 @@ class Selector {
     return [head, body, tail].filter(Boolean).join("");
   }
 }
+
+
+
+    // let parStart = +(a === S);
+    // if(parStart || a.match(calcOp) || tokens[0]?.match(calcOp)) {
+    //   let calcs = [a];
+    //   while (tokens.length) {
+    //     a = tokens.shift();
+    //     if (a === S) 
+    //       parStart++;
+    //     calcs.push(a);
+    //     if (a === E) {
+    //       if (!parStart--){
+    //         res.push(new CalcExpression(diveDeep(calcs)));
+    //         continue main;
+    //       }
+    //     } 
+    //   }
+    // }
+
+    // --var-value123-123_123.... recognize this first. and extract them.
+    //
+    // -after:  + ( 1230 .123 1e123 var(something)..
+    // before-: + ) 1230 .123 1e123 var(something)..
+    //
+    // not calc [a-z]-1|1-[a-z]
+    // space-between = [a-z]-[a-z], and this cannot be calc()
+    // if the last character is an operator /[+/*<>]/, then we need to eat all tokens 
+    // until we find the matching closing bracket.
+    // 
+    // --var-bob+---var-alice*(--var-joe+--var-jane);
+    //if we stumble upon a [+/*<>], in a, then we need to step into a
+    //calc expression style
+    //or, if name is empty. and we cannot be on the top level.
+    //  --klaj-ldkjf /[+/*<>]/ (
+
