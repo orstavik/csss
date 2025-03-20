@@ -60,35 +60,27 @@ class Rule {
 //--background-size*2
 //(--background-size,--fallback,fallback)*2
 
+const NativeCssFunctions = {
+  var: (...args) => `var(${args.join(",")})`,
+  url: (...args) => `url(${args.join(",")})`,    //this one goes to "" quotes when custom
+
+  // calc: (...args) => `calc(${args.join(" ")})`,    //2px**2 => calc(2px * 2px)
+  min: (...args) => `min(${args.join(",")})`,
+  max: (...args) => `max(${args.join(",")})`,
+  clamp: (...args) => `clamp(${args.join(",")})`,
+
+  counter: (...args) => `counter(${args.join(",")})`,
+  counters: (...args) => `counters(${args.join(",")})`,
+  element: (...args) => `element(${args.join(",")})`,
+  paint: (...args) => `paint(${args.join(",")})`,
+  env: (...args) => `env(${args.join(",")})`,
+  path: (...args) => `path(${args.join(",")})`,
+  //todo
+  // attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
+  // "image-set": (...args) => `image-set(${args.join(",")})`,
+};
+
 class Expression {
-
-  static makeCalc(tokens) {
-    const name = tokens.join("");
-    const segs = name
-      .split(/(--[a-z][a-z0-9_-]*)/g)
-      .map((s, i) => i % 2 ?
-        `var(${s})` :
-        s.replaceAll(/(?<!^|[+*/-])-|[+*/]/g, " $& "));
-
-    let res = [];
-    for (let i = segs.length - 1; i >= 0; i--)
-      res.unshift(
-        segs[i] == "," && segs[i - 1].startsWith("var(") ?
-          segs[--i].slice(0, -1) + "," + res.shift() + ")" :
-          segs[i]);
-
-    res = res.filter(Boolean);
-    if (res.length === 3 && res[0] === "(" && res[2] === ")")
-      res = [res[1]];
-    if (res.length === 1 && res[0].startsWith("var(--"))
-      return res[0];
-
-    const res2 = res.join("");
-
-    if (res2.includes(" "))
-      return `calc(${res2})`;
-    return res2;
-  }
 
   constructor(name, args) {
     this.args = args;
@@ -101,9 +93,9 @@ class Expression {
     return this.name + "/" + this.args.length;
   }
   interpret(scope, supers) {
-    const cb =
-    //min/max/clamp/var/
-    scope?.[this.name] ?? scope?.[supers["$" + this.name]?.func];
+    const cb = scope?.[this.name] ??
+      scope?.[supers["$" + this.name]?.func] ??
+      NativeCssFunctions[this.name];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${this.name}`);
     // const innerScope = !cb.scope ? scope : Object.assign({}, scope, cb.scope);
@@ -170,24 +162,37 @@ class Short {
     return { selector, shorts };
   }
 }
-const VAR = /(--[a-z][a-z0-9_-]*)/;
-const MATH = /(?<!^|[+*/-^])-|[+*/]/;
-const xWORD = /[^,()|$=;{}]+/;
 
-/**
- * 
- * calc(calc(calc(3+ 4) * 5) + (4-5)) = 23
-2345[*+/-](3+4)*5+(2-3)...,)
-(2+3)asd...,)
---var...,)
-=> fix the --var
-=> add space around the + - * /.
-=> wrap in calc, if not only a var()
+function parseVarCalc(tokens) {
+  const name = tokens.join("");
+  const segs = name
+    .split(/(--[a-z][a-z0-9_-]*)/g)
+    .map((s, i) => i % 2 ?
+      `var(${s})` :
+      s.replaceAll(/(?<!^|[+*/-])-|[+*/]/g, " $& "));
 
-calc((3+4)* 5 +(2-3)) and let the brwosser test it 
-here we are at the end, we wrap in calc() and add space and fix variables etc.
- */
+  let res = [];
+  for (let i = segs.length - 1; i >= 0; i--)
+    res.unshift(
+      segs[i] == "," && segs[i - 1].startsWith("var(") ?
+        segs[--i].slice(0, -1) + "," + res.shift() + ")" :
+        segs[i]);
 
+  res = res.filter(Boolean);
+  if (res.length === 3 && res[0] === "(" && res[2] === ")")
+    res = [res[1]];
+  if (res.length === 1 && res[0].startsWith("var(--"))
+    return res[0];
+
+  const res2 = res.join("");
+
+  if (res2.includes(" "))
+    return `calc(${res2})`;
+  return res2;
+}
+
+// const VAR = /(--[a-z][a-z0-9_-]*)/;
+// const MATH = /(?<!^|[+*/-^])-|[+*/]/;
 const WORD = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 const CPP = /[,()|$=;{}]/.source;
 const nCPP = /[^,()|$=;{}]+/.source;
@@ -213,7 +218,7 @@ function diveDeep(tokens, top) {
   const res = [];
   while (tokens.length) {
     let a = tokens[0].match(/^\($|[+/*]|(?<![a-z])-|-(?![a-z])/) ?
-      Expression.makeCalc(eatTokens(tokens)) :
+      parseVarCalc(eatTokens(tokens)) :
       tokens.shift();
     if (top && a === ",") throw "can't start with ','";
     if (top && a === ")") throw "can't start with ')'";

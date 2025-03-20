@@ -126,31 +126,6 @@ border.scope = {
   r8: toLogicalEight.bind(null, "Radius", 0),
 };
 
-//first, recognize calc */-+ and - has to be not double minus.
-//second, inside calc, recognize var(--var-name) and var(--var-name*2px)
-//third recognize var(--) without calc.
-//add a rule that says 2--3 is not allowed, it has to be 2+3.
-export const NativeCssFunctions = {
-  var: (...args) => `var(${args.join(",")})`,   //--var-name*2px+--another-var
-  url: (...args) => `url(${args.join(",")})`,    //this one goes to "" quotes
-  
-  calc: (...args) => `calc(${args.join(" ")})`,    //2px**2 => calc(2px * 2px)
-  min: (...args) => `min(${args.join(" ")})`,      // 2px*1<--var<3  2px*clamp(1,--var,3)
-  max: (...args) => `max(${args.join(" ")})`,      //1<2<
-  clamp: (...args) => `clamp(${args.join(" ")})`,  //1<=?<=3  --var:black
-
-
-  counter: (...args) => `counter(${args.join(",")})`,
-  counters: (...args) => `counters(${args.join(",")})`,
-  element: (...args) => `element(${args.join(",")})`,
-  paint: (...args) => `paint(${args.join(",")})`,
-  env: (...args) => `env(${args.join(",")})`,
-  path: (...args) => `path(${args.join(",")})`,
-  //todo
-  // attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
-  // "image-set": (...args) => `image-set(${args.join(",")})`,
-};
-
 const NativeCssTransformFunctions = {
   matrix: (...args) => ({ transform: `matrix(${args.join(",")})` }),
   matrix3d: (...args) => ({ transform: `matrix3d(${args.join(",")})` }),
@@ -313,7 +288,6 @@ const bg = (...args) => ({ background: args.join(" ") || "var(--background-color
 
 export default {
   ...NativeCssProperties,
-  ...NativeCssFunctions,
   ...NativeColorsFunctions,
   ...NativeCssTransformFunctions,
   ...NativeCssFilterFunctions,

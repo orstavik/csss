@@ -1,6 +1,5 @@
 <test-html title="Basic CSS Variables">
-  <div style="--my-color: blue;"
-  class="$bg(--my-color)">
+  <div style="--my-color: blue;" class="$bg(--my-color)">
     This text should be blue from a CSS variable
   </div>
   <style>
@@ -11,9 +10,8 @@
         background: var(--my-color);
       }
     }
-    @layer items {
 
-    }
+    @layer items {}
   </style>
 </test-html>
 <test-html title="CSS Variables with Fallbacks">
@@ -21,18 +19,17 @@
     <div class="$bg((--undefined,--primary))">
       This text should use the fallback variable
     </div>
-  </main>  
+  </main>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$bg\(\(--undefined\,--primary\)\) { 
+      .\$bg\(\(--undefined\,--primary\)\) {
         background: var(--undefined, var(--primary));
       }
     }
-    @layer items {
 
-    }
+    @layer items {}
   </style>
 </test-html>
 <test-html title="Simple Calc Expression">
@@ -47,15 +44,14 @@
         width: calc(120px);
       }
     }
-    @layer items {
 
-    }
+    @layer items {}
   </style>
 </test-html>
 <test-html title="Calc with Different Units">
   <div class="$width(100%-20px) $height(2rem+1em)">
     This div should have width and height from calc expressions
-    For some reason, it flips 2rem + 1em to 1em + 2rem when it adds the style. 
+    For some reason, it flips 2rem + 1em to 1em + 2rem when it adds the style.
   </div>
   <style>
     @layer container, items;
@@ -70,9 +66,7 @@
       }
     }
 
-    @layer items {
-    
-    }
+    @layer items {}
   </style>
 </test-html>
 <test-html title="Calc with Multiple Operations">
@@ -91,9 +85,8 @@
         padding: calc(1px + 1rem);
       }
     }
-    @layer items {
-    
-    }
+
+    @layer items {}
   </style>
 </test-html>
 <test-html title="Calc with Parentheses">
@@ -112,9 +105,8 @@
         height: calc(4.5rem);
       }
     }
-    @layer items {
-    
-    }
+
+    @layer items {}
   </style>
 </test-html>
 <test-html title="CSS Variables in Calc">
@@ -135,10 +127,8 @@
         height: calc(var(--base-size) + 10px);
       }
     }
-    
-    @layer items {
-    
-    }
+
+    @layer items {}
   </style>
 </test-html>
 <test-html title="Negative Values in Calc">
@@ -157,9 +147,8 @@
         padding: calc(-5px + 1rem);
       }
     }
-    @layer items {
-    
-  }
+
+    @layer items {}
   </style>
 </test-html>
 <test-html title="Complex Nested Calc">
@@ -174,9 +163,8 @@
         width: calc(225px);
       }
     }
-    @layer items {
-    
-  }
+
+    @layer items {}
   </style>
 </test-html>
 <test-html title="CSS Variables with Multiple Fallbacks">
@@ -193,9 +181,8 @@
         background: var(--undefined1, var(--primary, var(--secondary)));
       }
     }
-    @layer items {
-    
-    }
+
+    @layer items {}
   </style>
 </test-html>
 <test-html title="Simple Division Expression (1em/--var)">
@@ -210,9 +197,8 @@
         width: calc(1em / var(--var));
       }
     }
-    @layer items {
-    
-    }
+
+    @layer items {}
   </style>
 </test-html>
 <test-html title="Complex Expression with Operations ((1em+20px)*20+40px)">
@@ -235,9 +221,8 @@
         padding: 1rem;
       }
     }
-    @layer items {
-    
-  }
+
+    @layer items {}
   </style>
 </test-html>
 <test-html title="With Nested Calculation (2px+5px*(--var/3.5))">
@@ -261,8 +246,31 @@
         padding: 1rem;
       }
     }
-    @layer items {
-    
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="min max clamp">
+  <div class="$w(min(2px+1em,10%)) $h(max(2px+1em,10%,3vw)) $em(clamp(10%,2px+1em,20%))">
+    With nested calculation
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(min\(2px\+1em\,10\%\)\) {
+        inline-size: min(1em + 2px, 10%);
+      }
+
+      .\$h\(max\(2px\+1em\,10\%\,3vw\)\) {
+        block-size: max(1em + 2px, 10%, 3vw);
+      }
+
+      .\$em\(clamp\(10\%\,2px\+1em\,20\%\)\) {
+        font-size: clamp(10%, 1em + 2px, 20%);
+      }
     }
+
+    @layer items {}
   </style>
 </test-html>
