@@ -62,37 +62,32 @@ class Rule {
 
 class Expression {
 
-  static makeCalc(name, args) {
-    if (!name) {
-      if (!args.length)
-        throw "empty parentheses";
-      if (!args[0].startsWith("var(--")) {
-        if (args.length === 1)
-          return "calc(" + args[0] + ")";
-        throw "calc parentheses cannot contain ','";
-      }
-      while (args.length > 1) {
-        const fallback = args.pop();
-        if (!args[args.length - 1].match(/^var\(.+\)$/))
-          throw "comma only allowed in calc var expressions.";
-        args[args.length - 1] = args[args.length - 1].slice(0, -1) + ", " + fallback + ")";
-      }
-      return args[0];
-    }
-
+  static makeCalc(tokens) {
+    const name = tokens.join("");
     const segs = name
       .split(/(--[a-z][a-z0-9_-]*)/g)
-      .map((s, i) => i % 2 ? `var(${s})` : s.replaceAll(/(?<!^|[+*/-^])-|[+*/]/g, " $& "));
-    const expr = segs.join("");
-    if (expr.match(/(min|max|clamp)$/))
-      return expr + "(" + args.join(",") + ")";
-    if (!args.length)
-      return expr.match(/^(calc|var)\(/) ? expr : `calc(${expr})`;
-    if (args.length > 1)
-      throw "calc parentheses cannot contain ','";
-    if(!expr.endsWith(" "))
-      throw `calc missing operator in front of parentheses. Did you mean: '${expr} * ('?`;   
-    return `calc(${expr}${args[0]})`;
+      .map((s, i) => i % 2 ?
+        `var(${s})` :
+        s.replaceAll(/(?<!^|[+*/-])-|[+*/]/g, " $& "));
+
+    let res = [];
+    for (let i = segs.length - 1; i >= 0; i--)
+      res.unshift(
+        segs[i] == "," && segs[i - 1].startsWith("var(") ?
+          segs[--i].slice(0, -1) + "," + res.shift() + ")" :
+          segs[i]);
+
+    res = res.filter(Boolean);
+    if (res.length === 3 && res[0] === "(" && res[2] === ")")
+      res = [res[1]];
+    if (res.length === 1 && res[0].startsWith("var(--"))
+      return res[0];
+
+    const res2 = res.join("");
+
+    if (res2.includes(" "))
+      return `calc(${res2})`;
+    return res2;
   }
 
   constructor(name, args) {
@@ -107,8 +102,8 @@ class Expression {
   }
   interpret(scope, supers) {
     const cb =
-      // NativeCssFunctions[this.name] ??
-      scope?.[this.name] ?? scope?.[supers["$" + this.name]?.func];
+    //min/max/clamp/var/
+    scope?.[this.name] ?? scope?.[supers["$" + this.name]?.func];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${this.name}`);
     // const innerScope = !cb.scope ? scope : Object.assign({}, scope, cb.scope);
@@ -175,6 +170,23 @@ class Short {
     return { selector, shorts };
   }
 }
+const VAR = /(--[a-z][a-z0-9_-]*)/;
+const MATH = /(?<!^|[+*/-^])-|[+*/]/;
+const xWORD = /[^,()|$=;{}]+/;
+
+/**
+ * 
+ * calc(calc(calc(3+ 4) * 5) + (4-5)) = 23
+2345[*+/-](3+4)*5+(2-3)...,)
+(2+3)asd...,)
+--var...,)
+=> fix the --var
+=> add space around the + - * /.
+=> wrap in calc, if not only a var()
+
+calc((3+4)* 5 +(2-3)) and let the brwosser test it 
+here we are at the end, we wrap in calc() and add space and fix variables etc.
+ */
 
 const WORD = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 const CPP = /[,()|$=;{}]/.source;
@@ -186,10 +198,23 @@ function processToken([m, , , space]) {
   return space ? undefined : m;
 }
 
+function eatTokens(tokens) {
+  for (let res = [], depth = 0; tokens.length;) {
+    if (!depth && (tokens[0] === "," || tokens[0] === ")"))
+      return res;
+    if (tokens[0] === "(") depth++;
+    if (tokens[0] === ")") depth--;
+    res.push(tokens.shift());
+  }
+  throw "missing ')'";
+}
+
 function diveDeep(tokens, top) {
   const res = [];
   while (tokens.length) {
-    let a = tokens.shift();
+    let a = tokens[0].match(/^\($|[+/*]|(?<![a-z])-|-(?![a-z])/) ?
+      Expression.makeCalc(eatTokens(tokens)) :
+      tokens.shift();
     if (top && a === ",") throw "can't start with ','";
     if (top && a === ")") throw "can't start with ')'";
     if (a === "," || a === ")") {         //empty
@@ -200,26 +225,14 @@ function diveDeep(tokens, top) {
         return res;
       continue;
     }
-    //LAE
-    if (a === "(")
-      a = Expression.makeCalc("", diveDeep(tokens));
     let b = tokens.shift();
-    while (b.match(/^[+/*<>-]/)) {
-      //process b, but include b inside the calc of a, or wrap it in 
-      a = `calc(${a.slice(a.indexOf("(")) + b})`;   //(1em+20px)*20+40px (2+3) - 4 * (5+6)) calc(calc(calc(2+3) - 4) * (5+6))
-      b = tokens.shift();
-    }
     if (top && b === ",") throw "top level can't list using ','";
     if (top && b === ")") throw "top level can't use ')'";
+    if (b === "(" && !a.match(WORD)) throw "invalid function name";
     if (b === "(") {
-      a = a.match(WORD) ?
-        new Expression(a, diveDeep(tokens)) :
-        Expression.makeCalc(a, diveDeep(tokens)); //2px+5px*(3px+2px)
+      a = new Expression(a, diveDeep(tokens));
       b = tokens.shift();
     }
-    //LAE handle -!!
-    if (typeof a === "string" && !a.match(/^("|'|calc\(|var\().*\)/) && a.match(/^--|(?<!^|[+*/-^])-|[+*/]/))
-      a = Expression.makeCalc(a, []); //2px+5em
     if (b === ")" || (top && b === undefined))
       return res.push(a), res;
     if (b == ",")
