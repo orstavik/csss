@@ -49,16 +49,6 @@ class Rule {
       `${this.selector} { ${this.body} }`;
   }
 }
-//calc(var(--background-size,var(--fallback, fallback)) * 2)
-
-//(--background-size,--fallback,fallback)*2
-//--background-size:--fallback:fallback*2
-
-//(--background-size)*2
-//--background-size*2
-
-//--background-size*2
-//(--background-size,--fallback,fallback)*2
 
 const NativeCssFunctions = {
   var: (...args) => `var(${args.join(",")})`,
@@ -163,36 +153,43 @@ class Short {
   }
 }
 
-function parseVarCalc(tokens) {
-  const name = tokens.join("");
-  const segs = name
-    .split(/(--[a-z][a-z0-9_-]*)/g)
-    .map((s, i) => i % 2 ?
-      `var(${s})` :
-      s.replaceAll(/(?<!^|[+*/-])-|[+*/]/g, " $& "));
-
-  let res = [];
-  for (let i = segs.length - 1; i >= 0; i--)
-    res.unshift(
-      segs[i] == "," && segs[i - 1].startsWith("var(") ?
-        segs[--i].slice(0, -1) + "," + res.shift() + ")" :
-        segs[i]);
-
-  res = res.filter(Boolean);
-  if (res.length === 3 && res[0] === "(" && res[2] === ")")
-    res = [res[1]];
-  if (res.length === 1 && res[0].startsWith("var(--"))
-    return res[0];
-
-  const res2 = res.join("");
-
-  if (res2.includes(" "))
-    return `calc(${res2})`;
-  return res2;
+function varAndSpaceOperators(tokens) {
+const res = tokens.join("").split(/(--[a-z][a-z0-9_-]*)/g);
+  for (let i = res.length - 1; i >= 0; i--) {
+    if (!res[i]) 
+      res.splice(i, 1);
+    else if (i % 2 && res[i + 1] == "," && i + 2 < res.length)
+      res.splice(i, 3, `var(${res[i] + res[i + 1] + res[i + 2]})`);
+    else if (i % 2)
+      res[i] = `var(${res[i]})`;
+    else
+      res[i] = res[i].replaceAll(/(?<!^|[+*/-])-|[+*/]/g, " $& ");
+  }
+  return res;
 }
 
-// const VAR = /(--[a-z][a-z0-9_-]*)/;
-// const MATH = /(?<!^|[+*/-^])-|[+*/]/;
+function impliedMultiplication(tokens) {
+  for (let i = tokens.length - 2; i >= 1; i--) {
+    if (tokens[i] === "(" && !tokens[i - 1].match(/(min|max|clamp|[+*/-])$/))
+      tokens.splice(i, 0, "*");
+    else if (tokens[i] === ")" && !tokens[i + 1].match(/^[+*/-]/))
+      tokens.splice(i + 1, 0, "*");
+  }
+  return tokens;
+}
+
+function parseVarCalc(tokens) {
+  const t2 = impliedMultiplication(tokens);
+  const t3 = varAndSpaceOperators(t2);
+  if (t3.length === 3 && t3[0] === "(" && t3[2] === ")")
+    t3.shift(), t3.pop();
+  if (t3.length === 1 && t3[0].startsWith("var(--"))
+    return t3[0];
+  //wrap in calc() if needed
+  const str = t3.join("");
+  return str.includes(" ") ? `calc(${str})` : str;
+}
+
 const WORD = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 const CPP = /[,()|$=;{}]/.source;
 const nCPP = /[^,()|$=;{}]+/.source;
