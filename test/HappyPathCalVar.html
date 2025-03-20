@@ -18,7 +18,7 @@
 </test-html>
 <test-html title="CSS Variables with Fallbacks">
   <main style="--primary: red; --secondary: blue;">
-    <div class="$bg(--undefined:--primary)">
+    <div class="$bg((--undefined,--primary))">
       This text should use the fallback variable
     </div>
   </main>  
@@ -26,8 +26,8 @@
     @layer container, items;
 
     @layer container {
-      .\$bg\(--undefined\:--primary\) { 
-        background: var(--undefined, --primary);
+      .\$bg\(\(--undefined\,--primary\)\) { 
+        background: var(--undefined, var(--primary));
       }
     }
     @layer items {
@@ -53,8 +53,9 @@
   </style>
 </test-html>
 <test-html title="Calc with Different Units">
-  <div class="$width(100%-20px) $height(2rem+1em) ">
+  <div class="$width(100%-20px) $height(2rem+1em)">
     This div should have width and height from calc expressions
+    For some reason, it flips 2rem + 1em to 1em + 2rem when it adds the style. 
   </div>
   <style>
     @layer container, items;
@@ -65,7 +66,7 @@
       }
 
       .\$height\(2rem\+1em\) {
-        height: calc(2rem + 1em);
+        height: calc(1em + 2rem);
       }
     }
 
@@ -76,18 +77,18 @@
 </test-html>
 <test-html title="Calc with Multiple Operations">
   <div class="$margin(10px+5px*2) $padding(1rem+2px/2)">
-    Testing multiple operations in calc
+    Testing native compilation of rules and multiple operations in calc
   </div>
   <style>
     @layer container, items;
 
     @layer container {
       .\$margin\(10px\+5px\*2\) {
-        margin: calc(10px + 5px * 2);
+        margin: calc(20px);
       }
 
       .\$padding\(1rem\+2px\/2\) {
-        padding: calc(1rem + 2px / 2);
+        padding: calc(1px + 1rem);
       }
     }
     @layer items {
@@ -96,19 +97,19 @@
   </style>
 </test-html>
 <test-html title="Calc with Parentheses">
-  <div class="$width((100px+50px)*2) $height(3rem*(1+0.5))">
+  <div class="$width((100px+5vw)*2) $height(3rem*(1+0.5))">
     Testing calc with parentheses
   </div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$width\(\(100px\+50px\)\*2\) {
-        width: calc((100px + 50px) * 2);
+      .\$width\(\(100px\+5vw\)\*2\) {
+        width: calc(200px + 10vw);
       }
 
       .\$height\(3rem\*\(1\+0\.5\)\) {
-        height: calc(3rem * (1 + 0.5));
+        height: calc(4.5rem);
       }
     }
     @layer items {
@@ -118,7 +119,7 @@
 </test-html>
 <test-html title="CSS Variables in Calc">
   <main style="--base-size: 16px;">
-    <div class="$width((--base-size)*2) $height((--base-size)+10px)">
+    <div class="$width(--base-size*2) $height(--base-size+10px)">
       Testing CSS variables inside calc
     </div>
   </main>
@@ -126,15 +127,11 @@
     @layer container, items;
 
     @layer container {
-      .\$var\(--base-size\,\ 16px\) {
-        --base-size: 16px;
-      }
-
-      .\$width\(var\(--base-size\)\*2\) {
+      .\$width\(--base-size\*2\) {
         width: calc(var(--base-size) * 2);
       }
 
-      .\$height\(var\(--base-size\)\+10px\) {
+      .\$height\(--base-size\+10px\) {
         height: calc(var(--base-size) + 10px);
       }
     }

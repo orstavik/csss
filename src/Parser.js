@@ -1,5 +1,3 @@
-// import { NativeCssFunctions } from "./func.js";
-
 export class ShortBlock {
 
   constructor(exp) {
@@ -51,36 +49,50 @@ class Rule {
       `${this.selector} { ${this.body} }`;
   }
 }
+//calc(var(--background-size,var(--fallback, fallback)) * 2)
 
-function wrapVar(str) {
-  //todo make this better
-  return str.replaceAll(/--[a-z][a-z0-9_:-]*/g, (c) => {
-    const [name, ...fallbacks] = c.split(":");
-    const head = "var(".repeat(fallbacks.length || 1);
-    const tail = fallbacks.map(f => `, ${f}`).join(")") + ")";
-    return `${head}${name}${tail}`;
-  });
-}
+//(--background-size,--fallback,fallback)*2
+//--background-size:--fallback:fallback*2
+
+//(--background-size)*2
+//--background-size*2
+
+//--background-size*2
+//(--background-size,--fallback,fallback)*2
 
 class Expression {
 
   static makeCalc(name, args) {
-    args = args.join(" * ");
-    name = wrapVar(name);
-    if(!args && name.match(/^var\(.+\)$/))
-      return name;
-    name = name.replaceAll(/[+*/]/g, " $& ");
-    // //missing - that is not preceded by either ^ or [+*/]
-    const op = (args.length && !name.endsWith(" ")) ? " * " : "";
-    //todo add clamp and min/max
-    return `calc(${name}${op}${args})`;
-  }
+    if (!name) {
+      if (!args.length)
+        throw "empty parentheses";
+      if (!args[0].startsWith("var(--")) {
+        if (args.length === 1)
+          return "calc(" + args[0] + ")";
+        throw "calc parentheses cannot contain ','";
+      }
+      while (args.length > 1) {
+        const fallback = args.pop();
+        if (!args[args.length - 1].match(/^var\(.+\)$/))
+          throw "comma only allowed in calc var expressions.";
+        args[args.length - 1] = args[args.length - 1].slice(0, -1) + ", " + fallback + ")";
+      }
+      return args[0];
+    }
 
-  static extendCalc(a, b) {
-    a = a.slice(0, -1);
-    if (a.endsWith("   ")) //we have an operator, 
-      //todo if the a is a clamp/min/max, then we need to add it. If it is a calc, then we need to 
-      debugger
+    const segs = name
+      .split(/(--[a-z][a-z0-9_-]*)/g)
+      .map((s, i) => i % 2 ? `var(${s})` : s.replaceAll(/(?<!^|[+*/-^])-|[+*/]/g, " $& "));
+    const expr = segs.join("");
+    if (expr.match(/(min|max|clamp)$/))
+      return expr + "(" + args.join(",") + ")";
+    if (!args.length)
+      return expr.match(/^(calc|var)\(/) ? expr : `calc(${expr})`;
+    if (args.length > 1)
+      throw "calc parentheses cannot contain ','";
+    if(!expr.endsWith(" "))
+      throw `calc missing operator in front of parentheses. Did you mean: '${expr} * ('?`;   
+    return `calc(${expr}${args[0]})`;
   }
 
   constructor(name, args) {
@@ -174,48 +186,41 @@ function processToken([m, , , space]) {
   return space ? undefined : m;
 }
 
-const S = "(", E = ")";
 function diveDeep(tokens, top) {
   const res = [];
   while (tokens.length) {
     let a = tokens.shift();
     if (top && a === ",") throw "can't start with ','";
-    if (top && a === E) throw "can't start with ')'";
-    if (a === "," || a === E) {         //empty
+    if (top && a === ")") throw "can't start with ')'";
+    if (a === "," || a === ")") {         //empty
       res.push(undefined);
-      if (a === E && !res.length)
+      if (a === ")" && !res.length)
         throw new SyntaxError("empty function not allowed in CSSs");
-      if (a === E)
+      if (a === ")")
         return res;
       continue;
     }
-    let b;
-    if (a === S) {
-      debugger
-      a = Expression.makeCalc("", diveDeep(tokens)); //(1em/1vw) ...
+    //LAE
+    if (a === "(")
+      a = Expression.makeCalc("", diveDeep(tokens));
+    let b = tokens.shift();
+    while (b.match(/^[+/*<>-]/)) {
+      //process b, but include b inside the calc of a, or wrap it in 
+      a = `calc(${a.slice(a.indexOf("(")) + b})`;   //(1em+20px)*20+40px (2+3) - 4 * (5+6)) calc(calc(calc(2+3) - 4) * (5+6))
       b = tokens.shift();
-    } else {
-      b = tokens.shift();
-      while (b.match(/^[+/*<>-]/)) {
-        debugger;
-        a = Expression.extendCalc(a, b);   //(1em+20px)*20+40px
-        b = tokens.shift();
-      }
-      if (top && b === ",") throw "top level can't list using ','";
-      if (top && b === E) throw "top level can't use ')'";
-      if (b === S) {
-        a = a.match(WORD) ?
-          new Expression(a, diveDeep(tokens)) :
-          Expression.makeCalc(a, diveDeep(tokens)); //2px+5px*(3px+2px)
-        b = tokens.shift();
-      }
     }
-    //todo handle -!!
-    if (typeof a === "string" && a[0].match(/^[^"']/) &&
-      (a.match(/[+/*<>]/) || a.match(/^--[a-z]/))
-    )
+    if (top && b === ",") throw "top level can't list using ','";
+    if (top && b === ")") throw "top level can't use ')'";
+    if (b === "(") {
+      a = a.match(WORD) ?
+        new Expression(a, diveDeep(tokens)) :
+        Expression.makeCalc(a, diveDeep(tokens)); //2px+5px*(3px+2px)
+      b = tokens.shift();
+    }
+    //LAE handle -!!
+    if (typeof a === "string" && !a.match(/^("|'|calc\(|var\().*\)/) && a.match(/^--|(?<!^|[+*/-^])-|[+*/]/))
       a = Expression.makeCalc(a, []); //2px+5em
-    if (b === E || (top && b === undefined))
+    if (b === ")" || (top && b === undefined))
       return res.push(a), res;
     if (b == ",")
       res.push(a);
