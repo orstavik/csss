@@ -225,7 +225,19 @@ export const NativeColorsFunctions = (function () {
 const NativeCssProperties = (function () {
   const style = document.createElement('div').style;
   const nativeProps = Object.getOwnPropertyNames(style)
-    .map(k => [k, (...args) => ({ [k]: args.join(" ") })]);
+    .map(k => [k, (...args) => {
+      // Handle quoted string values for all properties
+      if (args.length === 1 && typeof args[0] === 'string') {
+        // Check if the value contains a slash or other operators that might be interpreted as calc
+        const value = args[0];
+        if (value.match(/[+\-*/]/)) {
+          if (value.startsWith('"') || value.startsWith("'")) {
+            return { [k]: value.replace(/^['"](.*)['"]$/, '$1') };
+          }
+        }
+      }
+      return { [k]: args.join(" ") };
+    }]);
   return Object.fromEntries(nativeProps);
 })();
 
