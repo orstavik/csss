@@ -1,0 +1,383 @@
+<test-html title="Color System 1 - Basic Palette">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$palette(#d41c84) $color(primary) 
+      $bg $border $grid(g(1rem),p(1rem))">
+        <div class="$color(primary-bw) $bg $border">primary-bw</div>
+        <div class="$color(primary-box) $bg $border">primary-box</div>
+        <div class="$color(primary-flip) $bg $border">primary-flip</div>
+        <div class="$color(primary-darkflip) $bg $border">primary-darkflip</div>
+        <div class="$color(primary-pop-flip) $bg $border">primary-pop-flip</div>
+      </div>
+      <div class="$palette(#1c03dc) $color(primary) 
+      $bg $border $grid(g(1rem),p(1rem))">
+        <div class="$color(secondary-box) $bg $border">secondary-box</div>
+        <div class="$color(tertiary-box) $bg $border">tertiary-box</div>
+        <div class="$color(neutral-box) $bg $border">neutral-box</div>
+        <div class="$color(grey-box) $bg $border">grey-box</div>
+        <div class="$color(red-blend-box) $bg $border">red-blend-box</div>
+        <div class="$color(blue-blend-box) $bg $border">blue-blend-box</div>
+        <div class="$color(green-blend-box) $bg $border">green-blend-box</div>
+        <div class="$color(orange-blend-box) $bg $border">oragne-blend-box</div>
+      </div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) { 
+        display: grid; 
+        word-spacing: unset; 
+        line-height: unset; 
+        white-space: unset; 
+        hyphens: unset; 
+        text-align: unset; 
+        text-indent: unset; 
+        grid-template-columns: 1fr 1fr; 
+        gap: 1rem; 
+      }
+      .\$palette\(\#d41c84\) { 
+        --palette-primary: #d41c84; 
+        --palette-secondary: oklch(from #d41c84 50 c calc(h - 60)); 
+        --palette-tertiary: oklch(from #d41c84 50 c calc(h + 60)); 
+        --palette-neutral: oklch(from #d41c84 50 0.02 h); 
+        --palette-bw-fg: 0; 
+        --palette-bw-bg: 1; 
+        --palette-text-fg: 0.23; 
+        --palette-text-bg: 0.99; 
+        --palette-box-fg: 0.23; 
+        --palette-box-bg: 0.92; 
+        --palette-flip-fg: 0.99; 
+        --palette-flip-bg: 0.66; 
+        --palette-darkflip-fg: 0.9; 
+        --palette-darkflip-bg: 0.33; 
+        --palette-chroma: 0.22526825830796882; 
+        --palette-pop: calc(c * 2); 
+      }
+      .\$color\(primary\) { 
+        color: oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$bg { 
+        background: var(--background-color); 
+      }
+      .\$border { 
+        border-style: solid; 
+        border-width: medium; 
+      }
+      .\$grid\(g\(1rem\)\,p\(1rem\)\) { 
+        display: grid; 
+        word-spacing: unset; 
+        line-height: unset; 
+        white-space: unset; 
+        hyphens: unset; 
+        text-align: unset; 
+        text-indent: unset; 
+        gap: 1rem; 
+        padding: 1rem; 
+      }
+      .\$color\(primary-bw\) { 
+        color: oklch(from var(--palette-primary) var(--palette-bw-fg) calc(c - (c * max(var(--palette-bw-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-primary) var(--palette-bw-bg) calc(c - (c * max(var(--palette-bw-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-bw-bg) calc(c - (c * max(var(--palette-bw-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-bw-fg) calc(c - (c * max(var(--palette-bw-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(primary-box\) { 
+        color: oklch(from var(--palette-primary) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-primary) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(primary-flip\) { 
+        color: oklch(from var(--palette-primary) var(--palette-flip-fg) calc(c - (c * max(var(--palette-flip-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-primary) var(--palette-flip-bg) calc(c - (c * max(var(--palette-flip-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-flip-bg) calc(c - (c * max(var(--palette-flip-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-flip-fg) calc(c - (c * max(var(--palette-flip-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(primary-darkflip\) { 
+        color: oklch(from var(--palette-primary) var(--palette-darkflip-fg) calc(c - (c * max(var(--palette-darkflip-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-primary) var(--palette-darkflip-bg) calc(c - (c * max(var(--palette-darkflip-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-darkflip-bg) calc(c - (c * max(var(--palette-darkflip-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-darkflip-fg) calc(c - (c * max(var(--palette-darkflip-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(primary-pop-flip\) { 
+        color: oklch(from oklch(from var(--palette-primary) l var(--palette-pop) h) var(--palette-flip-fg) calc(c - (c * max(var(--palette-flip-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from oklch(from var(--palette-primary) l var(--palette-pop) h) var(--palette-flip-bg) calc(c - (c * max(var(--palette-flip-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from oklch(from var(--palette-primary) l var(--palette-pop) h) var(--palette-flip-bg) calc(c - (c * max(var(--palette-flip-bg) - .8, 0) * 5)) h), oklch(from oklch(from var(--palette-primary) l var(--palette-pop) h) var(--palette-flip-fg) calc(c - (c * max(var(--palette-flip-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$palette\(\#1c03dc\) { 
+        --palette-primary: #1c03dc; 
+        --palette-secondary: oklch(from #1c03dc 50 c calc(h - 60)); 
+        --palette-tertiary: oklch(from #1c03dc 50 c calc(h + 60)); 
+        --palette-neutral: oklch(from #1c03dc 50 0.02 h); 
+        --palette-bw-fg: 0; 
+        --palette-bw-bg: 1; 
+        --palette-text-fg: 0.23; 
+        --palette-text-bg: 0.99; 
+        --palette-box-fg: 0.23; 
+        --palette-box-bg: 0.92; 
+        --palette-flip-fg: 0.99; 
+        --palette-flip-bg: 0.66; 
+        --palette-darkflip-fg: 0.9; 
+        --palette-darkflip-bg: 0.33; 
+        --palette-chroma: 0.2748111793828722; 
+        --palette-pop: calc(c * 2); 
+      }
+      .\$color\(secondary-box\) { 
+        color: oklch(from var(--palette-secondary) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-secondary) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-secondary) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from var(--palette-secondary) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(tertiary-box\) { 
+        color: oklch(from var(--palette-tertiary) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-tertiary) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-tertiary) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from var(--palette-tertiary) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(neutral-box\) { 
+        color: oklch(from var(--palette-neutral) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-neutral) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-neutral) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from var(--palette-neutral) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(grey-box\) { 
+        color: oklch(from grey var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from grey var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from grey var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from grey var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(red-blend-box\) { 
+        color: oklch(from oklch(from red l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from oklch(from red l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from oklch(from red l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from oklch(from red l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(blue-blend-box\) { 
+        color: oklch(from oklch(from blue l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from oklch(from blue l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from oklch(from blue l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from oklch(from blue l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(green-blend-box\) { 
+        color: oklch(from oklch(from green l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from oklch(from green l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from oklch(from green l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from oklch(from green l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(orange-blend-box\) {
+        color: oklch(from oklch(from orange l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from oklch(from orange l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h);
+        border-color: color-mix(in oklch, oklch(from oklch(from orange l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from oklch(from orange l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%);
+      }
+    }
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Color System 2 - Basic Color">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$color(pink-b1)">Named Color</div>
+      <!-- <div class="$color(#57237d)">Hex Color</div>
+      <div class="$color(rgba(0,0,255,0.5))">RGBA Color</div>
+      <div class="$color(primary)">Palette Color</div> -->
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+    }
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Color System 5 - Gradient Backgrounds">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$bg(linear-gradient(to right, red, blue))">Linear Gradient</div>
+      <div class="$bg(radial-gradient(circle, red, blue))">Radial Gradient</div>
+      <div class="$bg(conic-gradient(from 0deg, red, blue))">Conic Gradient</div>
+      <div class="$bg(linear(to right, primary, secondary))">Palette Gradient</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+    }
+    @layer items {}
+  </style>
+</test-html>
+<!-- 
+<test-html title="Color System 3 - Color Reliefs">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$color(bw)">Black/White Relief</div>
+      <div class="$color(text)">Text Relief</div>
+      <div class="$color(box)">Box Relief</div>
+      <div class="$color(flip)">Flip Relief</div>
+      <div class="$color(darkflip)">Dark Flip Relief</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+    }
+    @layer items {}
+  </style>
+</test-html>
+
+<test-html title="Color System 4 - Background Basics">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$bg(red)">Solid Color</div>
+      <div class="$bg(primary)">Palette Color</div>
+      <div class="$bg(rgba(0,0,255,0.5))">RGBA Color</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+    }
+    @layer items {}
+  </style>
+</test-html>
+
+<test-html title="Color System 6 - Color Combinations">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$color(red)$bg(blue)">Text and Background</div>
+      <div class="$color(primary)$bg(secondary)">Palette Colors</div>
+      <div class="$color(bw)$bg(flip)">Relief Combinations</div>
+      <div class="$color(pop)$bg(blend)">Special Effects</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+    }
+    @layer items {}
+  </style>
+</test-html>
+
+<test-html title="Color System 7 - Border Colors">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$color(,,red)">Border Only</div>
+      <div class="$color(red,,blue)">Text and Border</div>
+      <div class="$color(,blue,red)">Background and Border</div>
+      <div class="$color(primary,,secondary)">Palette Borders</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+    }
+    @layer items {}
+  </style>
+</test-html>
+
+<test-html title="Color System 8 - Color Functions">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$color(rgb(255,0,0))">RGB Color</div>
+      <div class="$color(hsl(120,100%,50%))">HSL Color</div>
+      <div class="$color(oklch(50% 0.2 120))">OKLCH Color</div>
+      <div class="$color(color-mix(in srgb, red, blue 50%))">Color Mix</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+    }
+    @layer items {}
+  </style>
+</test-html>
+
+<test-html title="Color System 9 - Interactive States">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$color(primary):hover$color(secondary)">Hover Color Change</div>
+      <div class="$bg(primary):hover$bg(secondary)">Hover Background</div>
+      <div class="$color(primary)$bg(secondary):hover$color(secondary)$bg(primary)">Hover Swap</div>
+      <div class="$bg(linear(to right, primary, secondary)):hover$bg(linear(to right, secondary, primary))">Hover Gradient</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+    }
+    @layer items {}
+  </style>
+</test-html>  
+
+
+<test-html title="Color System 11 - Border Intensity Levels">
+  <main>
+    <div class="$grid(cols(1fr,1fr,1fr,1fr),gap(0.5rem))">
+      <div class="$color(primary-b0)">Border 0</div>
+      <div class="$color(primary-b1)">Border 1</div>
+      <div class="$color(primary-b2)">Border 2</div>
+      <div class="$color(primary-b3)">Border 3</div>
+      <div class="$color(primary-b4)">Border 4</div>
+      <div class="$color(primary-b5)">Border 5</div>
+      <div class="$color(primary-b6)">Border 6</div>
+      <div class="$color(primary-b7)">Border 7</div>
+      <div class="$color(primary-b8)">Border 8</div>
+      <div class="$color(primary-b9)">Border 9</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\,1fr\,1fr\)\,gap\(0\.5rem\)\) {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 0.5rem;
+      }
+      .\$grid\(cols\(1fr\,1fr\,1fr\,1fr\)\,gap\(0\.5rem\)\) > div {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+        text-align: center;
+        border-radius: 0.25rem;
+      }
+    }
+    @layer items {}
+  </style>
+</test-html> 
+-->

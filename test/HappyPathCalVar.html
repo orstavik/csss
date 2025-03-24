@@ -274,3 +274,66 @@
     @layer items {}
   </style>
 </test-html>
+<test-html title="Font Names with Spaces and Special Characters">
+  <div class="$font('Times+New+Roman','DejaVu+Sans+Mono',serif)">
+    Testing font names with spaces and special characters
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$font\(\'Times\+New\+Roman\'\,\'DejaVu\+Sans\+Mono\'\,serif\) {
+        font-family: "Times New Roman", "DejaVu Sans Mono", serif;
+        font-style: initial;
+        font-weight: initial;
+        font-variant: initial;
+        font-stretch: initial;
+        text-transform: initial;
+        letter-spacing: initial;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Grid Column with Slash Notation">
+  <div class="$grid(cols(1fr,2fr,1fr),rows(auto,1fr,auto),gap(1rem))">
+    <div class="$gridColumn('1/4')">
+      Header spanning all columns
+    </div>
+    <div class="$gridColumn('2/3')">
+      Main content
+    </div>
+    <div class="$gridColumn('1/4')">
+      Footer spanning all columns
+    </div>
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,2fr\,1fr\)\,rows\(auto\,1fr\,auto\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 2fr 1fr;
+        grid-template-rows: auto 1fr auto;
+        gap: 1rem;
+      }
+
+      .\$gridColumn\(\'1\/4\'\) {
+        grid-column: 1 / 4;
+      }
+
+      .\$gridColumn\(\'2\/3\'\) {
+        grid-column: 2 / 3;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
