@@ -1,3 +1,5 @@
+import { NativeColorsFunctions } from "./func.js";
+
 export class ShortBlock {
 
   constructor(exp) {
@@ -65,6 +67,7 @@ const NativeCssFunctions = {
   paint: (...args) => `paint(${args.join(",")})`,
   env: (...args) => `env(${args.join(",")})`,
   path: (...args) => `path(${args.join(",")})`,
+  ...NativeColorsFunctions,
   //todo
   // attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
   // "image-set": (...args) => `image-set(${args.join(",")})`,
@@ -82,9 +85,14 @@ class Expression {
   get signature() {
     return this.name + "/" + this.args.length;
   }
-  interpret(scope, supers) {
+  interpret(scope, supers) {  
+    //added check for empty args and BuiltinSupers definition
+    if (this.args.length === 0 && supers["$" + this.name]?.shorts) {
+      return supers["$" + this.name].shorts;
+    }  
+    const superFunc = supers["$" + this.name]?.func;
     const cb = scope?.[this.name] ??
-      scope?.[supers["$" + this.name]?.func] ??
+      (superFunc && scope?.[superFunc]) ??
       NativeCssFunctions[this.name];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${this.name}`);
