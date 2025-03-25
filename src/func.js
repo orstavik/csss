@@ -144,12 +144,12 @@ const NativeColorsFunctions = (function () {
     const _alpha = args.length == 4 ? ` / ${args.pop()}` : "";
     return `${this.name}(${from_}${args.join(" ")}${_alpha})`;
   }
-  function nativeCssColorMixFunction(method, ...args) {
-    method = "in " + method.replaceAll("_", " "); //we don't support _ in --var-names
-    let res = args.shift();
-    while (args.length)
-      res += (CSS.supports("color", a) ? ", " : " ") + args.shift();
-    return `color-mix(in ${method}, ${res})`;
+  function nativeCssColorMixFunction(cSpace, ...args) {
+    cSpace = "in " + cSpace.replaceAll("_", " "); //we don't support '_' in --var-names
+    if (args[0]?.match(/^(shorter|longer|increasing|decreasing)$/))
+      cSpace += ` ${args.shift()} hue`;
+    args = args.map(a => (a.match(/^\d?\d%$/i) ? " " : ", ") + a);
+    return `color-mix(${cSpace}${args.join("")})`;
   }
 
   return {
@@ -168,7 +168,7 @@ const NativeColorsFunctions = (function () {
 })();
 
 for (const k in NativeCssProperties)
-  if(k.endsWith("Color"))
+  if (k.endsWith("Color"))
     NativeCssProperties[k].scope = NativeColorsFunctions;
 NativeCssProperties.color.scope = NativeColorsFunctions;
 NativeCssProperties.boxShadow.scope = NativeColorsFunctions;

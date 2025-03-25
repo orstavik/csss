@@ -40,13 +40,17 @@ class Rule {
     this.item = item;
   }
   get body() {
-    return Object.entries(this.shorts)
-      .map(([k, v]) => `${k.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase())}: ${v};`).join(" ");
+    return this.shorts && Object.entries(this.shorts).map(([k, v]) => {
+      k = k.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase());
+      if (!CSS.supports(k, v))
+        throw new SyntaxError(`Invalid CSS value: ${k} = ${v}`);
+      return `  ${k}: ${v};`;
+    }).join("\n");
   }
   get rule() {
     return this.media ?
-      `${this.media} { ${this.selector} { ${this.body} } }` :
-      `${this.selector} { ${this.body} }`;
+      `${this.media} { ${this.selector} {\n${this.body}\n} }` :
+      `${this.selector} {\n${this.body}\n}`;
   }
 }
 
@@ -154,9 +158,9 @@ class Short {
 }
 
 function varAndSpaceOperators(tokens) {
-const res = tokens.join("").split(/(--[a-z][a-z0-9_-]*)/g);
+  const res = tokens.join("").split(/(--[a-z][a-z0-9_-]*)/g);
   for (let i = res.length - 1; i >= 0; i--) {
-    if (!res[i]) 
+    if (!res[i])
       res.splice(i, 1);
     else if (i % 2 && res[i + 1] == "," && i + 2 < res.length)
       res.splice(i, 3, `var(${res[i] + res[i + 1] + res[i + 2]})`);

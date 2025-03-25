@@ -51,6 +51,7 @@ $systemUi = $fontFamily(system-ui);
 $uiSerif = $fontFamily(ui-serif);
 $uiSansSerif = $fontFamily(ui-sans-serif);
 
+$color = $color(black,white,colorMix(oklch,currentcolor,--background-color,33%));
 $border = $border(solid, medium);
 $block = $display(block)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.);
 $grid = $display(grid)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.);

@@ -30,7 +30,7 @@
   for (const type of types.split("|")) {
     for (let name of names.split("|")) {
       for (op of ops.split("|")) {
-        const n = op? `${op}(${name})` : name;
+        const n = op ? `${op}(${name})` : name;
         str.push(`<span class="$color(${[n, type].filter(Boolean).join(",")})"> hello sunshine </span>`);
       }
     }
@@ -55,5 +55,6 @@
           } catch (er) {
             console.log(er);
           }
+    requestAnimationFrame(_ => sheetWrapper.cleanup());
   })();
 </script>

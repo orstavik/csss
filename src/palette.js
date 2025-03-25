@@ -1,5 +1,5 @@
 import { Color } from "./Color.js";
-import { default as NativeFunctions } from "./func.js";
+import { borderSwitch, default as NativeFunctions, toLogicalFour } from "./func.js";
 
 /**
 
@@ -25,58 +25,146 @@ import { default as NativeFunctions } from "./func.js";
 }
 
 */
+const Relieffs = ["text", "bw", "box", "flip", "darkflip"];
+const lightRelieffs = {
+  "--palette-bw-fg": 0,
+  "--palette-text-fg": .23,
+  "--palette-box-fg": .23,
+  "--palette-flip-fg": .99,
+  "--palette-darkflip-fg": .90,
+  "--palette-bw-bg": 1,
+  "--palette-text-bg": .99,
+  "--palette-box-bg": .92,
+  "--palette-flip-bg": .66,
+  "--palette-darkflip-bg": .33,
+};
+const darkRelieffs = {
+  "--palette-bw-fg": 1,
+  "--palette-text-fg": .99,
+  "--palette-box-fg": .92,
+  "--palette-flip-fg": .66,
+  "--palette-darkflip-fg": .33,
+  "--palette-bw-bg": 0,
+  "--palette-text-bg": .23,
+  "--palette-box-bg": .23,
+  "--palette-flip-bg": .99,
+  "--palette-darkflip-bg": .90,
+};
 
-function palette(
-  primary,
-  secondary = `oklch(from ${primary} 50 c calc(h - 60))`,
-  tertiary = `oklch(from ${primary} 50 c calc(h + 60))`,
-  neutral = `oklch(from ${primary} 50 0.02 h)`
-) {
-  const res = Object.fromEntries(Object.entries({ primary, secondary, tertiary, neutral })
-    .map(([name, value]) => [`--${name}`, value]));
-  res["--primary-chroma"] = new Color(primary).C;
+function paletteGenerator(relieffs) {
+  function palette(primary, secondary, tertiary, neutral) {
+    return {
+      "--primary": primary,
+      "--secondary": secondary ?? `oklch(from ${primary} 50 c calc(h - 60))`,
+      "--tertiary": tertiary ?? `oklch(from ${primary} 50 c calc(h + 60))`,
+      "--neutral": neutral ?? `oklch(from ${primary} 50 0.02 h)`,
+      "--primary-chroma": new Color(primary).C,
+      ...relieffs
+    };
+  }
+  palette.scope = NativeFunctions.color.scope;
+  return palette;
+}
+const palette = paletteGenerator(lightRelieffs);
+const darkPalette = paletteGenerator(darkRelieffs);
+
+//$color(--primary,text,4,pop(--secondary),blend(blue))
+//$color(black,green,darkblue)
+
+//<div class="$color(black,green,red) @dark$color(white,black,red)"></div>
+
+//<body class="$palette(blue,darkorange) @dark$palette-dark(lightblue,orange)"></body>
+//  <div class="$color(flip,--primary,--secondary,--neutral)">...</div>
+//  <div class="$color(text,--primary,--secondary,--neutral)">...</div>
+//
+function color(...args) {
+
+  const fg = (name, c) => `oklch(from ${c} var(--palette-${name}-fg) calc(c - (c * max(var(--palette-${name}-fg) - .8, 0) * 5)) h)`;
+  const bg = (name, c) => `oklch(from ${c} var(--palette-${name}-bg) calc(c - (c * max(var(--palette-${name}-bg) - .8, 0) * 5)) h)`;
+
+  function border(num, color, bgColor) {
+    num = Math.round(Math.pow(num / 9, 1.5) * 100);
+    return `color-mix(in oklch, ${bgColor}, ${color} ${num}%)`;
+  }
+
+  let borderFunc, bgFunc, colors = [];
+  for (const a of args)
+    Relieffs.includes(a) ? bgFunc = a :
+      Number.isInteger(a) ? borderFunc = a :
+        colors.push(a);
+
+  const res = { color: colors[0] };
+
+  if (colors[1] == undefined && !bgFunc)
+    bgFunc = Relieffs[0];
+  res["--background-color"] = colors[1] ?? colors[0];
+
+  if (bgFunc) {
+    res.color = fg(bgFunc, res.color);
+    res["--background-color"] = bg(bgFunc, res["--background-color"]);
+  }
+  res.borderColor = colors[2] ?? colors[0];
+  if (borderFunc)
+    res.borderColor = border(borderFunc, res.borderColor, res["--background-color"]);
+  //todo multiply the backgroundColors.
   return res;
 }
-palette.scope = NativeFunctions.color.scope;
-
-
-const Relieffs = {
-  bw: [0, 1],
-  text: [.23, .99],
-  box: [.23, .92],
-  flip: [.99, .66],
-  darkflip: [.90, .33],
-};
-
-function border(num, color, bgColor) {
-  num = Math.round(Math.pow(num / 9, 1.5) * 100);
-  return `color-mix(in oklch, ${bgColor}, ${color} ${num}%)`;
-}
-
-//$colorText(pop(--primary),b4)
-//$color(--primary,text,4,--secondary,blue)
-//$color(red,blue,green)
-function color(c, bgFunc = "text", bFunc = 4) {
-  const [fg, bg] = Relieffs[bgFunc];
-  let output = {
-    color:
-      `oklch(from ${c} ${fg} calc(c - c * ${Math.max(fg - .8, 0) * 5}) h)`,
-    "--background-color":
-      `oklch(from ${c} ${bg} calc(c - c * ${Math.max(bg - .8, 0) * 5}) h)`
-  }
-  output.borderColor = border(bFunc, output.color, output["--background-color"]);
-  return output;
-}
-
-color.scope = {
+const ColorScope = {
   ...NativeFunctions.color.scope,
   pop: c => `oklch(from ${c} l calc(c * 2) h)`,
-  blend: c => `oklch(from ${c} l var(--primary-chroma) h)`
+  blend: c => `oklch(from ${c} l var(--primary-chroma) h)`,
 };
 
-const colorFunctions = {
+const funcs = {
+  caret: a => ({ "caret-color": a }),
+  accent: a => ({ "accent-color": a }),
+  emphasis: a => ({ "text-emphasis-color": a }),
+  decoration: a => ({ "text-decoration-color": a }),
+  column: a => ({ "column-rule-color": a }),
+  outline: a => ({ "outline-color": a }),
+  border: (...args) => borderSwitch(toLogicalFour("border-color", ...args)),
+  shadow: (...args) => ({
+    "--box-shadow-color": args[0],
+    "--text-shadow-color": args[1] ?? args[0],
+    "--drop-shadow-color": args[2] ?? args[0]
+  }),
+};
+for (const fn of Object.values(funcs))
+  fn.scope = ColorScope;
+
+color.scope = { ...ColorScope, ...funcs };
+
+
+
+
+function boxShadow(...args) {
+  if (args.every(a => isLength(a) || a === "inset"))
+    args.push(`var(--box-shadow-color, oklch(from currentcolor l 0 h))`);
+  return NativeCssProperties.boxShadow(...args);
+};
+function textShadow(...args) {
+  if (args.every(a => isLength(a)))
+    args.push(`var(--text-shadow-color, oklch(from currentcolor l 0 h))`);
+  return NativeCssProperties.boxShadow(...args);
+}
+function dropShadow(...args) {
+  if (args.every(a => isLength(a)))
+    args.push(`var(--drop-shadow-color, oklch(from currentcolor l 0 h))`);
+  return NativeCssProperties.boxShadow(...args);
+}
+
+boxShadow.scope = ColorScope;
+textShadow.scope = ColorScope;
+dropShadow.scope = ColorScope;
+
+
+const colorfulShorts = {
   palette,
+  darkPalette,
   color,
+  boxShadow,
+  textShadow,
+  dropShadow,
 };
 
-export default colorFunctions;
+export default colorfulShorts;
