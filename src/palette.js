@@ -88,12 +88,14 @@ function color(...args) {
   }
 
   let borderFunc, bgFunc, colors = [];
+  const res = {};
   for (const a of args)
-    Relieffs.includes(a) ? bgFunc = a :
-      Number.isInteger(a) ? borderFunc = a :
-        colors.push(a);
+    a instanceof Object ? Object.assign(res, a) :
+      Relieffs.includes(a) ? bgFunc = a :
+        Number.isInteger(a) ? borderFunc = a :
+          colors.push(a);
 
-  const res = { color: colors[0] };
+  res.color = colors[0];
 
   if (colors[1] == undefined && !bgFunc)
     bgFunc = Relieffs[0];
@@ -123,10 +125,10 @@ const funcs = {
   column: a => ({ "column-rule-color": a }),
   outline: a => ({ "outline-color": a }),
   border: (...args) => borderSwitch(toLogicalFour("border-color", ...args)),
-  shadow: (...args) => ({
-    "--box-shadow-color": args[0],
-    "--text-shadow-color": args[1] ?? args[0],
-    "--drop-shadow-color": args[2] ?? args[0]
+  shadow: (box, text = box, drop = box) => ({
+    "--box-shadow-color": box,
+    "--text-shadow-color": text,
+    "--drop-shadow-color": drop,
   }),
 };
 for (const fn of Object.values(funcs))

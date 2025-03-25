@@ -47,8 +47,8 @@
       }
 
       .\$color\(grey\,text\) {
-        color: grey;
-        --background-color: text;
+        color: oklch(from grey var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from grey var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
         border-color: grey;
       }
 
