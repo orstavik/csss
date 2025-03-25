@@ -199,6 +199,7 @@ const NativeCssTransformFunctions = {
   skewX: (...args) => ({ transform: `skewX(${args.join(",")})` }),
   skewY: (...args) => ({ transform: `skewY(${args.join(",")})` }),
 };
+delete NativeCssProperties.transform;
 
 const NativeCssGradientFunctions = {
   "linearGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
