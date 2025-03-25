@@ -167,9 +167,9 @@ const NativeColorsFunctions = (function () {
   };
 })();
 
-for (const p in NativeCssProperties)
-  if(p.endsWith("Color"))
-    NativeCssProperties[p].scope = NativeColorsFunctions;
+for (const k in NativeCssProperties)
+  if(k.endsWith("Color"))
+    NativeCssProperties[k].scope = NativeColorsFunctions;
 NativeCssProperties.color.scope = NativeColorsFunctions;
 NativeCssProperties.boxShadow.scope = NativeColorsFunctions;
 NativeCssProperties.textShadow.scope = NativeColorsFunctions;
@@ -256,6 +256,11 @@ border.scope = {
   r4: toRadiusFour.bind(null, "Radius"),
   r8: toLogicalEight.bind(null, "Radius", 0),
 };
+delete NativeCssProperties.borderWidth;
+delete NativeCssProperties.borderStyle;
+delete NativeCssProperties.borderRadius;
+NativeCssProperties.borderColor = (...args) => borderSwitch(toLogicalFour("borderColor", ...args));
+NativeCssProperties.borderColor.scope = NativeCssProperties.color.scope;
 
 const KNOWN_BAD_FONT_NAMES = {
   "comic": "Comic Sans MS",
