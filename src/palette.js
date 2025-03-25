@@ -1,5 +1,5 @@
 import { Color } from "./Color.js";
-import { toLogicalFour, borderSwitch, default as NativeFunctions } from "./func.js";
+import { default as NativeFunctions } from "./func.js";
 
 /**
 
@@ -32,21 +32,22 @@ function palette(
   tertiary = `oklch(from ${primary} 50 c calc(h + 60))`,
   neutral = `oklch(from ${primary} 50 0.02 h)`
 ) {
-  const res = {
-    //color roles
-    primary, secondary, tertiary, neutral,
+  let roles = { primary, secondary, tertiary, neutral };
+  roles = Object.fromEntries(Object.entries(roles).map(([k, v]) => [`--${k}`, v]));
+  const funcs = {
     //relieffs
-    "bw-fg": 0, "bw-bg": 1,
-    "text-fg": .23, "text-bg": .99,
-    "box-fg": .23, "box-bg": .92,
-    "flip-fg": .99, "flip-bg": .66,
-    "darkflip-fg": .90, "darkflip-bg": .33,
+    "--palette-bw-fg": 0, "--palette-bw-bg": 1,
+    "--palette-text-fg": .23, "--palette-text-bg": .99,
+    "--palette-box-fg": .23, "--palette-box-bg": .92,
+    "--palette-flip-fg": .99, "--palette-flip-bg": .66,
+    "--palette-darkflip-fg": .90, "--palette-darkflip-bg": .33,
     //chromas
-    chroma: new Color(primary).C,
-    pop: "calc(c * 2)"
+    "--palette-chroma": new Color(primary).C,
+    "--palette-pop": "calc(c * 2)"
   };
-  return Object.fromEntries(Object.entries(res).map(
-    ([k, v]) => [`--palette-${k}`, v]));
+  // const funcs = Object.fromEntries(Object.entries(res).map(
+  //   ([k, v]) => [`--palette-${k}`, v]));
+  return { ...roles, ...funcs };
 }
 
 const relieff = name => c => ({
@@ -65,13 +66,15 @@ const border = num => {
 }
 
 const ColorFuncs = {
+  pop: c => `oklch(from ${c} l var(--palette-pop) h)`,
+  blend: c => `oklch(from ${c} l var(--palette-chroma) h)`,
+
   bw: relieff("bw"),
   text: relieff("text"),
   box: relieff("box"),
   flip: relieff("flip"),
   darkflip: relieff("darkflip"),
-  pop: c => `oklch(from ${c} l var(--palette-pop) h)`,
-  blend: c => `oklch(from ${c} l var(--palette-chroma) h)`,
+
   b: border(4),
   b0: border(0),
   b1: border(1),
@@ -85,13 +88,15 @@ const ColorFuncs = {
   b9: border(9),
 };
 
+//$palette(--primary-pop,text, borderNumber)
+//, bg = "text", border = "b"
 function color(name) {
   const segs = name.split("-");
   let output = segs.reduce((res, a) => {
     res.unshift(
       a in ColorFuncs ? ColorFuncs[a](...res) :
         CSS.supports("color", a) ? a :
-          a.match(/^[a-z0-9_-]+$/) ? `var(--palette-${a})` :
+          a.match(/^[a-z0-9_-]+$/) ? `var(--${a})` :
             a); //here there is a SyntaxError
     return res;
   }, []).shift();
@@ -105,16 +110,10 @@ function color(name) {
   return output;
 }
 
-const colorShadow = toLogicalFour.bind(null, "--box-shadow-color");
-const colorBorder = (...args) => borderSwitch(toLogicalFour("borderColor", ...args));
-
-
 const colorFunctions = {
   palette,
   color,
-  colorBorder,
-  colorShadow
 };
-for (const name in colorFunctions) 
+for (const name in colorFunctions)
   colorFunctions[name].scope = NativeFunctions.color.scope;
 export default colorFunctions;
