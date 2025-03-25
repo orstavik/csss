@@ -1,0 +1,660 @@
+<test-html title="Border 1 - Styles">
+  <main>
+    <div class="$grid(cols(1fr,1fr,1fr,1fr),gap(1rem))">
+      <div class="$border $padding(1rem)">Solid Border</div>
+      <div class="$border(dashed) $padding(1rem)">Dashed Border</div>
+      <div class="$border(dotted) $padding(1rem)">Dotted Border</div>
+      <div class="$border(double) $padding(1rem)">Double Border</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\,1fr\,1fr\)\,gap\(1rem\)\) { 
+        display: grid; 
+        word-spacing: unset; 
+        line-height: unset; 
+        white-space: unset; 
+        hyphens: unset; 
+        text-align: unset; 
+        text-indent: unset; 
+        grid-template-columns: 1fr 1fr 1fr 1fr; 
+        gap: 1rem; 
+      }
+      .\$border { 
+          border-style: solid; 
+          border-width: medium; 
+        }
+      .\$padding\(1rem\) { 
+        padding: 1rem; 
+      }
+      .\$border\(dashed\) { 
+        border-style: dashed; 
+        border-width: medium; 
+      }
+      .\$border\(dotted\) { 
+        border-style: dotted; 
+        border-width: medium; }
+      .\$border\(double\) { 
+        border-style: double; 
+        border-width: medium; 
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+ <test-html title="Border 2 - Widths">
+  <main>
+    <div class="$grid(cols(1fr,1fr,1fr),gap(1rem))">
+      <div class="$border(solid,thin) $padding(1rem)">Thin Border</div>
+      <div class="$border(solid,medium) $padding(1rem)">Medium Border</div>
+      <div class="$border(solid,thick) $padding(1rem)">Thick Border</div>
+      <div class="$border(solid,1px) $padding(1rem)">1px Border</div>
+      <div class="$border(solid,0.25rem) $padding(1rem)">0.25rem Border</div>
+      <div class="$border(solid,5px) $padding(1rem)">5px Border</div>
+      <div class="$border(w(1em,2px,3cm,4rem)) $padding(1rem)">Mixed units</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(solid\,thin\) {
+        border-style: solid;
+        border-width: thin;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$border\(solid\,medium\) {
+        border-style: solid;
+        border-width: medium;
+      }
+
+      .\$border\(solid\,thick\) {
+        border-style: solid;
+        border-width: thick;
+      }
+
+      .\$border\(solid\,1px\) {
+        border-style: solid;
+        border-width: 1px;
+      }
+
+      .\$border\(solid\,0\.25rem\) {
+        border-style: solid;
+        border-width: 0.25rem;
+      }
+
+      .\$border\(solid\,5px\) {
+        border-style: solid;
+        border-width: 5px;
+      }
+      
+      .\$border\(w\(1em\,2px\,3cm\,4rem\)\) {
+        border-style: solid;
+        border-width: medium;
+        border-block-width: 1em 3cm;
+        border-inline-width: 2px 4rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 3 - Radius">
+  <main>
+    <div class="$grid(cols(1fr,1fr,1fr),gap(1rem))">
+      <div class="$border(solid,2px,radius(0.25rem)) $padding(1rem)">Small Radius</div>
+      <div class="$border(solid,2px,radius(1rem)) $padding(1rem)">Medium Radius</div>
+      <div class="$border(solid,2px,radius(50%)) $padding(1rem)">Circle</div>
+      <div class="$border(solid,2px,r(10px,20px,30px,40px)) $padding(1rem)">Mixed Radius</div>
+      <div class="$border(solid,2px,r(50%,10%,50%,10%)) $padding(1rem)">Alternating %</div>
+      <div class="$border(solid,2px,r(1px,99%,2px,98%)) $padding(1rem)">Extreme asymmetric radius</div>
+      <div class="$border(solid,2px,r(1em,2vh,3%,4px)) $padding(1rem)">Mixed unit radius</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(solid\,2px\,radius\(0\.25rem\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 0.25rem;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$border\(solid\,2px\,radius\(1rem\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 1rem;
+      }
+
+      .\$border\(solid\,2px\,radius\(50\%\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 50%;
+      }
+
+      .\$border\(solid\,2px\,r\(10px\,20px\,30px\,40px\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-start-start-radius: 10px;
+        border-end-end-radius: 30px;
+        border-start-end-radius: 20px;
+        border-end-start-radius: 40px;
+      }
+
+      .\$border\(solid\,2px\,r\(50\%\,10\%\,50\%\,10\%\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-start-start-radius: 50%;
+        border-end-end-radius: 50%;
+        border-start-end-radius: 10%;
+        border-end-start-radius: 10%;
+      }
+
+      .\$border\(solid\,2px\,r\(1px\,99\%\,2px\,98\%\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-start-start-radius: 1px;
+        border-end-end-radius: 2px;
+        border-start-end-radius: 99%;
+        border-end-start-radius: 98%;
+      }
+
+      .\$border\(solid\,2px\,r\(1em\,2vh\,3\%\,4px\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-start-start-radius: 1em;
+        border-end-end-radius: 3%;
+        border-start-end-radius: 2vh;
+        border-end-start-radius: 4px;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 4 - Color">
+  <main>
+    <div class="$grid(cols(1fr,1fr,1fr),gap(1rem))">
+      <div class="$border(solid,2px) $borderColor(red) $padding(1rem)">Red Border (using color)</div>
+      <div class="$border(solid,2px) $borderColor(blue) $padding(1rem)">Blue Border (using color)</div>
+      <div class="$border(solid,2px) $borderColor(#00ff00) $padding(1rem)">Green Border (hex)</div>
+      <div class="$border(solid,2px) $borderColor(rgba(128,0,128,0.5)) $padding(1rem)">Purple Border (rgba)</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(solid\,2px\) {
+        border-style: solid;
+        border-width: 2px;
+      }
+
+      .\$borderColor\(red\) { 
+        border-color: red; 
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$borderColor\(blue\) { 
+        border-color: blue; 
+      }
+
+      .\$borderColor\(\#00ff00\) { 
+        border-color: rgb(0, 255, 0); 
+      }
+      
+      .\$borderColor\(rgba\(128\,0\,128\,0\.5\)\) { 
+        border-color: rgba(128, 0, 128, 0.5); 
+      }
+
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 5 - Mixed Properties">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$border(w(1px,2px,3px,4px),s(solid,dashed,dotted,double)) $padding(1rem)">Mixed Widths & Styles</div>
+      <div class="$border(w(.,2px,.,4px),s(.,solid,.,dotted)) $padding(1rem)">Partial Borders (with dots)</div>
+      <div class="$border(w(0,3px,0,3px)) $padding(1rem)">Horizontal Only</div>
+      <div class="$border(w(3px,0,3px,0)) $padding(1rem)">Vertical Only</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(w\(1px\,2px\,3px\,4px\)\,s\(solid\,dashed\,dotted\,double\)\) {
+        border-style: solid;
+        border-width: medium;
+        border-block-width: 1px 3px;
+        border-inline-width: 2px 4px;
+        border-block-style: solid dotted;
+        border-inline-style: dashed double;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$border\(w\(\.\,2px\,\.\,4px\)\,s\(\.\,solid\,\.\,dotted\)\) {
+        border-style: solid;
+        border-width: medium;
+        border-block-width: unset;
+        border-inline-width: 2px 4px;
+        border-block-style: unset;
+        border-inline-style: solid dotted;
+      }
+
+      .\$border\(w\(0\,3px\,0\,3px\)\) {
+        border-style: solid;
+        border-width: medium;
+        border-block-width: 0px;
+        border-inline-width: 3px;
+      }
+
+      .\$border\(w\(3px\,0\,3px\,0\)\) {
+        border-style: solid;
+        border-width: medium;
+        border-block-width: 3px;
+        border-inline-width: 0px;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 6 - Edge Cases">
+  <main>
+    <div class="$grid(cols(1fr,1fr,1fr),gap(1rem))">
+      <div class="$border(0) $padding(1rem)">Zero Border</div>
+      <div class="$border(none) $padding(1rem)">None Border</div>
+      <div class="$border(solid,2px,r(0)) $padding(1rem)">Zero Radius</div>
+      <div class="$border(w(0,1px,2px,),s(.,.,solid,dashed)) $padding(1rem)">Missing Values with Fallbacks</div>
+      <div class="$border(solid,0.0001px) $padding(1rem)">Microscopic border</div>
+      <div class="$border(solid,99px) $padding(1rem)">Enormous border</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(0\) {
+        border-style: solid;
+        border-width: 0px;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$border\(none\) {
+        border-style: none;
+        border-width: medium;
+      }
+
+      .\$border\(solid\,2px\,r\(0\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 0px;
+      }
+
+      .\$border\(w\(0\,1px\,2px\,\)\,s\(\.\,\.\,solid\,dashed\)\) {
+        border-style: solid;
+        border-width: medium;
+        border-block-width: 0px 2px;
+        border-inline-start-width: 1px;
+        border-block-start-style: unset;
+        border-inline-start-style: unset;
+        border-block-end-style: solid;
+        border-inline-end-style: dashed;
+      }
+
+      .\$border\(solid\,0\.0001px\) {
+        border-style: solid;
+        border-width: 0.0001px;
+      }
+      
+      .\$border\(solid\,99px\) {
+        border-style: solid;
+        border-width: 99px;
+      }
+    }
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 7 - Interactive">
+  <main>
+    <div class="$block(g(1rem))">
+      <button class="$border(solid,1px) $padding(0.5rem,1rem) :hover$border(solid,2px,r(0.5rem))">
+        Hover Changes Border
+      </button>
+      <div class="$border(solid,1px) $padding(1rem) :hover$border(dashed,3px,r(1rem))">
+        Hover to change border style, width, and radius
+      </div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$block\(g\(1rem\)\) {
+        display: block;
+        word-spacing: 1rem;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+      }
+
+      .\$border\(solid\,1px\) {
+        border-style: solid;
+        border-width: 1px;
+      }
+
+      .\$padding\(0\.5rem\,1rem\) {
+        padding: 0.5rem 1rem;
+      }
+
+      .\:hover\$border\(solid\,2px\,r\(0\.5rem\)\):where(:hover) {
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 0.5rem;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\:hover\$border\(dashed\,3px\,r\(1rem\)\):where(:hover) {
+        border-style: dashed;
+        border-width: 3px;
+        border-radius: 1rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 8 - Calc Expressions">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$border(solid,w(1px+1em)) $padding(1rem)">Calc width</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(solid\,w\(1px\+1em\)\) {
+        border-style: solid;
+        border-width: calc(1em + 1px);
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 9 - On Item Alone">
+  <main>
+    <div class="|*$border(r(25%))$padding(1rem)">
+      <div>Test style inheritance</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+ 
+    }
+    @layer items {
+      .\|\*\$border\(r\(25\%\)\)\$padding\(1rem\) > * {
+        border-style: solid;
+        border-width: medium;
+        border-radius: 25%;
+        padding: 1rem;
+      }
+    }
+  </style>
+</test-html>
+<test-html title="Border 10 - Multiple Property With Hover">
+  <main>
+    <div class="
+      $border(w(1px,2px,3px,4px),s(solid,dashed,dotted,double))
+      :hover$border(w(4px,3px,2px,1px),s(double,dotted,dashed,solid))">Complex state changes</div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$border\(w\(1px\,2px\,3px\,4px\)\,s\(solid\,dashed\,dotted\,double\)\) {
+        border-style: solid;
+        border-width: medium;
+        border-block-width: 1px 3px;
+        border-inline-width: 2px 4px;
+        border-block-style: solid dotted;
+        border-inline-style: dashed double;
+      }
+
+      .\:hover\$border\(w\(4px\,3px\,2px\,1px\)\,s\(double\,dotted\,dashed\,solid\)\):where(:hover) {
+        border-style: solid;
+        border-width: medium;
+        border-block-width: 4px 2px;
+        border-inline-width: 3px 1px;
+        border-block-style: double dashed;
+        border-inline-style: dotted solid;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 11 - Container and Item with multiple properties">
+  <main>
+    <div class="
+      $border(1px)
+      |*$border(dotted,2px,r(2rem))
+      |.special$border(dashed,3px,r(3rem))
+      |.super$border(double,4px,r(4rem))
+    ">
+    Deep nesting with multiple overrides
+    <div class="special">Special</div>
+    <div class="super">Super</div>
+    <div> Normal </div>
+  </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$border\(1px\) {
+        border-style: solid;
+        border-width: 1px;
+      }
+    }
+
+    @layer items {
+      .\|\*\$border\(dotted\,2px\,r\(2rem\)\) > * {
+        border-style: dotted;
+        border-width: 2px;
+        border-radius: 2rem;
+      }
+
+      .\|\.special\$border\(dashed\,3px\,r\(3rem\)\) > :where(.special) {
+        border-style: dashed;
+        border-width: 3px;
+        border-radius: 3rem;
+      }
+
+      .\|\.super\$border\(double\,4px\,r\(4rem\)\) > :where(.super) {
+        border-style: double;
+        border-width: 4px;
+        border-radius: 4rem;
+      }
+    }
+  </style>
+</test-html>
+<test-html title="Border 12 - Competing border properties">
+  <main>
+    <div class="
+      $border(solid,1px)
+      $border(dotted,2px)
+      $border(dashed,3px)
+    ">Multiple direct border declarations</div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$border\(solid\,1px\) {
+        border-style: solid;
+        border-width: 1px;
+      }
+
+      .\$border\(dotted\,2px\) {
+        border-style: dotted;
+        border-width: 2px;
+      }
+
+      .\$border\(dashed\,3px\) {
+        border-style: dashed;
+        border-width: 3px;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 13 - Test on Auto Wrapping of var and calc">
+  <main style="--border-width: 3px;">
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$border(solid,w(--border-width)) $padding(1rem)">CSS Variable Auto-Wrap</div>
+      <div class="$border(solid,w(1px+2px)) $padding(1rem)">Calculation Auto-Wrap</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(solid\,w\(--border-width\)\) {
+        border-style: solid;
+        border-width: var(--border-width);
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$border\(solid\,w\(1px\+2px\)\) {
+        border-style: solid;
+        border-width: calc(3px);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
