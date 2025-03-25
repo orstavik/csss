@@ -103,51 +103,12 @@ function isLength(x) {
     x;
 }
 
-function border(...args) {
-  args = args.map(a => {
-    if (!(typeof a === "string")) return a;
-    if (a.match(/thin|medium|thick/)) return { Width: a };
-    const Width = isLength(a);
-    if (Width != null) return ({ Width });
-    if (a.match(/solid|dotted|dashed|double|none/)) return { Style: a };
-    return a;
-  });
-  return borderSwitch(Object.assign(...args));
-}
-
-border.scope = {
-  width: toLogicalFour.bind(null, "Width"),
-  w: toLogicalFour.bind(null, "Width"),
-  style: toLogicalFour.bind(null, "Style"),
-  s: toLogicalFour.bind(null, "Style"),
-  radius: toRadiusFour.bind(null, "Radius"),
-  r: toRadiusFour.bind(null, "Radius"),
-  r4: toRadiusFour.bind(null, "Radius"),
-  r8: toLogicalEight.bind(null, "Radius", 0),
-};
-
-const NativeCssTransformFunctions = {
-  matrix: (...args) => ({ transform: `matrix(${args.join(",")})` }),
-  matrix3d: (...args) => ({ transform: `matrix3d(${args.join(",")})` }),
-  translate: (...args) => ({ transform: `translate(${args.join(",")})` }),
-  translate3d: (...args) => ({ transform: `translate3d(${args.join(",")})` }),
-  scale: (...args) => ({ transform: `scale(${args.join(",")})` }),
-  scale3d: (...args) => ({ transform: `scale3d(${args.join(",")})` }),
-  rotate: (...args) => ({ transform: `rotate(${args.join(",")})` }),
-  rotate3d: (...args) => ({ transform: `rotate3d(${args.join(",")})` }),
-  skew: (...args) => ({ transform: `skew(${args.join(",")})` }),
-  translateX: (...args) => ({ transform: `translateX(${args.join(",")})` }),
-  translateY: (...args) => ({ transform: `translateY(${args.join(",")})` }),
-  translateZ: (...args) => ({ transform: `translateZ(${args.join(",")})` }),
-  scaleX: (...args) => ({ transform: `scaleX(${args.join(",")})` }),
-  scaleY: (...args) => ({ transform: `scaleY(${args.join(",")})` }),
-  scaleZ: (...args) => ({ transform: `scaleZ(${args.join(",")})` }),
-  rotateX: (...args) => ({ transform: `rotateX(${args.join(",")})` }),
-  rotateY: (...args) => ({ transform: `rotateY(${args.join(",")})` }),
-  rotateZ: (...args) => ({ transform: `rotateZ(${args.join(",")})` }),
-  skewX: (...args) => ({ transform: `skewX(${args.join(",")})` }),
-  skewY: (...args) => ({ transform: `skewY(${args.join(",")})` }),
-};
+const NativeCssProperties = (function () {
+  const style = document.createElement('div').style;
+  const nativeProps = Object.getOwnPropertyNames(style)
+    .map(k => [k, (...args) => ({ [k]: args.join(" ") })]);
+  return Object.fromEntries(nativeProps);
+})();
 
 const NativeCssFilterFunctions = {
   blur: (...args) => ({ filter: `blur(${args.join(" ")})` }),
@@ -162,23 +123,7 @@ const NativeCssFilterFunctions = {
   hueRotate: (...args) => ({ filter: `hue-rotate(${args.join(" ")})` }),
 };
 
-const NativeCssGradientFunctions = {
-  "linearGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "radialGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "conicGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "repeatingLinearGradient": (...args) => ({ background: `repeating-linear-gradient(${args.join(",")})` }),
-  "repeatingRadialGradient": (...args) => ({ background: `repeating-radial-gradient(${args.join(",")})` }),
-  "repeatingConicGradient": (...args) => ({ background: `repeating-conic-gradient(${args.join(",")})` }),
-  "radial": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "conic": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "repeatingLinear": (...args) => ({ background: `repeating-linear-gradient(${args.join(",")})` }),
-  "repeatingRadial": (...args) => ({ background: `repeating-radial-gradient(${args.join(",")})` }),
-  "repeatingConic": (...args) => ({ background: `repeating-conic-gradient(${args.join(",")})` }),
-  //collides with <transition: linear()>, but <transition: linear()> is limited to transition and animation scope. 
-  "linear": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-};
-
-export const NativeColorsFunctions = (function () {
+const NativeColorsFunctions = (function () {
   function nativeCssColorFunction(name, ...args) {
     if (args.length < 3 || args.length > 5)
       throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
@@ -222,12 +167,55 @@ export const NativeColorsFunctions = (function () {
   };
 })();
 
-const NativeCssProperties = (function () {
-  const style = document.createElement('div').style;
-  const nativeProps = Object.getOwnPropertyNames(style)
-    .map(k => [k, (...args) => ({ [k]: args.join(" ") })]);
-  return Object.fromEntries(nativeProps);
-})();
+for (const p in NativeCssProperties)
+  if(p.endsWith("Color"))
+    NativeCssProperties[p].scope = NativeColorsFunctions;
+NativeCssProperties.color.scope = NativeColorsFunctions;
+NativeCssProperties.boxShadow.scope = NativeColorsFunctions;
+NativeCssProperties.textShadow.scope = NativeColorsFunctions;
+NativeCssProperties.textDecoration.scope = NativeColorsFunctions;
+NativeCssFilterFunctions.dropShadow.scope = NativeColorsFunctions;
+//todo other shorthands that can accept color and doesn't have a name that endsWith "Color"?
+
+const NativeCssTransformFunctions = {
+  matrix: (...args) => ({ transform: `matrix(${args.join(",")})` }),
+  matrix3d: (...args) => ({ transform: `matrix3d(${args.join(",")})` }),
+  translate: (...args) => ({ transform: `translate(${args.join(",")})` }),
+  translate3d: (...args) => ({ transform: `translate3d(${args.join(",")})` }),
+  scale: (...args) => ({ transform: `scale(${args.join(",")})` }),
+  scale3d: (...args) => ({ transform: `scale3d(${args.join(",")})` }),
+  rotate: (...args) => ({ transform: `rotate(${args.join(",")})` }),
+  rotate3d: (...args) => ({ transform: `rotate3d(${args.join(",")})` }),
+  skew: (...args) => ({ transform: `skew(${args.join(",")})` }),
+  translateX: (...args) => ({ transform: `translateX(${args.join(",")})` }),
+  translateY: (...args) => ({ transform: `translateY(${args.join(",")})` }),
+  translateZ: (...args) => ({ transform: `translateZ(${args.join(",")})` }),
+  scaleX: (...args) => ({ transform: `scaleX(${args.join(",")})` }),
+  scaleY: (...args) => ({ transform: `scaleY(${args.join(",")})` }),
+  scaleZ: (...args) => ({ transform: `scaleZ(${args.join(",")})` }),
+  rotateX: (...args) => ({ transform: `rotateX(${args.join(",")})` }),
+  rotateY: (...args) => ({ transform: `rotateY(${args.join(",")})` }),
+  rotateZ: (...args) => ({ transform: `rotateZ(${args.join(",")})` }),
+  skewX: (...args) => ({ transform: `skewX(${args.join(",")})` }),
+  skewY: (...args) => ({ transform: `skewY(${args.join(",")})` }),
+};
+
+const NativeCssGradientFunctions = {
+  "linearGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+  "radialGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+  "conicGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+  "repeatingLinearGradient": (...args) => ({ background: `repeating-linear-gradient(${args.join(",")})` }),
+  "repeatingRadialGradient": (...args) => ({ background: `repeating-radial-gradient(${args.join(",")})` }),
+  "repeatingConicGradient": (...args) => ({ background: `repeating-conic-gradient(${args.join(",")})` }),
+  "radial": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+  "conic": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+  "repeatingLinear": (...args) => ({ background: `repeating-linear-gradient(${args.join(",")})` }),
+  "repeatingRadial": (...args) => ({ background: `repeating-radial-gradient(${args.join(",")})` }),
+  "repeatingConic": (...args) => ({ background: `repeating-conic-gradient(${args.join(",")})` }),
+  //collides with <transition: linear()>, but <transition: linear()> is limited to transition and animation scope. 
+  "linear": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+};
+
 
 const EASING_FUNCTIONS = {
   linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,
@@ -238,6 +226,35 @@ const EASING_FUNCTIONS = {
 
 NativeCssProperties.transition.scope = EASING_FUNCTIONS;
 NativeCssProperties.animation.scope = EASING_FUNCTIONS;
+
+
+
+
+
+
+
+function border(...args) {
+  args = args.map(a => {
+    if (!(typeof a === "string")) return a;
+    if (a.match(/thin|medium|thick/)) return { Width: a };
+    const Width = isLength(a);
+    if (Width != null) return ({ Width });
+    if (a.match(/solid|dotted|dashed|double|none/)) return { Style: a };
+    return a;
+  });
+  return borderSwitch(Object.assign(...args));
+}
+
+border.scope = {
+  width: toLogicalFour.bind(null, "Width"),
+  w: toLogicalFour.bind(null, "Width"),
+  style: toLogicalFour.bind(null, "Style"),
+  s: toLogicalFour.bind(null, "Style"),
+  radius: toRadiusFour.bind(null, "Radius"),
+  r: toRadiusFour.bind(null, "Radius"),
+  r4: toRadiusFour.bind(null, "Radius"),
+  r8: toLogicalEight.bind(null, "Radius", 0),
+};
 
 const KNOWN_BAD_FONT_NAMES = {
   "comic": "Comic Sans MS",
@@ -288,7 +305,7 @@ const bg = (...args) => ({ background: args.join(" ") || "var(--background-color
 
 export default {
   ...NativeCssProperties,
-  ...NativeColorsFunctions,
+  // ...NativeColorsFunctions,
   ...NativeCssTransformFunctions,
   ...NativeCssFilterFunctions,
   ...NativeCssGradientFunctions,

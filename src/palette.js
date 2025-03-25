@@ -1,5 +1,5 @@
 import { Color } from "./Color.js";
-import { toLogicalFour, borderSwitch, NativeColorsFunctions } from "./func.js";
+import { toLogicalFour, borderSwitch, default as NativeFunctions } from "./func.js";
 
 /**
 
@@ -116,5 +116,5 @@ const colorFunctions = {
   colorShadow
 };
 for (const name in colorFunctions) 
-  colorFunctions[name].scope = NativeColorsFunctions;
+  colorFunctions[name].scope = NativeFunctions.color.scope;
 export default colorFunctions;
