@@ -32,88 +32,51 @@ function palette(
   tertiary = `oklch(from ${primary} 50 c calc(h + 60))`,
   neutral = `oklch(from ${primary} 50 0.02 h)`
 ) {
-  let roles = { primary, secondary, tertiary, neutral };
-  roles = Object.fromEntries(Object.entries(roles).map(([k, v]) => [`--${k}`, v]));
-  const funcs = {
-    //relieffs
-    "--palette-bw-fg": 0, "--palette-bw-bg": 1,
-    "--palette-text-fg": .23, "--palette-text-bg": .99,
-    "--palette-box-fg": .23, "--palette-box-bg": .92,
-    "--palette-flip-fg": .99, "--palette-flip-bg": .66,
-    "--palette-darkflip-fg": .90, "--palette-darkflip-bg": .33,
-    //chromas
-    "--palette-chroma": new Color(primary).C,
-    "--palette-pop": "calc(c * 2)"
-  };
-  // const funcs = Object.fromEntries(Object.entries(res).map(
-  //   ([k, v]) => [`--palette-${k}`, v]));
-  return { ...roles, ...funcs };
+  const res = Object.fromEntries(Object.entries({ primary, secondary, tertiary, neutral })
+    .map(([name, value]) => [`--${name}`, value]));
+  res["--primary-chroma"] = new Color(primary).C;
+  return res;
 }
+palette.scope = NativeFunctions.color.scope;
 
-const relieff = name => c => ({
-  color:
-    `oklch(from ${c} var(--palette-${name}-fg) calc(c - (c * max(var(--palette-${name}-fg) - .8, 0) * 5)) h)`,
-  "--background-color":
-    `oklch(from ${c} var(--palette-${name}-bg) calc(c - (c * max(var(--palette-${name}-bg) - .8, 0) * 5)) h)`
-});
 
-const border = num => {
-  num = Math.round(Math.pow(num / 9, 1.5) * 100);
-  return function border(o) {
-    o.borderColor = `color-mix(in oklch, ${o["--background-color"]}, ${o.color} ${num}%)`;
-    return o;
-  }
-}
-
-const ColorFuncs = {
-  pop: c => `oklch(from ${c} l var(--palette-pop) h)`,
-  blend: c => `oklch(from ${c} l var(--palette-chroma) h)`,
-
-  bw: relieff("bw"),
-  text: relieff("text"),
-  box: relieff("box"),
-  flip: relieff("flip"),
-  darkflip: relieff("darkflip"),
-
-  b: border(4),
-  b0: border(0),
-  b1: border(1),
-  b2: border(2),
-  b3: border(3),
-  b4: border(4),
-  b5: border(5),
-  b6: border(6),
-  b7: border(7),
-  b8: border(8),
-  b9: border(9),
+const Relieffs = {
+  bw: [0, 1],
+  text: [.23, .99],
+  box: [.23, .92],
+  flip: [.99, .66],
+  darkflip: [.90, .33],
 };
 
-//$palette(--primary-pop,text, borderNumber)
-//, bg = "text", border = "b"
-function color(name) {
-  const segs = name.split("-");
-  let output = segs.reduce((res, a) => {
-    res.unshift(
-      a in ColorFuncs ? ColorFuncs[a](...res) :
-        CSS.supports("color", a) ? a :
-          a.match(/^[a-z0-9_-]+$/) ? `var(--${a})` :
-            a); //here there is a SyntaxError
-    return res;
-  }, []).shift();
-  if (typeof output == "string")
-    output = ColorFuncs.text(output);
-  if (!("borderColor" in output))
-    output = ColorFuncs.b(output);
+function border(num, color, bgColor) {
+  num = Math.round(Math.pow(num / 9, 1.5) * 100);
+  return `color-mix(in oklch, ${bgColor}, ${color} ${num}%)`;
+}
 
-  //TODO disperse backgrounds
-
+//$colorText(pop(--primary),b4)
+//$color(--primary,text,4,--secondary,blue)
+//$color(red,blue,green)
+function color(c, bgFunc = "text", bFunc = 4) {
+  const [fg, bg] = Relieffs[bgFunc];
+  let output = {
+    color:
+      `oklch(from ${c} ${fg} calc(c - c * ${Math.max(fg - .8, 0) * 5}) h)`,
+    "--background-color":
+      `oklch(from ${c} ${bg} calc(c - c * ${Math.max(bg - .8, 0) * 5}) h)`
+  }
+  output.borderColor = border(bFunc, output.color, output["--background-color"]);
   return output;
 }
+
+color.scope = {
+  ...NativeFunctions.color.scope,
+  pop: c => `oklch(from ${c} l calc(c * 2) h)`,
+  blend: c => `oklch(from ${c} l var(--primary-chroma) h)`
+};
 
 const colorFunctions = {
   palette,
   color,
 };
-for (const name in colorFunctions)
-  colorFunctions[name].scope = NativeFunctions.color.scope;
+
 export default colorFunctions;

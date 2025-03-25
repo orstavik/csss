@@ -7,10 +7,10 @@
   |.new$border(solid,4px,radius(1rem))
   |.sale$border(dashed,3px,radius(0.5rem))
                         
- $color(grey-text)
-  |*$color(primary)
-  |.new$color(secondary)
-  |.sale$color(tertiary)
+ $color(grey,text)
+  |*$color(--primary)
+  |.new$color(--secondary)
+  |.sale$color(--tertiary)
            ">
 
     <div class="new">New Arrival: Product 1</div>
@@ -28,18 +28,7 @@
         --secondary: oklch(from #ec1221 50 c calc(h - 60));
         --tertiary: oklch(from #ec1221 50 c calc(h + 60));
         --neutral: oklch(from #ec1221 50 0.02 h);
-        --palette-bw-fg: 0;
-        --palette-bw-bg: 1;
-        --palette-text-fg: 0.23;
-        --palette-text-bg: 0.99;
-        --palette-box-fg: 0.23;
-        --palette-box-bg: 0.92;
-        --palette-flip-fg: 0.99;
-        --palette-flip-bg: 0.66;
-        --palette-darkflip-fg: 0.9;
-        --palette-darkflip-bg: 0.33;
-        --palette-chroma: 0.23746015283192687;
-        --palette-pop: calc(c * 2);
+        --primary-chroma: 0.23746015283192687;
       }
 
       .\$border\(solid\,2px\) {
@@ -47,10 +36,10 @@
         border-width: 2px;
       }
 
-      .\$color\(grey-text\) {
-        color: oklch(from grey var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from grey var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: color-mix(in oklch, oklch(from grey var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from grey var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+      .\$color\(grey\,text\) {
+        color: oklch(0.23 0.0000299214 23.6032);
+        --background-color: oklch(from grey 0.99 calc(c - c * 0.9499999999999997) h);
+        border-color: color-mix(in oklch, oklch(0.99 0.00000149607 23.6032) 70%, oklch(0.23 0.0000299214 23.6032));
       }
 
       .\$h\(300px\) {
@@ -90,22 +79,22 @@
         border-radius: 0.5rem;
       }
 
-      .\|\*\$color\(primary\)>* {
-        color: oklch(from var(--primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from var(--primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: color-mix(in oklch, oklch(from var(--primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+      .\|\*\$color\(--primary\)>* {
+        color: oklch(from var(--primary) 0.23 calc(c - c * 0) h);
+        --background-color: oklch(from var(--primary) 0.99 calc(c - c * 0.9499999999999997) h);
+        border-color: color-mix(in oklch, oklch(from var(--primary) 0.99 calc(c - c * 0.9499999999999997) h), oklch(from var(--primary) 0.23 calc(c - c * 0) h) 30%);
       }
 
-      .\|\.new\$color\(secondary\)> :where(.new) {
-        color: oklch(from var(--secondary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from var(--secondary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: color-mix(in oklch, oklch(from var(--secondary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--secondary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+      .\|\.new\$color\(--secondary\)> :where(.new) {
+        color: oklch(from var(--secondary) 0.23 calc(c - c * 0) h);
+        --background-color: oklch(from var(--secondary) 0.99 calc(c - c * 0.9499999999999997) h);
+        border-color: color-mix(in oklch, oklch(from var(--secondary) 0.99 calc(c - c * 0.9499999999999997) h), oklch(from var(--secondary) 0.23 calc(c - c * 0) h) 30%);
       }
 
-      .\|\.sale\$color\(tertiary\)> :where(.sale) {
-        color: oklch(from var(--tertiary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from var(--tertiary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: color-mix(in oklch, oklch(from var(--tertiary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--tertiary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+      .\|\.sale\$color\(--tertiary\)> :where(.sale) {
+        color: oklch(from var(--tertiary) 0.23 calc(c - c * 0) h);
+        --background-color: oklch(from var(--tertiary) 0.99 calc(c - c * 0.9499999999999997) h);
+        border-color: color-mix(in oklch, oklch(from var(--tertiary) 0.99 calc(c - c * 0.9499999999999997) h), oklch(from var(--tertiary) 0.23 calc(c - c * 0) h) 30%);
       }
     }
   </style>
@@ -171,9 +160,9 @@
 
     @layer container {
       .\$color\(oklch\(green\,\.5\,\.85\,h\)\) {
-        color: oklch(from oklch(from green .5 .85 h) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from oklch(from green .5 .85 h) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: color-mix(in oklch, oklch(from oklch(from green .5 .85 h) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from oklch(from green .5 .85 h) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+        color: oklch(0.23 0.85 142.489);
+        --background-color: oklch(from oklch(from green .5 .85 h) 0.99 calc(c - c * 0.9499999999999997) h);
+        border-color: color-mix(in oklch, oklch(0.99 0.0425 142.489) 70%, oklch(0.23 0.85 142.489));
       }
     }
 
@@ -189,9 +178,9 @@
 
     @layer container {
       .\$color\(rgb\(0\,12\,255\,0\.6\)\) {
-        color: oklch(from rgba(0 12 255 / 0.6) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from rgba(0 12 255 / 0.6) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: color-mix(in oklch, oklch(from rgba(0 12 255 / 0.6) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from rgba(0 12 255 / 0.6) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+        color: oklch(0.23 0.310552 264.11 / 0.6);
+        --background-color: oklch(from rgba(0 12 255 / 0.6) 0.99 calc(c - c * 0.9499999999999997) h);
+        border-color: color-mix(in oklch, oklch(0.99 0.0155276 264.11 / 0.6) 70%, oklch(0.23 0.310552 264.11 / 0.6));
       }
     }
 
