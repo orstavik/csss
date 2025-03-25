@@ -23,18 +23,19 @@
 </style>
 <main class="$palette(#ff3412)"></main>
 <script>
-  const names = "--secondary|--primary|--tertiary|--neutral|grey|red|orange|green|blue";
-  const ops = "|blend|pop";
-  const types = "|bw|box|flip|darkflip"; //
+  const names = "--secondary|--primary|--tertiary|--neutral|grey|red|orange|green|blue".split("|");
+  const ops = "|blend|pop".split("|");
+  const types = "|bw|box|flip|darkflip".split("|");
   const str = [];
-  for (const type of types.split("|")) {
-    for (let name of names.split("|")) {
-      for (op of ops.split("|")) {
+  for (op of ops) {
+    str.push(`<h2>${op}</h2>`);
+    for (const type of types) {
+      for (let name of names) {
         const n = op ? `${op}(${name})` : name;
         str.push(`<span class="$color(${[n, type].filter(Boolean).join(",")})"> hello sunshine </span>`);
       }
+      str.push("<hr>");
     }
-    str.push("<hr>");
   }
   document.querySelector("main").insertAdjacentHTML("beforeend", str.join("\n"));
 </script>
