@@ -97,7 +97,7 @@ class Expression {
       x instanceof Expression ? x.interpret(cb.scope, supers) :
         x === "." ? "unset" :
           x);
-    const res = cb.call(this, ...args);
+    const res = args.length ? cb.call(this, ...args) : undefined;
     const supersObj = supers["$" + this.name]?.shorts;
     return supersObj ? Object.assign({}, supersObj, res) : res;
   }
@@ -239,6 +239,8 @@ function diveDeep(tokens, top) {
       a = new Expression(a, diveDeep(tokens));
       b = tokens.shift();
     }
+    if(a.match?.(WORD))
+      a = a.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase());
     if (b === ")" || (top && b === undefined))
       return res.push(a), res;
     if (b == ",")
@@ -288,7 +290,7 @@ function parse$Expression(exp) {
   return { shorts, medias };
 }
 
-const SUPER_HEAD = /([$:@][a-z_][a-z0-9_-]*)\s*=/.source; // (name)
+const SUPER_HEAD = /([$:@][a-zA-Z_][a-zA-Z0-9_-]*)\s*=/.source; // (name)
 const SUPER_LINE = /((["'`])(?:\\.|(?!\3).)*?\3|\/\*[\s\S]*?\*\/|[^;]+);/.source; // (body1, quoteSign)
 const SUPER_BODY = /{((["'`])(?:\\.|(?!\5).)*?\5|\/\*[\s\S]*?\*\/|[^}]+)}/.source;// (body2, quoteSign)
 const SUPER = new RegExp(`${SUPER_HEAD}(?:${SUPER_LINE}|${SUPER_BODY})`, "g");

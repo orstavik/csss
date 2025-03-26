@@ -721,6 +721,23 @@
     @layer items {}
   </style>
 </test-html>
+<test-html title="$ultraCondensed">
+  <div class="$ultraCondensed">
+    hello
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$ultraCondensed {
+        font-stretch: ultra-condensed;
+      }
+    }
+
+    @layer items {}
+  </style>
+
+</test-html>
 <!--
 <test-html title=":dark=@media(prefers-color-scheme:dark);">
   <div css=":dark=@media(prefers-color-scheme:dark);">
