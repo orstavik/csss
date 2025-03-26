@@ -1,5 +1,3 @@
-import { NativeColorsFunctions } from "./func.js";
-
 export class ShortBlock {
 
   constructor(exp) {
@@ -76,7 +74,6 @@ const NativeCssFunctions = {
   paint: (...args) => `paint(${args.join(",")})`,
   env: (...args) => `env(${args.join(",")})`,
   path: (...args) => `path(${args.join(",")})`,
-  ...NativeColorsFunctions,
   //todo
   // attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
   // "image-set": (...args) => `image-set(${args.join(",")})`,
@@ -94,14 +91,9 @@ class Expression {
   get signature() {
     return this.name + "/" + this.args.length;
   }
-  interpret(scope, supers) {  
-    //added check for empty args and BuiltinSupers definition
-    if (this.args.length === 0 && supers["$" + this.name]?.shorts) {
-      return supers["$" + this.name].shorts;
-    }  
-    const superFunc = supers["$" + this.name]?.func;
+  interpret(scope, supers) {
     const cb = scope?.[this.name] ??
-      (superFunc && scope?.[superFunc]) ??
+      scope?.[supers["$" + this.name]?.func] ??
       NativeCssFunctions[this.name];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${this.name}`);
@@ -141,12 +133,9 @@ const clashOrStack = (function () {
       for (let [k, v] of Object.entries(obj)) {
         if (v == null) continue;
         const k2 = k.replace(/[A-Z]/g, "-$&").toLowerCase();
-        if (CSS.supports(k2, "inherit")) {
-          // Remove quotes for validation but keep them in the actual value
-          const validationValue = typeof v === 'string' ? v.replace(/^['"](.*)['"]$/, '$1') : v;
-          if (!CSS.supports(k2, validationValue))
+        if (CSS.supports(k2, "inherit"))
+          if (!CSS.supports(k2, v))
             throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
-        }
         //else, the browser doesn't support the property, because the property is too modern.
         if (!(k in res))
           res[k] = v;
@@ -206,10 +195,6 @@ function parseVarCalc(tokens) {
     return t3[0];
   //wrap in calc() if needed
   const str = t3.join("");
-  // Don't wrap in calc if the string is quoted
-  if (str.startsWith("'") || str.startsWith('"')) {
-    return str;
-  }
   return str.includes(" ") ? `calc(${str})` : str;
 }
 
