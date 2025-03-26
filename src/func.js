@@ -235,6 +235,8 @@ NativeCssProperties.animation.scope = EASING_FUNCTIONS;
 
 
 function border(...args) {
+  if (!args.length)
+    return;
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
     if (a.match(/thin|medium|thick/)) return { Width: a };
