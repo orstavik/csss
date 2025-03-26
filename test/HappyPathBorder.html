@@ -1,3 +1,18 @@
+<test-html title="$border">
+  <div class="$border">Solid Border</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$border {
+        border-style: solid;
+        border-width: medium;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
 <test-html title="Border 1 - Styles">
   <main>
     <div class="$grid(cols(1fr,1fr,1fr,1fr),gap(1rem))">
@@ -11,41 +26,47 @@
     @layer container, items;
 
     @layer container {
-      .\$grid\(cols\(1fr\,1fr\,1fr\,1fr\)\,gap\(1rem\)\) { 
-        display: grid; 
-        word-spacing: unset; 
-        line-height: unset; 
-        white-space: unset; 
-        hyphens: unset; 
-        text-align: unset; 
-        text-indent: unset; 
-        grid-template-columns: 1fr 1fr 1fr 1fr; 
-        gap: 1rem; 
+      .\$grid\(cols\(1fr\,1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 1rem;
       }
-      .\$border { 
-          border-style: solid; 
-          border-width: medium; 
-        }
-      .\$padding\(1rem\) { 
-        padding: 1rem; 
+
+      .\$border {
+        border-style: solid;
+        border-width: medium;
       }
-      .\$border\(dashed\) { 
-        border-style: dashed; 
-        border-width: medium; 
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
       }
-      .\$border\(dotted\) { 
-        border-style: dotted; 
-        border-width: medium; }
-      .\$border\(double\) { 
-        border-style: double; 
-        border-width: medium; 
+
+      .\$border\(dashed\) {
+        border-style: dashed;
+        border-width: medium;
+      }
+
+      .\$border\(dotted\) {
+        border-style: dotted;
+        border-width: medium;
+      }
+
+      .\$border\(double\) {
+        border-style: double;
+        border-width: medium;
       }
     }
 
     @layer items {}
   </style>
 </test-html>
- <test-html title="Border 2 - Widths">
+<test-html title="Border 2 - Widths">
   <main>
     <div class="$grid(cols(1fr,1fr,1fr),gap(1rem))">
       <div class="$border(solid,thin) $padding(1rem)">Thin Border</div>
@@ -106,7 +127,7 @@
         border-style: solid;
         border-width: 5px;
       }
-      
+
       .\$border\(w\(1em\,2px\,3cm\,4rem\)\) {
         border-style: solid;
         border-width: medium;
@@ -238,24 +259,24 @@
         border-width: 2px;
       }
 
-      .\$borderColor\(red\) { 
-        border-color: red; 
+      .\$borderColor\(red\) {
+        border-color: red;
       }
 
       .\$padding\(1rem\) {
         padding: 1rem;
       }
 
-      .\$borderColor\(blue\) { 
-        border-color: blue; 
+      .\$borderColor\(blue\) {
+        border-color: blue;
       }
 
-      .\$borderColor\(\#00ff00\) { 
-        border-color: rgb(0, 255, 0); 
+      .\$borderColor\(\#00ff00\) {
+        border-color: rgb(0, 255, 0);
       }
-      
-      .\$borderColor\(rgba\(128\,0\,128\,0\.5\)\) { 
-        border-color: rgba(128, 0, 128, 0.5); 
+
+      .\$borderColor\(rgba\(128\,0\,128\,0\.5\)\) {
+        border-color: rgba(128, 0, 128, 0.5);
       }
 
     }
@@ -390,12 +411,13 @@
         border-style: solid;
         border-width: 0.0001px;
       }
-      
+
       .\$border\(solid\,99px\) {
         border-style: solid;
         border-width: 99px;
       }
     }
+
     @layer items {}
   </style>
 </test-html>
@@ -496,11 +518,10 @@
   <style>
     @layer container, items;
 
-    @layer container {
- 
-    }
+    @layer container {}
+
     @layer items {
-      .\|\*\$border\(r\(25\%\)\)\$padding\(1rem\) > * {
+      .\|\*\$border\(r\(25\%\)\)\$padding\(1rem\)>* {
         border-style: solid;
         border-width: medium;
         border-radius: 25%;
@@ -549,11 +570,11 @@
       |.special$border(dashed,3px,r(3rem))
       |.super$border(double,4px,r(4rem))
     ">
-    Deep nesting with multiple overrides
-    <div class="special">Special</div>
-    <div class="super">Super</div>
-    <div> Normal </div>
-  </div>
+      Deep nesting with multiple overrides
+      <div class="special">Special</div>
+      <div class="super">Super</div>
+      <div> Normal </div>
+    </div>
   </main>
   <style>
     @layer container, items;
@@ -566,19 +587,19 @@
     }
 
     @layer items {
-      .\|\*\$border\(dotted\,2px\,r\(2rem\)\) > * {
+      .\|\*\$border\(dotted\,2px\,r\(2rem\)\)>* {
         border-style: dotted;
         border-width: 2px;
         border-radius: 2rem;
       }
 
-      .\|\.special\$border\(dashed\,3px\,r\(3rem\)\) > :where(.special) {
+      .\|\.special\$border\(dashed\,3px\,r\(3rem\)\)> :where(.special) {
         border-style: dashed;
         border-width: 3px;
         border-radius: 3rem;
       }
 
-      .\|\.super\$border\(double\,4px\,r\(4rem\)\) > :where(.super) {
+      .\|\.super\$border\(double\,4px\,r\(4rem\)\)> :where(.super) {
         border-style: double;
         border-width: 4px;
         border-radius: 4rem;

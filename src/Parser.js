@@ -42,13 +42,17 @@ class Rule {
     this.item = item;
   }
   get body() {
-    return Object.entries(this.shorts)
-      .map(([k, v]) => `${k.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase())}: ${v};`).join(" ");
+    return this.shorts && Object.entries(this.shorts).map(([k, v]) => {
+      k = k.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase());
+      if (!CSS.supports(k, v))
+        throw new SyntaxError(`Invalid CSS value: ${k} = ${v}`);
+      return `  ${k}: ${v};`;
+    }).join("\n");
   }
   get rule() {
     return this.media ?
-      `${this.media} { ${this.selector} { ${this.body} } }` :
-      `${this.selector} { ${this.body} }`;
+      `${this.media} { ${this.selector} {\n${this.body}\n} }` :
+      `${this.selector} {\n${this.body}\n}`;
   }
 }
 
@@ -101,7 +105,7 @@ class Expression {
       x instanceof Expression ? x.interpret(cb.scope, supers) :
         x === "." ? "unset" :
           x);
-    const res = cb.call(this, ...args);
+    const res = args.length ? cb.call(this, ...args) : undefined;
     const supersObj = supers["$" + this.name]?.shorts;
     return supersObj ? Object.assign({}, supersObj, res) : res;
   }
@@ -165,9 +169,9 @@ class Short {
 }
 
 function varAndSpaceOperators(tokens) {
-const res = tokens.join("").split(/(--[a-z][a-z0-9_-]*)/g);
+  const res = tokens.join("").split(/(--[a-z][a-z0-9_-]*)/g);
   for (let i = res.length - 1; i >= 0; i--) {
-    if (!res[i]) 
+    if (!res[i])
       res.splice(i, 1);
     else if (i % 2 && res[i + 1] == "," && i + 2 < res.length)
       res.splice(i, 3, `var(${res[i] + res[i + 1] + res[i + 2]})`);
@@ -250,6 +254,8 @@ function diveDeep(tokens, top) {
       a = new Expression(a, diveDeep(tokens));
       b = tokens.shift();
     }
+    if(a.match?.(WORD))
+      a = a.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase());
     if (b === ")" || (top && b === undefined))
       return res.push(a), res;
     if (b == ",")
@@ -299,7 +305,7 @@ function parse$Expression(exp) {
   return { shorts, medias };
 }
 
-const SUPER_HEAD = /([$:@][a-z_][a-z0-9_-]*)\s*=/.source; // (name)
+const SUPER_HEAD = /([$:@][a-zA-Z_][a-zA-Z0-9_-]*)\s*=/.source; // (name)
 const SUPER_LINE = /((["'`])(?:\\.|(?!\3).)*?\3|\/\*[\s\S]*?\*\/|[^;]+);/.source; // (body1, quoteSign)
 const SUPER_BODY = /{((["'`])(?:\\.|(?!\5).)*?\5|\/\*[\s\S]*?\*\/|[^}]+)}/.source;// (body2, quoteSign)
 const SUPER = new RegExp(`${SUPER_HEAD}(?:${SUPER_LINE}|${SUPER_BODY})`, "g");

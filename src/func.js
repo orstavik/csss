@@ -103,28 +103,79 @@ function isLength(x) {
     x;
 }
 
-function border(...args) {
-  args = args.map(a => {
-    if (!(typeof a === "string")) return a;
-    if (a.match(/thin|medium|thick/)) return { Width: a };
-    const Width = isLength(a);
-    if (Width != null) return ({ Width });
-    if (a.match(/solid|dotted|dashed|double|none/)) return { Style: a };
-    return a;
-  });
-  return borderSwitch(Object.assign(...args));
-}
+const NativeCssProperties = (function () {
+  const style = document.createElement('div').style;
+  const nativeProps = Object.getOwnPropertyNames(style)
+    .map(k => [k, (...args) => ({ [k]: args.join(" ") })]);
+  return Object.fromEntries(nativeProps);
+})();
 
-border.scope = {
-  width: toLogicalFour.bind(null, "Width"),
-  w: toLogicalFour.bind(null, "Width"),
-  style: toLogicalFour.bind(null, "Style"),
-  s: toLogicalFour.bind(null, "Style"),
-  radius: toRadiusFour.bind(null, "Radius"),
-  r: toRadiusFour.bind(null, "Radius"),
-  r4: toRadiusFour.bind(null, "Radius"),
-  r8: toLogicalEight.bind(null, "Radius", 0),
+const NativeCssFilterFunctions = {
+  blur: (...args) => ({ filter: `blur(${args.join(" ")})` }),
+  brightness: (...args) => ({ filter: `brightness(${args.join(" ")})` }),
+  contrast: (...args) => ({ filter: `contrast(${args.join(" ")})` }),
+  grayscale: (...args) => ({ filter: `grayscale(${args.join(" ")})` }),
+  invert: (...args) => ({ filter: `invert(${args.join(" ")})` }),
+  opacity: (...args) => ({ filter: `opacity(${args.join(" ")})` }),
+  saturate: (...args) => ({ filter: `saturate(${args.join(" ")})` }),
+  sepia: (...args) => ({ filter: `sepia(${args.join(" ")})` }),
+  dropShadow: (...args) => ({ filter: `drop-shadow(${args.join(" ")})` }),
+  hueRotate: (...args) => ({ filter: `hue-rotate(${args.join(" ")})` }),
 };
+
+const NativeColorsFunctions = (function () {
+  function nativeCssColorFunction(name, ...args) {
+    if (args.length < 3 || args.length > 5)
+      throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
+    const SEP = name.match(/^(rgba?|hsla?)$/) ? " " : " ";
+    if (args.length === 3)
+      return `${name}(${args.join(SEP)})`;
+    if (args.length === 5)
+      return `${name}(from ${args.slice(0, 4).join(" ")} / ${args[4]})`;
+    if (CSS.supports("color", args[0]))
+      return `${name}(from ${args.join(" ")})`;
+    const a = name.match(/^(rgb|hsl)$/) ? "a" : "";
+    return `${name}${a}(${args.slice(0, 3).join(SEP)} / ${args[3]})`;
+  }
+  function nativeCssColorSpaceFunction(...args) {
+    if (args.length < 3 || args.length > 5)
+      throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
+    const from_ = CSS.supports("color", args[0]) ? `from ${args.shift()}` : "";
+    const _alpha = args.length == 4 ? ` / ${args.pop()}` : "";
+    return `${this.name}(${from_}${args.join(" ")}${_alpha})`;
+  }
+  function nativeCssColorMixFunction(cSpace, ...args) {
+    cSpace = "in " + cSpace.replaceAll("_", " "); //we don't support '_' in --var-names
+    if (args[0]?.match(/^(shorter|longer|increasing|decreasing)$/))
+      cSpace += ` ${args.shift()} hue`;
+    args = args.map(a => (a.match(/^\d?\d%$/i) ? " " : ", ") + a);
+    return `color-mix(${cSpace}${args.join("")})`;
+  }
+
+  return {
+    rgb: (...args) => nativeCssColorFunction("rgb", ...args),
+    rgba: (...args) => nativeCssColorFunction("rgba", ...args),
+    hsl: (...args) => nativeCssColorFunction("hsl", ...args),
+    hsla: (...args) => nativeCssColorFunction("hsla", ...args),
+    hwb: (...args) => nativeCssColorFunction("hwb", ...args),
+    lab: (...args) => nativeCssColorFunction("lab", ...args),
+    lch: (...args) => nativeCssColorFunction("lch", ...args),
+    oklab: (...args) => nativeCssColorFunction("oklab", ...args),
+    oklch: (...args) => nativeCssColorFunction("oklch", ...args),
+    color: nativeCssColorSpaceFunction,
+    colorMix: nativeCssColorMixFunction,
+  };
+})();
+
+for (const k in NativeCssProperties)
+  if (k.endsWith("Color"))
+    NativeCssProperties[k].scope = NativeColorsFunctions;
+NativeCssProperties.color.scope = NativeColorsFunctions;
+NativeCssProperties.boxShadow.scope = NativeColorsFunctions;
+NativeCssProperties.textShadow.scope = NativeColorsFunctions;
+NativeCssProperties.textDecoration.scope = NativeColorsFunctions;
+NativeCssFilterFunctions.dropShadow.scope = NativeColorsFunctions;
+//todo other shorthands that can accept color and doesn't have a name that endsWith "Color"?
 
 const NativeCssTransformFunctions = {
   matrix: (...args) => ({ transform: `matrix(${args.join(",")})` }),
@@ -148,19 +199,7 @@ const NativeCssTransformFunctions = {
   skewX: (...args) => ({ transform: `skewX(${args.join(",")})` }),
   skewY: (...args) => ({ transform: `skewY(${args.join(",")})` }),
 };
-
-const NativeCssFilterFunctions = {
-  blur: (...args) => ({ filter: `blur(${args.join(" ")})` }),
-  brightness: (...args) => ({ filter: `brightness(${args.join(" ")})` }),
-  contrast: (...args) => ({ filter: `contrast(${args.join(" ")})` }),
-  grayscale: (...args) => ({ filter: `grayscale(${args.join(" ")})` }),
-  invert: (...args) => ({ filter: `invert(${args.join(" ")})` }),
-  opacity: (...args) => ({ filter: `opacity(${args.join(" ")})` }),
-  saturate: (...args) => ({ filter: `saturate(${args.join(" ")})` }),
-  sepia: (...args) => ({ filter: `sepia(${args.join(" ")})` }),
-  dropShadow: (...args) => ({ filter: `drop-shadow(${args.join(" ")})` }),
-  hueRotate: (...args) => ({ filter: `hue-rotate(${args.join(" ")})` }),
-};
+delete NativeCssProperties.transform;
 
 const NativeCssGradientFunctions = {
   "linearGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
@@ -178,68 +217,6 @@ const NativeCssGradientFunctions = {
   "linear": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
 };
 
-export const NativeColorsFunctions = (function () {
-  function nativeCssColorFunction(name, ...args) {
-    if (args.length < 3 || args.length > 5)
-      throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
-    const SEP = name.match(/^(rgba?|hsla?)$/) ? " " : " ";
-    if (args.length === 3)
-      return `${name}(${args.join(SEP)})`;
-    if (args.length === 5)
-      return `${name}(from ${args.slice(0, 4).join(" ")} / ${args[4]})`;
-    if (CSS.supports("color", args[0]))
-      return `${name}(from ${args.join(" ")})`;
-    const a = name.match(/^(rgb|hsl)$/) ? "a" : "";
-    return `${name}${a}(${args.slice(0, 3).join(SEP)} / ${args[3]})`;
-  }
-  function nativeCssColorSpaceFunction(...args) {
-    if (args.length < 3 || args.length > 5)
-      throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
-    const from_ = CSS.supports("color", args[0]) ? `from ${args.shift()}` : "";
-    const _alpha = args.length == 4 ? ` / ${args.pop()}` : "";
-    return `${this.name}(${from_}${args.join(" ")}${_alpha})`;
-  }
-  function nativeCssColorMixFunction(method, ...args) {
-    method = "in " + method.replaceAll("_", " "); //we don't support _ in --var-names
-    let res = args.shift();
-    while (args.length)
-      res += (CSS.supports("color", a) ? ", " : " ") + args.shift();
-    return `color-mix(in ${method}, ${res})`;
-  }
-
-  return {
-    rgb: (...args) => nativeCssColorFunction("rgb", ...args),
-    rgba: (...args) => nativeCssColorFunction("rgba", ...args),
-    hsl: (...args) => nativeCssColorFunction("hsl", ...args),
-    hsla: (...args) => nativeCssColorFunction("hsla", ...args),
-    hwb: (...args) => nativeCssColorFunction("hwb", ...args),
-    lab: (...args) => nativeCssColorFunction("lab", ...args),
-    lch: (...args) => nativeCssColorFunction("lch", ...args),
-    oklab: (...args) => nativeCssColorFunction("oklab", ...args),
-    oklch: (...args) => nativeCssColorFunction("oklch", ...args),
-    color: nativeCssColorSpaceFunction,
-    colorMix: nativeCssColorMixFunction,
-  };
-})();
-
-const NativeCssProperties = (function () {
-  const style = document.createElement('div').style;
-  const nativeProps = Object.getOwnPropertyNames(style)
-    .map(k => [k, (...args) => {
-      // Handle quoted string values for all properties
-      if (args.length === 1 && typeof args[0] === 'string') {
-        // Check if the value contains a slash or other operators that might be interpreted as calc
-        const value = args[0];
-        if (value.match(/[+\-*/]/)) {
-          if (value.startsWith('"') || value.startsWith("'")) {
-            return { [k]: value.replace(/^['"](.*)['"]$/, '$1') };
-          }
-        }
-      }
-      return { [k]: args.join(" ") };
-    }]);
-  return Object.fromEntries(nativeProps);
-})();
 
 const EASING_FUNCTIONS = {
   linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,
@@ -250,6 +227,42 @@ const EASING_FUNCTIONS = {
 
 NativeCssProperties.transition.scope = EASING_FUNCTIONS;
 NativeCssProperties.animation.scope = EASING_FUNCTIONS;
+
+
+
+
+
+
+
+function border(...args) {
+  if (!args.length)
+    return;
+  args = args.map(a => {
+    if (!(typeof a === "string")) return a;
+    if (a.match(/thin|medium|thick/)) return { Width: a };
+    const Width = isLength(a);
+    if (Width != null) return ({ Width });
+    if (a.match(/solid|dotted|dashed|double|none/)) return { Style: a };
+    return a;
+  });
+  return borderSwitch(Object.assign(...args));
+}
+
+border.scope = {
+  width: toLogicalFour.bind(null, "Width"),
+  w: toLogicalFour.bind(null, "Width"),
+  style: toLogicalFour.bind(null, "Style"),
+  s: toLogicalFour.bind(null, "Style"),
+  radius: toRadiusFour.bind(null, "Radius"),
+  r: toRadiusFour.bind(null, "Radius"),
+  r4: toRadiusFour.bind(null, "Radius"),
+  r8: toLogicalEight.bind(null, "Radius", 0),
+};
+delete NativeCssProperties.borderWidth;
+delete NativeCssProperties.borderStyle;
+delete NativeCssProperties.borderRadius;
+NativeCssProperties.borderColor = (...args) => borderSwitch(toLogicalFour("borderColor", ...args));
+NativeCssProperties.borderColor.scope = NativeCssProperties.color.scope;
 
 const KNOWN_BAD_FONT_NAMES = {
   "comic": "Comic Sans MS",
@@ -300,7 +313,7 @@ const bg = (...args) => ({ background: args.join(" ") || "var(--background-color
 
 export default {
   ...NativeCssProperties,
-  ...NativeColorsFunctions,
+  // ...NativeColorsFunctions,
   ...NativeCssTransformFunctions,
   ...NativeCssFilterFunctions,
   ...NativeCssGradientFunctions,

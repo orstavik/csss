@@ -17,40 +17,41 @@ $bold = $fontWeight(bold);
 $italic = $fontStyle(italic);
 $oblique = $fontStyle(oblique);
 
-$smallCaps = $fontVariant(small-caps);
-$allSmallCaps = $fontVariant(all-small-caps);
-$petiteCaps = $fontVariant(petite-caps);
-$allPetiteCaps = $fontVariant(all-petite-caps);
+$smallCaps = $fontVariant(smallCaps);
+$allSmallCaps = $fontVariant(allSmallCaps);
+$petiteCaps = $fontVariant(petiteCaps);
+$allPetiteCaps = $fontVariant(allPetiteCaps);
 $unicase = $fontVariant(unicase);
-$titlingCaps = $fontVariant(titling-caps);
+$titlingCaps = $fontVariant(titlingCaps);
 
 $capitalize = $textTransform(capitalize);
 $uppercase = $textTransform(uppercase);
 $lowercase = $textTransform(lowercase);
-$mathAuto = $textTransform(math-auto);
+$mathAuto = $textTransform(mathAuto);
 
 $underline = $textDecoration(underline);
 $overline = $textDecoration(overline);
-$lineThrough = $textDecoration(line-through);
+$lineThrough = $textDecoration(lineThrough);
 
-$ultraCondensed = $fontStretch(ultra-condensed);
-$extraCondensed = $fontStretch(extra-condensed);
+$ultraCondensed = $fontStretch(ultraCondensed);
+$extraCondensed = $fontStretch(extraCondensed);
 $condensed = $fontStretch(condensed);
-$semiCondensed = $fontStretch(semi-condensed);
-$semiExpanded = $fontStretch(semi-expanded);
+$semiCondensed = $fontStretch(semiCondensed);
+$semiExpanded = $fontStretch(semiExpanded);
 $expanded = $fontStretch(expanded);
-$extraExpanded = $fontStretch(extra-expanded);
-$ultraExpanded = $fontStretch(ultra-expanded);
+$extraExpanded = $fontStretch(extraExpanded);
+$ultraExpanded = $fontStretch(ultraExpanded);
 
 $serif = $fontFamily(serif);
-$sansSerif = $fontFamily(sans-serif);
+$sansSerif = $fontFamily(sansSerif);
 $monospace = $fontFamily(monospace);
 $cursive = $fontFamily(cursive);
 $fantasy = $fontFamily(fantasy);
-$systemUi = $fontFamily(system-ui);
-$uiSerif = $fontFamily(ui-serif);
-$uiSansSerif = $fontFamily(ui-sans-serif);
+$systemUi = $fontFamily(systemUi);
+$uiSerif = $fontFamily(uiSerif);
+$uiSansSerif = $fontFamily(uiSansSerif);
 
+$color = $color(black,white,colorMix(oklch,currentcolor,--background-color,33%));
 $border = $border(solid, medium);
 $block = $display(block)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.);
 $grid = $display(grid)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.);

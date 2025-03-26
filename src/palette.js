@@ -1,5 +1,5 @@
 import { Color } from "./Color.js";
-import { toLogicalFour, borderSwitch, NativeColorsFunctions } from "./func.js";
+import { borderSwitch, default as NativeFunctions, toLogicalFour } from "./func.js";
 
 /**
 
@@ -25,96 +25,148 @@ import { toLogicalFour, borderSwitch, NativeColorsFunctions } from "./func.js";
 }
 
 */
+const Relieffs = ["text", "bw", "box", "flip", "darkflip"];
+const lightRelieffs = {
+  "--palette-bw-fg": 0,
+  "--palette-text-fg": .23,
+  "--palette-box-fg": .23,
+  "--palette-flip-fg": .99,
+  "--palette-darkflip-fg": .90,
+  "--palette-bw-bg": 1,
+  "--palette-text-bg": .99,
+  "--palette-box-bg": .92,
+  "--palette-flip-bg": .66,
+  "--palette-darkflip-bg": .33,
+};
+const darkRelieffs = {
+  "--palette-bw-fg": 1,
+  "--palette-text-fg": .99,
+  "--palette-box-fg": .92,
+  "--palette-flip-fg": .66,
+  "--palette-darkflip-fg": .33,
+  "--palette-bw-bg": 0,
+  "--palette-text-bg": .23,
+  "--palette-box-bg": .23,
+  "--palette-flip-bg": .99,
+  "--palette-darkflip-bg": .90,
+};
 
-function palette(
-  primary,
-  secondary = `oklch(from ${primary} 50 c calc(h - 60))`,
-  tertiary = `oklch(from ${primary} 50 c calc(h + 60))`,
-  neutral = `oklch(from ${primary} 50 0.02 h)`
-) {
-  const res = {
-    //color roles
-    primary, secondary, tertiary, neutral,
-    //relieffs
-    "bw-fg": 0, "bw-bg": 1,
-    "text-fg": .23, "text-bg": .99,
-    "box-fg": .23, "box-bg": .92,
-    "flip-fg": .99, "flip-bg": .66,
-    "darkflip-fg": .90, "darkflip-bg": .33,
-    //chromas
-    chroma: new Color(primary).C,
-    pop: "calc(c * 2)"
-  };
-  return Object.fromEntries(Object.entries(res).map(
-    ([k, v]) => [`--palette-${k}`, v]));
-}
-
-const relieff = name => c => ({
-  color:
-    `oklch(from ${c} var(--palette-${name}-fg) calc(c - (c * max(var(--palette-${name}-fg) - .8, 0) * 5)) h)`,
-  "--background-color":
-    `oklch(from ${c} var(--palette-${name}-bg) calc(c - (c * max(var(--palette-${name}-bg) - .8, 0) * 5)) h)`
-});
-
-const border = num => {
-  num = Math.round(Math.pow(num / 9, 1.5) * 100);
-  return function border(o) {
-    o.borderColor = `color-mix(in oklch, ${o["--background-color"]}, ${o.color} ${num}%)`;
-    return o;
+function paletteGenerator(relieffs) {
+  function palette(primary, secondary, tertiary, neutral) {
+    return {
+      "--primary": primary,
+      "--secondary": secondary ?? `oklch(from ${primary} 50 c calc(h - 60))`,
+      "--tertiary": tertiary ?? `oklch(from ${primary} 50 c calc(h + 60))`,
+      "--neutral": neutral ?? `oklch(from ${primary} 50 0.02 h)`,
+      "--primary-chroma": new Color(primary).C,
+      ...relieffs
+    };
   }
+  palette.scope = NativeFunctions.color.scope;
+  return palette;
 }
+const palette = paletteGenerator(lightRelieffs);
+const darkPalette = paletteGenerator(darkRelieffs);
 
-const ColorFuncs = {
-  bw: relieff("bw"),
-  text: relieff("text"),
-  box: relieff("box"),
-  flip: relieff("flip"),
-  darkflip: relieff("darkflip"),
-  pop: c => `oklch(from ${c} l var(--palette-pop) h)`,
-  blend: c => `oklch(from ${c} l var(--palette-chroma) h)`,
-  b: border(4),
-  b0: border(0),
-  b1: border(1),
-  b2: border(2),
-  b3: border(3),
-  b4: border(4),
-  b5: border(5),
-  b6: border(6),
-  b7: border(7),
-  b8: border(8),
-  b9: border(9),
+//$color(--primary,text,4,pop(--secondary),blend(blue))
+//$color(black,green,darkblue)
+
+//<div class="$color(black,green,red) @dark$color(white,black,red)"></div>
+
+//<body class="$palette(blue,darkorange) @dark$palette-dark(lightblue,orange)"></body>
+//  <div class="$color(flip,--primary,--secondary,--neutral)">...</div>
+//  <div class="$color(text,--primary,--secondary,--neutral)">...</div>
+//
+function color(...args) {
+
+  const fg = (name, c) => `oklch(from ${c} var(--palette-${name}-fg) calc(c - (c * max(var(--palette-${name}-fg) - .8, 0) * 5)) h)`;
+  const bg = (name, c) => `oklch(from ${c} var(--palette-${name}-bg) calc(c - (c * max(var(--palette-${name}-bg) - .8, 0) * 5)) h)`;
+
+  function border(num, color, bgColor) {
+    num = Math.round(Math.pow(num / 9, 1.5) * 100);
+    return `color-mix(in oklch, ${bgColor}, ${color} ${num}%)`;
+  }
+
+  let borderFunc, bgFunc, colors = [];
+  const res = {};
+  for (const a of args)
+    a instanceof Object ? Object.assign(res, a) :
+      Relieffs.includes(a) ? bgFunc = a :
+        Number.isInteger(a) ? borderFunc = a :
+          colors.push(a);
+
+  res.color = colors[0];
+
+  if (colors[1] == undefined && !bgFunc)
+    bgFunc = Relieffs[0];
+  res["--background-color"] = colors[1] ?? colors[0];
+
+  if (bgFunc) {
+    res.color = fg(bgFunc, res.color);
+    res["--background-color"] = bg(bgFunc, res["--background-color"]);
+  }
+  res.borderColor = colors[2] ?? colors[0];
+  if (borderFunc)
+    res.borderColor = border(borderFunc, res.borderColor, res["--background-color"]);
+  //todo multiply the backgroundColors.
+  return res;
+}
+const ColorScope = {
+  ...NativeFunctions.color.scope,
+  pop: c => `oklch(from ${c} l calc(c * 2) h)`,
+  blend: c => `oklch(from ${c} l var(--primary-chroma) h)`,
 };
 
-function color(name) {
-  const segs = name.split("-");
-  let output = segs.reduce((res, a) => {
-    res.unshift(
-      a in ColorFuncs ? ColorFuncs[a](...res) :
-        CSS.supports("color", a) ? a :
-          a.match(/^[a-z0-9_-]+$/) ? `var(--palette-${a})` :
-            a); //here there is a SyntaxError
-    return res;
-  }, []).shift();
-  if (typeof output == "string")
-    output = ColorFuncs.text(output);
-  if (!("borderColor" in output))
-    output = ColorFuncs.b(output);
+const funcs = {
+  caret: a => ({ "caret-color": a }),
+  accent: a => ({ "accent-color": a }),
+  emphasis: a => ({ "text-emphasis-color": a }),
+  decoration: a => ({ "text-decoration-color": a }),
+  column: a => ({ "column-rule-color": a }),
+  outline: a => ({ "outline-color": a }),
+  border: (...args) => borderSwitch(toLogicalFour("border-color", ...args)),
+  shadow: (box, text = box, drop = box) => ({
+    "--box-shadow-color": box,
+    "--text-shadow-color": text,
+    "--drop-shadow-color": drop,
+  }),
+};
+for (const fn of Object.values(funcs))
+  fn.scope = ColorScope;
 
-  //TODO disperse backgrounds
+color.scope = { ...ColorScope, ...funcs };
 
-  return output;
+
+
+
+function boxShadow(...args) {
+  if (args.every(a => isLength(a) || a === "inset"))
+    args.push(`var(--box-shadow-color, oklch(from currentcolor l 0 h))`);
+  return NativeCssProperties.boxShadow(...args);
+};
+function textShadow(...args) {
+  if (args.every(a => isLength(a)))
+    args.push(`var(--text-shadow-color, oklch(from currentcolor l 0 h))`);
+  return NativeCssProperties.boxShadow(...args);
+}
+function dropShadow(...args) {
+  if (args.every(a => isLength(a)))
+    args.push(`var(--drop-shadow-color, oklch(from currentcolor l 0 h))`);
+  return NativeCssProperties.boxShadow(...args);
 }
 
-const colorShadow = toLogicalFour.bind(null, "--box-shadow-color");
-const colorBorder = (...args) => borderSwitch(toLogicalFour("borderColor", ...args));
+boxShadow.scope = ColorScope;
+textShadow.scope = ColorScope;
+dropShadow.scope = ColorScope;
 
 
-const colorFunctions = {
+const colorfulShorts = {
   palette,
+  darkPalette,
   color,
-  colorBorder,
-  colorShadow
+  boxShadow,
+  textShadow,
+  dropShadow,
 };
-for (const name in colorFunctions) 
-  colorFunctions[name].scope = NativeColorsFunctions;
-export default colorFunctions;
+
+export default colorfulShorts;

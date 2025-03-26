@@ -7,10 +7,10 @@
   |.new$border(solid,4px,radius(1rem))
   |.sale$border(dashed,3px,radius(0.5rem))
                         
- $color(grey-text)
-  |*$color(primary)
-  |.new$color(secondary)
-  |.sale$color(tertiary)
+ $color(grey,text)
+  |*$color(--primary)
+  |.new$color(--secondary)
+  |.sale$color(--tertiary)
            ">
 
     <div class="new">New Arrival: Product 1</div>
@@ -24,22 +24,21 @@
 
     @layer container {
       .\$palette\(\#ec1221\) {
-        --palette-primary: #ec1221;
-        --palette-secondary: oklch(from #ec1221 50 c calc(h - 60));
-        --palette-tertiary: oklch(from #ec1221 50 c calc(h + 60));
-        --palette-neutral: oklch(from #ec1221 50 0.02 h);
+        --primary: #ec1221;
+        --secondary: oklch(from #ec1221 50 c calc(h - 60));
+        --tertiary: oklch(from #ec1221 50 c calc(h + 60));
+        --neutral: oklch(from #ec1221 50 0.02 h);
+        --primary-chroma: 0.23746015283192687;
         --palette-bw-fg: 0;
-        --palette-bw-bg: 1;
         --palette-text-fg: 0.23;
-        --palette-text-bg: 0.99;
         --palette-box-fg: 0.23;
-        --palette-box-bg: 0.92;
         --palette-flip-fg: 0.99;
-        --palette-flip-bg: 0.66;
         --palette-darkflip-fg: 0.9;
+        --palette-bw-bg: 1;
+        --palette-text-bg: 0.99;
+        --palette-box-bg: 0.92;
+        --palette-flip-bg: 0.66;
         --palette-darkflip-bg: 0.33;
-        --palette-chroma: 0.23746015283192687;
-        --palette-pop: calc(c * 2);
       }
 
       .\$border\(solid\,2px\) {
@@ -47,10 +46,10 @@
         border-width: 2px;
       }
 
-      .\$color\(grey-text\) {
+      .\$color\(grey\,text\) {
         color: oklch(from grey var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
         --background-color: oklch(from grey var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: color-mix(in oklch, oklch(from grey var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from grey var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+        border-color: grey;
       }
 
       .\$h\(300px\) {
@@ -90,22 +89,22 @@
         border-radius: 0.5rem;
       }
 
-      .\|\*\$color\(primary\)>* {
-        color: oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+      .\|\*\$color\(--primary\)>* {
+        color: oklch(from var(--primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from var(--primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: var(--primary);
       }
 
-      .\|\.new\$color\(secondary\)> :where(.new) {
-        color: oklch(from var(--palette-secondary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from var(--palette-secondary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: color-mix(in oklch, oklch(from var(--palette-secondary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-secondary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+      .\|\.new\$color\(--secondary\)> :where(.new) {
+        color: oklch(from var(--secondary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from var(--secondary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: var(--secondary);
       }
 
-      .\|\.sale\$color\(tertiary\)> :where(.sale) {
-        color: oklch(from var(--palette-tertiary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from var(--palette-tertiary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: color-mix(in oklch, oklch(from var(--palette-tertiary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-tertiary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+      .\|\.sale\$color\(--tertiary\)> :where(.sale) {
+        color: oklch(from var(--tertiary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from var(--tertiary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: var(--tertiary);
       }
     }
   </style>
@@ -162,36 +161,72 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="$color(oklch(green,.5,.85,h))">
-  <div class="$color(oklch(green,.5,.85,h))">
+<test-html title="$palette(blue) $color(oklch(green,.5,.85,h))">
+  <div class="$palette(blue) $color(oklch(green,.5,.85,h))">
     hello
   </div>
   <style>
     @layer container, items;
 
     @layer container {
+      .\$palette\(blue\) {
+        --primary: blue;
+        --secondary: oklch(from blue 50 c calc(h - 60));
+        --tertiary: oklch(from blue 50 c calc(h + 60));
+        --neutral: oklch(from blue 50 0.02 h);
+        --primary-chroma: 0.3132940092833078;
+        --palette-bw-fg: 0;
+        --palette-text-fg: 0.23;
+        --palette-box-fg: 0.23;
+        --palette-flip-fg: 0.99;
+        --palette-darkflip-fg: 0.9;
+        --palette-bw-bg: 1;
+        --palette-text-bg: 0.99;
+        --palette-box-bg: 0.92;
+        --palette-flip-bg: 0.66;
+        --palette-darkflip-bg: 0.33;
+      }
+
       .\$color\(oklch\(green\,\.5\,\.85\,h\)\) {
         color: oklch(from oklch(from green .5 .85 h) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
         --background-color: oklch(from oklch(from green .5 .85 h) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: color-mix(in oklch, oklch(from oklch(from green .5 .85 h) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from oklch(from green .5 .85 h) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+        border-color: oklch(0.5 0.85 142.489);
       }
     }
 
     @layer items {}
   </style>
 </test-html>
-<test-html title="$color(rgb(0,12,255,0.6))">
-  <div class="$color(rgb(0,12,255,0.6))">
+<test-html title="$palette(blue) $color(rgb(0,12,255,0.6))">
+  <div class="$palette(blue) $color(rgb(0,12,255,0.6))">
     hello
   </div>
   <style>
     @layer container, items;
 
     @layer container {
+      .\$palette\(blue\) {
+        --primary: blue;
+        --secondary: oklch(from blue 50 c calc(h - 60));
+        --tertiary: oklch(from blue 50 c calc(h + 60));
+        --neutral: oklch(from blue 50 0.02 h);
+        --primary-chroma: 0.3132940092833078;
+        --palette-bw-fg: 0;
+        --palette-text-fg: 0.23;
+        --palette-box-fg: 0.23;
+        --palette-flip-fg: 0.99;
+        --palette-darkflip-fg: 0.9;
+        --palette-bw-bg: 1;
+        --palette-text-bg: 0.99;
+        --palette-box-bg: 0.92;
+        --palette-flip-bg: 0.66;
+        --palette-darkflip-bg: 0.33;
+      }
+
       .\$color\(rgb\(0\,12\,255\,0\.6\)\) {
         color: oklch(from rgba(0 12 255 / 0.6) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
         --background-color: oklch(from rgba(0 12 255 / 0.6) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: color-mix(in oklch, oklch(from rgba(0 12 255 / 0.6) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from rgba(0 12 255 / 0.6) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%);
+        border-color: rgba(0, 12, 255, 0.6);
       }
     }
 
@@ -685,6 +720,23 @@
 
     @layer items {}
   </style>
+</test-html>
+<test-html title="$ultraCondensed">
+  <div class="$ultraCondensed">
+    hello
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$ultraCondensed {
+        font-stretch: ultra-condensed;
+      }
+    }
+
+    @layer items {}
+  </style>
+
 </test-html>
 <!--
 <test-html title=":dark=@media(prefers-color-scheme:dark);">

@@ -5,11 +5,13 @@
     const style = document.querySelector('style');
     style.textContent = "";
     const sheetWrapper = new SheetWrapper(style.sheet);
+    for (let el of document.body.querySelectorAll('[csss]'))
+      try { sheetWrapper.readSupers(el.getAttribute("csss")); } catch (er) { console.error(er); }
     for (let el of document.body.querySelectorAll('[class*="$"]'))
       for (let clazz of el.classList)
         if (clazz.includes("$"))
           try { sheetWrapper.addRule(clazz); } catch (er) { console.error(er); }
-    
+
     requestAnimationFrame(_ => sheetWrapper.cleanup());
   })();
 
@@ -26,7 +28,7 @@
 
   const paths = (location.hash.slice(1) || "HappyPath").split(",").map(p => p + ".html");
   for (let file of paths)
-    document.body.insertAdjacentHTML('beforeend', await(await fetch(file)).text());
+    document.body.insertAdjacentHTML('beforeend', await (await fetch(file)).text());
   const happy = document.querySelector('script[type="test"]').outerHTML;
   for (let test of document.querySelectorAll("test-html")) {
     test.querySelector('style').setAttribute("expected", "");
