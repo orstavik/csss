@@ -15,7 +15,7 @@ This document serves as a comprehensive reference for all implemented properties
 - `$block(breakWord)` - Sets overflowWrap
 - `$block(breakAll)` - Sets wordBreak
 
-### $\_block() - Item-level block properties
+### $_block() - Item-level block properties
 
 - `$_block(margin(0,0,1.5rem))` - Sets margin logical properties
 - `$_block(indent(1em))` - Sets text indent: 1em
@@ -28,7 +28,7 @@ This document serves as a comprehensive reference for all implemented properties
 - `$flex(cc)` - Sets align/justify content (center, center)
 - `$flex(gap(1rem))` - Sets flex gap
 
-### $\_flex() - Flex item properties
+### $_flex() - Flex item properties
 
 - `$_flex(1grow)` - Sets flex-grow: 1
 - `$_flex(2shrink)` - Sets flex-shrink: 2
@@ -42,7 +42,7 @@ This document serves as a comprehensive reference for all implemented properties
 - `$grid(gap(1rem))` - Sets grid gap
 - `$grid(dense-column)` - Sets grid-auto-flow
 
-### $\_grid() - Grid item properties
+### $_grid() - Grid item properties
 
 - Extends item properties for grid context
 
