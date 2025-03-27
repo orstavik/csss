@@ -40,6 +40,19 @@
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
+    padding: 20px;
+  }
+
+  p {
+    margin: 10px 0;
+    font-weight: bold;
+  }
+
+  .section {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
   }
 </style>
 <main></main>
@@ -47,29 +60,74 @@
   const hex = "#14a69b"; // change hex color here
   document.querySelector("main").className = `$palette(${hex})`;
 
-  const names = "primary|secondary|tertiary|neutral|grey|red-blend|orange-blend|green-blend|blue-blend";
-  const types = "-bw|-box|-flip|-darkflip|-pop-flip";
-  const comboes = Object.fromEntries(names.split("|").map(name =>
-    [name, types.split("|").map(type => `${name}${type}`)]
-  ));
-  const divs = Object.entries(comboes).map(([name, combos]) => `
-  <div class="outerbox $color(${name})">
-    <p>$color(${name})</p>
-    ${combos.map(combo => `<div class="innerbox $color(${combo})">${combo}</div>`).join("\n")}
-  </div>
-`);
+  // Color names with -- prefix
+  const names = "--primary|--secondary|--tertiary|--neutral";
+  const reliefs = "text|bw|box|flip|darkflip";
+  const modes = "pop|blend";
 
-  document.querySelector("main").insertAdjacentHTML("beforeend", divs.join("\n"));
+  // Create combinations
+  const combos = {};
+
+  // Base colors
+  names.split("|").forEach((name) => {
+    combos[name] = [];
+
+    // Add reliefs to each base color
+    reliefs.split("|").forEach((relief) => {
+      combos[name].push(`${name},${relief}`);
+    });
+
+    // Add border strengths with relief
+    [3, 5, 7].forEach((strength) => {
+      combos[name].push(`${name},text,${strength}`);
+    });
+  });
+
+  // Color modes
+  modes.split("|").forEach((mode) => {
+    names.split("|").forEach((name) => {
+      const modeName = `${mode}(${name})`;
+      combos[modeName] = [];
+
+      // Add reliefs to each mode
+      reliefs.split("|").forEach((relief) => {
+        combos[modeName].push(`${modeName},${relief}`);
+      });
+    });
+  });
+
+  // Generate divs from combinations
+  const divs = Object.entries(combos).map(
+    ([name, combinations]) => `
+    <div class="outerbox $color(${name})">
+      <p style="margin: 10px 0; font-weight: bold;">$color(${name})</p>
+      ${combinations
+        .map((combo) => {
+          // No need to replace spaces with commas anymore since we're already using commas
+          return `<div class="innerbox $color(${combo})">${combo}</div>`;
+        })
+        .join("\n")}
+    </div>
+  `
+  );
+
+  document
+    .querySelector("main")
+    .insertAdjacentHTML("beforeend", divs.join("\n"));
 </script>
 <script type="module">
   import { SheetWrapper } from "../src/engine.js";
-  const sheetWrapper = new SheetWrapper(document.querySelector('style').sheet);
+  const sheetWrapper = new SheetWrapper(document.querySelector("style").sheet);
 
   (function happyTest() {
     const res = [];
     for (let el of document.body.querySelectorAll('[class*="$"]'))
       for (let clazz of el.classList)
         if (clazz.includes("$"))
-          try { sheetWrapper.addRule(clazz) } catch (er) { console.log(er); }
+          try {
+            sheetWrapper.addRule(clazz);
+          } catch (er) {
+            console.log(er);
+          }
   })();
 </script>
