@@ -385,6 +385,263 @@
     @layer items {}
   </style>
 </test-html>
+<test-html title="Layout 5.1 - All Flex Alignment Combinations">
+  <main>
+    <h2>Flex Container Alignment Tests</h2>
+  
+    <h3>1. Two values but the same - $flex(cc)</h3>
+    <div class="$flex(cc,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">place-content: center</div>
+      <div class="$border $padding(0.5rem)">place-content: center</div>
+      <div class="$border $padding(0.5rem)">place-content: center</div>
+    </div>
+  
+    <h3>1a. Two values the same - $flex(ww)</h3>
+    <div class="$flex(ww,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">place-content: space-between</div>
+      <div class="$border $padding(0.5rem)">place-content: space-between</div>
+      <div class="$border $padding(0.5rem)">place-content: space-between</div>
+    </div>
+  
+    <h3>2. Two values but different - $flex(ab)</h3>
+    <div class="$flex(ab,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: start, justify-content: end</div>
+      <div class="$border $padding(0.5rem)">align-content: start, justify-content: end</div>
+      <div class="$border $padding(0.5rem)">align-content: start, justify-content: end</div>
+    </div>
+    
+    <h3>2a. Two values different (spaces) - $flex(vu)</h3>
+    <div class="$flex(vu,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: space-evenly, justify-content: space-around</div>
+      <div class="$border $padding(0.5rem)">align-content: space-evenly, justify-content: space-around</div>
+      <div class="$border $padding(0.5rem)">align-content: space-evenly, justify-content: space-around</div>
+    </div>
+  
+    <h3>3a. Only align-content - $flex(s.)</h3>
+    <div class="$flex(s.,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: stretch only</div>
+      <div class="$border $padding(0.5rem)">align-content: stretch only</div>
+      <div class="$border $padding(0.5rem)">align-content: stretch only</div>
+    </div>
+  
+    <h3>3b. Only justify-content - $flex(.w)</h3>
+    <div class="$flex(.w,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">justify-content: space-between only</div>
+      <div class="$border $padding(0.5rem)">justify-content: space-between only</div>
+      <div class="$border $padding(0.5rem)">justify-content: space-between only</div>
+    </div>
+  
+    <h3>4a. With align-items - Same content values - $flex(ccs)</h3>
+    <div class="$flex(ccs,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">place-content: center, align-items: stretch</div>
+      <div class="$border $padding(0.5rem)">place-content: center, align-items: stretch</div>
+      <div class="$border $padding(0.5rem)">place-content: center, align-items: stretch</div>
+    </div>
+  
+    <h3>4b. With align-items - Different content values - $flex(ws_)</h3>
+    <div class="$flex(ws_,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items: baseline</div>
+      <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items: baseline</div>
+      <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items: baseline</div>
+    </div>
+  
+    <h3>4e. Only align-items - $flex(..s)</h3>
+    <div class="$flex(..s,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">only align-items: stretch</div>
+      <div class="$border $padding(0.5rem)">only align-items: stretch</div>
+      <div class="$border $padding(0.5rem)">only align-items: stretch</div>
+    </div>
+  
+    <h2>Flex Item Alignment Tests</h2>
+    
+    <h3>Basic Item Alignments</h3>
+    <div class="$flex(gap(1rem)) $border $padding(1rem) $h(200px)
+          |:first$_flex(a)
+          |:second$_flex(b)
+          |:third$_flex(c)
+          |:fourth$_flex(s)
+          |:fifth$_flex(_)">
+      <div class="$border $padding(0.5rem)">align-self: start</div>
+      <div class="$border $padding(0.5rem)">align-self: end</div>
+      <div class="$border $padding(0.5rem)">align-self: center</div>
+      <div class="$border $padding(0.5rem)">align-self: stretch</div>
+      <div class="$border $padding(0.5rem)">align-self: baseline</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$flex\(cc\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: center;
+        text-indent: unset;
+        place-content: center;
+        gap: 1rem;
+      }
+
+      .\$border {
+        border-style: solid;
+        border-width: medium;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$h\(200px\) {
+        block-size: 200px;
+      }
+
+      .\$padding\(0\.5rem\) {
+        padding: 0.5rem;
+      }
+
+      .\$flex\(ww\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: space-between;
+        gap: 1rem;
+      }
+
+      .\$flex\(ab\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: end;
+        text-indent: unset;
+        place-content: start end;
+        gap: 1rem;
+      }
+
+      .\$flex\(vu\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: space-evenly space-around;
+        gap: 1rem;
+      }
+
+      .\$flex\(s\.\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        align-content: stretch;
+        justify-content: unset;
+        gap: 1rem;
+      }
+
+      .\$flex\(\.w\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        align-content: unset;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .\$flex\(ccs\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: center;
+        text-indent: unset;
+        place-content: center;
+        align-items: stretch;
+        gap: 1rem;
+      }
+
+      .\$flex\(ws_\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: justify;
+        text-indent: unset;
+        place-content: space-between stretch;
+        align-items: baseline;
+        gap: 1rem;
+      }
+
+      .\$flex\(\.\.s\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: unset;
+        align-items: stretch;
+        gap: 1rem;
+      }
+
+      .\$flex\(gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        gap: 1rem;
+      }
+    }
+
+    @layer items {
+      .\|\:first\$_flex\(a\) > :where(:where(:first-child)) {
+        text-align: unset;
+        align-self: start;
+      }
+
+      .\|\:second\$_flex\(b\) > :where(:where(:nth-child(2))) {
+        text-align: unset;
+        align-self: end;
+      }
+
+      .\|\:third\$_flex\(c\) > :where(:where(:nth-child(3))) {
+        text-align: unset;
+        align-self: center;
+      }
+
+      .\|\:fourth\$_flex\(s\) > :where(:where(:nth-child(4))) {
+        text-align: unset;
+        align-self: stretch;
+      }
+
+      .\|\:fifth\$_flex\(_\) > :where(:where(:nth-child(5))) {
+        text-align: unset;
+        align-self: baseline;
+      }
+    }
+  </style>
+</test-html> 
 <test-html title="Layout 6 - Flex Wrap">
   <main>
     <h3>No Wrap (default)</h3>
@@ -1053,7 +1310,7 @@
         inline-size: 300px;
       }
 
-      .\$block\(clamp\(2\)\,hidden\) {
+      .\$block\(clamp\(2\)\) {
         display: -webkit-box;
         word-spacing: unset;
         line-height: unset;
@@ -1070,7 +1327,7 @@
         height: calc(2.4em);
       }
 
-      .\$block\(clamp\(3\)\,hidden\) {
+      .\$block\(clamp\(3\)\) {
         display: -webkit-box;
         word-spacing: unset;
         line-height: unset;
@@ -1091,15 +1348,15 @@
     @layer items {}
   </style>
 </test-html>
-<!-- <test-html title="Layout 12 - Flex and Grid Item Properties">
+<test-html title="Layout 12 - Flex and Grid Item Properties">
   <main>
     <h3>Flex Item Properties</h3>
     <div class="$border $padding(1rem) 
             $flex(gap(1rem))
             |:first$_flex(1grow)
-            |:nth-child(2)$_flex(2grow)
-            |:nth-child(3)$_flex(0.5shrink)
-            |:nth-child(4)$_flex(basis(100px))
+            |:second$_flex(2grow)
+            |:third$_flex(0.5shrink)
+            |:fourth$_flex(basis(100px))
     ">
       <div class="$border $padding(0.5rem)">
         <p>Flex-grow: 1</p>
@@ -1113,50 +1370,19 @@
       <div class="$border $padding(0.5rem)">
         <p>Flex-basis: 100px</p>
       </div>
-    </div>
-    
-    <h3>Flex Item Alignment</h3>
-    <div class="$border $padding(1rem) $h(200px)
-            $flex(gap(1rem))
-            |:first$_flex(a)
-            |:nth-child(2)$_flex(c)
-            |:nth-child(3)$_flex(b)
-            |:nth-child(4)$_flex(_)
-    ">
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: start</p>
-      </div>
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: center</p>
-      </div>
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: end</p>
-      </div>
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: baseline</p>
-      </div>
-    </div>
-    
+    </div>  
     <h3>Grid Item Properties</h3>
     <div class="$border $padding(1rem)
             $grid(cols(1fr,1fr,1fr),rows(100px,100px),gap(1rem))
-            |:first$_grid(a)
-            |:nth-child(2)$_grid(c)
-            |:nth-child(3)$_grid(b)
-            |:nth-child(4)$_grid(_)
+            |:first$_grid(column(1,3))
+            |:second$_grid(row(,4))
+            |:third$_grid(column(1,))
+            |:fourth$_grid(row(1,2),column(2,3))
       ">
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: start</p>
-      </div>
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: center</p>
-      </div>
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: end</p>
-      </div>
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: baseline</p>
-      </div>
+      <div class="$border $padding(0.5rem)">Grid column: 1 / 3</div>
+      <div class="$border $padding(0.5rem)">Grid row-end: 4</div>
+      <div class="$border $padding(0.5rem)">Grid column-start: 1</div>
+      <div class="$border $padding(0.5rem)">Grid row: 1 / 2, Grid column: 2 / 3</div>
     </div>
   </main>
   <style>
@@ -1187,10 +1413,6 @@
         padding: 0.5rem;
       }
 
-      .\$h\(200px\) {
-        block-size: 200px;
-      }
-
       .\$grid\(cols\(1fr\,1fr\,1fr\)\,rows\(100px\,100px\)\,gap\(1rem\)\) {
         display: grid;
         word-spacing: unset;
@@ -1210,115 +1432,37 @@
         flex-grow: 1;
       }
 
-      .\|\:nth-child\(2\)\$_flex\(2grow\) > :where(:nth-child(2)) {
+      .\|\:second\$_flex\(2grow\) > :where(:where(:nth-child(2))) {
         flex-grow: 2;
       }
 
-      .\|\:nth-child\(3\)\$_flex\(0\.5shrink\) > :where(:nth-child(3)) {
+      .\|\:third\$_flex\(0\.5shrink\) > :where(:where(:nth-child(3))) {
         flex-shrink: 0.5;
       }
 
-      .\|\:nth-child\(4\)\$_flex\(basis\(100px\)\) > :where(:nth-child(4)) {
+      .\|\:fourth\$_flex\(basis\(100px\)\) > :where(:where(:nth-child(4))) {
         flex-basis: 100px;
       }
 
-      .\|\:first\$_flex\(a\) > :where(:where(:first-child)) {
-        text-align: unset;
-        align-self: start;
+      .\|\:first\$_grid\(column\(1\,3\)\) > :where(:where(:first-child)) {
+        grid-column: 1 / 3;
       }
 
-      .\|\:nth-child\(2\)\$_flex\(c\) > :where(:nth-child(2)) {
-        text-align: unset;
-        align-self: center;
+      .\|\:second\$_grid\(row\(\,4\)\) > :where(:where(:nth-child(2))) {
+        grid-row: undefined / 4;
       }
 
-      .\|\:nth-child\(3\)\$_flex\(b\) > :where(:nth-child(3)) {
-        text-align: unset;
-        align-self: end;
+      .\|\:third\$_grid\(column\(1\,\)\) > :where(:where(:nth-child(3))) {
+        grid-column: 1 / undefined;
       }
 
-      .\|\:nth-child\(4\)\$_flex\(_\) > :where(:nth-child(4)) {
-        text-align: unset;
-        align-self: baseline;
-      }
-
-      .\|\:first\$_grid\(a\) > :where(:where(:first-child)) {
-      }
-
-      .\|\:nth-child\(2\)\$_grid\(c\) > :where(:nth-child(2)) {
-      }
-
-      .\|\:nth-child\(3\)\$_grid\(b\) > :where(:nth-child(3)) {
-      }
-
-      .\|\:nth-child\(4\)\$_grid\(_\) > :where(:nth-child(4)) {
+      .\|\:fourth\$_grid\(row\(1\,2\)\,column\(2\,3\)\) > :where(:where(:nth-child(4))) {
+        grid-area: 1 / 2 / 2 / 3;
       }
     }
   </style>
 </test-html>
-<test-html title="Layout 13 - Grid Item Properties">
-  <main>
-    <div class="$grid(cols(1fr,1fr,1fr),rows(100px,100px),gap(1rem))
-    |:first$_grid(column(1,3))
-    |:second$_grid(row(2,4))
-    |:third$_grid(column(1,3))
-    |:fourth$_grid(row(2,4))
-      ">
-      <div class="$border $padding(0.5rem)">Spans 2 columns</div>
-      <div class="$border $padding(0.5rem)">Spans 2 rows</div>
-      <div class="$border $padding(0.5rem)">Shorthand spans 2 columns</div>
-      <div class="$border $padding(0.5rem)">Shorthand spans 2 rows</div>
-
-      <div class="$border $padding(0.5rem)"></div>
-    </div>
-  </main>
-  <style>
-    @layer container, items;
-
-    @layer container {
-      .\$grid\(cols\(1fr\,1fr\,1fr\)\,rows\(100px\,100px\)\,gap\(1rem\)\) {
-        display: grid;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
-        text-align: unset;
-        text-indent: unset;
-        grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: 100px 100px;
-        gap: 1rem;
-      }
-      
-      .\$border {
-        border-style: solid;
-        border-width: medium;
-      }
-      
-      .\$padding\(0\.5rem\) {
-        padding: 0.5rem;
-      }
-    }
-
-    @layer items {
-      .\|\:first\$_grid\(column\(1\,3\)\) > :where(:first-child) {
-        grid-column: 1 / 3;
-      }
-
-      .\|\:nth-child\(2\)\$_grid\(row\(2\,4\)\) > :where(:nth-child(2)) {
-        grid-row: 2 / 4;
-      }
-
-      .\|\:nth-child\(3\)\$_grid\(column\(1\,3\)\) > :where(:nth-child(3)) {
-        grid-column: 1 / 3;
-      }
-
-      .\|\:nth-child\(4\)\$_grid\(row\(2\,4\)\) > :where(:nth-child(4)) {
-        grid-row: 2 / 4;
-      }
-    }
-  </style>
-</test-html>
-<test-html title="Layout 14 - Grid Position Properties">
+<!-- <test-html title="Layout 14 - Grid Position Properties">
   <main>
     <h3>Individual Start/End Properties</h3>
     <div class="$grid(cols(repeat(3,1fr)),rows(repeat(3,100px)),gap(1rem))

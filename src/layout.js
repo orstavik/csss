@@ -153,7 +153,7 @@ _block.scope = {   //$_block(indent(1em),...)
 };
 
 const GRID_ALIGN = /^([abcsuvw.])([abcsuvw.])([abcs_.])([abcs])$/;
-const _GRID_ALIGN = /([abcs_.])([abcs])/;
+const _GRID_ALIGN = /^([abcs_.])([abcs_.])?$/;
 
 function grid(...args) {
   args = args.map(a => {
@@ -182,7 +182,21 @@ function _grid(...args) {
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
     let m;
-    if (m = a.match(_GRID_ALIGN)) return doAlignSelf(...m);
+    // Handle alignment values with pattern similar to flex container
+    if (m = a.match(_GRID_ALIGN)) {
+      const [_, alignChar, justifyChar = alignChar] = m;
+      
+      // If both are the same and not "." (unset), use place-self shorthand
+      if (alignChar === justifyChar && alignChar !== '.') {
+        return { placeSelf: AlignAliases[alignChar] };
+      }
+      
+      // Otherwise set them individually, but only if not "."
+      const result = {};
+      if (alignChar !== '.') result.alignSelf = AlignAliases[alignChar];
+      if (justifyChar !== '.') result.justifySelf = AlignAliases[justifyChar];
+      return result;
+    }
     return a;
   });
   return Object.assign(...args);
