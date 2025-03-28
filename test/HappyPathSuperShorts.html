@@ -1,10 +1,10 @@
 <test-html title="Holy Grail Layout">
   <main>
-    <div class="$holygrail $gap(1rem) $h(100vh)">
-      <header class="$holygrailheader $bg(azure) $border">
+    <div class="$holyGrail $gap(1rem) $h(100vh)">
+      <header class="$holyGrailHeader $bg(azure) $border">
         <h1>Header</h1>
       </header>
-      <aside class="$holygrailsidebarleft $bg(lightgreen) $border">
+      <aside class="$holyGrailSidebarLeft $bg(lightgreen) $border">
         <h2>Left Sidebar</h2>
         <p>Navigation links could go here</p>
         <ul>
@@ -14,13 +14,13 @@
           <li>Contact</li>
         </ul>
       </aside>
-      <main class="$holygrailmain $bg(white) $border">
+      <main class="$holyGrailMain $bg(white) $border">
         <h2>Main Content</h2>
         <p>This is the main content area of the page. In a real website, this would contain the primary content.</p>
         <p>The Holy Grail layout is a classic web design pattern with header, footer, main content, and two sidebars.</p>
         <p>Using CSS Grid makes this layout much simpler than older techniques that required floats and negative margins.</p>
       </main>
-      <aside class="$holygrailsidebarright $bg(lightyellow) $border">
+      <aside class="$holyGrailSidebarRight $bg(lightyellow) $border">
         <h2>Right Sidebar</h2>
         <p>Additional information, ads, or related content could go here.</p>
         <div class="$padding(0.5rem) $margin(1rem,0) $bg(white) $border">
@@ -28,7 +28,7 @@
           <p>Check out our guide to CSS layout techniques!</p>
         </div>
       </aside>
-      <footer class="$holygrailfooter $bg(lightblue) $border">
+      <footer class="$holyGrailFooter $bg(lightblue) $border">
         <h2>Footer</h2>
         <p>Copyright © 2024 Example Company</p>
       </footer>
@@ -38,60 +38,75 @@
      @layer container, items;
 
      @layer container {
-      .\$holygrail {
+      .\$holyGrail {
         display: grid;
         grid-template-rows: auto 1fr auto;
-        grid-template-columns: auto 1fr 1fr auto;
+        grid-template-columns: auto 1fr auto;
         gap: 1rem;
       }
+
       .\$gap\(1rem\) {
         gap: 1rem;
       }
+
       .\$h\(100vh\) {
         block-size: 100vh;
       }
-      .\$holygrailheader {
+
+      .\$holyGrailHeader {
         grid-column: 1 / 4;
         padding: 1rem;
       }
+
       .\$bg\(azure\) {
         background: azure;
       }
+
       .\$border {
         border-style: solid;
         border-width: medium;
       }
-      .\$holygrailsidebarleft {
+
+      .\$holyGrailSidebarLeft {
         grid-column: 1 / 2;
         padding: 1rem;
       }
+
       .\$bg\(lightgreen\) {
         background: lightgreen;
       }
-      .\$holygrailmain {
+
+      .\$holyGrailMain {
         grid-column: 2 / 3;
         padding: 1rem;
       }
+
       .\$bg\(white\) {
         background: white;
       }
-      .\$holygrailsidebarright {
+
+      .\$holyGrailSidebarRight {
         grid-column: 3 / 4;
         padding: 1rem;
       }
+
       .\$bg\(lightyellow\) {
         background: lightyellow;
       }
+
       .\$padding\(0\.5rem\) {
         padding: 0.5rem;
       }
+
       .\$margin\(1rem\,0\) {
         margin: 1rem 0px;
       }
-      .\$holygrailfooter {
+
+      .\$holyGrailFooter {
         grid-column: 1 / 4;
         padding: 1rem;
       }
+
       .\$bg\(lightblue\) {
         background: lightblue;
       }
@@ -104,11 +119,6 @@
   </style>
 </test-html> 
 <!-- 
-// $holygrailheader = $gridColumn("1 / span4");
-// $holygrailfooter = $gridColumn(1|4);
-// $holygrailsidebarleft = $gridColumn(1|2);
-// $holygrailsidebarright = $gridColumn(3|4);
-// $holygrailmain = $gridColumn(2|3);
 
 $twoCol = $grid(template(auto 1fr / 3fr 1fr))$gap(2rem);
 $twoColMain = $grid(column(1 / 2));
