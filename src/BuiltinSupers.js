@@ -75,12 +75,12 @@ $flex = $display(flex)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$tex
 $font = $fontFamily(initial)$fontStyle(initial)$fontWeight(initial)$fontVariant(initial)$fontStretch(initial)$textTransform(initial)$letterSpacing(initial);
 $fontInherit = $fontFamily(inherit)$fontStyle(inherit)$fontWeight(inherit)$fontVariant(inherit)$fontStretch(inherit)$textTransform(inherit)$letterSpacing(inherit);
 
-$holygrail = $display(grid)$gridTemplateRows(auto 1fr auto)$gridTemplateColumns(auto 1fr 1fr auto)$gap(1rem);
-$holygrailheader = $gridColumn("1/4")$padding(1rem);
-$holygrailfooter = $gridColumn("1/4")$padding(1rem);
-$holygrailsidebarleft = $gridColumn("1/2")$padding(1rem);
-$holygrailsidebarright = $gridColumn("3/4")$padding(1rem);
-$holygrailmain = $gridColumn("2/3")$padding(1rem);
+$holyGrail = $grid(rows(auto,1fr,auto),cols(auto,1fr,auto),gap(1rem));
+$holyGrailHeader = $_grid(column(1,4))$padding(1rem);
+$holyGrailFooter = $_grid(column(1,4))$padding(1rem);
+$holyGrailSidebarLeft = $_grid(column(1,2))$padding(1rem);
+$holyGrailSidebarRight = $_grid(column(3,4))$padding(1rem);
+$holyGrailMain = $_grid(column(2,3))$padding(1rem);
 `;
 //$full-width = $text-transform(full-width);
 //$full-size-kana = $text-transform(full-size-kana);

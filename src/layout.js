@@ -171,7 +171,9 @@ function grid(...args) {
     }
     return a;
   });
-  return Object.assign(...args);
+  
+  // Always include 'display: grid' in the result
+  return Object.assign({ display: "grid" }, ...args);
 }
 const nativeGrid = Object.fromEntries(Object.entries(AllFunctions).filter(
   ([k]) => k.match(/^grid[A-Z]/)));
