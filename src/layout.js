@@ -49,7 +49,7 @@ function lineClamp(num, ...ignored) {
     "display": "-webkit-box",
     WebkitLineClamp: num,
     WebkitBoxOrient: "vertical",
-    overflowBlock: "hidden",
+    overflow: "hidden",
   }
 }
 
@@ -240,7 +240,6 @@ flex.scope = {
   ...LAYOUT,
   ...GAP
 };
-
 
 const GROW = /^([0-9.]+)(grow|g)$/;
 const SHRINK = /^([0-9.]+)(shrink|s)$/;
