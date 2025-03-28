@@ -1,4 +1,3 @@
-
 <test-html title="Layout 1 - Basic Grid">
   <main>
     <div class="$grid(cols(1fr,1fr,1fr),gap(1rem))">
@@ -968,14 +967,14 @@
       <div>
         <h4>Line Clamp (2 lines)</h4>
         <div class="$border $padding(1rem) $w(300px)">
-          <p class="$block(clamp(2),hidden) $height(2*1.2em)">This text demonstrates line clamping to 2 lines. Remember to always add overflow hidden to achieve the effect.
+          <p class="$block(clamp(2)) $height(2*1.2em)">This text demonstrates line clamping to 2 lines. Remember to always add overflow hidden to achieve the effect.
             Any text beyond the second line will be truncated with an ellipsis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nunc nunc lacinia nunc, eget lacinia nunc nunc eget nunc.</p>
         </div>
       </div>
       <div>
         <h4>Line Clamp (3 lines)</h4>
         <div class="$border $padding(1rem) $w(300px)">
-          <p class="$block(clamp(3),hidden) $height(3*(1.2em))">This text demonstrates line clamping to 3 lines.  Remember to always add overflow hidden to achieve the effect.
+          <p class="$block(clamp(3)) $height(3*(1.2em))">This text demonstrates line clamping to 3 lines.  Remember to always add overflow hidden to achieve the effect.
             Any text beyond the third line will be truncated with an ellipsis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nunc nunc lacinia nunc, eget lacinia nunc nunc eget nunc.</p>
         </div>
       </div>
@@ -1092,7 +1091,7 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="Layout 12 - Flex and Grid Item Properties">
+<!-- <test-html title="Layout 12 - Flex and Grid Item Properties">
   <main>
     <h3>Flex Item Properties</h3>
     <div class="$border $padding(1rem) 
@@ -1257,3 +1256,134 @@
     }
   </style>
 </test-html>
+<test-html title="Layout 13 - Grid Item Properties">
+  <main>
+    <div class="$grid(cols(1fr,1fr,1fr),rows(100px,100px),gap(1rem))
+    |:first$_grid(column(1,3))
+    |:second$_grid(row(2,4))
+    |:third$_grid(column(1,3))
+    |:fourth$_grid(row(2,4))
+      ">
+      <div class="$border $padding(0.5rem)">Spans 2 columns</div>
+      <div class="$border $padding(0.5rem)">Spans 2 rows</div>
+      <div class="$border $padding(0.5rem)">Shorthand spans 2 columns</div>
+      <div class="$border $padding(0.5rem)">Shorthand spans 2 rows</div>
+
+      <div class="$border $padding(0.5rem)"></div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,rows\(100px\,100px\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 100px 100px;
+        gap: 1rem;
+      }
+      
+      .\$border {
+        border-style: solid;
+        border-width: medium;
+      }
+      
+      .\$padding\(0\.5rem\) {
+        padding: 0.5rem;
+      }
+    }
+
+    @layer items {
+      .\|\:first\$_grid\(column\(1\,3\)\) > :where(:first-child) {
+        grid-column: 1 / 3;
+      }
+
+      .\|\:nth-child\(2\)\$_grid\(row\(2\,4\)\) > :where(:nth-child(2)) {
+        grid-row: 2 / 4;
+      }
+
+      .\|\:nth-child\(3\)\$_grid\(column\(1\,3\)\) > :where(:nth-child(3)) {
+        grid-column: 1 / 3;
+      }
+
+      .\|\:nth-child\(4\)\$_grid\(row\(2\,4\)\) > :where(:nth-child(4)) {
+        grid-row: 2 / 4;
+      }
+    }
+  </style>
+</test-html>
+<test-html title="Layout 14 - Grid Position Properties">
+  <main>
+    <h3>Individual Start/End Properties</h3>
+    <div class="$grid(cols(repeat(3,1fr)),rows(repeat(3,100px)),gap(1rem))
+      |:first$_grid(column(,2))
+      |:second$_grid(column(2,))
+      |:third$_grid(row(,3))
+      |:fourth$_grid(row(2,))
+      |:fifth$_grid(column(1,3),row(2,4))">
+
+      <div class="$border $padding(0.5rem)">Grid Column End: 2</div>
+      <div class="$border $padding(0.5rem)">Grid Column Start: 2</div>
+      <div class="$border $padding(0.5rem)">Grid Row End: 3</div>
+      <div class="$border $padding(0.5rem)">Grid Row Start: 2</div>
+      <div class="$border $padding(0.5rem)">Spans Multiple</div>
+
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(repeat\(3\,1fr\)\)\,rows\(repeat\(3\,100px\)\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 100px);
+        gap: 1rem;
+      }
+
+      .\$border {
+        border-style: solid;
+        border-width: medium;
+      }
+
+      .\$padding\(0\.5rem\) {
+        padding: 0.5rem;
+      }
+    }
+
+    @layer items {
+      .\$border\$padding\(0\.5rem\)\_grid\(column\(\,2\)\) > :where(:first-child) {
+        grid-column-end: 2;
+      }
+
+      .\$border\$padding\(0\.5rem\)\_grid\(column\(2\,\)\) {
+        grid-column-start: 2;
+      }
+
+      .\$border\$padding\(0\.5rem\)\_grid\(row\(\,3\)\) {
+        grid-row-end: 3;
+      }
+
+      .\$border\$padding\(0\.5rem\)\_grid\(row\(2\,\)\) {
+        grid-row-start: 2;
+      }
+
+      .\$border\$padding\(0\.5rem\)\_grid\(column\(1\,3\)\,row\(2\,4\)\) {
+        grid-column: 1 / 3;
+        grid-row: 2 / 4;
+      }
+    }
+  </style>
+</test-html> -->

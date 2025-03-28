@@ -49,7 +49,7 @@ function toLineClamp(num, ...ignored) {
     "display": "-webkit-box",
     WebkitLineClamp: num,
     WebkitBoxOrient: "vertical",
-    overflowBlock: "hidden",
+    overflow: "hidden",
   }
 }
 
@@ -189,6 +189,27 @@ function _grid(...args) {
 }
 _grid.scope = {
   ..._LAYOUT,
+  column: (...args) => {
+    if (args.length === 1) return { ["grid-column"]: args[0] };
+    if (args.length === 2) {
+      if (args[0] === "") return { ["grid-column-end"]: args[1] };
+      if (args[1] === "") return { ["grid-column-start"]: args[0] };
+      return { ["grid-column"]: `${args[0]} / ${args[1]}` };
+    }
+    throw new SyntaxError("column accepts only 1 or 2 arguments");
+  },
+  row: (...args) => {
+    if (args.length === 1) return { ["grid-row"]: args[0] };
+    if (args.length === 2) {
+      if (args[0] === "") return { ["grid-row-end"]: args[1] };
+      if (args[1] === "") return { ["grid-row-start"]: args[0] };
+      return { ["grid-row"]: `${args[0]} / ${args[1]}` };
+    }
+    throw new SyntaxError("row accepts only 1 or 2 arguments");
+  },
+  // area: (...args) => ({ ["grid-area"]: args.join(" ") }),
+  columnSpan: (span) => ({ ["grid-column"]: `span ${span}` }),
+  rowSpan: (span) => ({ ["grid-row"]: `span ${span}` })
 };
 
 
@@ -211,7 +232,6 @@ flex.scope = {
   ...LAYOUT,
   ...GAP
 };
-
 
 const GROW = /^([0-9.]+)(grow|g)$/;
 const SHRINK = /^([0-9.]+)(shrink|s)$/;
