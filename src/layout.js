@@ -58,6 +58,11 @@ const TextAlignAliases = {
   b: "end",
   c: "center",
   s: "justify",
+  u: "unset",
+  v: "unset",
+  w: "unset",
+  _: "unset",
+  ".": "unset",
 };
 const AlignAliases = {
   a: "start",
@@ -71,34 +76,22 @@ const AlignAliases = {
   ".": "unset",
 };
 
-function doAlign(_, b, i, b2, i2) {
-  return {
-    textAlign: TextAlignAliases[i] ?? "unset",
-    alignContent: AlignAliases[b],
-    justifyContent: AlignAliases[i],
-    alignItems: AlignAliases[b2],
-    justifyItems: AlignAliases[i2],
-  };
-}
-function doAlignSelf(_, b, i) {
-  return {
-    textAlign: TextAlignAliases[i] ?? "unset",
-    alignSelf: AlignAliases[b],
-    justifySelf: AlignAliases[i],
-  };
-}
 // todo this doesn't need to be in the scope here.
 //todo because we only 
+//todo move this into the NativeCssPropertis in func.js
 const LAYOUT = {
   padding: toLogicalFour.bind(null, "padding"),
   p: toLogicalFour.bind(null, "padding"),
   scrollPadding: toLogicalFour.bind(null, "scroll-padding"),
+  textAlign: AllFunctions.textAlign,
 };
 
 const _LAYOUT = {
   margin: toLogicalFour.bind(null, "margin"),
   m: toLogicalFour.bind(null, "margin"),
-  scrollMargin: toLogicalFour.bind(null, "scroll-margin")
+  scrollMargin: toLogicalFour.bind(null, "scroll-margin"),
+  textAlign: AllFunctions.textAlign,
+  // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
 
 function toGap(...args) {
@@ -142,23 +135,26 @@ function _block(...args) {
 }
 _block.scope = {   //$_block(indent(1em),...)
   ..._LAYOUT,
-  //todo these are not necessary. they are native functions?
-  //todo the thing we need instead is a filter that says which properties are valid when we mergy the different layout 
-  // textIndent: (...args) => ({ textIndent: args.join(" ") }), 
-  indent: (...args) => ({ textIndent: args.join(" ") }),
+  textIndent: AllFunctions.textIndent,
+  indent: AllFunctions.textIndent,
 };
-
-const GRID_ALIGN = /^([abcsuvw.])([abcsuvw.])([abcs_.])([abcs])$/;
-const _GRID_ALIGN = /([abcs_.])([abcs])/;
 
 function grid(...args) {
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
-    let m = wrap(a);
-    if (m) return m;
+    let m;
+    if (m = wrap(a))
+      return m;
     if (m = a.match(/(dense)-?(column)/))
       return { gridAutoFlow: `${m[1]} ${m[2] || "row"}` };
-    if (m = a.match(GRID_ALIGN)) return doAlign(...m);
+    if (m = a.match(/^([abcsuvw.])([abcsuvw.])?([abcs_.])?([abcs])?$/)) {
+      const [_, b, i = b, b2 = b, i2 = i] = m;
+      return {
+        textAlign: TextAlignAliases[i2],
+        placeContent: [AlignAliases[b], AlignAliases[i]].join(" "),
+        placeItems: [AlignAliases[b2], AlignAliases[i2]].join(" "),
+      };
+    }
     return a;
   });
   return Object.assign(...args);
@@ -176,9 +172,15 @@ grid.scope = {
 
 function _grid(...args) {
   args = args.map(a => {
-    if (!(typeof a === "string")) return a;
+    if (typeof a !== "string") return a;
     let m;
-    if (m = a.match(_GRID_ALIGN)) return doAlignSelf(...m);
+    if (m = a.match(/^([abcs_.])([abcs_.])?$/)) {
+      const [_, b, i = b] = m;
+      return {
+        textAlign: TextAlignAliases[i],
+        placeSelf: [AlignAliases[b], AlignAliases[i]].join(" "),
+      };
+    }
     return a;
   });
   return Object.assign(...args);
@@ -197,7 +199,14 @@ function flex(...args) {
     if (m) return m;
     if (m = a.match(/^(column|column-reverse|row-reverse|row)$/)) return { ["flex-direction"]: a };
     if (m = a.match(/^(wrap|wrap-reverse|no-wrap)$/)) return { ["flex-wrap"]: a };
-    if (m = a.match(/^([abcsuvw.])([abcsuvw.])?([abcs_])?$/)) return doAlign(...m);
+    if (m = a.match(/^([abcsuvw.])([abcsuvw.])?([abcs_])?$/)) {
+      const [_, b, i = b, i2 = i] = m;
+      return {
+        textAlign: TextAlignAliases[i],
+        placeContent: [AlignAliases[b], AlignAliases[i]].join(" "),
+        alignItems: TextAlignAliases[i2],
+      };
+    }
     if (m = wrap(a)) return m;
     return a;
   });
@@ -217,10 +226,14 @@ function _flex(...args) {
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
     let m;
-    if (m = a.match(GROW)) return { ["flex-grow"]: m[1] };
-    if (m = a.match(SHRINK)) return { ["flex-shrink"]: m[1] };
-    if (m = a.match(ORDER)) return { ["order"]: m[1] };
-    if (m = a.match(/([abcs_])/)) return doAlignSelf(...m);
+    if (m = a.match(GROW)) return { flexGrow: m[1] };
+    if (m = a.match(SHRINK)) return { flexShrink: m[1] };
+    if (m = a.match(ORDER)) return { order: m[1] };
+    if (m = a.match(/^[abcs_]$/))
+      return {
+        alignItems: AlignAliases[m[0]],
+        textAlign: TextAlignAliases[m[0]]
+      };
     //todo safe
     return a;
   });
