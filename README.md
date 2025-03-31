@@ -8,11 +8,7 @@ A lightweight CSS preprocessor that enables writing concise, expressive CSS dire
 npx http-server -p 3003 --cors
 ```
 
-Then go to:
-
-```
-http://127.0.0.1:3003/test
-```
+Then go to: (http://127.0.0.1:3003/test)[http://127.0.0.1:3003/test]
 
 ## About CSSS
 
