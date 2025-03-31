@@ -199,8 +199,18 @@ function _grid(...args) {
   });
   return Object.assign(...args);
 }
+
+const column = (start, end = start) => ({ ["grid-column"]: `${start} / ${end}` });
+const row = (start, end = start) => ({ ["grid-row"]: `${start} / ${end}` });
+const span = arg => `span ${arg}`;
+column.scope = { span };
+row.scope = { span };
+
 _grid.scope = {
   ..._LAYOUT,
+  column, row,
+  // area: (...args) => ({ ["grid-area"]: args.join(" ") }),
+
 };
 
 

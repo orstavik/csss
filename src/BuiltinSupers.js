@@ -8,6 +8,15 @@ export const BuiltinSupers = `
 
 
 :first = :first-child;
+:second = :nth-child(2);
+:third = :nth-child(3);
+:fourth = :nth-child(4);
+:fifth = :nth-child(5);
+:sixth = :nth-child(6);
+:seventh = :nth-child(7);
+:eighth = :nth-child(8);
+:ninth = :nth-child(9);
+:tenth = :nth-child(10);
 :last = :last-child;
 :edge = :first-child,:last-child;
 

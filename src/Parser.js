@@ -157,7 +157,6 @@ class Short {
   interpret(SHORTS, supers) {
     const shorts = this.exprList && clashOrStack(this.exprList.map(s => s.interpret(SHORTS, supers)));
     let selector = this.selectorList && this.selectorList.map(s => s.interpret(supers)).join(", ");
-    selector &&= `:where(${selector})`;
     return { selector, shorts };
   }
 }
@@ -392,13 +391,29 @@ class Selector {
     this.tail = tail;
   }
 
+  whereWrap(selector) {
+    if (!selector)
+      return selector;
+    if (!selector.startsWith(":where("))
+      return `:where(${selector})`;
+    for (let depth = 1, i = 7; i < selector.length; i++) {
+      if (selector[i] === "(") depth++;
+      if (selector[i] === ")") depth--;
+      if (!depth)
+        return i === selector.length - 1 ? selector : `:where(${selector})`;
+    }
+    throw "missing ')'";
+  }
+
   interpret(supers) {
     let head = Selector.superAndNots(this.head, supers);
     let body = Selector.superAndNots(this.body, supers);
     let tail = Selector.superAndNots(this.tail, supers);
     tail &&= `:has(${tail})`;
     head &&= `:where(${head})`;
-    return [head, body, tail].filter(Boolean).join("");
+    let selector = [head, body, tail].filter(Boolean).join("");
+    if (selector) selector = this.whereWrap(selector);
+    return selector;
   }
 }
 
