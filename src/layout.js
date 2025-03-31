@@ -76,6 +76,18 @@ const AlignAliases = {
   ".": "unset",
 };
 
+const AlignItemsFlexAliases = {
+  a: "start",
+  b: "end",
+  c: "center",
+  s: "stretch",
+  u: "stretch",
+  v: "stretch",
+  w: "stretch",
+  _: "start",
+  ".": "unset",
+};
+
 // todo this doesn't need to be in the scope here.
 //todo because we only 
 //todo move this into the NativeCssPropertis in func.js
@@ -108,25 +120,27 @@ function doFloat(a) {
   if (m) return { float: "inline-" + m[1] };
 }
 
-function textAlign(a) {
-  if (a = a.match(/^[abcs]$/))
-    return ({ textAlign: TextAlignAliases[a[0]] });
-}
-
-function toBlockGap(wordSpacing, lineHeight) {
+function blockGap(wordSpacing, lineHeight) {
   return { wordSpacing, lineHeight };
 }
 
 function block(...args) {
-  args = args.map(a => typeof a === "string" ? wrap(a) ?? textAlign(a) : a);
+  args = args.map(a => {
+    if (typeof a !== "string") return a;
+    let m;
+    if (m = wrap(a))
+      return m;
+    if (m = a.match(/^[abcs]$/))
+      return ({ textAlign: TextAlignAliases[a[0]] });
+  });
   return Object.assign(...args);
 }
 block.scope = {
   ...LAYOUT,
   lineClamp,
   clamp: lineClamp,
-  gap: toBlockGap,
-  g: toBlockGap,
+  gap: blockGap,
+  g: blockGap,
 };
 
 function _block(...args) {
@@ -147,8 +161,8 @@ function grid(...args) {
       return m;
     if (m = a.match(/(dense)-?(column)/))
       return { gridAutoFlow: `${m[1]} ${m[2] || "row"}` };
-    if (m = a.match(/^([abcsuvw.])([abcsuvw.])?([abcs_.])?([abcs])?$/)) {
-      const [_, b, i = b, b2 = b, i2 = i] = m;
+    if (m = a.match(/^[abcsuvw.][abcsuvw.]?[abcs_.]?[abcs]?$/)) {
+      const [b, i = b, b2 = ".", i2 = b2] = m[0];
       return {
         textAlign: TextAlignAliases[i2],
         placeContent: [AlignAliases[b], AlignAliases[i]].join(" "),
@@ -174,8 +188,8 @@ function _grid(...args) {
   args = args.map(a => {
     if (typeof a !== "string") return a;
     let m;
-    if (m = a.match(/^([abcs_.])([abcs_.])?$/)) {
-      const [_, b, i = b] = m;
+    if (m = a.match(/^[abcs_.][abcs_.]?$/)) {
+      const [b, i = b] = m[0];
       return {
         textAlign: TextAlignAliases[i],
         placeSelf: [AlignAliases[b], AlignAliases[i]].join(" "),
@@ -199,12 +213,12 @@ function flex(...args) {
     if (m) return m;
     if (m = a.match(/^(column|column-reverse|row-reverse|row)$/)) return { ["flex-direction"]: a };
     if (m = a.match(/^(wrap|wrap-reverse|no-wrap)$/)) return { ["flex-wrap"]: a };
-    if (m = a.match(/^([abcsuvw.])([abcsuvw.])?([abcs_])?$/)) {
-      const [_, b, i = b, i2 = i] = m;
+    if (m = a.match(/^[abcsuvw.][abcsuvw.]?[abcs_]?$/)) {
+      const [b, i = b, i2 = "."] = m[0];
       return {
-        textAlign: TextAlignAliases[i],
+        textAlign: TextAlignAliases[i2],
         placeContent: [AlignAliases[b], AlignAliases[i]].join(" "),
-        alignItems: TextAlignAliases[i2],
+        alignItems: AlignItemsFlexAliases[i2],
       };
     }
     if (m = wrap(a)) return m;
