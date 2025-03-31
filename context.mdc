@@ -1,0 +1,177 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# CSSS (CSS Shorts) Project Context
+
+## Overview
+CSSS (CSS Shorts) is a CSS preprocessor engine that introduces two main concepts for simplified CSS authoring:
+
+1. **Dollar Shorts**: Shorthand syntax patterns that start with `$`. These provide concise, expressive ways to write common CSS patterns. For example, `$border` expands into border-related CSS properties, and `$flex(cc)` is a short for centering with flexbox.
+
+2. **Supershorts**: An even more concise way to combine multiple dollar shorts together. Supershorts are perfect for reusing combinations of properties or grouping commonly used patterns. They are defined with a `$` prefix and can be used just like dollar shorts. For example, `$flexLayout` might combine flex and other properties related to layout.
+
+The engine comes with "BuiltinSupers" - a set of predefined supershorts available to all users, but developers can also create their own project-specific supershorts to match their needs.
+
+## Core Components
+
+### Parser System
+- **Parser.js**: Main parser for CSSS syntax
+  - Handles expression interpretation
+  - Processes both dollar shorts and supershorts
+  - Uses `NativeCssFunctions` for basic CSS function handling
+
+- **BuiltinSupers.js**: Predefined supershorts
+  - Contains the default set of supershorts
+  - Example: `$border = $border(solid, medium)`
+  - Example: `$bold = $fontWeight(bold)`
+  - Provides inheritance chain breaking utilities
+
+### Function System
+- **func.js**: Core CSS function implementations
+  - `NativeColorsFunctions`: Advanced color manipulation
+  - Border handling functions
+  - Transform and filter functions
+  - Gradient generators
+
+### Layout System
+- **layout.js**: Layout-specific utilities
+  - Flexbox shortcuts
+  - Grid system helpers
+  - Spacing utilities
+
+### Color System
+- **Color.js**: Color manipulation utilities
+  - Color space conversions
+  - Color mixing
+  - Palette generation
+
+### Engine
+- **engine.js**: Core processing engine
+  - Converts CSSS to standard CSS
+  - Handles rule generation
+  - Manages specificity
+
+## Key Features
+
+### Dollar Shorts
+```css
+/* Using Dollar Shorts */
+<div class = "$border(dotted,2px,radius(1px))">
+</div>
+
+/* Traditional CSS Equivalent*/
+.\$border\(dotted\,2px\,radius(1px\)\) {
+  border-style: dotted;
+  border-width: 2px;
+  border-radius: 1px;
+}
+```
+
+### Supershorts
+```css
+/* Using Built-in Supershorts */
+.element {
+  $bold                /* expands to $fontWeight(bold) */
+  $border             /* expands to $border(solid, medium) */
+}
+
+/* Creating Custom Supershorts */
+$myButton = $padding(1rem,2rem) $border(solid,2px) $flex(cc)
+
+.button {
+  $myButton           /* uses the custom supershort */
+}
+```
+
+### BuiltinSupers System
+- Provides a default set of supershorts
+- Common combinations like `$bold`, `$italic`, `$border`
+- Allows function composition
+- Supports inheritance breaking
+- Can be extended with custom supershorts per project
+
+### Color System and Palettes
+```css
+/* Using $palette to define a color scheme */
+.\$palette\(\#d41c84\) {
+    /* Sets primary color and generates secondary, tertiary, and neutral colors */
+}
+
+/* Using $color with palette colors and modifiers */
+.element {
+  $color(primary)           /* Use primary color */
+  $color(primary-box)      /* Primary color with box relief */
+  $color(primary-flip)     /* Primary color with flip relief */
+  $color(neutral-box)      /* Neutral color with box relief */
+  $color(red-blend-box)    /* Red color blended with box relief */
+}
+```
+
+The palette system provides:
+- **Color Roles**: primary, secondary, tertiary, and neutral colors
+- **Color Reliefs**: bw (black/white), text, box, flip, darkflip
+- **Color Blending**: Support for red, green, orange, blue with blend modifiers
+- **Border Intensities**: b0 through b9 for fine-tuned border colors
+- **Special Effects**: pop and blend modifiers for enhanced color effects
+
+Each palette color can be combined with various modifiers:
+- Relief types (box, flip, darkflip)
+- Border intensities (b0-b9)
+- Special effects (pop, blend)
+- Color mixing and blending
+
+## Testing
+- HTML-based test files in `/test`
+- HappyPath tests for feature verification
+- Color analysis tools in `/color_analysis`
+- PaletteGuide for full palette guidebook
+
+## Current State
+1. Recent Changes:
+   - Renamed `Shorts` class to `ShortBlock`
+   - Improved color function handling
+   - Enhanced BuiltinSupers system
+
+2. Active Issues:
+   - 
+
+3. Ongoing Work:
+   - Enhancing test coverage
+   - Adding more built-in supers
+   - Adding more missing functions in the engine
+
+## Development Setup
+```bash
+# Start development server
+npx http-server -p 3003 --cors
+
+# Access tests
+https://127.0.0.1:3003:/test/index
+
+#Specific test file
+https://127.0.0.1:3003:/test/index#HappyPathName
+```
+
+## File Structure
+```
+csss/
+├── src/
+│   ├── Parser.js         # Main parser
+│   ├── func.js          # Core functions
+│   ├── BuiltinSupers.js # Predefined supershorts
+│   ├── engine.js        # Processing engine
+│   ├── layout.js        # Layout utilities
+│   ├── palette.js       # Color palette tools
+│   └── Color.js         # Color utilities
+├── test/
+│   └── HappyPath*.html  # Feature tests
+├── color_analysis/      # Color tools
+└── csss-properties-reference.md
+```
