@@ -1,4 +1,3 @@
-
 <test-html title="Layout 1 - Basic Grid">
   <main>
     <div class="$grid(cols(1fr,1fr,1fr),gap(1rem))">
@@ -25,12 +24,12 @@
         grid-template-columns: 1fr 1fr 1fr;
         gap: 1rem;
       }
-      
+
       .\$border {
         border-style: solid;
         border-width: medium;
       }
-      
+
       .\$padding\(1rem\) {
         padding: 1rem;
       }
@@ -69,12 +68,12 @@
         grid-template-rows: 50px 100px auto;
         gap: 1rem;
       }
-      
+
       .\$border {
         border-style: solid;
         border-width: medium;
       }
-      
+
       .\$padding\(0\.5rem\) {
         padding: 0.5rem;
       }
@@ -92,7 +91,7 @@
       <div class="$border $padding(0.5rem)">Center Content</div>
       <div class="$border $padding(0.5rem)">Center Items</div>
     </div>
-    
+
     <h3>Start and End Alignment (abab)</h3>
     <div class="$grid(cols(1fr,1fr),rows(100px,100px),gap(1rem),abab) $border $padding(1rem) $h(300px)">
       <div class="$border $padding(0.5rem)">Start Content</div>
@@ -100,7 +99,7 @@
       <div class="$border $padding(0.5rem)">Start Content</div>
       <div class="$border $padding(0.5rem)">End Items</div>
     </div>
-    
+
     <h3>Space Between and Around (wucs)</h3>
     <div class="$grid(cols(1fr,1fr),rows(50px,50px),gap(1rem),wucs) $border $padding(1rem) $h(300px)">
       <div class="$border $padding(0.5rem)">Space Between</div>
@@ -113,7 +112,7 @@
     @layer container, items;
 
     @layer container {
-      
+
       .\$grid\(cols\(1fr\,1fr\)\,rows\(100px\,100px\)\,gap\(1rem\)\,ccss\) {
         display: grid;
         word-spacing: unset;
@@ -188,21 +187,21 @@
       <div class="$border $padding(0.5rem)">Flex Item 2</div>
       <div class="$border $padding(0.5rem)">Flex Item 3</div>
     </div>
-    
+
     <h3>Column Flex</h3>
     <div class="$flex(column,gap(1rem)) $border $padding(1rem)">
       <div class="$border $padding(0.5rem)">Flex Item 1</div>
       <div class="$border $padding(0.5rem)">Flex Item 2</div>
       <div class="$border $padding(0.5rem)">Flex Item 3</div>
     </div>
-    
+
     <h3>Reverse Row Flex</h3>
     <div class="$flex(row-reverse,gap(1rem)) $border $padding(1rem)">
       <div class="$border $padding(0.5rem)">Flex Item 1</div>
       <div class="$border $padding(0.5rem)">Flex Item 2</div>
       <div class="$border $padding(0.5rem)">Flex Item 3</div>
     </div>
-    
+
     <h3>Reverse Column Flex</h3>
     <div class="$flex(column-reverse,gap(1rem)) $border $padding(1rem)">
       <div class="$border $padding(0.5rem)">Flex Item 1</div>
@@ -224,16 +223,20 @@
         text-indent: unset;
         gap: 1rem;
       }
+
       .\$border {
         border-style: solid;
         border-width: medium;
       }
+
       .\$padding\(1rem\) {
         padding: 1rem;
       }
+
       .\$padding\(0\.5rem\) {
         padding: 0.5rem;
       }
+
       .\$flex\(column\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -245,6 +248,7 @@
         flex-direction: column;
         gap: 1rem;
       }
+
       .\$flex\(row-reverse\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -256,6 +260,7 @@
         flex-direction: row-reverse;
         gap: 1rem;
       }
+
       .\$flex\(column-reverse\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -280,28 +285,28 @@
       <div class="$border $padding(0.5rem)">Center Aligned</div>
       <div class="$border $padding(0.5rem)">Center Aligned</div>
     </div>
-    
+
     <h3>Start-End Alignment (ab)</h3>
     <div class="$flex(ab,gap(1rem)) $border $padding(1rem) $h(200px)">
       <div class="$border $padding(0.5rem)">Start-End Aligned</div>
       <div class="$border $padding(0.5rem)">Start-End Aligned</div>
       <div class="$border $padding(0.5rem)">Start-End Aligned</div>
     </div>
-    
+
     <h3>Space Between (w)</h3>
     <div class="$flex(w,gap(1rem)) $border $padding(1rem) $h(200px)">
       <div class="$border $padding(0.5rem)">Space Between</div>
       <div class="$border $padding(0.5rem)">Space Between</div>
       <div class="$border $padding(0.5rem)">Space Between</div>
     </div>
-    
+
     <h3>Space Around (u)</h3>
     <div class="$flex(u,gap(1rem)) $border $padding(1rem) $h(200px)">
       <div class="$border $padding(0.5rem)">Space Around</div>
       <div class="$border $padding(0.5rem)">Space Around</div>
       <div class="$border $padding(0.5rem)">Space Around</div>
     </div>
-    
+
     <h3>Space Evenly (v)</h3>
     <div class="$flex(v,gap(1rem)) $border $padding(1rem) $h(200px)">
       <div class="$border $padding(0.5rem)">Space Evenly</div>
@@ -324,19 +329,24 @@
         align-content: center;
         gap: 1rem;
       }
+
       .\$border {
         border-style: solid;
         border-width: medium;
       }
+
       .\$padding\(1rem\) {
         padding: 1rem;
       }
+
       .\$h\(200px\) {
         block-size: 200px;
       }
+
       .\$padding\(0\.5rem\) {
         padding: 0.5rem;
       }
+
       .\$flex\(ab\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -348,6 +358,7 @@
         place-content: start end;
         gap: 1rem;
       }
+
       .\$flex\(w\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -359,6 +370,7 @@
         align-content: space-between;
         gap: 1rem;
       }
+
       .\$flex\(u\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -370,6 +382,7 @@
         align-content: space-around;
         gap: 1rem;
       }
+
       .\$flex\(v\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -386,6 +399,266 @@
     @layer items {}
   </style>
 </test-html>
+<test-html title="Layout 5.1 - All Flex Alignment Combinations">
+  <main>
+    <h2>Flex Container Alignment Tests</h2>
+
+    <h3>1. Two values but the same - $flex(cc)</h3>
+    <div class="$flex(cc,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">place-content: center</div>
+      <div class="$border $padding(0.5rem)">place-content: center</div>
+      <div class="$border $padding(0.5rem)">place-content: center</div>
+    </div>
+
+    <h3>1a. Two values the same - $flex(ww)</h3>
+    <div class="$flex(ww,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">place-content: space-between</div>
+      <div class="$border $padding(0.5rem)">place-content: space-between</div>
+      <div class="$border $padding(0.5rem)">place-content: space-between</div>
+    </div>
+
+    <h3>2. Two values but different - $flex(ab)</h3>
+    <div class="$flex(ab,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: start, justify-content: end</div>
+      <div class="$border $padding(0.5rem)">align-content: start, justify-content: end</div>
+      <div class="$border $padding(0.5rem)">align-content: start, justify-content: end</div>
+    </div>
+
+    <h3>2a. Two values different (spaces) - $flex(vu)</h3>
+    <div class="$flex(vu,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: space-evenly, justify-content: space-around</div>
+      <div class="$border $padding(0.5rem)">align-content: space-evenly, justify-content: space-around</div>
+      <div class="$border $padding(0.5rem)">align-content: space-evenly, justify-content: space-around</div>
+    </div>
+
+    <h3>3a. Only align-content - $flex(s.)</h3>
+    <div class="$flex(s.,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: stretch only</div>
+      <div class="$border $padding(0.5rem)">align-content: stretch only</div>
+      <div class="$border $padding(0.5rem)">align-content: stretch only</div>
+    </div>
+
+    <h3>3b. Only justify-content - $flex(.w)</h3>
+    <div class="$flex(.w,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">justify-content: space-between only</div>
+      <div class="$border $padding(0.5rem)">justify-content: space-between only</div>
+      <div class="$border $padding(0.5rem)">justify-content: space-between only</div>
+    </div>
+
+    <h3>4a. With align-items - Same content values - $flex(ccs)</h3>
+    <div class="$flex(ccs,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">place-content: center, align-items: stretch</div>
+      <div class="$border $padding(0.5rem)">place-content: center, align-items: stretch</div>
+      <div class="$border $padding(0.5rem)">place-content: center, align-items: stretch</div>
+    </div>
+
+    <h3>4b. With align-items - Different content values - $flex(ws_)</h3>
+    <div class="$flex(ws_,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items:
+        baseline</div>
+      <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items:
+        baseline</div>
+      <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items:
+        baseline</div>
+    </div>
+
+    <h3>4e. Only align-items - $flex(..s)</h3>
+    <div class="$flex(..s,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">only align-items: stretch</div>
+      <div class="$border $padding(0.5rem)">only align-items: stretch</div>
+      <div class="$border $padding(0.5rem)">only align-items: stretch</div>
+    </div>
+
+    <h2>Flex Item Alignment Tests</h2>
+
+    <h3>Basic Item Alignments</h3>
+    <div class="$flex(gap(1rem)) $border $padding(1rem) $h(200px)
+          |:first$_flex(a)
+          |:second$_flex(b)
+          |:third$_flex(c)
+          |:fourth$_flex(s)
+          |:fifth$_flex(_)">
+      <div class="$border $padding(0.5rem)">align-self: start</div>
+      <div class="$border $padding(0.5rem)">align-self: end</div>
+      <div class="$border $padding(0.5rem)">align-self: center</div>
+      <div class="$border $padding(0.5rem)">align-self: stretch</div>
+      <div class="$border $padding(0.5rem)">align-self: baseline</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$flex\(cc\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: center;
+        text-indent: unset;
+        place-content: center;
+        gap: 1rem;
+      }
+
+      .\$border {
+        border-style: solid;
+        border-width: medium;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$h\(200px\) {
+        block-size: 200px;
+      }
+
+      .\$padding\(0\.5rem\) {
+        padding: 0.5rem;
+      }
+
+      .\$flex\(ww\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: space-between;
+        gap: 1rem;
+      }
+
+      .\$flex\(ab\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: end;
+        text-indent: unset;
+        place-content: start end;
+        gap: 1rem;
+      }
+
+      .\$flex\(vu\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: space-evenly space-around;
+        gap: 1rem;
+      }
+
+      .\$flex\(s\.\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        align-content: stretch;
+        justify-content: unset;
+        gap: 1rem;
+      }
+
+      .\$flex\(\.w\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        align-content: unset;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .\$flex\(ccs\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: center;
+        text-indent: unset;
+        place-content: center;
+        align-items: stretch;
+        gap: 1rem;
+      }
+
+      .\$flex\(ws_\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: justify;
+        text-indent: unset;
+        place-content: space-between stretch;
+        align-items: baseline;
+        gap: 1rem;
+      }
+
+      .\$flex\(\.\.s\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: unset;
+        align-items: stretch;
+        gap: 1rem;
+      }
+
+      .\$flex\(gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        gap: 1rem;
+      }
+    }
+
+    @layer items {
+      .\|\:first\$_flex\(a\)> :where(:where(:first-child)) {
+        text-align: unset;
+        align-self: start;
+      }
+
+      .\|\:second\$_flex\(b\)> :where(:where(:nth-child(2))) {
+        text-align: unset;
+        align-self: end;
+      }
+
+      .\|\:third\$_flex\(c\)> :where(:where(:nth-child(3))) {
+        text-align: unset;
+        align-self: center;
+      }
+
+      .\|\:fourth\$_flex\(s\)> :where(:where(:nth-child(4))) {
+        text-align: unset;
+        align-self: stretch;
+      }
+
+      .\|\:fifth\$_flex\(_\)> :where(:where(:nth-child(5))) {
+        text-align: unset;
+        align-self: baseline;
+      }
+    }
+  </style>
+</test-html>
 <test-html title="Layout 6 - Flex Wrap">
   <main>
     <h3>No Wrap (default)</h3>
@@ -395,7 +668,7 @@
       <div class="$border $padding(0.5rem) $w(100px)">Item 3</div>
       <div class="$border $padding(0.5rem) $w(100px)">Item 4</div>
     </div>
-    
+
     <h3>Wrap</h3>
     <div class="$flex(wrap,gap(1rem)) $border $padding(1rem) $w(300px)">
       <div class="$border $padding(0.5rem) $w(100px)">Item 1</div>
@@ -403,7 +676,7 @@
       <div class="$border $padding(0.5rem) $w(100px)">Item 3</div>
       <div class="$border $padding(0.5rem) $w(100px)">Item 4</div>
     </div>
-    
+
     <h3>Wrap Reverse</h3>
     <div class="$flex(wrap-reverse,gap(1rem)) $border $padding(1rem) $w(300px)">
       <div class="$border $padding(0.5rem) $w(100px)">Item 1</div>
@@ -484,7 +757,7 @@
       <p>The gap function in block layout controls word spacing and line height.</p>
       <p>This creates proper spacing for readable text content.</p>
     </div>
-    
+
     <h3>Block with Text Alignment</h3>
     <div class="$grid(cols(1fr,1fr),gap(1rem))">
       <div class="$block(a) $border $padding(1rem)">
@@ -579,7 +852,7 @@
         text-align: justify;
         text-indent: unset;
       }
-      
+
     }
 
     @layer items {}
@@ -592,45 +865,54 @@
       <div>
         <h4>Visible (default)</h4>
         <div class="$block(visible) $border $padding(1rem) $h(100px) $w(200px)">
-          <p>This text demonstrates the visible overflow property. It will continue to be visible outside the container if it's too long to fit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt.</p>
+          <p>This text demonstrates the visible overflow property. It will continue to be visible outside the container
+            if it's too long to fit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget
+            ultricies tincidunt.</p>
         </div>
       </div>
-      
+
       <div>
         <h4>Hidden</h4>
         <div class="$block(hidden) $border $padding(1rem) $h(100px) $w(200px)">
-          <p>This text demonstrates the hidden overflow property. It will be clipped and not visible outside the container if it's too long to fit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt.</p>
+          <p>This text demonstrates the hidden overflow property. It will be clipped and not visible outside the
+            container if it's too long to fit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor,
+            nisl eget ultricies tincidunt.</p>
         </div>
       </div>
-      
+
       <div>
         <h4>Scroll</h4>
         <div class="$block(scroll) $border $padding(1rem) $h(100px) $w(200px)">
-          <p>This text demonstrates the scroll overflow property. It will add scrollbars when the content is too large to fit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt.</p>
+          <p>This text demonstrates the scroll overflow property. It will add scrollbars when the content is too large
+            to fit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies
+            tincidunt.</p>
         </div>
       </div>
-      
+
       <div>
         <h4>Auto</h4>
         <div class="$block(auto) $border $padding(1rem) $h(100px) $w(200px)">
-          <p>This text demonstrates the auto overflow property. It will add scrollbars only when necessary. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt.</p>
+          <p>This text demonstrates the auto overflow property. It will add scrollbars only when necessary. Lorem ipsum
+            dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt.</p>
         </div>
       </div>
     </div>
-    
+
     <h3>Mixed Overflow (Block:Inline)</h3>
     <div class="$grid(cols(1fr,1fr),gap(1rem))">
       <div>
         <h4>Hidden:Scroll</h4>
         <div class="$block(hidden:scroll) $border $padding(1rem) $h(100px) $w(200px)">
-          <p>This demonstrates hidden overflow-y and scroll overflow-x. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt.</p>
+          <p>This demonstrates hidden overflow-y and scroll overflow-x. Lorem ipsum dolor sit amet, consectetur
+            adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt.</p>
         </div>
       </div>
-      
+
       <div>
         <h4>Scroll:Hidden</h4>
         <div class="$block(scroll:hidden) $border $padding(1rem) $h(100px) $w(200px)">
-          <p>This demonstrates scroll overflow-y and hidden overflow-x. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt.</p>
+          <p>This demonstrates scroll overflow-y and hidden overflow-x. Lorem ipsum dolor sit amet, consectetur
+            adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt.</p>
         </div>
       </div>
     </div>
@@ -650,7 +932,7 @@
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
       }
-      
+
       .\$block\(visible\) {
         display: block;
         word-spacing: unset;
@@ -661,24 +943,24 @@
         text-indent: unset;
         overflow: visible;
       }
-      
+
       .\$border {
         border-style: solid;
         border-width: medium;
       }
-      
+
       .\$padding\(1rem\) {
         padding: 1rem;
       }
-      
+
       .\$h\(100px\) {
         block-size: 100px;
       }
-      
+
       .\$w\(200px\) {
         inline-size: 200px;
       }
-      
+
       .\$block\(hidden\) {
         display: block;
         word-spacing: unset;
@@ -689,7 +971,7 @@
         text-indent: unset;
         overflow: hidden;
       }
-      
+
       .\$block\(scroll\) {
         display: block;
         word-spacing: unset;
@@ -700,7 +982,7 @@
         text-indent: unset;
         overflow: scroll;
       }
-      
+
       .\$block\(auto\) {
         display: block;
         word-spacing: unset;
@@ -711,7 +993,7 @@
         text-indent: unset;
         overflow: auto;
       }
-      
+
       .\$block\(hidden\:scroll\) {
         display: block;
         word-spacing: unset;
@@ -722,7 +1004,7 @@
         text-indent: unset;
         overflow: hidden;
       }
-      
+
       .\$block\(scroll\:hidden\) {
         display: block;
         word-spacing: unset;
@@ -746,52 +1028,53 @@
       <div>
         <h4>Normal (default)</h4>
         <div class="$border $padding(1rem)">
-          <p>This    text    demonstrates
-          normal    white-space
-          handling.    Multiple spaces are collapsed.</p>
+          <p>This text demonstrates
+            normal white-space
+            handling. Multiple spaces are collapsed.</p>
         </div>
       </div>
-      
+
       <div>
         <h4>Nowrap</h4>
         <div class="$block(nowrap) $border $padding(1rem) $w(200px)">
-          <p>This text demonstrates nowrap white-space handling. It will not wrap to the next line even if it's too long to fit in the container.</p>
+          <p>This text demonstrates nowrap white-space handling. It will not wrap to the next line even if it's too long
+            to fit in the container.</p>
         </div>
       </div>
-      
+
       <div>
         <h4>Pre</h4>
         <div class="$block(pre) $border $padding(1rem)">
-          <p>This    text    demonstrates
-          pre    white-space
-          handling.    Multiple spaces are preserved.</p>
+          <p>This text demonstrates
+            pre white-space
+            handling. Multiple spaces are preserved.</p>
         </div>
       </div>
-      
+
       <div>
         <h4>Pre-wrap</h4>
         <div class="$block(pre-wrap) $border $padding(1rem) $w(200px)">
-          <p>This    text    demonstrates
-          pre-wrap    white-space
-          handling.    Multiple spaces are preserved and text wraps.</p>
+          <p>This text demonstrates
+            pre-wrap white-space
+            handling. Multiple spaces are preserved and text wraps.</p>
         </div>
       </div>
-      
+
       <div>
         <h4>Pre-line</h4>
         <div class="$block(pre-line) $border $padding(1rem) $w(200px)">
-          <p>This    text    demonstrates
-          pre-line    white-space
-          handling.    Multiple spaces are collapsed but line breaks are preserved.</p>
+          <p>This text demonstrates
+            pre-line white-space
+            handling. Multiple spaces are collapsed but line breaks are preserved.</p>
         </div>
       </div>
-      
+
       <div>
         <h4>Break-spaces</h4>
         <div class="$block(break-spaces) $border $padding(1rem) $w(200px)">
-          <p>This    text    demonstrates
-          break-spaces    white-space
-          handling.    Multiple spaces are preserved and may break.</p>
+          <p>This text demonstrates
+            break-spaces white-space
+            handling. Multiple spaces are preserved and may break.</p>
         </div>
       </div>
     </div>
@@ -811,13 +1094,16 @@
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
       }
+
       .\$border {
         border-style: solid;
         border-width: medium;
       }
+
       .\$padding\(1rem\) {
         padding: 1rem;
       }
+
       .\$block\(nowrap\) {
         display: block;
         word-spacing: unset;
@@ -827,9 +1113,11 @@
         text-align: unset;
         text-indent: unset;
       }
+
       .\$w\(200px\) {
         inline-size: 200px;
       }
+
       .\$block\(pre\) {
         display: block;
         word-spacing: unset;
@@ -839,6 +1127,7 @@
         text-align: unset;
         text-indent: unset;
       }
+
       .\$block\(pre-wrap\) {
         display: block;
         word-spacing: unset;
@@ -848,6 +1137,7 @@
         text-align: unset;
         text-indent: unset;
       }
+
       .\$block\(pre-line\) {
         display: block;
         word-spacing: unset;
@@ -857,6 +1147,7 @@
         text-align: unset;
         text-indent: unset;
       }
+
       .\$block\(break-spaces\) {
         display: block;
         word-spacing: unset;
@@ -878,42 +1169,45 @@
       <div>
         <h4>Normal Wrapping</h4>
         <div class="$border $padding(1rem) $w(200px)">
-          <p>This text demonstrates normal wrapping behavior with a very long word: supercalifragilisticexpialidocious.</p>
+          <p>This text demonstrates normal wrapping behavior with a very long word: supercalifragilisticexpialidocious.
+          </p>
         </div>
       </div>
-      
+
       <div>
         <h4>Break Word</h4>
         <div class="$block(break-word) $border $padding(1rem) $w(200px)">
           <p>This text demonstrates break-word behavior with a very long word: supercalifragilisticexpialidocious.</p>
         </div>
       </div>
-      
+
       <div>
         <h4>Break All</h4>
         <div class="$block(break-all) $border $padding(1rem) $w(200px)">
           <p>This text demonstrates break-all behavior with a very long word: supercalifragilisticexpialidocious.</p>
         </div>
       </div>
-      
+
       <div>
         <h4>Keep All</h4>
         <div class="$block(keep-all) $border $padding(1rem) $w(200px)">
           <p>This text demonstrates keep-all behavior with multiple words: word1 word2 word3 word4 word5 word6.</p>
         </div>
       </div>
-      
+
       <div>
         <h4>Anywhere</h4>
         <div class="$block(anywhere) $border $padding(1rem) $w(200px)">
-          <p>This text demonstrates anywhere overflow-wrap with a very long word: supercalifragilisticexpialidocious.</p>
+          <p>This text demonstrates anywhere overflow-wrap with a very long word: supercalifragilisticexpialidocious.
+          </p>
         </div>
       </div>
-      
+
       <div>
         <h4>Ellipsis</h4>
         <div class="$border $padding(1rem) $w(200px)">
-          <p class="$block(ellipsis,hidden)">This text demonstrates ellipsis behavior when the text is too long to fit in the container. It should truncate with an ellipsis at the end.</p>
+          <p class="$block(ellipsis,hidden)">This text demonstrates ellipsis behavior when the text is too long to fit
+            in the container. It should truncate with an ellipsis at the end.</p>
         </div>
       </div>
     </div>
@@ -922,15 +1216,86 @@
     @layer container, items;
 
     @layer container {
-      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) { display: grid; word-spacing: unset; line-height: unset; white-space: unset; hyphens: unset; text-align: unset; text-indent: unset; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .\$border { border-style: solid; border-width: medium; }
-  .\$padding\(1rem\) { padding: 1rem; }
-  .\$w\(200px\) { inline-size: 200px; }
-  .\$block\(break-word\) { display: block; word-spacing: unset; line-height: unset; white-space: unset; hyphens: unset; text-align: unset; text-indent: unset; overflow-wrap: break-word; }
-  .\$block\(break-all\) { display: block; word-spacing: unset; line-height: unset; white-space: unset; hyphens: unset; text-align: unset; text-indent: unset; word-break: break-all; }
-  .\$block\(keep-all\) { display: block; word-spacing: unset; line-height: unset; white-space: unset; hyphens: unset; text-align: unset; text-indent: unset; word-break: keep-all; }
-  .\$block\(anywhere\) { display: block; word-spacing: unset; line-height: unset; white-space: unset; hyphens: unset; text-align: unset; text-indent: unset; overflow-wrap: anywhere; }
-  .\$block\(ellipsis\,hidden\) { display: block; word-spacing: unset; line-height: unset; white-space: nowrap; hyphens: unset; text-align: unset; text-indent: unset; text-overflow: ellipsis; overflow: hidden; }
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border {
+        border-style: solid;
+        border-width: medium;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$w\(200px\) {
+        inline-size: 200px;
+      }
+
+      .\$block\(break-word\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        overflow-wrap: break-word;
+      }
+
+      .\$block\(break-all\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        word-break: break-all;
+      }
+
+      .\$block\(keep-all\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        word-break: keep-all;
+      }
+
+      .\$block\(anywhere\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        overflow-wrap: anywhere;
+      }
+
+      .\$block\(ellipsis\,hidden\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: nowrap;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
     }
 
     @layer items {}
@@ -944,39 +1309,48 @@
       <div>
         <h4>No Hyphens</h4>
         <div class="$border $padding(1rem) $w(150px)">
-          <p>This text demonstrates normal behavior without hyphenation for long words like internationalization and antidisestablishmentarianism.</p>
+          <p>This text demonstrates normal behavior without hyphenation for long words like internationalization and
+            antidisestablishmentarianism.</p>
         </div>
       </div>
-      
+
       <div>
         <h4>Auto Hyphens</h4>
         <div class="$block(hyphens) $border $padding(1rem) $w(80px)">
-          <p>This text demonstrates auto hyphenation for long words like internationalization and antidisestablishmentarianism.</p>
+          <p>This text demonstrates auto hyphenation for long words like internationalization and
+            antidisestablishmentarianism.</p>
         </div>
       </div>
-      
+
       <div>
         <h4>Manual Hyphens (shy)</h4>
         <div class="$block(shy) $border $w(100px)">
-          <p>This text demonstrates manual hyphenation using the shy parameter. You would need to add soft hyphe&shy;ns manually.</p>
+          <p>This text demonstrates manual hyphenation using the shy parameter. You would need to add soft hyphe&shy;ns
+            manually.</p>
         </div>
       </div>
     </div>
-    
+
     <h3>Line Clamp</h3>
     <div class="$grid(cols(1fr,1fr),gap(1rem))">
       <div>
         <h4>Line Clamp (2 lines)</h4>
         <div class="$border $padding(1rem) $w(300px)">
-          <p class="$block(clamp(2),hidden) $height(2*1.2em)">This text demonstrates line clamping to 2 lines. Remember to always add overflow hidden to achieve the effect.
-            Any text beyond the second line will be truncated with an ellipsis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nunc nunc lacinia nunc, eget lacinia nunc nunc eget nunc.</p>
+          <p class="$block(clamp(2)) $height(2*1.2em)">This text demonstrates line clamping to 2 lines. Remember to
+            always add overflow hidden to achieve the effect.
+            Any text beyond the second line will be truncated with an ellipsis. Lorem ipsum dolor sit amet, consectetur
+            adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nunc nunc lacinia nunc, eget lacinia nunc
+            nunc eget nunc.</p>
         </div>
       </div>
       <div>
         <h4>Line Clamp (3 lines)</h4>
         <div class="$border $padding(1rem) $w(300px)">
-          <p class="$block(clamp(3),hidden) $height(3*(1.2em))">This text demonstrates line clamping to 3 lines.  Remember to always add overflow hidden to achieve the effect.
-            Any text beyond the third line will be truncated with an ellipsis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nunc nunc lacinia nunc, eget lacinia nunc nunc eget nunc.</p>
+          <p class="$block(clamp(3)) $height(3*(1.2em))">This text demonstrates line clamping to 3 lines. Remember to
+            always add overflow hidden to achieve the effect.
+            Any text beyond the third line will be truncated with an ellipsis. Lorem ipsum dolor sit amet, consectetur
+            adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nunc nunc lacinia nunc, eget lacinia nunc
+            nunc eget nunc.</p>
         </div>
       </div>
     </div>
@@ -1054,7 +1428,7 @@
         inline-size: 300px;
       }
 
-      .\$block\(clamp\(2\)\,hidden\) {
+      .\$block\(clamp\(2\)\) {
         display: -webkit-box;
         word-spacing: unset;
         line-height: unset;
@@ -1064,14 +1438,14 @@
         text-indent: unset;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
-        overflow: hidden;
+        overflow-y: hidden;
       }
 
       .\$height\(2\*1\.2em\) {
         height: calc(2.4em);
       }
 
-      .\$block\(clamp\(3\)\,hidden\) {
+      .\$block\(clamp\(3\)\) {
         display: -webkit-box;
         word-spacing: unset;
         line-height: unset;
@@ -1081,7 +1455,7 @@
         text-indent: unset;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
-        overflow: hidden;
+        overflow-y: hidden;
       }
 
       .\$height\(3\*\(1\.2em\)\) {
@@ -1098,9 +1472,9 @@
     <div class="$border $padding(1rem) 
             $flex(gap(1rem))
             |:first$_flex(1grow)
-            |:nth-child(2)$_flex(2grow)
-            |:nth-child(3)$_flex(0.5shrink)
-            |:nth-child(4)$_flex(basis(100px))
+            |:second$_flex(2grow)
+            |:third$_flex(0.5shrink)
+            |:fourth$_flex(basis(100px))
     ">
       <div class="$border $padding(0.5rem)">
         <p>Flex-grow: 1</p>
@@ -1115,49 +1489,18 @@
         <p>Flex-basis: 100px</p>
       </div>
     </div>
-    
-    <h3>Flex Item Alignment</h3>
-    <div class="$border $padding(1rem) $h(200px)
-            $flex(gap(1rem))
-            |:first$_flex(a)
-            |:nth-child(2)$_flex(c)
-            |:nth-child(3)$_flex(b)
-            |:nth-child(4)$_flex(_)
-    ">
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: start</p>
-      </div>
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: center</p>
-      </div>
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: end</p>
-      </div>
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: baseline</p>
-      </div>
-    </div>
-    
     <h3>Grid Item Properties</h3>
     <div class="$border $padding(1rem)
             $grid(cols(1fr,1fr,1fr),rows(100px,100px),gap(1rem))
-            |:first$_grid(a)
-            |:nth-child(2)$_grid(c)
-            |:nth-child(3)$_grid(b)
-            |:nth-child(4)$_grid(_)
+            |:first$_grid(column(1,3))
+            |:second$_grid(row(,4))
+            |:third$_grid(column(1,))
+            |:fourth$_grid(row(1,2),column(2,3))
       ">
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: start</p>
-      </div>
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: center</p>
-      </div>
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: end</p>
-      </div>
-      <div class="$border $padding(0.5rem)">
-        <p>Self-align: baseline</p>
-      </div>
+      <div class="$border $padding(0.5rem)">Grid column: 1 / 3</div>
+      <div class="$border $padding(0.5rem)">Grid row-end: 4</div>
+      <div class="$border $padding(0.5rem)">Grid column-start: 1</div>
+      <div class="$border $padding(0.5rem)">Grid row: 1 / 2, Grid column: 2 / 3</div>
     </div>
   </main>
   <style>
@@ -1188,10 +1531,6 @@
         padding: 0.5rem;
       }
 
-      .\$h\(200px\) {
-        block-size: 200px;
-      }
-
       .\$grid\(cols\(1fr\,1fr\,1fr\)\,rows\(100px\,100px\)\,gap\(1rem\)\) {
         display: grid;
         word-spacing: unset;
@@ -1207,53 +1546,106 @@
     }
 
     @layer items {
-      .\|\:first\$_flex\(1grow\) > :where(:where(:first-child)) {
+      .\|\:first\$_flex\(1grow\)> :where(:where(:first-child)) {
         flex-grow: 1;
       }
 
-      .\|\:nth-child\(2\)\$_flex\(2grow\) > :where(:nth-child(2)) {
+      .\|\:second\$_flex\(2grow\)> :where(:where(:nth-child(2))) {
         flex-grow: 2;
       }
 
-      .\|\:nth-child\(3\)\$_flex\(0\.5shrink\) > :where(:nth-child(3)) {
+      .\|\:third\$_flex\(0\.5shrink\)> :where(:where(:nth-child(3))) {
         flex-shrink: 0.5;
       }
 
-      .\|\:nth-child\(4\)\$_flex\(basis\(100px\)\) > :where(:nth-child(4)) {
+      .\|\:fourth\$_flex\(basis\(100px\)\)> :where(:where(:nth-child(4))) {
         flex-basis: 100px;
       }
 
-      .\|\:first\$_flex\(a\) > :where(:where(:first-child)) {
-        text-align: unset;
-        align-self: start;
+      .\|\:first\$_grid\(column\(1\,3\)\)> :where(:where(:first-child)) {
+        grid-column: 1 / 3;
       }
 
-      .\|\:nth-child\(2\)\$_flex\(c\) > :where(:nth-child(2)) {
-        text-align: unset;
-        align-self: center;
+      .\|\:second\$_grid\(row\(\,4\)\)> :where(:where(:nth-child(2))) {
+        grid-row: undefined / 4;
       }
 
-      .\|\:nth-child\(3\)\$_flex\(b\) > :where(:nth-child(3)) {
-        text-align: unset;
-        align-self: end;
+      .\|\:third\$_grid\(column\(1\,\)\)> :where(:where(:nth-child(3))) {
+        grid-column: 1 / undefined;
       }
 
-      .\|\:nth-child\(4\)\$_flex\(_\) > :where(:nth-child(4)) {
-        text-align: unset;
-        align-self: baseline;
-      }
-
-      .\|\:first\$_grid\(a\) > :where(:where(:first-child)) {
-      }
-
-      .\|\:nth-child\(2\)\$_grid\(c\) > :where(:nth-child(2)) {
-      }
-
-      .\|\:nth-child\(3\)\$_grid\(b\) > :where(:nth-child(3)) {
-      }
-
-      .\|\:nth-child\(4\)\$_grid\(_\) > :where(:nth-child(4)) {
+      .\|\:fourth\$_grid\(row\(1\,2\)\,column\(2\,3\)\)> :where(:where(:nth-child(4))) {
+        grid-area: 1 / 2 / 2 / 3;
       }
     }
   </style>
 </test-html>
+<!-- <test-html title="Layout 14 - Grid Position Properties">
+  <main>
+    <h3>Individual Start/End Properties</h3>
+    <div class="$grid(cols(repeat(3,1fr)),rows(repeat(3,100px)),gap(1rem))
+      |:first$_grid(column(,2))
+      |:second$_grid(column(2,))
+      |:third$_grid(row(,3))
+      |:fourth$_grid(row(2,))
+      |:fifth$_grid(column(1,3),row(2,4))">
+
+      <div class="$border $padding(0.5rem)">Grid Column End: 2</div>
+      <div class="$border $padding(0.5rem)">Grid Column Start: 2</div>
+      <div class="$border $padding(0.5rem)">Grid Row End: 3</div>
+      <div class="$border $padding(0.5rem)">Grid Row Start: 2</div>
+      <div class="$border $padding(0.5rem)">Spans Multiple</div>
+
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(repeat\(3\,1fr\)\)\,rows\(repeat\(3\,100px\)\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 100px);
+        gap: 1rem;
+      }
+
+      .\$border {
+        border-style: solid;
+        border-width: medium;
+      }
+
+      .\$padding\(0\.5rem\) {
+        padding: 0.5rem;
+      }
+    }
+
+    @layer items {
+      .\$border\$padding\(0\.5rem\)\_grid\(column\(\,2\)\) > :where(:first-child) {
+        grid-column-end: 2;
+      }
+
+      .\$border\$padding\(0\.5rem\)\_grid\(column\(2\,\)\) {
+        grid-column-start: 2;
+      }
+
+      .\$border\$padding\(0\.5rem\)\_grid\(row\(\,3\)\) {
+        grid-row-end: 3;
+      }
+
+      .\$border\$padding\(0\.5rem\)\_grid\(row\(2\,\)\) {
+        grid-row-start: 2;
+      }
+
+      .\$border\$padding\(0\.5rem\)\_grid\(column\(1\,3\)\,row\(2\,4\)\) {
+        grid-column: 1 / 3;
+        grid-row: 2 / 4;
+      }
+    }
+  </style>
+</test-html> -->

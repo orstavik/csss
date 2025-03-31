@@ -19,9 +19,14 @@ export class ShortBlock {
     return { media, shorts };
   }
 
-  *rules(SHORTS, supers) {
+  static #rename(shorts, renameMap) {
+    return Object.fromEntries(Object.entries(shorts).map(([k, v]) => [renameMap[k] ?? k, v]));
+  }
+
+  *rules(SHORTS, supers, renameMap) {
     let { media, shorts } = this.interpret(SHORTS, supers);
     if (!shorts) return;
+    shorts = shorts.map(({ shorts, selector }) => ({ selector, shorts: ShortBlock.#rename(shorts, renameMap) }));
     let [container, ...items] = shorts;
     items = items.filter(item => item.shorts);
     const cRule = new Rule(media, this.clazz + container.selector, container.shorts);
@@ -239,7 +244,7 @@ function diveDeep(tokens, top) {
       a = new Expression(a, diveDeep(tokens));
       b = tokens.shift();
     }
-    if(a.match?.(WORD))
+    if (a.match?.(WORD))
       a = a.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase());
     if (b === ")" || (top && b === undefined))
       return res.push(a), res;

@@ -10,6 +10,11 @@ const SHORTS = {
   ...layouts,
 };
 
+const RENAME = {
+  overflowBlock: "overflowY",
+  overflowInline: "overflowX",
+};
+
 export class SheetWrapper {
   rules = {};
 
@@ -34,6 +39,7 @@ export class SheetWrapper {
     this.sheet = sheet;
     this.supers = {};
     this.shorts = { ...SHORTS };
+    this.renameMap = { ...RENAME };
     this.items = this.setupLayer("items", sheet);
     this.container = this.setupLayer("container", sheet);
     this.setupStatement();
@@ -57,7 +63,7 @@ export class SheetWrapper {
 
   addRule(str) {
     const shorts = new ShortBlock(str);
-    const rules = [...shorts.rules(this.shorts, this.supers)];
+    const rules = [...shorts.rules(this.shorts, this.supers, this.renameMap)];
     for (const rule of rules)
       this.addRuleImpl(rule);
     return rules[0];
@@ -76,7 +82,7 @@ export class SheetWrapper {
   }
 
   readSupers(txt) {
-    const supers = extractSuperShorts(txt, SHORTS);
+    const supers = extractSuperShorts(txt, this.shorts);
     Object.assign(this.supers, supers);
   }
 
