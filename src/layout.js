@@ -44,18 +44,13 @@ function wrap(a) {
   return wordBreak(a) ?? overflow(a) ?? whiteSpace(a) ?? hyphens(a) ?? overflowWrap(a);
 }
 
-function toLineClamp(num, ...ignored) {
+function lineClamp(num, ...ignored) {
   return {
     "display": "-webkit-box",
     WebkitLineClamp: num,
     WebkitBoxOrient: "vertical",
     overflowBlock: "hidden",
   }
-}
-
-const LineClamp = { //$block(lineClamp(3),...)
-  lineClamp: toLineClamp,
-  clamp: toLineClamp,
 }
 
 const TextAlignAliases = {
@@ -135,7 +130,8 @@ function block(...args) {
 }
 block.scope = {
   ...LAYOUT,
-  ...LineClamp,
+  lineClamp,
+  clamp: lineClamp,
   gap: toBlockGap,
   g: toBlockGap,
 };

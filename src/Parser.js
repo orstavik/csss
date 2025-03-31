@@ -20,7 +20,7 @@ export class ShortBlock {
   }
 
   static #rename(shorts, renameMap) {
-    return Object.fromEntries(Object.entries(shorts).map(([k, v]) => [renameMap[k] ?? k, v]));
+    return shorts && Object.fromEntries(Object.entries(shorts).map(([k, v]) => [renameMap[k] ?? k, v]));
   }
 
   *rules(SHORTS, supers, renameMap) {
