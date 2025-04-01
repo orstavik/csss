@@ -49,7 +49,7 @@ function lineClamp(num, ...ignored) {
     "display": "-webkit-box",
     WebkitLineClamp: num,
     WebkitBoxOrient: "vertical",
-    overflow: "hidden",
+    overflowBlock: "hidden",
   }
 }
 
@@ -152,6 +152,9 @@ _block.scope = {   //$_block(indent(1em),...)
   textIndent: AllFunctions.textIndent,
   indent: AllFunctions.textIndent,
 };
+
+const GRID_ALIGN = /^([abcsuvw.])([abcsuvw.])([abcs_.])([abcs])$/;
+const _GRID_ALIGN = /([abcs_.])([abcs])/;
 
 function grid(...args) {
   args = args.map(a => {

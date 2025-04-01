@@ -23,8 +23,6 @@ export const BuiltinSupers = `
 :fifth = :nth-child(5);
 :last = :last-child;
 :edge = :first-child,:last-child;
-:odd = :nth-child(odd);
-:even = :nth-child(even);
 
 
 
