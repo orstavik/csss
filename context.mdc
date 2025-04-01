@@ -3,11 +3,6 @@ description:
 globs: 
 alwaysApply: true
 ---
----
-description: 
-globs: 
-alwaysApply: false
----
 # CSSS (CSS Shorts) Project Context
 
 ## Overview

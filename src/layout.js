@@ -44,7 +44,7 @@ function wrap(a) {
   return wordBreak(a) ?? overflow(a) ?? whiteSpace(a) ?? hyphens(a) ?? overflowWrap(a);
 }
 
-function lineClamp(num, ...ignored) {
+function toLineClamp(num, ...ignored) {
   return {
     "display": "-webkit-box",
     WebkitLineClamp: num,
@@ -213,9 +213,6 @@ row.scope = { span };
 
 _grid.scope = {
   ..._LAYOUT,
-  column, row,
-  // area: (...args) => ({ ["grid-area"]: args.join(" ") }),
-
 };
 
 

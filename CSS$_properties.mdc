@@ -1,3 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
 # CSSS Properties Reference
 
 This document serves as a comprehensive reference for all implemented properties and syntax patterns in the CSSS engine.
