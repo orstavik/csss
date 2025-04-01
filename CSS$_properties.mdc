@@ -1,7 +1,12 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
+---
+---
+description: CSSS Properties Reference
+globs: 
+alwaysApply: true
 ---
 # CSSS Properties Reference
 

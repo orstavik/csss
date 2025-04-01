@@ -17,10 +17,6 @@ export const BuiltinSupers = `
 :eighth = :nth-child(8);
 :ninth = :nth-child(9);
 :tenth = :nth-child(10);
-:second = :nth-child(2);
-:third = :nth-child(3);
-:fourth = :nth-child(4);
-:fifth = :nth-child(5);
 :last = :last-child;
 :edge = :first-child,:last-child;
 
@@ -72,13 +68,6 @@ $flex = $display(flex)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$tex
 //font that breaks inheritance chain
 $font = $fontFamily(initial)$fontStyle(initial)$fontWeight(initial)$fontVariant(initial)$fontStretch(initial)$textTransform(initial)$letterSpacing(initial);
 $fontInherit = $fontFamily(inherit)$fontStyle(inherit)$fontWeight(inherit)$fontVariant(inherit)$fontStretch(inherit)$textTransform(inherit)$letterSpacing(inherit);
-
-$holyGrail = $grid(rows(auto,1fr,auto),cols(auto,1fr,auto),gap(1rem));
-$holyGrailHeader = $_grid(column(1,4))$padding(1rem);
-$holyGrailFooter = $_grid(column(1,4))$padding(1rem);
-$holyGrailSidebarLeft = $_grid(column(1,2))$padding(1rem);
-$holyGrailSidebarRight = $_grid(column(3,4))$padding(1rem);
-$holyGrailMain = $_grid(column(2,3))$padding(1rem);
 `;
 //$full-width = $text-transform(full-width);
 //$full-size-kana = $text-transform(full-size-kana);

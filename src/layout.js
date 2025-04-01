@@ -44,7 +44,7 @@ function wrap(a) {
   return wordBreak(a) ?? overflow(a) ?? whiteSpace(a) ?? hyphens(a) ?? overflowWrap(a);
 }
 
-function toLineClamp(num, ...ignored) {
+function lineClamp(num, ...ignored) {
   return {
     "display": "-webkit-box",
     WebkitLineClamp: num,
@@ -153,9 +153,6 @@ _block.scope = {   //$_block(indent(1em),...)
   indent: AllFunctions.textIndent,
 };
 
-const GRID_ALIGN = /^([abcsuvw.])([abcsuvw.])([abcs_.])([abcs])$/;
-const _GRID_ALIGN = /([abcs_.])([abcs])/;
-
 function grid(...args) {
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
@@ -174,9 +171,7 @@ function grid(...args) {
     }
     return a;
   });
-  
-  // Always include 'display: grid' in the result
-  return Object.assign({ display: "grid" }, ...args);
+  return Object.assign(...args);
 }
 const nativeGrid = Object.fromEntries(Object.entries(AllFunctions).filter(
   ([k]) => k.match(/^grid[A-Z]/)));
@@ -213,6 +208,9 @@ row.scope = { span };
 
 _grid.scope = {
   ..._LAYOUT,
+  column, row,
+  // area: (...args) => ({ ["grid-area"]: args.join(" ") }),
+
 };
 
 
@@ -242,6 +240,7 @@ flex.scope = {
   ...LAYOUT,
   ...GAP
 };
+
 
 const GROW = /^([0-9.]+)(grow|g)$/;
 const SHRINK = /^([0-9.]+)(shrink|s)$/;
