@@ -1,5 +1,5 @@
 import { Color } from "./Color.js";
-import { borderSwitch, default as NativeFunctions, toLogicalFour } from "./func.js";
+import { borderSwitch, default as NativeFunctions, toLogicalFour, isLength } from "./func.js";
 
 /**
 
@@ -142,17 +142,17 @@ color.scope = { ...ColorScope, ...funcs };
 function boxShadow(...args) {
   if (args.every(a => isLength(a) || a === "inset"))
     args.push(`var(--box-shadow-color, oklch(from currentcolor l 0 h))`);
-  return NativeCssProperties.boxShadow(...args);
+  return NativeFunctions.boxShadow(...args);
 };
 function textShadow(...args) {
   if (args.every(a => isLength(a)))
     args.push(`var(--text-shadow-color, oklch(from currentcolor l 0 h))`);
-  return NativeCssProperties.boxShadow(...args);
+  return NativeFunctions.boxShadow(...args);
 }
 function dropShadow(...args) {
   if (args.every(a => isLength(a)))
     args.push(`var(--drop-shadow-color, oklch(from currentcolor l 0 h))`);
-  return NativeCssProperties.boxShadow(...args);
+  return NativeFunctions.boxShadow(...args);
 }
 
 boxShadow.scope = ColorScope;

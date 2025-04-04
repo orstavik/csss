@@ -94,7 +94,7 @@ function toSize(NAME, ...args) {
   } throw new SyntaxError(`$${NAME} accepts only 1 or 3 arguments: ${args}`);
 }
 
-function isLength(x) {
+export function isLength(x) {
   if (x === "0") return x;
   const m = x.match?.(new RegExp(`^(${NUM})(${LENGTHS_PER})$`));
   if (!m) return;
