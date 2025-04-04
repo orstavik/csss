@@ -171,7 +171,7 @@ function grid(...args) {
     }
     return a;
   });
-  return Object.assign(...args);
+  return Object.assign({ display: 'grid' }, ...args);
 }
 const nativeGrid = Object.fromEntries(Object.entries(AllFunctions).filter(
   ([k]) => k.match(/^grid[A-Z]/)));
@@ -219,22 +219,46 @@ _grid.scope = {
 function flex(...args) {
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
-    let m = wrap(a);
-    if (m) return m;
+    let m;
     if (m = a.match(/^(column|column-reverse|row-reverse|row)$/)) return { ["flex-direction"]: a };
     if (m = a.match(/^(wrap|wrap-reverse|no-wrap)$/)) return { ["flex-wrap"]: a };
-    if (m = a.match(/^[abcsuvw.][abcsuvw.]?[abcs_]?$/)) {
-      const [b, i = b, i2 = "."] = m[0];
-      return {
-        textAlign: TextAlignAliases[i2],
-        placeContent: [AlignAliases[b], AlignAliases[i]].join(" "),
-        alignItems: AlignItemsFlexAliases[i2],
-      };
+    // Original alignment logic commented out
+    // if (m = a.match(/^[abcsuvw.][abcsuvw.]?[abcs_]?$/)) {
+    //   const [b, i = b, i2 = "."] = m[0];
+    //   return {
+    //     textAlign: TextAlignAliases[i2],
+    //     placeContent: [AlignAliases[b], AlignAliases[i]].join(" "),
+    //     alignItems: AlignItemsFlexAliases[i2],
+    //   };
+    // }
+
+    if (m = a.match(/^([abcsuvw._]{1,3})$/)) {
+        const alignStr = m[1];
+        const b = alignStr[0];
+        const i = alignStr.length > 1 ? alignStr[1] : '.';
+        const i2 = alignStr.length > 2 ? alignStr[2] : '.';
+        const styles = {};
+
+        const effective_i = alignStr.length === 1 ? b : i;
+        if (TextAlignAliases[effective_i]) styles.textAlign = TextAlignAliases[effective_i];
+
+        const justifyContentVal = effective_i !== '.' ? AlignAliases[effective_i] : null;
+
+        const alignContentVal = b !== '.' ? AlignAliases[b] : null;
+
+        if (alignContentVal && justifyContentVal) styles.placeContent = [alignContentVal, justifyContentVal].join(" ");
+        else if (alignContentVal) styles.alignContent = alignContentVal;
+        else if (justifyContentVal) styles.justifyContent = justifyContentVal;
+
+        if (i2 !== '.' && 'abcs_'.includes(i2) && AlignAliases[i2]) styles.alignItems = AlignAliases[i2];
+
+        if (Object.keys(styles).length > 0 || /^\.+$/.test(alignStr)) return styles;
     }
+
     if (m = wrap(a)) return m;
     return a;
   });
-  return Object.assign(...args);
+  return Object.assign({ display: 'flex' }, ...args);
 }
 flex.scope = {
   ...LAYOUT,
