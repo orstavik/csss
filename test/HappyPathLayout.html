@@ -119,7 +119,7 @@
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: center;
+        text-align: justify;
         text-indent: unset;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 100px 100px;
@@ -166,7 +166,7 @@
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: unset;
+        text-align: justify;
         text-indent: unset;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 50px 50px;
@@ -179,7 +179,7 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="Layout 4 - Basic Flex (Potential Supershorts?)">
+<test-html title="Layout 4 - Basic Flex">
   <main>
     <h3>Row Flex (default)</h3>
     <div class="$flex(gap(1rem)) $border $padding(1rem)">
@@ -271,7 +271,7 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="Layout 5 - Flex Alignment">
+<test-html title="Layout 5 - Flex Alignment - Place Content">
   <main>
     <h3>Center Alignment (c)</h3>
     <div class="$flex(c,gap(1rem)) $border $padding(1rem) $h(200px)">
@@ -318,24 +318,29 @@
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: unset;
+        text-align: center;
         text-indent: unset;
-        align-content: center;
+        place-content: center;
         gap: 1rem;
       }
+
       .\$border {
         border-style: solid;
         border-width: medium;
       }
+
       .\$padding\(1rem\) {
         padding: 1rem;
       }
+
       .\$h\(200px\) {
         block-size: 200px;
       }
+
       .\$padding\(0\.5rem\) {
         padding: 0.5rem;
       }
+
       .\$flex\(ab\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -347,6 +352,7 @@
         place-content: start end;
         gap: 1rem;
       }
+
       .\$flex\(w\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -355,9 +361,10 @@
         hyphens: unset;
         text-align: unset;
         text-indent: unset;
-        align-content: space-between;
+        place-content: space-between;
         gap: 1rem;
       }
+
       .\$flex\(u\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -366,9 +373,10 @@
         hyphens: unset;
         text-align: unset;
         text-indent: unset;
-        align-content: space-around;
+        place-content: space-around;
         gap: 1rem;
       }
+
       .\$flex\(v\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -377,7 +385,7 @@
         hyphens: unset;
         text-align: unset;
         text-indent: unset;
-        align-content: space-evenly;
+        place-content: space-evenly;
         gap: 1rem;
       }
     }
@@ -451,21 +459,47 @@
       <div class="$border $padding(0.5rem)">only align-items: stretch</div>
       <div class="$border $padding(0.5rem)">only align-items: stretch</div>
     </div>
-  
-    <h2>Flex Item Alignment Tests</h2>
     
-    <h3>Basic Item Alignments</h3>
-    <div class="$flex(gap(1rem)) $border $padding(1rem) $h(200px)
-          |:first$_flex(a)
-          |:second$_flex(b)
-          |:third$_flex(c)
-          |:fourth$_flex(s)
-          |:fifth$_flex(_)">
-      <div class="$border $padding(0.5rem)">align-self: start</div>
-      <div class="$border $padding(0.5rem)">align-self: end</div>
-      <div class="$border $padding(0.5rem)">align-self: center</div>
-      <div class="$border $padding(0.5rem)">align-self: stretch</div>
-      <div class="$border $padding(0.5rem)">align-self: baseline</div>
+    <h3>5. Single value shorthand - $flex(a)</h3>
+    <div class="$flex(a,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">should produce: place-content: start start, text-align: start</div>
+      <div class="$border $padding(0.5rem)">using 'a' for both align-content and justify-content</div>
+      <div class="$border $padding(0.5rem)">and no align-items</div>
+    </div>
+    
+    <h3>6. Only justify-content provided - $flex(.b)</h3>
+    <div class="$flex(.b,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">should produce: justify-content: end, text-align: end</div>
+      <div class="$border $padding(0.5rem)">with no explicit align-content</div>
+      <div class="$border $padding(0.5rem)">and no align-items</div>
+    </div>
+    
+    <h3>7. Three-value mix - $flex(acb)</h3>
+    <div class="$flex(acb,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: start, justify-content: center</div>
+      <div class="$border $padding(0.5rem)">align-items: end</div>
+      <div class="$border $padding(0.5rem)">text-align: center</div>
+    </div>
+    
+    <h3>8. Three-value mix with unset align-items - $flex(ac.)</h3>
+    <div class="$flex(ac.,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: start, justify-content: center</div>
+      <div class="$border $padding(0.5rem)">no align-items should be set</div>
+      <div class="$border $padding(0.5rem)">text-align: center</div>
+    </div>
+    
+    <h3>9. Three-value mix with align-items as baseline - $flex(.c_)</h3>
+    <div class="$flex(.c_,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">justify-content: center, text-align: center</div>
+      <div class="$border $padding(0.5rem)">align-items: baseline</div>
+      <div class="$border $padding(0.5rem)">first character is placeholder</div>
+    </div>
+    
+    <h3>10. Three-value mix with space-evenly and center - $flex(vvc)</h3>
+    <div class="$flex(vvc,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: space-evenly</div>
+      <div class="$border $padding(0.5rem)">justify-content: space-evenly</div>
+      <div class="$border $padding(0.5rem)">align-items: center, text-align: unset</div>
     </div>
   </main>
   <style>
@@ -546,7 +580,6 @@
         text-align: unset;
         text-indent: unset;
         align-content: stretch;
-        justify-content: unset;
         gap: 1rem;
       }
 
@@ -558,7 +591,6 @@
         hyphens: unset;
         text-align: unset;
         text-indent: unset;
-        align-content: unset;
         justify-content: space-between;
         gap: 1rem;
       }
@@ -597,12 +629,73 @@
         hyphens: unset;
         text-align: unset;
         text-indent: unset;
-        place-content: unset;
         align-items: stretch;
         gap: 1rem;
       }
 
-      .\$flex\(gap\(1rem\)\) {
+      .\$flex\(a\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: start;
+        text-indent: unset;
+        place-content: start;
+        gap: 1rem;
+      }
+
+      .\$flex\(\.b\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: end;
+        text-indent: unset;
+        justify-content: end;
+        gap: 1rem;
+      }
+
+      .\$flex\(acb\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: center;
+        text-indent: unset;
+        place-content: start center;
+        align-items: end;
+        gap: 1rem;
+      }
+
+      .\$flex\(ac\.\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: center;
+        text-indent: unset;
+        place-content: start center;
+        gap: 1rem;
+      }
+
+      .\$flex\(\.c_\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: center;
+        text-indent: unset;
+        justify-content: center;
+        align-items: baseline;
+        gap: 1rem;
+      }
+
+      .\$flex\(vvc\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -610,38 +703,17 @@
         hyphens: unset;
         text-align: unset;
         text-indent: unset;
+        place-content: space-evenly;
+        align-items: center;
         gap: 1rem;
       }
     }
 
     @layer items {
-      .\|\:first\$_flex\(a\) > :where(:where(:first-child)) {
-        text-align: unset;
-        align-self: start;
-      }
-
-      .\|\:second\$_flex\(b\) > :where(:where(:nth-child(2))) {
-        text-align: unset;
-        align-self: end;
-      }
-
-      .\|\:third\$_flex\(c\) > :where(:where(:nth-child(3))) {
-        text-align: unset;
-        align-self: center;
-      }
-
-      .\|\:fourth\$_flex\(s\) > :where(:where(:nth-child(4))) {
-        text-align: unset;
-        align-self: stretch;
-      }
-
-      .\|\:fifth\$_flex\(_\) > :where(:where(:nth-child(5))) {
-        text-align: unset;
-        align-self: baseline;
-      }
+      
     }
   </style>
-</test-html> 
+</test-html>
 <test-html title="Layout 6 - Flex Wrap">
   <main>
     <h3>No Wrap (default)</h3>
@@ -1320,7 +1392,7 @@
         text-indent: unset;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
-        overflow: hidden;
+        overflow-y: hidden;
       }
 
       .\$height\(2\*1\.2em\) {
@@ -1337,7 +1409,7 @@
         text-indent: unset;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
-        overflow: hidden;
+        overflow-y: hidden;
       }
 
       .\$height\(3\*\(1\.2em\)\) {
