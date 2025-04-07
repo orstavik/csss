@@ -165,8 +165,10 @@ function grid(...args) {
       const [b, i = b, b2 = ".", i2 = b2] = m[0];
       return {
         textAlign: TextAlignAliases[i2],
-        placeContent: [AlignAliases[b], AlignAliases[i]].join(" "),
-        placeItems: [AlignAliases[b2], AlignAliases[i2]].join(" "),
+        alignContent: AlignAliases[b],
+        justifyContent: AlignAliases[i],
+        alignItems: AlignAliases[b2],
+        justifyItems: AlignAliases[i2],
       };
     }
     return a;
@@ -176,6 +178,12 @@ function grid(...args) {
 const nativeGrid = Object.fromEntries(Object.entries(AllFunctions).filter(
   ([k]) => k.match(/^grid[A-Z]/)));
 grid.scope = {
+  placeContent: AllFunctions.placeContent,
+  justifyContent: AllFunctions.justifyContent,
+  alignContent: AllFunctions.alignContent,
+  placeItems: AllFunctions.placeItems,
+  justifyItems: AllFunctions.justifyItems,
+  alignItems: AllFunctions.alignItems,
   ...nativeGrid,
   cols: nativeGrid.gridTemplateColumns,
   rows: nativeGrid.gridTemplateRows,
@@ -192,7 +200,8 @@ function _grid(...args) {
       const [b, i = b] = m[0];
       return {
         textAlign: TextAlignAliases[i],
-        placeSelf: [AlignAliases[b], AlignAliases[i]].join(" "),
+        alignSelf: AlignAliases[b],
+        justifySelf: AlignAliases[i],
       };
     }
     return a;
@@ -209,6 +218,9 @@ row.scope = { span };
 _grid.scope = {
   ..._LAYOUT,
   column, row,
+  placeSelf: AllFunctions.placeSelf,
+  justifySelf: AllFunctions.justifySelf,
+  alignSelf: AllFunctions.alignSelf,
   // area: (...args) => ({ ["grid-area"]: args.join(" ") }),
 
 };
@@ -227,7 +239,8 @@ function flex(...args) {
       const [b, i = b, i2 = "."] = m[0];
       return {
         textAlign: TextAlignAliases[i2],
-        placeContent: [AlignAliases[b], AlignAliases[i]].join(" "),
+        alignContent: AlignAliases[b],
+        justifyContent: AlignAliases[i],
         alignItems: AlignItemsFlexAliases[i2],
       };
     }
@@ -237,6 +250,10 @@ function flex(...args) {
   return Object.assign(...args);
 }
 flex.scope = {
+  placeContent: AllFunctions.placeContent,
+  justifyContent: AllFunctions.justifyContent,
+  alignContent: AllFunctions.alignContent,
+  alignItems: AllFunctions.alignItems,
   ...LAYOUT,
   ...GAP
 };
@@ -265,6 +282,7 @@ function _flex(...args) {
 }
 
 _flex.scope = {
+  alignSelf: AllFunctions.alignSelf,
   ..._LAYOUT,
   basis: a => ({ ["flex-basis"]: a })
 };
