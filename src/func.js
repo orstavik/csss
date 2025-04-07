@@ -302,7 +302,7 @@ function font(...args) {
     }
     throw `Unrecognized font property: ${a}`;
   }
-  res.fontFamily = res.fontFamily.join(", ").replaceAll("+", " ");
+  res.fontFamily ??= res.fontFamily.join(", ").replaceAll("+", " ");
   return res;
 }
 font.scope = {
