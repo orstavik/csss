@@ -1,13 +1,3 @@
----
-description: 
-globs: 
-alwaysApply: true
----
----
-description: CSSS Properties Reference
-globs: 
-alwaysApply: true
----
 # CSSS Properties Reference
 
 This document serves as a comprehensive reference for all implemented properties and syntax patterns in the CSSS engine.
@@ -257,12 +247,16 @@ Note: The following background properties are planned for future implementation:
 - `$h(100%)` - Height
 - `$h(min-content,50%,max-content)` - Min, normal, max heights
 
-### $transform() - Transformations
+### Transform Functions ($translateX, $scale, etc.)
 
-- `$transform(translateY(-50%))` - Transform translateY
-- `$transform(rotate(45deg))` - Transform rotate
+Applies CSS transforms using specific function shorts. The generic `$transform()` short is **not** available. Use the individual function shorts instead:
 
-## Special Features
+- `$translateX(10px)` - Translates horizontally.
+- `$translateY(-50%)` - Translates vertically.
+- `$scale(1.5)` - Scales the element.
+- `$rotate(45deg)` - Rotates the element.
+- `$skewX(10deg)` - Skews horizontally.
+- (Other transform functions like `translate`, `scaleX`, `rotateZ`, etc., follow the same pattern)
 
 ### Position controls
 
@@ -354,129 +348,4 @@ You can combine multiple state selectors by chaining pipe syntax:
 - `$semiCondensed` → `$fontStretch(semiCondensed)`
 - `$semiExpanded` → `$fontStretch(semiExpanded)`
 - `$expanded` → `$fontStretch(expanded)`
-- `$extraExpanded` → `$fontStretch(extraExpanded)`
-- `$ultraExpanded` → `$fontStretch(ultraExpanded)`
-
-### Font Family Properties
-
-- `$serif` → `$fontFamily(serif)`
-- `$sansSerif` → `$fontFamily(sansSerif)`
-- `$monospace` → `$fontFamily(monospace)`
-- `$cursive` → `$fontFamily(cursive)`
-- `$fantasy` → `$fontFamily(fantasy)`
-- `$systemUi` → `$fontFamily(systemUi)`
-- `$uiSerif` → `$fontFamily(uiSerif)`
-- `$uiSansSerif` → `$fontFamily(uiSansSerif)`
-
-### Default Elements
-
-- `$color` → `$color(black,white,colorMix(oklch,currentcolor,--background-color,33%))`
-- `$border` → `$border(solid, medium)`
-- `$block` → `$display(block)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.)`
-- `$grid` → `$display(grid)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.)`
-- `$flex` → `$display(flex)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.)`
-- `$font` → `$fontFamily(initial)$fontStyle(initial)$fontWeight(initial)$fontVariant(initial)$fontStretch(initial)$textTransform(initial)$letterSpacing(initial)`
-- `$fontInherit` → `$fontFamily(inherit)$fontStyle(inherit)$fontWeight(inherit)$fontVariant(inherit)$fontStretch(inherit)$textTransform(inherit)$letterSpacing(inherit)`
-- `$holyGrail` → `$display(grid)$gridTemplateRows(auto 1fr auto)$gridTemplateColumns(auto 1fr 1fr auto)$gap(1rem)`
-
-### Media Query Aliases
-
-- `@sm` → `@(min-width:640px)`
-- `@md` → `@(min-width:768px)`
-- `@lg` → `@(min-width:1024px)`
-- `@xl` → `@(min-width:1280px)`
-- `@2xl` → `@(min-width:1536px)`
-- `@dark` → `@(prefers-color-scheme:dark)`
-
-### Selector Aliases
-
-- `:first` → `:first-child`
-- `:last` → `:last-child`
-- `:edge` → `:first-child,:last-child`
-
-## Technical Implementation Details
-
-### Implementation of Super Shorts (`$name`)
-
-Super shorts are reusable CSS property bundles prefixed with `$` that expand to one or more CSS properties.
-
-#### Implementation:
-
-- Super shorts are defined in `BuiltinSupers.js` with the format: `$name = $function(value)$function2(value2)...;`
-- For example: `$bold = $fontWeight(bold);` defines a super short named `$bold` that sets font-weight to bold
-- More complex example: `$block = $display(block)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.);`
-
-#### How They Work:
-
-1. The `extractSuperShorts()` function in `Parser.js` uses regex to find and extract super short definitions
-2. The `SUPER_HEAD`, `SUPER_LINE`, and `SUPER_BODY` regex patterns match the super short syntax
-3. Super shorts are parsed into a `ShortBlock` object
-4. When used in HTML, each super short expands to its defined CSS properties
-5. The dot notation `.` is used to represent `unset` value
-
-#### Storage and Registration:
-
-- Built-in super shorts are defined in `BuiltinSupers.js`
-- They're loaded during initialization by the `SheetWrapper` constructor
-- Custom super shorts can be added at runtime via the `readSupers()` method
-
-### Implementation of Super Selectors (`:name`)
-
-Super selectors are reusable CSS selectors prefixed with `:` that expand to one or more CSS pseudo-classes or complex selectors.
-
-#### Implementation:
-
-- Super selectors are defined in `BuiltinSupers.js` with the format: `:name = :selector1,:selector2,...;`
-- For example: `:first = :first-child;` creates an alias for the `:first-child` pseudo-class
-- Multiple selectors: `:edge = :first-child,:last-child;` creates a selector that matches both first and last children
-
-#### How They Work:
-
-1. Super selectors are extracted using the same mechanism as super shorts in `extractSuperShorts()`
-2. They're validated by `checkSuperBody()` to ensure they have the correct prefix and structure
-3. Super selectors are processed by the `Selector` class, which interprets them when building CSS rules
-4. When used in HTML, they expand to the full CSS selector
-
-### Implementation of Media Queries (`@name`)
-
-Media query supers are reusable media query definitions prefixed with `@` that expand to full media query expressions.
-
-#### Implementation:
-
-- Media query supers are defined in `BuiltinSupers.js` with format: `@name = @(media-query);`
-- For example: `@sm = @(min-width:640px);` defines a breakpoint for small screens
-- Special case: `@dark = @(prefers-color-scheme:dark);` for dark mode detection
-
-#### How They Work:
-
-1. Media query supers are extracted with the same mechanism as other supers
-2. The `ShortBlock.interpret()` method processes media queries by:
-   - Replacing supers with their values using the supers object
-   - Stripping the `@` prefix
-   - Handling special syntax like `!` for negation
-   - Joining conditions with "and"
-   - Prepending `@media` to create a complete media query
-3. The `Rule` class uses these media queries when generating CSS rules
-
-### Combining These Features
-
-The real power of the system comes from combining these features:
-
-1. **Nested Expressions**:
-
-   ```html
-   <div class="$grid(cols(1fr,1fr),gap(1rem))">...</div>
-   ```
-
-2. **Media + Selectors + Shorts**:
-
-   ```html
-   <div class="@sm:hover$color(red)">Red on hover on small screens</div>
-   ```
-
-3. **Multiple Declarations** using pipe syntax:
-   ```html
-   <div class="$border|@md$w(500px)|:hover$color(blue)">...</div>
-   ```
-
-The parser first identifies media queries, then selectors, and finally shorts. Each component is processed by its corresponding interpreter, and the results are combined to generate the final CSS rules. These rules are then added to the appropriate CSS layer ("container" or "items") based on whether they target container elements or their children.
+- `$extraExpanded` → `
