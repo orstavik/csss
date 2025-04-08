@@ -157,59 +157,33 @@ function grid(...args) {
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
     let m;
-    if (m = wrap(a)) return m;
+    if (m = wrap(a))
+      return m;
     if (m = a.match(/(dense)-?(column)/))
       return { gridAutoFlow: `${m[1]} ${m[2] || "row"}` };
-    if (m = a.match(/^[abcsuvw._]{1,4}$/)) {
-      const sh = m[0];
-      let cont_v, cont_h, item_v, item_h;
-      switch(sh.length) {
-        case 1:
-          cont_v = cont_h = item_v = item_h = sh[0];
-          break;
-        case 2:
-          cont_v = sh[0];
-          cont_h = sh[1];
-          item_v = sh[0];
-          item_h = sh[1];
-          break;
-        case 3:
-          cont_v = sh[0];
-          cont_h = sh[1];
-          item_v = sh[2];
-          item_h = sh[1];
-          break;
-        default:
-          cont_v = sh[0];
-          cont_h = sh[1];
-          item_v = sh[2];
-          item_h = sh[3];
-          break;
-      }
-      const styles = {};
-      if (cont_v !== '.' || cont_h !== '.') {
-        const arr = [];
-        if (cont_v !== '.') arr.push(AlignAliases[cont_v]);
-        if (cont_h !== '.') arr.push(AlignAliases[cont_h]);
-        if (arr.length) styles.placeContent = arr.join(' ');
-      }
-      if (item_v !== '.' || item_h !== '.') {
-        const arr = [];
-        if (item_v !== '.') arr.push(AlignAliases[item_v]);
-        if (item_h !== '.') arr.push(AlignAliases[item_h]);
-        if (arr.length) styles.placeItems = arr.join(' ');
-      }
-      if (item_h !== '.' && TextAlignAliases[item_h])
-        styles.textAlign = TextAlignAliases[item_h];
-      return styles;
+    if (m = a.match(/^[abcsuvw.][abcsuvw.]?[abcs_.]?[abcs]?$/)) {
+      const [b, i = b, b2 = ".", i2 = b2] = m[0];
+      return {
+        textAlign: TextAlignAliases[i2],
+        alignContent: AlignAliases[b],
+        justifyContent: AlignAliases[i],
+        alignItems: AlignAliases[b2],
+        justifyItems: AlignAliases[i2],
+      };
     }
     return a;
   });
-  return Object.assign({ display: 'grid' }, ...args);
+  return Object.assign(...args);
 }
 const nativeGrid = Object.fromEntries(Object.entries(AllFunctions).filter(
   ([k]) => k.match(/^grid[A-Z]/)));
 grid.scope = {
+  placeContent: AllFunctions.placeContent,
+  justifyContent: AllFunctions.justifyContent,
+  alignContent: AllFunctions.alignContent,
+  placeItems: AllFunctions.placeItems,
+  justifyItems: AllFunctions.justifyItems,
+  alignItems: AllFunctions.alignItems,
   ...nativeGrid,
   cols: nativeGrid.gridTemplateColumns,
   rows: nativeGrid.gridTemplateRows,
@@ -222,21 +196,13 @@ function _grid(...args) {
   args = args.map(a => {
     if (typeof a !== "string") return a;
     let m;
-    if (m = a.match(/^[abcsuvw._]{1,2}$/)) {
-      const sh = m[0];
-      let item_v, item_h;
-      if (sh.length === 1) {
-        item_v = item_h = sh[0];
-      } else {
-        item_v = sh[0];
-        item_h = sh[1];
-      }
-      const styles = {
-        placeSelf: [AlignAliases[item_v], AlignAliases[item_h]].join(' ')
+    if (m = a.match(/^[abcs_.][abcs_.]?$/)) {
+      const [b, i = b] = m[0];
+      return {
+        textAlign: TextAlignAliases[i],
+        alignSelf: AlignAliases[b],
+        justifySelf: AlignAliases[i],
       };
-      if (item_h !== '.' && TextAlignAliases[item_h])
-        styles.textAlign = TextAlignAliases[item_h];
-      return styles;
     }
     return a;
   });
@@ -252,6 +218,9 @@ row.scope = { span };
 _grid.scope = {
   ..._LAYOUT,
   column, row,
+  placeSelf: AllFunctions.placeSelf,
+  justifySelf: AllFunctions.justifySelf,
+  alignSelf: AllFunctions.alignSelf,
   // area: (...args) => ({ ["grid-area"]: args.join(" ") }),
 
 };
@@ -262,48 +231,29 @@ _grid.scope = {
 function flex(...args) {
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
-    let m;
+    let m = wrap(a);
+    if (m) return m;
     if (m = a.match(/^(column|column-reverse|row-reverse|row)$/)) return { ["flex-direction"]: a };
     if (m = a.match(/^(wrap|wrap-reverse|no-wrap)$/)) return { ["flex-wrap"]: a };
-    // Original alignment logic commented out
-    // if (m = a.match(/^[abcsuvw.][abcsuvw.]?[abcs_]?$/)) {
-    //   const [b, i = b, i2 = "."] = m[0];
-    //   return {
-    //     textAlign: TextAlignAliases[i2],
-    //     placeContent: [AlignAliases[b], AlignAliases[i]].join(" "),
-    //     alignItems: AlignItemsFlexAliases[i2],
-    //   };
-    // }
-
-    if (m = a.match(/^([abcsuvw._]{1,3})$/)) {
-        const alignStr = m[1];
-        const b = alignStr[0];
-        const i = alignStr.length > 1 ? alignStr[1] : '.';
-        const i2 = alignStr.length > 2 ? alignStr[2] : '.';
-        const styles = {};
-
-        const effective_i = alignStr.length === 1 ? b : i;
-        if (TextAlignAliases[effective_i]) styles.textAlign = TextAlignAliases[effective_i];
-
-        const justifyContentVal = effective_i !== '.' ? AlignAliases[effective_i] : null;
-
-        const alignContentVal = b !== '.' ? AlignAliases[b] : null;
-
-        if (alignContentVal && justifyContentVal) styles.placeContent = [alignContentVal, justifyContentVal].join(" ");
-        else if (alignContentVal) styles.alignContent = alignContentVal;
-        else if (justifyContentVal) styles.justifyContent = justifyContentVal;
-
-        if (i2 !== '.' && 'abcs_'.includes(i2) && AlignAliases[i2]) styles.alignItems = AlignAliases[i2];
-
-        if (Object.keys(styles).length > 0 || /^\.+$/.test(alignStr)) return styles;
+    if (m = a.match(/^[abcsuvw.][abcsuvw.]?[abcs_]?$/)) {
+      const [b, i = b, i2 = "."] = m[0];
+      return {
+        textAlign: TextAlignAliases[i2],
+        alignContent: AlignAliases[b],
+        justifyContent: AlignAliases[i],
+        alignItems: AlignItemsFlexAliases[i2],
+      };
     }
-
     if (m = wrap(a)) return m;
     return a;
   });
-  return Object.assign({ display: 'flex' }, ...args);
+  return Object.assign(...args);
 }
 flex.scope = {
+  placeContent: AllFunctions.placeContent,
+  justifyContent: AllFunctions.justifyContent,
+  alignContent: AllFunctions.alignContent,
+  alignItems: AllFunctions.alignItems,
   ...LAYOUT,
   ...GAP
 };
@@ -332,6 +282,7 @@ function _flex(...args) {
 }
 
 _flex.scope = {
+  alignSelf: AllFunctions.alignSelf,
   ..._LAYOUT,
   basis: a => ({ ["flex-basis"]: a })
 };

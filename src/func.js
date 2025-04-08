@@ -94,7 +94,7 @@ function toSize(NAME, ...args) {
   } throw new SyntaxError(`$${NAME} accepts only 1 or 3 arguments: ${args}`);
 }
 
-export function isLength(x) {
+function isLength(x) {
   if (x === "0") return x;
   const m = x.match?.(new RegExp(`^(${NUM})(${LENGTHS_PER})$`));
   if (!m) return;
@@ -302,7 +302,7 @@ function font(...args) {
     }
     throw `Unrecognized font property: ${a}`;
   }
-  res.fontFamily = res.fontFamily.join(", ").replaceAll("+", " ");
+  res.fontFamily ??= res.fontFamily.join(", ").replaceAll("+", " ");
   return res;
 }
 font.scope = {
