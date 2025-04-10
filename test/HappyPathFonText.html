@@ -1,0 +1,24 @@
+<test-html title="Text Decoration - Basic Test">
+  <main>
+      <h2>Grammar & Spelling</h2>
+      <div class="$grammarError(2px)">grammarError(2px)</div>
+      <h2>Default (no style)</h2>
+      <div class="$overLine(2px)">overLine(2px)</div>
+      <div class="$overUnderThroughLine(2px)">overUnderThroughLine(2px)</div>
+      <h2>Styles</h2>
+      <div class="$wavyOverUnderThroughLine(2px)">wavyOverUnderThroughLine(2px)</div>
+      <div class="$solidThroughLine(2px)">solidThroughLine(2px)</div>    
+      <div class="$dottedUnderLine(2px)">dottedUnderLine(2px)</div>
+      <div class="$dashedOverUnderThroughLine(2px)">dashedOverUnderThroughLine(2px)</div>
+      <div class="$doubleOverLine(2px)">doubleOverLine(2px)</div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      
+    }
+
+    @layer items {}
+  </style>
+</test-html> 
