@@ -814,6 +814,28 @@
     @layer items {}
   </style>
 </test-html>
+<test-html title="$lineClamp(2)">
+  <div csss="$lineClamp(n)=$block(clamp(n));" class="$lineClamp(2)">
+    hello
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$lineClamp\(2\) {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow-y: hidden;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+
+
+
 <!--
 <test-html title=":dark=@media(prefers-color-scheme:dark);">
   <div css=":dark=@media(prefers-color-scheme:dark);">
