@@ -1,5 +1,12 @@
 <test-html title="Holy Grail Layout">
-  <main>
+  <main csss="
+      $holyGrail = $grid(rows(auto,1fr,auto),cols(auto,1fr,auto),gap(1rem));
+      $holyGrailHeader = $_grid(column(1,4))$padding(1rem);
+      $holyGrailFooter = $_grid(column(1,4))$padding(1rem);
+      $holyGrailSidebarLeft = $_grid(column(1,2))$padding(1rem);
+      $holyGrailSidebarRight = $_grid(column(3,4))$padding(1rem);
+      $holyGrailMain = $_grid(column(2,3))$padding(1rem);
+    ">
     <div class="$holyGrail $gap(1rem) $h(100vh)">
       <header class="$holyGrailHeader $bg(azure) $border">
         <h1>Header</h1>
@@ -118,8 +125,131 @@
      
   </style>
 </test-html> 
-<!-- 
+<test-html title="Bug: `display:grid`">
+    <main csss="
+    $layout = $grid(cols(1fr,1fr,1fr))$gap(1rem);
+     ">
+    <div class="$layout $grid">
+      <div class="$color(white,blue,) $bg() $padding(1rem) $textAlign(center)">1</div>
+      <div class="$color(white,yellow,) $bg() $padding(1rem) $textAlign(center)">2</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
 
+      @layer container {
+        .\$layout { 
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr; 
+          gap: 1rem; 
+        }
+        .\$color\(white\,blue\,\) { 
+          color: white; 
+          --background-color: blue; 
+          border-color: white; 
+        }
+        .\$bg\(\) { 
+          background: var(--background-color); 
+        }
+        .\$padding\(1rem\) { 
+          padding: 1rem; 
+        }
+        .\$textAlign\(center\) { 
+          text-align: center; 
+        }
+        .\$color\(white\,yellow\,\) { 
+          color: white; 
+          --background-color: yellow; 
+          border-color: white; 
+        }
+       }
+      @layer items {
+        
+      }
+  </style>
+</test-html>
+<test-html title="Bug: `display:flex`">
+  <main csss="
+    $flex = $flex(row,gap(1rem),textAlign(center),padding(1rem));
+  ">
+    <div class="$flex">
+      <div class="$color(white,red,) $bg(red)">1</div>
+      <div class="$color(white,green,) $bg(green)">2</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+    @layer container {
+      .\$flex { 
+        display: flex;
+        flex-direction: row; 
+        gap: 1rem; 
+        text-align: center; 
+        padding: 1rem; 
+      }
+      .\$color\(white\,red\,\) { 
+        color: white; 
+        --background-color: red; 
+        border-color: white; 
+      }
+      .\$bg\(red\) { 
+        background: red; 
+      }
+      .\$color\(white\,green\,\) { 
+        color: white; 
+        --background-color: green; 
+        border-color: white; 
+      }
+      .\$bg\(green\) { 
+        background: green; 
+      }
+    }
+
+    @layer items {
+
+    }
+  </style>
+</test-html>
+<test-html title="Bug: empty argument on supershorts">
+  <main csss="
+    $layout = $block$border;
+  ">
+    <div class="$layout">
+      <h1>Hello Sunshine! This is error.</h1>
+    </div>
+    <div class="$block $border">
+      <h1>Hello Sunshine! No error?</h1>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+    @layer container {
+      .\$layout {
+        display: block;
+        border-style: solid;
+        border-width: medium;
+      }
+      .\$block {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+      }
+      .\$border {
+        border-style: solid;
+        border-width: medium;
+      }
+    }
+    @layer items {
+
+    }
+  </style>
+</test-html>
+
+<!-- 
 $twoCol = $grid(template(auto 1fr / 3fr 1fr))$gap(2rem);
 $twoColMain = $grid(column(1 / 2));
 $twoColSidebar = $grid(column(2 / 3));
