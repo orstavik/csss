@@ -62,7 +62,6 @@
 
       .\$border\(r\(10px\,30px\,60px\)\) {
         border-style: solid;
-        border-width: medium;
         border-start-start-radius: 10px;
         border-end-end-radius: 60px;
         border-start-end-radius: 30px;
@@ -133,7 +132,6 @@
     @layer container {
       .\$border\(w\(0\,1px\,2px\,\)\,s\(\.\,\.\,solid\,dashed\)\) {
         border-style: solid;
-        border-width: medium;
         border-block-width: 0px 2px;
         border-inline-start-width: 1px;
         border-block-start-style: unset;
@@ -369,9 +367,10 @@
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: center;
+        text-align: unset;
         text-indent: unset;
         place-content: center;
+        align-items: unset;
       }
     }
 
@@ -738,6 +737,109 @@
   </style>
 
 </test-html>
+<test-html title="Text Decoration - Basic Test">
+  <main>
+    <h2>Grammar & Spelling</h2>
+    <div class="$grammarError(2px)">grammarError(2px)</div>
+    <h2>Default (no style)</h2>
+    <div class="$overLine(2px)">overLine(2px)</div>
+    <div class="$overUnderLineThrough(2px)">overUnderLineThrough(2px)</div>
+    <h2>Styles</h2>
+    <div class="$wavyOverUnderLineThrough(2px)">wavyOverUnderLineThrough(2px)</div>
+    <div class="$lineThrough(2px)">lineThrough(2px)</div>
+    <div class="$dottedUnderLine(2px)">dottedUnderLine(2px)</div>
+    <div class="$dashedOverUnderLineThrough(2px)">dashedOverUnderLineThrough(2px)</div>
+    <div class="$doubleOverLine(2px)">doubleOverLine(2px)</div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grammarError\(2px\) {
+        text-decoration-line: grammar-error;
+        text-decoration-thickness: 2px;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+
+      .\$overLine\(2px\) {
+        text-decoration-line: overline;
+        text-decoration-thickness: 2px;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+
+      .\$overUnderLineThrough\(2px\) {
+        text-decoration-line: underline overline line-through;
+        text-decoration-thickness: 2px;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+
+      .\$wavyOverUnderLineThrough\(2px\) {
+        text-decoration-line: underline overline line-through;
+        text-decoration-thickness: 2px;
+        text-decoration-style: wavy;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+
+      .\$lineThrough\(2px\) {
+        text-decoration-style: initial;
+        text-decoration-line: line-through;
+        text-decoration-thickness: 2px;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+
+      .\$dottedUnderLine\(2px\) {
+        text-decoration-line: underline;
+        text-decoration-thickness: 2px;
+        text-decoration-style: dotted;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+
+      .\$dashedOverUnderLineThrough\(2px\) {
+        text-decoration-line: underline overline line-through;
+        text-decoration-thickness: 2px;
+        text-decoration-style: dashed;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+
+      .\$doubleOverLine\(2px\) {
+        text-decoration-line: overline;
+        text-decoration-thickness: 2px;
+        text-decoration-style: double;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$lineClamp(2)">
+  <div csss="$lineClamp(n)=$block(clamp(n));" class="$lineClamp(2)">
+    hello
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$lineClamp\(2\) {
+        display: -webkit-box;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow-y: hidden;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+
+
+
 <!--
 <test-html title=":dark=@media(prefers-color-scheme:dark);">
   <div css=":dark=@media(prefers-color-scheme:dark);">
