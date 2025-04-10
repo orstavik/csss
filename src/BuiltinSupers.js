@@ -60,14 +60,17 @@ $systemUi = $fontFamily(systemUi);
 $uiSerif = $fontFamily(uiSerif);
 $uiSansSerif = $fontFamily(uiSansSerif);
 
-$color = $color(black,white,colorMix(oklch,currentcolor,--background-color,33%));
-$border = $border(solid, medium);
-$block = $display(block)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.);
-$grid = $display(grid)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.);
-$flex = $display(flex)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.);
-//font that breaks inheritance chain
-$font = $fontFamily(initial)$fontStyle(initial)$fontWeight(initial)$fontVariant(initial)$fontStretch(initial)$textTransform(initial)$letterSpacing(initial);
-$fontInherit = $fontFamily(inherit)$fontStyle(inherit)$fontWeight(inherit)$fontVariant(inherit)$fontStretch(inherit)$textTransform(inherit)$letterSpacing(inherit);
 `;
 //$full-width = $text-transform(full-width);
 //$full-size-kana = $text-transform(full-size-kana);
+
+
+// $color = $color(black,white,colorMix(oklch,currentcolor,--background-color,33%));
+// $border = $border(solid, medium);
+// $block = $display(block)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.);
+// $grid = $display(grid)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.);
+// $flex = $display(flex)$wordSpacing(.)$lineHeight(.)$whiteSpace(.)$hyphens(.)$textAlign(.)$textIndent(.);
+// //font that breaks inheritance chain
+// $font = $fontFamily(.)$fontStyle(.)$fontWeight(.)$fontVariant(.)$fontStretch(.)$textTransform(.)$letterSpacing(.);
+// $fontInherit = $fontFamily(inherit)$fontStyle(inherit)$fontWeight(inherit)$fontVariant(inherit)$fontStretch(inherit)$textTransform(inherit)$letterSpacing(inherit);
+// fontInherit is like an umbrella with holes in it.

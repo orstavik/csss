@@ -1,3 +1,6 @@
+//func is the basic of native css. And it shouldn't be altered. Only fixed.
+// border and font should be outside this file.
+
 export const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|in|pt|pc|ch|ex|%/.source;
 export const N = /-?[0-9]*\.?[0-9]+(?:e[+-]?[0-9]+)?/.source;
 export const NUM = `(${N})(?:\\/(${N}))?`; //num frac allows for -.5e+0/-122.5e-12
@@ -68,33 +71,7 @@ export function borderSwitch(obj) {
   }));
 }
 
-function colonSplit2(NAME, SEP, x) {
-  if (x == null) return x;
-  const res = x.split(":");
-  return res.length == 1 ? res[0] :
-    `${NAME}(${res.join(SEP)})`;
-}
-
-//enables us to write a min and max eiter as 2px:5px or max(2px,5px)
-//$w(50%)
-//$w(1,2) not allowed, only 1 or 3 arguments.
-//$w(30em:35%,50%,60cm:80vw:100%)
-//$w(max(30em,35%),50%,min(60cm,80vw,100%))
-function toSize(NAME, ...args) {
-  args = args.map(a => a?.replace(/^(min|max)$/, "$&-content"));
-  if (args.length === 1)
-    return { [NAME]: args[0] };
-  if (args.length === 3) {
-    const NAME2 = NAME.replace(/^./, c => c.toUpperCase());
-    return {
-      [`min${NAME2}`]: colonSplit2("max", ",", args[0]),
-      [NAME]: args[1],
-      [`max${NAME2}`]: colonSplit2("min", ",", args[2])
-    };
-  } throw new SyntaxError(`$${NAME} accepts only 1 or 3 arguments: ${args}`);
-}
-
-function isLength(x) {
+export function isLength(x) {
   if (x === "0") return x;
   const m = x.match?.(new RegExp(`^(${NUM})(${LENGTHS_PER})$`));
   if (!m) return;
@@ -235,8 +212,6 @@ NativeCssProperties.animation.scope = EASING_FUNCTIONS;
 
 
 function border(...args) {
-  if (!args.length)
-    return;
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
     if (a.match(/thin|medium|thick/)) return { Width: a };
@@ -245,8 +220,11 @@ function border(...args) {
     if (a.match(/solid|dotted|dashed|double|none/)) return { Style: a };
     return a;
   });
-  return borderSwitch(Object.assign(...args));
+  return borderSwitch(Object.assign({ Style: "solid" }, ...args));
 }
+
+const borderColor = toLogicalFour.bind(null, "Color");
+borderColor.scope = NativeCssProperties.color.scope;
 
 border.scope = {
   width: toLogicalFour.bind(null, "Width"),
@@ -257,11 +235,16 @@ border.scope = {
   r: toRadiusFour.bind(null, "Radius"),
   r4: toRadiusFour.bind(null, "Radius"),
   r8: toLogicalEight.bind(null, "Radius", 0),
+  color: borderColor,
+  c: borderColor,
 };
+delete NativeCssProperties.border;
 delete NativeCssProperties.borderWidth;
 delete NativeCssProperties.borderStyle;
 delete NativeCssProperties.borderRadius;
-NativeCssProperties.borderColor = (...args) => borderSwitch(toLogicalFour("borderColor", ...args));
+// delete NativeCssProperties.borderColor;
+
+NativeCssProperties.borderColor = (...args) => borderSwitch(toLogicalFour("Color", ...args));
 NativeCssProperties.borderColor.scope = NativeCssProperties.color.scope;
 
 const KNOWN_BAD_FONT_NAMES = {
@@ -311,17 +294,44 @@ font.scope = {
 
 const bg = (...args) => ({ background: args.join(" ") || "var(--background-color)" });
 
+function colonSplit2(NAME, SEP, x) {
+  if (x == null) return x;
+  const res = x.split(":");
+  return res.length == 1 ? res[0] :
+    `${NAME}(${res.join(SEP)})`;
+}
+
+//enables us to write a min and max eiter as 2px:5px or max(2px,5px)
+//$w(50%)
+//$w(1,2) not allowed, only 1 or 3 arguments.
+//$w(30em:35%,50%,60cm:80vw:100%)
+//$w(max(30em,35%),50%,min(60cm,80vw,100%))
+function toSize(NAME, ...args) {
+  args = args.map(a => a?.replace(/^(min|max)$/, "$&-content"));
+  if (args.length === 1)
+    return { [NAME]: args[0] };
+  if (args.length === 3) {
+    const NAME2 = NAME.replace(/^./, c => c.toUpperCase());
+    return {
+      [`min${NAME2}`]: colonSplit2("max", ",", args[0]),
+      [NAME]: args[1],
+      [`max${NAME2}`]: colonSplit2("min", ",", args[2])
+    };
+  } throw new SyntaxError(`$${NAME} accepts only 1 or 3 arguments: ${args}`);
+}
+
 export default {
   ...NativeCssProperties,
-  // ...NativeColorsFunctions,
   ...NativeCssTransformFunctions,
   ...NativeCssFilterFunctions,
   ...NativeCssGradientFunctions,
+  em: NativeCssProperties.fontSize,
+
+  //the properties below are our own custom css Shortcuts 
   border,
   font,
   bg,
   background: bg,
-  em: NativeCssProperties.fontSize,
   w: (...args) => toSize("inlineSize", ...args),
   h: (...args) => toSize("blockSize", ...args),
 }
