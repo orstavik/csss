@@ -304,7 +304,7 @@ function checkSuperBody(name, { media, shorts: selectorShorts }) {
   if (!media && !selectorShorts) throw `is empty`;
   if (media && selectorShorts) throw `contains both media and selector/shorts`;
   if (media && type !== "@") throw `type error: did you mean "${type}${name.slice(1)}"?`;
-  if (media) return { media };
+  if (media) return { media: media.slice(7) };
   const [{ selector, shorts }, tooManyItems] = selectorShorts;
   if (selector && shorts) throw `contains both selector and shorts`;
   if (tooManyItems) throw `contains too many items`;
@@ -317,7 +317,7 @@ function checkSuperBody(name, { media, shorts: selectorShorts }) {
 function interpretSuper(name, body, SHORTS) {
   const parsed = new ShortBlock(body);
   const { media, selector, shorts } = checkSuperBody(name, parsed.interpret(SHORTS, {}));
-  return selector || (media ? media.slice(7) : { shorts, func: parsed.shorts[0].exprList[0].name });
+  return selector ?? media ?? { shorts, func: parsed.shorts[0].exprList[0].name };
 }
 
 export function extractSuperShorts(txt, SHORTS) {
