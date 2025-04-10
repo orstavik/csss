@@ -212,8 +212,6 @@ NativeCssProperties.animation.scope = EASING_FUNCTIONS;
 
 
 function border(...args) {
-  if (!args.length)
-    return;
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
     if (a.match(/thin|medium|thick/)) return { Width: a };
@@ -222,7 +220,7 @@ function border(...args) {
     if (a.match(/solid|dotted|dashed|double|none/)) return { Style: a };
     return a;
   });
-  return borderSwitch(Object.assign(...args));
+  return borderSwitch(Object.assign({ Style: "solid" }, ...args));
 }
 
 const borderColor = toLogicalFour.bind(null, "Color");

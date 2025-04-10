@@ -5,6 +5,18 @@ const OVERFLOW2 = new RegExp(`^${O2}(?::${O2})?$`); //$block(hidden:scroll-snap-
 
 //todo rename the text block layout unit to $page
 
+function defaultLayout(display, ...args) {
+  const containerDefaults = {
+    wordSpacing: "unset",
+    lineHeight: "unset",
+    whiteSpace: "unset",
+    hyphens: "unset",
+    textAlign: "unset",
+    textIndent: "unset",
+  };
+  return Object.assign({ display }, containerDefaults, ...args);
+}
+
 function overflow(a) {
   const m = a.match(OVERFLOW2);
   if (!m) return;
@@ -133,7 +145,7 @@ function block(...args) {
     if (m = a.match(/^[abcs]$/))
       return ({ textAlign: TextAlignAliases[a[0]] });
   });
-  return Object.assign(...args);
+  return defaultLayout("block", ...args);
 }
 block.scope = {
   ...LAYOUT,
@@ -173,7 +185,7 @@ function grid(...args) {
     }
     return a;
   });
-  return Object.assign(...args);
+  return defaultLayout("grid", ...args);
 }
 const nativeGrid = Object.fromEntries(Object.entries(AllFunctions).filter(
   ([k]) => k.match(/^grid[A-Z]/)));
@@ -247,7 +259,7 @@ function flex(...args) {
     if (m = wrap(a)) return m;
     return a;
   });
-  return Object.assign(...args);
+  return defaultLayout("flex", ...args);
 }
 flex.scope = {
   placeContent: AllFunctions.placeContent,

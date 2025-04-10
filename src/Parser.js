@@ -1,3 +1,10 @@
+function interpretMedias(medias, supers) {
+  return medias?.map(m => supers[m] ?? m)
+    .map(m => m.replace(/^@/, ""))
+    .map(m => m === "!" ? "not" : m)
+    .join(" and ").replaceAll("and , and", ",").replaceAll("not and ", "not ");
+}
+
 export class ShortBlock {
 
   constructor(exp) {
@@ -9,12 +16,8 @@ export class ShortBlock {
   }
 
   interpret(SHORTS, supers) {
-    let media = this.medias?.map(m => supers[m] ?? m)
-      .map(m => m.replace(/^@/, ""))
-      .map(m => m === "!" ? "not" : m)
-      .join(" and ").replaceAll("and , and", ",").replaceAll("not and ", "not ");
-    if (media)
-      media = `@media ${media}`;
+    let media = interpretMedias(this.medias, supers);
+    if (media) media = `@media ${media}`;
     const shorts = this.shorts?.map(short => short.interpret(SHORTS, supers));
     return { media, shorts };
   }
@@ -92,19 +95,14 @@ class Expression {
     return this.name + "/" + this.args.length;
   }
   interpret(scope, supers) {
-    const cb = scope?.[this.name] ??
-      scope?.[supers["$" + this.name]?.func] ??
-      NativeCssFunctions[this.name];
+    const cb = scope?.[this.name] ?? NativeCssFunctions[this.name];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${this.name}`);
-    // const innerScope = !cb.scope ? scope : Object.assign({}, scope, cb.scope);
     const args = this.args.map(x =>
       x instanceof Expression ? x.interpret(cb.scope, supers) :
         x === "." ? "unset" :
           x);
-    const res = args.length ? cb.call(this, ...args) : undefined;
-    const supersObj = supers["$" + this.name]?.shorts;
-    return supersObj ? Object.assign({}, supersObj, res) : res;
+    return cb.call(this, ...args);
   }
 }
 const clashOrStack = (function () {
@@ -293,37 +291,62 @@ function parse$Expression(exp) {
     ));
   return { shorts, medias };
 }
-
-const SUPER_HEAD = /([$:@][a-zA-Z_][a-zA-Z0-9_-]*)\s*=/.source; // (name)
-const SUPER_LINE = /((["'`])(?:\\.|(?!\3).)*?\3|\/\*[\s\S]*?\*\/|[^;]+);/.source; // (body1, quoteSign)
+const ARG = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;
+const ARGLIST = new RegExp(`\\(\\s*${ARG}(?:\\s*,\\s*${ARG})*\\s*\\)`).source;
+const SUPER_HEAD = new RegExp(`([$:@][a-zA-Z_][a-zA-Z0-9_-]*(?:\\s*${ARGLIST})?)\\s*=`).source;
+// const SUPER_HEAD = /([$:@][a-zA-Z_][a-zA-Z0-9_-]*)\s*=/.source; // (name)
+const SUPER_LINE = /((["'`])(?:\\.|(?!\3).)*?\3|\/\*[\s\S]*?\*\/|[^;]+)(?:;|$)/.source; // (body1, quoteSign)
 const SUPER_BODY = /{((["'`])(?:\\.|(?!\5).)*?\5|\/\*[\s\S]*?\*\/|[^}]+)}/.source;// (body2, quoteSign)
 const SUPER = new RegExp(`${SUPER_HEAD}(?:${SUPER_LINE}|${SUPER_BODY})`, "g");
 
-function checkSuperBody(name, { media, shorts: selectorShorts }) {
-  const type = name[0];
-  if (!media && !selectorShorts) throw `is empty`;
-  if (media && selectorShorts) throw `contains both media and selector/shorts`;
-  if (media && type !== "@") throw `type error: did you mean "${type}${name.slice(1)}"?`;
-  if (media) return { media: media.slice(7) };
-  const [{ selector, shorts }, tooManyItems] = selectorShorts;
-  if (selector && shorts) throw `contains both selector and shorts`;
-  if (tooManyItems) throw `contains too many items`;
-  if (selector && type !== ":") throw `type error: did you mean "${type}${name.slice(1)}"?`;
-  if (selector) return { selector };
-  if (shorts && type !== "$") throw `type error: did you mean "${type}${name.slice(1)}"?`;
-  return { shorts };
+function checkSuperBody(type, name, { medias, shorts }) {
+  if (!medias && !shorts) throw `is empty`;
+  if (medias && shorts) throw `contains both medias and selector/shorts`;
+  if (medias && type !== "@") throw `type error: did you mean "@${name}"?`;
+  if (medias) return { medias };
+  if (shorts.length > 1) throw `item selector not allowed in superShorts.`;
+  const { selectorList, exprList } = shorts[0];
+  if (selectorList && exprList) throw `contains both selector and shorts`;
+  if (selectorList && type !== ":") throw `type error: did you mean ":${name}"?`;
+  if (exprList && type !== "$") throw `type error: did you mean "$${name}"?`;
+  return { exprList, selectorList };
 }
 
-function interpretSuper(name, body, SHORTS) {
+function cloneAndReplaceExpr(argMap, { name, args }) {
+  args = args.map(arg => arg instanceof Expression ? cloneAndReplaceExpr(argMap, arg) : argMap[arg] ?? arg);
+  return new Expression(name, args);
+}
+
+function makeSuperShort(name, argNames, body, SHORTS) {
+  return function superShort(...args) {
+    if (argNames.length > args.length)
+      throw `missing argument: ${name}(...${argNames[args.length]})`;
+    const argMap = argNames.reduce((res, n) => ((res[n] = args.shift()), res), {});
+    body = body.map(expr => cloneAndReplaceExpr(argMap, expr));
+    const res = body.map(expr => expr.interpret(SHORTS));
+    return Object.assign(...res);
+  }
+}
+
+function interpretSuper(head, body, SHORTS) {
   const parsed = new ShortBlock(body);
-  const { media, selector, shorts } = checkSuperBody(name, parsed.interpret(SHORTS, {}));
-  return selector ?? media ?? { shorts, func: parsed.shorts[0].exprList[0].name };
+  const type = head[0];
+  const { name, args } = new ShortBlock("$" + head.slice(1)).shorts[0].exprList[0];
+  const { medias, selectorList, exprList } = checkSuperBody(type, name, parsed);
+  if (medias) return interpretMedias(medias, {});
+  if (selectorList) return selectorList.map(s => s.interpret({})).join(", ");
+  return { [name]: makeSuperShort(name, args, exprList, SHORTS) };
 }
 
 export function extractSuperShorts(txt, SHORTS) {
-  return Object.fromEntries(
-    [...txt.matchAll(SUPER)]
-      .map(([, name, b, , body = b]) => [name, interpretSuper(name, body, SHORTS)]));
+  const supers = {}, shorts = {};
+  for (const [, name, b, , body = b] of txt.matchAll(SUPER)) {
+    if (name[0] === "$")
+      Object.assign(shorts, interpretSuper(name, body, SHORTS));
+    else
+      supers[name] = interpretSuper(name, body, SHORTS);
+  }
+  return { supers, shorts };
 }
 
 //todo we don't support nested :not(:has(...))

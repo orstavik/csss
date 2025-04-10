@@ -136,12 +136,8 @@ for (const fn of Object.values(funcs))
 
 color.scope = { ...ColorScope, ...funcs };
 
-const textDecorationColor = "var(--text-decoration-color, currentcolor)";
-function textDecoration(textDecorationLine, textDecorationThickness) {
-  return { textDecorationLine, textDecorationThickness, textDecorationColor };
-}
-function textDecorationStyle(textDecorationStyle, textDecorationLine, textDecorationThickness) {
-  return { textDecorationLine, textDecorationThickness, textDecorationStyle, textDecorationColor };
+function textDecorationStyle(textDecorationStyle = "unset", textDecorationLine, textDecorationThickness) {
+  return { textDecorationLine, textDecorationThickness, textDecorationStyle, textDecorationColor: "var(--text-decoration-color, currentcolor)" };
 }
 
 const textDecorations = {
@@ -173,17 +169,17 @@ const textDecorations = {
   wavyLineThrough: textDecorationStyle.bind(null, "wavy", "line-through"),
   wavyUnderLine: textDecorationStyle.bind(null, "wavy", "underline"),
   wavyUnderLineThrough: textDecorationStyle.bind(null, "wavy", "underline line-through"),
+  overLine: textDecorationStyle.bind(null, "solid", "overline"),
+  overLineThrough: textDecorationStyle.bind(null, "solid", "overline line-through"),
+  overUnderLine: textDecorationStyle.bind(null, "solid", "overline underline"),
+  overUnderLineThrough: textDecorationStyle.bind(null, "solid", "overline underline line-through"),
+  lineThrough: textDecorationStyle.bind(null, "solid", "line-through"),
+  underLine: textDecorationStyle.bind(null, "solid", "underline"),
+  underLineThrough: textDecorationStyle.bind(null, "solid", "underline line-through"),
 
-  blink: textDecoration.bind(null, "blink"),
-  overLine: textDecoration.bind(null, "overline"),
-  overLineThrough: textDecoration.bind(null, "overline line-through"),
-  overUnderLine: textDecoration.bind(null, "overline underline"),
-  overUnderLineThrough: textDecoration.bind(null, "overline underline line-through"),
-  lineThrough: textDecoration.bind(null, "line-through"),
-  underLine: textDecoration.bind(null, "underline"),
-  underLineThrough: textDecoration.bind(null, "underline line-through"),
-  grammarError: textDecoration.bind(null, "grammar-error"),
-  spellingError: textDecoration.bind(null, "spelling-error"),
+  blink: textDecorationStyle.bind(null, null, "blink"),
+  grammarError: textDecorationStyle.bind(null, null, "grammar-error"),
+  spellingError: textDecorationStyle.bind(null, null, "spelling-error"),
 }
 
 //Override the text-emphasis and column-rule and outline and accent and caret needs to be updated.
