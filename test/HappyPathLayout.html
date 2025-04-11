@@ -320,7 +320,7 @@
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: center;
+        text-align: unset;
         text-indent: unset;
         place-content: center;
         align-items: unset;
@@ -349,7 +349,7 @@
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: end;
+        text-align: unset;
         text-indent: unset;
         place-content: start end;
         align-items: unset;
@@ -459,7 +459,7 @@
       <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items: baseline</div>
     </div>
 
-    <h3>4e. Only align-items - $flex(..s)</h3>
+    <h3>4c. Only align-items - $flex(..s)</h3>
     <div class="$flex(..s,gap(1rem)) $border $padding(1rem) $h(200px)">
       <div class="$border $padding(0.5rem)">only align-items: stretch</div>
       <div class="$border $padding(0.5rem)">only align-items: stretch</div>
@@ -487,25 +487,18 @@
       <div class="$border $padding(0.5rem)">text-align: center</div>
     </div>
     
-    <h3>8. Three-value mix with unset align-items - $flex(ac.)</h3>
-    <div class="$flex(ac.,gap(1rem)) $border $padding(1rem) $h(200px)">
-      <div class="$border $padding(0.5rem)">align-content: start, justify-content: center</div>
-      <div class="$border $padding(0.5rem)">no align-items should be set</div>
-      <div class="$border $padding(0.5rem)">text-align: center</div>
-    </div>
-    
-    <h3>9. Three-value mix with align-items as baseline - $flex(.c_)</h3>
+    <h3>8. Three-value mix with align-items as baseline - $flex(.c_)</h3>
     <div class="$flex(.c_,gap(1rem)) $border $padding(1rem) $h(200px)">
       <div class="$border $padding(0.5rem)">justify-content: center, text-align: center</div>
       <div class="$border $padding(0.5rem)">align-items: baseline</div>
       <div class="$border $padding(0.5rem)">first character is placeholder</div>
     </div>
     
-    <h3>10. Three-value mix with space-evenly and center - $flex(vvc)</h3>
+    <h3>9. Three-value mix with space-evenly and center - $flex(vvc)</h3>
     <div class="$flex(vvc,gap(1rem)) $border $padding(1rem) $h(200px)">
       <div class="$border $padding(0.5rem)">align-content: space-evenly</div>
       <div class="$border $padding(0.5rem)">justify-content: space-evenly</div>
-      <div class="$border $padding(0.5rem)">align-items: center, text-align: unset</div>
+      <div class="$border $padding(0.5rem)">align-items: center</div>
     </div>
   </main>
   <style>
@@ -518,29 +511,24 @@
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: center;
+        text-align: unset;
         text-indent: unset;
         place-content: center;
         align-items: unset;
         gap: 1rem;
       }
-
       .\$border {
         border-style: solid;
       }
-
       .\$padding\(1rem\) {
         padding: 1rem;
       }
-
       .\$h\(200px\) {
         block-size: 200px;
       }
-
       .\$padding\(0\.5rem\) {
         padding: 0.5rem;
       }
-
       .\$flex\(ww\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -550,35 +538,33 @@
         text-align: unset;
         text-indent: unset;
         place-content: space-between;
+        align-items: unset;
         gap: 1rem;
       }
-
       .\$flex\(ab\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: end;
+        text-align: unset;
         text-indent: unset;
         place-content: start end;
-        align-items: end;
+        align-items: unset;
         gap: 1rem;
       }
-
       .\$flex\(vu\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: justify;
+        text-align: unset;
         text-indent: unset;
         place-content: space-evenly space-around;
-        align-items: space-around;
+        align-items: unset;
         gap: 1rem;
       }
-
       .\$flex\(s\.\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -589,9 +575,9 @@
         text-indent: unset;
         align-content: stretch;
         justify-content: unset;
+        align-items: unset;
         gap: 1rem;
       }
-
       .\$flex\(\.w\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -602,23 +588,10 @@
         text-indent: unset;
         align-content: unset;
         justify-content: space-between;
+        align-items: unset;
         gap: 1rem;
       }
-
       .\$flex\(ccs\,gap\(1rem\)\) {
-        display: flex;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
-        text-align: center;
-        text-indent: unset;
-        place-content: center;
-        align-items: stretch;
-        gap: 1rem;
-      }
-
-      .\$flex\(ws_\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -626,12 +599,11 @@
         hyphens: unset;
         text-align: justify;
         text-indent: unset;
-        place-content: space-between stretch;
-        align-items: baseline;
+        place-content: center;
+        align-items: stretch;
         gap: 1rem;
       }
-
-      .\$flex\(\.\.s\,gap\(1rem\)\) {
+      .\$flex\(ws_\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -639,24 +611,48 @@
         hyphens: unset;
         text-align: unset;
         text-indent: unset;
+        place-content: space-between stretch;
+        align-items: start;
+        gap: 1rem;
+      }
+      .\$flex\(\.\.s\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: justify;
+        text-indent: unset;
         place-content: unset;
         align-items: stretch;
         gap: 1rem;
       }
-
       .\$flex\(a\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: start;
+        text-align: unset;
         text-indent: unset;
         place-content: start;
+        align-items: unset;
         gap: 1rem;
       }
-
       .\$flex\(\.b\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        align-content: unset;
+        justify-content: end;
+        align-items: unset;
+        gap: 1rem;
+      }
+      .\$flex\(acb\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -664,55 +660,30 @@
         hyphens: unset;
         text-align: end;
         text-indent: unset;
-        justify-content: end;
-        gap: 1rem;
-      }
-
-      .\$flex\(acb\,gap\(1rem\)\) {
-        display: flex;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
-        text-align: center;
-        text-indent: unset;
         place-content: start center;
         align-items: end;
         gap: 1rem;
       }
-
-      .\$flex\(ac\.\,gap\(1rem\)\) {
-        display: flex;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
-        text-align: center;
-        text-indent: unset;
-        place-content: start center;
-        gap: 1rem;
-      }
-
       .\$flex\(\.c_\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: center;
+        text-align: unset;
         text-indent: unset;
+        align-content: unset;
         justify-content: center;
-        align-items: baseline;
+        align-items: start;
         gap: 1rem;
       }
-
       .\$flex\(vvc\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: unset;
+        text-align: center;
         text-indent: unset;
         place-content: space-evenly;
         align-items: center;

@@ -487,7 +487,6 @@
     @layer items {}
   </style>
 </test-html>
-
 <test-html title="$font(times,serif,700,capitalize)">
   <main class="$font(times,serif,500,2px,italic)">
     <h2 class="$font(helvetica,arial,sans-serif,900,capitalize)">
@@ -603,7 +602,6 @@
     }
   </style>
 </test-html>
-
 <test-html title="@print,@screen:hover$border(solid,2px)|:valid$border(dotted,2px)|.first$border(dashed,2px)">
   <style>
     @layer container, items;
@@ -642,7 +640,6 @@
     hello
   </div>
 </test-html>
-
 <test-html title="Border 8 - Calc Expressions">
   <main>
     <div class="$grid(cols(1fr,1fr),gap(1rem))">
@@ -678,7 +675,6 @@
     @layer items {}
   </style>
 </test-html>
-
 <test-html title="Border 13 - Test on Auto Wrapping of var and calc">
   <main style="--border-width: 3px;">
     <div class="$grid(cols(1fr,1fr),gap(1rem))">
@@ -760,47 +756,42 @@
         text-decoration-thickness: 2px;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
-
       .\$overLine\(2px\) {
         text-decoration-line: overline;
         text-decoration-thickness: 2px;
+        text-decoration-style: solid;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
-
       .\$overUnderLineThrough\(2px\) {
         text-decoration-line: underline overline line-through;
         text-decoration-thickness: 2px;
+        text-decoration-style: solid;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
-
       .\$wavyOverUnderLineThrough\(2px\) {
         text-decoration-line: underline overline line-through;
         text-decoration-thickness: 2px;
         text-decoration-style: wavy;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
-
       .\$lineThrough\(2px\) {
-        text-decoration-style: initial;
         text-decoration-line: line-through;
         text-decoration-thickness: 2px;
+        text-decoration-style: solid;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
-
       .\$dottedUnderLine\(2px\) {
         text-decoration-line: underline;
         text-decoration-thickness: 2px;
         text-decoration-style: dotted;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
-
       .\$dashedOverUnderLineThrough\(2px\) {
         text-decoration-line: underline overline line-through;
         text-decoration-thickness: 2px;
         text-decoration-style: dashed;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
-
       .\$doubleOverLine\(2px\) {
         text-decoration-line: overline;
         text-decoration-thickness: 2px;

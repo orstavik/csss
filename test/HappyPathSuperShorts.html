@@ -47,73 +47,63 @@
      @layer container {
       .\$holyGrail {
         display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
         grid-template-rows: auto 1fr auto;
         grid-template-columns: auto 1fr auto;
         gap: 1rem;
       }
-
       .\$gap\(1rem\) {
         gap: 1rem;
       }
-
       .\$h\(100vh\) {
         block-size: 100vh;
       }
-
       .\$holyGrailHeader {
         grid-column: 1 / 4;
         padding: 1rem;
       }
-
       .\$bg\(azure\) {
         background: azure;
       }
-
       .\$border {
         border-style: solid;
-        border-width: medium;
       }
-
       .\$holyGrailSidebarLeft {
         grid-column: 1 / 2;
         padding: 1rem;
       }
-
       .\$bg\(lightgreen\) {
         background: lightgreen;
       }
-
       .\$holyGrailMain {
         grid-column: 2 / 3;
         padding: 1rem;
       }
-
       .\$bg\(white\) {
         background: white;
       }
-
       .\$holyGrailSidebarRight {
         grid-column: 3 / 4;
         padding: 1rem;
       }
-
       .\$bg\(lightyellow\) {
         background: lightyellow;
       }
-
       .\$padding\(0\.5rem\) {
         padding: 0.5rem;
       }
-
       .\$margin\(1rem\,0\) {
         margin: 1rem 0px;
       }
-
       .\$holyGrailFooter {
         grid-column: 1 / 4;
         padding: 1rem;
       }
-
       .\$bg\(lightblue\) {
         background: lightblue;
       }
@@ -138,29 +128,44 @@
     @layer container, items;
 
       @layer container {
-        .\$layout { 
+        .\$layout {
           display: grid;
-          grid-template-columns: 1fr 1fr 1fr; 
-          gap: 1rem; 
+          word-spacing: unset;
+          line-height: unset;
+          white-space: unset;
+          hyphens: unset;
+          text-align: unset;
+          text-indent: unset;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 1rem;
         }
-        .\$color\(white\,blue\,\) { 
-          color: white; 
-          --background-color: blue; 
-          border-color: white; 
+        .\$grid {
+          display: grid;
+          word-spacing: unset;
+          line-height: unset;
+          white-space: unset;
+          hyphens: unset;
+          text-align: unset;
+          text-indent: unset;
         }
-        .\$bg\(\) { 
-          background: var(--background-color); 
+        .\$color\(white\,blue\,\) {
+          color: white;
+          --background-color: blue;
+          border-color: white;
         }
-        .\$padding\(1rem\) { 
-          padding: 1rem; 
+        .\$bg\(\) {
+          background: var(--background-color);
         }
-        .\$textAlign\(center\) { 
-          text-align: center; 
+        .\$padding\(1rem\) {
+          padding: 1rem;
         }
-        .\$color\(white\,yellow\,\) { 
-          color: white; 
-          --background-color: yellow; 
-          border-color: white; 
+        .\$textAlign\(center\) {
+          text-align: center;
+        }
+        .\$color\(white\,yellow\,\) {
+          color: white;
+          --background-color: yellow;
+          border-color: white;
         }
        }
       @layer items {
@@ -170,9 +175,9 @@
 </test-html>
 <test-html title="Bug: `display:flex`">
   <main csss="
-    $flex = $flex(row,gap(1rem),textAlign(center),padding(1rem));
+    $layout = $flex(row,gap(1rem),textAlign(center),padding(1rem));
   ">
-    <div class="$flex">
+    <div class="$layout">
       <div class="$color(white,red,) $bg(red)">1</div>
       <div class="$color(white,green,) $bg(green)">2</div>
     </div>
@@ -180,28 +185,33 @@
   <style>
     @layer container, items;
     @layer container {
-      .\$flex { 
+      .\$layout {
         display: flex;
-        flex-direction: row; 
-        gap: 1rem; 
-        text-align: center; 
-        padding: 1rem; 
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: center;
+        text-indent: unset;
+        flex-direction: row;
+        gap: 1rem;
+        padding: 1rem;
       }
-      .\$color\(white\,red\,\) { 
-        color: white; 
-        --background-color: red; 
-        border-color: white; 
+      .\$color\(white\,red\,\) {
+        color: white;
+        --background-color: red;
+        border-color: white;
       }
-      .\$bg\(red\) { 
-        background: red; 
+      .\$bg\(red\) {
+        background: red;
       }
-      .\$color\(white\,green\,\) { 
-        color: white; 
-        --background-color: green; 
-        border-color: white; 
+      .\$color\(white\,green\,\) {
+        color: white;
+        --background-color: green;
+        border-color: white;
       }
-      .\$bg\(green\) { 
-        background: green; 
+      .\$bg\(green\) {
+        background: green;
       }
     }
 
@@ -226,8 +236,13 @@
     @layer container {
       .\$layout {
         display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
         border-style: solid;
-        border-width: medium;
       }
       .\$block {
         display: block;
@@ -240,7 +255,6 @@
       }
       .\$border {
         border-style: solid;
-        border-width: medium;
       }
     }
     @layer items {
