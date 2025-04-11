@@ -1,7 +1,7 @@
 ---
 description: 
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 ---
 description: Project Context
@@ -13,91 +13,84 @@ alwaysApply: true
 ## Overview
 CSSS (CSS Shorts) is a CSS preprocessor engine that introduces two main concepts for simplified CSS authoring:
 
-1. **Dollar Shorts**: Shorthand syntax patterns that start with `$`. These provide concise, expressive ways to write common CSS patterns. For example, `$border` expands into border-related CSS properties, and `$flex(cc)` is a short for centering with flexbox.
+1.  **Dollar Shorts**: Shorthand syntax patterns that start with `$`. These are typically JavaScript functions (defined in `func.js`, `layout.js`, `palette.js`) that generate CSS property objects. For example, `$padding(1rem, 2rem)` calls a function to generate logical padding properties, and `$flex(cc)` calls a function to configure flexbox centering.
 
-2. **Supershorts**: An even more concise way to combine multiple dollar shorts together. Supershorts are perfect for reusing combinations of properties or grouping commonly used patterns. They are defined with a `$` prefix and can be used just like dollar shorts. For example, `$flexLayout` might combine flex and other properties related to layout.
+2.  **Supershorts (Defined with `=`):** A way to define custom shortcuts using the `=` syntax within `<style csss="...">` or `csss="..."` attributes. These definitions create wrapper functions using the internal `makeSuperShort` mechanism.
+    *   **Simple Aliases (`$name = $short1$short2;`):** Creates a function that, when called (e.g., by using `$name` in a class), executes the original sequence (`$short1`, then `$short2`) using the main function registry (`this.shorts`). This correctly handles built-ins like `$block` or `$border` by interpreting them at runtime.
+    *   **Parameterized Functions (`$name(arg) = $short1(arg);`):** Creates a function that accepts arguments. When called (e.g., `$name(value)`), it substitutes the provided arguments into the remembered definition and then executes the resulting sequence using the main function registry.
+    *   **Media/Selector Aliases (`@name = @media...;`, `:name = :pseudo...;`):** These are simple string replacements stored separately and used for media query or selector substitutions.
 
-The engine comes with "BuiltinSupers" - a set of predefined supershorts available to all users, but developers can also create their own project-specific supershorts to match their needs.
+The engine comes with "BuiltinSupers" (`BuiltinSupers.js`) - a set of predefined simple aliases (like `$name = ...`), which are also processed using the `makeSuperShort` mechanism during initialization.
 
 ## Core Components
 
 ### Parser System
-- **Parser.js**: Main parser for CSSS syntax
-  - Handles expression interpretation
-  - Processes both dollar shorts and supershorts
-  - Uses `NativeCssFunctions` for basic CSS function handling
-
-- **BuiltinSupers.js**: Predefined supershorts
-  - Contains the default set of supershorts
-  - Example: `$border = $border(solid, medium)`
-  - Example: `$bold = $fontWeight(bold)`
-  - Provides inheritance chain breaking utilities
+- **Parser.js**: Main parser for CSSS syntax.
+  - Handles parsing of dollar shorts and supershort definitions (`=`).
+  - Contains `extractSuperShorts` to parse definitions.
+  - Contains `makeSuperShort` to create function wrappers for `$`-based supershorts.
+  - Contains `Expression.interpret` to execute dollar short functions (both built-in and those created by `makeSuperShort`).
+- **BuiltinSupers.js**: Predefined simple aliases (`$name = ...`).
+  - Loaded first and processed by `extractSuperShorts` / `makeSuperShort`.
+  - Examples: `$bold = $fontWeight(bold);`, `$italic = $fontStyle(italic);`
 
 ### Function System
-- **func.js**: Core CSS function implementations
-  - `NativeColorsFunctions`: Advanced color manipulation
-  - Border handling functions
-  - Transform and filter functions
-  - Gradient generators
-
-### Layout System
-- **layout.js**: Layout-specific utilities
-  - Flexbox shortcuts
-  - Grid system helpers
-  - Spacing utilities
-
-### Color System
-- **Color.js**: Color manipulation utilities
-  - Color space conversions
-  - Color mixing
-  - Palette generation
+- **func.js**: Core CSS function implementations (borders, basic properties, transforms, filters, gradients, fonts).
+- **layout.js**: Layout-specific function implementations (`$block`, `$flex`, `$grid`, `$_block`, etc.). Includes `display` logic and resets.
+- **palette.js**: Color system and palette function implementations (`$palette`, `$color`, shadows, text decorations).
 
 ### Engine
-- **engine.js**: Core processing engine
-  - Converts CSSS to standard CSS
-  - Handles rule generation
-  - Manages specificity
+- **engine.js**: Core processing engine.
+  - Initializes (`this.shorts` with functions from `func.js`, `layout.js`, `palette.js`).
+  - Reads and processes `BuiltinSupers.js` and other supershort definitions using `readSupers` -> `extractSuperShorts`. Stores resulting functions/aliases in `this.shorts` or `this.supers`.
+  - Processes class attributes (`addRule`) by creating `ShortBlock` instances and interpreting them using the populated `this.shorts` and `this.supers`.
+  - Handles CSS rule generation and insertion into the stylesheet layers.
 
 ## Key Features
 
 ### Dollar Shorts
+Dollar shorts are direct calls to JavaScript functions that return CSS property objects.
 ```css
 /* Using Dollar Shorts */
-<div class = "$border(dotted,2px,radius(1px))">
-</div>
+<div class = "$padding(1rem, 2rem) $flex(row, c)"></div>
 
-/* Traditional CSS Equivalent*/
-.\$border\(dotted\,2px\,radius(1px\)\) {
-  border-style: dotted;
-  border-width: 2px;
-  border-radius: 1px;
-}
+/* Resulting CSS (Simplified) */
+.\$padding\(1rem\,2rem\) { padding-block: 1rem; padding-inline: 2rem; }
+.\$flex\(row\,c\) { display: flex; flex-direction: row; align-items: center; }
 ```
 
-### Supershorts
+### Supershorts (`=`)
+Supershorts create callable functions via `makeSuperShort`.
 ```css
-/* Using Built-in Supershorts */
-.element {
-  $bold                /* expands to $fontWeight(bold) */
-  $border             /* expands to $border(solid, medium) */
-}
+/* Defining and Using Supershorts */
+<style csss="
+  /* Simple Alias (creates a function wrapper) */
+  $cardBase = $border(solid, 1px)$padding(1rem);
+  /* Parameterized Function */
+  $rounded(r) = $border(radius(r));
+">
+</style>
 
-/* Creating Custom Supershorts */
-$myButton = $padding(1rem,2rem) $border(solid,2px) $flex(cc)
+<div class="$cardBase $rounded(8px)"></div>
 
-.button {
-  $myButton           /* uses the custom supershort */
-}
+/* How it works internally: */
+/* 1. $cardBase definition creates a function in this.shorts['cardBase'] */
+/* 2. $rounded definition creates a function in this.shorts['rounded'] */
+/* 3. When class="$cardBase $rounded(8px)" is processed: */
+/*    - this.shorts.cardBase() is called -> runs $border(solid, 1px), then $padding(1rem) */
+/*    - this.shorts.rounded('8px') is called -> substitutes 'r', runs $border(radius('8px')) */
+
+/* Resulting CSS (Simplified) */
+.\$cardBase { border: solid 1px; padding: 1rem; }
+.\$rounded\(8px\) { border-radius: 8px; }
 ```
 
-### BuiltinSupers System
-- Provides a default set of supershorts
-- Common combinations like `$bold`, `$italic`, `$border`
-- Allows function composition
-- Supports inheritance breaking
-- Can be extended with custom supershorts per project
+### BuiltinSupers System (`BuiltinSupers.js`)
+- Provides a default set of simple aliases (like `$bold`, `$italic`).
+- These are also converted into function wrappers via `makeSuperShort` on initialization.
+- Example: `$bold` in a class calls the function created from `$bold = $fontWeight(bold);`, which in turn calls the actual `$fontWeight` function.
 
-### Color System and Palettes
+## Color System and Palettes
 ```css
 /* Using $palette to define a color scheme */
 .\$palette\(\#d41c84\) {
@@ -135,9 +128,9 @@ Each palette color can be combined with various modifiers:
 
 ## Current State
 1. Recent Changes:
-   - Renamed `Shorts` class to `ShortBlock`
-   - Improved color function handling
-   - Enhanced BuiltinSupers system
+   - Refactored supershort handling (`=`) to use `makeSuperShort`, creating function wrappers. This enables parameterized definitions and correctly handles built-in shorts within definitions at runtime.
+   - Moved layout-specific functions (`$block`, `$grid`, `$flex`, `$_block`, etc.) including `display` logic into `layout.js`.
+   - Cleaned up function/alias storage (`this.shorts` for functions, `this.supers` for `@`/`:` aliases).
 
 2. Active Issues:
    - 
