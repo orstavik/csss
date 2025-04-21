@@ -409,7 +409,7 @@
     @layer container, items;
 
     @layer container {
-      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$_flex\(0shrink\,c\)\$w\(7rem\)\$h\(3rem\) {
+      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$shrink\(0\)\$align\(c\)\$w\(7rem\)\$h\(3rem\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -425,7 +425,7 @@
     }
 
     @layer items {
-      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$_flex\(0shrink\,c\)\$w\(7rem\)\$h\(3rem\)>* {
+      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$shrink\(0\)\$align\(c\)\$w\(7rem\)\$h\(3rem\)>* {
         flex-shrink: 0;
         align-items: center;
         text-align: center;
@@ -435,7 +435,7 @@
     }
   </style>
   <div class="
-    $flex(gap(1rem),visible:auto,padding(1rem))$w(80%)|*$_flex(0shrink,c)$w(7rem)$h(3rem)">
+    $flex(gap(1rem),visible:auto,padding(1rem))$w(80%)|*$shrink(0)$align(c)$w(7rem)$h(3rem)">
     hello
   </div>
 </test-html>
