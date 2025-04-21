@@ -319,6 +319,8 @@ function toSize(NAME, ...args) {
     };
   } throw new SyntaxError(`$${NAME} accepts only 1 or 3 arguments: ${args}`);
 }
+const width = (...args) => toSize("inlineSize", ...args);
+const height = (...args) => toSize("blockSize", ...args);
 
 export default {
   ...NativeCssProperties,
@@ -332,6 +334,8 @@ export default {
   font,
   bg,
   background: bg,
-  w: (...args) => toSize("inlineSize", ...args),
-  h: (...args) => toSize("blockSize", ...args),
+  w: width,
+  h: height,
+  width,
+  height,
 }

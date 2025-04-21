@@ -115,6 +115,10 @@ const _LAYOUT = {
   m: toLogicalFour.bind(null, "margin"),
   scrollMargin: toLogicalFour.bind(null, "scroll-margin"),
   textAlign: AllFunctions.textAlign,
+  w: AllFunctions.width,
+  h: AllFunctions.height,
+  width: AllFunctions.width,
+  height: AllFunctions.height,
   // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
 
@@ -292,11 +296,14 @@ function _flex(...args) {
   });
   return Object.assign(...args);
 }
-
 _flex.scope = {
+  basis: a => ({ flexBasis: a }),
   alignSelf: AllFunctions.alignSelf,
+};
+
+flex.itemScope = {
   ..._LAYOUT,
-  basis: a => ({ ["flex-basis"]: a })
+  "_flex": _flex,
 };
 
 export default {
@@ -305,5 +312,5 @@ export default {
   grid,
   _grid,
   flex,
-  _flex
+  // _flex
 };
