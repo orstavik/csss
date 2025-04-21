@@ -1466,7 +1466,7 @@
   <main>
     <h3>Flex Item Properties</h3>
     <div class="$border $padding(1rem) 
-$flex(gap(1rem))|:first$_flex(1grow)|:second$_flex(2grow)|:third$_flex(0.5shrink)|:fourth$_flex(basis(100px))
+$flex(gap(1rem))|:first$grow(1)|:second$grow(2)|:third$shrink(0.5)|:fourth$basis(100px)
     ">
       <div class="$border $padding(0.5rem)">
         <p>Flex-grow: 1</p>
@@ -1507,7 +1507,7 @@ $flex(gap(1rem))|:first$_flex(1grow)|:second$_flex(2grow)|:third$_flex(0.5shrink
         padding: 1rem;
       }
 
-      .\$flex\(gap\(1rem\)\)\|\:first\$_flex\(1grow\)\|\:second\$_flex\(2grow\)\|\:third\$_flex\(0\.5shrink\)\|\:fourth\$_flex\(basis\(100px\)\) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$grow\(1\)\|\:second\$grow\(2\)\|\:third\$shrink\(0\.5\)\|\:fourth\$basis\(100px\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -1537,19 +1537,19 @@ $flex(gap(1rem))|:first$_flex(1grow)|:second$_flex(2grow)|:third$_flex(0.5shrink
     }
 
     @layer items {
-      .\$flex\(gap\(1rem\)\)\|\:first\$_flex\(1grow\)\|\:second\$_flex\(2grow\)\|\:third\$_flex\(0\.5shrink\)\|\:fourth\$_flex\(basis\(100px\)\)> :where(:first-child) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$grow\(1\)\|\:second\$grow\(2\)\|\:third\$shrink\(0\.5\)\|\:fourth\$basis\(100px\)> :where(:first-child) {
         flex-grow: 1;
       }
 
-      .\$flex\(gap\(1rem\)\)\|\:first\$_flex\(1grow\)\|\:second\$_flex\(2grow\)\|\:third\$_flex\(0\.5shrink\)\|\:fourth\$_flex\(basis\(100px\)\)> :where(:nth-child(2)) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$grow\(1\)\|\:second\$grow\(2\)\|\:third\$shrink\(0\.5\)\|\:fourth\$basis\(100px\)> :where(:nth-child(2)) {
         flex-grow: 2;
       }
 
-      .\$flex\(gap\(1rem\)\)\|\:first\$_flex\(1grow\)\|\:second\$_flex\(2grow\)\|\:third\$_flex\(0\.5shrink\)\|\:fourth\$_flex\(basis\(100px\)\)> :where(:nth-child(3)) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$grow\(1\)\|\:second\$grow\(2\)\|\:third\$shrink\(0\.5\)\|\:fourth\$basis\(100px\)> :where(:nth-child(3)) {
         flex-shrink: 0.5;
       }
 
-      .\$flex\(gap\(1rem\)\)\|\:first\$_flex\(1grow\)\|\:second\$_flex\(2grow\)\|\:third\$_flex\(0\.5shrink\)\|\:fourth\$_flex\(basis\(100px\)\)> :where(:nth-child(4)) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$grow\(1\)\|\:second\$grow\(2\)\|\:third\$shrink\(0\.5\)\|\:fourth\$basis\(100px\)> :where(:nth-child(4)) {
         flex-basis: 100px;
       }
 

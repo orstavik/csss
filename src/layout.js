@@ -274,36 +274,27 @@ flex.scope = {
   ...GAP
 };
 
-
-const GROW = /^([0-9.]+)(grow|g)$/;
-const SHRINK = /^([0-9.]+)(shrink|s)$/;
-const ORDER = /^(-?\d+)(order|o)$/;
-
-function _flex(...args) {
-  args = args.map(a => {
-    if (!(typeof a === "string")) return a;
-    let m;
-    if (m = a.match(GROW)) return { flexGrow: m[1] };
-    if (m = a.match(SHRINK)) return { flexShrink: m[1] };
-    if (m = a.match(ORDER)) return { order: m[1] };
-    if (m = a.match(/^[abcs_]$/))
-      return {
-        alignItems: AlignAliases[m[0]],
-        textAlign: TextAlignAliases[m[0]]
-      };
-    //todo safe
-    return a;
-  });
-  return Object.assign(...args);
-}
-_flex.scope = {
-  basis: a => ({ flexBasis: a }),
-  alignSelf: AllFunctions.alignSelf,
-};
-
 flex.itemScope = {
   ..._LAYOUT,
-  "_flex": _flex,
+  basis: a => ({ flexBasis: a }),
+  grow: a => ({ flexGrow: a }),
+  g: a => ({ flexGrow: a }),
+  shrink: a => ({ flexShrink: a }),
+  s: a => ({ flexShrink: a }),
+  order: a => ({ order: a }),
+  o: a => ({ order: a }),
+  //todo safe
+  align: a => {
+    const m = a.match(/^[abcs_]$/)?.[0];
+    if (!m)
+      throw `$flex|$align(${a}): "${a}" doesn't match /^[abcs_]$/`;
+    return {
+      alignItems: AlignAliases[m],
+      textAlign: TextAlignAliases[m]
+    };
+  },
+  textAlign: AllFunctions.textAlign,
+  alignSelf: AllFunctions.alignSelf,
 };
 
 export default {
@@ -312,5 +303,4 @@ export default {
   grid,
   _grid,
   flex,
-  // _flex
 };
