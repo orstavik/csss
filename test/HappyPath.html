@@ -542,10 +542,7 @@
     $w(100%)
     $em(15px)
     
-    $block(s,gap(0.3em,1em))
-    |*$_block(indent(15%))
-    |.head$_block(indent(-5%))
-    |.subheading$_block(indent(0))
+    $block(s,gap(0.3em,1em))|*$indent(15%)|.head$indent(-5%)|.subheading$indent(0)
     ">
     <h1 class="head">The Article Heading</h1>
     <h4 class="subheading">Sub-information... Lorem ipsum dolor sit amet. Et quia temporibus est officia ipsam a sunt
@@ -577,7 +574,7 @@
         font-size: 15px;
       }
 
-      .\$block\(s\,gap\(0\.3em\,1em\)\) {
+      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\) {
         display: block;
         word-spacing: 0.3em;
         line-height: 1em;
@@ -589,15 +586,15 @@
     }
 
     @layer items {
-      .\|\*\$_block\(indent\(15\%\)\)>* {
+      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\)>* {
         text-indent: 15%;
       }
 
-      .\|\.head\$_block\(indent\(-5\%\)\)> :where(.head) {
+      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\)> :where(.head) {
         text-indent: -5%;
       }
 
-      .\|\.subheading\$_block\(indent\(0\)\)> :where(.subheading) {
+      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\)> :where(.subheading) {
         text-indent: 0px;
       }
     }

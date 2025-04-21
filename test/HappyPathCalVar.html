@@ -41,7 +41,7 @@
 
     @layer container {
       .\$width\(100px\+20px\) {
-        width: calc(120px);
+        inline-size: calc(120px);
       }
     }
 
@@ -58,11 +58,11 @@
 
     @layer container {
       .\$width\(100\%-20px\) {
-        width: calc(100% - 20px);
+        inline-size: calc(100% - 20px);
       }
 
       .\$height\(2rem\+1em\) {
-        height: calc(1em + 2rem);
+        block-size: calc(1em + 2rem);
       }
     }
 
@@ -98,11 +98,11 @@
 
     @layer container {
       .\$width\(\(100px\+5vw\)\*2\) {
-        width: calc(200px + 10vw);
+        inline-size: calc(200px + 10vw);
       }
 
       .\$height\(3rem\*\(1\+0\.5\)\) {
-        height: calc(4.5rem);
+        block-size: calc(4.5rem);
       }
     }
 
@@ -120,11 +120,11 @@
 
     @layer container {
       .\$width\(--base-size\*2\) {
-        width: calc(var(--base-size) * 2);
+        inline-size: calc(var(--base-size) * 2);
       }
 
       .\$height\(--base-size\+10px\) {
-        height: calc(var(--base-size) + 10px);
+        block-size: calc(var(--base-size) + 10px);
       }
     }
 
@@ -160,7 +160,7 @@
 
     @layer container {
       .\$width\(\(100px\+50px\)\*\(2-0\.5\)\) {
-        width: calc(225px);
+        inline-size: calc(225px);
       }
     }
 
@@ -194,7 +194,7 @@
 
     @layer container {
       .\$width\(1em\/--var\) {
-        width: calc(1em / var(--var));
+        inline-size: calc(1em / var(--var));
       }
     }
 
@@ -210,7 +210,7 @@
 
     @layer container {
       .\$width\(\(1em\+20px\)\*20\+40px\) {
-        width: calc(20em + 440px);
+        inline-size: calc(20em + 440px);
       }
 
       .\$bg\(lightblue\) {

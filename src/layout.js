@@ -131,7 +131,7 @@ function toGap(...args) {
 }
 const GAP = { gap: toGap, g: toGap };
 
-function doFloat(a) {
+function float(a) {
   const m = a.match(/^float-(start|end)$/);
   if (m) return { float: "inline-" + m[1] };
 }
@@ -158,16 +158,21 @@ block.scope = {
   gap: blockGap,
   g: blockGap,
 };
-
-function _block(...args) {
-  args = args.map(a => typeof a === "string" ? doFloat(a) : a);
-  return Object.assign(...args);
-}
-_block.scope = {   //$_block(indent(1em),...)
+block.itemScope = {
   ..._LAYOUT,
+  float,
   textIndent: AllFunctions.textIndent,
   indent: AllFunctions.textIndent,
 };
+// function _block(...args) {
+//   args = args.map(a => typeof a === "string" ? float(a) : a);
+//   return Object.assign(...args);
+// }
+// _block.scope = {   //$_block(indent(1em),...)
+//   ..._LAYOUT,
+//   textIndent: AllFunctions.textIndent,
+//   indent: AllFunctions.textIndent,
+// };
 
 function grid(...args) {
   args = args.map(a => {
@@ -208,37 +213,31 @@ grid.scope = {
   ...GAP
 };
 
-function _grid(...args) {
-  args = args.map(a => {
-    if (typeof a !== "string") return a;
-    let m;
-    if (m = a.match(/^[abcs_.][abcs_.]?$/)) {
-      const [b, i = b] = m[0];
-      return {
-        textAlign: TextAlignAliases[i],
-        alignSelf: AlignAliases[b],
-        justifySelf: AlignAliases[i],
-      };
-    }
-    return a;
-  });
-  return Object.assign(...args);
-}
-
 const column = (start, end = start) => ({ gridColumn: `${start} / ${end}` });
 const row = (start, end = start) => ({ gridRow: `${start} / ${end}` });
 const span = arg => `span ${arg}`;
 column.scope = { span };
 row.scope = { span };
 
-_grid.scope = {
+grid.itemScope = {
   ..._LAYOUT,
-  column, row,
+  column,
+  row,
   placeSelf: AllFunctions.placeSelf,
   justifySelf: AllFunctions.justifySelf,
   alignSelf: AllFunctions.alignSelf,
   // area: (...args) => ({ ["grid-area"]: args.join(" ") }),
-
+  align: a => {
+    const m = a.match(/^[abcs_.][abcs_.]?$/)?.[0];
+    if (!m)
+      throw `$_grid|$align(${a}): "${a}" doesn't match /^[abcs_.][abcs_.]?$/`;
+    const [b, i = b] = m[0];
+    return {
+      textAlign: TextAlignAliases[i],
+      alignSelf: AlignAliases[b],
+      justifySelf: AlignAliases[i],
+    };
+  }
 };
 
 
@@ -299,8 +298,7 @@ flex.itemScope = {
 
 export default {
   block,
-  _block,
+  // _block,
   grid,
-  _grid,
   flex,
 };

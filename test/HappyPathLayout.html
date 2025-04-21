@@ -472,12 +472,9 @@
     <h2>Flex Item Alignment Tests</h2>
 
     <h3>Basic Item Alignments</h3>
-    <div class="$flex(gap(1rem)) $border $padding(1rem) $h(200px)
-          |:first$_flex(a)
-          |:second$_flex(b)
-          |:third$_flex(c)
-          |:fourth$_flex(s)
-          |:fifth$_flex(_)">
+    <div class="
+      $flex(gap(1rem))|:first$align(a)|:second$align(b)|:third$align(c)|:fourth$align(s)|:fifth$align(_)
+      $border $padding(1rem) $h(200px)">
       <div class="$border $padding(0.5rem)">align-self: start</div>
       <div class="$border $padding(0.5rem)">align-self: end</div>
       <div class="$border $padding(0.5rem)">align-self: center</div>
@@ -621,7 +618,7 @@
         gap: 1rem;
       }
 
-      .\$flex\(gap\(1rem\)\) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$align\(a\)\|\:second\$align\(b\)\|\:third\$align\(c\)\|\:fourth\$align\(s\)\|\:fifth\$align\(_\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -634,27 +631,27 @@
     }
 
     @layer items {
-      .\|\:first\$_flex\(a\)> :where(:first-child) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$align\(a\)\|\:second\$align\(b\)\|\:third\$align\(c\)\|\:fourth\$align\(s\)\|\:fifth\$align\(_\)> :where(:first-child) {
         text-align: unset;
         align-self: start;
       }
 
-      .\|\:second\$_flex\(b\)> :where(:nth-child(2)) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$align\(a\)\|\:second\$align\(b\)\|\:third\$align\(c\)\|\:fourth\$align\(s\)\|\:fifth\$align\(_\)> :where(:nth-child(2)) {
         text-align: unset;
         align-self: end;
       }
 
-      .\|\:third\$_flex\(c\)> :where(:nth-child(3)) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$align\(a\)\|\:second\$align\(b\)\|\:third\$align\(c\)\|\:fourth\$align\(s\)\|\:fifth\$align\(_\)> :where(:nth-child(3)) {
         text-align: unset;
         align-self: center;
       }
 
-      .\|\:fourth\$_flex\(s\)> :where(:nth-child(4)) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$align\(a\)\|\:second\$align\(b\)\|\:third\$align\(c\)\|\:fourth\$align\(s\)\|\:fifth\$align\(_\)> :where(:nth-child(4)) {
         text-align: unset;
         align-self: stretch;
       }
 
-      .\|\:fifth\$_flex\(_\)> :where(:nth-child(5)) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$align\(a\)\|\:second\$align\(b\)\|\:third\$align\(c\)\|\:fourth\$align\(s\)\|\:fifth\$align\(_\)> :where(:nth-child(5)) {
         text-align: unset;
         align-self: baseline;
       }
@@ -1483,11 +1480,7 @@ $flex(gap(1rem))|:first$grow(1)|:second$grow(2)|:third$shrink(0.5)|:fourth$basis
     </div>
     <h3>Grid Item Properties</h3>
     <div class="$border $padding(1rem)
-            $grid(cols(1fr,1fr,1fr),rows(100px,100px),gap(1rem))
-            |:first$_grid(column(1,3))
-            |:second$_grid(row(4))
-            |:third$_grid(column(1))
-            |:fourth$_grid(row(1,2),column(2,3))
+            $grid(cols(1fr,1fr,1fr),rows(100px,100px),gap(1rem))|:first$column(1,3)|:second$row(4)|:third$column(1)|:fourth$row(1,2)$column(2,3)
       ">
       <div class="$border $padding(0.5rem)">Grid column: 1 / 3</div>
       <div class="$border $padding(0.5rem)">Grid row: 4 / 4</div>
@@ -1522,7 +1515,7 @@ $flex(gap(1rem))|:first$grow(1)|:second$grow(2)|:third$shrink(0.5)|:fourth$basis
         padding: 0.5rem;
       }
 
-      .\$grid\(cols\(1fr\,1fr\,1fr\)\,rows\(100px\,100px\)\,gap\(1rem\)\) {
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,rows\(100px\,100px\)\,gap\(1rem\)\)\|\:first\$column\(1\,3\)\|\:second\$row\(4\)\|\:third\$column\(1\)\|\:fourth\$row\(1\,2\)\$column\(2\,3\) {
         display: grid;
         word-spacing: unset;
         line-height: unset;
@@ -1553,19 +1546,19 @@ $flex(gap(1rem))|:first$grow(1)|:second$grow(2)|:third$shrink(0.5)|:fourth$basis
         flex-basis: 100px;
       }
 
-      .\|\:first\$_grid\(column\(1\,3\)\)> :where(:first-child) {
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,rows\(100px\,100px\)\,gap\(1rem\)\)\|\:first\$column\(1\,3\)\|\:second\$row\(4\)\|\:third\$column\(1\)\|\:fourth\$row\(1\,2\)\$column\(2\,3\)> :where(:first-child) {
         grid-column: 1 / 3;
       }
 
-      .\|\:second\$_grid\(row\(4\)\)> :where(:nth-child(2)) {
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,rows\(100px\,100px\)\,gap\(1rem\)\)\|\:first\$column\(1\,3\)\|\:second\$row\(4\)\|\:third\$column\(1\)\|\:fourth\$row\(1\,2\)\$column\(2\,3\)> :where(:nth-child(2)) {
         grid-row: 4 / 4;
       }
 
-      .\|\:third\$_grid\(column\(1\)\)> :where(:nth-child(3)) {
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,rows\(100px\,100px\)\,gap\(1rem\)\)\|\:first\$column\(1\,3\)\|\:second\$row\(4\)\|\:third\$column\(1\)\|\:fourth\$row\(1\,2\)\$column\(2\,3\)> :where(:nth-child(3)) {
         grid-column: 1 / 1;
       }
 
-      .\|\:fourth\$_grid\(row\(1\,2\)\,column\(2\,3\)\)> :where(:nth-child(4)) {
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,rows\(100px\,100px\)\,gap\(1rem\)\)\|\:first\$column\(1\,3\)\|\:second\$row\(4\)\|\:third\$column\(1\)\|\:fourth\$row\(1\,2\)\$column\(2\,3\)> :where(:nth-child(4)) {
         grid-area: 1 / 2 / 2 / 3;
       }
     }
