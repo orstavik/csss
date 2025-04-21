@@ -225,8 +225,8 @@ function _grid(...args) {
   return Object.assign(...args);
 }
 
-const column = (start, end = start) => ({ ["grid-column"]: `${start} / ${end}` });
-const row = (start, end = start) => ({ ["grid-row"]: `${start} / ${end}` });
+const column = (start, end = start) => ({ gridColumn: `${start} / ${end}` });
+const row = (start, end = start) => ({ gridRow: `${start} / ${end}` });
 const span = arg => `span ${arg}`;
 column.scope = { span };
 row.scope = { span };
@@ -249,8 +249,8 @@ function flex(...args) {
     if (!(typeof a === "string")) return a;
     let m = wrap(a);
     if (m) return m;
-    if (m = a.match(/^(column|column-reverse|row-reverse|row)$/)) return { ["flex-direction"]: a };
-    if (m = a.match(/^(wrap|wrap-reverse|no-wrap)$/)) return { ["flex-wrap"]: a };
+    if (m = a.match(/^(column|column-reverse|row-reverse|row)$/)) return { flexDirection: a };
+    if (m = a.match(/^(wrap|wrap-reverse|no-wrap)$/)) return { flexWrap: a };
     if (m = a.match(/^[abcsuvw.][abcsuvw.]?[abcs_]?$/)) {
       const [b, i = b, i2 = "."] = m[0];
       return {
