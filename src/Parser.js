@@ -20,7 +20,8 @@ export class ShortBlock {
     if (media) media = `@media ${media}`;
     const owner = this.shorts?.[0]?.exprList?.[0]?.name;
     const ownerMain = supers["$" + owner]?.exprList?.[0]?.name ?? owner;
-    const itemScope = SHORTS[ownerMain]?.itemScope ?? SHORTS;
+    //only allow the global scope for item |$shorts when there is an empty $container| short??
+    const itemScope = SHORTS[ownerMain]?.itemScope?? SHORTS; /* can we remove ?? SHORTS soon? i want to not be as wide as this */ 
     const shorts = this.shorts?.map((short, i) => short.interpret(i ? itemScope : SHORTS, supers, i ? owner : ""));
     return { media, shorts };
   }
@@ -343,7 +344,7 @@ function interpretSuper(type, head, body) {
 
 export function extractSuperShorts(txt) {
   const res = {};
-  for (let [, type, owner = "", name, args = "", b, , body = b] of txt.matchAll(SUPER)) 
+  for (let [, type, owner = "", name, args = "", b, , body = b] of txt.matchAll(SUPER))
     res[type + owner + name] = interpretSuper(type, name + args, body);
   return res;
 }
