@@ -47,6 +47,20 @@
     @layer container, items;
 
     @layer container {
+      .\$hg\|header\$header\|\.left\$left\|main\$main\|aside\.right\$right\|\.footer\$footer {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-rows: auto 1fr auto;
+        grid-template-columns: auto 1fr auto;
+        gap: 1rem;
+        block-size: 100vh;
+      }
+
       .\$bg\(azure\) {
         background: azure;
       }
@@ -73,6 +87,26 @@
     }
 
     @layer items {
+      .\$hg\|header\$header\|\.left\$left\|main\$main\|aside\.right\$right\|\.footer\$footer> :where(header) {
+        grid-column: 1 / 4;
+      }
+
+      .\$hg\|header\$header\|\.left\$left\|main\$main\|aside\.right\$right\|\.footer\$footer> :where(.left) {
+        grid-column: 1 / 2;
+      }
+
+      .\$hg\|header\$header\|\.left\$left\|main\$main\|aside\.right\$right\|\.footer\$footer> :where(main) {
+        grid-column: 2 / 3;
+      }
+
+      .\$hg\|header\$header\|\.left\$left\|main\$main\|aside\.right\$right\|\.footer\$footer> :where(aside.right) {
+        grid-column: 3 / 4;
+      }
+
+      .\$hg\|header\$header\|\.left\$left\|main\$main\|aside\.right\$right\|\.footer\$footer> :where(.footer) {
+        grid-column: 1 / 4;
+      }
+
       .\|\:third\$margin\(1rem\,0\)> :where(:nth-child(3)) {
         margin: 1rem 0px;
       }

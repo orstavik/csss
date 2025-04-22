@@ -18,16 +18,8 @@ export class ShortBlock {
   interpret(SHORTS, supers) {
     let media = interpretMedias(this.medias, supers);
     if (media) media = `@media ${media}`;
-    // itemScope start
-    SHORTS = { ...SHORTS };
-    for (let k in supers)
-      if (k[0] === "$")
-        SHORTS[k.slice(1)] = supers[k];
-
-    const main = this.shorts?.[0]?.exprList[0]?.name;
-    const itemScope = (SHORTS[main])?.itemScope ?? SHORTS;
-    // itemScope end
-    const shorts = this.shorts?.map((short, i) => short.interpret(i ? itemScope : SHORTS, supers));
+    const owner = this.shorts?.[0]?.exprList?.[0]?.name;
+    const shorts = this.shorts?.map((short, i) => short.interpret(SHORTS, supers, i ? owner : ""));
     return { media, shorts };
   }
 
@@ -156,13 +148,25 @@ const clashOrStack = (function () {
   }
 })();
 
+
 class Short {
   constructor(selectorList, exprList) {
     this.selectorList = selectorList;
-    this.exprList = exprList;
+    this.exprList = exprList || undefined;
   }
-  interpret(SHORTS, supers) {
-    const shorts = this.exprList && clashOrStack(this.exprList.map(s => s.interpret(SHORTS, supers)));
+
+  //todo
+  interpret(SHORTS, supers, owner) {
+    const exprList = this.exprList?.map(s =>
+      supers["$" + (owner ? owner + "." : "") + s.name]?.(s.args) ?? s
+    ).flat();
+    let scope = SHORTS;
+    if (owner) {
+      owner = supers["$" + owner]?.owner ?? owner;
+      const ownerCb = SHORTS[owner];
+      scope = ownerCb?.itemScope ?? SHORTS;
+    }
+    const shorts = exprList && clashOrStack(exprList.map(s => s.interpret(scope, supers)));
     let selector = this.selectorList && this.selectorList.map(s => s.interpret(supers)).join(", ");
     return { selector, shorts };
   }
@@ -326,30 +330,31 @@ function cloneAndReplaceExpr(argMap, { name, args }) {
   return new Expression(name, args);
 }
 
-function makeSuperShort(name, argNames, body, SHORTS) {
-  return function superShort(...args) {
+function makeSuperShort(name, argNames, exprList) {
+  function superShort(...args) {
     if (argNames.length > args.length)
       throw `missing argument: ${name}(...${argNames[args.length]})`;
     const argMap = argNames.reduce((res, n) => ((res[n] = args.shift()), res), {});
-    body = body.map(expr => cloneAndReplaceExpr(argMap, expr));
-    const res = body.map(expr => expr.interpret(SHORTS));
-    return Object.assign(...res);
-  }
+    return exprList.map(expr => cloneAndReplaceExpr(argMap, expr));
+  };
+  superShort.owner = exprList[0].name;
+  return superShort;
 }
 
-function interpretSuper(type, head, body, SHORTS) {
+function interpretSuper(type, head, body) {
   const parsed = new ShortBlock(body);
   const { name, args } = new ShortBlock("$" + head).shorts[0].exprList[0];
   const { medias, selectorList, exprList } = checkSuperBody(type, name, parsed);
   if (medias) return interpretMedias(medias, {});
   if (selectorList) return selectorList.map(s => s.interpret({})).join(", ");
-  return makeSuperShort(name, args, exprList, SHORTS);
+  return makeSuperShort(name, args, exprList);
 }
 
-export function extractSuperShorts(txt, SHORTS) {
+export function extractSuperShorts(txt) {
   const res = {};
-  for (const [, type, owner, name, args = "", b, , body = b] of txt.matchAll(SUPER)) {
-    res[type + name] = interpretSuper(type, name + args, body, SHORTS);
+  for (let [, type, owner = "", name, args = "", b, , body = b] of txt.matchAll(SUPER)) {
+    owner &&= owner + ".";
+    res[type + owner + name] = interpretSuper(type, name + args, body);
   }
   return res;
 }
