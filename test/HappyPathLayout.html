@@ -473,7 +473,7 @@
 
     <h3>Basic Item Alignments</h3>
     <div class="
-      $flex(gap(1rem))|:first$align(a)|:second$align(b)|:third$align(c)|:fourth$align(s)|:fifth$align(_)
+      $flex(gap(1rem))|:first$start|:second$end|:third$center|:fourth$baseline
       $border $padding(1rem) $h(200px)">
       <div class="$border $padding(0.5rem)">align-self: start</div>
       <div class="$border $padding(0.5rem)">align-self: end</div>
@@ -618,7 +618,7 @@
         gap: 1rem;
       }
 
-      .\$flex\(gap\(1rem\)\)\|\:first\$align\(a\)\|\:second\$align\(b\)\|\:third\$align\(c\)\|\:fourth\$align\(s\)\|\:fifth\$align\(_\) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$start\|\:second\$end\|\:third\$center\|\:fourth\$baseline {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -631,29 +631,24 @@
     }
 
     @layer items {
-      .\$flex\(gap\(1rem\)\)\|\:first\$align\(a\)\|\:second\$align\(b\)\|\:third\$align\(c\)\|\:fourth\$align\(s\)\|\:fifth\$align\(_\)> :where(:first-child) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$start\|\:second\$end\|\:third\$center\|\:fourth\$baseline> :where(:first-child) {
         text-align: unset;
         align-self: start;
       }
 
-      .\$flex\(gap\(1rem\)\)\|\:first\$align\(a\)\|\:second\$align\(b\)\|\:third\$align\(c\)\|\:fourth\$align\(s\)\|\:fifth\$align\(_\)> :where(:nth-child(2)) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$start\|\:second\$end\|\:third\$center\|\:fourth\$baseline> :where(:nth-child(2)) {
         text-align: unset;
         align-self: end;
       }
 
-      .\$flex\(gap\(1rem\)\)\|\:first\$align\(a\)\|\:second\$align\(b\)\|\:third\$align\(c\)\|\:fourth\$align\(s\)\|\:fifth\$align\(_\)> :where(:nth-child(3)) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$start\|\:second\$end\|\:third\$center\|\:fourth\$baseline> :where(:nth-child(3)) {
         text-align: unset;
         align-self: center;
       }
 
-      .\$flex\(gap\(1rem\)\)\|\:first\$align\(a\)\|\:second\$align\(b\)\|\:third\$align\(c\)\|\:fourth\$align\(s\)\|\:fifth\$align\(_\)> :where(:nth-child(4)) {
+      .\$flex\(gap\(1rem\)\)\|\:first\$start\|\:second\$end\|\:third\$center\|\:fourth\$baseline> :where(:nth-child(4)) {
         text-align: unset;
         align-self: stretch;
-      }
-
-      .\$flex\(gap\(1rem\)\)\|\:first\$align\(a\)\|\:second\$align\(b\)\|\:third\$align\(c\)\|\:fourth\$align\(s\)\|\:fifth\$align\(_\)> :where(:nth-child(5)) {
-        text-align: unset;
-        align-self: baseline;
       }
     }
   </style>

@@ -283,22 +283,18 @@ flex.itemScope = {
   order: a => ({ order: a }),
   o: a => ({ order: a }),
   //todo safe
-  align: a => {
-    const m = a.match(/^[abcs_]$/)?.[0];
-    if (!m)
-      throw `$flex|$align(${a}): "${a}" doesn't match /^[abcs_]$/`;
-    return {
-      alignItems: AlignAliases[m],
-      textAlign: TextAlignAliases[m]
-    };
-  },
-  textAlign: AllFunctions.textAlign,
+  //todo check for no arguments
+  center: _ => ({ alignSelf: "center", textAlign: "center" }),
+  end: _ => ({ alignSelf: "end", textAlign: "end" }),
+  start: _ => ({ alignSelf: "start", textAlign: "start" }),
+  stretch: _ => ({ alignSelf: "stretch", textAlign: "stretch" }),
+  baseline: _ => ({ alignSelf: "baseline", textAlign: "unset" }),
   alignSelf: AllFunctions.alignSelf,
+  textAlign: AllFunctions.textAlign,
 };
 
 export default {
   block,
-  // _block,
   grid,
   flex,
 };

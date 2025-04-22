@@ -409,7 +409,7 @@
     @layer container, items;
 
     @layer container {
-      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$shrink\(0\)\$align\(c\)\$w\(7rem\)\$h\(3rem\) {
+      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$shrink\(0\)\$center\$w\(7rem\)\$h\(3rem\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -425,9 +425,9 @@
     }
 
     @layer items {
-      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$shrink\(0\)\$align\(c\)\$w\(7rem\)\$h\(3rem\)>* {
+      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$shrink\(0\)\$center\$w\(7rem\)\$h\(3rem\)>* {
         flex-shrink: 0;
-        align-items: center;
+        align-self: center;
         text-align: center;
         inline-size: 7rem;
         block-size: 3rem;
@@ -435,7 +435,7 @@
     }
   </style>
   <div class="
-    $flex(gap(1rem),visible:auto,padding(1rem))$w(80%)|*$shrink(0)$align(c)$w(7rem)$h(3rem)">
+    $flex(gap(1rem),visible:auto,padding(1rem))$w(80%)|*$shrink(0)$center$w(7rem)$h(3rem)">
     hello
   </div>
 </test-html>
