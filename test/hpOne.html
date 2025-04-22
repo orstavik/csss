@@ -911,6 +911,19 @@
     @layer container, items;
 
     @layer container {
+      .\$flex {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: center;
+        text-indent: unset;
+        flex-direction: row;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
       .\$color\(white\,red\,\) {
         color: white;
         --background-color: red;
