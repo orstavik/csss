@@ -337,10 +337,9 @@ function makeSuperShort(name, argNames, body, SHORTS) {
   }
 }
 
-function interpretSuper(head, body, SHORTS) {
+function interpretSuper(type, head, body, SHORTS) {
   const parsed = new ShortBlock(body);
-  const type = head[0];
-  const { name, args } = new ShortBlock("$" + head.slice(1)).shorts[0].exprList[0];
+  const { name, args } = new ShortBlock("$" + head).shorts[0].exprList[0];
   const { medias, selectorList, exprList } = checkSuperBody(type, name, parsed);
   if (medias) return interpretMedias(medias, {});
   if (selectorList) return selectorList.map(s => s.interpret({})).join(", ");
@@ -350,7 +349,7 @@ function interpretSuper(head, body, SHORTS) {
 export function extractSuperShorts(txt, SHORTS) {
   const res = {};
   for (const [, type, owner, name, args = "", b, , body = b] of txt.matchAll(SUPER)) {
-    res[type + name] = interpretSuper(type + name + args, body, SHORTS);
+    res[type + name] = interpretSuper(type, name + args, body, SHORTS);
   }
   return res;
 }
