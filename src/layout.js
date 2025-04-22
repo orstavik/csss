@@ -56,6 +56,10 @@ function wrap(a) {
   return wordBreak(a) ?? overflow(a) ?? whiteSpace(a) ?? hyphens(a) ?? overflowWrap(a);
 }
 
+function checkNoArgs(args) {
+  if (args.some(a => a != null)) throw `This $short takes no arguments: ${args.join(", ")}")}`;
+}
+
 function lineClamp(num, ...ignored) {
   return {
     "display": "-webkit-box",
@@ -131,11 +135,6 @@ function toGap(...args) {
 }
 const GAP = { gap: toGap, g: toGap };
 
-function float(a) {
-  const m = a.match(/^float-(start|end)$/);
-  if (m) return { float: "inline-" + m[1] };
-}
-
 function blockGap(wordSpacing, lineHeight) {
   return { wordSpacing, lineHeight };
 }
@@ -160,19 +159,10 @@ block.scope = {
 };
 block.itemScope = {
   ..._LAYOUT,
-  float,
+  float: a => ({ float: "inline-" + a }),
   textIndent: AllFunctions.textIndent,
   indent: AllFunctions.textIndent,
 };
-// function _block(...args) {
-//   args = args.map(a => typeof a === "string" ? float(a) : a);
-//   return Object.assign(...args);
-// }
-// _block.scope = {   //$_block(indent(1em),...)
-//   ..._LAYOUT,
-//   textIndent: AllFunctions.textIndent,
-//   indent: AllFunctions.textIndent,
-// };
 
 function grid(...args) {
   args = args.map(a => {
@@ -283,12 +273,11 @@ flex.itemScope = {
   order: a => ({ order: a }),
   o: a => ({ order: a }),
   //todo safe
-  //todo check for no arguments
-  center: _ => ({ alignSelf: "center", textAlign: "center" }),
-  end: _ => ({ alignSelf: "end", textAlign: "end" }),
-  start: _ => ({ alignSelf: "start", textAlign: "start" }),
-  stretch: _ => ({ alignSelf: "stretch", textAlign: "stretch" }),
-  baseline: _ => ({ alignSelf: "baseline", textAlign: "unset" }),
+  center: (...args) => (checkNoArgs(args), ({ alignSelf: "center", textAlign: "center" })),
+  end: (...args) => (checkNoArgs(args), ({ alignSelf: "end", textAlign: "end" })),
+  start: (...args) => (checkNoArgs(args), ({ alignSelf: "start", textAlign: "start" })),
+  stretch: (...args) => (checkNoArgs(args), ({ alignSelf: "stretch", textAlign: "stretch" })),
+  baseline: (...args) => (checkNoArgs(args), ({ alignSelf: "baseline", textAlign: "unset" })),
   alignSelf: AllFunctions.alignSelf,
   textAlign: AllFunctions.textAlign,
 };
