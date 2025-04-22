@@ -296,12 +296,12 @@ function parse$Expression(exp) {
   return { shorts, medias };
 }
 const ARG = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;
-const ARGLIST = new RegExp(`\\(\\s*${ARG}(?:\\s*,\\s*${ARG})*\\s*\\)`).source;
-const SUPER_HEAD = new RegExp(`([$:@][a-zA-Z_][a-zA-Z0-9_-]*(?:\\s*${ARGLIST})?)\\s*=`).source;
-// const SUPER_HEAD = /([$:@][a-zA-Z_][a-zA-Z0-9_-]*)\s*=/.source; // (name)
+const ARGLIST = new RegExp(`\\(${ARG}(?:,\\s*${ARG})*\\)`).source;
+const SUPER_NAME = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;
 const SUPER_LINE = /((["'`])(?:\\.|(?!\3).)*?\3|\/\*[\s\S]*?\*\/|[^;]+)(?:;|$)/.source; // (body1, quoteSign)
 const SUPER_BODY = /{((["'`])(?:\\.|(?!\5).)*?\5|\/\*[\s\S]*?\*\/|[^}]+)}/.source;// (body2, quoteSign)
-const SUPER = new RegExp(`${SUPER_HEAD}(?:${SUPER_LINE}|${SUPER_BODY})`, "g");
+const SUPER = new RegExp(
+  `([$:@])(?:(${SUPER_NAME})\\.)?(${SUPER_NAME})(${ARGLIST})?\\s*=\\s*(?:${SUPER_LINE}|${SUPER_BODY})`, "g");
 
 function checkSuperBody(type, name, { medias, shorts }) {
   if (!medias && !shorts) throw `is empty`;
@@ -339,24 +339,21 @@ function interpretSuper(head, body, SHORTS) {
   const { medias, selectorList, exprList } = checkSuperBody(type, name, parsed);
   if (medias) return interpretMedias(medias, {});
   if (selectorList) return selectorList.map(s => s.interpret({})).join(", ");
-  return { [name]: makeSuperShort(name, args, exprList, SHORTS) };
+  return makeSuperShort(name, args, exprList, SHORTS);
 }
 
 export function extractSuperShorts(txt, SHORTS) {
-  const supers = {}, shorts = {};
-  for (const [, name, b, , body = b] of txt.matchAll(SUPER)) {
-    if (name[0] === "$")
-      Object.assign(shorts, interpretSuper(name, body, SHORTS));
-    else
-      supers[name] = interpretSuper(name, body, SHORTS);
+  const res = {};
+  for (const [, type, owner, name, args = "", b, , body = b] of txt.matchAll(SUPER)) {
+    res[type + name] = interpretSuper(type + name + args, body, SHORTS);
   }
-  return { supers, shorts };
+  return res;
 }
 
 //todo we don't support nested :not(:has(...))
 const pseudo = /:[a-zA-Z][a-zA-Z0-9_-]*(?:\([^)]+\))?/.source;
 const at = /\[[a-zA-Z][a-zA-Z0-9_-]*(?:[$*~|^]?=(?:'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"))?\]/.source;
-const tag = /\[a-zA-Z][a-zA-Z0-9-]*/.source; //tag
+const tag = /[a-zA-Z][a-zA-Z0-9-]*/.source; //tag
 const clazz = /\.[a-zA-Z][a-zA-Z0-9_-]*/.source; //class
 const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");

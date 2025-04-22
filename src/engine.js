@@ -82,9 +82,11 @@ export class SheetWrapper {
   }
 
   readSupers(txt) {
-    const {supers, shorts} = extractSuperShorts(txt, this.shorts);
-    Object.assign(this.shorts, shorts);
+    const supers = extractSuperShorts(txt, this.shorts, this.supers);
     Object.assign(this.supers, supers);
+    for (let k in supers)
+      if (k[0] === "$")
+        this.shorts[k.slice(1)] = supers[k];
   }
 
   #isInUse(r) {
