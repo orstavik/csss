@@ -104,11 +104,11 @@ class Expression {
     return this.name + "/" + this.args.length;
   }
   interpret(scope, supers) {
-    const cb = scope?.[this.name] ?? NativeCssFunctions[this.name];
+    const cb = scope?.[this.name];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${this.name}`);
     const args = this.args.map(x =>
-      x instanceof Expression ? x.interpret(cb.scope, supers) :
+      x instanceof Expression ? x.interpret(cb.scope ?? NativeCssFunctions, supers) :
         x === "." ? "unset" :
           x);
     return cb.call(this, ...args);
