@@ -26,7 +26,8 @@
     }
   }
 
-  const paths = (location.hash.slice(1) || "HappyPath,HappyPathLayout,HappyPathCalVar").split(",").map(p => p + ".html");
+  if (!location.hash) location.hash = "hpOne,hpBorder,hpLayout,hpCalVar,hpSupers";
+  const paths = location.hash.slice(1).split(",").map(p => p + ".html");
   for (let file of paths)
     document.body.insertAdjacentHTML('beforeend', await(await fetch(file)).text());
   const happy = document.querySelector('script[type="test"]').outerHTML;
