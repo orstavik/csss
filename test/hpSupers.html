@@ -1,13 +1,13 @@
 <test-html title="Holy Grail Layout">
   <main csss="
       $hg = $grid(rows(auto,1fr,auto),cols(auto,1fr,auto),gap(1rem))$h(100vh);
-      $hgHeader = $column(1,4);
-      $hgFooter = $column(1,4);
-      $hgLeft = $column(1,2);
-      $hgRight = $column(3,4);
-      $hgMain = $column(2,3);
+      $hg.header = $column(1,4);
+      $hg.footer = $column(1,4);
+      $hg.left = $column(1,2);
+      $hg.right = $column(3,4);
+      $hg.main = $column(2,3);
   ">
-    <div class="$hg|.header$hgHeader|.left$hgLeft|.main$hgMain|.right$hgRight|.footer$hgFooter">
+    <div class="$hg|header$header|.left$left|main$main|aside.right$right|.footer$footer">
       <header class="header $bg(azure) $border">
         <h1>Header</h1>
       </header>
@@ -21,11 +21,13 @@
           <li>Contact</li>
         </ul>
       </aside>
-      <main class="main $bg(white) $border">
+      <main class="$bg(white) $border">
         <h2>Main Content</h2>
         <p>This is the main content area of the page. In a real website, this would contain the primary content.</p>
-        <p>The Holy Grail layout is a classic web design pattern with header, footer, main content, and two sidebars.</p>
-        <p>Using CSS Grid makes this layout much simpler than older techniques that required floats and negative margins.</p>
+        <p>The Holy Grail layout is a classic web design pattern with header, footer, main content, and two sidebars.
+        </p>
+        <p>Using CSS Grid makes this layout much simpler than older techniques that required floats and negative
+          margins.</p>
       </main>
       <aside class="right |:third$margin(1rem,0)">
         <h2>Right Sidebar</h2>
@@ -42,18 +44,41 @@
     </div>
   </main>
   <style>
-     @layer container, items;
+    @layer container, items;
 
-     @layer container {
-      
-     }
-
-      @layer items {
-        
+    @layer container {
+      .\$bg\(azure\) {
+        background: azure;
       }
-     
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$bg\(lightgreen\) {
+        background: lightgreen;
+      }
+
+      .\$bg\(white\) {
+        background: white;
+      }
+
+      .\$padding\(0\.5rem\) {
+        padding: 0.5rem;
+      }
+
+      .\$bg\(lightblue\) {
+        background: lightblue;
+      }
+    }
+
+    @layer items {
+      .\|\:third\$margin\(1rem\,0\)> :where(:nth-child(3)) {
+        margin: 1rem 0px;
+      }
+    }
   </style>
-</test-html> 
+</test-html>
 
 <!-- 
 $twoCol = $grid(template(auto 1fr / 3fr 1fr))$gap(2rem);
