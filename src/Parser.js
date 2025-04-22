@@ -19,15 +19,15 @@ export class ShortBlock {
     let media = interpretMedias(this.medias, supers);
     if (media) media = `@media ${media}`;
     // itemScope start
-    const main = this.shorts?.[0]?.exprList[0]?.name;
     SHORTS = { ...SHORTS };
     for (let k in supers)
       if (k[0] === "$")
         SHORTS[k.slice(1)] = supers[k];
 
-    const itemScope = (SHORTS[main] ?? NativeCssFunctions[main])?.itemScope;
-    const shorts = this.shorts?.map((short, i) => short.interpret(i ? itemScope ?? SHORTS : SHORTS, supers));
+    const main = this.shorts?.[0]?.exprList[0]?.name;
+    const itemScope = (SHORTS[main])?.itemScope ?? SHORTS;
     // itemScope end
+    const shorts = this.shorts?.map((short, i) => short.interpret(i ? itemScope : SHORTS, supers));
     return { media, shorts };
   }
 
