@@ -19,7 +19,9 @@ export class ShortBlock {
     let media = interpretMedias(this.medias, supers);
     if (media) media = `@media ${media}`;
     const owner = this.shorts?.[0]?.exprList?.[0]?.name;
-    const shorts = this.shorts?.map((short, i) => short.interpret(SHORTS, supers, i ? owner : ""));
+    const ownerMain = supers["$" + owner]?.exprList?.[0]?.name ?? owner;
+    const itemScope = SHORTS[ownerMain]?.itemScope ?? SHORTS;
+    const shorts = this.shorts?.map((short, i) => short.interpret(i ? itemScope : SHORTS, supers, i ? owner : ""));
     return { media, shorts };
   }
 
@@ -149,24 +151,29 @@ const clashOrStack = (function () {
 })();
 
 
+function cloneAndReplaceExpr(argMap, { name, args }) {
+  args = args.map(arg => arg instanceof Expression ? cloneAndReplaceExpr(argMap, arg) : argMap[arg] ?? arg);
+  return new Expression(name, args);
+}
+
 class Short {
   constructor(selectorList, exprList) {
     this.selectorList = selectorList;
     this.exprList = exprList || undefined;
   }
 
-  //todo
-  interpret(SHORTS, supers, owner) {
-    const exprList = this.exprList?.map(s =>
-      supers["$" + (owner ? owner + "." : "") + s.name]?.(s.args) ?? s
-    ).flat();
-    let scope = SHORTS;
-    if (owner) {
-      owner = supers["$" + owner]?.owner ?? owner;
-      const ownerCb = SHORTS[owner];
-      scope = ownerCb?.itemScope ?? SHORTS;
-    }
-    const shorts = exprList && clashOrStack(exprList.map(s => s.interpret(scope, supers)));
+  interpret(scope, supers, owner) {
+    const unSuperExprList = this.exprList?.map(s => {
+      const sup = supers["$" + (owner ? owner + "." : "") + s.name];
+      if (!sup)
+        return s;
+      const { name, argNames, exprList } = sup;
+      if (argNames.length > s.args.length)
+        throw `missing argument: ${name}(...${argNames[s.args.length]})`;
+      const argMap = argNames.reduce((res, n) => ((res[n] = s.args.shift()), res), {});
+      return exprList.map(expr => cloneAndReplaceExpr(argMap, expr));
+    }).flat();
+    const shorts = unSuperExprList && clashOrStack(unSuperExprList.map(s => s.interpret(scope, supers)));
     let selector = this.selectorList && this.selectorList.map(s => s.interpret(supers)).join(", ");
     return { selector, shorts };
   }
@@ -310,7 +317,7 @@ const SUPER_NAME = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;
 const SUPER_LINE = /((["'`])(?:\\.|(?!\3).)*?\3|\/\*[\s\S]*?\*\/|[^;]+)(?:;|$)/.source; // (body1, quoteSign)
 const SUPER_BODY = /{((["'`])(?:\\.|(?!\5).)*?\5|\/\*[\s\S]*?\*\/|[^}]+)}/.source;// (body2, quoteSign)
 const SUPER = new RegExp(
-  `([$:@])(?:(${SUPER_NAME})\\.)?(${SUPER_NAME})(${ARGLIST})?\\s*=\\s*(?:${SUPER_LINE}|${SUPER_BODY})`, "g");
+  `([$:@])(${SUPER_NAME}\\.)?(${SUPER_NAME})(${ARGLIST})?\\s*=\\s*(?:${SUPER_LINE}|${SUPER_BODY})`, "g");
 
 function checkSuperBody(type, name, { medias, shorts }) {
   if (!medias && !shorts) throw `is empty`;
@@ -325,37 +332,19 @@ function checkSuperBody(type, name, { medias, shorts }) {
   return { exprList, selectorList };
 }
 
-function cloneAndReplaceExpr(argMap, { name, args }) {
-  args = args.map(arg => arg instanceof Expression ? cloneAndReplaceExpr(argMap, arg) : argMap[arg] ?? arg);
-  return new Expression(name, args);
-}
-
-function makeSuperShort(name, argNames, exprList) {
-  function superShort(...args) {
-    if (argNames.length > args.length)
-      throw `missing argument: ${name}(...${argNames[args.length]})`;
-    const argMap = argNames.reduce((res, n) => ((res[n] = args.shift()), res), {});
-    return exprList.map(expr => cloneAndReplaceExpr(argMap, expr));
-  };
-  superShort.owner = exprList[0].name;
-  return superShort;
-}
-
 function interpretSuper(type, head, body) {
   const parsed = new ShortBlock(body);
-  const { name, args } = new ShortBlock("$" + head).shorts[0].exprList[0];
+  const { name, args: argNames } = new ShortBlock("$" + head).shorts[0].exprList[0];
   const { medias, selectorList, exprList } = checkSuperBody(type, name, parsed);
   if (medias) return interpretMedias(medias, {});
   if (selectorList) return selectorList.map(s => s.interpret({})).join(", ");
-  return makeSuperShort(name, args, exprList);
+  return { name, argNames, exprList };
 }
 
 export function extractSuperShorts(txt) {
   const res = {};
-  for (let [, type, owner = "", name, args = "", b, , body = b] of txt.matchAll(SUPER)) {
-    owner &&= owner + ".";
+  for (let [, type, owner = "", name, args = "", b, , body = b] of txt.matchAll(SUPER)) 
     res[type + owner + name] = interpretSuper(type, name + args, body);
-  }
   return res;
 }
 
