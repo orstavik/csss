@@ -325,14 +325,14 @@
   </style>
 </test-html>
 <test-html title="$flex(...)|$_flex">
-  <div class="$flex(gap(4px),padding(22px,33px,44px))|$_flex(margin(,0.1px,,20%))">
+  <div class="$flex(gap(4px),padding(22px,33px,44px))|$margin(,0.1px,,20%)">
     hello
   </div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\)\|\$_flex\(margin\(\,0\.1px\,\,20\%\)\) {
+      .\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\)\|\$margin\(\,0\.1px\,\,20\%\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -347,21 +347,21 @@
     }
 
     @layer items {
-      .\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\)\|\$_flex\(margin\(\,0\.1px\,\,20\%\)\)>* {
+      .\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\)\|\$margin\(\,0\.1px\,\,20\%\)>* {
         margin-inline: 0.1px 20%;
       }
     }
   </style>
 </test-html>
-<test-html title="$flex(cc)|*$_flex(margin(10px))">
-  <div class="$flex(cc)|*$_flex(margin(10px))">
+<test-html title="$flex(cc)|*$margin(10px)">
+  <div class="$flex(cc)|*$margin(10px)">
     hello
   </div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$flex\(cc\)\|\*\$_flex\(margin\(10px\)\) {
+      .\$flex\(cc\)\|\*\$margin\(10px\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -375,7 +375,7 @@
     }
 
     @layer items {
-      .\$flex\(cc\)\|\*\$_flex\(margin\(10px\)\)>* {
+      .\$flex\(cc\)\|\*\$margin\(10px\)>* {
         margin: 10px;
       }
     }
@@ -409,7 +409,7 @@
     @layer container, items;
 
     @layer container {
-      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$_flex\(0shrink\,c\)\$w\(7rem\)\$h\(3rem\) {
+      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$shrink\(0\)\$center\$w\(7rem\)\$h\(3rem\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -425,9 +425,9 @@
     }
 
     @layer items {
-      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$_flex\(0shrink\,c\)\$w\(7rem\)\$h\(3rem\)>* {
+      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$shrink\(0\)\$center\$w\(7rem\)\$h\(3rem\)>* {
         flex-shrink: 0;
-        align-items: center;
+        align-self: center;
         text-align: center;
         inline-size: 7rem;
         block-size: 3rem;
@@ -435,7 +435,7 @@
     }
   </style>
   <div class="
-    $flex(gap(1rem),visible:auto,padding(1rem))$w(80%)|*$_flex(0shrink,c)$w(7rem)$h(3rem)">
+    $flex(gap(1rem),visible:auto,padding(1rem))$w(80%)|*$shrink(0)$center$w(7rem)$h(3rem)">
     hello
   </div>
 </test-html>
@@ -487,6 +487,7 @@
     @layer items {}
   </style>
 </test-html>
+
 <test-html title="$font(times,serif,700,capitalize)">
   <main class="$font(times,serif,500,2px,italic)">
     <h2 class="$font(helvetica,arial,sans-serif,900,capitalize)">
@@ -541,10 +542,7 @@
     $w(100%)
     $em(15px)
     
-    $block(s,gap(0.3em,1em))
-    |*$_block(indent(15%))
-    |.head$_block(indent(-5%))
-    |.subheading$_block(indent(0))
+    $block(s,gap(0.3em,1em))|*$indent(15%)|.head$indent(-5%)|.subheading$indent(0)
     ">
     <h1 class="head">The Article Heading</h1>
     <h4 class="subheading">Sub-information... Lorem ipsum dolor sit amet. Et quia temporibus est officia ipsam a sunt
@@ -576,7 +574,7 @@
         font-size: 15px;
       }
 
-      .\$block\(s\,gap\(0\.3em\,1em\)\) {
+      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\) {
         display: block;
         word-spacing: 0.3em;
         line-height: 1em;
@@ -588,20 +586,21 @@
     }
 
     @layer items {
-      .\|\*\$_block\(indent\(15\%\)\)>* {
+      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\)>* {
         text-indent: 15%;
       }
 
-      .\|\.head\$_block\(indent\(-5\%\)\)> :where(.head) {
+      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\)> :where(.head) {
         text-indent: -5%;
       }
 
-      .\|\.subheading\$_block\(indent\(0\)\)> :where(.subheading) {
+      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\)> :where(.subheading) {
         text-indent: 0px;
       }
     }
   </style>
 </test-html>
+
 <test-html title="@print,@screen:hover$border(solid,2px)|:valid$border(dotted,2px)|.first$border(dashed,2px)">
   <style>
     @layer container, items;
@@ -640,6 +639,7 @@
     hello
   </div>
 </test-html>
+
 <test-html title="Border 8 - Calc Expressions">
   <main>
     <div class="$grid(cols(1fr,1fr),gap(1rem))">
@@ -675,6 +675,7 @@
     @layer items {}
   </style>
 </test-html>
+
 <test-html title="Border 13 - Test on Auto Wrapping of var and calc">
   <main style="--border-width: 3px;">
     <div class="$grid(cols(1fr,1fr),gap(1rem))">
@@ -756,42 +757,47 @@
         text-decoration-thickness: 2px;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
+
       .\$overLine\(2px\) {
         text-decoration-line: overline;
         text-decoration-thickness: 2px;
-        text-decoration-style: solid;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
+
       .\$overUnderLineThrough\(2px\) {
         text-decoration-line: underline overline line-through;
         text-decoration-thickness: 2px;
-        text-decoration-style: solid;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
+
       .\$wavyOverUnderLineThrough\(2px\) {
         text-decoration-line: underline overline line-through;
         text-decoration-thickness: 2px;
         text-decoration-style: wavy;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
+
       .\$lineThrough\(2px\) {
+        text-decoration-style: initial;
         text-decoration-line: line-through;
         text-decoration-thickness: 2px;
-        text-decoration-style: solid;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
+
       .\$dottedUnderLine\(2px\) {
         text-decoration-line: underline;
         text-decoration-thickness: 2px;
         text-decoration-style: dotted;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
+
       .\$dashedOverUnderLineThrough\(2px\) {
         text-decoration-line: underline overline line-through;
         text-decoration-thickness: 2px;
         text-decoration-style: dashed;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
+
       .\$doubleOverLine\(2px\) {
         text-decoration-line: overline;
         text-decoration-thickness: 2px;
@@ -830,15 +836,15 @@
 </test-html>
 <test-html title="Bug: `display:grid`">
   <main csss="
-  $layout = $grid(cols(1fr,1fr,1fr))$gap(1rem);
-   ">
-  <div class="$layout $grid">
-    <div class="$color(white,blue,) $bg() $padding(1rem) $textAlign(center)">1</div>
-    <div class="$color(white,yellow,) $bg() $padding(1rem) $textAlign(center)">2</div>
-  </div>
-</main>
-<style>
-  @layer container, items;
+    $layout = $grid(cols(1fr,1fr,1fr))$gap(1rem);
+     ">
+    <div class="$layout $grid(gap(2rem))">
+      <div class="$color(white,blue,) $bg() $padding(1rem) $textAlign(center)">1</div>
+      <div class="$color(white,yellow,) $bg() $padding(1rem) $textAlign(center)">2</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
 
     @layer container {
       .\$layout {
@@ -852,7 +858,8 @@
         grid-template-columns: 1fr 1fr 1fr;
         gap: 1rem;
       }
-      .\$grid {
+
+      .\$grid\(gap\(2rem\)\) {
         display: grid;
         word-spacing: unset;
         line-height: unset;
@@ -860,121 +867,133 @@
         hyphens: unset;
         text-align: unset;
         text-indent: unset;
+        gap: 2rem;
       }
+
       .\$color\(white\,blue\,\) {
         color: white;
         --background-color: blue;
         border-color: white;
       }
+
       .\$bg\(\) {
         background: var(--background-color);
       }
+
       .\$padding\(1rem\) {
         padding: 1rem;
       }
+
       .\$textAlign\(center\) {
         text-align: center;
       }
+
       .\$color\(white\,yellow\,\) {
         color: white;
         --background-color: yellow;
         border-color: white;
       }
-     }
-    @layer items {
-      
     }
-</style>
+
+    @layer items {}
+  </style>
 </test-html>
 <test-html title="Bug: `display:flex`">
-<main csss="
-  $layout = $flex(row,gap(1rem),textAlign(center),padding(1rem));
-">
-  <div class="$layout">
-    <div class="$color(white,red,) $bg(red)">1</div>
-    <div class="$color(white,green,) $bg(green)">2</div>
-  </div>
-</main>
-<style>
-  @layer container, items;
-  @layer container {
-    .\$layout {
-      display: flex;
-      word-spacing: unset;
-      line-height: unset;
-      white-space: unset;
-      hyphens: unset;
-      text-align: center;
-      text-indent: unset;
-      flex-direction: row;
-      gap: 1rem;
-      padding: 1rem;
-    }
-    .\$color\(white\,red\,\) {
-      color: white;
-      --background-color: red;
-      border-color: white;
-    }
-    .\$bg\(red\) {
-      background: red;
-    }
-    .\$color\(white\,green\,\) {
-      color: white;
-      --background-color: green;
-      border-color: white;
-    }
-    .\$bg\(green\) {
-      background: green;
-    }
-  }
+  <main csss="
+    $flex = $flex(row,gap(1rem),textAlign(center),padding(1rem));
+  ">
+    <div class="$flex">
+      <div class="$color(white,red,) $bg(red)">1</div>
+      <div class="$color(white,green,) $bg(green)">2</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
 
-  @layer items {
+    @layer container {
+      .\$flex {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: center;
+        text-indent: unset;
+        flex-direction: row;
+        gap: 1rem;
+        padding: 1rem;
+      }
 
-  }
-</style>
+      .\$color\(white\,red\,\) {
+        color: white;
+        --background-color: red;
+        border-color: white;
+      }
+
+      .\$bg\(red\) {
+        background: red;
+      }
+
+      .\$color\(white\,green\,\) {
+        color: white;
+        --background-color: green;
+        border-color: white;
+      }
+
+      .\$bg\(green\) {
+        background: green;
+      }
+    }
+
+    @layer items {}
+  </style>
 </test-html>
 <test-html title="Bug: empty argument on supershorts">
-<main csss="
-  $layout = $block$border;
-">
-  <div class="$layout">
-    <h1>Hello Sunshine! This is error.</h1>
-  </div>
-  <div class="$block $border">
-    <h1>Hello Sunshine! No error?</h1>
-  </div>
-</main>
-<style>
-  @layer container, items;
-  @layer container {
-    .\$layout {
-      display: block;
-      word-spacing: unset;
-      line-height: unset;
-      white-space: unset;
-      hyphens: unset;
-      text-align: unset;
-      text-indent: unset;
-      border-style: solid;
-    }
-    .\$block {
-      display: block;
-      word-spacing: unset;
-      line-height: unset;
-      white-space: unset;
-      hyphens: unset;
-      text-align: unset;
-      text-indent: unset;
-    }
-    .\$border {
-      border-style: solid;
-    }
-  }
-  @layer items {
+  <main csss="
+    $layout = $block$border;
+  ">
+    <div class="$layout">
+      <h1>Hello Sunshine! This is error.</h1>
+    </div>
+    <div class="$block $border">
+      <h1>Hello Sunshine! No error?</h1>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
 
-  }
-</style>
+    @layer container {
+      .\$layout {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        border-style: solid;
+      }
+
+      .\$block {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+    }
+
+    @layer items {}
+  </style>
 </test-html>
+
+
 
 <!--
 <test-html title=":dark=@media(prefers-color-scheme:dark);">

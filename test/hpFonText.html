@@ -1,0 +1,70 @@
+<test-html title="Text Decoration - Basic Test">
+  <main>
+    <h2>Grammar & Spelling</h2>
+    <div class="$grammarError(2px)">grammarError(2px)</div>
+    <h2>Default (no style)</h2>
+    <div class="$overLine(2px)">overLine(2px)</div>
+    <div class="$overUnderLineThrough(2px)">overUnderLineThrough(2px)</div>
+    <h2>Styles</h2>
+    <div class="$wavyOverUnderLineThrough(2px)">wavyOverUnderLineThrough(2px)</div>
+    <div class="$lineThrough(2px)">lineThrough(2px)</div>
+    <div class="$dottedUnderLine(2px)">dottedUnderLine(2px)</div>
+    <div class="$dashedOverUnderLineThrough(2px)">dashedOverUnderLineThrough(2px)</div>
+    <div class="$doubleOverLine(2px)">doubleOverLine(2px)</div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grammarError\(2px\) {
+        text-decoration-line: grammar-error;
+        text-decoration-thickness: 2px;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+      .\$overLine\(2px\) {
+        text-decoration-line: overline;
+        text-decoration-thickness: 2px;
+        text-decoration-style: solid;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+      .\$overUnderLineThrough\(2px\) {
+        text-decoration-line: underline overline line-through;
+        text-decoration-thickness: 2px;
+        text-decoration-style: solid;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+      .\$wavyOverUnderLineThrough\(2px\) {
+        text-decoration-line: underline overline line-through;
+        text-decoration-thickness: 2px;
+        text-decoration-style: wavy;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+      .\$lineThrough\(2px\) {
+        text-decoration-line: line-through;
+        text-decoration-thickness: 2px;
+        text-decoration-style: solid;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+      .\$dottedUnderLine\(2px\) {
+        text-decoration-line: underline;
+        text-decoration-thickness: 2px;
+        text-decoration-style: dotted;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+      .\$dashedOverUnderLineThrough\(2px\) {
+        text-decoration-line: underline overline line-through;
+        text-decoration-thickness: 2px;
+        text-decoration-style: dashed;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+      .\$doubleOverLine\(2px\) {
+        text-decoration-line: overline;
+        text-decoration-thickness: 2px;
+        text-decoration-style: double;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>

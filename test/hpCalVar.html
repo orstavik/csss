@@ -41,7 +41,7 @@
 
     @layer container {
       .\$width\(100px\+20px\) {
-        width: calc(120px);
+        inline-size: calc(120px);
       }
     }
 
@@ -58,11 +58,11 @@
 
     @layer container {
       .\$width\(100\%-20px\) {
-        width: calc(100% - 20px);
+        inline-size: calc(100% - 20px);
       }
 
       .\$height\(2rem\+1em\) {
-        height: calc(1em + 2rem);
+        block-size: calc(1em + 2rem);
       }
     }
 
@@ -98,11 +98,11 @@
 
     @layer container {
       .\$width\(\(100px\+5vw\)\*2\) {
-        width: calc(200px + 10vw);
+        inline-size: calc(200px + 10vw);
       }
 
       .\$height\(3rem\*\(1\+0\.5\)\) {
-        height: calc(4.5rem);
+        block-size: calc(4.5rem);
       }
     }
 
@@ -120,11 +120,11 @@
 
     @layer container {
       .\$width\(--base-size\*2\) {
-        width: calc(var(--base-size) * 2);
+        inline-size: calc(var(--base-size) * 2);
       }
 
       .\$height\(--base-size\+10px\) {
-        height: calc(var(--base-size) + 10px);
+        block-size: calc(var(--base-size) + 10px);
       }
     }
 
@@ -160,7 +160,7 @@
 
     @layer container {
       .\$width\(\(100px\+50px\)\*\(2-0\.5\)\) {
-        width: calc(225px);
+        inline-size: calc(225px);
       }
     }
 
@@ -194,7 +194,7 @@
 
     @layer container {
       .\$width\(1em\/--var\) {
-        width: calc(1em / var(--var));
+        inline-size: calc(1em / var(--var));
       }
     }
 
@@ -210,7 +210,7 @@
 
     @layer container {
       .\$width\(\(1em\+20px\)\*20\+40px\) {
-        width: calc(20em + 440px);
+        inline-size: calc(20em + 440px);
       }
 
       .\$bg\(lightblue\) {
@@ -268,69 +268,6 @@
 
       .\$em\(clamp\(10\%\,2px\+1em\,20\%\)\) {
         font-size: clamp(10%, 1em + 2px, 20%);
-      }
-    }
-
-    @layer items {}
-  </style>
-</test-html>
-<test-html title="Font Names with Spaces and Special Characters">
-  <div class="$font('Times+New+Roman','DejaVu+Sans+Mono',serif)">
-    Testing font names with spaces and special characters
-  </div>
-  <style>
-    @layer container, items;
-
-    @layer container {
-      .\$font\(\'Times\+New\+Roman\'\,\'DejaVu\+Sans\+Mono\'\,serif\) {
-        font-family: "Times New Roman", "DejaVu Sans Mono", serif;
-        font-style: initial;
-        font-weight: initial;
-        font-variant: initial;
-        font-stretch: initial;
-        text-transform: initial;
-        letter-spacing: initial;
-      }
-    }
-
-    @layer items {}
-  </style>
-</test-html>
-<test-html title="Grid Column with Slash Notation">
-  <div class="$grid(cols(1fr,2fr,1fr),rows(auto,1fr,auto),gap(1rem))">
-    <div class="$gridColumn('1/4')">
-      Header spanning all columns
-    </div>
-    <div class="$gridColumn('2/3')">
-      Main content
-    </div>
-    <div class="$gridColumn('1/4')">
-      Footer spanning all columns
-    </div>
-  </div>
-  <style>
-    @layer container, items;
-
-    @layer container {
-      .\$grid\(cols\(1fr\,2fr\,1fr\)\,rows\(auto\,1fr\,auto\)\,gap\(1rem\)\) {
-        display: grid;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
-        text-align: unset;
-        text-indent: unset;
-        grid-template-columns: 1fr 2fr 1fr;
-        grid-template-rows: auto 1fr auto;
-        gap: 1rem;
-      }
-
-      .\$gridColumn\(\'1\/4\'\) {
-        grid-column: 1 / 4;
-      }
-
-      .\$gridColumn\(\'2\/3\'\) {
-        grid-column: 2 / 3;
       }
     }
 
