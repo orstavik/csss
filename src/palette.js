@@ -125,11 +125,15 @@ const funcs = {
   outline: a => ({ "outline-color": a }),
   border: (...args) => borderSwitch(toLogicalFour("Color", ...args)),
   decoration: a => ({ "--text-decoration-color": a }),
-  shadow: (box, text = box, drop = box) => ({
-    "--box-shadow-color": box,
-    "--text-shadow-color": text,
-    "--drop-shadow-color": drop,
-  }),
+  boxShadow: (...colors) => {
+    const vars = {};
+    colors.forEach((color, index) => {
+      vars[`--box-shadow-color-${index + 1}`] = color;
+    });
+    return vars;
+  },
+  textShadow: (color) => ({ "--text-shadow-color": color }),
+  dropShadow: (color) => ({ "--drop-shadow-color": color }),
 };
 for (const fn of Object.values(funcs))
   fn.scope = ColorScope;
@@ -196,10 +200,18 @@ export default {
   palette,
   darkPalette,
   color,
-  boxShadow: (...args) => [...args, `var(--box-shadow-color, oklch(from currentcolor l 0 0))`].join(" "),
-  boxShadowInset: (...args) => ["inset", ...args, `var(--box-shadow-color, oklch(from currentcolor l 0 0))`].join(" "),
-  textShadow: (...args) => [...args, `var(--text-shadow-color, oklch(from currentcolor l 0 0))`].join(" "),
-  dropShadow: (...args) => [...args, `var(--drop-shadow-color, oklch(from currentcolor l 0 0))`].join(" "),
+  boxShadow: (...geometries) => ({ 
+    'box-shadow': geometries.map((geom, index) => 
+      `${geom.replace(/,/g, ' ')} var(--box-shadow-color-${index + 1}, oklch(from currentcolor l 0 0))`
+    ).join(", ") 
+  }),
+  boxShadowInset: (...geometries) => ({ 
+    'box-shadow': geometries.map((geom, index) => 
+      `inset ${geom.replace(/,/g, ' ')} var(--box-shadow-color-${index + 1}, oklch(from currentcolor l 0 0))`
+    ).join(", ") 
+  }),
+  textShadow: (...args) => ({ 'text-shadow': [...args, `var(--text-shadow-color, oklch(from currentcolor l 0 0))`].join(" ") }),
+  dropShadow: (...args) => ({ filter: `drop-shadow(${[...args, `var(--drop-shadow-color, oklch(from currentcolor l 0 0))`].join(" ")})` }),
   border,
   ...textDecorations,
 };
