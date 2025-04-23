@@ -1,0 +1,44 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Project Context
+This workspace contains three interconnected projects that work together to build tegn.tv:
+- DoubleDots: The JavaScript framework providing reactive HTML templating and custom attributes
+- CSSS (CSS Shorts): The CSS framework enabling concise styling with shorthand syntax
+- tegn.tv: A Netflix-like single page application for displaying sign language videos and content (new version of https://tegn.tv)
+
+# Instructions to chatbot
+1. Read these instructions carefully. They give you the most important rules for how to interact with me.
+2. Don't delete any of my comments.
+3. Don't delete any of my code or .md or html text, comment it out instead using //, /* */, <!-- xyz --->.
+4. Make pure functions when you can. Don't make classes unless i ask you to.
+
+# Startup instructions.
+1. read this file.
+2. read all the files except .md files in codebase.
+3. explain the codebase to me.
+4. read the README.md file and other .md files and check that these files are in sync with what you got.
+4. update the .md files so they contain the latest knowledge (if there are important updates).
+
+# Formatting JS and JSON
+1. Don't use brackets {} for single statement if/else/for/while loops.
+2. When a function can be declared on less than 60chars width, make it into a single line.
+
+# Formatting JSON
+1. prioritize brevity.
+2. Try to avoid making the structure more than 4 levels deep using 2space indents.
+3. If an array only contains primitives and/or short strings, then don't split them into a new line if i don't.
+
+# Formatting HTML and css and DoubleDots and CssShorts
+1. Don't add linebreak around inline elements such as <span> and <a>.
+2. Format all css rules with only one property on a single line.
+3. When the html attributes are wide, use enter to sort them.
+4. When the class attribute contains many classes, use enter to sort them.

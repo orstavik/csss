@@ -24,6 +24,7 @@ This document serves as a comprehensive reference for all implemented properties
   - `$_block(margin(0,0,1.5rem))` or `$_block(m(...))` - Calls the `margin` function in its scope.
   - `$_block(indent(1em))` - Calls the `textIndent` function in its scope.
   - `$_block(floatStart)` or `$_block(floatEnd)` - Processes the argument via `doFloat()`, setting `float: inline-start` or `float: inline-end`.
+- Example using `|` syntax (preferred): `class="$block(...)|*$margin(0)"` (Applies margin to first child).
 
 ### $flex() - Flexbox container Function
 
@@ -43,6 +44,7 @@ This document serves as a comprehensive reference for all implemented properties
   - `$_flex(basis(200px))` - Calls the `basis` function in its scope.
   - `$_flex(1order)` or `$_flex(1o)` - Sets `order: 1`.
   - `$_flex(ac)` / `sb` / etc. - Uses alignment aliases to set `align-self` and `textAlign`.
+- Example using `|` syntax (preferred): `class="$flex(...)|.item$grow(1)$shrink(0)"`.
   - Also includes margin, padding, etc., via the inherited `_LAYOUT` scope.
 
 ### $grid() - Grid container Function
@@ -62,6 +64,7 @@ This document serves as a comprehensive reference for all implemented properties
   - `$_grid(column(1, 4))` or `$_grid(col(...))` - Calls `column` function in scope to set `grid-column`.
   - `$_grid(row(2, 3))` - Calls `row` function in scope to set `grid-row`.
   - `$_grid(ac)` / `sb` / etc. - Uses alignment aliases to set `align-self`, `justify-self`, and `textAlign`.
+- Example using `|` syntax (preferred): `class="$grid(...)|*$column(1,4)"`.
   - Also includes margin, padding, etc., via the inherited `_LAYOUT` scope.
 
 ## Spacing Properties
