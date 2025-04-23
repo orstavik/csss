@@ -27,19 +27,19 @@
   }
 
   const allHappyPaths = [
-    "HappyPath.html",
-    "HappyPathBorder.html",
-    "HappyPathLayout.html",
-    "HappyPathSuperShorts.html",
-    "HappyPathPalette.html",
-    "HappyPathCalVar.html",
-    "HappyPathFonText.html",
+    "hpOne.html",
+    "hpBorder.html",
+    "hpLayout.html",
+    "hpSupers.html",
+    "hpPalette.html",
+    "hpCalVar.html",
+    "hpFonText.html",
   ];
 
   let paths;
   const hashContent = location.hash.slice(1);
 
-  if (!hashContent || hashContent === "HappyPath" || hashContent === "all")
+  if (!hashContent || hashContent === "hp" || hashContent === "all")
     paths = allHappyPaths;
   else
     paths = hashContent.split(",").map(p => p.endsWith(".html") ? p : p + ".html");
