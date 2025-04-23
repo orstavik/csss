@@ -18,7 +18,11 @@ export class ShortBlock {
   interpret(SHORTS, supers) {
     let media = interpretMedias(this.medias, supers);
     if (media) media = `@media ${media}`;
-    const shorts = this.shorts?.map(short => short.interpret(SHORTS, supers));
+    const owner = this.shorts?.[0]?.exprList?.[0]?.name;
+    const ownerMain = supers["$" + owner]?.exprList?.[0]?.name ?? owner;
+    //only allow the global scope for item |$shorts when there is an empty $container| short??
+    const itemScope = SHORTS[ownerMain]?.itemScope?? SHORTS; /* can we remove ?? SHORTS soon? i want to not be as wide as this */ 
+    const shorts = this.shorts?.map((short, i) => short.interpret(i ? itemScope : SHORTS, supers, i ? owner : ""));
     return { media, shorts };
   }
 
@@ -95,11 +99,11 @@ class Expression {
     return this.name + "/" + this.args.length;
   }
   interpret(scope, supers) {
-    const cb = scope?.[this.name] ?? NativeCssFunctions[this.name];
+    const cb = scope?.[this.name];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${this.name}`);
     const args = this.args.map(x =>
-      x instanceof Expression ? x.interpret(cb.scope, supers) :
+      x instanceof Expression ? x.interpret(cb.scope ?? NativeCssFunctions, supers) :
         x === "." ? "unset" :
           x);
     return cb.call(this, ...args);
@@ -147,13 +151,30 @@ const clashOrStack = (function () {
   }
 })();
 
+
+function cloneAndReplaceExpr(argMap, { name, args }) {
+  args = args.map(arg => arg instanceof Expression ? cloneAndReplaceExpr(argMap, arg) : argMap[arg] ?? arg);
+  return new Expression(name, args);
+}
+
 class Short {
   constructor(selectorList, exprList) {
     this.selectorList = selectorList;
-    this.exprList = exprList;
+    this.exprList = exprList || undefined;
   }
-  interpret(SHORTS, supers) {
-    const shorts = this.exprList && clashOrStack(this.exprList.map(s => s.interpret(SHORTS, supers)));
+
+  interpret(scope, supers, owner) {
+    const unSuperExprList = this.exprList?.map(s => {
+      const sup = supers["$" + (owner ? owner + "." : "") + s.name];
+      if (!sup)
+        return s;
+      const { name, argNames, exprList } = sup;
+      if (argNames.length > s.args.length)
+        throw `missing argument: ${name}(...${argNames[s.args.length]})`;
+      const argMap = argNames.reduce((res, n) => ((res[n] = s.args.shift()), res), {});
+      return exprList.map(expr => cloneAndReplaceExpr(argMap, expr));
+    }).flat();
+    const shorts = unSuperExprList && clashOrStack(unSuperExprList.map(s => s.interpret(scope, supers)));
     let selector = this.selectorList && this.selectorList.map(s => s.interpret(supers)).join(", ");
     return { selector, shorts };
   }
@@ -292,12 +313,12 @@ function parse$Expression(exp) {
   return { shorts, medias };
 }
 const ARG = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;
-const ARGLIST = new RegExp(`\\(\\s*${ARG}(?:\\s*,\\s*${ARG})*\\s*\\)`).source;
-const SUPER_HEAD = new RegExp(`([$:@][a-zA-Z_][a-zA-Z0-9_-]*(?:\\s*${ARGLIST})?)\\s*=`).source;
-// const SUPER_HEAD = /([$:@][a-zA-Z_][a-zA-Z0-9_-]*)\s*=/.source; // (name)
+const ARGLIST = new RegExp(`\\(${ARG}(?:,\\s*${ARG})*\\)`).source;
+const SUPER_NAME = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;
 const SUPER_LINE = /((["'`])(?:\\.|(?!\3).)*?\3|\/\*[\s\S]*?\*\/|[^;]+)(?:;|$)/.source; // (body1, quoteSign)
 const SUPER_BODY = /{((["'`])(?:\\.|(?!\5).)*?\5|\/\*[\s\S]*?\*\/|[^}]+)}/.source;// (body2, quoteSign)
-const SUPER = new RegExp(`${SUPER_HEAD}(?:${SUPER_LINE}|${SUPER_BODY})`, "g");
+const SUPER = new RegExp(
+  `([$:@])(${SUPER_NAME}\\.)?(${SUPER_NAME})(${ARGLIST})?\\s*=\\s*(?:${SUPER_LINE}|${SUPER_BODY})`, "g");
 
 function checkSuperBody(type, name, { medias, shorts }) {
   if (!medias && !shorts) throw `is empty`;
@@ -312,47 +333,26 @@ function checkSuperBody(type, name, { medias, shorts }) {
   return { exprList, selectorList };
 }
 
-function cloneAndReplaceExpr(argMap, { name, args }) {
-  args = args.map(arg => arg instanceof Expression ? cloneAndReplaceExpr(argMap, arg) : argMap[arg] ?? arg);
-  return new Expression(name, args);
-}
-
-function makeSuperShort(name, argNames, body, SHORTS) {
-  return function superShort(...args) {
-    if (argNames.length > args.length)
-      throw `missing argument: ${name}(...${argNames[args.length]})`;
-    const argMap = argNames.reduce((res, n) => ((res[n] = args.shift()), res), {});
-    body = body.map(expr => cloneAndReplaceExpr(argMap, expr));
-    const res = body.map(expr => expr.interpret(SHORTS));
-    return Object.assign(...res);
-  }
-}
-
-function interpretSuper(head, body, SHORTS) {
+function interpretSuper(type, head, body) {
   const parsed = new ShortBlock(body);
-  const type = head[0];
-  const { name, args } = new ShortBlock("$" + head.slice(1)).shorts[0].exprList[0];
+  const { name, args: argNames } = new ShortBlock("$" + head).shorts[0].exprList[0];
   const { medias, selectorList, exprList } = checkSuperBody(type, name, parsed);
   if (medias) return interpretMedias(medias, {});
   if (selectorList) return selectorList.map(s => s.interpret({})).join(", ");
-  return { [name]: makeSuperShort(name, args, exprList, SHORTS) };
+  return { name, argNames, exprList };
 }
 
-export function extractSuperShorts(txt, SHORTS) {
-  const supers = {}, shorts = {};
-  for (const [, name, b, , body = b] of txt.matchAll(SUPER)) {
-    if (name[0] === "$")
-      Object.assign(shorts, interpretSuper(name, body, SHORTS));
-    else
-      supers[name] = interpretSuper(name, body, SHORTS);
-  }
-  return { supers, shorts };
+export function extractSuperShorts(txt) {
+  const res = {};
+  for (let [, type, owner = "", name, args = "", b, , body = b] of txt.matchAll(SUPER))
+    res[type + owner + name] = interpretSuper(type, name + args, body);
+  return res;
 }
 
 //todo we don't support nested :not(:has(...))
 const pseudo = /:[a-zA-Z][a-zA-Z0-9_-]*(?:\([^)]+\))?/.source;
 const at = /\[[a-zA-Z][a-zA-Z0-9_-]*(?:[$*~|^]?=(?:'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"))?\]/.source;
-const tag = /\[a-zA-Z][a-zA-Z0-9-]*/.source; //tag
+const tag = /[a-zA-Z][a-zA-Z0-9-]*/.source; //tag
 const clazz = /\.[a-zA-Z][a-zA-Z0-9_-]*/.source; //class
 const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");

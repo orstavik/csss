@@ -56,6 +56,10 @@ function wrap(a) {
   return wordBreak(a) ?? overflow(a) ?? whiteSpace(a) ?? hyphens(a) ?? overflowWrap(a);
 }
 
+function checkNoArgs(args) {
+  if (args.some(a => a != null)) throw `This $short takes no arguments: ${args.join(", ")}")}`;
+}
+
 function lineClamp(num, ...ignored) {
   return {
     "display": "-webkit-box",
@@ -115,6 +119,10 @@ const _LAYOUT = {
   m: toLogicalFour.bind(null, "margin"),
   scrollMargin: toLogicalFour.bind(null, "scroll-margin"),
   textAlign: AllFunctions.textAlign,
+  w: AllFunctions.width,
+  h: AllFunctions.height,
+  width: AllFunctions.width,
+  height: AllFunctions.height,
   // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
 
@@ -126,11 +134,6 @@ function toGap(...args) {
   throw new SyntaxError("gap only accepts 1 or 2 arguments");
 }
 const GAP = { gap: toGap, g: toGap };
-
-function doFloat(a) {
-  const m = a.match(/^float-(start|end)$/);
-  if (m) return { float: "inline-" + m[1] };
-}
 
 function blockGap(wordSpacing, lineHeight) {
   return { wordSpacing, lineHeight };
@@ -154,13 +157,9 @@ block.scope = {
   gap: blockGap,
   g: blockGap,
 };
-
-function _block(...args) {
-  args = args.map(a => typeof a === "string" ? doFloat(a) : a);
-  return Object.assign(...args);
-}
-_block.scope = {   //$_block(indent(1em),...)
+block.itemScope = {
   ..._LAYOUT,
+  float: a => ({ float: "inline-" + a }),
   textIndent: AllFunctions.textIndent,
   indent: AllFunctions.textIndent,
 };
@@ -204,37 +203,31 @@ grid.scope = {
   ...GAP
 };
 
-function _grid(...args) {
-  args = args.map(a => {
-    if (typeof a !== "string") return a;
-    let m;
-    if (m = a.match(/^[abcs_.][abcs_.]?$/)) {
-      const [b, i = b] = m[0];
-      return {
-        textAlign: TextAlignAliases[i],
-        alignSelf: AlignAliases[b],
-        justifySelf: AlignAliases[i],
-      };
-    }
-    return a;
-  });
-  return Object.assign(...args);
-}
-
-const column = (start, end = start) => ({ ["grid-column"]: `${start} / ${end}` });
-const row = (start, end = start) => ({ ["grid-row"]: `${start} / ${end}` });
+const column = (start, end = start) => ({ gridColumn: `${start} / ${end}` });
+const row = (start, end = start) => ({ gridRow: `${start} / ${end}` });
 const span = arg => `span ${arg}`;
 column.scope = { span };
 row.scope = { span };
 
-_grid.scope = {
+grid.itemScope = {
   ..._LAYOUT,
-  column, row,
+  column,
+  row,
   placeSelf: AllFunctions.placeSelf,
   justifySelf: AllFunctions.justifySelf,
   alignSelf: AllFunctions.alignSelf,
   // area: (...args) => ({ ["grid-area"]: args.join(" ") }),
-
+  align: a => {
+    const m = a.match(/^[abcs_.][abcs_.]?$/)?.[0];
+    if (!m)
+      throw `$_grid|$align(${a}): "${a}" doesn't match /^[abcs_.][abcs_.]?$/`;
+    const [b, i = b] = m[0];
+    return {
+      textAlign: TextAlignAliases[i],
+      alignSelf: AlignAliases[b],
+      justifySelf: AlignAliases[i],
+    };
+  }
 };
 
 
@@ -245,8 +238,8 @@ function flex(...args) {
     if (!(typeof a === "string")) return a;
     let m = wrap(a);
     if (m) return m;
-    if (m = a.match(/^(column|column-reverse|row-reverse|row)$/)) return { ["flex-direction"]: a };
-    if (m = a.match(/^(wrap|wrap-reverse|no-wrap)$/)) return { ["flex-wrap"]: a };
+    if (m = a.match(/^(column|column-reverse|row-reverse|row)$/)) return { flexDirection: a };
+    if (m = a.match(/^(wrap|wrap-reverse|no-wrap)$/)) return { flexWrap: a };
     if (m = a.match(/^[abcsuvw.][abcsuvw.]?[abcs_]?$/)) {
       const [b, i = b, i2 = "."] = m[0];
       return {
@@ -270,40 +263,27 @@ flex.scope = {
   ...GAP
 };
 
-
-const GROW = /^([0-9.]+)(grow|g)$/;
-const SHRINK = /^([0-9.]+)(shrink|s)$/;
-const ORDER = /^(-?\d+)(order|o)$/;
-
-function _flex(...args) {
-  args = args.map(a => {
-    if (!(typeof a === "string")) return a;
-    let m;
-    if (m = a.match(GROW)) return { flexGrow: m[1] };
-    if (m = a.match(SHRINK)) return { flexShrink: m[1] };
-    if (m = a.match(ORDER)) return { order: m[1] };
-    if (m = a.match(/^[abcs_]$/))
-      return {
-        alignItems: AlignAliases[m[0]],
-        textAlign: TextAlignAliases[m[0]]
-      };
-    //todo safe
-    return a;
-  });
-  return Object.assign(...args);
-}
-
-_flex.scope = {
-  alignSelf: AllFunctions.alignSelf,
+flex.itemScope = {
   ..._LAYOUT,
-  basis: a => ({ ["flex-basis"]: a })
+  basis: a => ({ flexBasis: a }),
+  grow: a => ({ flexGrow: a }),
+  g: a => ({ flexGrow: a }),
+  shrink: a => ({ flexShrink: a }),
+  s: a => ({ flexShrink: a }),
+  order: a => ({ order: a }),
+  o: a => ({ order: a }),
+  //todo safe
+  center: (...args) => (checkNoArgs(args), ({ alignSelf: "center", textAlign: "center" })),
+  end: (...args) => (checkNoArgs(args), ({ alignSelf: "end", textAlign: "end" })),
+  start: (...args) => (checkNoArgs(args), ({ alignSelf: "start", textAlign: "start" })),
+  stretch: (...args) => (checkNoArgs(args), ({ alignSelf: "stretch", textAlign: "stretch" })),
+  baseline: (...args) => (checkNoArgs(args), ({ alignSelf: "baseline", textAlign: "unset" })),
+  alignSelf: AllFunctions.alignSelf,
+  textAlign: AllFunctions.textAlign,
 };
 
 export default {
   block,
-  _block,
   grid,
-  _grid,
   flex,
-  _flex
 };
