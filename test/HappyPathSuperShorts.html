@@ -115,151 +115,177 @@
      
   </style>
 </test-html> 
-<test-html title="Bug: `display:grid`">
-    <main csss="
-    $layout = $grid(cols(1fr,1fr,1fr))$gap(1rem);
-     ">
-    <div class="$layout $grid">
-      <div class="$color(white,blue,) $bg() $padding(1rem) $textAlign(center)">1</div>
-      <div class="$color(white,yellow,) $bg() $padding(1rem) $textAlign(center)">2</div>
+<test-html title="Holy Grail Layout NEW">
+  <main csss="
+      $hg = $grid(rows(auto,1fr,auto),cols(auto,1fr,auto),gap(1rem))$h(100vh);
+      $hgHeader = $column(1,4);
+      $hgFooter = $column(1,4);
+      $hgLeft = $column(1,2);
+      $hgRight = $column(3,4);
+      $hgMain = $column(2,3);
+  ">
+    <div class="$hg|.header$hgHeader|.left$hgLeft|.main$hgMain|.right$hgRight|.footer$hgFooter">
+      <header class="header $bg(azure) $border">
+        <h1>Header</h1>
+      </header>
+      <aside class="left $bg(lightgreen) $border">
+        <h2>Left Sidebar</h2>
+        <p>Navigation links could go here</p>
+        <ul>
+          <li>Home</li>
+          <li>About</li>
+          <li>Services</li>
+          <li>Contact</li>
+        </ul>
+      </aside>
+      <main class="main $bg(white) $border">
+        <h2>Main Content</h2>
+        <p>This is the main content area of the page. In a real website, this would contain the primary content.</p>
+        <p>The Holy Grail layout is a classic web design pattern with header, footer, main content, and two sidebars.</p>
+        <p>Using CSS Grid makes this layout much simpler than older techniques that required floats and negative margins.</p>
+      </main>
+      <aside class="right |:nth-class(3)$margin(1rem,0)">
+        <h2>Right Sidebar</h2>
+        <p>Additional information, ads, or related content could go here.</p>
+        <div class="$padding(0.5rem) $bg(white) $border">
+          <h3>Related Article</h3>
+          <p>Check out our guide to CSS layout techniques!</p>
+        </div>
+      </aside>
+      <footer class="footer $bg(lightblue) $border">
+        <h2>Footer</h2>
+        <p>Copyright © 2024 Example Company</p>
+      </footer>
     </div>
   </main>
   <style>
-    @layer container, items;
+     @layer container, items;
 
-      @layer container {
-        .\$layout {
-          display: grid;
-          word-spacing: unset;
-          line-height: unset;
-          white-space: unset;
-          hyphens: unset;
-          text-align: unset;
-          text-indent: unset;
-          grid-template-columns: 1fr 1fr 1fr;
-          gap: 1rem;
-        }
-        .\$grid {
-          display: grid;
-          word-spacing: unset;
-          line-height: unset;
-          white-space: unset;
-          hyphens: unset;
-          text-align: unset;
-          text-indent: unset;
-        }
-        .\$color\(white\,blue\,\) {
-          color: white;
-          --background-color: blue;
-          border-color: white;
-        }
-        .\$bg\(\) {
-          background: var(--background-color);
-        }
-        .\$padding\(1rem\) {
-          padding: 1rem;
-        }
-        .\$textAlign\(center\) {
-          text-align: center;
-        }
-        .\$color\(white\,yellow\,\) {
-          color: white;
-          --background-color: yellow;
-          border-color: white;
-        }
-       }
+     @layer container {
+      
+     }
+
       @layer items {
         
       }
+     
   </style>
-</test-html>
-<test-html title="Bug: `display:flex`">
-  <main csss="
-    $layout = $flex(row,gap(1rem),textAlign(center),padding(1rem));
+</test-html> 
+<test-html title="Navbar Layout">
+  <main class="|:last$margin(60px,0,0,0)"
+  csss="
+    $navbar = $flex(cw,padding(1rem))$position(sticky)$top(0);
+    $navbarBrand = $flex(c)$gap(0.5rem);
+    $navbarLinks = $flex(c)$gap(1.5rem);
   ">
-    <div class="$layout">
-      <div class="$color(white,red,) $bg(red)">1</div>
-      <div class="$color(white,green,) $bg(green)">2</div>
+    <nav class="$navbar $bg(lightgray)">
+      <div class="$navbarBrand">
+        <span>BrandLogo</span>
+      </div>
+      <div class="$navbarLinks">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+      </div>
+    </nav>
+    <div class="$h(150vh) $padding(1rem)">
+      Scrollable content to test sticky navbar...
     </div>
   </main>
   <style>
-    @layer container, items;
-    @layer container {
-      .\$layout {
-        display: flex;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
-        text-align: center;
-        text-indent: unset;
-        flex-direction: row;
-        gap: 1rem;
-        padding: 1rem;
-      }
-      .\$color\(white\,red\,\) {
-        color: white;
-        --background-color: red;
-        border-color: white;
-      }
-      .\$bg\(red\) {
-        background: red;
-      }
-      .\$color\(white\,green\,\) {
-        color: white;
-        --background-color: green;
-        border-color: white;
-      }
-      .\$bg\(green\) {
-        background: green;
-      }
-    }
+     @layer container, items;
 
-    @layer items {
+     @layer container {
+      
+     }
 
-    }
+      @layer items {
+        
+      }
+     
   </style>
 </test-html>
-<test-html title="Bug: empty argument on supershorts">
+<test-html title="Navbar Layout NEW">
   <main csss="
-    $layout = $block$border;
+    $nav = $flex(cw,padding(1rem))$position(sticky)$top(0);
+    $navBrand = $c$gap(0.5rem);
+    $navLinks = $c$gap(1.5rem);
   ">
-    <div class="$layout">
-      <h1>Hello Sunshine! This is error.</h1>
-    </div>
-    <div class="$block $border">
-      <h1>Hello Sunshine! No error?</h1>
+    <nav class="$nav|.brand$navBrand|.links$navBrand $bg(lightgray) |:last$margin(60px,0,0,0)">
+      <div class="brand">
+        <span>BrandLogo</span>
+      </div>
+      <div class="links">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+      </div>
+    </nav>
+    <div class="$h(150vh) $padding(1rem)">
+      Scrollable content to test sticky navbar...
     </div>
   </main>
   <style>
-    @layer container, items;
-    @layer container {
-      .\$layout {
-        display: block;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
-        text-align: unset;
-        text-indent: unset;
-        border-style: solid;
-      }
-      .\$block {
-        display: block;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
-        text-align: unset;
-        text-indent: unset;
-      }
-      .\$border {
-        border-style: solid;
-      }
-    }
-    @layer items {
+     @layer container, items;
 
-    }
+     @layer container {
+      
+     }
+
+      @layer items {
+        
+      }
+     
+  </style>
+</test-html> 
+<test-html title="Feature Card">
+  <main csss="
+    $featureCard = $flex(column,cc,padding(1.5rem),gap(1rem),textAlign(center))$border$w(,,20%);
+    $featureIcon = $w(60px)$h(60px)$margin(0,auto,1rem)$border;
+  ">
+    <div class="$featureCard">
+      <div class="$featureIcon">Icon</div>
+      <h3>Feature Title</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla egestas tristique venenatis. In egestas vestibulum arcu, a ultricies augue ultrices vitae. Nulla hendrerit sapien et sapien congue posuere sit amet id felis. Phasellus blandit rutrum lorem aliquam volutpat. Vivamus gravida interdum augue, nec porta dolor vehicula vel.</p>
+      <button>Learn More</button>
+    </div>
+  </main>
+  <style>
+     @layer container, items;
+
+     @layer container {
+      
+     }
+
+      @layer items {
+        
+      }
+     
+  </style>
+</test-html>
+<test-html title="Feature Card NEW">
+  <main csss="
+    $featCard = $flex(column,cc,padding(1.5rem),gap(1rem),textAlign(center))$w(,,20%)$border;
+    $featIcon = $margin(0,auto,1rem)$w(60px)$h(60px)$border;
+  ">
+    <div class="$featCard|.icon$featIcon">
+      <div class="icon">Icon</div>
+      <h3>Feature Title</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla egestas tristique venenatis. In egestas vestibulum arcu, a ultricies augue ultrices vitae. Nulla hendrerit sapien et sapien congue posuere sit amet id felis. Phasellus blandit rutrum lorem aliquam volutpat. Vivamus gravida interdum augue, nec porta dolor vehicula vel.</p>
+      <button>Learn More</button>
+    </div>
+  </main>
+  <style>
+     @layer container, items;
+
+     @layer container {
+      
+     }
+
+      @layer items {
+        
+      }
+     
   </style>
 </test-html>
 
@@ -296,10 +322,6 @@ $galleryImage = $w(100%)$h(100%)$object(cover);
 
 $masonry = $columns(3)$gap(1rem);
 $masonryItem = $break-inside(avoid)$margin(0,0,1rem);
-
-$navbar = $flex(center,between)$padding(1rem)$sticky(top)$bg(white)$shadow(sm);
-$navbarBrand = $flex(center)$gap(0.5rem)$font(xl,bold);
-$navbarLinks = $flex(center)$gap(1.5rem);
 
 $hero = $grid(place(center))$padding(3rem,1rem)$min-h(80vh)$bg(cover,center)$text(center);
 $heroContent = $max-w(800px)$padding(2rem)$flex(column,center,center)$gap(2rem);

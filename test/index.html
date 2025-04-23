@@ -26,9 +26,28 @@
     }
   }
 
-  const paths = (location.hash.slice(1) || "HappyPath").split(",").map(p => p + ".html");
-  for (let file of paths)
+  const allHappyPaths = [
+    "HappyPath.html",
+    "HappyPathBorder.html",
+    "HappyPathLayout.html",
+    "HappyPathSuperShorts.html",
+    "HappyPathPalette.html",
+    "HappyPathCalVar.html",
+    "HappyPathFonText.html",
+  ];
+
+  let paths;
+  const hashContent = location.hash.slice(1);
+
+  if (!hashContent || hashContent === "HappyPath" || hashContent === "all")
+    paths = allHappyPaths;
+  else
+    paths = hashContent.split(",").map(p => p.endsWith(".html") ? p : p + ".html");
+
+  for (let file of paths) {
+    document.body.insertAdjacentHTML('beforeend', `<h4 style="margin: 2rem 0 1rem; font-size: 1rem; font-weight: bold;">${file}</h2>`);
     document.body.insertAdjacentHTML('beforeend', await (await fetch(file)).text());
+  }
   const happy = document.querySelector('script[type="test"]').outerHTML;
   for (let test of document.querySelectorAll("test-html")) {
     test.querySelector('style').setAttribute("expected", "");

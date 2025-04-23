@@ -828,8 +828,153 @@
     @layer items {}
   </style>
 </test-html>
+<test-html title="Bug: `display:grid`">
+  <main csss="
+  $layout = $grid(cols(1fr,1fr,1fr))$gap(1rem);
+   ">
+  <div class="$layout $grid">
+    <div class="$color(white,blue,) $bg() $padding(1rem) $textAlign(center)">1</div>
+    <div class="$color(white,yellow,) $bg() $padding(1rem) $textAlign(center)">2</div>
+  </div>
+</main>
+<style>
+  @layer container, items;
 
+    @layer container {
+      .\$layout {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+      }
+      .\$grid {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+      }
+      .\$color\(white\,blue\,\) {
+        color: white;
+        --background-color: blue;
+        border-color: white;
+      }
+      .\$bg\(\) {
+        background: var(--background-color);
+      }
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+      .\$textAlign\(center\) {
+        text-align: center;
+      }
+      .\$color\(white\,yellow\,\) {
+        color: white;
+        --background-color: yellow;
+        border-color: white;
+      }
+     }
+    @layer items {
+      
+    }
+</style>
+</test-html>
+<test-html title="Bug: `display:flex`">
+<main csss="
+  $layout = $flex(row,gap(1rem),textAlign(center),padding(1rem));
+">
+  <div class="$layout">
+    <div class="$color(white,red,) $bg(red)">1</div>
+    <div class="$color(white,green,) $bg(green)">2</div>
+  </div>
+</main>
+<style>
+  @layer container, items;
+  @layer container {
+    .\$layout {
+      display: flex;
+      word-spacing: unset;
+      line-height: unset;
+      white-space: unset;
+      hyphens: unset;
+      text-align: center;
+      text-indent: unset;
+      flex-direction: row;
+      gap: 1rem;
+      padding: 1rem;
+    }
+    .\$color\(white\,red\,\) {
+      color: white;
+      --background-color: red;
+      border-color: white;
+    }
+    .\$bg\(red\) {
+      background: red;
+    }
+    .\$color\(white\,green\,\) {
+      color: white;
+      --background-color: green;
+      border-color: white;
+    }
+    .\$bg\(green\) {
+      background: green;
+    }
+  }
 
+  @layer items {
+
+  }
+</style>
+</test-html>
+<test-html title="Bug: empty argument on supershorts">
+<main csss="
+  $layout = $block$border;
+">
+  <div class="$layout">
+    <h1>Hello Sunshine! This is error.</h1>
+  </div>
+  <div class="$block $border">
+    <h1>Hello Sunshine! No error?</h1>
+  </div>
+</main>
+<style>
+  @layer container, items;
+  @layer container {
+    .\$layout {
+      display: block;
+      word-spacing: unset;
+      line-height: unset;
+      white-space: unset;
+      hyphens: unset;
+      text-align: unset;
+      text-indent: unset;
+      border-style: solid;
+    }
+    .\$block {
+      display: block;
+      word-spacing: unset;
+      line-height: unset;
+      white-space: unset;
+      hyphens: unset;
+      text-align: unset;
+      text-indent: unset;
+    }
+    .\$border {
+      border-style: solid;
+    }
+  }
+  @layer items {
+
+  }
+</style>
+</test-html>
 
 <!--
 <test-html title=":dark=@media(prefers-color-scheme:dark);">
