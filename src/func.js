@@ -373,22 +373,13 @@ font.scope = {
 const bg = (...args) => ({ background: args.join(" ") || "var(--background-color)" });
 bg.scope = NativeCssProperties.background.scope;
 
-function colonSplit2(NAME, SEP, x) {
-  if (x == null) return x;
-  const res = x.split(":");
-  return res.length == 1 ? res[0] :
-    `${NAME}(${res.join(SEP)})`;
-}
-
 //todo do something like this instead:
 //   12><--var
 //   12<>--var
 //   45>23>--var
 
-//enables us to write a min and max eiter as 2px:5px or max(2px,5px)
 //$w(50%)
 //$w(1,2) not allowed, only 1 or 3 arguments.
-//$w(30em:35%,50%,60cm:80vw:100%)
 //$w(max(30em,35%),50%,min(60cm,80vw,100%))
 function toSize(NAME, ...args) {
   args = args.map(a => a?.replace(/^(min|max)$/, "$&-content"));
@@ -397,9 +388,9 @@ function toSize(NAME, ...args) {
   if (args.length === 3) {
     const NAME2 = NAME.replace(/^./, c => c.toUpperCase());
     return {
-      [`min${NAME2}`]: colonSplit2("max", ",", args[0]),
+      [`min${NAME2}`]: args[0],
       [NAME]: args[1],
-      [`max${NAME2}`]: colonSplit2("min", ",", args[2])
+      [`max${NAME2}`]: args[2]
     };
   } throw new SyntaxError(`$${NAME} accepts only 1 or 3 arguments: ${args}`);
 }
