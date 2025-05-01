@@ -993,6 +993,22 @@
   </style>
 </test-html>
 
+<test-html title="transition">
+  <div class="$border(dotted,50px,easeIn(10s))">Hello Sunshine!</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$border\(dotted\,50px\,easeIn\(10s\)\) {
+        border-style: dotted;
+        border-width: 50px;
+        transition: border-width 10s ease-in;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
 
 
 <!--

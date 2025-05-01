@@ -66,6 +66,7 @@ function toLogicalEight(NAME, DEFAULT, ...args) {
 
 export function borderSwitch(obj) {
   return Object.fromEntries(Object.entries(obj).map(([k, v]) => {
+    if (k === "transition") return [k, v];
     const [wsr, ...dirs] = k.split(/(?=[A-Z])/);
     return [["border", ...dirs, wsr].join(""), v];
   }));
@@ -80,24 +81,21 @@ export function isLength(x) {
     x;
 }
 
-const NativeCssProperties = (function () {
-  const style = document.createElement('div').style;
-  const nativeProps = Object.getOwnPropertyNames(style)
-    .map(k => [k, (...args) => ({ [k]: args.join(" ") })]);
-  return Object.fromEntries(nativeProps);
-})();
+//scope functions start
+const NativeCssScopeMath = {
+  min: (...args) => `min(${args.join(",")})`,
+  max: (...args) => `max(${args.join(",")})`,
+  clamp: (...args) => `clamp(${args.join(",")})`,
+};
+for (const v of Object.values(NativeCssScopeMath))
+  v.scope = NativeCssScopeMath;
 
-const NativeCssFilterFunctions = {
-  blur: (...args) => ({ filter: `blur(${args.join(" ")})` }),
-  brightness: (...args) => ({ filter: `brightness(${args.join(" ")})` }),
-  contrast: (...args) => ({ filter: `contrast(${args.join(" ")})` }),
-  grayscale: (...args) => ({ filter: `grayscale(${args.join(" ")})` }),
-  invert: (...args) => ({ filter: `invert(${args.join(" ")})` }),
-  opacity: (...args) => ({ filter: `opacity(${args.join(" ")})` }),
-  saturate: (...args) => ({ filter: `saturate(${args.join(" ")})` }),
-  sepia: (...args) => ({ filter: `sepia(${args.join(" ")})` }),
-  dropShadow: (...args) => ({ filter: `drop-shadow(${args.join(" ")})` }),
-  hueRotate: (...args) => ({ filter: `hue-rotate(${args.join(" ")})` }),
+const NativeCssScopeUrl = (...args) => `url(${args.join(" ")})`;
+
+const NativeCssScopeAttrCounter = {
+  counter: (...args) => `counter(${args.join(",")})`,
+  counters: (...args) => `counters(${args.join(",")})`,
+  attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
 };
 
 const NativeColorsFunctions = (function () {
@@ -129,7 +127,7 @@ const NativeColorsFunctions = (function () {
     return `color-mix(${cSpace}${args.join("")})`;
   }
 
-  return {
+  const res = {
     rgb: (...args) => nativeCssColorFunction("rgb", ...args),
     rgba: (...args) => nativeCssColorFunction("rgba", ...args),
     hsl: (...args) => nativeCssColorFunction("hsl", ...args),
@@ -142,18 +140,85 @@ const NativeColorsFunctions = (function () {
     color: nativeCssColorSpaceFunction,
     colorMix: nativeCssColorMixFunction,
   };
+  for (const cb of Object.values(res))
+    cb.scope = { ...NativeCssScopeMath };
+  return res;
 })();
 
-for (const k in NativeCssProperties)
-  if (k.endsWith("Color"))
-    NativeCssProperties[k].scope = NativeColorsFunctions;
-NativeCssProperties.color.scope = NativeColorsFunctions;
-NativeCssProperties.boxShadow.scope = NativeColorsFunctions;
-NativeCssProperties.textShadow.scope = NativeColorsFunctions;
-NativeCssProperties.textDecoration.scope = NativeColorsFunctions;
-NativeCssFilterFunctions.dropShadow.scope = NativeColorsFunctions;
-//todo other shorthands that can accept color and doesn't have a name that endsWith "Color"?
+// const SpecializedNativeCssFunctions = {
+//    element: (...args) => `element(${args.join(",")})`,
+//    paint: (...args) => `paint(${args.join(",")})`,
+//    env: (...args) => `env(${args.join(",")})`,   
+//    path: (...args) => `path(${args.join(",")})`,
+//    imageSet: (...args) => `image-set(${args.join(",")})`,
+// };
 
+const transitionFunctionSet = (function () {
+
+  function transition(props, dur, type, delay = "") {
+    return { transition: `${props} ${dur} ${type} ${delay}` };
+  }
+
+  return function transitionFunctionSet(...props) {
+    props = props.join(" ");
+    return {
+      ease: (dur, delay) => transition(props, dur, "ease", delay),
+      easeIn: (dur, delay) => transition(props, dur, "ease-in", delay),
+      easeOut: (dur, delay) => transition(props, dur, "ease-out", delay),
+      easeInOut: (dur, delay) => transition(props, dur, "ease-in-out", delay),
+      linear: (dur, delay) => transition(props, dur, "linear", delay),
+      jumpStart: (dur, steps = 1, delay) => transition(props, dur, `jump-start(${steps})`, delay),
+      jumpEnd: (dur, steps = 1, delay) => transition(props, dur, `jump-end(${steps})`, delay),
+      jumpNone: (dur, steps = 1, delay) => transition(props, dur, `jump-none(${steps})`, delay),
+      jumpBoth: (dur, steps = 1, delay) => transition(props, dur, `jump-both(${steps})`, delay),
+      cubicBezier: (dur, x1, y1, x2, y2, delay) => transition(props, dur, `cubic-bezier(${x1},${y1},${x2},${y2})`, delay),
+    };
+  }
+})();
+//scope functions end
+
+
+//no shorts before this point
+const NativeCssProperties = (function () {
+  const style = document.createElement('div').style;
+  const res = {};
+  for (const camel of Object.getOwnPropertyNames(style)) {
+    res[camel] = (...args) => ({ [camel]: args.join(" ") });
+    Object.defineProperty(res[camel], "name", { value: camel });
+    res[camel].scope = {};
+    const name = camel.replace(/([A-Z])/g, "-$1").toLowerCase();
+    if (CSS.supports(name, "min(0,1)") || CSS.supports(name, "min(0px,1px)"))
+      Object.assign(res[camel].scope, NativeCssScopeMath);
+    if (CSS.supports(name, "url(http://example.com)"))
+      res[camel].scope.url = NativeCssScopeUrl;
+    if (CSS.supports(name, "#123456")) // CSS.supports(name,"1px solid #123456") || CSS.supports(name,"underline #123456") || CSS.supports(name,"dot #123456") ||    
+      Object.assign(res[camel].scope, NativeColorsFunctions);
+    if (CSS.supports("transition", name + " 1s linear"))
+      Object.assign(res[camel].scope, transitionFunctionSet(name));
+  }
+  //if name == "content"
+  res.content.scope = Object.assign(res.content.scope ?? {}, NativeCssScopeAttrCounter);
+  return res;
+})();
+
+//UNPACKED $filter scope functions
+const NativeCssFilterFunctions = {
+  blur: (...args) => ({ filter: `blur(${args.join(" ")})` }),
+  brightness: (...args) => ({ filter: `brightness(${args.join(" ")})` }),
+  contrast: (...args) => ({ filter: `contrast(${args.join(" ")})` }),
+  grayscale: (...args) => ({ filter: `grayscale(${args.join(" ")})` }),
+  invert: (...args) => ({ filter: `invert(${args.join(" ")})` }),
+  opacity: (...args) => ({ filter: `opacity(${args.join(" ")})` }),
+  saturate: (...args) => ({ filter: `saturate(${args.join(" ")})` }),
+  sepia: (...args) => ({ filter: `sepia(${args.join(" ")})` }),
+  dropShadow: (...args) => ({ filter: `drop-shadow(${args.join(" ")})` }),
+  hueRotate: (...args) => ({ filter: `hue-rotate(${args.join(" ")})` }),
+};
+for (const cb of Object.values(NativeCssFilterFunctions))
+  cb.scope = { ...NativeCssScopeMath };
+NativeCssFilterFunctions.filterUrl = (...args) => ({ filter: `url(${args.join(" ")})` });
+
+//UNPACKED $transform scope functions
 const NativeCssTransformFunctions = {
   matrix: (...args) => ({ transform: `matrix(${args.join(",")})` }),
   matrix3d: (...args) => ({ transform: `matrix3d(${args.join(",")})` }),
@@ -176,8 +241,10 @@ const NativeCssTransformFunctions = {
   skewX: (...args) => ({ transform: `skewX(${args.join(",")})` }),
   skewY: (...args) => ({ transform: `skewY(${args.join(",")})` }),
 };
-delete NativeCssProperties.transform;
+for (const cb of Object.values(NativeCssTransformFunctions))
+  cb.scope = { ...NativeCssScopeMath };
 
+//UNPACKED $gradient scope functions
 const NativeCssGradientFunctions = {
   "linearGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
   "radialGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
@@ -190,22 +257,30 @@ const NativeCssGradientFunctions = {
   "repeatingLinear": (...args) => ({ background: `repeating-linear-gradient(${args.join(",")})` }),
   "repeatingRadial": (...args) => ({ background: `repeating-radial-gradient(${args.join(",")})` }),
   "repeatingConic": (...args) => ({ background: `repeating-conic-gradient(${args.join(",")})` }),
-  //collides with <transition: linear()>, but <transition: linear()> is limited to transition and animation scope. 
+  //collides with {transition: linear()}, but is done as a scope function now, so no problem
   "linear": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
 };
+for (const k in NativeCssGradientFunctions)
+  NativeCssGradientFunctions[k].scope = { ...NativeCssScopeMath, ...NativeColorsFunctions };
 
 
-const EASING_FUNCTIONS = {
+const ANIMATION_FUNCTIONS = {
   linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,
   ease: (...args) => `ease(${args.join(",")})`,
   steps: (...args) => `steps(${args.join(",")})`,
   cubicBezier: (...args) => `cubic-bezier(${args.join(",")})`,
 };
 
-NativeCssProperties.transition.scope = EASING_FUNCTIONS;
-NativeCssProperties.animation.scope = EASING_FUNCTIONS;
+NativeCssProperties.animation.scope = ANIMATION_FUNCTIONS;
 
-
+const UnpackedNativeCssProperties = {
+  ...NativeCssProperties,
+  transform: undefined,
+  ...NativeCssTransformFunctions,
+  filter: undefined,
+  ...NativeCssFilterFunctions,
+  ...NativeCssGradientFunctions,
+};
 
 
 
@@ -214,38 +289,40 @@ NativeCssProperties.animation.scope = EASING_FUNCTIONS;
 function border(...args) {
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
-    if (a.match(/thin|medium|thick/)) return { Width: a };
-    const Width = isLength(a);
-    if (Width != null) return ({ Width });
-    if (a.match(/solid|dotted|dashed|double|none/)) return { Style: a };
-    return a;
+    if (a.match(/solid|dotted|dashed|double|none/))
+      return { Style: a };
+    if (isLength(a) || a.match(/(^(min|max|clamp)\()/) || a.match(/^(thin|medium|thick)$/))
+      return { Width: a };
+    return a; //todo this throws, right?
   });
   return borderSwitch(Object.assign({ Style: "solid" }, ...args));
 }
 
 const borderColor = toLogicalFour.bind(null, "Color");
-borderColor.scope = NativeCssProperties.color.scope;
+borderColor.scope = NativeCssProperties.borderColor.scope;
+const borderWidth = toLogicalFour.bind(null, "Width");
+borderWidth.scope = NativeCssProperties.borderWidth.scope;
+const borderRadius = toRadiusFour.bind(null, "Radius");
+borderRadius.scope = NativeCssProperties.borderRadius.scope;
+const borderRadius8 = toLogicalEight.bind(null, "Radius", 0);
+borderRadius8.scope = NativeCssProperties.borderRadius.scope;
 
 border.scope = {
-  width: toLogicalFour.bind(null, "Width"),
-  w: toLogicalFour.bind(null, "Width"),
+  width: borderWidth,
+  w: borderWidth,
   style: toLogicalFour.bind(null, "Style"),
   s: toLogicalFour.bind(null, "Style"),
-  radius: toRadiusFour.bind(null, "Radius"),
-  r: toRadiusFour.bind(null, "Radius"),
-  r4: toRadiusFour.bind(null, "Radius"),
-  r8: toLogicalEight.bind(null, "Radius", 0),
+  radius: borderRadius,
+  r: borderRadius,
+  r4: borderRadius,
+  r8: borderRadius8,
   color: borderColor,
   c: borderColor,
+  ...transitionFunctionSet("border-width"),
 };
-delete NativeCssProperties.border;
-delete NativeCssProperties.borderWidth;
-delete NativeCssProperties.borderStyle;
-delete NativeCssProperties.borderRadius;
-// delete NativeCssProperties.borderColor;
 
-NativeCssProperties.borderColor = (...args) => borderSwitch(toLogicalFour("Color", ...args));
-NativeCssProperties.borderColor.scope = NativeCssProperties.color.scope;
+// NativeCssProperties.borderColor = (...args) => borderSwitch(toLogicalFour("Color", ...args));
+// NativeCssProperties.borderColor.scope = NativeCssProperties.color.scope;
 
 const KNOWN_BAD_FONT_NAMES = {
   "comic": "Comic Sans MS",
@@ -283,16 +360,18 @@ function font(...args) {
         continue main;
       }
     }
-    throw `Unrecognized font property: ${a}`;
+    throw `Unrecognized font property: ${a}`; //todo this should happen with "url(..)"?
   }
   res.fontFamily ??= res.fontFamily.join(", ").replaceAll("+", " ");
   return res;
 }
 font.scope = {
   oblique: (...args) => ["oblique", ...args].join(" "),
+  url: (...args) => `url(${args.join(" ")})`,
 }
 
 const bg = (...args) => ({ background: args.join(" ") || "var(--background-color)" });
+bg.scope = NativeCssProperties.background.scope;
 
 function colonSplit2(NAME, SEP, x) {
   if (x == null) return x;
@@ -300,6 +379,11 @@ function colonSplit2(NAME, SEP, x) {
   return res.length == 1 ? res[0] :
     `${NAME}(${res.join(SEP)})`;
 }
+
+//todo do something like this instead:
+//   12><--var
+//   12<>--var
+//   45>23>--var
 
 //enables us to write a min and max eiter as 2px:5px or max(2px,5px)
 //$w(50%)
@@ -321,21 +405,24 @@ function toSize(NAME, ...args) {
 }
 const width = (...args) => toSize("inlineSize", ...args);
 const height = (...args) => toSize("blockSize", ...args);
+width.scope = NativeCssProperties.width.scope;
+height.scope = NativeCssProperties.height.scope;
 
 export default {
-  ...NativeCssProperties,
-  ...NativeCssTransformFunctions,
-  ...NativeCssFilterFunctions,
-  ...NativeCssGradientFunctions,
-  em: NativeCssProperties.fontSize,
+  ...UnpackedNativeCssProperties,
 
-  //the properties below are our own custom css Shortcuts 
   border,
+  borderWidth: undefined,
+  borderStyle: undefined,
+  borderRadius: undefined,
+  // borderColor: undefined,
+
   font,
+  em: NativeCssProperties.fontSize,
   bg,
   background: bg,
   w: width,
   h: height,
   width,
   height,
-}
+};

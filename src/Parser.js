@@ -21,7 +21,7 @@ export class ShortBlock {
     const owner = this.shorts?.[0]?.exprList?.[0]?.name;
     const ownerMain = supers["$" + owner]?.exprList?.[0]?.name ?? owner;
     //only allow the global scope for item |$shorts when there is an empty $container| short??
-    const itemScope = SHORTS[ownerMain]?.itemScope?? SHORTS; /* can we remove ?? SHORTS soon? i want to not be as wide as this */ 
+    const itemScope = SHORTS[ownerMain]?.itemScope ?? SHORTS; /* can we remove ?? SHORTS soon? i want to not be as wide as this */
     const shorts = this.shorts?.map((short, i) => short.interpret(i ? itemScope : SHORTS, supers, i ? owner : ""));
     return { media, shorts };
   }
@@ -66,26 +66,6 @@ class Rule {
   }
 }
 
-const NativeCssFunctions = {
-  var: (...args) => `var(${args.join(",")})`,
-  url: (...args) => `url(${args.join(",")})`,    //this one goes to "" quotes when custom
-
-  // calc: (...args) => `calc(${args.join(" ")})`,    //2px**2 => calc(2px * 2px)
-  min: (...args) => `min(${args.join(",")})`,
-  max: (...args) => `max(${args.join(",")})`,
-  clamp: (...args) => `clamp(${args.join(",")})`,
-
-  counter: (...args) => `counter(${args.join(",")})`,
-  counters: (...args) => `counters(${args.join(",")})`,
-  element: (...args) => `element(${args.join(",")})`,
-  paint: (...args) => `paint(${args.join(",")})`,
-  env: (...args) => `env(${args.join(",")})`,
-  path: (...args) => `path(${args.join(",")})`,
-  //todo
-  // attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
-  // "image-set": (...args) => `image-set(${args.join(",")})`,
-};
-
 class Expression {
 
   constructor(name, args) {
@@ -103,8 +83,8 @@ class Expression {
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${this.name}`);
     const args = this.args.map(x =>
-      x instanceof Expression ? x.interpret(cb.scope ?? NativeCssFunctions, supers) :
-        x === "." ? "unset" :
+      x instanceof Expression ? x.interpret(cb.scope, supers) :
+        x === "." ? "unset" : //todo move this into the parser??
           x);
     return cb.call(this, ...args);
   }
