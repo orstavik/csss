@@ -289,7 +289,7 @@ const UnpackedNativeCssProperties = {
 function border(...args) {
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
-    if (a.match(/solid|dotted|dashed|double|none/))
+    if (a.match(/solid|dotted|dashed|double|none|groove|ridge|inset|outset|hidden/))
       return { Style: a };
     if (isLength(a) || a.match(/(^(min|max|clamp)\()/) || a.match(/^(thin|medium|thick)$/))
       return { Width: a };
