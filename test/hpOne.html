@@ -490,47 +490,47 @@
 
 <test-html title="$font(times,serif,700,capitalize)">
   <main class="$font(times,serif,500,2px,italic)">
-    <h2 class="$font(helvetica,arial,sans-serif,900,capitalize)">
+    <h2 class="$font(helvetica,arial,'sans-serif',900,capitalize)">
       $font(fontFamily[], fontStyle, fontWeight, fontVariant, fontStretch, textTransform, letterSpacing)
     </h2>
     Notes:
     <p>
       For future maybe because they are not widely supported: text-wrap&hypens
     </p>
-    <p class="$font(comic+sans,lucida,'DejaVu+Sans+Mono')">goofy</p>
+    <p class="$font('comic+sans',lucida,'DejaVu+Sans+Mono')">goofy</p>
   </main>
   <style>
     @layer container, items;
 
     @layer container {
       .\$font\(times\,serif\,500\,2px\,italic\) {
-        font-family: "Times New Roman", serif;
         font-style: italic;
         font-weight: 500;
-        font-variant: initial;
-        font-stretch: initial;
-        text-transform: initial;
+        font-variant-caps: unset;
+        font-stretch: unset;
+        text-transform: unset;
         letter-spacing: 2px;
+        font-family: "Times New Roman", serif;
       }
 
-      .\$font\(helvetica\,arial\,sans-serif\,900\,capitalize\) {
-        font-family: "Helvetica Neue", arial, sans-serif;
-        font-style: initial;
+      .\$font\(helvetica\,arial\,\'sans-serif\'\,900\,capitalize\) {
+        font-style: unset;
         font-weight: 900;
-        font-variant: initial;
-        font-stretch: initial;
+        font-variant-caps: unset;
+        font-stretch: unset;
         text-transform: capitalize;
-        letter-spacing: initial;
+        letter-spacing: unset;
+        font-family: helvetica, arial, "sans-serif";
       }
 
-      .\$font\(comic\+sans\,lucida\,\'DejaVu\+Sans\+Mono\'\) {
-        font-family: "Comic Sans MS", "Lucida Sans Unicode", "DejaVu Sans Mono";
-        font-style: initial;
-        font-weight: initial;
-        font-variant: initial;
-        font-stretch: initial;
-        text-transform: initial;
-        letter-spacing: initial;
+      .\$font\(\'comic\+sans\'\,lucida\,\'DejaVu\+Sans\+Mono\'\) {
+        font-style: unset;
+        font-weight: unset;
+        font-variant-caps: unset;
+        font-stretch: unset;
+        text-transform: unset;
+        letter-spacing: unset;
+        font-family: "comic sans", "Lucida Sans Unicode", "DejaVu Sans Mono";
       }
     }
 
