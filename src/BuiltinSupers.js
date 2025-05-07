@@ -52,13 +52,13 @@ $extraExpanded = $fontStretch(extraExpanded);
 $ultraExpanded = $fontStretch(ultraExpanded);
 
 $serif = $fontFamily(serif);
-$sansSerif = $fontFamily(sansSerif);
+$sansSerif = $fontFamily('sans-serif');
 $monospace = $fontFamily(monospace);
 $cursive = $fontFamily(cursive);
 $fantasy = $fontFamily(fantasy);
-$systemUi = $fontFamily(systemUi);
-$uiSerif = $fontFamily(uiSerif);
-$uiSansSerif = $fontFamily(uiSansSerif);
+$systemUi = $fontFamily('system-ui');
+$uiSerif = $fontFamily('ui-serif');
+$uiSansSerif = $fontFamily('ui-sans-serif');
 
 `;
 //$full-width = $text-transform(full-width);
