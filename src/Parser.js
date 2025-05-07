@@ -221,9 +221,11 @@ function eatTokens(tokens) {
 function diveDeep(tokens, top) {
   const res = [];
   while (tokens.length) {
-    let a = tokens[0].match(/^\($|[+/*]|(?<![a-z])-|-(?![a-z])/) ?
+    let a = tokens[0].match(/^\($|^(?!["']).*[+/*]|(?<![a-z])-|-(?![a-z])/) ?
       parseVarCalc(eatTokens(tokens)) :
       tokens.shift();
+    if (a[0] === "#")
+      a = new Expression("_hash", [a.slice(1)]);
     if (top && a === ",") throw "can't start with ','";
     if (top && a === ")") throw "can't start with ')'";
     if (a === "," || a === ")") {         //empty

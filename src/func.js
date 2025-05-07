@@ -126,8 +126,16 @@ const NativeColorsFunctions = (function () {
     args = args.map(a => (a.match(/^\d?\d%$/i) ? " " : ", ") + a);
     return `color-mix(${cSpace}${args.join("")})`;
   }
+  function _hash(a, ...others) {
+    if (others.length) throw "hash(can only have 1 argument)";
+    //#123 => hash(123) => #123
+    //#primary_a80 => hash(primary) => var(--color_primary_a80)
+    return !a.match(/^[a-f0-9]{3,8}$/) || a.length == 5 || a.length == 7 ?
+      `var(--color_${a})` : `#${a}`;
+  }
 
   const res = {
+    _hash,
     rgb: (...args) => nativeCssColorFunction("rgb", ...args),
     rgba: (...args) => nativeCssColorFunction("rgba", ...args),
     hsl: (...args) => nativeCssColorFunction("hsl", ...args),
@@ -144,6 +152,15 @@ const NativeColorsFunctions = (function () {
     cb.scope = { ...NativeCssScopeMath };
   return res;
 })();
+
+const ColorNames = /^(aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen)$/i;
+const ColorFunctionStart = /^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color|colorMix)\(/;
+const ColorVar = /^var\(--color_/;
+const ColorString = new RegExp(`${ColorNames}|${ColorFunctionStart}|${ColorVar}`);
+
+export function isColor(x) {
+  return ColorString.test(x) && x;
+}
 
 // const SpecializedNativeCssFunctions = {
 //    element: (...args) => `element(${args.join(",")})`,
@@ -285,10 +302,14 @@ const UnpackedNativeCssProperties = {
 
 
 
-
+//border: 2px 4px solid red blue;
+//$border(w(2px,4px),solid,c(red,blue))
+//$border(2px,solid,red)
 function border(...args) {
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
+    if (isColor(a))
+      return { Color: a };
     if (a.match(/solid|dotted|dashed|double|none|groove|ridge|inset|outset|hidden/))
       return { Style: a };
     if (isLength(a) || a.match(/(^(min|max|clamp)\()/) || a.match(/^(thin|medium|thick)$/))
@@ -306,12 +327,14 @@ const borderRadius = toRadiusFour.bind(null, "Radius");
 borderRadius.scope = NativeCssProperties.borderRadius.scope;
 const borderRadius8 = toLogicalEight.bind(null, "Radius", 0);
 borderRadius8.scope = NativeCssProperties.borderRadius.scope;
+const borderStyle = toLogicalFour.bind(null, "Style");
+borderStyle.scope = NativeCssProperties.borderStyle.scope;
 
 border.scope = {
   width: borderWidth,
   w: borderWidth,
-  style: toLogicalFour.bind(null, "Style"),
-  s: toLogicalFour.bind(null, "Style"),
+  style: borderStyle,
+  s: borderStyle,
   radius: borderRadius,
   r: borderRadius,
   r4: borderRadius,
@@ -324,45 +347,57 @@ border.scope = {
 // NativeCssProperties.borderColor = (...args) => borderSwitch(toLogicalFour("Color", ...args));
 // NativeCssProperties.borderColor.scope = NativeCssProperties.color.scope;
 
-const KNOWN_BAD_FONT_NAMES = {
-  "comic": "Comic Sans MS",
-  "comic+sans": "Comic Sans MS",
-  "times": "Times New Roman",
-  "courier": "Courier New",
-  "palatino": "Palatino Linotype",
-  "helvetica": "Helvetica Neue",
-  "lucida": "Lucida Sans Unicode",
+
+function isFontFamily(x) {
+  //"Zapf Dingbats"|"Arial Black"|"Andale Mono"|"Palatino Times"|"DejaVu Sans"|"DejaVu Serif"|"DejaVu Sans Mono"|"Liberation Sans"|"Liberation Serif"|"Liberation Mono"|"Nimbus Roman No9 L"|"Nimbus Sans L"|"Nimbus Mono L"|"Century Schoolbook L"|"URW Chancery L"|"URW Gothic L"|"URW Bookman L"|"Comic Sans MS"|"Apple Chancery"|"Marker Felt"|"Lucida Console"|"Lucida Sans Unicode"|"Palatino Linotype"|"Segoe UI"|"Times New Roman"|"Trebuchet MS"|"Lucida Grande"|"Hoefler Text"|"American Typewriter"|"Gill Sans"|"Book Antiqua"|"Century Gothic"|"Franklin Gothic Medium"|"Bookman Old Style"|"Brush Script MT"|"Helvetica Neue"|"Courier Monaco"|"sans-serif"|"system-ui"|"ui-serif"|"ui-sans-serif"|"ui-monospace"|"ui-rounded"|"-apple-system"
+  if (x.match?.(/^(serif|monospace|cursive|fantasy|emoji|math|fangsong|Arial|Calibri|Cambria|Candara|Consolas|Constantia|Corbel|Georgia|Impact|Tahoma|Verdana|Garamond|Helvetica|Geneva|Didot|Optima|Futura|Baskerville|Copperplate|Menlo|Monaco|Chalkboard|Wingdings|Webdings|Symbol|BlinkMacSystemFont|Roboto)$/i))
+    return x;
+  if (x[0] === "'" || x[0] === '"')
+    return x.replaceAll("+", " ");
+  if (x.match(/^url\(/))
+    return x;
+  const KNOWN_BAD_FONT_NAMES = {
+    "comic": "Comic Sans MS",
+    "comic sans": "Comic Sans MS",
+    "times": "Times New Roman",
+    "courier": "Courier New",
+    "palatino": "Palatino Linotype",
+    "helvetica": "Helvetica Neue",
+    "lucida": "Lucida Sans Unicode",
+  };
+  return KNOWN_BAD_FONT_NAMES[x];
 }
 //$font("Arial+Black",serif,bold,small-caps,ultra-condensed,capitalize,sans-serif,oblique(-10deg),ui-sans-serif)
 //$font("Arial+Black",sans-serif,ui-sans-serif,900,small-caps,ultra-condensed,capitalize,oblique(10deg))
-const FONT = [
-  ["fontFamily", /^(serif|sans-serif|monospace|cursive|fantasy|system-ui|ui-serif|ui-sans-serif|ui-monospace|ui-rounded|emoji|math|fangsong|Arial|Arial\+Black|Calibri|Cambria|Candara|Comic\+Sans\+MS|Consolas|Constantia|Corbel|Courier\+New|Georgia|Impact|Lucida\+Console|Lucida\+Sans\+Unicode|Palatino\+Linotype|Segoe\+UI|Tahoma|Times\+New\+Roman|Trebuchet\+MS|Verdana|Book\+Antiqua|Century\+Gothic|Franklin\+Gothic\+Medium|Garamond|Bookman\+Old\+Style|Brush\+Script\+MT|Helvetica|Helvetica\+Neue|Courier\+Monaco|Geneva|Lucida\+Grande|Didot|Hoefler\+Text|American\+Typewriter|Gill\+Sans|Optima|Futura|Baskerville|Copperplate|Menlo|Monaco|Apple\+Chancery|Marker\+Felt|Chalkboard|Andale\+Mono|Palatino\+Times|DejaVu\+Sans|DejaVu\+Serif|DejaVu\+Sans\+Mono|Liberation\+Sans|Liberation\+Serif|Liberation\+Mono|Nimbus\+Roman\+No9\+L|Nimbus\+Sans\+L|Nimbus\+Mono\+L|Century\+Schoolbook\+L|URW\+Chancery\+L|URW\+Gothic\+L|URW\+Bookman\+L|Wingdings|Webdings|Symbol|Zapf\+Dingbats|-apple-system|BlinkMacSystemFont|Roboto)$/i],
-  ["fontFamily", /^["']/i],
-  ["fontStyle", /^(italic|oblique)$/i],
-  ["fontWeight", /^(bold|bolder|lighter|[1-9]00)$/i],
-  ["fontVariantCaps", /^(small-caps|all-small-caps|petite-caps|all-petite-caps|unicase|titling-caps)$/i],
-  ["fontStretch", /^(ultra-condensed|extra-condensed|condensed|semi-condensed|normal|semi-expanded|expanded|extra-expanded|ultra-expanded)$/i],
-  ["textTransform", /^(capitalize|uppercase|lowercase|full-width|full-size-kana|math-auto)$/i],
-  ["letterSpacing", /^-?[0-9]*\.?[0-9]+([a-z]+|%)$/i],
-];
+const FONT = {
+  fontStyle: x => x.match(/^(italic|oblique)$/i),
+  fontWeight: x => x.match(/^(bold|bolder|lighter|[1-9]00)$/i),
+  fontVariantCaps: x => x.match(/^(small-caps|all-small-caps|petite-caps|all-petite-caps|unicase|titling-caps)$/i),
+  fontStretch: x => x.match(/^(ultra-condensed|extra-condensed|condensed|semi-condensed|normal|semi-expanded|expanded|extra-expanded|ultra-expanded)$/i),
+  textTransform: x => x.match(/^(capitalize|uppercase|lowercase|full-width|full-size-kana|math-auto)$/i),
+  letterSpacing: x => x.match(/^-?[0-9]*\.?[0-9]+([a-z]+|%)$/i),
+  // fontSize: x => x.match(/^(xx-small|x-small|small|medium|large|x-large|xx-large|smaller|larger)$/i),
+  // fontSizeAdjust: x => x.match(/^[0-9]*\.?[0-9]+$/),
+  // color: isColor,
+};
+function matchFontProperty(a) {
+  for (const type in FONT)
+    if (FONT[type](a))
+      return type;
+}
 
 function font(...args) {
-  const res = {};
-  main: for (const a of args) {
-    const badFont = KNOWN_BAD_FONT_NAMES[a.toLowerCase()];
-    if (badFont) {
-      (res.fontFamily ??= []).push(badFont);
-      continue main;
-    }
-    for (const [TYPE, WORD] of FONT) {
-      if (a.match(WORD)) {
-        TYPE === "fontFamily" ? (res[TYPE] ??= []).push(a) : res[TYPE] = a;
-        continue main;
-      }
-    }
-    throw `Unrecognized font property: ${a}`; //todo this should happen with "url(..)"?
+  const res = Object.entries(FONT).reduce((acc, [k, v]) => ((acc[k] = "unset"), acc), {});
+  let v;
+  for (const a of args) {
+    const type = matchFontProperty(a);
+    if (type)
+      res[type] = a;
+    else if (v = isFontFamily(a))
+      (res.fontFamily ??= []).push(v);
+    else
+      throw `Unrecognized font property: ${a}`;
   }
-  res.fontFamily ??= res.fontFamily.join(", ").replaceAll("+", " ");
   return res;
 }
 font.scope = {
