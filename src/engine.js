@@ -38,11 +38,11 @@ export class SheetWrapper {
   constructor(sheet) {
     this.styleEl = sheet.ownerNode;
     this.sheet = sheet;
+    this.items = this.setupLayer("items", sheet);
+    this.container = this.setupLayer("container", sheet);
     this.supers = {};
     this.shorts = { ...SHORTS };
     this.renameMap = { ...RENAME };
-    this.items = this.setupLayer("items", sheet);
-    this.container = this.setupLayer("container", sheet);
     this.setupStatement();
     this.readSupers(BuiltinSupers);
   }
@@ -108,6 +108,8 @@ export class SheetWrapper {
       this.#removeUnused(this.items.layer);
       this.sheet.ownerNode.textContent = [...this.sheet.cssRules].map(r => r.cssText).join('\n');
       this.sheet = this.styleEl.sheet;
+      this.items = this.setupLayer("items", this.sheet);
+      this.container = this.setupLayer("container", this.sheet);
     });
   }
 }
