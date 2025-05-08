@@ -1,4 +1,4 @@
-import { SheetWrapper } from "./SheetWrapper.js";
+import { SheetWrapper } from "./src/SheetWrapper.js";
 
 function initCssShorts(style, interval = 500) {
   style || document.head.appendChild(style = document.createElement("style"));
