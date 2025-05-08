@@ -38,10 +38,6 @@ $uppercase = $textTransform(uppercase);
 $lowercase = $textTransform(lowercase);
 $mathAuto = $textTransform(mathAuto);
 
-$underline = $textDecoration(underline);
-$overline = $textDecoration(overline);
-$lineThrough = $textDecoration(lineThrough);
-
 $ultraCondensed = $fontStretch(ultraCondensed);
 $extraCondensed = $fontStretch(extraCondensed);
 $condensed = $fontStretch(condensed);

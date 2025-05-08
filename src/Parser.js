@@ -148,10 +148,14 @@ class Short {
       const sup = supers["$" + (owner ? owner + "." : "") + s.name];
       if (!sup)
         return s;
+      if (s.name in scope)
+        throw `Superclash: ${s.name} is both a super and defined in the scope.`;
       const { name, argNames, exprList } = sup;
       if (argNames.length > s.args.length)
         throw `missing argument: ${name}(...${argNames[s.args.length]})`;
-      const argMap = argNames.reduce((res, n) => ((res[n] = s.args.shift()), res), {});
+      const argMap = argNames.reduce((res, n) => ((res[n] = s.args.shift() || "."), res), {});
+      if (s.args.length)  //adding superflous arguments to the first expression in the super's body
+        exprList[0].args.push(...s.args);
       return exprList.map(expr => cloneAndReplaceExpr(argMap, expr));
     }).flat();
     const shorts = unSuperExprList && clashOrStack(unSuperExprList.map(s => s.interpret(scope, supers)));

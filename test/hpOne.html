@@ -188,7 +188,7 @@
       .\$color\(oklch\(green\,\.5\,\.85\,h\)\) {
         color: oklch(from oklch(from green .5 .85 h) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
         --background-color: oklch(from oklch(from green .5 .85 h) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: oklch(0.5 0.85 142.489);
+        border-color: oklch(from green 0.5 0.85 h);
       }
     }
 
@@ -734,16 +734,39 @@
   </style>
 
 </test-html>
+<test-html title="overline lineThrough">
+  <div class="$lineThrough(3px)">hello</div>
+  <div class="$overLine(2px)">sunshine</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$lineThrough\(3px\) {
+        text-decoration-line: line-through;
+        text-decoration-thickness: 3px;
+        text-decoration-style: solid;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+
+      .\$overLine\(2px\) {
+        text-decoration-line: overline;
+        text-decoration-thickness: 2px;
+        text-decoration-style: solid;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
 <test-html title="Text Decoration - Basic Test">
   <main>
     <h2>Grammar & Spelling</h2>
     <div class="$grammarError(2px)">grammarError(2px)</div>
     <h2>Default (no style)</h2>
-    <div class="$overLine(2px)">overLine(2px)</div>
     <div class="$overUnderLineThrough(2px)">overUnderLineThrough(2px)</div>
     <h2>Styles</h2>
     <div class="$wavyOverUnderLineThrough(2px)">wavyOverUnderLineThrough(2px)</div>
-    <div class="$lineThrough(2px)">lineThrough(2px)</div>
     <div class="$dottedUnderLine(2px)">dottedUnderLine(2px)</div>
     <div class="$dashedOverUnderLineThrough(2px)">dashedOverUnderLineThrough(2px)</div>
     <div class="$doubleOverLine(2px)">doubleOverLine(2px)</div>
@@ -758,15 +781,10 @@
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
 
-      .\$overLine\(2px\) {
-        text-decoration-line: overline;
-        text-decoration-thickness: 2px;
-        text-decoration-color: var(--text-decoration-color, currentcolor);
-      }
-
       .\$overUnderLineThrough\(2px\) {
         text-decoration-line: underline overline line-through;
         text-decoration-thickness: 2px;
+        text-decoration-style: solid;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
 
@@ -774,13 +792,6 @@
         text-decoration-line: underline overline line-through;
         text-decoration-thickness: 2px;
         text-decoration-style: wavy;
-        text-decoration-color: var(--text-decoration-color, currentcolor);
-      }
-
-      .\$lineThrough\(2px\) {
-        text-decoration-style: initial;
-        text-decoration-line: line-through;
-        text-decoration-thickness: 2px;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
 
@@ -900,9 +911,9 @@
 </test-html>
 <test-html title="Bug: `display:flex`">
   <main csss="
-    $flex = $flex(row,gap(1rem),textAlign(center),padding(1rem));
+    $flex2 = $flex(row,gap(1rem),textAlign(center),padding(1rem));
   ">
-    <div class="$flex">
+    <div class="$flex2">
       <div class="$color(white,red,) $bg(red)">1</div>
       <div class="$color(white,green,) $bg(green)">2</div>
     </div>
@@ -911,7 +922,7 @@
     @layer container, items;
 
     @layer container {
-      .\$flex {
+      .\$flex2 {
         display: flex;
         word-spacing: unset;
         line-height: unset;
