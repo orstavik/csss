@@ -7,7 +7,22 @@
       $hg.right = $column(3,4);
       $hg.main = $column(2,3);
   ">
-    <div class="$hg|header$header|.left$left|main$main|aside.right$right|.footer$footer">
+    <script type="module">
+      import { registerShort } from '/src/engine.js';
+      await new Promise(r => setTimeout(r, 100));
+      registerShort('$grid.hg', () => ({
+        gridTemplateRows: "auto 1fr auto",
+        gridTemplateColumns: "auto 1fr auto",
+        gap: "1rem",
+        blockSize: "100vh"
+      }));
+      registerShort('$grid|$hgHeader', function () { return this.column(1, 4); });
+      registerShort('$grid|$hgFooter', function () { return this.column(1, 4); });
+      registerShort('$grid|$hgLeft', function () { return this.column(1, 2); });
+      registerShort('$grid|$hgRight', function () { return this.column(3, 4); });
+      registerShort('$grid|$hgMain', function () { return this.column(2, 3); });
+    </script>
+    <div class="$grid(hg())|header$hgHeader|.left$hgLeft|main$hgMain|aside.right$hgRight|.footer$hgFooter">
       <header class="header $bg(azure) $border">
         <h1>Header</h1>
       </header>
@@ -29,7 +44,7 @@
         <p>Using CSS Grid makes this layout much simpler than older techniques that required floats and negative
           margins.</p>
       </main>
-      <aside class="right |:third$margin(1rem,0)">
+      <aside class="right |:nth-child(3)$margin(1rem,0)">
         <h2>Right Sidebar</h2>
         <p>Additional information, ads, or related content could go here.</p>
         <div class="$padding(0.5rem) $bg(white) $border">
@@ -47,20 +62,6 @@
     @layer container, items;
 
     @layer container {
-      .\$hg\|header\$header\|\.left\$left\|main\$main\|aside\.right\$right\|\.footer\$footer {
-        display: grid;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
-        text-align: unset;
-        text-indent: unset;
-        grid-template-rows: auto 1fr auto;
-        grid-template-columns: auto 1fr auto;
-        gap: 1rem;
-        block-size: 100vh;
-      }
-
       .\$bg\(azure\) {
         background: azure;
       }
@@ -84,32 +85,48 @@
       .\$bg\(lightblue\) {
         background: lightblue;
       }
+
+      .\$grid\(hg\(\)\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-rows: auto 1fr auto;
+        grid-template-columns: auto 1fr auto;
+        gap: 1rem;
+        block-size: 100vh;
+      }
+
     }
 
     @layer items {
-      .\$hg\|header\$header\|\.left\$left\|main\$main\|aside\.right\$right\|\.footer\$footer> :where(header) {
+      .\|\:nth-child\(3\)\$margin\(1rem\,0\)> :where(:nth-child(3)) {
+        margin: 1rem 0px;
+      }
+
+      .\$grid\(hg\(\)\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(header) {
         grid-column: 1 / 4;
       }
 
-      .\$hg\|header\$header\|\.left\$left\|main\$main\|aside\.right\$right\|\.footer\$footer> :where(.left) {
+      .\$grid\(hg\(\)\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(.left) {
         grid-column: 1 / 2;
       }
 
-      .\$hg\|header\$header\|\.left\$left\|main\$main\|aside\.right\$right\|\.footer\$footer> :where(main) {
+      .\$grid\(hg\(\)\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(main) {
         grid-column: 2 / 3;
       }
 
-      .\$hg\|header\$header\|\.left\$left\|main\$main\|aside\.right\$right\|\.footer\$footer> :where(aside.right) {
+      .\$grid\(hg\(\)\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(aside.right) {
         grid-column: 3 / 4;
       }
 
-      .\$hg\|header\$header\|\.left\$left\|main\$main\|aside\.right\$right\|\.footer\$footer> :where(.footer) {
+      .\$grid\(hg\(\)\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(.footer) {
         grid-column: 1 / 4;
       }
 
-      .\|\:third\$margin\(1rem\,0\)> :where(:nth-child(3)) {
-        margin: 1rem 0px;
-      }
     }
   </style>
 </test-html>

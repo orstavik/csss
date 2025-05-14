@@ -821,9 +821,18 @@
   </style>
 </test-html>
 <test-html title="$lineClamp(2)">
-  <div csss="$lineClamp(n)=$block(clamp(n));" class="$lineClamp(2)">
-    hello
-  </div>
+  <div class="$lineClamp(2)"> hello </div>
+  <script type="module">
+    import { registerShort } from "/src/engine.js";
+    registerShort("$lineClamp", function (lines, ...args) {
+      return this.$block({
+        display: "-webkit-box",
+        WebkitLineClamp: lines,
+        WebkitBoxOrient: "vertical",
+        overflowY: "hidden"
+      }, ...args);
+    });
+  </script>
   <style>
     @layer container, items;
 
@@ -845,20 +854,22 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="Bug: `display:grid`">
-  <main csss="
-    $layout = $grid(cols(1fr,1fr,1fr))$gap(1rem);
-     ">
-    <div class="$layout $grid(gap(2rem))">
+<test-html title="$grid(layout(),gap(2rem))">
+  <main csss="OLD: $layout = $grid(cols(1fr,1fr,1fr))$gap(1rem);">
+    <div class="$grid(layout(),gap(2rem))">
       <div class="$color(white,blue,) $bg() $padding(1rem) $textAlign(center)">1</div>
       <div class="$color(white,yellow,) $bg() $padding(1rem) $textAlign(center)">2</div>
     </div>
+    <script type="module">
+      import { registerShort } from "/src/engine.js";
+      registerShort("$grid.layout", () => ({ gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }));
+    </script>
   </main>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$layout {
+      .\$grid\(layout\(\)\,gap\(2rem\)\) {
         display: grid;
         word-spacing: unset;
         line-height: unset;
@@ -867,17 +878,6 @@
         text-align: unset;
         text-indent: unset;
         grid-template-columns: 1fr 1fr 1fr;
-        gap: 1rem;
-      }
-
-      .\$grid\(gap\(2rem\)\) {
-        display: grid;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
-        text-align: unset;
-        text-indent: unset;
         gap: 2rem;
       }
 
@@ -909,15 +909,25 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="Bug: `display:flex`">
-  <main csss="
-    $flex2 = $flex(row,gap(1rem),textAlign(center),padding(1rem));
-  ">
+<test-html title="$flex2">
+  <main csss="OLD.  $flex2 = $flex(row,gap(1rem),textAlign(center),padding(1rem));">
     <div class="$flex2">
       <div class="$color(white,red,) $bg(red)">1</div>
       <div class="$color(white,green,) $bg(green)">2</div>
     </div>
   </main>
+  <script type="module">
+    import { registerShort } from "/src/engine.js";
+    registerShort("$flex2", function (...args) {
+      return this.$flex({
+        display: "flex",
+        flexDirection: "row",
+        gap: "1rem",
+        textAlign: "center",
+        padding: "1rem"
+      }, ...args)
+    });
+  </script>
   <style>
     @layer container, items;
 
@@ -960,30 +970,24 @@
   </style>
 </test-html>
 <test-html title="Bug: empty argument on supershorts">
-  <main csss="
-    $layout = $block$border;
-  ">
-    <div class="$layout">
+  <main csss="OLD:   $layout = $block$border;  ">
+    <div class="$block(layout())">
       <h1>Hello Sunshine! This is error.</h1>
     </div>
     <div class="$block $border">
       <h1>Hello Sunshine! No error?</h1>
     </div>
+    <script type="module">
+      import { registerShort } from "/src/engine.js";
+      registerShort("$block.layout", function () {
+        return this.$border(); //this throws an error
+      });
+    </script>
   </main>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$layout {
-        display: block;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
-        text-align: unset;
-        text-indent: unset;
-        border-style: solid;
-      }
 
       .\$block {
         display: block;
