@@ -112,12 +112,15 @@ const NativeColorsFunctions = (function () {
     const a = name.match(/^(rgb|hsl)$/) ? "a" : "";
     return `${name}${a}(${args.slice(0, 3).join(SEP)} / ${args[3]})`;
   }
-  function nativeCssColorSpaceFunction(...args) {
+  //todo untested!!
+  function nativeCssColorSpaceFunction(space, ...args) {
     if (args.length < 3 || args.length > 5)
       throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
-    const from_ = CSS.supports("color", args[0]) ? `from ${args.shift()}` : "";
-    const _alpha = args.length == 4 ? ` / ${args.pop()}` : "";
-    return `${this.name}(${from_}${args.join(" ")}${_alpha})`;
+    const from = CSS.supports("color", args[0]) && args.shift();
+    if (args.length == 4) args.splice(-1, 0, "/");
+    args.unshift(space);
+    if (from) args.unshift("from", from);
+    return `color(${args.join(" ")})`;
   }
   function nativeCssColorMixFunction(cSpace, ...args) {
     cSpace = "in " + cSpace.replaceAll("_", " "); //we don't support '_' in --var-names
@@ -145,7 +148,16 @@ const NativeColorsFunctions = (function () {
     lch: (...args) => nativeCssColorFunction("lch", ...args),
     oklab: (...args) => nativeCssColorFunction("oklab", ...args),
     oklch: (...args) => nativeCssColorFunction("oklch", ...args),
-    color: nativeCssColorSpaceFunction,
+    srgb: (...args) => nativeCssColorSpaceFunction("srgb", ...args),
+    srgbLinear: (...args) => nativeCssColorSpaceFunction("srgb-linear", ...args),
+    displayP3: (...args) => nativeCssColorSpaceFunction("display-p3", ...args),
+    a98Rgb: (...args) => nativeCssColorSpaceFunction("a98-rgb", ...args),
+    prophotoRgb: (...args) => nativeCssColorSpaceFunction("prophoto-rgb", ...args),
+    rec2020: (...args) => nativeCssColorSpaceFunction("rec2020", ...args),
+    xyz: (...args) => nativeCssColorSpaceFunction("xyz", ...args),
+    xyzD50: (...args) => nativeCssColorSpaceFunction("xyz-d50", ...args),
+    xyzD65: (...args) => nativeCssColorSpaceFunction("xyz-d65", ...args),
+    color: (...args) => nativeCssColorSpaceFunction("srgb", ...args),
     colorMix: nativeCssColorMixFunction,
   };
   for (const cb of Object.values(res))
@@ -372,11 +384,11 @@ function isFontFamily(x) {
 const FONT = {
   fontStyle: x => x.match(/^(italic|oblique)$/i),
   fontWeight: x => x.match(/^(bold|bolder|lighter|[1-9]00)$/i),
-  fontVariantCaps: x => x.match(/^(small-caps|all-small-caps|petite-caps|all-petite-caps|unicase|titling-caps)$/i),
-  fontStretch: x => x.match(/^(ultra-condensed|extra-condensed|condensed|semi-condensed|normal|semi-expanded|expanded|extra-expanded|ultra-expanded)$/i),
-  textTransform: x => x.match(/^(capitalize|uppercase|lowercase|full-width|full-size-kana|math-auto)$/i),
+  fontVariantCaps: x => x.match(/^(smallCaps|allSmallCaps|petiteCaps|allPetiteCaps|unicase|titlingCaps)$/i),
+  fontStretch: x => x.match(/^(ultraCondensed|extraCondensed|condensed|semiCondensed|normal|semiExpanded|expanded|extraExpanded|ultraExpanded)$/i),
+  textTransform: x => x.match(/^(capitalize|uppercase|lowercase|fullWidth|fullSizeKana|mathAuto)$/i),
   letterSpacing: x => x.match(/^-?[0-9]*\.?[0-9]+([a-z]+|%)$/i),
-  // fontSize: x => x.match(/^(xx-small|x-small|small|medium|large|x-large|xx-large|smaller|larger)$/i),
+  // fontSize: x => x.match(/^(xxSmall|xSmall|small|medium|large|x-large|xx-large|smaller|larger)$/i),
   // fontSizeAdjust: x => x.match(/^[0-9]*\.?[0-9]+$/),
   // color: isColor,
 };
@@ -403,6 +415,42 @@ function font(...args) {
 font.scope = {
   oblique: (...args) => ["oblique", ...args].join(" "),
   url: (...args) => `url(${args.join(" ")})`,
+}
+
+/**
+ * 
+$capitalize = $textTransform(capitalize);
+$uppercase = $textTransform(uppercase);
+$lowercase = $textTransform(lowercase);
+$mathAuto = $textTransform(mathAuto);
+
+ */
+const fontShorts = {
+  bold: function (...args) { return this.fontStyle("bold", ...args); },
+  italic: function (...args) { return this.fontStyle("italic", ...args); },
+  oblique: function (...args) { return this.fontStyle("oblique", ...args); },
+  smallCaps: function (...args) { return this.fontVariantCaps("smallCaps", ...args); },
+  allSmallCaps: function (...args) { return this.fontVariantCaps("allSmallCaps", ...args); },
+  petiteCaps: function (...args) { return this.fontVariantCaps("petiteCaps", ...args); },
+  allPetiteCaps: function (...args) { return this.fontVariantCaps("allPetiteCaps", ...args); },
+  unicase: function (...args) { return this.fontVariantCaps("unicase", ...args); },
+  titlingCaps: function (...args) { return this.fontVariantCaps("titlingCaps", ...args); },
+  ultraCondensed: function (...args) { return this.fontStretch("ultraCondensed", ...args); },
+  extraCondensed: function (...args) { return this.fontStretch("extraCondensed", ...args); },
+  condensed: function (...args) { return this.fontStretch("condensed", ...args); },
+  semiCondensed: function (...args) { return this.fontStretch("semiCondensed", ...args); },
+  semiExpanded: function (...args) { return this.fontStretch("semiExpanded", ...args); },
+  expanded: function (...args) { return this.fontStretch("expanded", ...args); },
+  extraExpanded: function (...args) { return this.fontStretch("extraExpanded", ...args); },
+  ultraExpanded: function (...args) { return this.fontStretch("ultraExpanded", ...args); },
+  serif: function (...args) { return this.fontFamily("serif", ...args); },
+  monospace: function (...args) { return this.fontFamily("monospace", ...args); },
+  cursive: function (...args) { return this.fontFamily("cursive", ...args); },
+  fantasy: function (...args) { return this.fontFamily("fantasy", ...args); },
+  sansSerif: function (...args) { return this.fontFamily("sansSerif", ...args); },
+  systemUi: function (...args) { return this.fontFamily("systemUi", ...args); },
+  uiSerif: function (...args) { return this.fontFamily("uiSerif", ...args); },
+  uiSansSerif: function (...args) { return this.fontFamily("uiSansSerif", ...args); },
 }
 
 const bg = (...args) => ({ background: args.join(" ") || "var(--background-color)" });
@@ -444,6 +492,7 @@ export default {
   // borderColor: undefined,
 
   font,
+  ...fontShorts,
   em: NativeCssProperties.fontSize,
   bg,
   background: bg,

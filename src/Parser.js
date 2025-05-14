@@ -19,10 +19,10 @@ export class ShortBlock {
     let media = interpretMedias(this.medias, supers);
     if (media) media = `@media ${media}`;
     const owner = this.shorts?.[0]?.exprList?.[0]?.name;
-    const ownerMain = supers["$" + owner]?.exprList?.[0]?.name ?? owner;
+    // const ownerMain = supers["$" + owner]?.exprList?.[0]?.name ?? owner;
     //only allow the global scope for item |$shorts when there is an empty $container| short??
-    const itemScope = SHORTS[ownerMain]?.itemScope ?? SHORTS; /* can we remove ?? SHORTS soon? i want to not be as wide as this */
-    const shorts = this.shorts?.map((short, i) => short.interpret(i ? itemScope : SHORTS, supers, i ? owner : ""));
+    const itemScope = SHORTS[owner]?.itemScope ?? SHORTS; /* can we remove ?? SHORTS soon? i want to not be as wide as this */
+    const shorts = this.shorts?.map((short, i) => short.interpret(i ? itemScope : SHORTS, supers, i ? owner + "|" : ""));
     return { media, shorts };
   }
 
@@ -78,15 +78,16 @@ class Expression {
   get signature() {
     return this.name + "/" + this.args.length;
   }
-  interpret(scope, supers) {
+  interpret(scope, supers, owner) {
+    const fullName = owner + this.name;
     const cb = scope?.[this.name];
     if (!cb)
-      throw new SyntaxError(`Unknown short function: ${this.name}`);
+      throw new SyntaxError(`Unknown short function: ${fullName}`);
     const args = this.args.map(x =>
-      x instanceof Expression ? x.interpret(cb.scope, supers) :
+      x instanceof Expression ? x.interpret(cb.scope, supers, fullName + ".") :
         x === "." ? "unset" : //todo move this into the parser??
           x);
-    return cb.call(this, ...args);
+    return cb.call(scope, ...args);
   }
 }
 const clashOrStack = (function () {
@@ -115,6 +116,8 @@ const clashOrStack = (function () {
       for (let [k, v] of Object.entries(obj)) {
         if (v == null) continue;
         const k2 = k.replace(/[A-Z]/g, "-$&").toLowerCase();
+        if (v.match?.(/^[a-zA-Z][a-zA-Z0-9]+$/) && v.match(/[A-Z]/))
+          v = v.replace(/[A-Z]/g, "-$&").toLowerCase();
         if (CSS.supports(k2, "inherit"))
           if (!CSS.supports(k2, v))
             throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
@@ -132,10 +135,10 @@ const clashOrStack = (function () {
 })();
 
 
-function cloneAndReplaceExpr(argMap, { name, args }) {
-  args = args.map(arg => arg instanceof Expression ? cloneAndReplaceExpr(argMap, arg) : argMap[arg] ?? arg);
-  return new Expression(name, args);
-}
+// function cloneAndReplaceExpr(argMap, { name, args }) {
+//   args = args.map(arg => arg instanceof Expression ? cloneAndReplaceExpr(argMap, arg) : argMap[arg] ?? arg);
+//   return new Expression(name, args);
+// }
 
 class Short {
   constructor(selectorList, exprList) {
@@ -147,21 +150,21 @@ class Short {
   }
 
   interpret(scope, supers, owner) {
-    const unSuperExprList = this.exprList?.map(s => {
-      const sup = supers[(owner ? owner + "." : "") + s.name];
-      if (!sup)
-        return s;
-      if (s.name in scope)
-        throw `Superclash: ${s.name} is both a super and defined in the scope.`;
-      const { name, argNames, exprList } = sup;
-      if (argNames.length > s.args.length)
-        throw `missing argument: ${name}(...${argNames[s.args.length]})`;
-      const argMap = argNames.reduce((res, n) => ((res[n] = s.args.shift() || "."), res), {});
-      if (s.args.length)  //adding superflous arguments to the first expression in the super's body
-        exprList[0].args.push(...s.args);
-      return exprList.map(expr => cloneAndReplaceExpr(argMap, expr));
-    }).flat();
-    const shorts = unSuperExprList && clashOrStack(unSuperExprList.map(s => s.interpret(scope, supers)));
+    // const unSuperExprList = this.exprList?.map(s => {
+    //   const sup = supers[(owner ? owner + "." : "") + s.name];
+    //   if (!sup)
+    //     return s;
+    //   if (s.name in scope)
+    //     throw `Superclash: ${s.name} is both a super and defined in the scope.`;
+    //   const { name, argNames, exprList } = sup;
+    //   if (argNames.length > s.args.length)
+    //     throw `missing argument: ${name}(...${argNames[s.args.length]})`;
+    //   const argMap = argNames.reduce((res, n) => ((res[n] = s.args.shift() || "."), res), {});
+    //   if (s.args.length)  //adding superflous arguments to the first expression in the super's body
+    //     exprList[0].args.push(...s.args);
+    //   return exprList.map(expr => cloneAndReplaceExpr(argMap, expr));
+    // }).flat();
+    const shorts = this.exprList && clashOrStack(this.exprList.map(s => s.interpret(scope, supers, owner)));
     let selector = this.selectorList && this.selectorList.map(s => s.interpret(supers)).join(", ");
     return { selector, shorts };
   }
@@ -251,8 +254,8 @@ function diveDeep(tokens, top) {
       a = new Expression(a, diveDeep(tokens));
       b = tokens.shift();
     }
-    if (a.match?.(WORD))
-      a = a.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase());
+    // if (a.match?.(WORD)) 
+    //   a = a.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase());
     if (b === ")" || (top && b === undefined))
       return res.push(a), res;
     if (b == ",")

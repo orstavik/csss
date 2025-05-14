@@ -2,7 +2,7 @@ import { extractSuperShorts, ShortBlock } from "./Parser.js";
 import nativeAndMore from "./func.js";
 import layouts from "./layout.js";
 import colorPalette from "./palette.js";
-import { BuiltinSupers } from "./BuiltinSupers.js";
+// import { BuiltinSupers } from "./BuiltinSupers.js";
 
 class UpgradeRegistry {
   #register = {};
@@ -64,7 +64,7 @@ class SheetWrapper {
     this.shorts = { ...SHORTS };
     this.renameMap = { ...RENAME };
     this.setupStatement();
-    this.readSupers(BuiltinSupers);
+    // this.readSupers(BuiltinSupers);
   }
 
   setupStatement() {
@@ -151,9 +151,14 @@ for (const [k, short] of Object.entries(SHORTS)) {
 }
 
 function registerShort(name, func) {
-  if (name in SHORTS)
+  const [main, type, name2 = main] = name.split(/(\.|\|)/);
+  const table =
+    type === "|" ? SHORTS[main].itemScope ??= {} :
+      type === "." ? SHORTS[main].scope ??= {} :
+        SHORTS;
+  if (name in table)
     throw new Error(`Short name ${name} already exists`);
-  SHORTS[name] = func;
+  table[name2] = func;
   const todos = upgrades.enoughWaiting(name);
   if (!todos)
     return;

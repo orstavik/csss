@@ -13,16 +13,34 @@
   </style>
   <script type="module">
     import { registerShort } from '/src/engine.js';
+    await new Promise(r => setTimeout(r, 100));
     registerShort('$unknown', a => ({ fontSize: a }));
   </script>
 </test-html>
-<test-html title="$w(unknown(2px))">
-  <div class="$w(unknown(2px))">throw an error</div>
+<test-html title="$grid(unknown(22px))">
+  <div class="$grid(unknown(22px))">sunshine</div>
   <style>
     @layer container, items;
 
-    @layer container {}
+    @layer container {
+      .\$grid\(unknown\(22px\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        min-width: 22px;
+        max-width: 22px;
+      }
+    }
 
     @layer items {}
   </style>
+  <script type="module">
+    import { registerShort } from '/src/engine.js';
+    await new Promise(r => setTimeout(r, 100));
+    registerShort('$grid.unknown', a => ({ minWidth: a, maxWidth: a }));
+  </script>
 </test-html>
