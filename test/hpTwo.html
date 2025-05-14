@@ -1,0 +1,20 @@
+<test-html title="$unknown(2px)">
+  <div class="$unknown(2px)">hello</div>
+  <style>
+    @layer container, items;
+
+    @layer container {}
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$w(unknown(2px))">
+  <div class="$w(unknown(2px))">throw an error</div>
+  <style>
+    @layer container, items;
+
+    @layer container {}
+
+    @layer items {}
+  </style>
+</test-html>
