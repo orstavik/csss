@@ -1,4 +1,4 @@
-<test-html title="Color System 1 - Basic Palette">
+<!-- <test-html title="Color System 1 - Basic Palette">
   <main>
     <div class="$grid(cols(1fr,1fr),gap(1rem))">
       <div class="$palette(#d41c84) $color(primary) 
@@ -163,36 +163,8 @@
     }
     @layer items {}
   </style>
-</test-html>
-<test-html title="Color System 2 - Basic Color">
-  <main>
-    <div class="$grid(cols(1fr,1fr),gap(1rem))">
-      <div class="$color(pink-b1)">Named Color</div>
-      <!-- <div class="$color(#57237d)">Hex Color</div>
-      <div class="$color(rgba(0,0,255,0.5))">RGBA Color</div>
-      <div class="$color(primary)">Palette Color</div> -->
-    </div>
-  </main>
-  <style>
-    @layer container, items;
-    @layer container {
-      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
-        display: grid;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
-        text-align: unset;
-        text-indent: unset;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-      }
-
-    }
-    @layer items {}
-  </style>
-</test-html>
-<test-html title="Color System 5 - Gradient Backgrounds">
+</test-html> -->
+<!-- <test-html title="Color System 5 - Gradient Backgrounds">
   <main>
     <div class="$grid(cols(1fr,1fr),gap(1rem))">
       <div class="$bg(linear-gradient(to right, red, blue))">Linear Gradient</div>
@@ -212,172 +184,209 @@
     }
     @layer items {}
   </style>
-</test-html>
-<!-- 
-<test-html title="Color System 3 - Color Reliefs">
-  <main>
-    <div class="$grid(cols(1fr,1fr),gap(1rem))">
-      <div class="$color(bw)">Black/White Relief</div>
-      <div class="$color(text)">Text Relief</div>
-      <div class="$color(box)">Box Relief</div>
-      <div class="$color(flip)">Flip Relief</div>
-      <div class="$color(darkflip)">Dark Flip Relief</div>
+</test-html> -->
+<test-html title="Gradient Function Test">
+  <main csss="
+    $primary(color,onColor) = $gradient(primary,color,onColor);
+    $secondary(color,onColor) = $gradient(secondary,color,onColor);
+    $accent(color,onColor) = $gradient(accent,color,onColor);
+  ">
+    <div class="
+      $primary(blue,red) $secondary(yellow,orange) $accent(purple,yellow) $padding(1rem) $flex(column,gap(1rem))
+    ">
+      <h2>Color Palette System</h2>
+      
+      <p>Primary Color Progression (0-100):</p>
+      <div class="$flex(row,gap(0.2rem)) $h(40px)">
+        <!-- Primary -->
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary0); color: var(--primary100); flex: 1;">0</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary10); color: var(--primary100); flex: 1;">10</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary20); color: var(--primary100); flex: 1;">20</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary30); color: var(--primary100); flex: 1;">30</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary40); color: var(--primary100); flex: 1;">40</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary50); color: black; flex: 1;">50</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary60); color: black; flex: 1;">60</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary70); color: black; flex: 1;">70</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary80); color: black; flex: 1;">80</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary90); color: black; flex: 1;">90</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary100); color: black; flex: 1;">100</div>
+      </div>
+      
+      <p>Secondary Color Progression (0-100):</p>
+      <div class="$flex(row,gap(0.2rem)) $h(40px)">
+        <!-- Secondary -->
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--secondary0); color: var(--secondary100); flex: 1;">0</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--secondary10); color: var(--secondary100); flex: 1;">10</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--secondary20); color: var(--secondary100); flex: 1;">20</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--secondary30); color: var(--secondary100); flex: 1;">30</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--secondary40); color: var(--secondary100); flex: 1;">40</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--secondary50); color: black; flex: 1;">50</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--secondary60); color: black; flex: 1;">60</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--secondary70); color: black; flex: 1;">70</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--secondary80); color: black; flex: 1;">80</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--secondary90); color: black; flex: 1;">90</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--secondary100); color: black; flex: 1;">100</div>
+      </div>
+      
+      <p>Accent Color Progression (0-100):</p>
+      <div class="$flex(row,gap(0.2rem)) $h(40px)">
+        <!-- Accent -->
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--accent0); color: var(--accent100); flex: 1;">0</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--accent10); color: var(--accent100); flex: 1;">10</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--accent20); color: var(--accent100); flex: 1;">20</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--accent30); color: var(--accent100); flex: 1;">30</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--accent40); color: var(--accent100); flex: 1;">40</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--accent50); color: black; flex: 1;">50</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--accent60); color: black; flex: 1;">60</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--accent70); color: black; flex: 1;">70</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--accent80); color: black; flex: 1;">80</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--accent90); color: black; flex: 1;">90</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--accent100); color: black; flex: 1;">100</div>
+      </div>
+
+      <p>Alpha Progression (var(--primary50-aX)):</p>
+      <div class="$flex(row,gap(0.2rem)) $h(40px)" style="background: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc), linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc); background-size: 20px 20px; background-position: 0 0, 10px 10px;">
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary50-a10); color: black; flex: 1;">10%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary50-a20); color: black; flex: 1;">20%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary50-a30); color: black; flex: 1;">30%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary50-a40); color: black; flex: 1;">40%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary50-a50); color: black; flex: 1;">50%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary50-a60); color: black; flex: 1;">60%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary50-a70); color: black; flex: 1;">70%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary50-a80); color: black; flex: 1;">80%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary50-a90); color: black; flex: 1;">90%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--primary50-a100); color: black; flex: 1;">100%</div>
+      </div>
+
+      <p>Chroma Variations (var(--primary50-...)):</p>
+      <div class="$flex(row,gap(0.2rem)) $h(40px)">
+         <div class="$flex(cc) $border(radius(4px))" style="background-color: var(--primary50-blend); color: black; flex: 1;">blend</div>
+         <div class="$flex(cc) $border(radius(4px))" style="background-color: var(--primary50); color: black; flex: 1;">base (50)</div>
+         <div class="$flex(cc) $border(radius(4px))" style="background-color: var(--primary50-pop); color: black; flex: 1;">pop</div>
+      </div>
     </div>
   </main>
   <style>
-    @layer container, items;
-    @layer container {
-      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-      }
+   @layer container, items;
+   @layer container {
+      
     }
-    @layer items {}
+
+    @layer items {
+    }
   </style>
 </test-html>
+<test-html title="">
+  <main csss="
+    $primary(color,onColor) = $gradient(primary,color,onColor);
+    $secondary(color,onColor) = $gradient(secondary,color,onColor);
+    $accent(color,onColor) = $gradient(accent,color,onColor);
 
-<test-html title="Color System 4 - Background Basics">
-  <main>
-    <div class="$grid(cols(1fr,1fr),gap(1rem))">
-      <div class="$bg(red)">Solid Color</div>
-      <div class="$bg(primary)">Palette Color</div>
-      <div class="$bg(rgba(0,0,255,0.5))">RGBA Color</div>
+
+  ">
+  <h3>Practical Examples</h3>    
+  <div class="$flex(column,gap(1rem)) $primary(white,blue) $secondary(skyblue,green) $accent(red,white)">
+    <!-- UI Component Examples -->
+    <div class="$flex(row,gap(1rem))">
+      <!-- Primary Button -->
+      <button class="$padding(0.5rem,1rem) $border(none,radius(4px))" 
+             style="background-color: var(--primary50); color: var(--primary0); cursor: pointer;">
+        Primary Button
+      </button>
+      
+      <!-- Secondary Button -->
+      <button class="$padding(0.5rem,1rem) $border(none,radius(4px))" 
+             style="background-color: var(--secondary50); color: var(--secondary0); cursor: pointer;">
+        Secondary Button
+      </button>
+      
+      <!-- Accent Button -->
+      <button class="$padding(0.5rem,1rem) $border(none,radius(4px))" 
+             style="background-color: var(--accent50); color: var(--accent0); cursor: pointer;">
+        Accent Button
+      </button>
     </div>
+    
+    <!-- Card Example -->
+    <div class="$padding(1rem) $border(solid,radius(8px))" 
+         style="background-color: var(--primary10); border-color(var(--primary30))">
+      <h4 style="color: var(--primary90); margin-top: 0;">Card Title</h4>
+      <p style="color: var(--primary80);">This card uses various shades from the primary palette for a cohesive design.</p>
+      <div class="$flex(b.,row,gap(0.5rem))">
+        <button class="$padding(0.25rem,0.75rem) $border(none,radius(4px))" 
+               style="background-color: var(--primary40-a80); color: var(--primary100);">
+          Cancel
+        </button>
+        <button class="$padding(0.25rem,0.75rem) $border(none,radius(4px))" 
+               style="background-color: var(--primary60); color: var(--primary0);">
+          Submit
+        </button>
+      </div>
+    </div>
+    
+    <!-- Alert Examples -->
+    <div class="$flex(column,gap(0.5rem))">
+      <div class="$padding(1rem) $border(solid,radius(4px))" 
+           style="background-color: var(--primary20-a40); border-color(var(--primary30));">
+        <strong style="color: var(--primary90);">Info Alert</strong>
+        <p style="color: var(--primary80); margin: 0.5rem 0 0;">Using primary colors with transparency.</p>
+      </div>
+      
+      <div class="$padding(1rem) $border(solid,radius(4px))" 
+           style="background-color: var(--secondary20-a40); border-color(var(--secondary30));">
+        <strong style="color: var(--secondary90);">Warning Alert</strong>
+        <p style="color: var(--secondary80); margin: 0.5rem 0 0;">Using secondary colors with transparency.</p>
+      </div>
+      
+      <div class="$padding(1rem) $border(solid,radius(4px))" 
+           style="background-color: var(--accent20-a40); border-color(var(--accent30));">
+        <strong style="color: var(--accent0);">Danger Alert</strong>
+        <p style="color: var(--accent10); margin: 0.5rem 0 0;">Using accent colors with transparency.</p>
+      </div>
+    </div>
+  </div>
   </main>
   <style>
-    @layer container, items;
-    @layer container {
-      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-      }
+   @layer container, items;
+   @layer container {
+      
     }
+
+    @layer items {
+    }
+  </style>
+</test-html>
+<test-html title="Gradient Function Test">
+  <main class="
+    $popGradient(primary,darkblue,#eee)$gradient(neutral,#eee,#111)
+    @dark$popGradient(primary,#eee,darkblue)$gradient(neutral,#111,#eee)
+  ">
+    <div class="$padding(1rem) $flex(column,gap(1rem))">
+      <h2>Color Palette System</h2>
+
+      <p>Primary Color Progression (0-100):</p>
+      <div class="$flex(row,gap(0.2rem))|*$flex(1) $h(40px)">
+        <div class="$flex(cc) $border(solid,r(4px)) $bg(color(--primary)) $font(color(--primary100))">Normal</div>
+        <div class="$flex(cc) $border(solid,r(4px)) $bg(color(--primary10-a80)) $font(color(--primary90-a80))">10-a80</div>
+        <div class="$flex(cc) $border(solid,r(4px)) $bg(color(--primary20-a80-p2)) $font(color(--primary80))">20-a80-p2</div>
+      </div>
+    </div>
+  </main>
+  //todo 1. $bg must recognize the color variables as colors?
+  
+  //        color(--primary20-a80-p2)
+  //        c(--primary20-a80-p2)
+  //        #primary20-a80-p2
+  
+  //        #primary20-a80-p2? That this is turned into color(--primary20-a80-p2)
+  // #primary20-a80-p2 => if #111/#abcdef ? color(#111/#abcdef or color(var(--primary20-a80-p2)))
+
+  //todo 2. $font-color?
+  <style>
+    @layer container, items;
+
+    @layer container {}
+
     @layer items {}
   </style>
 </test-html>
-
-<test-html title="Color System 6 - Color Combinations">
-  <main>
-    <div class="$grid(cols(1fr,1fr),gap(1rem))">
-      <div class="$color(red)$bg(blue)">Text and Background</div>
-      <div class="$color(primary)$bg(secondary)">Palette Colors</div>
-      <div class="$color(bw)$bg(flip)">Relief Combinations</div>
-      <div class="$color(pop)$bg(blend)">Special Effects</div>
-    </div>
-  </main>
-  <style>
-    @layer container, items;
-    @layer container {
-      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-      }
-    }
-    @layer items {}
-  </style>
-</test-html>
-
-<test-html title="Color System 7 - Border Colors">
-  <main>
-    <div class="$grid(cols(1fr,1fr),gap(1rem))">
-      <div class="$color(,,red)">Border Only</div>
-      <div class="$color(red,,blue)">Text and Border</div>
-      <div class="$color(,blue,red)">Background and Border</div>
-      <div class="$color(primary,,secondary)">Palette Borders</div>
-    </div>
-  </main>
-  <style>
-    @layer container, items;
-    @layer container {
-      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-      }
-    }
-    @layer items {}
-  </style>
-</test-html>
-
-<test-html title="Color System 8 - Color Functions">
-  <main>
-    <div class="$grid(cols(1fr,1fr),gap(1rem))">
-      <div class="$color(rgb(255,0,0))">RGB Color</div>
-      <div class="$color(hsl(120,100%,50%))">HSL Color</div>
-      <div class="$color(oklch(50% 0.2 120))">OKLCH Color</div>
-      <div class="$color(color-mix(in srgb, red, blue 50%))">Color Mix</div>
-    </div>
-  </main>
-  <style>
-    @layer container, items;
-    @layer container {
-      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-      }
-    }
-    @layer items {}
-  </style>
-</test-html>
-
-<test-html title="Color System 9 - Interactive States">
-  <main>
-    <div class="$grid(cols(1fr,1fr),gap(1rem))">
-      <div class="$color(primary):hover$color(secondary)">Hover Color Change</div>
-      <div class="$bg(primary):hover$bg(secondary)">Hover Background</div>
-      <div class="$color(primary)$bg(secondary):hover$color(secondary)$bg(primary)">Hover Swap</div>
-      <div class="$bg(linear(to right, primary, secondary)):hover$bg(linear(to right, secondary, primary))">Hover Gradient</div>
-    </div>
-  </main>
-  <style>
-    @layer container, items;
-    @layer container {
-      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-      }
-    }
-    @layer items {}
-  </style>
-</test-html>  
-
-
-<test-html title="Color System 11 - Border Intensity Levels">
-  <main>
-    <div class="$grid(cols(1fr,1fr,1fr,1fr),gap(0.5rem))">
-      <div class="$color(primary-b0)">Border 0</div>
-      <div class="$color(primary-b1)">Border 1</div>
-      <div class="$color(primary-b2)">Border 2</div>
-      <div class="$color(primary-b3)">Border 3</div>
-      <div class="$color(primary-b4)">Border 4</div>
-      <div class="$color(primary-b5)">Border 5</div>
-      <div class="$color(primary-b6)">Border 6</div>
-      <div class="$color(primary-b7)">Border 7</div>
-      <div class="$color(primary-b8)">Border 8</div>
-      <div class="$color(primary-b9)">Border 9</div>
-    </div>
-  </main>
-  <style>
-    @layer container, items;
-    @layer container {
-      .\$grid\(cols\(1fr\,1fr\,1fr\,1fr\)\,gap\(0\.5rem\)\) {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr;
-        gap: 0.5rem;
-      }
-      .\$grid\(cols\(1fr\,1fr\,1fr\,1fr\)\,gap\(0\.5rem\)\) > div {
-        padding: 0.5rem;
-        font-size: 0.8rem;
-        text-align: center;
-        border-radius: 0.25rem;
-      }
-    }
-    @layer items {}
-  </style>
-</test-html> 
--->

@@ -185,8 +185,384 @@
      
   </style>
 </test-html>
+<h4>Shadow and Border Related</h4>
+<test-html title="Frame">
+  <main class="$flex(gap(2rem))" csss="
+    $frameSm(style) = $boxShadow(0,.125rem,.25rem)$color(bs(rgba(0,0,0,.175)))$border(style,1px);
+    $frame(style) = $boxShadow(0,.5rem,1rem)$color(bs(rgba(0,0,0,0.15)))$border(style,1px);
+    $frameLg(style) = $boxShadow(0,1rem,3rem)$color(bs(rgba(0,0,0,0.175)))$border(style,1px);
+    $frameInset(style) = $boxShadow(inset,0,2px,4px,0)$color(bs(rgba(0,0,0,0.6)))$border(style,1px);
+  ">
+    <div class="$frameSm(dashed) $w(200px) $h(200px) $bg(white)">Small</div>
+    <div class="$frame(dotted) $w(200px) $h(200px) $bg(white)">Regular</div>
+    <div class="$frameLg(double) $w(200px) $h(200px) $bg(white)">Large</div>
+    <div class="$frameInset(solid) $w(200px) $h(200px) $bg(white)">Inset</div>
+  </main>
+  <style>
+     @layer container, items;
 
+     @layer container {
+      .\$flex\(gap\(2rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        gap: 2rem;
+      }
+      .\$frameSm\(dashed\) {
+        box-shadow: 0 .125rem .25rem var(--box-shadow-color-1, oklch(from currentcolor l 0 0));
+        --box-shadow-color-1: rgba(0 0 0 / .175);
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-style: dashed;
+        border-width: 1px;
+      }
+      .\$w\(200px\) {
+        inline-size: 200px;
+      }
+      .\$h\(200px\) {
+        block-size: 200px;
+      }
+      .\$bg\(white\) {
+        background: white;
+      }
+      .\$frame\(dotted\) {
+        box-shadow: 0 .5rem 1rem var(--box-shadow-color-1, oklch(from currentcolor l 0 0));
+        --box-shadow-color-1: rgba(0 0 0 / 0.15);
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-style: dotted;
+        border-width: 1px;
+      }
+      .\$frameLg\(double\) {
+        box-shadow: 0 1rem 3rem var(--box-shadow-color-1, oklch(from currentcolor l 0 0));
+        --box-shadow-color-1: rgba(0 0 0 / 0.175);
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-style: double;
+        border-width: 1px;
+      }
+      .\$frameInset\(solid\) {
+        box-shadow: inset 0 2px 4px 0 var(--box-shadow-color-1, oklch(from currentcolor l 0 0));
+        --box-shadow-color-1: rgba(0 0 0 / 0.6);
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-style: solid;
+        border-width: 1px;
+      }
+     }
+
+     @layer items {
+       
+     }
+     
+  </style>
+</test-html>
+<test-html title="Inverse Frame">
+  <main class="$flex(gap(2rem))" csss="
+    $TlframeInverse(style,color) = $border(style,width(1px,1px,0,0px))$color(,,color,bs(color))$boxShadow(0.5rem,0.5rem,1rem);
+    $TrframeInverse(style,color) = $border(style,width(1px,0,0,1px))$color(,,color,bs(color))$boxShadow(-0.5rem,0.5rem,1rem);
+    $BrframeInverse(style,color) = $border(style,width(0,0px,1px,1px))$color(,,color,bs(color))$boxShadow(-0.5rem,-0.5rem,1rem );
+    $BlframeInverse(style,color) = $border(style,width(0,1px,1px,0))$color(,,color,bs(color))$boxShadow(0.5rem,-0.5rem,1rem);
+  ">
+    <div class="$TlframeInverse(solid,red) $h(200px) $w(200px)">Inverse Frame</div>
+    <div class="$TrframeInverse(dashed,black) $h(200px) $w(200px)">Inverse Frame</div>
+    <div class="$BrframeInverse(double,grey) $h(200px) $w(200px)">Inverse Frame</div>
+    <div class="$BlframeInverse(dotted,yellow) $h(200px) $w(200px)">Inverse Frame</div>
+  </main>
+  <style>
+     @layer container, items;
+
+     @layer container {
+      .\$flex\(gap\(2rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        gap: 2rem;
+      }
+      .\$TlframeInverse\(solid\,red\) {
+        border-style: solid;
+        border-block-width: 1px 0px;
+        border-inline-width: 1px 0px;
+        --box-shadow-color-1: red;
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: red;
+        box-shadow: 0.5rem 0.5rem 1rem var(--box-shadow-color-1, oklch(from currentcolor l 0 0));
+      }
+      .\$h\(200px\) {
+        block-size: 200px;
+      }
+      .\$w\(200px\) {
+        inline-size: 200px;
+      }
+      .\$TrframeInverse\(dashed\,black\) {
+        border-style: dashed;
+        border-block-width: 1px 0px;
+        border-inline-width: 0px 1px;
+        --box-shadow-color-1: black;
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: black;
+        box-shadow: -0.5rem 0.5rem 1rem var(--box-shadow-color-1, oklch(from currentcolor l 0 0));
+      }
+      .\$BrframeInverse\(double\,grey\) {
+        border-style: double;
+        border-block-width: 0px 1px;
+        border-inline-width: 0px 1px;
+        --box-shadow-color-1: grey;
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: grey;
+        box-shadow: -0.5rem -0.5rem 1rem var(--box-shadow-color-1, oklch(from currentcolor l 0 0));
+      }
+      .\$BlframeInverse\(dotted\,yellow\) {
+        border-style: dotted;
+        border-block-width: 0px 1px;
+        border-inline-width: 1px 0px;
+        --box-shadow-color-1: yellow;
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: yellow;
+        box-shadow: 0.5rem -0.5rem 1rem var(--box-shadow-color-1, oklch(from currentcolor l 0 0));
+      }
+     }
+
+     @layer items {
+       
+     }
+     
+  </style>
+</test-html>
+<test-html title="Card Shadow and Shadow effects">
+  <main class="$flex(gap(2rem))" csss="
+    $cardShadow(radius) = $border(1px,solid,r(radius))$color(,,rgba(0,0,0,0.125),bs(rgba(0,0,0,0.075)))$boxShadow(0,1px,3px);
+    
+    $cardInteractive(radius,shadowC) = $border(1px,solid,r(radius))$color(,,#eee,bs(shadowC))$boxShadow(0,0.125rem,0.25rem)$transition(borderColor,0.2s,easeInOut)$transition(boxShadow,0.3s,easeInOut);
+    $cardInteractiveEffect(borderC,shadowC) = $color(,,borderC,bs(shadowC))$boxShadow(0,4px,8px);
+
+    $hoverShadow = $transition(boxShadow,0.3s,easeInOut)$boxShadow(none);
+    $hoverShadowEffect(x,y,blur,spread,color) = $boxShadow(x,y,blur,spread)$color(bs(color));
+  ">
+    <div class="$cardShadow(0.5rem) $h(200px) $w(200px)">This is a card with a shadow.</div>
+    <div class="$cardInteractive(0.25rem,rgba(0,0,0,0.05)) :hover$cardInteractiveEffect(gray,rgba(0,0,0,0.1))$h(200px) $w(200px)">This is an interactive card.</div>
+    
+    <div class="$hoverShadow :hover$boxShadow(0,0.5rem,1rem)$color(bs(rgba(0,0,0,0.15))) $h(200px) $w(200px)">Hover here. This is manually set hover shadow.</div>
+    <div class="$hoverShadow :hover$hoverShadowEffect(0,0.5rem,1rem,0,rgba(0,0,255,0.2)) $h(200px) $w(200px)">Hover here too. This uses the supershort effect shadow.</div>
+  </main>
+  <style>
+     @layer container, items;
+
+     @layer container {
+      .\$flex\(gap\(2rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        gap: 2rem;
+      }
+      .\$cardShadow\(0\.5rem\) {
+        border-style: solid;
+        border-width: 1px;
+        border-radius: 0.5rem;
+        --box-shadow-color-1: rgba(0 0 0 / 0.075);
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: rgba(0, 0, 0, 0.125);
+        box-shadow: 0 1px 3px var(--box-shadow-color-1, oklch(from currentcolor l 0 0));
+      }
+      .\$h\(200px\) {
+        block-size: 200px;
+      }
+      .\$w\(200px\) {
+        inline-size: 200px;
+      }
+      .\$cardInteractive\(0\.25rem\,rgba\(0\,0\,0\,0\.05\)\) {
+        border-style: solid;
+        border-width: 1px;
+        border-radius: 0.25rem;
+        --box-shadow-color-1: rgba(0 0 0 / 0.05);
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: rgb(238, 238, 238);
+        box-shadow: 0 0.125rem 0.25rem var(--box-shadow-color-1, oklch(from currentcolor l 0 0));
+        transition: border-color 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
+      }
+      .\:hover\$cardInteractiveEffect\(blue\,rgba\(0\,0\,0\,0\.1\)\)\$h\(200px\):where(:hover) {
+        --box-shadow-color-1: rgba(0 0 0 / 0.1);
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: blue;
+        box-shadow: 0 4px 8px var(--box-shadow-color-1, oklch(from currentcolor l 0 0));
+        block-size: 200px;
+      }
+      .\$hoverShadow {
+        transition: box-shadow 0.3s ease-in-out;
+        box-shadow: none var(--box-shadow-color-1, oklch(from currentcolor l 0 0));
+      }
+      .\:hover\$boxShadow\(0\,0\.5rem\,1rem\)\$color\(bs\(rgba\(0\,0\,0\,0\.15\)\)\):where(:hover) {
+        box-shadow: 0 0.5rem 1rem var(--box-shadow-color-1, oklch(from currentcolor l 0 0));
+        --box-shadow-color-1: rgba(0 0 0 / 0.15);
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+      }
+      .\:hover\$hoverShadowEffect\(0\,0\.5rem\,1rem\,0\,blue\):where(:hover) {
+        box-shadow: 0 0.5rem 1rem var(--box-shadow-color-1, oklch(from currentcolor l 0 0));
+        --box-shadow-color-1: blue;
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+      }
+    }
+
+
+    @layer items {
+       
+    }
+     
+  </style>
+</test-html>
+<test-html title="Border effects">
+  <main class="$flex(gap(2rem))" csss="
+    $borderOnHover(weight) = $border(solid,weight)$color(,,#ccc)$transition(borderColor,0.2s,easeInOut);
+    $borderOnHoverEffect(color) = $color(,,color)$outline(none);
+    
+    $navBorder(style,n) = $border(style,width(0,0,n,0))$color(,,transparent)$transition(borderColor,0.2s,easeInOut)$padding(0,0,n,0);
+    $navBorderEffect(color) = $color(,,color)$outline(none);
+    
+    $thickBorderOnHover(width,color) = $border(solid,width)$color(,,color)$transition(borderWidth,0.1s,easeInOut);
+
+    $separatorWithShadow(x,y,blur,spread,color) = $border(none,width(0,0,1px,0))$color(,,color,rgba(0,0,0,0.2))$boxShadow(x,y,blur,spread);
+  ">
+    <button class="$borderOnHover(2px) :hover$borderOnHoverEffect(red) :focus$borderOnHoverEffect(red)">Button</button>
+    <button class="$navBorder(solid,2px) :hover$navBorderEffect(green) :focus$navBorderEffect(green)">MENU</button>
+    <div class="$thickBorderOnHover(1px,purple) :hover$thickBorderOnHover(2px,purple)">Border gets thicker.</div>
+    <span class="$separatorWithShadow(0,2px,2px,-2px,#ccc)">Heading</span>
+  </main>
+  <style>
+     @layer container, items;
+
+     @layer container {
+      .\$flex\(gap\(2rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        gap: 2rem;
+      }
+      .\$interactiveBorder\(2px\) {
+        border-style: solid;
+        border-width: 2px;
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: rgb(204, 204, 204);
+        transition: border-color 0.2s ease-in-out;
+      }
+      .\:hover\$intBorderEffect\(red\):where(:hover) {
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: red;
+        outline: none;
+      }
+      .\:focus\$intBorderEffect\(red\):where(:focus) {
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: red;
+        outline: none;
+      }
+      .\$navBorder\(dotted\,2px\) {
+        border-style: dotted;
+        border-block-width: 0px 2px;
+        border-inline-width: 0px;
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: transparent;
+        transition: border-color 0.2s ease-in-out;
+        padding: 0px 0px 2px;
+      }
+      .\:hover\$navBorderEffect\(green\):where(:hover) {
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: green;
+        outline: none;
+      }
+      .\:focus\$navBorderEffect\(green\):where(:focus) {
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: green;
+        outline: none;
+      }
+      .\$thickBorderOnHover\(1px\,purple\) {
+        border-style: solid;
+        border-width: 1px;
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: purple;
+        transition: border-width 0.1s ease-in-out;
+      }
+      .\:hover\$thickBorderOnHover\(2px\,purple\):where(:hover) {
+        border-style: solid;
+        border-width: 2px;
+        color: oklch(from undefined var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from undefined var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
+        border-color: purple;
+        transition: border-width 0.1s ease-in-out;
+      }
+    }
+
+
+    @layer items {
+       
+    }
+     
+  </style>
+</test-html>
+<test-html title="Experimental">
+  <main csss="
+    $cardInteractive(radius,shadowC) = $border(1px,solid,r(radius))$color(,,#eee,bs(shadowC))$boxShadow(0,0.125rem,0.25rem);
+    $cardInteractiveEffect(borderC,shadowC) = $color(,,borderC,bs(shadowC))$boxShadow(0,4px,8px);
+
+    $borderTransition(color,width) = $border(width,solid)$color(,,color)
+  ">
+    <div class="$cardInteractive($easeInOut(0.2s,0.3s,borderColor,boxShadow),0.25rem,rgba(0,0,0,0.05)) :hover$cardInteractive(gray,rgba(0,0,0,0.1)) $h(200px) $w(200px)">This is an interactive card.</div>
+    <div class="$borderTransition(gray,2px,$easeInOut(0.2s,borderColor)) :hover$borderTransition(red,4px)">This is a border transition.</div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+
+    }
+    
+    @layer items {
+
+    }
+  </style>
+</test-html>
 <!-- 
+ $bShadowSm = $boxShadow(0,.125rem,.25rem)$color(boxShadow(rgba(0, 0, 0, 0.75)));
+    $boxShadowLg = $boxShadow(0,1rem,3rem)$color(boxShadow(rgba(0, 0, 0, 0.175)));
+    $boxShadowInset = $boxShadow(inset,0,1px,2px)$color(boxShadow(rgba(0, 0, 0, 0.75)));
+
+$box-shadow:                  0 .5rem 1rem rgba($black, .15);
+$box-shadow-sm:               0 .125rem .25rem rgba($black, .075);
+$box-shadow-lg:               0 1rem 3rem rgba($black, .175);
+$box-shadow-inset:            inset 0 1px 2px rgba($black, .075);
+
+$frame(border,)
+
 $twoCol = $grid(template(auto 1fr / 3fr 1fr))$gap(2rem);
 $twoColMain = $grid(column(1 / 2));
 $twoColSidebar = $grid(column(2 / 3));
