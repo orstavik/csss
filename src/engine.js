@@ -7,42 +7,35 @@ import { BuiltinSupers } from "./BuiltinSupers.js";
 class UpgradeRegistry {
   #register = {};
 
-  waitFor(name, element) {
-    (this.#register[name] ??= []).push({ name, element: new WeakRef(element) });
+  waitFor(name, element, clazz) {
+    (this.#register[name] ??= []).push({ clazz, element: new WeakRef(element) });
   }
 
   enoughWaiting(name) {
-    if (!(name in this.#register))
-      return;
-    const undone = this.#register[name];
+    let undone = this.#register[name];
+    if (!undone) return;
     delete this.#register[name];
-    return undone.filter(({ element }) => element.deref()).map(({ name }) => name);
+    undone = undone.reduce((res, { clazz, element }) => {
+      element = element.deref();
+      element?.classList.contains(clazz) && res.push({ clazz, element });
+      return res;
+    }, []);
+    return undone.length ? undone : undefined;
   }
 }
-const upgrades = new UpgradeRegistry();
 
 const SHORTS = {
   ...nativeAndMore,
   ...colorPalette,
   ...layouts,
 };
-for (const [k, short] of Object.entries(SHORTS)) {
-  if (short?.itemScope) {
-    for (const [k2, func] of Object.entries(short.itemScope)) {
-      short.itemScope["$" + k2] = func;
-      delete func[k2];
-    }
-  }
-  SHORTS["$" + k] = short;
-  delete SHORTS[k];
-}
 
 const RENAME = {
   overflowBlock: "overflowY",
   overflowInline: "overflowX",
 };
 
-export class SheetWrapper {
+class SheetWrapper {
   rules = {};
 
   static getKey(r) {
@@ -96,7 +89,7 @@ export class SheetWrapper {
         this.addRuleImpl(rule);
     } catch (err) {
       if (err.message.startsWith("Unknown short function: $"))
-        return upgrades.waitFor(err.message.slice(24), el);
+        return upgrades.waitFor(err.message.slice(24), el, str);
       throw err;
     }
   }
@@ -144,3 +137,30 @@ export class SheetWrapper {
     });
   }
 }
+
+const upgrades = new UpgradeRegistry();
+
+for (const [k, short] of Object.entries(SHORTS)) {
+  if (short?.itemScope) {
+    for (const [k2, func] of Object.entries(short.itemScope)) {
+      short.itemScope["$" + k2] = func;
+      delete func[k2];
+    }
+  }
+  registerShort("$" + k, short);
+}
+
+function registerShort(name, func) {
+  if (name in SHORTS)
+    throw new Error(`Short name ${name} already exists`);
+  SHORTS[name] = func;
+  const todos = upgrades.enoughWaiting(name);
+  if (!todos)
+    return;
+  const style = document.querySelector("style");
+  const csss = new SheetWrapper(style.sheet);
+  for (const { clazz, element } of todos)
+    csss.addRule(clazz, element);
+}
+
+export { SheetWrapper, registerShort };

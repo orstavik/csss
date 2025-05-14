@@ -1,12 +1,20 @@
-<test-html title="$unknown(2px)">
-  <div class="$unknown(2px)">hello</div>
+<test-html title="$unknown(22px)">
+  <div class="$unknown(22px)">hello</div>
   <style>
     @layer container, items;
 
-    @layer container {}
+    @layer container {
+      .\$unknown\(22px\) {
+        font-size: 22px;
+      }
+    }
 
     @layer items {}
   </style>
+  <script type="module">
+    import { registerShort } from '/src/engine.js';
+    registerShort('$unknown', a => ({ fontSize: a }));
+  </script>
 </test-html>
 <test-html title="$w(unknown(2px))">
   <div class="$w(unknown(2px))">throw an error</div>

@@ -12,7 +12,7 @@
         if (clazz.includes("$"))
           try { sheetWrapper.addRule(clazz, el); } catch (er) { console.error(er); }
 
-    requestAnimationFrame(_ => sheetWrapper.cleanup());
+    setTimeout(_ => sheetWrapper.cleanup(), 2000);
   })();
 
 </script>
