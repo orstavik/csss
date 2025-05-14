@@ -4,6 +4,23 @@ import layouts from "./layout.js";
 import colorPalette from "./palette.js";
 import { BuiltinSupers } from "./BuiltinSupers.js";
 
+class UpgradeRegistry {
+  #register = {};
+
+  waitFor(name, element) {
+    (this.#register[name] ??= []).push({ name, element: new WeakRef(element) });
+  }
+
+  enoughWaiting(name) {
+    if (!(name in this.#register))
+      return;
+    const undone = this.#register[name];
+    delete this.#register[name];
+    return undone.filter(({ element }) => element.deref()).map(({ name }) => name);
+  }
+}
+const upgrades = new UpgradeRegistry();
+
 const SHORTS = {
   ...nativeAndMore,
   ...colorPalette,
@@ -62,12 +79,18 @@ export class SheetWrapper {
     return { layer: this.sheet.cssRules[0], registry: new Map() };
   }
 
-  addRule(str) {
+  addRule(str, el) {
     const shorts = new ShortBlock(str);
-    const rules = [...shorts.rules(this.shorts, this.supers, this.renameMap)];
-    for (const rule of rules)
-      this.addRuleImpl(rule);
-    return rules[0];
+    try {
+      for (const rule of shorts.rules(this.shorts, this.supers, this.renameMap))
+        this.addRuleImpl(rule);
+    } catch (err) {
+      if (err.message.startsWith("Unknown short function: ")) {
+        // debugger
+        return upgrades.waitFor(err.message.slice(26), el);
+      }
+      throw err;
+    }
   }
 
   addRuleImpl(rule) {
