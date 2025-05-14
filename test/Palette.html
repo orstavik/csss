@@ -52,7 +52,7 @@
       for (let clazz of el.classList)
         if (clazz.includes("$"))
           try {
-            sheetWrapper.addRule(clazz);
+            sheetWrapper.addRule(clazz, el);
           } catch (er) {
             console.log(er);
           }

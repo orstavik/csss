@@ -10,7 +10,7 @@ function initCssShorts(style, interval = 500) {
     for (let el of document.body.querySelectorAll('[class*="$"]'))
       for (let clazz of el.classList)
         if (clazz.includes("$"))
-          try { sheetWrapper.addRule(clazz); } catch (er) { console.error(er); }
+          try { sheetWrapper.addRule(clazz, el); } catch (er) { console.error(er); }
     sheetWrapper.cleanup();
   }
   if (interval < 0)

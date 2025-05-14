@@ -70,6 +70,6 @@
     for (let el of document.body.querySelectorAll('[class*="$"]'))
       for (let clazz of el.classList)
         if (clazz.includes("$"))
-          try { sheetWrapper.addRule(clazz) } catch (er) { console.log(er); }
+          try { sheetWrapper.addRule(clazz, el) } catch (er) { console.log(er); }
   })();
 </script>
