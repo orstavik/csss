@@ -26,6 +26,16 @@ const SHORTS = {
   ...colorPalette,
   ...layouts,
 };
+for (const [k, short] of Object.entries(SHORTS)) {
+  if (short?.itemScope) {
+    for (const [k2, func] of Object.entries(short.itemScope)) {
+      short.itemScope["$" + k2] = func;
+      delete func[k2];
+    }
+  }
+  SHORTS["$" + k] = short;
+  delete SHORTS[k];
+}
 
 const RENAME = {
   overflowBlock: "overflowY",
@@ -85,10 +95,8 @@ export class SheetWrapper {
       for (const rule of shorts.rules(this.shorts, this.supers, this.renameMap))
         this.addRuleImpl(rule);
     } catch (err) {
-      if (err.message.startsWith("Unknown short function: ")) {
-        // debugger
-        return upgrades.waitFor(err.message.slice(26), el);
-      }
+      if (err.message.startsWith("Unknown short function: $"))
+        return upgrades.waitFor(err.message.slice(24), el);
       throw err;
     }
   }

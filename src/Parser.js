@@ -141,11 +141,14 @@ class Short {
   constructor(selectorList, exprList) {
     this.selectorList = selectorList;
     this.exprList = exprList || undefined;
+    if (exprList)
+      for (const expr of exprList)
+        expr.name = "$" + expr.name;
   }
 
   interpret(scope, supers, owner) {
     const unSuperExprList = this.exprList?.map(s => {
-      const sup = supers["$" + (owner ? owner + "." : "") + s.name];
+      const sup = supers[(owner ? owner + "." : "") + s.name];
       if (!sup)
         return s;
       if (s.name in scope)
