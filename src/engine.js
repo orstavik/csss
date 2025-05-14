@@ -36,12 +36,13 @@ export class SheetWrapper {
   }
 
   constructor(sheet) {
+    this.styleEl = sheet.ownerNode;
     this.sheet = sheet;
+    this.items = this.setupLayer("items", sheet);
+    this.container = this.setupLayer("container", sheet);
     this.supers = {};
     this.shorts = { ...SHORTS };
     this.renameMap = { ...RENAME };
-    this.items = this.setupLayer("items", sheet);
-    this.container = this.setupLayer("container", sheet);
     this.setupStatement();
     this.readSupers(BuiltinSupers);
   }
@@ -90,7 +91,7 @@ export class SheetWrapper {
     if (r instanceof CSSMediaRule) r = r.cssRules[0];
     if (!(r instanceof CSSStyleRule)) return false;
     const className = r.selectorText.match(/^\.((\\.|[a-zA-Z0-9_-])+)/)?.[1].replaceAll(/\\(.)/g, "$1");
-    return className && this.sheet.ownerNode.getRootNode().querySelector(`[class~="${className}"]`);
+    return className && this.styleEl.getRootNode().querySelector(`[class~="${className}"]`);
   }
 
   #removeUnused(layer) {
@@ -106,6 +107,9 @@ export class SheetWrapper {
       this.#removeUnused(this.container.layer);
       this.#removeUnused(this.items.layer);
       this.sheet.ownerNode.textContent = [...this.sheet.cssRules].map(r => r.cssText).join('\n');
+      this.sheet = this.styleEl.sheet;
+      this.items = this.setupLayer("items", this.sheet);
+      this.container = this.setupLayer("container", this.sheet);
     });
   }
 }
