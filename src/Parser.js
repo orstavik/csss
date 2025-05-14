@@ -86,7 +86,8 @@ class Expression {
     const args = this.args.map(x =>
       x instanceof Expression ? x.interpret(cb.scope, supers, fullName + ".") :
         x === "." ? "unset" : //todo move this into the parser??
-          x);
+          (typeof x == "string" && cb.scope?.[x]) ? cb.scope[x].call(cb.scope) :
+            x);
     return cb.call(scope, ...args);
   }
 }

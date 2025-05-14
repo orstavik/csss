@@ -231,15 +231,15 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="$w(min)">
-  <div class="$w(min)">
+<test-html title="$w(minContent)">
+  <div class="$w(minContent)">
     hello
   </div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$w\(min\) {
+      .\$w\(minContent\) {
         inline-size: min-content;
       }
     }
@@ -247,13 +247,13 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="$w(min,2px,max)">
+<test-html title="$w(minContent,2px,maxContent)">
   <style>
     @layer container, items;
 
     @layer container {
 
-      .\$w\(min\,2px\,max\) {
+      .\$w\(minContent\,2px\,maxContent\) {
         min-inline-size: min-content;
         inline-size: 2px;
         max-inline-size: max-content;
@@ -262,7 +262,7 @@
 
     @layer items {}
   </style>
-  <div class="$w(min,2px,max)">
+  <div class="$w(minContent,2px,maxContent)">
     hello
   </div>
 </test-html>
@@ -854,9 +854,9 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="$grid(layout(),gap(2rem))">
+<test-html title="$grid(layout,gap(2rem))">
   <main csss="OLD: $layout = $grid(cols(1fr,1fr,1fr))$gap(1rem);">
-    <div class="$grid(layout(),gap(2rem))">
+    <div class="$grid(layout,gap(2rem))">
       <div class="$color(white,blue,) $bg() $padding(1rem) $textAlign(center)">1</div>
       <div class="$color(white,yellow,) $bg() $padding(1rem) $textAlign(center)">2</div>
     </div>
@@ -869,7 +869,7 @@
     @layer container, items;
 
     @layer container {
-      .\$grid\(layout\(\)\,gap\(2rem\)\) {
+      .\$grid\(layout\,gap\(2rem\)\) {
         display: grid;
         word-spacing: unset;
         line-height: unset;
@@ -971,7 +971,7 @@
 </test-html>
 <test-html title="Bug: empty argument on supershorts">
   <main csss="OLD:   $layout = $block$border;  ">
-    <div class="$block(layout())">
+    <div class="$block(layout)">
       <h1>Hello Sunshine! This is error.</h1>
     </div>
     <div class="$block $border">

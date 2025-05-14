@@ -22,7 +22,7 @@
       registerShort('$grid|$hgRight', function () { return this.column(3, 4); });
       registerShort('$grid|$hgMain', function () { return this.column(2, 3); });
     </script>
-    <div class="$grid(hg())|header$hgHeader|.left$hgLeft|main$hgMain|aside.right$hgRight|.footer$hgFooter">
+    <div class="$grid(hg)|header$hgHeader|.left$hgLeft|main$hgMain|aside.right$hgRight|.footer$hgFooter">
       <header class="header $bg(azure) $border">
         <h1>Header</h1>
       </header>
@@ -86,7 +86,7 @@
         background: lightblue;
       }
 
-      .\$grid\(hg\(\)\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter {
+      .\$grid\(hg\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter {
         display: grid;
         word-spacing: unset;
         line-height: unset;
@@ -107,23 +107,23 @@
         margin: 1rem 0px;
       }
 
-      .\$grid\(hg\(\)\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(header) {
+      .\$grid\(hg\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(header) {
         grid-column: 1 / 4;
       }
 
-      .\$grid\(hg\(\)\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(.left) {
+      .\$grid\(hg\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(.left) {
         grid-column: 1 / 2;
       }
 
-      .\$grid\(hg\(\)\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(main) {
+      .\$grid\(hg\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(main) {
         grid-column: 2 / 3;
       }
 
-      .\$grid\(hg\(\)\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(aside.right) {
+      .\$grid\(hg\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(aside.right) {
         grid-column: 3 / 4;
       }
 
-      .\$grid\(hg\(\)\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(.footer) {
+      .\$grid\(hg\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(.footer) {
         grid-column: 1 / 4;
       }
 
