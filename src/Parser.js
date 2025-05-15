@@ -68,9 +68,12 @@ class Rule {
 
 class Expression {
 
-  constructor(name, args) {
+  constructor(name, args, ctx) {
     this.args = args;
-    this.name = name;
+    const top = ctx.length == 1;
+    this.name = top ? ctx + name : name;
+    this.ctx = top ? "" : ctx;
+    this.fullName = this.ctx + this.name;
   }
   toString() {
     return `${this.name}(${this.args.join(",")})`;
@@ -80,6 +83,10 @@ class Expression {
   }
   interpret(scope, supers, owner) {
     const fullName = owner + this.name;
+    if (fullName !== this.fullName)
+      1//debugger;
+    // if (this.name != fullName)
+    //   debugger
     const cb = scope?.[this.name];
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${fullName}`);
@@ -145,9 +152,9 @@ class Short {
   constructor(selectorList, exprList) {
     this.selectorList = selectorList;
     this.exprList = exprList || undefined;
-    if (exprList)
-      for (const expr of exprList)
-        expr.name = "$" + expr.name;
+    // if (exprList)
+    //   for (const expr of exprList)
+    //     expr.name = "$" + expr.name;
   }
 
   interpret(scope, supers, owner) {
@@ -208,7 +215,7 @@ function parseVarCalc(tokens) {
   return str.includes(" ") ? `calc(${str})` : str;
 }
 
-const WORD = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+const WORD = /^\$?[a-zA-Z_][a-zA-Z0-9_]*$/;
 const CPP = /[,()|$=;{}]/.source;
 const nCPP = /[^,()|$=;{}]+/.source;
 const QUOTE = /([`'"])(?:\\.|(?!\2).)*?\2/.source;
@@ -229,14 +236,15 @@ function eatTokens(tokens) {
   throw "missing ')'";
 }
 
-function diveDeep(tokens, top) {
+function diveDeep(tokens, ctx = "") {
+  const top = ctx.length === 1;
   const res = [];
   while (tokens.length) {
     let a = tokens[0].match(/^\($|^(?!["']).*[+/*]|(?<![a-z])-|-(?![a-z])/) ?
       parseVarCalc(eatTokens(tokens)) :
       tokens.shift();
     if (a[0] === "#")
-      a = new Expression("_hash", [a.slice(1)]);
+      a = new Expression("_hash", [a.slice(1)], ctx);
     if (top && a === ",") throw "can't start with ','";
     if (top && a === ")") throw "can't start with ')'";
     if (a === "," || a === ")") {         //empty
@@ -252,7 +260,7 @@ function diveDeep(tokens, top) {
     if (top && b === ")") throw "top level can't use ')'";
     if (b === "(" && !a.match(WORD)) throw "invalid function name";
     if (b === "(") {
-      a = new Expression(a, diveDeep(tokens));
+      a = new Expression(a, diveDeep(tokens, ctx + a + "."), ctx);
       b = tokens.shift();
     }
     // if (a.match?.(WORD)) 
@@ -267,13 +275,13 @@ function diveDeep(tokens, top) {
   throw "missing ')'";
 }
 
-function parseNestedExpression(short) {
+function parseNestedExpression(short, ctx) {
   const tokensOG = [...short.matchAll(TOKENS)].map(processToken).filter(Boolean);
   if (tokensOG.length === 1)
-    return new Expression(tokensOG[0], []); //todo no calc top level
+    return new Expression(tokensOG[0], [], ctx); //todo no calc top level
   const tokens = tokensOG.slice();
   try {
-    const res = diveDeep(tokens, true);
+    const res = diveDeep(tokens, ctx);
     if (tokens.length)
       throw "too many ')'";
     return res[0];
@@ -301,8 +309,12 @@ function parse$Expression(exp) {
   const shorts = rest?.split("|").map(seg => seg.split("$"))
     .map(([sel, ...shorts]) => new Short(
       sel && parseSelectorBody(sel)?.map(s => new Selector(s)),
-      shorts.length && shorts.map(parseNestedExpression)
+      shorts.length && shorts.map(s => parseNestedExpression(s, "$"))
     ));
+  const ctx = shorts?.[0]?.exprList?.[0]?.name;
+  if (ctx)
+    for (let i = 1; i < shorts.length; i++)
+      shorts[i].exprList.forEach(s => (s.ctx = ctx + "|" + s.ctx, s.fullName = ctx + "|" + s.fullName));
   return { shorts, medias };
 }
 const ARG = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;

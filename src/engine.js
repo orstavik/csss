@@ -24,12 +24,7 @@ class UpgradeRegistry {
   }
 }
 
-const SHORTS = {
-  ...nativeAndMore,
-  ...colorPalette,
-  ...layouts,
-};
-
+const SHORTS = {};
 const RENAME = {
   overflowBlock: "overflowY",
   overflowInline: "overflowX",
@@ -140,7 +135,11 @@ class SheetWrapper {
 
 const upgrades = new UpgradeRegistry();
 
-for (const [k, short] of Object.entries(SHORTS)) {
+for (const [k, short] of Object.entries({
+  ...nativeAndMore,
+  ...colorPalette,
+  ...layouts,
+})) {
   if (short?.itemScope) {
     for (const [k2, func] of Object.entries(short.itemScope)) {
       short.itemScope["$" + k2] = func;
