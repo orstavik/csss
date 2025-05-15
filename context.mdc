@@ -191,7 +191,15 @@ Each palette color can be combined with various modifiers:
    - Cleaned up function/alias storage (`this.shorts` for functions, `this.supers` for `@`/`:` aliases).
 
 2. Active Issues:
-   - 
+   - Supershorts system complexity: The current supershorts system is overly complex and planned for replacement with a more direct custom word approach. This will simplify the syntax and make it more consistent with how colors work.
+   
+   - Media query handling: Plans to implement media queries as shorts (e.g., `@md`, `@dark`) with a consistent expression syntax, making them more aligned with the rest of the CSSS system.
+   
+   - Smart loading system: Implementing an "upgrade" sequence where the system doesn't fail on unregistered shorts but stores them for later when they become available.
+   
+   - Layout naming conventions: Working toward a more semantic layout system with named layouts (e.g., `$grid(holyGrail)`), allowing complex layouts to be defined with single words.
+   
+   - Single registry consolidation: Moving toward a single unified registry that includes both $ and @ shorts with their prefixes, simplifying the system architecture.
 
 3. Ongoing Work:
    - Enhancing test coverage

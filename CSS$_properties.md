@@ -375,6 +375,8 @@ You can combine multiple state selectors by chaining pipe syntax:
 
 Supershorts allow you to define custom shortcuts using the `=` syntax. They are processed by the `extractSuperShorts` parser function and result in new entries being added to the engine's registries.
 
+> **Note: Upcoming Changes** - The supershorts system is being redesigned. Future versions will replace supershorts with a more direct custom word approach similar to how colors work (e.g., `$grid(holyGrail)`) and will implement media queries as shorts (e.g., `@md`, `@dark`). This will make the syntax more consistent and easier to use.
+
 There are three types of definitions:
 
 1.  **Media Aliases (`@name = @media ...;`)**: Defines a reusable name for a media query condition. The alias name (e.g., `@sm`) can then be used in class definitions (e.g., `@sm$color(red)`).
