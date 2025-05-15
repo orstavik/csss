@@ -1,0 +1,24 @@
+<script type="module">
+  import { isMedia } from "/src/mediaFuncs.js";
+
+  const tests = {
+    "width<=768px": "max-width: 768px",
+    "height>100.5em": "min-height: 100.51em",
+    "aspectRatio==16/9": "aspect-ratio: 16/9",
+    "resolution>=2dppx": "min-resolution: 2dppx",
+    "color==8": "color: 8",
+
+    "foo>10px": undefined,
+    "width<>100px": undefined,
+
+    "width<=100": "Invalid width: 100",
+    "aspectRatio<16px": "Invalid aspectRatio: 16px",
+    "color>5px": "Invalid color: 5px",
+  };
+
+  for (const [input, expected] of Object.entries(tests)) {
+    let res;
+    try { res = isMedia(input); } catch (e) { res = e.message; }
+    console.assert(res === expected, `Test failed for input "${input}": expected "${expected}", got "${res}"`);
+  }
+</script>
