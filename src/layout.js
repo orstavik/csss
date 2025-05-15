@@ -157,7 +157,13 @@ block.scope = {
   gap: blockGap,
   g: blockGap,
 };
-block.itemScope = {
+function _block(...args) {
+  for (const a of args)
+    if (!(a instanceof Object))
+      throw new ReferenceError(a);
+  return Object.assign(...args);
+}
+_block.scope = {
   ..._LAYOUT,
   float: a => ({ float: "inline-" + a }),
   textIndent: AllFunctions.textIndent,
@@ -170,8 +176,8 @@ function grid(...args) {
     let m;
     if (m = wrap(a))
       return m;
-    if (m = a.match(/(dense)-?(column)/))
-      return { gridAutoFlow: `${m[1]} ${m[2] || "row"}` };
+    // if (m = a.match(/(dense)-?(column|row|)/))
+    //   return { gridAutoFlow: `${m[1]} ${m[2] || "row"}` };
     if (m = a.match(/^[abcsuvw.][abcsuvw.]?[abcs_.]?[abcs]?$/)) {
       const [b, i = b, b2 = ".", i2 = b2] = m[0];
       return {
@@ -182,7 +188,7 @@ function grid(...args) {
         justifyItems: AlignAliases[i2],
       };
     }
-    return a;
+    throw new ReferenceError(a);
   });
   return defaultLayout("grid", ...args);
 }
@@ -200,7 +206,12 @@ grid.scope = {
   rows: nativeGrid.gridTemplateRows,
   areas: nativeGrid.gridTemplateAreas,
   ...LAYOUT,
-  ...GAP
+  ...GAP,
+  //todo test this!!
+  column: { gridAutoFlow: "column" },
+  dense: { gridAutoFlow: "dense row" },
+  denseColumn: { gridAutoFlow: "dense column" },
+  denseRow: { gridAutoFlow: "dense row" },
 };
 
 const column = (start, end = start) => ({ gridColumn: `${start} / ${end}` });
@@ -209,7 +220,13 @@ const span = arg => `span ${arg}`;
 column.scope = { span };
 row.scope = { span };
 
-grid.itemScope = {
+function _grid(...args) {
+  for (const a of args)
+    if (!(a instanceof Object))
+      throw new ReferenceError(a);
+  return Object.assign(...args);
+}
+_grid.scope = {
   ..._LAYOUT,
   column,
   row,
@@ -250,7 +267,7 @@ function flex(...args) {
       };
     }
     if (m = wrap(a)) return m;
-    return a;
+    throw new ReferenceError(a);
   });
   return defaultLayout("flex", ...args);
 }
@@ -262,8 +279,14 @@ flex.scope = {
   ...LAYOUT,
   ...GAP
 };
+function _flex(...args) {
+  for (const a of args)
+    if (!(a instanceof Object))
+      throw new ReferenceError(a);
+  return Object.assign(...args);
+}
 
-flex.itemScope = {
+_flex.scope = {
   ..._LAYOUT,
   basis: a => ({ flexBasis: a }),
   grow: a => ({ flexGrow: a }),
@@ -284,6 +307,9 @@ flex.itemScope = {
 
 export default {
   block,
+  _block,
   grid,
+  _grid,
   flex,
+  _flex,
 };

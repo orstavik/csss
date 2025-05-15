@@ -10,19 +10,28 @@
     <script type="module">
       import { registerShort } from '/src/engine.js';
       await new Promise(r => setTimeout(r, 100));
-      registerShort('$grid.hg', () => ({
-        gridTemplateRows: "auto 1fr auto",
-        gridTemplateColumns: "auto 1fr auto",
-        gap: "1rem",
-        blockSize: "100vh"
-      }));
-      registerShort('$grid|$hgHeader', function () { return this.column(1, 4); });
-      registerShort('$grid|$hgFooter', function () { return this.column(1, 4); });
-      registerShort('$grid|$hgLeft', function () { return this.column(1, 2); });
-      registerShort('$grid|$hgRight', function () { return this.column(3, 4); });
-      registerShort('$grid|$hgMain', function () { return this.column(2, 3); });
+      registerShort('$grid.hg', () => {
+        return ({
+          gridTemplateRows: "auto 1fr auto",
+          gridTemplateColumns: "auto 1fr auto",
+          gap: "1rem",
+          blockSize: "100vh"
+        })
+      });
+      registerShort('$_grid.hgHeader', function () { return this.column(1, 4); });
+      registerShort('$_grid.hgFooter', function () { return this.column(1, 4); });
+      registerShort('$_grid.hgLeft', function () { return this.column(1, 2); });
+      registerShort('$_grid.hgRight', function () { return this.column(3, 4); });
+      registerShort('$_grid.hgMain', function () { return this.column(2, 3); });
     </script>
-    <div class="$grid(hg)|header$hgHeader|.left$hgLeft|main$hgMain|aside.right$hgRight|.footer$hgFooter">
+    <div class="
+                $grid(hg)
+                |header$_grid(hgHeader)
+                |.left$_grid(hgLeft)
+                |main$_grid(hgMain)
+                |aside.right$_grid(hgRight)
+                |.footer$_grid(hgFooter)
+    ">
       <header class="header $bg(azure) $border">
         <h1>Header</h1>
       </header>
@@ -86,7 +95,7 @@
         background: lightblue;
       }
 
-      .\$grid\(hg\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter {
+      .\$grid\(hg\) {
         display: grid;
         word-spacing: unset;
         line-height: unset;
@@ -99,7 +108,6 @@
         gap: 1rem;
         block-size: 100vh;
       }
-
     }
 
     @layer items {
@@ -107,26 +115,25 @@
         margin: 1rem 0px;
       }
 
-      .\$grid\(hg\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(header) {
+      .\|header\$_grid\(hgHeader\)> :where(header) {
         grid-column: 1 / 4;
       }
 
-      .\$grid\(hg\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(.left) {
+      .\|\.footer\$_grid\(hgFooter\)> :where(.footer) {
+        grid-column: 1 / 4;
+      }
+
+      .\|\.left\$_grid\(hgLeft\)> :where(.left) {
         grid-column: 1 / 2;
       }
 
-      .\$grid\(hg\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(main) {
-        grid-column: 2 / 3;
-      }
-
-      .\$grid\(hg\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(aside.right) {
+      .\|aside\.right\$_grid\(hgRight\)> :where(aside.right) {
         grid-column: 3 / 4;
       }
 
-      .\$grid\(hg\)\|header\$hgHeader\|\.left\$hgLeft\|main\$hgMain\|aside\.right\$hgRight\|\.footer\$hgFooter> :where(.footer) {
-        grid-column: 1 / 4;
+      .\|main\$_grid\(hgMain\)> :where(main) {
+        grid-column: 2 / 3;
       }
-
     }
   </style>
 </test-html>

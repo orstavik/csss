@@ -324,15 +324,17 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="$flex(...)|$_flex">
-  <div class="$flex(gap(4px),padding(22px,33px,44px))|$margin(,0.1px,,20%)">
+<test-html title="$flex(...) |$_flex">
+  <div class="
+  $flex(gap(4px),padding(22px,33px,44px))
+  |$_flex(margin(,0.1px,,20%))">
     hello
   </div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\)\|\$margin\(\,0\.1px\,\,20\%\) {
+      .\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -347,7 +349,7 @@
     }
 
     @layer items {
-      .\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\)\|\$margin\(\,0\.1px\,\,20\%\)>* {
+      .\|\$_flex\(margin\(\,0\.1px\,\,20\%\)\)>* {
         margin-inline: 0.1px 20%;
       }
     }
@@ -404,12 +406,12 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="$flex|items">
+<test-html title="$flex |$_flex(items)">
   <style>
     @layer container, items;
 
     @layer container {
-      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$shrink\(0\)\$center\$w\(7rem\)\$h\(3rem\) {
+      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -425,7 +427,7 @@
     }
 
     @layer items {
-      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$shrink\(0\)\$center\$w\(7rem\)\$h\(3rem\)>* {
+      .\|\*\$_flex\(shrink\(0\)\,center\,w\(7rem\)\,h\(3rem\)\)>* {
         flex-shrink: 0;
         align-self: center;
         text-align: center;
@@ -435,7 +437,8 @@
     }
   </style>
   <div class="
-    $flex(gap(1rem),visible:auto,padding(1rem))$w(80%)|*$shrink(0)$center$w(7rem)$h(3rem)">
+    $flex(gap(1rem),visible:auto,padding(1rem))$w(80%)
+    |*$_flex(shrink(0),center,w(7rem),h(3rem))">
     hello
   </div>
 </test-html>
@@ -542,7 +545,10 @@
     $w(100%)
     $em(15px)
     
-    $block(s,gap(0.3em,1em))|*$indent(15%)|.head$indent(-5%)|.subheading$indent(0)
+    $block(s,gap(0.3em,1em))
+    |$_block(indent(15%))
+    |.head$_block(indent(-5%))
+    |.subheading$_block(indent(0))
     ">
     <h1 class="head">The Article Heading</h1>
     <h4 class="subheading">Sub-information... Lorem ipsum dolor sit amet. Et quia temporibus est officia ipsam a sunt
@@ -574,7 +580,7 @@
         font-size: 15px;
       }
 
-      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\) {
+      .\$block\(s\,gap\(0\.3em\,1em\)\) {
         display: block;
         word-spacing: 0.3em;
         line-height: 1em;
@@ -586,15 +592,15 @@
     }
 
     @layer items {
-      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\)>* {
+      .\|\$_block\(indent\(15\%\)\)>* {
         text-indent: 15%;
       }
 
-      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\)> :where(.head) {
+      .\|\.head\$_block\(indent\(-5\%\)\)> :where(.head) {
         text-indent: -5%;
       }
 
-      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\)> :where(.subheading) {
+      .\|\.subheading\$_block\(indent\(0\)\)> :where(.subheading) {
         text-indent: 0px;
       }
     }
@@ -609,7 +615,7 @@
 
       @media print,
       screen {
-        .\@print\,\@screen\:hover\$border\(solid\,2px\)\|\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):where(:hover) {
+        .\@print\,\@screen\:hover\$border\(solid\,2px\):where(:hover) {
           border-style: solid;
           border-width: 2px;
         }
@@ -620,7 +626,7 @@
 
       @media print,
       screen {
-        .\@print\,\@screen\:hover\$border\(solid\,2px\)\|\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):where(:hover)> :where(:valid) {
+        .\@print\,\@screen\:hover\|\:valid\$border\(dotted\,2px\):where(:hover)> :where(:valid) {
           border-style: dotted;
           border-width: 2px;
         }
@@ -628,14 +634,17 @@
 
       @media print,
       screen {
-        .\@print\,\@screen\:hover\$border\(solid\,2px\)\|\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):where(:hover)> :where(.first) {
+        .\@print\,\@screen\:hover\|\.first\$border\(dashed\,2px\):where(:hover)> :where(.first) {
           border-style: dashed;
           border-width: 2px;
         }
       }
     }
   </style>
-  <div class="@print,@screen:hover$border(solid,2px)|:valid$border(dotted,2px)|.first$border(dashed,2px)">
+  <div class="
+    @print,@screen:hover$border(solid,2px)
+    @print,@screen:hover|:valid$border(dotted,2px)
+    @print,@screen:hover|.first$border(dashed,2px)">
     hello
   </div>
 </test-html>

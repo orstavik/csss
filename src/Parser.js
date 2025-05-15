@@ -79,20 +79,24 @@ class Expression {
     return this.name + "/" + this.args.length;
   }
   interpret(scope, owner) {
+    //todo remove owner up the call chain
     const fullName = owner + this.name;
-    if (fullName !== this.fullName)
-      1//debugger;
-    // if (this.name != fullName)
-    //   debugger
     const cb = scope?.[this.name];
     if (!cb)
-      throw new SyntaxError(`Unknown short function: ${fullName}`);
+      throw new ReferenceError(fullName);
     const args = this.args.map(x =>
       x instanceof Expression ? x.interpret(cb.scope, fullName + ".") :
         x === "." ? "unset" : //todo move this into the parser??
-          (typeof x == "string" && cb.scope?.[x]) ? cb.scope[x].call(cb.scope) :
-            x);
-    return cb.call(scope, ...args);
+          cb.scope?.[x] instanceof Function ? cb.scope[x].call(cb.scope) :
+            cb.scope?.[x] ? cb.scope?.[x] :
+              x);
+    try {
+      return cb.call(scope, ...args);
+    } catch (e) {
+      if (e instanceof ReferenceError)
+        e.message = this.name + "." + e.message;
+      throw e;
+    }
   }
 }
 const clashOrStack = (function () {

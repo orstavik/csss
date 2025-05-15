@@ -81,8 +81,8 @@ class SheetWrapper {
       for (const rule of shorts.rules(this.shorts, this.renameMap))
         this.addRuleImpl(rule);
     } catch (err) {
-      if (err.message.startsWith("Unknown short function: $"))
-        return upgrades.waitFor(err.message.slice(24), el, str);
+      if (err instanceof ReferenceError)
+        return upgrades.waitFor(err.message, el, str);
       throw err;
     }
   }
@@ -146,12 +146,9 @@ for (const [k, short] of Object.entries({
 }
 
 function registerShort(name, func) {
-  const [main, type, name2 = main] = name.split(/(\.|\|)/);
-  const table =
-    type === "|" ? SHORTS[main].itemScope ??= {} :
-      type === "." ? SHORTS[main].scope ??= {} :
-        SHORTS;
-  if (name in table)
+  const [main, name2 = main] = name.split(".");
+  const table = name2 != main ? SHORTS[main].scope ??= {} : SHORTS;
+  if (name2 in table)
     throw new Error(`Short name ${name} already exists`);
   table[name2] = func;
   const todos = upgrades.enoughWaiting(name);
