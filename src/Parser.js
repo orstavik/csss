@@ -9,27 +9,25 @@ export class ShortBlock {
   constructor(exp) {
     this.exp = exp;
     this.clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
-    const { medias, short } = parse$Expression(exp);
+    const { medias, shorts, selectorChain } = parse$Expression(exp);
     this.medias = medias;
-    this.short = short;
+    this.exprList = shorts;
+    this.selectorChain = selectorChain;
   }
 
-  interpret(SHORTS) {
+  interpret(scope) {
     let media = interpretMedias(this.medias);
     if (media) media = `@media ${media}`;
-    const short = this.short.interpret(SHORTS, "");
-    return { media, short };
+    let shorts = this.exprList && clashOrStack(this.exprList.map(s => s.interpret(scope)));
+    shorts = renameProps(shorts);
+    const selector = this.selectorChain && this.selectorChain.interpret();
+    return { media, shorts, selector };
   }
 
-  static #rename(shorts, renameMap) {
-    return shorts && Object.fromEntries(Object.entries(shorts).map(([k, v]) => [renameMap[k] ?? k, v]));
-  }
-
-  *rules(SHORTS, renameMap) {
-    let { media, short } = this.interpret(SHORTS);
-    if (!short) return;
-    short.shorts = ShortBlock.#rename(short.shorts, renameMap);
-    yield new Rule(media, this.clazz + short.selector, short.shorts, !!this.short.selectorChain?.body2);
+  rule(SHORTS) {
+    const isItem = !!this.selectorChain?.body2;
+    let { media, shorts, selector } = this.interpret(SHORTS);
+    return shorts && new Rule(media, this.clazz + selector, shorts, isItem);
   }
 }
 
@@ -70,8 +68,8 @@ class Expression {
   get signature() {
     return this.name + "/" + this.args.length;
   }
-  interpret(scope, owner) {
-    //todo remove owner up the call chain
+  interpret(scope, owner = "") {
+    //todo remove owner from down here
     const fullName = owner + this.name;
     const cb = scope?.[this.name];
     if (!cb)
@@ -91,6 +89,21 @@ class Expression {
     }
   }
 }
+
+const renameProps = (function () {
+  const RENAME = {
+    overflowBlock: "overflowY",
+    overflowInline: "overflowX",
+  };
+  return function renameProps(shorts) {
+    if (shorts && shorts instanceof Object)
+      for (let k in shorts)
+        if (k in RENAME)
+          (shorts[RENAME[k]] = shorts[k]), delete shorts[k];
+    return shorts;
+  }
+})();
+
 const clashOrStack = (function () {
   const STACKABLE_PROPERTIES = {
     background: ",",
@@ -136,18 +149,18 @@ const clashOrStack = (function () {
 })();
 
 
-class Short {
-  constructor(selectorChain, exprList) {
-    this.selectorChain = selectorChain;
-    this.exprList = exprList || undefined;
-  }
+// class Short {
+//   constructor(selectorChain, exprList) {
+//     this.selectorChain = selectorChain;
+//     this.exprList = exprList || undefined;
+//   }
 
-  interpret(scope, owner) {
-    const shorts = this.exprList && clashOrStack(this.exprList.map(s => s.interpret(scope, owner)));
-    let selector = this.selectorChain && this.selectorChain.interpret();
-    return { selector, shorts };
-  }
-}
+//   interpret(scope, owner) {
+//     const shorts = this.exprList && clashOrStack(this.exprList.map(s => s.interpret(scope, owner)));
+//     let selector = this.selectorChain && this.selectorChain.interpret();
+//     return { selector, shorts };
+//   }
+// }
 
 function varAndSpaceOperators(tokens) {
   const res = tokens.join("").split(/(--[a-z][a-z0-9_-]*)/g);
@@ -277,49 +290,47 @@ function parseMediaHead(str) {
 
 function parse$Expression(exp) {
   const { medias, rest } = parseMediaHead(exp);
-  const [sel, ...shorts] = rest?.split("$");
-  const short = new Short(
-    sel && parseSelectorBody(sel),
-    shorts.length && shorts.map(s => parseNestedExpression(s, "$"))
-  );
-  return { short, medias };
+  let [selectorChain, ...shorts] = rest?.split("$");
+  selectorChain &&= parseSelectorBody(selectorChain);
+  shorts = shorts.map(s => parseNestedExpression(s, "$"));
+  return { medias, selectorChain, shorts };
 }
-const ARG = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;
-const ARGLIST = new RegExp(`\\(${ARG}(?:,\\s*${ARG})*\\)`).source;
-const SUPER_NAME = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;
-const SUPER_LINE = /((["'`])(?:\\.|(?!\3).)*?\3|\/\*[\s\S]*?\*\/|[^;]+)(?:;|$)/.source; // (body1, quoteSign)
-const SUPER_BODY = /{((["'`])(?:\\.|(?!\5).)*?\5|\/\*[\s\S]*?\*\/|[^}]+)}/.source;// (body2, quoteSign)
-const SUPER = new RegExp(
-  `([$:@])(${SUPER_NAME}\\.)?(${SUPER_NAME})(${ARGLIST})?\\s*=\\s*(?:${SUPER_LINE}|${SUPER_BODY})`, "g");
+// const ARG = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;
+// const ARGLIST = new RegExp(`\\(${ARG}(?:,\\s*${ARG})*\\)`).source;
+// const SUPER_NAME = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;
+// const SUPER_LINE = /((["'`])(?:\\.|(?!\3).)*?\3|\/\*[\s\S]*?\*\/|[^;]+)(?:;|$)/.source; // (body1, quoteSign)
+// const SUPER_BODY = /{((["'`])(?:\\.|(?!\5).)*?\5|\/\*[\s\S]*?\*\/|[^}]+)}/.source;// (body2, quoteSign)
+// const SUPER = new RegExp(
+//   `([$:@])(${SUPER_NAME}\\.)?(${SUPER_NAME})(${ARGLIST})?\\s*=\\s*(?:${SUPER_LINE}|${SUPER_BODY})`, "g");
 
-function checkSuperBody(type, name, { medias, shorts }) {
-  if (!medias && !shorts) throw `is empty`;
-  if (medias && shorts) throw `contains both medias and selector/shorts`;
-  if (medias && type !== "@") throw `type error: did you mean "@${name}"?`;
-  if (medias) return { medias };
-  if (shorts.length > 1) throw `item selector not allowed in superShorts.`;
-  const { selectorList, exprList } = shorts[0];
-  if (selectorList && exprList) throw `contains both selector and shorts`;
-  if (selectorList && type !== ":") throw `type error: did you mean ":${name}"?`;
-  if (exprList && type !== "$") throw `type error: did you mean "$${name}"?`;
-  return { exprList, selectorList };
-}
+// function checkSuperBody(type, name, { medias, shorts }) {
+//   if (!medias && !shorts) throw `is empty`;
+//   if (medias && shorts) throw `contains both medias and selector/shorts`;
+//   if (medias && type !== "@") throw `type error: did you mean "@${name}"?`;
+//   if (medias) return { medias };
+//   if (shorts.length > 1) throw `item selector not allowed in superShorts.`;
+//   const { selectorList, exprList } = shorts[0];
+//   if (selectorList && exprList) throw `contains both selector and shorts`;
+//   if (selectorList && type !== ":") throw `type error: did you mean ":${name}"?`;
+//   if (exprList && type !== "$") throw `type error: did you mean "$${name}"?`;
+//   return { exprList, selectorList };
+// }
 
-function interpretSuper(type, head, body) {
-  const parsed = new ShortBlock(body);
-  const { name, args: argNames } = new ShortBlock("$" + head).shorts[0].exprList[0];
-  const { medias, selectorList, exprList } = checkSuperBody(type, name, parsed);
-  if (medias) return interpretMedias(medias, {});
-  if (selectorList) return selectorList.map(s => s.interpret({})).join(", ");
-  return { name, argNames, exprList };
-}
+// function interpretSuper(type, head, body) {
+//   const parsed = new ShortBlock(body);
+//   const { name, args: argNames } = new ShortBlock("$" + head).shorts[0].exprList[0];
+//   const { medias, selectorList, exprList } = checkSuperBody(type, name, parsed);
+//   if (medias) return interpretMedias(medias, {});
+//   if (selectorList) return selectorList.map(s => s.interpret({})).join(", ");
+//   return { name, argNames, exprList };
+// }
 
-export function extractSuperShorts(txt) {
-  const res = {};
-  for (let [, type, owner = "", name, args = "", b, , body = b] of txt.matchAll(SUPER))
-    res[type + owner + name] = interpretSuper(type, name + args, body);
-  return res;
-}
+// export function extractSuperShorts(txt) {
+//   const res = {};
+//   for (let [, type, owner = "", name, args = "", b, , body = b] of txt.matchAll(SUPER))
+//     res[type + owner + name] = interpretSuper(type, name + args, body);
+//   return res;
+// }
 
 //todo we don't support nested :not(:has(...))
 const pseudo = /:[a-zA-Z][a-zA-Z0-9_-]*(?:\([^)]+\))?/.source;

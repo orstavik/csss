@@ -1,4 +1,4 @@
-import { extractSuperShorts, ShortBlock } from "./Parser.js";
+import { ShortBlock } from "./Parser.js";
 import nativeAndMore from "./func.js";
 import layouts from "./layout.js";
 import colorPalette from "./palette.js";
@@ -25,10 +25,6 @@ class UpgradeRegistry {
 }
 
 const SHORTS = {};
-const RENAME = {
-  overflowBlock: "overflowY",
-  overflowInline: "overflowX",
-};
 
 class SheetWrapper {
   rules = {};
@@ -56,7 +52,6 @@ class SheetWrapper {
     this.items = this.setupLayer("items", sheet);
     this.container = this.setupLayer("container", sheet);
     this.shorts = { ...SHORTS };
-    this.renameMap = { ...RENAME };
     this.setupStatement();
   }
 
@@ -78,8 +73,8 @@ class SheetWrapper {
   addRule(str, el) {
     const shorts = new ShortBlock(str);
     try {
-      for (const rule of shorts.rules(this.shorts, this.renameMap))
-        this.addRuleImpl(rule);
+      const rule = shorts.rule(this.shorts);
+      rule && this.addRuleImpl(rule);
     } catch (err) {
       if (err instanceof ReferenceError)
         return upgrades.waitFor(err.message, el, str);
