@@ -2,7 +2,6 @@ import { ShortBlock } from "./Parser.js";
 import nativeAndMore from "./func.js";
 import layouts from "./layout.js";
 import colorPalette from "./palette.js";
-// import { BuiltinSupers } from "./BuiltinSupers.js";
 
 class UpgradeRegistry {
   #register = {};
@@ -71,30 +70,23 @@ class SheetWrapper {
   }
 
   addRule(str, el) {
-    const shorts = new ShortBlock(str);
     try {
-      const rule = shorts.rule(this.shorts);
-      rule && this.addRuleImpl(rule);
+      const rule = new ShortBlock(str).rule(this.shorts);
+      if (!rule) return;
+      const { layer, registry } = rule.item ? this.items : this.container;
+      const key = [rule.media, rule.selector].filter(Boolean).join(" { ");
+      let ruleAndPos = registry.get(key);
+      if (!ruleAndPos) {
+        layer.insertRule(rule.rule, layer.cssRules.length);
+        ruleAndPos = { rule, css: layer.cssRules[layer.cssRules.length - 1], pos: layer.cssRules.length - 1 };
+        registry.set(key, ruleAndPos);
+      }
+      return ruleAndPos;
     } catch (err) {
       if (err instanceof ReferenceError)
         return upgrades.waitFor(err.message, el, str);
       throw err;
     }
-  }
-
-  addRuleImpl(rule) {
-    const { layer, registry } = rule.item ? this.items : this.container;
-    const key = [rule.media, rule.selector].filter(Boolean).join(" { ");
-    let ruleAndPos = registry.get(key);
-    if (!ruleAndPos) {
-      layer.insertRule(rule.rule, layer.cssRules.length);
-      ruleAndPos = { rule, css: layer.cssRules[layer.cssRules.length - 1], pos: layer.cssRules.length - 1 };
-      registry.set(key, ruleAndPos);
-    }
-    return ruleAndPos;
-  }
-
-  readSupers(txt) {
   }
 
   #isInUse(r) {
