@@ -29,15 +29,22 @@ export class ShortBlock {
 }
 
 class Rule {
-  constructor(media, selector, shorts, item, renames) {
+  constructor(media, selector, shorts, item, fallbackProps) {
     this.media = media;
     this.selector = selector;
     this.shorts = shorts;
     this.item = item;
-    this.renames = renames;
+    this.fallbackProps = fallbackProps;
   }
   get rule() {
-    const body = Object.entries(this.shorts).map(([k, v]) => `  ${this.renames[k] ?? k}: ${v};`).join("\n");
+    const body = Object.entries(this.shorts).map(([k, v]) => {
+      k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
+      if (CSS.supports(k, "inherit"))
+        if (!CSS.supports(k, v) && !CSS.supports(k = this.fallbackProps[k] ?? k, v))
+          throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
+      //the browser might not support the property, because the property is too modern.
+      return `  ${k}: ${v};`
+    }).join("\n");
     return this.media ?
       `${this.media} { ${this.selector} {\n${body}\n} }` :
       `${this.selector} {\n${body}\n}`;
@@ -104,17 +111,12 @@ const clashOrStack = (function () {
         if (v == null) continue;
         if (v.match?.(/[A-Z]/) && v.match?.(/^[a-zA-Z][a-zA-Z0-9]+$/))
           v = v.replace(/[A-Z]/g, "-$&").toLowerCase();
-        const k2 = k.replace(/[A-Z]/g, "-$&").toLowerCase();
-        if (CSS.supports(k2, "inherit"))
-          if (!CSS.supports(k2, v))
-            throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
-        //else, the browser doesn't support the property, because the property is too modern.
-        if (!(k2 in res))
-          res[k2] = v;
+        if (!(k in res))
+          res[k] = v;
         else if (k in STACKABLE_PROPERTIES)
-          res[k2] += (STACKABLE_PROPERTIES[k] + v);
+          res[k] += (STACKABLE_PROPERTIES[k] + v);
         else
-          throw new SyntaxError(`CSS$ clash: ${k2} = ${res[k2]}  AND = ${v}.`);
+          throw new SyntaxError(`CSS$ clash: ${k} = ${res[k]}  AND = ${v}.`);
       }
     }
     return res;
