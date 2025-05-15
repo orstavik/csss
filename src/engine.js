@@ -3,8 +3,15 @@ import nativeAndMore from "./func.js";
 import layouts from "./layout.js";
 import colorPalette from "./palette.js";
 
+const SHORTS = {};
+
 class UpgradeRegistry {
   #register = {};
+
+  constructor(dict) {
+    for (const [k, short] of Object.entries(dict))
+      this.registerShort("$" + k, short);
+  }
 
   waitFor(name, element, clazz) {
     (this.#register[name] ??= []).push({ clazz, element: new WeakRef(element) });
@@ -37,8 +44,6 @@ class UpgradeRegistry {
       csss.addRule(clazz, element);
   }
 }
-
-const SHORTS = {};
 
 class SheetWrapper {
   rules = {};
@@ -131,15 +136,11 @@ class SheetWrapper {
   }
 }
 
-const upgrades = new UpgradeRegistry();
-
-for (const [k, short] of Object.entries({
+const upgrades = new UpgradeRegistry({
   ...nativeAndMore,
   ...colorPalette,
   ...layouts,
-})) {
-  upgrades.registerShort("$" + k, short);
-}
+});
 
 const registerShort = (name, func) => upgrades.registerShort(name, func);
 export { SheetWrapper, registerShort };
