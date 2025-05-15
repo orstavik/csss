@@ -5,6 +5,11 @@ import colorPalette from "./palette.js";
 
 const SHORTS = {};
 
+const RENAME = {
+  "overflow-block": "overflow-y",
+  "overflow-inline": "overflow-x",
+};
+
 class UpgradeRegistry {
   #register = {};
 
@@ -91,7 +96,7 @@ class SheetWrapper {
 
   addRule(str, el) {
     try {
-      const rule = new ShortBlock(str).interpret(this.shorts);
+      const rule = new ShortBlock(str).interpret(this.shorts, RENAME);
       if (!rule) return;
       const { layer, registry } = rule.item ? this.items : this.container;
       const key = [rule.media, rule.selector].filter(Boolean).join(" { ");

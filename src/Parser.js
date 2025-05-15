@@ -16,7 +16,7 @@ export class ShortBlock {
     this.item = !!this.selector?.body2;
   }
 
-  interpret(scope) {
+  interpret(scope, renames) {
     if (!this.exprList)
       return;
     let media = interpretMedias(this.medias);
@@ -24,30 +24,23 @@ export class ShortBlock {
     const selector = this.selector && this.selector?.interpret();
     let shorts = this.exprList?.map(s => s.interpret(scope));
     shorts &&= clashOrStack(shorts);
-    shorts &&= renameProps(shorts);
-    return new Rule(media, this.clazz + selector, shorts, this.item);
+    return new Rule(media, this.clazz + selector, shorts, this.item, renames);
   }
 }
 
 class Rule {
-  constructor(media, selector, shorts, item) {
+  constructor(media, selector, shorts, item, renames) {
     this.media = media;
     this.selector = selector;
     this.shorts = shorts;
     this.item = item;
-  }
-  get body() {
-    return this.shorts && Object.entries(this.shorts).map(([k, v]) => {
-      k = k.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase());
-      if (!CSS.supports(k, v))
-        throw new SyntaxError(`Invalid CSS value: ${k} = ${v}`);
-      return `  ${k}: ${v};`;
-    }).join("\n");
+    this.renames = renames;
   }
   get rule() {
+    const body = Object.entries(this.shorts).map(([k, v]) => `  ${this.renames[k] ?? k}: ${v};`).join("\n");
     return this.media ?
-      `${this.media} { ${this.selector} {\n${this.body}\n} }` :
-      `${this.selector} {\n${this.body}\n}`;
+      `${this.media} { ${this.selector} {\n${body}\n} }` :
+      `${this.selector} {\n${body}\n}`;
   }
 }
 
@@ -84,20 +77,6 @@ class Expression {
   }
 }
 
-const renameProps = (function () {
-  const RENAME = {
-    overflowBlock: "overflowY",
-    overflowInline: "overflowX",
-  };
-  return function renameProps(shorts) {
-    if (shorts && shorts instanceof Object)
-      for (let k in shorts)
-        if (k in RENAME)
-          (shorts[RENAME[k]] = shorts[k]), delete shorts[k];
-    return shorts;
-  }
-})();
-
 const clashOrStack = (function () {
   const STACKABLE_PROPERTIES = {
     background: ",",
@@ -123,38 +102,24 @@ const clashOrStack = (function () {
     for (const obj of shortsI) {
       for (let [k, v] of Object.entries(obj)) {
         if (v == null) continue;
-        const k2 = k.replace(/[A-Z]/g, "-$&").toLowerCase();
-        if (v.match?.(/^[a-zA-Z][a-zA-Z0-9]+$/) && v.match(/[A-Z]/))
+        if (v.match?.(/[A-Z]/) && v.match?.(/^[a-zA-Z][a-zA-Z0-9]+$/))
           v = v.replace(/[A-Z]/g, "-$&").toLowerCase();
+        const k2 = k.replace(/[A-Z]/g, "-$&").toLowerCase();
         if (CSS.supports(k2, "inherit"))
           if (!CSS.supports(k2, v))
             throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
         //else, the browser doesn't support the property, because the property is too modern.
-        if (!(k in res))
-          res[k] = v;
+        if (!(k2 in res))
+          res[k2] = v;
         else if (k in STACKABLE_PROPERTIES)
-          res[k] += (STACKABLE_PROPERTIES[k] + v);
+          res[k2] += (STACKABLE_PROPERTIES[k] + v);
         else
-          throw new SyntaxError(`CSS$ clash: ${k} = ${res[k]}  AND = ${v}.`);
+          throw new SyntaxError(`CSS$ clash: ${k2} = ${res[k2]}  AND = ${v}.`);
       }
     }
     return res;
   }
 })();
-
-
-// class Short {
-//   constructor(selectorChain, exprList) {
-//     this.selectorChain = selectorChain;
-//     this.exprList = exprList || undefined;
-//   }
-
-//   interpret(scope, owner) {
-//     const shorts = this.exprList && clashOrStack(this.exprList.map(s => s.interpret(scope, owner)));
-//     let selector = this.selectorChain && this.selectorChain.interpret();
-//     return { selector, shorts };
-//   }
-// }
 
 function varAndSpaceOperators(tokens) {
   const res = tokens.join("").split(/(--[a-z][a-z0-9_-]*)/g);
@@ -289,42 +254,6 @@ function parse$Expression(exp) {
   shorts = shorts.map(s => parseNestedExpression(s, "$"));
   return { medias, selectorChain, shorts };
 }
-// const ARG = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;
-// const ARGLIST = new RegExp(`\\(${ARG}(?:,\\s*${ARG})*\\)`).source;
-// const SUPER_NAME = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;
-// const SUPER_LINE = /((["'`])(?:\\.|(?!\3).)*?\3|\/\*[\s\S]*?\*\/|[^;]+)(?:;|$)/.source; // (body1, quoteSign)
-// const SUPER_BODY = /{((["'`])(?:\\.|(?!\5).)*?\5|\/\*[\s\S]*?\*\/|[^}]+)}/.source;// (body2, quoteSign)
-// const SUPER = new RegExp(
-//   `([$:@])(${SUPER_NAME}\\.)?(${SUPER_NAME})(${ARGLIST})?\\s*=\\s*(?:${SUPER_LINE}|${SUPER_BODY})`, "g");
-
-// function checkSuperBody(type, name, { medias, shorts }) {
-//   if (!medias && !shorts) throw `is empty`;
-//   if (medias && shorts) throw `contains both medias and selector/shorts`;
-//   if (medias && type !== "@") throw `type error: did you mean "@${name}"?`;
-//   if (medias) return { medias };
-//   if (shorts.length > 1) throw `item selector not allowed in superShorts.`;
-//   const { selectorList, exprList } = shorts[0];
-//   if (selectorList && exprList) throw `contains both selector and shorts`;
-//   if (selectorList && type !== ":") throw `type error: did you mean ":${name}"?`;
-//   if (exprList && type !== "$") throw `type error: did you mean "$${name}"?`;
-//   return { exprList, selectorList };
-// }
-
-// function interpretSuper(type, head, body) {
-//   const parsed = new ShortBlock(body);
-//   const { name, args: argNames } = new ShortBlock("$" + head).shorts[0].exprList[0];
-//   const { medias, selectorList, exprList } = checkSuperBody(type, name, parsed);
-//   if (medias) return interpretMedias(medias, {});
-//   if (selectorList) return selectorList.map(s => s.interpret({})).join(", ");
-//   return { name, argNames, exprList };
-// }
-
-// export function extractSuperShorts(txt) {
-//   const res = {};
-//   for (let [, type, owner = "", name, args = "", b, , body = b] of txt.matchAll(SUPER))
-//     res[type + owner + name] = interpretSuper(type, name + args, body);
-//   return res;
-// }
 
 //todo we don't support nested :not(:has(...))
 const pseudo = /:[a-zA-Z][a-zA-Z0-9_-]*(?:\([^)]+\))?/.source;
