@@ -17,9 +17,7 @@ export class ShortBlock {
   interpret(SHORTS) {
     let media = interpretMedias(this.medias);
     if (media) media = `@media ${media}`;
-    const owner = this.shorts?.[0]?.exprList?.[0]?.name;
-    const itemScope = SHORTS[owner]?.itemScope ?? SHORTS; /* can we remove ?? SHORTS soon? i want to not be as wide as this */
-    const shorts = this.shorts?.map((short, i) => short.interpret(i ? itemScope : SHORTS, i ? owner + "|" : ""));
+    const shorts = this.shorts?.map((short) => short.interpret(SHORTS, ""));
     return { media, shorts };
   }
 

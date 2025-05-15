@@ -136,12 +136,6 @@ for (const [k, short] of Object.entries({
   ...colorPalette,
   ...layouts,
 })) {
-  if (short?.itemScope) {
-    for (const [k2, func] of Object.entries(short.itemScope)) {
-      short.itemScope["$" + k2] = func;
-      delete func[k2];
-    }
-  }
   registerShort("$" + k, short);
 }
 
