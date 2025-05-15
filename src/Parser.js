@@ -12,22 +12,20 @@ export class ShortBlock {
     const { medias, shorts, selectorChain } = parse$Expression(exp);
     this.medias = medias;
     this.exprList = shorts;
-    this.selectorChain = selectorChain;
+    this.selector = selectorChain;
+    this.item = !!this.selector?.body2;
   }
 
   interpret(scope) {
+    if (!this.exprList)
+      return;
     let media = interpretMedias(this.medias);
-    if (media) media = `@media ${media}`;
-    let shorts = this.exprList && clashOrStack(this.exprList.map(s => s.interpret(scope)));
-    shorts = renameProps(shorts);
-    const selector = this.selectorChain && this.selectorChain.interpret();
-    return { media, shorts, selector };
-  }
-
-  rule(SHORTS) {
-    const isItem = !!this.selectorChain?.body2;
-    let { media, shorts, selector } = this.interpret(SHORTS);
-    return shorts && new Rule(media, this.clazz + selector, shorts, isItem);
+    media &&= `@media ${media}`;
+    const selector = this.selector && this.selector?.interpret();
+    let shorts = this.exprList?.map(s => s.interpret(scope));
+    shorts &&= clashOrStack(shorts);
+    shorts &&= renameProps(shorts);
+    return new Rule(media, this.clazz + selector, shorts, this.item);
   }
 }
 
