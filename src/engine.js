@@ -21,6 +21,21 @@ class UpgradeRegistry {
     }, []);
     return undone.length ? undone : undefined;
   }
+
+  registerShort(name, func) {
+    const [main, name2 = main] = name.split(".");
+    const table = name2 != main ? SHORTS[main].scope ??= {} : SHORTS;
+    if (name2 in table)
+      throw new Error(`Short name ${name} already exists`);
+    table[name2] = func;
+    const todos = this.enoughWaiting(name);
+    if (!todos)
+      return;
+    const style = document.querySelector("style");
+    const csss = new SheetWrapper(style.sheet);
+    for (const { clazz, element } of todos)
+      csss.addRule(clazz, element);
+  }
 }
 
 const SHORTS = {};
@@ -123,22 +138,8 @@ for (const [k, short] of Object.entries({
   ...colorPalette,
   ...layouts,
 })) {
-  registerShort("$" + k, short);
+  upgrades.registerShort("$" + k, short);
 }
 
-function registerShort(name, func) {
-  const [main, name2 = main] = name.split(".");
-  const table = name2 != main ? SHORTS[main].scope ??= {} : SHORTS;
-  if (name2 in table)
-    throw new Error(`Short name ${name} already exists`);
-  table[name2] = func;
-  const todos = upgrades.enoughWaiting(name);
-  if (!todos)
-    return;
-  const style = document.querySelector("style");
-  const csss = new SheetWrapper(style.sheet);
-  for (const { clazz, element } of todos)
-    csss.addRule(clazz, element);
-}
-
+const registerShort = (name, func) => upgrades.registerShort(name, func);
 export { SheetWrapper, registerShort };
