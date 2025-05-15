@@ -59,8 +59,6 @@ class Expression {
     this.args = args;
     const top = ctx.length == 1;
     this.name = top ? ctx + name : name;
-    this.ctx = top ? "" : ctx;
-    this.fullName = this.ctx + this.name;
   }
   toString() {
     return `${this.name}(${this.args.join(",")})`;
@@ -68,19 +66,17 @@ class Expression {
   get signature() {
     return this.name + "/" + this.args.length;
   }
-  interpret(scope, owner = "") {
-    //todo remove owner from down here
-    const fullName = owner + this.name;
+  interpret(scope) {
     const cb = scope?.[this.name];
     if (!cb)
-      throw new ReferenceError(fullName);
-    const args = this.args.map(x =>
-      x instanceof Expression ? x.interpret(cb.scope, fullName + ".") :
-        x === "." ? "unset" : //todo move this into the parser??
-          cb.scope?.[x] instanceof Function ? cb.scope[x].call(cb.scope) :
-            cb.scope?.[x] ? cb.scope?.[x] :
-              x);
+      throw new ReferenceError(this.name);
     try {
+      const args = this.args.map(x =>
+        x instanceof Expression ? x.interpret(cb.scope) :
+          x === "." ? "unset" : //todo move this into the parser??
+            cb.scope?.[x] instanceof Function ? cb.scope[x].call(cb.scope) :
+              cb.scope?.[x] ? cb.scope?.[x] :
+                x);
       return cb.call(scope, ...args);
     } catch (e) {
       if (e instanceof ReferenceError)
