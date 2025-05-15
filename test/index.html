@@ -5,8 +5,6 @@
     const style = document.querySelector('style');
     style.textContent = "";
     const sheetWrapper = new SheetWrapper(style.sheet);
-    for (let el of document.body.querySelectorAll('[csss]'))
-      try { sheetWrapper.readSupers(el.getAttribute("csss")); } catch (er) { console.error(er); }
     for (let el of document.body.querySelectorAll('[class*="$"]'))
       for (let clazz of el.classList)
         if (clazz.includes("$"))
@@ -26,7 +24,7 @@
     }
   }
 
-  if (!location.hash) location.hash = "hpOne,hpBorder,hpLayout,hpCalVar,hpSupers";
+  if (!location.hash) location.hash = "hpOne,hpTwo,hpBorder,hpLayout,hpCalVar,hpSupers";
   const paths = location.hash.slice(1).split(",").map(p => p + ".html");
   for (let file of paths)
     document.body.insertAdjacentHTML('beforeend', await(await fetch(file)).text());

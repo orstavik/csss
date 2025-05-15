@@ -1,6 +1,5 @@
-function interpretMedias(medias, supers) {
-  return medias?.map(m => supers[m] ?? m)
-    .map(m => m.replace(/^@/, ""))
+function interpretMedias(medias) {
+  return medias?.map(m => m.replace(/^@/, ""))
     .map(m => m === "!" ? "not" : m)
     .join(" and ").replaceAll("and , and", ",").replaceAll("not and ", "not ");
 }
@@ -15,14 +14,12 @@ export class ShortBlock {
     this.shorts = shorts;
   }
 
-  interpret(SHORTS, supers) {
-    let media = interpretMedias(this.medias, supers);
+  interpret(SHORTS) {
+    let media = interpretMedias(this.medias);
     if (media) media = `@media ${media}`;
     const owner = this.shorts?.[0]?.exprList?.[0]?.name;
-    // const ownerMain = supers["$" + owner]?.exprList?.[0]?.name ?? owner;
-    //only allow the global scope for item |$shorts when there is an empty $container| short??
     const itemScope = SHORTS[owner]?.itemScope ?? SHORTS; /* can we remove ?? SHORTS soon? i want to not be as wide as this */
-    const shorts = this.shorts?.map((short, i) => short.interpret(i ? itemScope : SHORTS, supers, i ? owner + "|" : ""));
+    const shorts = this.shorts?.map((short, i) => short.interpret(i ? itemScope : SHORTS, i ? owner + "|" : ""));
     return { media, shorts };
   }
 
@@ -30,8 +27,8 @@ export class ShortBlock {
     return shorts && Object.fromEntries(Object.entries(shorts).map(([k, v]) => [renameMap[k] ?? k, v]));
   }
 
-  *rules(SHORTS, supers, renameMap) {
-    let { media, shorts } = this.interpret(SHORTS, supers);
+  *rules(SHORTS, renameMap) {
+    let { media, shorts } = this.interpret(SHORTS);
     if (!shorts) return;
     shorts = shorts.map(({ shorts, selector }) => ({ selector, shorts: ShortBlock.#rename(shorts, renameMap) }));
     let [container, ...items] = shorts;
@@ -81,7 +78,7 @@ class Expression {
   get signature() {
     return this.name + "/" + this.args.length;
   }
-  interpret(scope, supers, owner) {
+  interpret(scope, owner) {
     const fullName = owner + this.name;
     if (fullName !== this.fullName)
       1//debugger;
@@ -91,7 +88,7 @@ class Expression {
     if (!cb)
       throw new SyntaxError(`Unknown short function: ${fullName}`);
     const args = this.args.map(x =>
-      x instanceof Expression ? x.interpret(cb.scope, supers, fullName + ".") :
+      x instanceof Expression ? x.interpret(cb.scope, fullName + ".") :
         x === "." ? "unset" : //todo move this into the parser??
           (typeof x == "string" && cb.scope?.[x]) ? cb.scope[x].call(cb.scope) :
             x);
@@ -143,37 +140,15 @@ const clashOrStack = (function () {
 })();
 
 
-// function cloneAndReplaceExpr(argMap, { name, args }) {
-//   args = args.map(arg => arg instanceof Expression ? cloneAndReplaceExpr(argMap, arg) : argMap[arg] ?? arg);
-//   return new Expression(name, args);
-// }
-
 class Short {
   constructor(selectorList, exprList) {
     this.selectorList = selectorList;
     this.exprList = exprList || undefined;
-    // if (exprList)
-    //   for (const expr of exprList)
-    //     expr.name = "$" + expr.name;
   }
 
-  interpret(scope, supers, owner) {
-    // const unSuperExprList = this.exprList?.map(s => {
-    //   const sup = supers[(owner ? owner + "." : "") + s.name];
-    //   if (!sup)
-    //     return s;
-    //   if (s.name in scope)
-    //     throw `Superclash: ${s.name} is both a super and defined in the scope.`;
-    //   const { name, argNames, exprList } = sup;
-    //   if (argNames.length > s.args.length)
-    //     throw `missing argument: ${name}(...${argNames[s.args.length]})`;
-    //   const argMap = argNames.reduce((res, n) => ((res[n] = s.args.shift() || "."), res), {});
-    //   if (s.args.length)  //adding superflous arguments to the first expression in the super's body
-    //     exprList[0].args.push(...s.args);
-    //   return exprList.map(expr => cloneAndReplaceExpr(argMap, expr));
-    // }).flat();
-    const shorts = this.exprList && clashOrStack(this.exprList.map(s => s.interpret(scope, supers, owner)));
-    let selector = this.selectorList && this.selectorList.map(s => s.interpret(supers)).join(", ");
+  interpret(scope, owner) {
+    const shorts = this.exprList && clashOrStack(this.exprList.map(s => s.interpret(scope, owner)));
+    let selector = this.selectorList && this.selectorList.map(s => s.interpret()).join(", ");
     return { selector, shorts };
   }
 }
@@ -402,9 +377,8 @@ class Selector {
     return last ? [select] : [null, ...Selector.findTail(select)];
   }
 
-  static superAndNots(select, supers) {
-    return select?.map(s => supers[s] ?? s)
-      .map((el, i, ar) => ar[i - 1] === "!" ? `:not(${el})` : el)
+  static superAndNots(select) {
+    return select?.map((el, i, ar) => ar[i - 1] === "!" ? `:not(${el})` : el)
       .filter(el => el !== "!")
       .join("");
   }
@@ -433,10 +407,10 @@ class Selector {
     throw "missing ')'";
   }
 
-  interpret(supers) {
-    let head = Selector.superAndNots(this.head, supers);
-    let body = Selector.superAndNots(this.body, supers);
-    let tail = Selector.superAndNots(this.tail, supers);
+  interpret() {
+    let head = Selector.superAndNots(this.head);
+    let body = Selector.superAndNots(this.body);
+    let tail = Selector.superAndNots(this.tail);
     tail &&= `:has(${tail})`;
     head &&= `:where(${head})`;
     let selector = [head, body, tail].filter(Boolean).join("");

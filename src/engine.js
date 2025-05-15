@@ -55,11 +55,9 @@ class SheetWrapper {
     this.sheet = sheet;
     this.items = this.setupLayer("items", sheet);
     this.container = this.setupLayer("container", sheet);
-    this.supers = {};
     this.shorts = { ...SHORTS };
     this.renameMap = { ...RENAME };
     this.setupStatement();
-    // this.readSupers(BuiltinSupers);
   }
 
   setupStatement() {
@@ -80,7 +78,7 @@ class SheetWrapper {
   addRule(str, el) {
     const shorts = new ShortBlock(str);
     try {
-      for (const rule of shorts.rules(this.shorts, this.supers, this.renameMap))
+      for (const rule of shorts.rules(this.shorts, this.renameMap))
         this.addRuleImpl(rule);
     } catch (err) {
       if (err.message.startsWith("Unknown short function: $"))
@@ -102,8 +100,6 @@ class SheetWrapper {
   }
 
   readSupers(txt) {
-    const supers = extractSuperShorts(txt, this.shorts, this.supers);
-    Object.assign(this.supers, supers);
   }
 
   #isInUse(r) {
