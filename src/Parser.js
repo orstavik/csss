@@ -9,16 +9,16 @@ export class ShortBlock {
   constructor(exp) {
     this.exp = exp;
     this.clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
-    const { medias, shorts } = parse$Expression(exp);
+    const { medias, short } = parse$Expression(exp);
     this.medias = medias;
-    this.shorts = shorts;
+    this.short = short;
   }
 
   interpret(SHORTS) {
     let media = interpretMedias(this.medias);
     if (media) media = `@media ${media}`;
-    const shorts = this.shorts?.map((short) => short.interpret(SHORTS, ""));
-    return { media, shorts };
+    const short = this.short.interpret(SHORTS, "");
+    return { media, short };
   }
 
   static #rename(shorts, renameMap) {
@@ -26,16 +26,10 @@ export class ShortBlock {
   }
 
   *rules(SHORTS, renameMap) {
-    let { media, shorts } = this.interpret(SHORTS);
-    if (!shorts) return;
-    shorts = shorts.map(({ shorts, selector }) => ({ selector, shorts: ShortBlock.#rename(shorts, renameMap) }));
-    let [container, ...items] = shorts;
-    items = items.filter(item => item.shorts);
-    const cRule = new Rule(media, this.clazz + container.selector, container.shorts);
-    if (cRule.shorts) //todo this we can't do, because we need the sequence data for the empty rules too.
-      yield cRule;
-    for (const item of items)
-      yield new Rule(media, cRule.selector + ">*" + item.selector, item.shorts, true);
+    let { media, short } = this.interpret(SHORTS);
+    if (!short) return;
+    short.shorts = ShortBlock.#rename(short.shorts, renameMap);
+    yield new Rule(media, this.clazz + short.selector, short.shorts, !!this.short.selectorChain?.body2);
   }
 }
 
@@ -143,14 +137,14 @@ const clashOrStack = (function () {
 
 
 class Short {
-  constructor(selectorList, exprList) {
-    this.selectorList = selectorList;
+  constructor(selectorChain, exprList) {
+    this.selectorChain = selectorChain;
     this.exprList = exprList || undefined;
   }
 
   interpret(scope, owner) {
     const shorts = this.exprList && clashOrStack(this.exprList.map(s => s.interpret(scope, owner)));
-    let selector = this.selectorList && this.selectorList.map(s => s.interpret()).join(", ");
+    let selector = this.selectorChain && this.selectorChain.interpret();
     return { selector, shorts };
   }
 }
@@ -193,8 +187,8 @@ function parseVarCalc(tokens) {
 }
 
 const WORD = /^\$?[a-zA-Z_][a-zA-Z0-9_]*$/;
-const CPP = /[,()|$=;{}]/.source;
-const nCPP = /[^,()|$=;{}]+/.source;
+const CPP = /[,()$=;{}]/.source;
+const nCPP = /[^,()$=;{}]+/.source;
 const QUOTE = /([`'"])(?:\\.|(?!\2).)*?\2/.source;
 const TOKENS = new RegExp(`(${QUOTE})|(\\s+)|(${CPP})|(${nCPP})`, "g");
 
@@ -283,16 +277,12 @@ function parseMediaHead(str) {
 
 function parse$Expression(exp) {
   const { medias, rest } = parseMediaHead(exp);
-  const shorts = rest?.split("|").map(seg => seg.split("$"))
-    .map(([sel, ...shorts]) => new Short(
-      sel && parseSelectorBody(sel)?.map(s => new Selector(s)),
-      shorts.length && shorts.map(s => parseNestedExpression(s, "$"))
-    ));
-  const ctx = shorts?.[0]?.exprList?.[0]?.name;
-  if (ctx)
-    for (let i = 1; i < shorts.length; i++)
-      shorts[i].exprList.forEach(s => (s.ctx = ctx + "|" + s.ctx, s.fullName = ctx + "|" + s.fullName));
-  return { shorts, medias };
+  const [sel, ...shorts] = rest?.split("$");
+  const short = new Short(
+    sel && parseSelectorBody(sel),
+    shorts.length && shorts.map(s => parseNestedExpression(s, "$"))
+  );
+  return { short, medias };
 }
 const ARG = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;
 const ARGLIST = new RegExp(`\\(${ARG}(?:,\\s*${ARG})*\\)`).source;
@@ -340,6 +330,27 @@ const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
 function parseSelectorBody(str) {
+  const [body1, body2] = str.split("|").map(s => parseSelectorBody2(s).map(t => new Selector(t)));
+  return new SelectorChain(body1, body2);
+}
+
+class SelectorChain {
+  constructor(body1, body2) {
+    this.body1 = body1;
+    this.body2 = body2;
+
+  }
+
+  interpret() {
+    const body1 = this.body1?.map(s => s.interpret()).join(", ");
+    if (!this.body2)
+      return body1;
+    const body2 = this.body2?.map(s => s.interpret()).join(", ");
+    return body1 + ">" + (body2 || "*");
+  }
+}
+
+function parseSelectorBody2(str) {
   let tokens = [...str.matchAll(selectorTokens)];
   const badToken = tokens.find(([t, ws, select, error]) => error);
   if (badToken)

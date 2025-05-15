@@ -355,15 +355,15 @@
     }
   </style>
 </test-html>
-<test-html title="$flex(cc)|*$margin(10px)">
-  <div class="$flex(cc)|*$margin(10px)">
+<test-html title="$flex(cc) |*$_flex(margin(10px))">
+  <div class="$flex(cc) |*$_flex(margin(10px))">
     hello
   </div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$flex\(cc\)\|\*\$margin\(10px\) {
+      .\$flex\(cc\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -377,7 +377,7 @@
     }
 
     @layer items {
-      .\$flex\(cc\)\|\*\$margin\(10px\)>* {
+      .\|\*\$_flex\(margin\(10px\)\)>* {
         margin: 10px;
       }
     }
