@@ -168,7 +168,8 @@ const NativeColorsFunctions = (function () {
 const ColorNames = /^(aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen)$/i.source;
 const ColorFunctionStart = /^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color|colorMix)\(/.source;
 const ColorVar = /^var\(--color_/.source;
-const ColorString = new RegExp(`${ColorNames}|${ColorFunctionStart}|${ColorVar}`);
+const ColorHash = /^#[a-fA-F0-9]{3,8}$/.source;
+const ColorString = new RegExp(`${ColorNames}|${ColorFunctionStart}|${ColorVar}|${ColorHash}`);
 
 export function isColor(x) {
   return ColorString.test(x) && x;
@@ -274,26 +275,36 @@ for (const cb of Object.values(NativeCssTransformFunctions))
   cb.scope = { ...NativeCssScopeMath };
 
 function doGradient(name, ...args) {
-  const processedArgs = args.map(arg =>
-    typeof arg === 'string' ? arg.replaceAll(/[A-Z]/g, ' $&').toLowerCase() : arg
-  );
-  return { background: `${name}(${processedArgs.join(",")})` };
+  let repeat = args.findIndex(a => a instanceof Array);
+  if (repeat >= 0) {
+    repeat = args.splice(repeat, 1)[0];
+    const colors = [], args2 = [];
+    for (const a of args)
+      isColor(a) ? colors.push(a) : args2.push(a);
+    if (repeat.length != colors.length) repeat.unshift("0%");
+    if (repeat.length != colors.length) repeat.push("100%");
+    if (repeat.length != colors.length)
+      throw new SyntaxError(`Gradient function ${name} requires at least ${colors.length} colors, but got ${repeat.length - 2}`);
+    for (let i = 0; i < colors.length; i++)
+      colors[i] += ` ${repeat[i]}`;
+    name = "repeating-" + name;
+    args = [...args2, ...colors];
+  }
+  args = args.map(a => typeof a === 'string' ? a.replaceAll(/[A-Z]/g, ' $&').toLowerCase() : a);
+  return { background: `${name}-gradient(${args.join(",")})` };
 }
 
 const NativeCssGradientFunctions = {
-  linear: (...args) => doGradient("linear-gradient", ...args),
-  radial: (...args) => doGradient("radial-gradient", ...args),
-  conic: (...args) => doGradient("conic-gradient", ...args),
-  repeatingLinear: (...args) => doGradient("repeating-linear-gradient", ...args),
-  repeatingRadial: (...args) => doGradient("repeating-radial-gradient", ...args),
-  repeatingConic: (...args) => doGradient("repeating-conic-gradient", ...args),
-  radialClosest: (...args) => doGradient("radial-gradient", "closest side", ...args),
-  radialFarthest: (...args) => doGradient("radial-gradient", "farthest side", ...args),
-  radialClosestCorner: (...args) => doGradient("radial-gradient", "closest corner", ...args),
-  radialFarthestCorner: (...args) => doGradient("radial-gradient", "farthest corner", ...args),
+  linear: (...args) => doGradient("linear", ...args),
+  radial: (...args) => doGradient("radial", ...args),
+  conic: (...args) => doGradient("conic", ...args),
 };
 for (const k in NativeCssGradientFunctions)
-  NativeCssGradientFunctions[k].scope = { ...NativeCssScopeMath, ...NativeColorsFunctions };
+  NativeCssGradientFunctions[k].scope = {
+    repeat: (...args) => args,
+    ...NativeCssProperties.color.scope,
+    ...NativeCssScopeMath,
+  };
 
 
 const ANIMATION_FUNCTIONS = {

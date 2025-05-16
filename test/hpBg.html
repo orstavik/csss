@@ -1,0 +1,49 @@
+<test-html title="linear background">
+  <div class="$w(100vh) $h(100vh) $linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c)">
+    hello sunshine!
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(100vh\) {
+        inline-size: 100vh;
+      }
+
+      .\$h\(100vh\) {
+        block-size: 100vh;
+      }
+
+      .\$linear\(0\.25turn\,\#3f87a6\,\#ebf8e1\,\#f69d3c\) {
+        background: linear-gradient(0.25turn, rgb(63, 135, 166), rgb(235, 248, 225), rgb(246, 157, 60));
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+
+<test-html title="$linear(repeat)">
+  <div class="$w(100vh) $h(100vh) $linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,repeat(10%,67%))">
+    hello sunshine!
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(100vh\) {
+        inline-size: 100vh;
+      }
+
+      .\$h\(100vh\) {
+        block-size: 100vh;
+      }
+
+      .\$linear\(0\.25turn\,\#3f87a6\,\#ebf8e1\,\#f69d3c\,repeat\(10\%\,67\%\)\) {
+        background: repeating-linear-gradient(0.25turn, rgb(63, 135, 166) 0%, rgb(235, 248, 225) 10%, rgb(246, 157, 60) 67%);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
