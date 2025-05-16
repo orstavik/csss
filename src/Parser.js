@@ -237,20 +237,12 @@ const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
 function parseSelectorBody(str) {
-  const [body1, body2] = str.split("|").map(s => parseSelectorBody2(s).map(t => new Selector(t).interpret()));
-  const item = !!body2;
-  return { selector: SelectorChain.interpret(body1, body2), item };
-}
-
-class SelectorChain {
-
-  static interpret(body1, body2) {
-    body1 = body1?.join(", ");
-    if (!body2)
-      return body1;
-    body2 = body2?.join(", ");
-    return body1 + ">" + (body2 || "*");
-  }
+  let [body1, body2] = str.split("|").map(s => parseSelectorBody2(s).map(t => new Selector(t).interpret()));
+  body1 = body1?.join(", ");
+  if (!body2)
+    return { selector: body1 };
+  body2 = body2?.join(", ");
+  return { selector: body1 + ">" + (body2 || "*"), item: true };
 }
 
 function parseSelectorBody2(str) {
