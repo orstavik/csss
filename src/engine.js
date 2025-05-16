@@ -1,4 +1,4 @@
-import { ShortBlock } from "./Parser.js";
+import { Rule } from "./Parser.js";
 import nativeAndMore from "./func.js";
 import layouts from "./layout.js";
 import colorPalette from "./palette.js";
@@ -182,7 +182,7 @@ class SheetWrapper {
 
   addRule(str, el) {
     try {
-      const rule = ShortBlock.interpret(str, upgrades, RENAME);
+      const rule = Rule.interpret(str, upgrades, RENAME);
       if (!rule) return;
       const { layer, registry } = rule.item ? this.items : this.container;
       const key = [rule.media, rule.selector].filter(Boolean).join(" { ");

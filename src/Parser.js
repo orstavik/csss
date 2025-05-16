@@ -1,24 +1,6 @@
 import { parseMediaQuery } from "./mediaFuncs.js";
 
-export class ShortBlock {
-
-  static interpret(exp, registries, renames) {
-    const { shorts: scope, medias: MEDIA_WORDS } = registries;
-    const clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
-    const { str, media } = parseMediaQuery(exp, MEDIA_WORDS);
-    exp = str;
-    let [sel, ...exprList] = exp?.split("$");
-    const { selector, item } = parseSelectorBody(sel);
-    exprList = exprList.map(s => parseNestedExpression(s, "$"));
-    if (!exprList)
-      return;
-    let shorts = exprList?.map(s => s.interpret(scope));
-    shorts &&= clashOrStack(shorts);
-    return new Rule(media, clazz + selector, shorts, item, renames);
-  }
-}
-
-class Rule {
+export class Rule {
   constructor(media, selector, shorts, item, fallbackProps) {
     this.media = media;
     this.selector = selector;
@@ -38,6 +20,21 @@ class Rule {
     return this.media ?
       `${this.media} { ${this.selector} {\n${body}\n} }` :
       `${this.selector} {\n${body}\n}`;
+  }
+
+  static interpret(exp, registries, renames) {
+    const { shorts: scope, medias: MEDIA_WORDS } = registries;
+    const clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
+    const { str, media } = parseMediaQuery(exp, MEDIA_WORDS);
+    exp = str;
+    let [sel, ...exprList] = exp?.split("$");
+    const { selector, item } = parseSelectorBody(sel);
+    exprList = exprList.map(s => parseNestedExpression(s, "$"));
+    if (!exprList)
+      return;
+    let shorts = exprList?.map(s => s.interpret(scope));
+    shorts &&= clashOrStack(shorts);
+    return new Rule(media, clazz + selector, shorts, item, renames);
   }
 }
 
