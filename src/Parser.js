@@ -28,7 +28,7 @@ export class Rule {
     const { str, media } = parseMediaQuery(exp, MEDIA_WORDS);
     exp = str;
     let [sel, ...exprList] = exp?.split("$");
-    const { selector, item } = parseSelectorBody(sel);
+    const { selector, item } = parseSelectorPipe(sel);
     exprList = exprList.map(s => parseNestedExpression(s, "$"));
     if (!exprList)
       return;
@@ -241,8 +241,8 @@ const clazz = /\.[a-zA-Z][a-zA-Z0-9_-]*/.source; //class
 const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
-function parseSelectorBody(str) {
-  let [body1, body2] = str.split("|").map(parseSelectorBody2);
+function parseSelectorPipe(str) {
+  let [body1, body2] = str.split("|").map(parseSelectorComma);
   body1 = body1?.join(", ");
   if (!body2)
     return { selector: body1 };
@@ -250,7 +250,7 @@ function parseSelectorBody(str) {
   return { selector: body1 + ">" + (body2 || "*"), item: true };
 }
 
-function parseSelectorBody2(str) {
+function parseSelectorComma(str) {
   let tokens = [...str.matchAll(selectorTokens)];
   const badToken = tokens.find(([t, ws, select, error]) => error);
   if (badToken)
@@ -296,20 +296,6 @@ class Selector {
       .join("");
   }
 
-  static whereWrap(selector) {
-    if (!selector)
-      return selector;
-    if (!selector.startsWith(":where("))
-      return `:where(${selector})`;
-    for (let depth = 1, i = 7; i < selector.length; i++) {
-      if (selector[i] === "(") depth++;
-      if (selector[i] === ")") depth--;
-      if (!depth)
-        return i === selector.length - 1 ? selector : `:where(${selector})`;
-    }
-    throw "missing ')'";
-  }
-
   static interpret(select) {
     if (!select.length || select.length === 1 && select[0] === "*")
       return;
@@ -317,8 +303,7 @@ class Selector {
     let [head, body, tail] = Selector.whereIsStar(select).map(Selector.superAndNots);
     tail &&= `:has(${tail})`;
     head &&= `:where(${head})`;
-    let selector = [head, body, tail].filter(Boolean).join("");
-    if (selector) selector = Selector.whereWrap(selector);
-    return selector;
+    const selector = [head, body, tail].filter(Boolean).join("");
+    return selector ? `:where(${selector})` : selector;
   }
 }
