@@ -273,21 +273,24 @@ const NativeCssTransformFunctions = {
 for (const cb of Object.values(NativeCssTransformFunctions))
   cb.scope = { ...NativeCssScopeMath };
 
-//UNPACKED $gradient scope functions
+function doGradient(name, ...args) {
+  const processedArgs = args.map(arg =>
+    typeof arg === 'string' ? arg.replaceAll(/[A-Z]/g, ' $&').toLowerCase() : arg
+  );
+  return { background: `${name}(${processedArgs.join(",")})` };
+}
+
 const NativeCssGradientFunctions = {
-  "linearGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "radialGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "conicGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "repeatingLinearGradient": (...args) => ({ background: `repeating-linear-gradient(${args.join(",")})` }),
-  "repeatingRadialGradient": (...args) => ({ background: `repeating-radial-gradient(${args.join(",")})` }),
-  "repeatingConicGradient": (...args) => ({ background: `repeating-conic-gradient(${args.join(",")})` }),
-  "radial": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "conic": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "repeatingLinear": (...args) => ({ background: `repeating-linear-gradient(${args.join(",")})` }),
-  "repeatingRadial": (...args) => ({ background: `repeating-radial-gradient(${args.join(",")})` }),
-  "repeatingConic": (...args) => ({ background: `repeating-conic-gradient(${args.join(",")})` }),
-  //collides with {transition: linear()}, but is done as a scope function now, so no problem
-  "linear": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
+  linear: (...args) => doGradient("linear-gradient", ...args),
+  radial: (...args) => doGradient("radial-gradient", ...args),
+  conic: (...args) => doGradient("conic-gradient", ...args),
+  repeatingLinear: (...args) => doGradient("repeating-linear-gradient", ...args),
+  repeatingRadial: (...args) => doGradient("repeating-radial-gradient", ...args),
+  repeatingConic: (...args) => doGradient("repeating-conic-gradient", ...args),
+  radialClosest: (...args) => doGradient("radial-gradient", "closest side", ...args),
+  radialFarthest: (...args) => doGradient("radial-gradient", "farthest side", ...args),
+  radialClosestCorner: (...args) => doGradient("radial-gradient", "closest corner", ...args),
+  radialFarthestCorner: (...args) => doGradient("radial-gradient", "farthest corner", ...args),
 };
 for (const k in NativeCssGradientFunctions)
   NativeCssGradientFunctions[k].scope = { ...NativeCssScopeMath, ...NativeColorsFunctions };
