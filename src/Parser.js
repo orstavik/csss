@@ -38,17 +38,11 @@ export class Rule {
 
 class Expression {
 
-  constructor(name, args, ctx) {
+  constructor(name, args) {
     this.args = args;
-    const top = ctx.length == 1;
-    this.name = top ? ctx + name : name;
+    this.name = name;
   }
-  toString() {
-    return `${this.name}(${this.args.join(",")})`;
-  }
-  get signature() {
-    return this.name + "/" + this.args.length;
-  }
+
   interpret(scope) {
     const cb = scope?.[this.name];
     if (!cb)
@@ -174,15 +168,14 @@ function eatTokens(tokens) {
   throw "missing ')'";
 }
 
-function diveDeep(tokens, ctx = "") {
-  const top = ctx.length === 1;
+function diveDeep(tokens, top) {
   const res = [];
   while (tokens.length) {
     let a = tokens[0].match(/^\($|^(?!["']).*[+/*]|(?<![a-z])-|-(?![a-z])/) ?
       parseVarCalc(eatTokens(tokens)) :
       tokens.shift();
     if (a[0] === "#")
-      a = new Expression("_hash", [a.slice(1)], ctx);
+      a = new Expression("_hash", [a.slice(1)]);
     if (top && a === ",") throw "can't start with ','";
     if (top && a === ")") throw "can't start with ')'";
     if (a === "," || a === ")") {         //empty
@@ -198,7 +191,7 @@ function diveDeep(tokens, ctx = "") {
     if (top && b === ")") throw "top level can't use ')'";
     if (b === "(" && !a.match(WORD)) throw "invalid function name";
     if (b === "(") {
-      a = new Expression(a, diveDeep(tokens, ctx + a + "."), ctx);
+      a = new Expression(a, diveDeep(tokens));
       b = tokens.shift();
     }
     // if (a.match?.(WORD)) 
@@ -213,16 +206,17 @@ function diveDeep(tokens, ctx = "") {
   throw "missing ')'";
 }
 
-function parseNestedExpression(short, ctx = "$") {
+function parseNestedExpression(short) {
   const tokensOG = [...short.matchAll(TOKENS)].map(processToken).filter(Boolean);
   if (tokensOG.length === 1)
-    return new Expression(tokensOG[0], [], ctx); //todo no calc top level
+    return new Expression("$" + tokensOG[0], []); //todo no calc top level
   const tokens = tokensOG.slice();
   try {
-    const res = diveDeep(tokens, ctx);
+    const res = diveDeep(tokens, true)[0];
     if (tokens.length)
       throw "too many ')'";
-    return res[0];
+    res.name = "$" + res.name;
+    return res;
   } catch (e) {
     const i = tokensOG.length - tokens.length;
     tokensOG.splice(i, 0, `{{{${e}}}}`);
