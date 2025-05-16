@@ -49,22 +49,22 @@ class UpgradeRegistry {
     this.rerun(name);
   }
 
-  get shorts(){
+  get shorts() {
     return SHORTS;
   }
 
-  get medias(){
+  get medias() {
     return MEDIA_WORDS;
   }
 
-  registerMedia(name, txt){
-    if(name in MEDIA_WORDS)
+  registerMedia(name, txt) {
+    if (name in MEDIA_WORDS)
       throw new Error(`Media name ${name} already exists`);
     MEDIA_WORDS[name] = txt;
     this.rerun(`@${name}`);
   }
 
-  rerun(name){
+  rerun(name) {
     const todos = this.enoughWaiting(name);
     if (!todos)
       return;
@@ -121,7 +121,7 @@ class SheetWrapper {
 
   addRule(str, el) {
     try {
-      const rule = new ShortBlock(str).interpret(this.shorts, RENAME, upgrades.medias);
+      const rule = ShortBlock.interpret(str, this.shorts, RENAME, upgrades.medias);
       if (!rule) return;
       const { layer, registry } = rule.item ? this.items : this.container;
       const key = [rule.media, rule.selector].filter(Boolean).join(" { ");

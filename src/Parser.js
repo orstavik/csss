@@ -2,25 +2,18 @@ import { parseMediaQuery } from "./mediaFuncs.js";
 
 export class ShortBlock {
 
-  constructor(exp) {
-    this.exp = exp;
-    this.clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
-    const { str, media: medias } = parseMediaQuery(exp);
+  static interpret(exp, scope, renames, MEDIA_WORDS) {
+    const clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
+    const { str, media: medias } = parseMediaQuery(exp, MEDIA_WORDS);
     exp = str;
-    const { shorts, selectorChain } = parse$Expression(exp);
-    this.medias = medias;
-    this.exprList = shorts;
-    this.selector = selectorChain;
-    this.item = !!this.selector?.body2;
-  }
-
-  interpret(scope, renames, MEDIA_WORDS) {
-    if (!this.exprList)
+    let { shorts: exprList, selectorChain: selector } = parse$Expression(exp);
+    if (!exprList)
       return;
-    const selector = this.selector && this.selector?.interpret();
-    let shorts = this.exprList?.map(s => s.interpret(scope));
+    const item = !!selector?.body2;
+    selector &&= selector?.interpret();
+    let shorts = exprList?.map(s => s.interpret(scope));
     shorts &&= clashOrStack(shorts);
-    return new Rule(this.medias, this.clazz + selector, shorts, this.item, renames);
+    return new Rule(medias, clazz + selector, shorts, item, renames);
   }
 }
 
