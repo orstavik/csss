@@ -26,12 +26,12 @@ export class Rule {
     const { str, media } = parseMediaQuery(exp, MEDIA_WORDS);
     exp = str;
     let [sel, ...exprList] = exp?.split("$");
-    const { selector, item } = parseSelectorPipe(sel);
-    exprList = exprList.map(s => parseNestedExpression(s, "$"));
     if (!exprList)
       return;
+    exprList = exprList.map(s => parseNestedExpression(s, "$"));
     let shorts = exprList?.map(s => s.interpret(scope));
     shorts &&= clashOrStack(shorts);
+    const { selector, item } = parseSelectorPipe(sel);
     return new Rule(media, clazz + selector, shorts, item, renames);
   }
 }
