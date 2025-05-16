@@ -3,17 +3,15 @@ import { parseMediaQuery } from "./mediaFuncs.js";
 export class ShortBlock {
 
   static interpret(exp, registries, renames) {
-    const {shorts: scope, medias: MEDIA_WORDS} = registries;
+    const { shorts: scope, medias: MEDIA_WORDS } = registries;
     const clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
     const { str, media } = parseMediaQuery(exp, MEDIA_WORDS);
     exp = str;
-    let [selector, ...exprList] = exp?.split("$");
-    selector &&= parseSelectorBody(selector);
+    let [sel, ...exprList] = exp?.split("$");
+    const { selector, item } = parseSelectorBody(sel);
     exprList = exprList.map(s => parseNestedExpression(s, "$"));
     if (!exprList)
       return;
-    const item = !!selector?.body2;
-    selector &&= selector?.interpret();
     let shorts = exprList?.map(s => s.interpret(scope));
     shorts &&= clashOrStack(shorts);
     return new Rule(media, clazz + selector, shorts, item, renames);
@@ -239,22 +237,18 @@ const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
 function parseSelectorBody(str) {
-  const [body1, body2] = str.split("|").map(s => parseSelectorBody2(s).map(t => new Selector(t)));
-  return new SelectorChain(body1, body2);
+  const [body1, body2] = str.split("|").map(s => parseSelectorBody2(s).map(t => new Selector(t).interpret()));
+  const item = !!body2;
+  return { selector: SelectorChain.interpret(body1, body2), item };
 }
 
 class SelectorChain {
-  constructor(body1, body2) {
-    this.body1 = body1;
-    this.body2 = body2;
 
-  }
-
-  interpret() {
-    const body1 = this.body1?.map(s => s.interpret()).join(", ");
-    if (!this.body2)
+  static interpret(body1, body2) {
+    body1 = body1?.join(", ");
+    if (!body2)
       return body1;
-    const body2 = this.body2?.map(s => s.interpret()).join(", ");
+    body2 = body2?.join(", ");
     return body1 + ">" + (body2 || "*");
   }
 }
