@@ -245,7 +245,7 @@ const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
 function parseSelectorBody(str) {
-  let [body1, body2] = str.split("|").map(s => parseSelectorBody2(s).map(t => new Selector(t).interpret()));
+  let [body1, body2] = str.split("|").map(s => parseSelectorBody2(s).map(t => Selector.interpret(t)));
   body1 = body1?.join(", ");
   if (!body2)
     return { selector: body1 };
@@ -299,17 +299,7 @@ class Selector {
       .join("");
   }
 
-  constructor(select) {
-    select = select.map(s => s == ">>" ? " " : s);
-    if (!select.length || select.length === 1 && select[0] === "*")
-      return;
-    let [head, body, tail] = Selector.whereIsStar(select);
-    this.head = head;
-    this.body = body;
-    this.tail = tail;
-  }
-
-  whereWrap(selector) {
+  static whereWrap(selector) {
     if (!selector)
       return selector;
     if (!selector.startsWith(":where("))
@@ -323,14 +313,15 @@ class Selector {
     throw "missing ')'";
   }
 
-  interpret() {
-    let head = Selector.superAndNots(this.head);
-    let body = Selector.superAndNots(this.body);
-    let tail = Selector.superAndNots(this.tail);
+  static interpret(select) {
+    select = select.map(s => s == ">>" ? " " : s);
+    if (!select.length || select.length === 1 && select[0] === "*")
+      return;
+    let [head, body, tail] = Selector.whereIsStar(select).map(Selector.superAndNots);
     tail &&= `:has(${tail})`;
     head &&= `:where(${head})`;
     let selector = [head, body, tail].filter(Boolean).join("");
-    if (selector) selector = this.whereWrap(selector);
+    if (selector) selector = Selector.whereWrap(selector);
     return selector;
   }
 }
