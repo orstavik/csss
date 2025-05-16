@@ -4,16 +4,18 @@ export class ShortBlock {
 
   static interpret(exp, scope, renames, MEDIA_WORDS) {
     const clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
-    const { str, media: medias } = parseMediaQuery(exp, MEDIA_WORDS);
+    const { str, media } = parseMediaQuery(exp, MEDIA_WORDS);
     exp = str;
-    let { shorts: exprList, selectorChain: selector } = parse$Expression(exp);
+    let [selector, ...exprList] = exp?.split("$");
+    selector &&= parseSelectorBody(selector);
+    exprList = exprList.map(s => parseNestedExpression(s, "$"));
     if (!exprList)
       return;
     const item = !!selector?.body2;
     selector &&= selector?.interpret();
     let shorts = exprList?.map(s => s.interpret(scope));
     shorts &&= clashOrStack(shorts);
-    return new Rule(medias, clazz + selector, shorts, item, renames);
+    return new Rule(media, clazz + selector, shorts, item, renames);
   }
 }
 
@@ -225,14 +227,6 @@ function parseNestedExpression(short, ctx) {
     const msg = tokensOG.join("");
     throw new SyntaxError("Invalid short: " + msg);
   }
-}
-
-//todo move this into the ShortBlock
-function parse$Expression(exp) {
-  let [selectorChain, ...shorts] = exp?.split("$");
-  selectorChain &&= parseSelectorBody(selectorChain);
-  shorts = shorts.map(s => parseNestedExpression(s, "$"));
-  return { selectorChain, shorts };
 }
 
 //todo we don't support nested :not(:has(...))
