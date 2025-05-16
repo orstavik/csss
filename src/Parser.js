@@ -245,7 +245,7 @@ const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
 function parseSelectorBody(str) {
-  let [body1, body2] = str.split("|").map(s => parseSelectorBody2(s).map(t => Selector.interpret(t)));
+  let [body1, body2] = str.split("|").map(s => parseSelectorBody2(s));
   body1 = body1?.join(", ");
   if (!body2)
     return { selector: body1 };
@@ -262,7 +262,7 @@ function parseSelectorBody2(str) {
   const selects = [[]];
   for (const [t] of tokens)
     t === "," ? selects.push([]) : selects.at(-1).push(t);
-  return selects;
+  return selects.map(t => Selector.interpret(t));
 }
 
 class Selector {
