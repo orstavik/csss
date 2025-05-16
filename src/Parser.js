@@ -314,9 +314,9 @@ class Selector {
   }
 
   static interpret(select) {
-    select = select.map(s => s == ">>" ? " " : s);
     if (!select.length || select.length === 1 && select[0] === "*")
       return;
+    select = select.map(s => s == ">>" ? " " : s);
     let [head, body, tail] = Selector.whereIsStar(select).map(Selector.superAndNots);
     tail &&= `:has(${tail})`;
     head &&= `:where(${head})`;
@@ -325,20 +325,3 @@ class Selector {
     return selector;
   }
 }
-
-
-// --var-value123-123_123.... recognize this first. and extract them.
-//
-// -after:  + ( 1230 .123 1e123 var(something)..
-// before-: + ) 1230 .123 1e123 var(something)..
-//
-// not calc [a-z]-1|1-[a-z]
-// space-between = [a-z]-[a-z], and this cannot be calc()
-// if the last character is an operator /[+/*<>]/, then we need to eat all tokens
-// until we find the matching closing bracket.
-//
-// --var-bob+---var-alice*(--var-joe+--var-jane);
-//if we stumble upon a [+/*<>], in a, then we need to step into a
-//calc expression style
-//or, if name is empty. and we cannot be on the top level.
-//  --klaj-ldkjf /[+/*<>]/ (
