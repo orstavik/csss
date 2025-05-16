@@ -63,7 +63,7 @@ class Expression {
         x instanceof Expression ? x.interpret(cb.scope) :
           x === "." ? "unset" : //todo move this into the parser??
             cb.scope?.[x] instanceof Function ? cb.scope[x].call(cb.scope) :
-              cb.scope?.[x] ? cb.scope?.[x] :
+              cb.scope?.[x] ? cb.scope[x] :
                 x);
       return cb.call(scope, ...args);
     } catch (e) {
@@ -76,7 +76,15 @@ class Expression {
 
 const clashOrStack = (function () {
   const STACKABLE_PROPERTIES = {
-    background: ",",
+    background: ", ",
+    backgroundImage: ", ",
+    backgroundPosition: ", ",
+    backgroundRepeat: ", ",
+    backgroundSize: ", ",
+    backgroundOrigin: ", ",
+    backgroundClip: ", ",
+    backgroundBlendMode: ", ",
+    backgroundAttachment: ", ",
     transition: ",",
     fontFamily: ",",
     voiceFamily: ",",

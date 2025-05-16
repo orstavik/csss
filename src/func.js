@@ -274,43 +274,112 @@ const NativeCssTransformFunctions = {
 for (const cb of Object.values(NativeCssTransformFunctions))
   cb.scope = { ...NativeCssScopeMath };
 
-function doGradient(name, ...args) {
-  let repeats = args.findIndex(a => a.repeats);
-  if (repeats >= 0) repeats = repeats = args.splice(repeats, 1)[0].repeats; else repeats = undefined;
-  let stops = args.findIndex(a => a.stops);
-  if (stops >= 0) stops = args.splice(stops, 1)[0].stops; else stops = undefined;
-  if (stops && repeats)
-    throw new SyntaxError(`Gradient function ${name} cannot have both stops and repeats`);
-  if (repeats)
-    name = "repeating-" + name;
-  if (repeats || stops) {
-    repeats ??= stops;
-    const colors = [], args2 = [];
-    for (const a of args)
-      isColor(a) ? colors.push(a) : args2.push(a);
-    if (repeats.length != colors.length) repeats.unshift("0%");
-    if (repeats.length != colors.length) repeats.push("100%");
-    if (repeats.length != colors.length)
-      throw new SyntaxError(`Gradient function ${name} requires at least ${colors.length} colors, but got ${repeats.length - 2}`);
-    for (let i = 0; i < colors.length; i++)
-      colors[i] += ` ${repeats[i]}`;
-    args = [...args2, ...colors];
-  }
-  args = args.map(a => typeof a === 'string' ? a.replaceAll(/[A-Z]/g, ' $&').toLowerCase() : a);
-  return { background: `${name}-gradient(${args.join(",")})` };
+function bgImpl(...args) {
+  const res = {
+    backgroundImage: undefined,
+    backgroundPosition: "0% 0%",
+    backgroundRepeat: "repeat",
+    backgroundSize: "auto auto",
+    backgroundOrigin: "padding-box",
+    backgroundClip: "border-box",
+    backgroundBlendMode: "normal",
+    backgroundAttachment: "scroll",
+  };
+  const colors = [], args2 = [];
+  for (const a of args)
+    (a && typeof a === 'object') ? Object.assign(res, a) :
+      isColor(a) ? colors.push(a) :
+        args2.push(a.replaceAll(/[A-Z]/g, ' $&').toLowerCase());
+  return { res, colors, args2 };
 }
 
-const NativeCssGradientFunctions = {
+function doGradient(name, ...args) {
+  const { res, colors, args2 } = bgImpl(...args);
+  if (res.stops) {
+    for (let i = 0; i < res.stops?.length && i < colors.length; i++)
+      colors[i] += " " + res.stops[i];
+    delete res.stops;
+  }
+  res.backgroundImage = `${name}-gradient(${[...args2, ...colors].join(",")})`;
+  return res;
+}
+
+function bg(...args) {
+  const { res, colors, args2 } = bgImpl(...args);
+  if (!colors.length && !args2.length)
+    throw new SyntaxError(`$bg(${args.join(",")}) is missing a color or url argument.`);
+  if (colors.length > 1)
+    throw new SyntaxError(`use $bg(color1,left)$bg(color2,right) for layered backgrounds, not $bg(${colors.join(",")}).`);
+  if (args2.length > 1)
+    throw new SyntaxError(`use $bg(url1)$bg(url2) for layered backgrounds, not $bg(${args2.join(",")}).`);
+  if (colors.length && args2.length)
+    throw new SyntaxError(`use $bg(color)$bg(url) for layered backgrounds, not $bg(${colors.join(",")},${args2.join(",")}).`);
+  res.backgroundImage = colors.length ? `linear-gradient(${colors[0]})` : args2[0];
+  return res;
+}
+
+const BackgroundFunctions = {
   linear: (...args) => doGradient("linear", ...args),
   radial: (...args) => doGradient("radial", ...args),
   conic: (...args) => doGradient("conic", ...args),
+  repeatingLinear: (...args) => doGradient("repeating-linear", ...args),
+  repeatingRadial: (...args) => doGradient("repeating-radial", ...args),
+  repeatingConic: (...args) => doGradient("repeating-conic", ...args),
+  bg,
 };
-for (const k in NativeCssGradientFunctions)
-  NativeCssGradientFunctions[k].scope = {
-    repeat: (...args) => ({ repeats: args }),
+
+for (const k in BackgroundFunctions)
+  BackgroundFunctions[k].scope = {
     stops: (...args) => ({ stops: args }),
-    ...NativeCssProperties.color.scope,
-    ...NativeCssScopeMath,
+    ...NativeCssProperties.background.scope,
+    ...NativeCssScopeMath, //todo do we need this, or is it covered by background above?
+    pos: (block = "0", inline = "0") => ({ backgroundPosition: `${block[0] === "-" ? `bottom ${block.slice(1)}` : block} ${inline[0] === "-" ? `right ${inline.slice(1)}` : inline}` }),
+    position: (block = "0", inline = "0") => ({ backgroundPosition: `${block[0] === "-" ? `bottom ${block.slice(1)}` : block} ${inline[0] === "-" ? `right ${inline.slice(1)}` : inline}` }),
+    size: (inline, block = "auto") => ({ backgroundSize: `${inline} ${block}` }),
+    top: { backgroundPosition: "top" },
+    bottom: { backgroundPosition: "bottom" },
+    left: { backgroundPosition: "left" },
+    right: { backgroundPosition: "right" },
+    center: { backgroundPosition: "center" },
+    topLeft: { backgroundPosition: "top left" },
+    topRight: { backgroundPosition: "top right" },
+    bottomLeft: { backgroundPosition: "bottom left" },
+    bottomRight: { backgroundPosition: "bottom right" },
+    topCenter: { backgroundPosition: "top center" },
+    bottomCenter: { backgroundPosition: "bottom center" },
+    leftCenter: { backgroundPosition: "left center" },
+    rightCenter: { backgroundPosition: "right center" },
+    repeatX: { backgroundRepeat: "repeat-x" },
+    repeatY: { backgroundRepeat: "repeat-y" },
+    space: { backgroundRepeat: "space" },
+    round: { backgroundRepeat: "round" },
+    noRepeat: { backgroundRepeat: "no-repeat" },
+    cover: { backgroundSize: "cover" },
+    contain: { backgroundSize: "contain" },
+    contentBox: { backgroundOrigin: "content-box" },
+    borderBox: { backgroundOrigin: "border-box" },
+    clipPaddingBox: { backgroundClip: "padding-box" },
+    clipContentBox: { backgroundClip: "content-box" },
+    clipText: { backgroundClip: "text" },
+    clipBorderArea: { backgroundClip: "border-area" },
+    multiply: { backgroundBlendMode: "multiply" },
+    screen: { backgroundBlendMode: "screen" },
+    overlay: { backgroundBlendMode: "overlay" },
+    darken: { backgroundBlendMode: "darken" },
+    lighten: { backgroundBlendMode: "lighten" },
+    colorDodge: { backgroundBlendMode: "color-dodge" },
+    colorBurn: { backgroundBlendMode: "color-burn" },
+    hardLight: { backgroundBlendMode: "hard-light" },
+    softLight: { backgroundBlendMode: "soft-light" },
+    difference: { backgroundBlendMode: "difference" },
+    exclusion: { backgroundBlendMode: "exclusion" },
+    hue: { backgroundBlendMode: "hue" },
+    saturation: { backgroundBlendMode: "saturation" },
+    color: { backgroundBlendMode: "color" },
+    luminosity: { backgroundBlendMode: "luminosity" },
+    scroll: { backgroundAttachment: "scroll" },
+    fixed: { backgroundAttachment: "fixed" },
+    local: { backgroundAttachment: "local" },
   };
 
 
@@ -329,7 +398,7 @@ const UnpackedNativeCssProperties = {
   ...NativeCssTransformFunctions,
   filter: undefined,
   ...NativeCssFilterFunctions,
-  ...NativeCssGradientFunctions,
+  ...BackgroundFunctions,
 };
 
 
@@ -444,7 +513,7 @@ $capitalize = $textTransform(capitalize);
 $uppercase = $textTransform(uppercase);
 $lowercase = $textTransform(lowercase);
 $mathAuto = $textTransform(mathAuto);
-
+ 
  */
 const fontShorts = {
   bold: function (...args) { return this.$fontStyle("bold", ...args); },
@@ -473,9 +542,6 @@ const fontShorts = {
   uiSerif: function (...args) { return this.$fontFamily("uiSerif", ...args); },
   uiSansSerif: function (...args) { return this.$fontFamily("uiSansSerif", ...args); },
 }
-
-const bg = (...args) => ({ background: args.join(" ") || "var(--background-color)" });
-bg.scope = NativeCssProperties.background.scope;
 
 //todo do something like this instead:
 //   12><--var
