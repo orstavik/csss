@@ -242,6 +242,10 @@ const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
 function parseSelectorPipe(str) {
+  //todo body1 must have star at the end. body2 must have star at the start. The where is star doesn't work with this.
+  //todo also. I think that we should always have a star, and not end with empty. It is less confusing with ".something>*" than ".something>".
+  //todo this will make the selector far more readable! also, it will make the parsing of body1 and body2 easier.
+
   let [body1, body2] = str.split("|").map(parseSelectorComma);
   body1 = body1?.join(", ");
   if (!body2)
