@@ -96,13 +96,19 @@ function isComparator(str) {
   return `${snake}: ${num}${type}`;
 }
 
-const WORD = /^[a-zA-Z][a-zA-Z_0-9]*$/;
-
 export function parseMediaQuery(str) {
   if (str[0] !== "@")
     return { str };
-  if (str[1] !== "(")
-    debugger
+  if (str[1] !== "(") {
+    const m = str.slice(1).match(/^[a-z][a-z0-9_]*/i);
+    if (!m)
+      throw new SyntaxError(`Invalid media query: "${str}".`);
+    const word = m[0]
+    const t = MEDIA_WORDS[word];
+    if (!t)
+      throw new ReferenceError(word);
+    return { str: str.slice(1 + word.length), media: `@media (${t})` };
+  }
   let i = 2, tokens = [], level = 1;
   for (; i < str.length; i++) {
     if (str[i] == ",") tokens.push(str[i]);
@@ -123,7 +129,7 @@ export function parseMediaQuery(str) {
       const word = str.slice(start, i--);
       const t = isComparator(word) ?? MEDIA_WORDS[word];
       if (!t)
-        throw word.match(WORD) ?
+        throw word.match(/^[a-z][a-z_0-9]*$/i) ?
           new ReferenceError(word) :
           new SyntaxError(`Invalid media query: "${word}" in "${str}".`);
       tokens.push(`(${t})`);

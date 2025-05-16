@@ -45,9 +45,7 @@
     "@(aspectRatio==16px)": "Invalid aspectRatio: 16px",
     "@(resolution>1)": "Invalid resolution: 1",
     "@(height<=10)": "Invalid height: 10",
-  };
 
-  const tests2 = {
     // ─── single‐feature ──────────────────────────────
     "@(width<=768px)": "@media (max-width: 768px)",
     "@(!print)": "@media not (print)",
@@ -69,12 +67,11 @@
     "@(width<<100px)": 'Invalid media query: "width<<100px" in "@(width<<100px)".',
     "@(color>5px)": 'Invalid color: 5px',
     "@(resolution>1)": 'Invalid resolution: 1',
+
+    "@dark": "@media (prefers-color-scheme: dark)",
   };
 
-  // for (const [input, expected] of Object.entries({
-  //   "@(dark,light)": "@media (prefers-color-scheme: dark), (prefers-color-scheme: light)",
-  // })) {
-  for (const [input, expected] of Object.entries({ ...tests, ...tests2 })) {
+  for (const [input, expected] of Object.entries(tests)) {
     let res;
     try { res = parseMediaQuery(input)?.media; } catch (e) { res = e.message; }
     console.assert(res === expected, `Test failed for input "${input}": expected "${expected}", got "${res}"`);
