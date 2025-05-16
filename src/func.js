@@ -275,19 +275,25 @@ for (const cb of Object.values(NativeCssTransformFunctions))
   cb.scope = { ...NativeCssScopeMath };
 
 function doGradient(name, ...args) {
-  let repeat = args.findIndex(a => a instanceof Array);
-  if (repeat >= 0) {
-    repeat = args.splice(repeat, 1)[0];
+  let repeats = args.findIndex(a => a.repeats);
+  if (repeats >= 0) repeats = repeats = args.splice(repeats, 1)[0].repeats; else repeats = undefined;
+  let stops = args.findIndex(a => a.stops);
+  if (stops >= 0) stops = args.splice(stops, 1)[0].stops; else stops = undefined;
+  if (stops && repeats)
+    throw new SyntaxError(`Gradient function ${name} cannot have both stops and repeats`);
+  if (repeats)
+    name = "repeating-" + name;
+  if (repeats || stops) {
+    repeats ??= stops;
     const colors = [], args2 = [];
     for (const a of args)
       isColor(a) ? colors.push(a) : args2.push(a);
-    if (repeat.length != colors.length) repeat.unshift("0%");
-    if (repeat.length != colors.length) repeat.push("100%");
-    if (repeat.length != colors.length)
-      throw new SyntaxError(`Gradient function ${name} requires at least ${colors.length} colors, but got ${repeat.length - 2}`);
+    if (repeats.length != colors.length) repeats.unshift("0%");
+    if (repeats.length != colors.length) repeats.push("100%");
+    if (repeats.length != colors.length)
+      throw new SyntaxError(`Gradient function ${name} requires at least ${colors.length} colors, but got ${repeats.length - 2}`);
     for (let i = 0; i < colors.length; i++)
-      colors[i] += ` ${repeat[i]}`;
-    name = "repeating-" + name;
+      colors[i] += ` ${repeats[i]}`;
     args = [...args2, ...colors];
   }
   args = args.map(a => typeof a === 'string' ? a.replaceAll(/[A-Z]/g, ' $&').toLowerCase() : a);
@@ -301,7 +307,8 @@ const NativeCssGradientFunctions = {
 };
 for (const k in NativeCssGradientFunctions)
   NativeCssGradientFunctions[k].scope = {
-    repeat: (...args) => args,
+    repeat: (...args) => ({ repeats: args }),
+    stops: (...args) => ({ stops: args }),
     ...NativeCssProperties.color.scope,
     ...NativeCssScopeMath,
   };

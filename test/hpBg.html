@@ -47,3 +47,28 @@
     @layer items {}
   </style>
 </test-html>
+
+<test-html title="$linear(stops)">
+  <div class="$w(100vh) $h(100vh) $linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,stops(10%,25%,35%))">
+    hello sunshine!
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(100vh\) {
+        inline-size: 100vh;
+      }
+
+      .\$h\(100vh\) {
+        block-size: 100vh;
+      }
+
+      .\$linear\(0\.25turn\,\#3f87a6\,\#ebf8e1\,\#f69d3c\,stops\(10\%\,25\%\,35\%\)\) {
+        background: linear-gradient(0.25turn, rgb(63, 135, 166) 10%, rgb(235, 248, 225) 25%, rgb(246, 157, 60) 35%);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
