@@ -1,5 +1,5 @@
 <script type="module">
-  import { parseMediaQuery } from "/src/mediaFuncs.js";
+  import { parseCssShorts } from "/src/engine.js";
 
   const tests = {
     // ─── comparator tests ─── 
@@ -32,11 +32,11 @@
     "@(fastUpdate)": "@media (update: fast)",
 
     // ─── failure cases ───
-    "@(foo>10px)": `Invalid media query: "foo>10px" in "@(foo>10px)".`,
-    "@(width<>100px)": `Invalid media query: "width<>100px" in "@(width<>100px)".`,
+    "@(foo>10px)": `Invalid media query: "foo>10px" in "@(foo>10px)$bg(blue)".`,
+    "@(width<>100px)": `Invalid media query: "width<>100px" in "@(width<>100px)$bg(blue)".`,
     "@(unknownFeature)": "unknownFeature",
-    "@(width<<100px)": `Invalid media query: "width<<100px" in "@(width<<100px)".`,
-    "@(grid>1)": `Invalid media query: "grid>1" in "@(grid>1)".`,
+    "@(width<<100px)": `Invalid media query: "width<<100px" in "@(width<<100px)$bg(blue)".`,
+    "@(grid>1)": `Invalid media query: "grid>1" in "@(grid>1)$bg(blue)".`,
 
     // ─── error cases ───
     "@(width<=100)": "Invalid width: 100",
@@ -65,7 +65,7 @@
 
     // ─── error cases ─────────────────────────────────
     "@(foo)": 'foo',
-    "@(width<<100px)": 'Invalid media query: "width<<100px" in "@(width<<100px)".',
+    "@(width<<100px)": 'Invalid media query: "width<<100px" in "@(width<<100px)$bg(blue)".',
     "@(color>5px)": 'Invalid color: 5px',
     "@(resolution>1)": 'Invalid resolution: 1',
 
@@ -74,9 +74,9 @@
 
   for (const [input, expected] of Object.entries(tests)) {
     let media, str;
-    try { ({ media, str } = parseMediaQuery(input)); } catch (e) { media = e.message; }
+    try { ({ media, str } = parseCssShorts(input + "$bg(blue)")); } catch (e) { media = e.message; }
     if (str)
-      media = "badTail: " + str;
+      media = "badTail: " + str.slice(0, -7);
     console.assert(media === expected, `Test failed for input "${input}": expected "${expected}", got "${media}"`);
   }
 </script>

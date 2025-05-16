@@ -65,13 +65,9 @@ const MEDIA_WORDS = {
   all: "all",
 }
 
-// const SHORTS = {};
-
 // todo make this work with @media.
-// | Feature                  | Possible values                             | Example                                             |
-// | ------------------------ | ------------------------------------------- | --------------------------------------------------- |
-// | **overflow-block**       | `none`, `scroll`, `optional-paged`, `paged` | `@media (overflow-block: scroll) {…}`               |
-// | **overflow-inline**      | same as overflow-block                      | `@media (overflow-inline: none) {…}`                |
+// | **overflow-block**       | `none`, `scroll`, `optional-paged`, `paged` | `@media (overflow-block: scroll) {…}`
+// | **overflow-inline**      | `none`, `scroll`, `optional-paged`, `paged` | `@media (overflow-inline: none) {…}`
 const RENAME = {
   "overflow-block": "overflow-y",
   "overflow-inline": "overflow-x",
@@ -136,6 +132,15 @@ class UpgradeRegistry {
       csss.addRule(clazz, element);
   }
 }
+
+const upgrades = new UpgradeRegistry({
+  ...nativeAndMore,
+  ...colorPalette,
+  ...layouts,
+});
+
+const parseCssShorts = (str) => Rule.interpret(str, upgrades, RENAME);
+const registerShort = (name, func) => upgrades.registerShort(name, func);
 
 class SheetWrapper {
   rules = {};
@@ -227,11 +232,4 @@ class SheetWrapper {
   }
 }
 
-const upgrades = new UpgradeRegistry({
-  ...nativeAndMore,
-  ...colorPalette,
-  ...layouts,
-});
-
-const registerShort = (name, func) => upgrades.registerShort(name, func);
-export { SheetWrapper, registerShort };
+export { SheetWrapper, registerShort, parseCssShorts };
