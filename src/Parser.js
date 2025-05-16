@@ -1,30 +1,26 @@
-function interpretMedias(medias) {
-  return medias?.map(m => m.replace(/^@/, ""))
-    .map(m => m === "!" ? "not" : m)
-    .join(" and ").replaceAll("and , and", ",").replaceAll("not and ", "not ");
-}
+import { parseMediaQuery } from "./mediaFuncs.js";
 
 export class ShortBlock {
 
   constructor(exp) {
     this.exp = exp;
     this.clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
-    const { medias, shorts, selectorChain } = parse$Expression(exp);
+    const { str, media: medias } = parseMediaQuery(exp);
+    exp = str;
+    const { shorts, selectorChain } = parse$Expression(exp);
     this.medias = medias;
     this.exprList = shorts;
     this.selector = selectorChain;
     this.item = !!this.selector?.body2;
   }
 
-  interpret(scope, renames) {
+  interpret(scope, renames, MEDIA_WORDS) {
     if (!this.exprList)
       return;
-    let media = interpretMedias(this.medias);
-    media &&= `@media ${media}`;
     const selector = this.selector && this.selector?.interpret();
     let shorts = this.exprList?.map(s => s.interpret(scope));
     shorts &&= clashOrStack(shorts);
-    return new Rule(media, this.clazz + selector, shorts, this.item, renames);
+    return new Rule(this.medias, this.clazz + selector, shorts, this.item, renames);
   }
 }
 
@@ -238,23 +234,12 @@ function parseNestedExpression(short, ctx) {
   }
 }
 
-function parseMediaHead(str) {
-  let medias;
-  for (const m of str.matchAll(/(@(?:\([^)]+\)|[a-zA-Z][a-zA-Z0-9_-]*))|([,!])|\s|(.)/g)) {
-    if (m[3])
-      return { medias, rest: str.slice(m.index) || undefined };
-    if (m[1] ?? m[2])
-      (medias ??= []).push(m[1] ?? m[2]);
-  }
-  return { medias };
-}
-
+//todo move this into the ShortBlock
 function parse$Expression(exp) {
-  const { medias, rest } = parseMediaHead(exp);
-  let [selectorChain, ...shorts] = rest?.split("$");
+  let [selectorChain, ...shorts] = exp?.split("$");
   selectorChain &&= parseSelectorBody(selectorChain);
   shorts = shorts.map(s => parseNestedExpression(s, "$"));
-  return { medias, selectorChain, shorts };
+  return { selectorChain, shorts };
 }
 
 //todo we don't support nested :not(:has(...))

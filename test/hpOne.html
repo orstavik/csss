@@ -607,15 +607,15 @@
   </style>
 </test-html>
 
-<test-html title="@print,@screen:hover$border(solid,2px)|:valid$border(dotted,2px)|.first$border(dashed,2px)">
+<test-html title="@(print,screen):hover$border(solid,2px)|:valid$border(dotted,2px)|.first$border(dashed,2px)">
   <style>
     @layer container, items;
 
     @layer container {
 
-      @media print,
-      screen {
-        .\@print\,\@screen\:hover\$border\(solid\,2px\):where(:hover) {
+      @media (print),
+      (screen) {
+        .\@\(print\,screen\)\:hover\$border\(solid\,2px\):where(:hover) {
           border-style: solid;
           border-width: 2px;
         }
@@ -624,17 +624,17 @@
 
     @layer items {
 
-      @media print,
-      screen {
-        .\@print\,\@screen\:hover\|\:valid\$border\(dotted\,2px\):where(:hover)> :where(:valid) {
+      @media (print),
+      (screen) {
+        .\@\(print\,screen\)\:hover\|\:valid\$border\(dotted\,2px\):where(:hover)> :where(:valid) {
           border-style: dotted;
           border-width: 2px;
         }
       }
 
-      @media print,
-      screen {
-        .\@print\,\@screen\:hover\|\.first\$border\(dashed\,2px\):where(:hover)> :where(.first) {
+      @media (print),
+      (screen) {
+        .\@\(print\,screen\)\:hover\|\.first\$border\(dashed\,2px\):where(:hover)> :where(.first) {
           border-style: dashed;
           border-width: 2px;
         }
@@ -642,9 +642,9 @@
     }
   </style>
   <div class="
-    @print,@screen:hover$border(solid,2px)
-    @print,@screen:hover|:valid$border(dotted,2px)
-    @print,@screen:hover|.first$border(dashed,2px)">
+    @(print,screen):hover$border(solid,2px)
+    @(print,screen):hover|:valid$border(dotted,2px)
+    @(print,screen):hover|.first$border(dashed,2px)">
     hello
   </div>
 </test-html>

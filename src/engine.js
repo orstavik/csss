@@ -2,9 +2,15 @@ import { ShortBlock } from "./Parser.js";
 import nativeAndMore from "./func.js";
 import layouts from "./layout.js";
 import colorPalette from "./palette.js";
+import { MEDIA_WORDS } from "./mediaFuncs.js";
 
 const SHORTS = {};
 
+// todo make this work with @media.
+// | Feature                  | Possible values                             | Example                                             |
+// | ------------------------ | ------------------------------------------- | --------------------------------------------------- |
+// | **overflow-block**       | `none`, `scroll`, `optional-paged`, `paged` | `@media (overflow-block: scroll) {…}`               |
+// | **overflow-inline**      | same as overflow-block                      | `@media (overflow-inline: none) {…}`                |
 const RENAME = {
   "overflow-block": "overflow-y",
   "overflow-inline": "overflow-x",
@@ -40,6 +46,25 @@ class UpgradeRegistry {
     if (name2 in table)
       throw new Error(`Short name ${name} already exists`);
     table[name2] = func;
+    this.rerun(name);
+  }
+
+  get shorts(){
+    return SHORTS;
+  }
+
+  get medias(){
+    return MEDIA_WORDS;
+  }
+
+  registerMedia(name, txt){
+    if(name in MEDIA_WORDS)
+      throw new Error(`Media name ${name} already exists`);
+    MEDIA_WORDS[name] = txt;
+    this.rerun(`@${name}`);
+  }
+
+  rerun(name){
     const todos = this.enoughWaiting(name);
     if (!todos)
       return;
@@ -96,7 +121,7 @@ class SheetWrapper {
 
   addRule(str, el) {
     try {
-      const rule = new ShortBlock(str).interpret(this.shorts, RENAME);
+      const rule = new ShortBlock(str).interpret(this.shorts, RENAME, upgrades.medias);
       if (!rule) return;
       const { layer, registry } = rule.item ? this.items : this.container;
       const key = [rule.media, rule.selector].filter(Boolean).join(" { ");
