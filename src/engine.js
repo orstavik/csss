@@ -121,7 +121,7 @@ class SheetWrapper {
 
   addRule(str, el) {
     try {
-      const rule = ShortBlock.interpret(str, this.shorts, RENAME, upgrades.medias);
+      const rule = ShortBlock.interpret(str, upgrades, RENAME);
       if (!rule) return;
       const { layer, registry } = rule.item ? this.items : this.container;
       const key = [rule.media, rule.selector].filter(Boolean).join(" { ");

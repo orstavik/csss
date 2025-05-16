@@ -2,7 +2,8 @@ import { parseMediaQuery } from "./mediaFuncs.js";
 
 export class ShortBlock {
 
-  static interpret(exp, scope, renames, MEDIA_WORDS) {
+  static interpret(exp, registries, renames) {
+    const {shorts: scope, medias: MEDIA_WORDS} = registries;
     const clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
     const { str, media } = parseMediaQuery(exp, MEDIA_WORDS);
     exp = str;
