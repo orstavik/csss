@@ -274,6 +274,26 @@ const NativeCssTransformFunctions = {
 for (const cb of Object.values(NativeCssTransformFunctions))
   cb.scope = { ...NativeCssScopeMath };
 
+const ANIMATION_FUNCTIONS = {
+  linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,
+  ease: (...args) => `ease(${args.join(",")})`,
+  steps: (...args) => `steps(${args.join(",")})`,
+  cubicBezier: (...args) => `cubic-bezier(${args.join(",")})`,
+};
+
+NativeCssProperties.animation.scope = ANIMATION_FUNCTIONS;
+
+const UnpackedNativeCssProperties = {
+  ...NativeCssProperties,
+  transform: undefined,
+  ...NativeCssTransformFunctions,
+  filter: undefined,
+  ...NativeCssFilterFunctions,
+};
+
+
+
+//$bg
 function bgImpl(...args) {
   const res = {
     backgroundImage: undefined,
@@ -326,6 +346,7 @@ const BackgroundFunctions = {
   repeatingRadial: (...args) => doGradient("repeating-radial", ...args),
   repeatingConic: (...args) => doGradient("repeating-conic", ...args),
   bg,
+  background: bg,
 };
 
 for (const k in BackgroundFunctions)
@@ -381,28 +402,6 @@ for (const k in BackgroundFunctions)
     fixed: { backgroundAttachment: "fixed" },
     local: { backgroundAttachment: "local" },
   };
-
-
-const ANIMATION_FUNCTIONS = {
-  linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,
-  ease: (...args) => `ease(${args.join(",")})`,
-  steps: (...args) => `steps(${args.join(",")})`,
-  cubicBezier: (...args) => `cubic-bezier(${args.join(",")})`,
-};
-
-NativeCssProperties.animation.scope = ANIMATION_FUNCTIONS;
-
-const UnpackedNativeCssProperties = {
-  ...NativeCssProperties,
-  transform: undefined,
-  ...NativeCssTransformFunctions,
-  filter: undefined,
-  ...NativeCssFilterFunctions,
-  ...BackgroundFunctions,
-};
-
-
-
 
 //border: 2px 4px solid red blue;
 //$border(w(2px,4px),solid,c(red,blue))
@@ -581,8 +580,7 @@ export default {
   font,
   ...fontShorts,
   em: NativeCssProperties.fontSize,
-  bg,
-  background: bg,
+  ...BackgroundFunctions,
   w: width,
   h: height,
   width,
