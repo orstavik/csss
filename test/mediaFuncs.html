@@ -72,8 +72,10 @@
   };
 
   for (const [input, expected] of Object.entries(tests)) {
-    let res;
-    try { res = parseMediaQuery(input)?.media; } catch (e) { res = e.message; }
-    console.assert(res === expected, `Test failed for input "${input}": expected "${expected}", got "${res}"`);
+    let media, str;
+    try { ({ media, str } = parseMediaQuery(input)); } catch (e) { media = e.message; }
+    if (str)
+      media = "badTail: " + str;
+    console.assert(media === expected, `Test failed for input "${input}": expected "${expected}", got "${media}"`);
   }
 </script>

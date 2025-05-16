@@ -1,4 +1,4 @@
-const MEDIA_WORDS = {
+export const MEDIA_WORDS = {
   progressive: "scan: progressive",
   interlace: "scan: interlace",
   dim: "light-level: dim",
@@ -96,7 +96,7 @@ function isComparator(str) {
   return `${snake}: ${num}${type}`;
 }
 
-export function parseMediaQuery(str) {
+export function parseMediaQuery(str, register = MEDIA_WORDS) {
   if (str[0] !== "@")
     return { str };
   if (str[1] !== "(") {
@@ -104,7 +104,7 @@ export function parseMediaQuery(str) {
     if (!m)
       throw new SyntaxError(`Invalid media query: "${str}".`);
     const word = m[0]
-    const t = MEDIA_WORDS[word];
+    const t = register[word];
     if (!t)
       throw new ReferenceError(word);
     return { str: str.slice(1 + word.length), media: `@media (${t})` };
@@ -114,9 +114,7 @@ export function parseMediaQuery(str) {
     if (str[i] == ",") tokens.push(str[i]);
     else if (str[i] == "(") level++, tokens.push(str[i]);
     else if (str[i] == ")") {
-      level--;
-      if (level === 0)
-        break;
+      if (!--level) { i++; break; }
       tokens.push(str[i]);
     }
     else if (str[i] === "!") tokens.push("not");
@@ -127,7 +125,7 @@ export function parseMediaQuery(str) {
       while (i < str.length && /[^,()&|!]/.test(str[i]))
         i++;
       const word = str.slice(start, i--);
-      const t = isComparator(word) ?? MEDIA_WORDS[word];
+      const t = isComparator(word) ?? register[word];
       if (!t)
         throw word.match(/^[a-z][a-z_0-9]*$/i) ?
           new ReferenceError(word) :
