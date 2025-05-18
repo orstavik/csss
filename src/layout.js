@@ -1,10 +1,6 @@
 import { toLogicalFour, default as AllFunctions } from "./func.js";
 
-const O2 = "(?:(visible|hidden|clip)|(auto|scroll)(?:-snap(?:-mandatory)?)?)";
-const OVERFLOW2 = new RegExp(`^${O2}(?::${O2})?$`); //$block(hidden:scroll-snap-mandatory,...)
-
 //todo rename the text block layout unit to $page
-
 function defaultLayout(display, ...args) {
   const containerDefaults = {
     wordSpacing: "unset",
@@ -17,6 +13,8 @@ function defaultLayout(display, ...args) {
   return Object.assign({ display }, containerDefaults, ...args);
 }
 
+const O2 = "(?:(visible|hidden|clip)|(auto|scroll)(?:-snap(?:-mandatory)?)?)";
+const OVERFLOW2 = new RegExp(`^${O2}(?::${O2})?$`); //$block(hidden:scroll-snap-mandatory,...)
 function overflow(a) {
   const m = a.match(OVERFLOW2);
   if (!m) return;
@@ -29,26 +27,6 @@ function overflow(a) {
     if (man || man2) res.scrollSnapType += " mandatory";
   }
   return res;
-}
-
-function whiteSpace(a) { //$block(pre-wrap,...)
-  const m = a.match(/^(nowrap|pre|pre-wrap|pre-line|break-spaces|ellipsis)$/);
-  if (m?.[0] === "ellipsis") return { whiteSpace: "nowrap", textOverflow: m[0] };
-  if (m) return { whiteSpace: m[0] };
-}
-
-// function overflowWrap(a) { //$block(break-word,...)
-//   const m = a.match(/^(break-word|anywhere)$/);
-//   if (m) return { overflowWrap: m[0] };
-// }
-
-function wordBreak(a) { //$block(break-all,...)
-  const m = a.match(/^(break-all|keep-all)$/);
-  if (m) return { wordBreak: m[0] };
-}
-
-function wrap(a) {
-  return wordBreak(a) ?? overflow(a) ?? whiteSpace(a)// ?? overflowWrap(a); //?? hyphens(a) 
 }
 
 function checkNoArgs(args) {
@@ -111,6 +89,14 @@ const LAYOUT = {
   hyphens: { hyphens: "auto" },
   "break-word": { overflowWrap: "break-word" },
   "break-anywhere": { overflowWrap: "anywhere" },
+  "nowrap": { whiteSpace: "nowrap" },
+  "pre-wrap": { whiteSpace: "pre-wrap" },
+  "pre-line": { whiteSpace: "pre-line" },
+  "pre": { whiteSpace: "pre" },
+  "break-spaces": { whiteSpace: "break-spaces" },
+  "ellipsis": { whiteSpace: "nowrap", textOverflow: "ellipsis" },
+  "break-all": { wordBreak: "break-all" },
+  "keep-all": { wordBreak: "keep-all" },
 };
 
 const _LAYOUT = {
@@ -142,7 +128,7 @@ function block(...args) {
   args = args.map(a => {
     if (typeof a !== "string") return a;
     let m;
-    if (m = wrap(a))
+    if (m = overflow(a))
       return m;
     if (m = a.match(/^[abcs]$/))
       return ({ textAlign: TextAlignAliases[a[0]] });
@@ -173,7 +159,7 @@ function grid(...args) {
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
     let m;
-    if (m = wrap(a))
+    if (m = overflow(a))
       return m;
     // if (m = a.match(/(dense)-?(column|row|)/))
     //   return { gridAutoFlow: `${m[1]} ${m[2] || "row"}` };
@@ -252,7 +238,7 @@ _grid.scope = {
 function flex(...args) {
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
-    let m = wrap(a);
+    let m = overflow(a);
     if (m) return m;
     if (m = a.match(/^(column|column-reverse|row-reverse|row)$/)) return { flexDirection: a };
     if (m = a.match(/^(wrap|wrap-reverse|no-wrap)$/)) return { flexWrap: a };
@@ -265,7 +251,7 @@ function flex(...args) {
         alignItems: AlignItemsFlexAliases[i2],
       };
     }
-    if (m = wrap(a)) return m;
+    if (m = overflow(a)) return m;
     throw new ReferenceError(a);
   });
   return defaultLayout("flex", ...args);
