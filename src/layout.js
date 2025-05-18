@@ -150,7 +150,8 @@ function _block(...args) {
 }
 _block.scope = {
   ..._LAYOUT,
-  float: a => ({ float: "inline-" + a }),
+  "float-start": { float: "inline-start" },
+  "float-end": { float: "inline-end" },
   textIndent: AllFunctions.textIndent,
   indent: AllFunctions.textIndent,
 };
@@ -240,8 +241,6 @@ function flex(...args) {
     if (!(typeof a === "string")) return a;
     let m = overflow(a);
     if (m) return m;
-    if (m = a.match(/^(column|column-reverse|row-reverse|row)$/)) return { flexDirection: a };
-    if (m = a.match(/^(wrap|wrap-reverse|no-wrap)$/)) return { flexWrap: a };
     if (m = a.match(/^[abcsuvw.][abcsuvw.]?[abcs_]?$/)) {
       const [b, i = b, i2 = "."] = m[0];
       return {
@@ -251,12 +250,18 @@ function flex(...args) {
         alignItems: AlignItemsFlexAliases[i2],
       };
     }
-    if (m = overflow(a)) return m;
     throw new ReferenceError(a);
   });
   return defaultLayout("flex", ...args);
 }
 flex.scope = {
+  "column": { flexDirection: "column" },
+  "column-reverse": { flexDirection: "column-reverse" },
+  "row-reverse": { flexDirection: "row-reverse" },
+  "row": { flexDirection: "row" },
+  "wrap": { flexWrap: "wrap" },
+  "wrap-reverse": { flexWrap: "wrap-reverse" },
+  "no-wrap": { flexWrap: "nowrap" },
   placeContent: AllFunctions.placeContent,
   justifyContent: AllFunctions.justifyContent,
   alignContent: AllFunctions.alignContent,
