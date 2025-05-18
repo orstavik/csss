@@ -188,6 +188,8 @@ function diveDeep(tokens, top) {
     }
     // if (a.match?.(WORD)) 
     //   a = a.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase());
+    if (b === ")" && top && tokens.length)
+      throw "too many ')'";
     if (b === ")" || (top && b === undefined))
       return res.push(a), res;
     if (b == ",")
@@ -204,12 +206,9 @@ function parseNestedExpression(short) {
     return new Expression(tokensOG[0], []); //todo no calc top level
   const tokens = tokensOG.slice();
   try {
-    const res = diveDeep(tokens, true)[0];
-    if (tokens.length)
-      throw "too many ')'";
-    res.name = res.name;
-    return res;
+    return diveDeep(tokens, true)[0];
   } catch (e) {
+    //todo add the error string to the e.message
     const i = tokensOG.length - tokens.length;
     tokensOG.splice(i, 0, `{{{${e}}}}`);
     const msg = tokensOG.join("");
