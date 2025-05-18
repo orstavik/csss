@@ -14,7 +14,7 @@
   <script type="module">
     import { registerShort } from '/src/engine.js';
     await new Promise(r => setTimeout(r, 100));
-    registerShort('$unknown', a => ({ fontSize: a }));
+    registerShort('unknown', a => ({ fontSize: a }));
   </script>
 </test-html>
 <test-html title="$grid(unknown(22px))">
@@ -41,6 +41,6 @@
   <script type="module">
     import { registerShort } from '/src/engine.js';
     await new Promise(r => setTimeout(r, 100));
-    registerShort('$grid.unknown', a => ({ minWidth: a, maxWidth: a }));
+    registerShort('grid.unknown', a => ({ minWidth: a, maxWidth: a }));
   </script>
 </test-html>

@@ -833,8 +833,8 @@
   <div class="$lineClamp(2)"> hello </div>
   <script type="module">
     import { registerShort } from "/src/engine.js";
-    registerShort("$lineClamp", function (lines, ...args) {
-      return this.$block({
+    registerShort("lineClamp", function (lines, ...args) {
+      return this.block({
         display: "-webkit-box",
         WebkitLineClamp: lines,
         WebkitBoxOrient: "vertical",
@@ -871,7 +871,7 @@
     </div>
     <script type="module">
       import { registerShort } from "/src/engine.js";
-      registerShort("$grid.layout", () => ({ gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }));
+      registerShort("grid.layout", () => ({ gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }));
     </script>
   </main>
   <style>
@@ -934,8 +934,8 @@
   </main>
   <script type="module">
     import { registerShort } from "/src/engine.js";
-    registerShort("$flex2", function (...args) {
-      return this.$flex({
+    registerShort("flex2", function (...args) {
+      return this.flex({
         display: "flex",
         flexDirection: "row",
         gap: "1rem",
@@ -1009,7 +1009,7 @@
     </div>
     <script type="module">
       import { registerShort } from "/src/engine.js";
-      registerShort("$block.layout", function () {
+      registerShort("block.layout", function () {
         return this.$border(); //this throws an error
       });
     </script>

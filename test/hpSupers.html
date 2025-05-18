@@ -10,7 +10,7 @@
     <script type="module">
       import { registerShort } from '/src/engine.js';
       await new Promise(r => setTimeout(r, 100));
-      registerShort('$grid.hg', () => {
+      registerShort('grid.hg', () => {
         return ({
           gridTemplateRows: "auto 1fr auto",
           gridTemplateColumns: "auto 1fr auto",
@@ -18,11 +18,11 @@
           blockSize: "100vh"
         })
       });
-      registerShort('$_grid.hgHeader', function () { return this.column(1, 4); });
-      registerShort('$_grid.hgFooter', function () { return this.column(1, 4); });
-      registerShort('$_grid.hgLeft', function () { return this.column(1, 2); });
-      registerShort('$_grid.hgRight', function () { return this.column(3, 4); });
-      registerShort('$_grid.hgMain', function () { return this.column(2, 3); });
+      registerShort('_grid.hgHeader', function () { return this.column(1, 4); });
+      registerShort('_grid.hgFooter', function () { return this.column(1, 4); });
+      registerShort('_grid.hgLeft', function () { return this.column(1, 2); });
+      registerShort('_grid.hgRight', function () { return this.column(3, 4); });
+      registerShort('_grid.hgMain', function () { return this.column(2, 3); });
     </script>
     <div class="
                 $grid(hg)

@@ -79,7 +79,7 @@ class UpgradeRegistry {
 
   constructor(dict) {
     for (const [k, short] of Object.entries(dict))
-      this.registerShort("$" + k, short);
+      this.registerShort(k, short);
   }
 
   waitFor(name, element, clazz) {

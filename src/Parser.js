@@ -5,7 +5,7 @@ export class Rule {
     const { str, media } = parseMediaQuery(exp, MEDIA_WORDS);
     exp = str;
     let [sel, ...exprList] = exp?.split("$");
-    exprList = exprList.map(s => parseNestedExpression(s, "$"));
+    exprList = exprList.map(s => parseNestedExpression(s));
     exprList = exprList.map(s => s.interpret(scope));
     exprList &&= clashOrStack(exprList);
     let { selector, item } = parseSelectorPipe(sel);
@@ -201,13 +201,13 @@ function diveDeep(tokens, top) {
 function parseNestedExpression(short) {
   const tokensOG = [...short.matchAll(TOKENS)].map(processToken).filter(Boolean);
   if (tokensOG.length === 1)
-    return new Expression("$" + tokensOG[0], []); //todo no calc top level
+    return new Expression(tokensOG[0], []); //todo no calc top level
   const tokens = tokensOG.slice();
   try {
     const res = diveDeep(tokens, true)[0];
     if (tokens.length)
       throw "too many ')'";
-    res.name = "$" + res.name;
+    res.name = res.name;
     return res;
   } catch (e) {
     const i = tokensOG.length - tokens.length;
