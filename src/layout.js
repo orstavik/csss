@@ -37,10 +37,10 @@ function whiteSpace(a) { //$block(pre-wrap,...)
   if (m) return { whiteSpace: m[0] };
 }
 
-function overflowWrap(a) { //$block(break-word,...)
-  const m = a.match(/^(break-word|anywhere)$/);
-  if (m) return { overflowWrap: m[0] };
-}
+// function overflowWrap(a) { //$block(break-word,...)
+//   const m = a.match(/^(break-word|anywhere)$/);
+//   if (m) return { overflowWrap: m[0] };
+// }
 
 function wordBreak(a) { //$block(break-all,...)
   const m = a.match(/^(break-all|keep-all)$/);
@@ -48,7 +48,7 @@ function wordBreak(a) { //$block(break-all,...)
 }
 
 function wrap(a) {
-  return wordBreak(a) ?? overflow(a) ?? whiteSpace(a) ?? overflowWrap(a); //?? hyphens(a) 
+  return wordBreak(a) ?? overflow(a) ?? whiteSpace(a)// ?? overflowWrap(a); //?? hyphens(a) 
 }
 
 function checkNoArgs(args) {
@@ -109,6 +109,8 @@ const LAYOUT = {
   textAlign: AllFunctions.textAlign,
   shy: { hyphens: "manual" },
   hyphens: { hyphens: "auto" },
+  "break-word": { overflowWrap: "break-word" },
+  "break-anywhere": { overflowWrap: "anywhere" },
 };
 
 const _LAYOUT = {
