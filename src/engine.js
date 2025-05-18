@@ -1,5 +1,6 @@
 import { Rule } from "./Parser.js";
 import nativeAndMore from "./func.js";
+import fonts from "./font.js";
 import layouts from "./layout.js";
 import colorPalette from "./palette.js";
 
@@ -135,6 +136,7 @@ class UpgradeRegistry {
 
 const upgrades = new UpgradeRegistry({
   ...nativeAndMore,
+  ...fonts,
   ...colorPalette,
   ...layouts,
 });

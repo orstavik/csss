@@ -178,7 +178,7 @@ export function isColor(x) {
 // const SpecializedNativeCssFunctions = {
 //    element: (...args) => `element(${args.join(",")})`,
 //    paint: (...args) => `paint(${args.join(",")})`,
-//    env: (...args) => `env(${args.join(",")})`,   
+//    env: (...args) => `env(${args.join(",")})`,   //todo handle as css vars.
 //    path: (...args) => `path(${args.join(",")})`,
 //    imageSet: (...args) => `image-set(${args.join(",")})`,
 // };
@@ -411,9 +411,7 @@ function border(...args) {
     if (!(typeof a === "string")) return a;
     if (isColor(a))
       return { Color: a };
-    if (a.match(/solid|dotted|dashed|double|none|groove|ridge|inset|outset|hidden/))
-      return { Style: a };
-    if (isLength(a) || a.match(/(^(min|max|clamp)\()/) || a.match(/^(thin|medium|thick)$/))
+    if (isLength(a) || a.match(/(^(min|max|clamp)\()/))
       return { Width: a };
     return a; //todo this throws, right?
   });
@@ -443,104 +441,23 @@ border.scope = {
   color: borderColor,
   c: borderColor,
   ...transitionFunctionSet("border-width"),
+  solid: { Style: "solid" },
+  dotted: { Style: "dotted" },
+  dashed: { Style: "dashed" },
+  double: { Style: "double" },
+  groove: { Style: "groove" },
+  ridge: { Style: "ridge" },
+  inset: { Style: "inset" },
+  outset: { Style: "outset" },
+  hidden: { Style: "hidden" },
+  none: { Style: "none" },
+  thin: { Width: "thin" },
+  medium: { Width: "medium" },
+  thick: { Width: "thick" },
 };
 
 // NativeCssProperties.borderColor = (...args) => borderSwitch(toLogicalFour("Color", ...args));
 // NativeCssProperties.borderColor.scope = NativeCssProperties.color.scope;
-
-
-function isFontFamily(x) {
-  //"Zapf Dingbats"|"Arial Black"|"Andale Mono"|"Palatino Times"|"DejaVu Sans"|"DejaVu Serif"|"DejaVu Sans Mono"|"Liberation Sans"|"Liberation Serif"|"Liberation Mono"|"Nimbus Roman No9 L"|"Nimbus Sans L"|"Nimbus Mono L"|"Century Schoolbook L"|"URW Chancery L"|"URW Gothic L"|"URW Bookman L"|"Comic Sans MS"|"Apple Chancery"|"Marker Felt"|"Lucida Console"|"Lucida Sans Unicode"|"Palatino Linotype"|"Segoe UI"|"Times New Roman"|"Trebuchet MS"|"Lucida Grande"|"Hoefler Text"|"American Typewriter"|"Gill Sans"|"Book Antiqua"|"Century Gothic"|"Franklin Gothic Medium"|"Bookman Old Style"|"Brush Script MT"|"Helvetica Neue"|"Courier Monaco"|"sans-serif"|"system-ui"|"ui-serif"|"ui-sans-serif"|"ui-monospace"|"ui-rounded"|"-apple-system"
-  if (x.match?.(/^(serif|monospace|cursive|fantasy|emoji|math|fangsong|Arial|Calibri|Cambria|Candara|Consolas|Constantia|Corbel|Georgia|Impact|Tahoma|Verdana|Garamond|Helvetica|Geneva|Didot|Optima|Futura|Baskerville|Copperplate|Menlo|Monaco|Chalkboard|Wingdings|Webdings|Symbol|BlinkMacSystemFont|Roboto)$/i))
-    return x;
-  if (x[0] === "'" || x[0] === '"')
-    return x.replaceAll("+", " ");
-  if (x.match(/^url\(/))
-    return x;
-  const KNOWN_BAD_FONT_NAMES = {
-    "comic": "Comic Sans MS",
-    "comic sans": "Comic Sans MS",
-    "times": "Times New Roman",
-    "courier": "Courier New",
-    "palatino": "Palatino Linotype",
-    "helvetica": "Helvetica Neue",
-    "lucida": "Lucida Sans Unicode",
-  };
-  return KNOWN_BAD_FONT_NAMES[x];
-}
-//$font("Arial+Black",serif,bold,small-caps,ultra-condensed,capitalize,sans-serif,oblique(-10deg),ui-sans-serif)
-//$font("Arial+Black",sans-serif,ui-sans-serif,900,small-caps,ultra-condensed,capitalize,oblique(10deg))
-const FONT = {
-  fontStyle: x => x.match(/^(italic|oblique)$/i),
-  fontWeight: x => x.match(/^(bold|bolder|lighter|[1-9]00)$/i),
-  fontVariantCaps: x => x.match(/^(smallCaps|allSmallCaps|petiteCaps|allPetiteCaps|unicase|titlingCaps)$/i),
-  fontStretch: x => x.match(/^(ultraCondensed|extraCondensed|condensed|semiCondensed|normal|semiExpanded|expanded|extraExpanded|ultraExpanded)$/i),
-  textTransform: x => x.match(/^(capitalize|uppercase|lowercase|fullWidth|fullSizeKana|mathAuto)$/i),
-  letterSpacing: x => x.match(/^-?[0-9]*\.?[0-9]+([a-z]+|%)$/i),
-  // fontSize: x => x.match(/^(xxSmall|xSmall|small|medium|large|x-large|xx-large|smaller|larger)$/i),
-  // fontSizeAdjust: x => x.match(/^[0-9]*\.?[0-9]+$/),
-  // color: isColor,
-};
-function matchFontProperty(a) {
-  for (const type in FONT)
-    if (FONT[type](a))
-      return type;
-}
-
-function font(...args) {
-  const res = Object.entries(FONT).reduce((acc, [k, v]) => ((acc[k] = "unset"), acc), {});
-  let v;
-  for (const a of args) {
-    const type = matchFontProperty(a);
-    if (type)
-      res[type] = a;
-    else if (v = isFontFamily(a))
-      (res.fontFamily ??= []).push(v);
-    else
-      throw `Unrecognized font property: ${a}`;
-  }
-  return res;
-}
-font.scope = {
-  oblique: (...args) => ["oblique", ...args].join(" "),
-  url: (...args) => `url(${args.join(" ")})`,
-}
-
-/**
- * 
-$capitalize = $textTransform(capitalize);
-$uppercase = $textTransform(uppercase);
-$lowercase = $textTransform(lowercase);
-$mathAuto = $textTransform(mathAuto);
- 
- */
-const fontShorts = {
-  bold: function (...args) { return this.fontStyle("bold", ...args); },
-  italic: function (...args) { return this.fontStyle("italic", ...args); },
-  oblique: function (...args) { return this.fontStyle("oblique", ...args); },
-  smallCaps: function (...args) { return this.fontVariantCaps("smallCaps", ...args); },
-  allSmallCaps: function (...args) { return this.fontVariantCaps("allSmallCaps", ...args); },
-  petiteCaps: function (...args) { return this.fontVariantCaps("petiteCaps", ...args); },
-  allPetiteCaps: function (...args) { return this.fontVariantCaps("allPetiteCaps", ...args); },
-  unicase: function (...args) { return this.fontVariantCaps("unicase", ...args); },
-  titlingCaps: function (...args) { return this.fontVariantCaps("titlingCaps", ...args); },
-  ultraCondensed: function (...args) { return this.fontStretch("ultraCondensed", ...args); },
-  extraCondensed: function (...args) { return this.fontStretch("extraCondensed", ...args); },
-  condensed: function (...args) { return this.fontStretch("condensed", ...args); },
-  semiCondensed: function (...args) { return this.fontStretch("semiCondensed", ...args); },
-  semiExpanded: function (...args) { return this.fontStretch("semiExpanded", ...args); },
-  expanded: function (...args) { return this.fontStretch("expanded", ...args); },
-  extraExpanded: function (...args) { return this.fontStretch("extraExpanded", ...args); },
-  ultraExpanded: function (...args) { return this.fontStretch("ultraExpanded", ...args); },
-  serif: function (...args) { return this.fontFamily("serif", ...args); },
-  monospace: function (...args) { return this.fontFamily("monospace", ...args); },
-  cursive: function (...args) { return this.fontFamily("cursive", ...args); },
-  fantasy: function (...args) { return this.fontFamily("fantasy", ...args); },
-  sansSerif: function (...args) { return this.fontFamily("sansSerif", ...args); },
-  systemUi: function (...args) { return this.fontFamily("systemUi", ...args); },
-  uiSerif: function (...args) { return this.fontFamily("uiSerif", ...args); },
-  uiSansSerif: function (...args) { return this.fontFamily("uiSansSerif", ...args); },
-}
 
 //todo do something like this instead:
 //   12><--var
@@ -577,8 +494,6 @@ export default {
   borderRadius: undefined,
   // borderColor: undefined,
 
-  font,
-  ...fontShorts,
   em: NativeCssProperties.fontSize,
   ...BackgroundFunctions,
   w: width,
