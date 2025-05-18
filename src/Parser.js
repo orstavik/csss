@@ -365,7 +365,9 @@ function parseMediaQuery(str, register) {
         throw word.match(/^[a-z][a-z_0-9]*$/i) ?
           new ReferenceError(word) :
           new SyntaxError(`Invalid media query: "${word}" in "${str}".`);
-      tokens.push(`(${t})`);
+      if(t != "all" && t != "print" && t != "screen")
+        t = `(${t})`;
+      tokens.push(t);
     }
   }
   return { str: str.slice(i), media: `@media ${tokens.join(" ")}` };

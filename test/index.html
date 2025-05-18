@@ -15,12 +15,27 @@
 
 </script>
 
+<style>
+  test-html[state="error"] {
+    border-bottom: 3px solid red;
+  }
+
+  test-html[state="ok"] {
+    height: 3px;
+  }
+</style>
+
 <script type="module">
-  async function openTsts(time) {
+  async function openTsts(time, time2) {
     await new Promise(r => setTimeout(r, time));
     for (let t of document.querySelectorAll('test-html[state="error"]')) {
+      if (t.matches(':not([state="error"])'))
+        continue;
+      window.scrollTo(0, t.offsetTop - 100);
+      await new Promise(r => setTimeout(r, time2));
       t.setAttribute("active", "");
-      setTimeout(_ => t.removeAttribute("active"), 500);
+      await new Promise(r => setTimeout(r, time2));
+      t.removeAttribute("active");
     }
   }
 
@@ -35,7 +50,8 @@
   }
 
   (async function () {
-    await openTsts(3000);
+    await openTsts(2000, 300);
+    await openTsts(2000, 300);
   })();
   import("https://cdn.jsdelivr.net/gh/orstavik/TestHTML@2.1.2/TestHTMLexpected.js");
 </script>
