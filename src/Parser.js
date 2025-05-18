@@ -5,14 +5,12 @@ export class Rule {
     const { str, media } = parseMediaQuery(exp, MEDIA_WORDS);
     exp = str;
     let [sel, ...exprList] = exp?.split("$");
-    if (!exprList)
-      return;
     exprList = exprList.map(s => parseNestedExpression(s, "$"));
-    let shorts = exprList?.map(s => s.interpret(scope));
-    shorts &&= clashOrStack(shorts);
+    exprList = exprList.map(s => s.interpret(scope));
+    exprList &&= clashOrStack(exprList);
     let { selector, item } = parseSelectorPipe(sel);
     selector = clazz + selector;
-    const body = Object.entries(shorts).map(([k, v]) => {
+    const body = Object.entries(exprList).map(([k, v]) => {
       k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
       if (CSS.supports(k, "inherit"))
         if (!CSS.supports(k, v) && !CSS.supports(k = renames[k] ?? k, v))
@@ -27,10 +25,6 @@ export class Rule {
       key = `${media} { ${selector}`;
     }
     return { rule, key, item };
-    const layer = item ? "items" : "container";
-    rule = `@layer ${layer} { ${rule} }`;
-    key = `${layer} { ${key}`;
-    return { rule, key };
   }
 }
 
