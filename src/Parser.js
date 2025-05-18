@@ -11,6 +11,8 @@ export class Rule {
     let { selector, item } = parseSelectorPipe(sel);
     selector = clazz + selector;
     const body = Object.entries(exprList).map(([k, v]) => {
+      if (v.match?.(/^[a-zA-Z][a-zA-Z0-9]+$/))
+        v = v.replace(/[A-Z]/g, "-$&").toLowerCase();
       k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
       if (CSS.supports(k, "inherit"))
         if (!CSS.supports(k, v) && !CSS.supports(k = renames[k] ?? k, v))
@@ -88,8 +90,6 @@ const clashOrStack = (function () {
     for (const obj of shortsI) {
       for (let [k, v] of Object.entries(obj)) {
         if (v == null) continue;
-        if (v.match?.(/[A-Z]/) && v.match?.(/^[a-zA-Z][a-zA-Z0-9]+$/))
-          v = v.replace(/[A-Z]/g, "-$&").toLowerCase();
         if (!(k in res))
           res[k] = v;
         else if (k in STACKABLE_PROPERTIES)
