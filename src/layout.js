@@ -31,11 +31,6 @@ function overflow(a) {
   return res;
 }
 
-function hyphens(a) { //$block(shy,...)
-  const m = a.match(/^(hyphens|shy)$/);
-  if (m) return { hyphens: m[0] === "shy" ? "manual" : "auto" };
-}
-
 function whiteSpace(a) { //$block(pre-wrap,...)
   const m = a.match(/^(nowrap|pre|pre-wrap|pre-line|break-spaces|ellipsis)$/);
   if (m?.[0] === "ellipsis") return { whiteSpace: "nowrap", textOverflow: m[0] };
@@ -53,14 +48,14 @@ function wordBreak(a) { //$block(break-all,...)
 }
 
 function wrap(a) {
-  return wordBreak(a) ?? overflow(a) ?? whiteSpace(a) ?? hyphens(a) ?? overflowWrap(a);
+  return wordBreak(a) ?? overflow(a) ?? whiteSpace(a) ?? overflowWrap(a); //?? hyphens(a) 
 }
 
 function checkNoArgs(args) {
   if (args.some(a => a != null)) throw `This $short takes no arguments: ${args.join(", ")}")}`;
 }
 
-function lineClamp(num, ...ignored) {
+function lineClamp(num) {
   return {
     "display": "-webkit-box",
     WebkitLineClamp: num,
@@ -112,6 +107,8 @@ const LAYOUT = {
   p: toLogicalFour.bind(null, "padding"),
   scrollPadding: toLogicalFour.bind(null, "scroll-padding"),
   textAlign: AllFunctions.textAlign,
+  shy: { hyphens: "manual" },
+  hyphens: { hyphens: "auto" },
 };
 
 const _LAYOUT = {

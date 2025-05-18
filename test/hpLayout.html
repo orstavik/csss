@@ -1314,14 +1314,6 @@
             antidisestablishmentarianism.</p>
         </div>
       </div>
-
-      <div>
-        <h4>Manual Hyphens (shy)</h4>
-        <div class="$block(shy) $border $w(100px)">
-          <p>This text demonstrates manual hyphenation using the shy parameter. You would need to add soft hyphe&shy;ns
-            manually.</p>
-        </div>
-      </div>
     </div>
 
     <h3>Line Clamp</h3>
@@ -1388,20 +1380,6 @@
 
       .\$w\(80px\) {
         inline-size: 80px;
-      }
-
-      .\$block\(shy\) {
-        display: block;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: manual;
-        text-align: unset;
-        text-indent: unset;
-      }
-
-      .\$w\(100px\) {
-        inline-size: 100px;
       }
 
       .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
@@ -1571,6 +1549,51 @@
     }
   </style>
 </test-html>
+<test-html title="Layout X - hyphens">
+  <main>
+    <h4>Hyphens (shy/hyphens)</h4>
+    <div class="$w(100px) $block(shy)">
+      This text demonstrates manual hyphenation using the shy parameter. You would need to add soft hyphe&shy;ns
+      manually.
+    </div>
+    <div class="$flex(hyphens) $w(100px)">
+      This text demonstrates auto hyphenation using the shy parameter. You would need to add soft hyphe&shy;ns
+      manually.
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(100px\) {
+        inline-size: 100px;
+      }
+
+      .\$block\(shy\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: manual;
+        text-align: unset;
+        text-indent: unset;
+      }
+
+      .\$flex\(hyphens\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: auto;
+        text-align: unset;
+        text-indent: unset;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+
 <!-- <test-html title="Layout 14 - Grid Position Properties">
   <main>
     <h3>Individual Start/End Properties</h3>
