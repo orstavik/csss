@@ -1,25 +1,4 @@
 export class Rule {
-  constructor(media, selector, shorts, item, fallbackProps) {
-    this.media = media;
-    this.selector = selector;
-    this.shorts = shorts;
-    this.item = item;
-    this.fallbackProps = fallbackProps;
-  }
-  get rule() {
-    const body = Object.entries(this.shorts).map(([k, v]) => {
-      k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
-      if (CSS.supports(k, "inherit"))
-        if (!CSS.supports(k, v) && !CSS.supports(k = this.fallbackProps[k] ?? k, v))
-          throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
-      //the browser might not support the property, because the property is too modern.
-      return `  ${k}: ${v};`
-    }).join("\n");
-    return this.media ?
-      `${this.media} { ${this.selector} {\n${body}\n} }` :
-      `${this.selector} {\n${body}\n}`;
-  }
-
   static interpret(exp, registries, renames) {
     const { shorts: scope, medias: MEDIA_WORDS } = registries;
     const clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
@@ -31,8 +10,27 @@ export class Rule {
     exprList = exprList.map(s => parseNestedExpression(s, "$"));
     let shorts = exprList?.map(s => s.interpret(scope));
     shorts &&= clashOrStack(shorts);
-    const { selector, item } = parseSelectorPipe(sel);
-    return new Rule(media, clazz + selector, shorts, item, renames);
+    let { selector, item } = parseSelectorPipe(sel);
+    selector = clazz + selector;
+    const body = Object.entries(shorts).map(([k, v]) => {
+      k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
+      if (CSS.supports(k, "inherit"))
+        if (!CSS.supports(k, v) && !CSS.supports(k = renames[k] ?? k, v))
+          throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
+      //the browser might not support the property, because the property is too modern.
+      return `  ${k}: ${v};`
+    }).join("\n");
+    let rule = `${selector} {\n${body}\n}`;
+    let key = selector;
+    if (media) {
+      rule = `${media} { ${rule} }`;
+      key = `${media} { ${selector}`;
+    }
+    return { rule, key, item };
+    const layer = item ? "items" : "container";
+    rule = `@layer ${layer} { ${rule} }`;
+    key = `${layer} { ${key}`;
+    return { rule, key };
   }
 }
 

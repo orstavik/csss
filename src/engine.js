@@ -190,7 +190,7 @@ class SheetWrapper {
       const rule = Rule.interpret(str, upgrades, RENAME);
       if (!rule) return;
       const { layer, registry } = rule.item ? this.items : this.container;
-      const key = [rule.media, rule.selector].filter(Boolean).join(" { ");
+      const key = rule.key;
       let ruleAndPos = registry.get(key);
       if (!ruleAndPos) {
         layer.insertRule(rule.rule, layer.cssRules.length);
