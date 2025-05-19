@@ -99,7 +99,7 @@
   <div
     style="--picjpg: url('https://pikaso.cdnpk.net/private/production/1896828186/original-assistant-remove-background.png?token=exp=1757980800~hmac=a4698d06f4bc828c21e316dfb910f9f56f33b24a02086d65d594bf83d3adeacd');"
     class="$w(100vh) $h(100vh)
-  $bg(--picjpg,size(30%),noRepeat,center,luminosity)$bg(--picjpg,size(30%),noRepeat,left,luminosity)$linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,topRight,size(70%,70%))
+  $bg(--picjpg,size(30%),noRepeat,center,luminosity)$bg(--picjpg,size(30%),noRepeat,left,overlay)$linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,topRight,size(70%,70%))
   ">
     hello sunshine!
   </div>
@@ -122,7 +122,7 @@
         background-size: 30%, 30%, 70% 70%;
         background-origin: padding-box, padding-box, padding-box;
         background-clip: border-box, border-box, border-box;
-        background-blend-mode: luminosity, luminosity, normal;
+        background-blend-mode: luminosity, overlay, normal;
         background-attachment: scroll, scroll, scroll;
       }
     }
