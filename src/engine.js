@@ -145,6 +145,7 @@ const upgrades = new UpgradeRegistry({
 
 const parseCssShorts = (str) => Rule.interpret(str, upgrades, RENAME);
 const registerShort = (name, func) => upgrades.registerShort(name, func);
+const registerMedia = (name, txt) => upgrades.registerMedia(name, txt);
 
 class SheetWrapper {
   rules = {};
@@ -236,4 +237,4 @@ class SheetWrapper {
   }
 }
 
-export { SheetWrapper, registerShort, parseCssShorts };
+export { SheetWrapper, registerShort, parseCssShorts, registerMedia };

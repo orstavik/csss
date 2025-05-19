@@ -44,3 +44,25 @@
     registerShort('grid.unknown', a => ({ minWidth: a, maxWidth: a }));
   </script>
 </test-html>
+<test-html title="@xxl$w(20px)">
+  <div class="@xxl$w(20px)">sunshine</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      @media (min-width:1536px) {
+
+        .\@xxl\$w\(20px\) {
+          inline-size: 20px;
+        }
+      }
+    }
+
+    @layer items {}
+  </style>
+  <script type="module">
+    import { registerMedia } from '/src/engine.js';
+    await new Promise(r => setTimeout(r, 100));
+    registerMedia("xxl", "min-width:1536px");
+  </script>
+</test-html>
