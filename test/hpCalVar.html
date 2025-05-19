@@ -1,13 +1,20 @@
 <test-html title="Basic CSS Variables">
-  <div style="--my-color: blue;" class="$bg(--my-color)">
+  <div style="--color_my: blue;" class="$bg(--color_my)">
     This text should be blue from a CSS variable
   </div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$bg\(--my-color\) {
-        background: var(--my-color);
+      .\$bg\(--color_my\) {
+        background-image: linear-gradient(var(--color_my));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
       }
     }
 
@@ -15,8 +22,8 @@
   </style>
 </test-html>
 <test-html title="CSS Variables with Fallbacks">
-  <main style="--primary: red; --secondary: blue;">
-    <div class="$bg((--undefined,--primary))">
+  <main style="--color_primary: red; --color_secondary: blue;">
+    <div class="$bg((--color_undefined,--color_primary))">
       This text should use the fallback variable
     </div>
   </main>
@@ -24,8 +31,15 @@
     @layer container, items;
 
     @layer container {
-      .\$bg\(\(--undefined\,--primary\)\) {
-        background: var(--undefined, var(--primary));
+      .\$bg\(\(--color_undefined\,--color_primary\)\) {
+        background-image: linear-gradient(var(--color_undefined, var(--color_primary)));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
       }
     }
 
@@ -168,8 +182,8 @@
   </style>
 </test-html>
 <test-html title="CSS Variables with Multiple Fallbacks">
-  <main style="--primary: red; --secondary: blue;">
-    <div class="$bg((--undefined1,--primary,--secondary))">
+  <main style="--color_primary: red; --color_secondary: blue;">
+    <div class="$bg((--color_undefined1,--color_primary,--color_secondary))">
       Testing multiple fallbacks in CSS variables
     </div>
   </main>
@@ -177,8 +191,15 @@
     @layer container, items;
 
     @layer container {
-      .\$bg\(\(--undefined1\,--primary\,--secondary\)\) {
-        background: var(--undefined1, var(--primary, var(--secondary)));
+      .\$bg\(\(--color_undefined1\,--color_primary\,--color_secondary\)\) {
+        background-image: linear-gradient(var(--color_undefined1, var(--color_primary, var(--color_secondary))));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
       }
     }
 
@@ -214,7 +235,14 @@
       }
 
       .\$bg\(lightblue\) {
-        background: lightblue;
+        background-image: linear-gradient(lightblue);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
       }
 
       .\$padding\(1rem\) {

@@ -1,0 +1,82 @@
+<script type="module">
+  import { parseCssShorts } from "/src/engine.js";
+
+  const tests = {
+    // ─── comparator tests ─── 
+    "@(width<=768px)": "@media (max-width: 768px)",
+    "@(height>100.5em)": "@media (min-height: 100.51em)",
+    "@(aspectRatio==16/9)": "@media (aspect-ratio: 16/9)",
+    "@(resolution>=2dppx)": "@media (min-resolution: 2dppx)",
+    "@(color==8)": "@media (color: 8)",
+    "@(width>100.25cm)": "@media (min-width: 100.26cm)",
+    "@(resolution>=300dpi)": "@media (min-resolution: 300dpi)",
+    "@(aspectRatio==4/3)": "@media (aspect-ratio: 4/3)",
+    // ─── new “media word” tests (should all return the mapped string) ───
+    "@(dark)": "@media (prefers-color-scheme: dark)",
+    "@(light)": "@media (prefers-color-scheme: light)",
+    "@(noColorScheme)": "@media (prefers-color-scheme: no-preference)",
+    "@(screen)": "@media (screen)",
+    "@(print)": "@media (print)",
+    "@(p3)": "@media (color-gamut: p3)",
+    "@(srgb)": "@media (color-gamut: srgb)",
+    "@(highContrast)": "@media (prefers-contrast: high)",
+    "@(forcedContrast)": "@media (prefers-contrast: forced)",
+    "@(reducedMotion)": "@media (prefers-reduced-motion: reduce)",
+    "@(noReducedMotion)": "@media (prefers-reduced-motion: no-preference)",
+    "@(coarsePointer)": "@media (pointer: coarse)",
+    "@(finePointer)": "@media (pointer: fine)",
+    "@(anyHover)": "@media (any-hover: hover)",
+    "@(bitmap)": "@media (grid: 0)",
+    "@(pip)": "@media (display-mode: picture-in-picture)",
+    "@(slowUpdate)": "@media (update: slow)",
+    "@(fastUpdate)": "@media (update: fast)",
+
+    // ─── failure cases ───
+    "@(foo>10px)": `Invalid media query: "foo>10px" in "@(foo>10px)$bg(blue)".`,
+    "@(width<>100px)": `Invalid media query: "width<>100px" in "@(width<>100px)$bg(blue)".`,
+    "@(unknownFeature)": "unknownFeature",
+    "@(width<<100px)": `Invalid media query: "width<<100px" in "@(width<<100px)$bg(blue)".`,
+    "@(grid>1)": `Invalid media query: "grid>1" in "@(grid>1)$bg(blue)".`,
+
+    // ─── error cases ───
+    "@(width<=100)": "Invalid width: 100",
+    "@(aspectRatio<16px)": "Invalid aspectRatio: 16px",
+    "@(color>5px)": "Invalid color: 5px",
+    "@(aspectRatio==16px)": "Invalid aspectRatio: 16px",
+    "@(resolution>1)": "Invalid resolution: 1",
+    "@(height<=10)": "Invalid height: 10",
+
+    // ─── single‐feature ──────────────────────────────
+    "@(width<=768px)": "@media (max-width: 768px)",
+    "@(!print)": "@media not (print)",
+    "@(dark)": "@media (prefers-color-scheme: dark)",
+
+    // ─── OR at top level (comma) ────────────────────
+    "@(dark,light)": "@media (prefers-color-scheme: dark) , (prefers-color-scheme: light)",
+    "@(width>100px,height<200px)": "@media (min-width: 100.01px) , (max-height: 199.99px)",
+
+    // ─── AND inside a clause (&) ───────────────────
+    "@(width<=100px&height<=200px)": "@media (max-width: 100px) and (max-height: 200px)",
+    "@(!dark&highContrast)": "@media not (prefers-color-scheme: dark) and (prefers-contrast: high)",
+    "@(!(dark|highContrast))": "@media not ( (prefers-color-scheme: dark) or (prefers-contrast: high) )",
+
+    // ─── mixed OR + AND ─────────────────────────────
+    "@(dark,hover&coarsePointer)": "@media (prefers-color-scheme: dark) , (hover: hover) and (pointer: coarse)",
+
+    // ─── error cases ─────────────────────────────────
+    "@(foo)": 'foo',
+    "@(width<<100px)": 'Invalid media query: "width<<100px" in "@(width<<100px)$bg(blue)".',
+    "@(color>5px)": 'Invalid color: 5px',
+    "@(resolution>1)": 'Invalid resolution: 1',
+
+    "@dark": "@media (prefers-color-scheme: dark)",
+  };
+
+  for (const [input, expected] of Object.entries(tests)) {
+    let media, str;
+    try { ({ media, str } = parseCssShorts(input + "$bg(blue)")); } catch (e) { media = e.message; }
+    if (str)
+      media = "badTail: " + str.slice(0, -7);
+    console.assert(media === expected, `Test failed for input "${input}": expected "${expected}", got "${media}"`);
+  }
+</script>

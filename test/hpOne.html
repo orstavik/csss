@@ -188,7 +188,7 @@
       .\$color\(oklch\(green\,\.5\,\.85\,h\)\) {
         color: oklch(from oklch(from green .5 .85 h) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
         --background-color: oklch(from oklch(from green .5 .85 h) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: oklch(0.5 0.85 142.489);
+        border-color: oklch(from green 0.5 0.85 h);
       }
     }
 
@@ -231,15 +231,15 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="$w(min)">
-  <div class="$w(min)">
+<test-html title="$w(minContent)">
+  <div class="$w(minContent)">
     hello
   </div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$w\(min\) {
+      .\$w\(minContent\) {
         inline-size: min-content;
       }
     }
@@ -247,13 +247,13 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="$w(min,2px,max)">
+<test-html title="$w(minContent,2px,maxContent)">
   <style>
     @layer container, items;
 
     @layer container {
 
-      .\$w\(min\,2px\,max\) {
+      .\$w\(minContent\,2px\,maxContent\) {
         min-inline-size: min-content;
         inline-size: 2px;
         max-inline-size: max-content;
@@ -262,7 +262,7 @@
 
     @layer items {}
   </style>
-  <div class="$w(min,2px,max)">
+  <div class="$w(minContent,2px,maxContent)">
     hello
   </div>
 </test-html>
@@ -324,15 +324,17 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="$flex(...)|$_flex">
-  <div class="$flex(gap(4px),padding(22px,33px,44px))|$margin(,0.1px,,20%)">
+<test-html title="$flex(...) |$_flex">
+  <div class="
+  $flex(gap(4px),padding(22px,33px,44px))
+  |$_flex(margin(,0.1px,,20%))">
     hello
   </div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\)\|\$margin\(\,0\.1px\,\,20\%\) {
+      .\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -347,21 +349,21 @@
     }
 
     @layer items {
-      .\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\)\|\$margin\(\,0\.1px\,\,20\%\)>* {
+      .\|\$_flex\(margin\(\,0\.1px\,\,20\%\)\)>* {
         margin-inline: 0.1px 20%;
       }
     }
   </style>
 </test-html>
-<test-html title="$flex(cc)|*$margin(10px)">
-  <div class="$flex(cc)|*$margin(10px)">
+<test-html title="$flex(cc) |*$_flex(margin(10px))">
+  <div class="$flex(cc) |*$_flex(margin(10px))">
     hello
   </div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$flex\(cc\)\|\*\$margin\(10px\) {
+      .\$flex\(cc\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -375,7 +377,7 @@
     }
 
     @layer items {
-      .\$flex\(cc\)\|\*\$margin\(10px\)>* {
+      .\|\*\$_flex\(margin\(10px\)\)>* {
         margin: 10px;
       }
     }
@@ -404,12 +406,12 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="$flex|items">
+<test-html title="$flex |$_flex(items)">
   <style>
     @layer container, items;
 
     @layer container {
-      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$shrink\(0\)\$center\$w\(7rem\)\$h\(3rem\) {
+      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -425,7 +427,7 @@
     }
 
     @layer items {
-      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\)\|\*\$shrink\(0\)\$center\$w\(7rem\)\$h\(3rem\)>* {
+      .\|\*\$_flex\(shrink\(0\)\,center\,w\(7rem\)\,h\(3rem\)\)>* {
         flex-shrink: 0;
         align-self: center;
         text-align: center;
@@ -435,7 +437,8 @@
     }
   </style>
   <div class="
-    $flex(gap(1rem),visible:auto,padding(1rem))$w(80%)|*$shrink(0)$center$w(7rem)$h(3rem)">
+    $flex(gap(1rem),visible:auto,padding(1rem))$w(80%)
+    |*$_flex(shrink(0),center,w(7rem),h(3rem))">
     hello
   </div>
 </test-html>
@@ -490,47 +493,47 @@
 
 <test-html title="$font(times,serif,700,capitalize)">
   <main class="$font(times,serif,500,2px,italic)">
-    <h2 class="$font(helvetica,arial,sans-serif,900,capitalize)">
+    <h2 class="$font(helvetica,arial,'sans-serif',900,capitalize)">
       $font(fontFamily[], fontStyle, fontWeight, fontVariant, fontStretch, textTransform, letterSpacing)
     </h2>
     Notes:
     <p>
       For future maybe because they are not widely supported: text-wrap&hypens
     </p>
-    <p class="$font(comic+sans,lucida,'DejaVu+Sans+Mono')">goofy</p>
+    <p class="$font('comic+sans',lucida,'DejaVu+Sans+Mono')">goofy</p>
   </main>
   <style>
     @layer container, items;
 
     @layer container {
       .\$font\(times\,serif\,500\,2px\,italic\) {
-        font-family: "Times New Roman", serif;
         font-style: italic;
         font-weight: 500;
-        font-variant: initial;
-        font-stretch: initial;
-        text-transform: initial;
+        font-variant-caps: unset;
+        font-stretch: unset;
+        text-transform: unset;
         letter-spacing: 2px;
+        font-family: "Times New Roman", serif;
       }
 
-      .\$font\(helvetica\,arial\,sans-serif\,900\,capitalize\) {
-        font-family: "Helvetica Neue", arial, sans-serif;
-        font-style: initial;
+      .\$font\(helvetica\,arial\,\'sans-serif\'\,900\,capitalize\) {
+        font-style: unset;
         font-weight: 900;
-        font-variant: initial;
-        font-stretch: initial;
+        font-variant-caps: unset;
+        font-stretch: unset;
         text-transform: capitalize;
-        letter-spacing: initial;
+        letter-spacing: unset;
+        font-family: "Helvetica Neue", Arial, "sans-serif";
       }
 
-      .\$font\(comic\+sans\,lucida\,\'DejaVu\+Sans\+Mono\'\) {
-        font-family: "Comic Sans MS", "Lucida Sans Unicode", "DejaVu Sans Mono";
-        font-style: initial;
-        font-weight: initial;
-        font-variant: initial;
-        font-stretch: initial;
-        text-transform: initial;
-        letter-spacing: initial;
+      .\$font\(\'comic\+sans\'\,lucida\,\'DejaVu\+Sans\+Mono\'\) {
+        font-style: unset;
+        font-weight: unset;
+        font-variant-caps: unset;
+        font-stretch: unset;
+        text-transform: unset;
+        letter-spacing: unset;
+        font-family: "comic sans", "Lucida Sans Unicode", "DejaVu Sans Mono";
       }
     }
 
@@ -542,7 +545,10 @@
     $w(100%)
     $em(15px)
     
-    $block(s,gap(0.3em,1em))|*$indent(15%)|.head$indent(-5%)|.subheading$indent(0)
+    $block(s,gap(0.3em,1em))
+    |$_block(indent(15%))
+    |.head$_block(indent(-5%))
+    |.subheading$_block(indent(0))
     ">
     <h1 class="head">The Article Heading</h1>
     <h4 class="subheading">Sub-information... Lorem ipsum dolor sit amet. Et quia temporibus est officia ipsam a sunt
@@ -574,7 +580,7 @@
         font-size: 15px;
       }
 
-      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\) {
+      .\$block\(s\,gap\(0\.3em\,1em\)\) {
         display: block;
         word-spacing: 0.3em;
         line-height: 1em;
@@ -586,22 +592,22 @@
     }
 
     @layer items {
-      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\)>* {
+      .\|\$_block\(indent\(15\%\)\)>* {
         text-indent: 15%;
       }
 
-      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\)> :where(.head) {
+      .\|\.head\$_block\(indent\(-5\%\)\)> :where(.head) {
         text-indent: -5%;
       }
 
-      .\$block\(s\,gap\(0\.3em\,1em\)\)\|\*\$indent\(15\%\)\|\.head\$indent\(-5\%\)\|\.subheading\$indent\(0\)> :where(.subheading) {
+      .\|\.subheading\$_block\(indent\(0\)\)> :where(.subheading) {
         text-indent: 0px;
       }
     }
   </style>
 </test-html>
 
-<test-html title="@print,@screen:hover$border(solid,2px)|:valid$border(dotted,2px)|.first$border(dashed,2px)">
+<test-html title="@(print,screen):hover$border(solid,2px)|:valid$border(dotted,2px)|.first$border(dashed,2px)">
   <style>
     @layer container, items;
 
@@ -609,7 +615,7 @@
 
       @media print,
       screen {
-        .\@print\,\@screen\:hover\$border\(solid\,2px\)\|\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):where(:hover) {
+        .\@\(print\,screen\)\:hover\$border\(solid\,2px\):where(:hover) {
           border-style: solid;
           border-width: 2px;
         }
@@ -620,7 +626,7 @@
 
       @media print,
       screen {
-        .\@print\,\@screen\:hover\$border\(solid\,2px\)\|\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):where(:hover)> :where(:valid) {
+        .\@\(print\,screen\)\:hover\|\:valid\$border\(dotted\,2px\):where(:hover)> :where(:valid) {
           border-style: dotted;
           border-width: 2px;
         }
@@ -628,14 +634,17 @@
 
       @media print,
       screen {
-        .\@print\,\@screen\:hover\$border\(solid\,2px\)\|\:valid\$border\(dotted\,2px\)\|\.first\$border\(dashed\,2px\):where(:hover)> :where(.first) {
+        .\@\(print\,screen\)\:hover\|\.first\$border\(dashed\,2px\):where(:hover)> :where(.first) {
           border-style: dashed;
           border-width: 2px;
         }
       }
     }
   </style>
-  <div class="@print,@screen:hover$border(solid,2px)|:valid$border(dotted,2px)|.first$border(dashed,2px)">
+  <div class="
+    @(print,screen):hover$border(solid,2px)
+    @(print,screen):hover|:valid$border(dotted,2px)
+    @(print,screen):hover|.first$border(dashed,2px)">
     hello
   </div>
 </test-html>
@@ -734,16 +743,39 @@
   </style>
 
 </test-html>
+<test-html title="overline lineThrough">
+  <div class="$lineThrough(3px)">hello</div>
+  <div class="$overLine(2px)">sunshine</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$lineThrough\(3px\) {
+        text-decoration-line: line-through;
+        text-decoration-thickness: 3px;
+        text-decoration-style: solid;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+
+      .\$overLine\(2px\) {
+        text-decoration-line: overline;
+        text-decoration-thickness: 2px;
+        text-decoration-style: solid;
+        text-decoration-color: var(--text-decoration-color, currentcolor);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
 <test-html title="Text Decoration - Basic Test">
   <main>
     <h2>Grammar & Spelling</h2>
     <div class="$grammarError(2px)">grammarError(2px)</div>
     <h2>Default (no style)</h2>
-    <div class="$overLine(2px)">overLine(2px)</div>
     <div class="$overUnderLineThrough(2px)">overUnderLineThrough(2px)</div>
     <h2>Styles</h2>
     <div class="$wavyOverUnderLineThrough(2px)">wavyOverUnderLineThrough(2px)</div>
-    <div class="$lineThrough(2px)">lineThrough(2px)</div>
     <div class="$dottedUnderLine(2px)">dottedUnderLine(2px)</div>
     <div class="$dashedOverUnderLineThrough(2px)">dashedOverUnderLineThrough(2px)</div>
     <div class="$doubleOverLine(2px)">doubleOverLine(2px)</div>
@@ -758,15 +790,10 @@
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
 
-      .\$overLine\(2px\) {
-        text-decoration-line: overline;
-        text-decoration-thickness: 2px;
-        text-decoration-color: var(--text-decoration-color, currentcolor);
-      }
-
       .\$overUnderLineThrough\(2px\) {
         text-decoration-line: underline overline line-through;
         text-decoration-thickness: 2px;
+        text-decoration-style: solid;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
 
@@ -774,13 +801,6 @@
         text-decoration-line: underline overline line-through;
         text-decoration-thickness: 2px;
         text-decoration-style: wavy;
-        text-decoration-color: var(--text-decoration-color, currentcolor);
-      }
-
-      .\$lineThrough\(2px\) {
-        text-decoration-style: initial;
-        text-decoration-line: line-through;
-        text-decoration-thickness: 2px;
         text-decoration-color: var(--text-decoration-color, currentcolor);
       }
 
@@ -810,9 +830,18 @@
   </style>
 </test-html>
 <test-html title="$lineClamp(2)">
-  <div csss="$lineClamp(n)=$block(clamp(n));" class="$lineClamp(2)">
-    hello
-  </div>
+  <div class="$lineClamp(2)"> hello </div>
+  <script type="module">
+    import { registerShort } from "/src/engine.js";
+    registerShort("lineClamp", function (lines, ...args) {
+      return this.block({
+        display: "-webkit-box",
+        WebkitLineClamp: lines,
+        WebkitBoxOrient: "vertical",
+        overflowY: "hidden"
+      }, ...args);
+    });
+  </script>
   <style>
     @layer container, items;
 
@@ -834,20 +863,22 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="Bug: `display:grid`">
-  <main csss="
-    $layout = $grid(cols(1fr,1fr,1fr))$gap(1rem);
-     ">
-    <div class="$layout $grid(gap(2rem))">
-      <div class="$color(white,blue,) $bg() $padding(1rem) $textAlign(center)">1</div>
-      <div class="$color(white,yellow,) $bg() $padding(1rem) $textAlign(center)">2</div>
+<test-html title="$grid(layout,gap(2rem))">
+  <main style="--color_bg: pink;" csss="OLD: $layout = $grid(cols(1fr,1fr,1fr))$gap(1rem);">
+    <div class="$grid(layout,gap(2rem))">
+      <div class="$color(white,blue,) $bg(--color_bg) $padding(1rem) $textAlign(center)">1</div>
+      <div class="$color(white,yellow,) $bg(--color_bg) $padding(1rem) $textAlign(center)">2</div>
     </div>
+    <script type="module">
+      import { registerShort } from "/src/engine.js";
+      registerShort("grid.layout", () => ({ gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }));
+    </script>
   </main>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$layout {
+      .\$grid\(layout\,gap\(2rem\)\) {
         display: grid;
         word-spacing: unset;
         line-height: unset;
@@ -856,17 +887,6 @@
         text-align: unset;
         text-indent: unset;
         grid-template-columns: 1fr 1fr 1fr;
-        gap: 1rem;
-      }
-
-      .\$grid\(gap\(2rem\)\) {
-        display: grid;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
-        text-align: unset;
-        text-indent: unset;
         gap: 2rem;
       }
 
@@ -876,8 +896,15 @@
         border-color: white;
       }
 
-      .\$bg\(\) {
-        background: var(--background-color);
+      .\$bg\(--color_bg\) {
+        background-image: linear-gradient(var(--color_bg));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
       }
 
       .\$padding\(1rem\) {
@@ -898,20 +925,30 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="Bug: `display:flex`">
-  <main csss="
-    $flex = $flex(row,gap(1rem),textAlign(center),padding(1rem));
-  ">
-    <div class="$flex">
+<test-html title="$flex2">
+  <main csss="OLD.  $flex2 = $flex(row,gap(1rem),textAlign(center),padding(1rem));">
+    <div class="$flex2">
       <div class="$color(white,red,) $bg(red)">1</div>
       <div class="$color(white,green,) $bg(green)">2</div>
     </div>
   </main>
+  <script type="module">
+    import { registerShort } from "/src/engine.js";
+    registerShort("flex2", function (...args) {
+      return this.flex({
+        display: "flex",
+        flexDirection: "row",
+        gap: "1rem",
+        textAlign: "center",
+        padding: "1rem"
+      }, ...args)
+    });
+  </script>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$flex {
+      .\$flex2 {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -931,7 +968,14 @@
       }
 
       .\$bg\(red\) {
-        background: red;
+        background-image: linear-gradient(red);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
       }
 
       .\$color\(white\,green\,\) {
@@ -941,7 +985,14 @@
       }
 
       .\$bg\(green\) {
-        background: green;
+        background-image: linear-gradient(green);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
       }
     }
 
@@ -949,30 +1000,24 @@
   </style>
 </test-html>
 <test-html title="Bug: empty argument on supershorts">
-  <main csss="
-    $layout = $block$border;
-  ">
-    <div class="$layout">
+  <main csss="OLD:   $layout = $block$border;  ">
+    <div class="$block(layout)">
       <h1>Hello Sunshine! This is error.</h1>
     </div>
     <div class="$block $border">
       <h1>Hello Sunshine! No error?</h1>
     </div>
+    <script type="module">
+      import { registerShort } from "/src/engine.js";
+      registerShort("block.layout", function () {
+        return this.$border(); //this throws an error
+      });
+    </script>
   </main>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$layout {
-        display: block;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
-        text-align: unset;
-        text-indent: unset;
-        border-style: solid;
-      }
 
       .\$block {
         display: block;
@@ -993,16 +1038,19 @@
   </style>
 </test-html>
 
-
-
-<!--
-<test-html title=":dark=@media(prefers-color-scheme:dark);">
-  <div css=":dark=@media(prefers-color-scheme:dark);">
-    <div class=":dark$w(10px)">
-      hello
-    </div>
-  </div>
+<test-html title="transition">
+  <div class="$border(dotted,50px,easeIn(10s))">Hello Sunshine!</div>
   <style>
+    @layer container, items;
+
+    @layer container {
+      .\$border\(dotted\,50px\,easeIn\(10s\)\) {
+        border-style: dotted;
+        border-width: 50px;
+        transition: border-width 10s ease-in;
+      }
+    }
+
+    @layer items {}
   </style>
 </test-html>
--->
