@@ -1,31 +1,129 @@
 <test-html title="linear background">
-  <body class="$w(100vh) $h(100vh) $linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c)">
-    <div class=""></div>
-hello sunshine!
-  </body>
+  <div class="$w(100vh) $h(100vh) $linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c)">
+    hello sunshine!
+  </div>
   <style>
     @layer container, items;
 
     @layer container {
+      .\$w\(100vh\) {
+        inline-size: 100vh;
+      }
+
+      .\$h\(100vh\) {
+        block-size: 100vh;
+      }
+
       .\$linear\(0\.25turn\,\#3f87a6\,\#ebf8e1\,\#f69d3c\) {
-        background: linear-gradient(0.25turn, #3f87a6, #ebf8e1, #f69d3c);
+        background-image: linear-gradient(0.25turn, rgb(63, 135, 166), rgb(235, 248, 225), rgb(246, 157, 60));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
       }
     }
 
     @layer items {}
   </style>
 </test-html>
-<test-html title="bg blend mode">
-  <body class="$w(100vh) $h(100vh)
-  $bg(url(--pic.jpg),30%,noRepeat,center,blend(luminosity))$linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,size(100%,100%))">
-hello sunshine!
-  </body>
+
+<test-html title="$repeatingLinear(stops)">
+  <div class="$w(100vh) $h(100vh) $repeatingLinear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,stops(10%,67%))">
+    hello sunshine!
+  </div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$linear\(0\.25turn\,\#3f87a6\,\#ebf8e1\,\#f69d3c\) {
-        background: linear-gradient(0.25turn, #3f87a6, #ebf8e1, #f69d3c);
+      .\$w\(100vh\) {
+        inline-size: 100vh;
+      }
+
+      .\$h\(100vh\) {
+        block-size: 100vh;
+      }
+
+      .\$repeatingLinear\(0\.25turn\,\#3f87a6\,\#ebf8e1\,\#f69d3c\,stops\(10\%\,67\%\)\) {
+        background-image: repeating-linear-gradient(0.25turn, rgb(63, 135, 166) 10%, rgb(235, 248, 225) 67%, rgb(246, 157, 60));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+
+<test-html title="$linear(stops)">
+  <div class="$w(100vh) $h(100vh) $linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,stops(10%,25%,35%))">
+    hello sunshine!
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(100vh\) {
+        inline-size: 100vh;
+      }
+
+      .\$h\(100vh\) {
+        block-size: 100vh;
+      }
+
+      .\$linear\(0\.25turn\,\#3f87a6\,\#ebf8e1\,\#f69d3c\,stops\(10\%\,25\%\,35\%\)\) {
+        background-image: linear-gradient(0.25turn, rgb(63, 135, 166) 10%, rgb(235, 248, 225) 25%, rgb(246, 157, 60) 35%);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+
+<test-html title="bg blend mode">
+
+  <div
+    style="--picjpg: url('https://pikaso.cdnpk.net/private/production/1896828186/original-assistant-remove-background.png?token=exp=1757980800~hmac=a4698d06f4bc828c21e316dfb910f9f56f33b24a02086d65d594bf83d3adeacd');"
+    class="$w(100vh) $h(100vh)
+  $bg(--picjpg,size(30%),noRepeat,center,luminosity)$bg(--picjpg,size(30%),noRepeat,left,overlay)$linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,topRight,size(70%,70%))
+  ">
+    hello sunshine!
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(100vh\) {
+        inline-size: 100vh;
+      }
+
+      .\$h\(100vh\) {
+        block-size: 100vh;
+      }
+
+      .\$bg\(--picjpg\,size\(30\%\)\,noRepeat\,center\,luminosity\)\$bg\(--picjpg\,size\(30\%\)\,noRepeat\,left\,luminosity\)\$linear\(0\.25turn\,\#3f87a6\,\#ebf8e1\,\#f69d3c\,topRight\,size\(70\%\,70\%\)\) {
+        background-image: var(--picjpg), var(--picjpg), linear-gradient(0.25turn, #3f87a6, #ebf8e1, #f69d3c);
+        background-position: center center, left center, right top;
+        background-repeat: no-repeat, no-repeat, repeat;
+        background-size: 30%, 30%, 70% 70%;
+        background-origin: padding-box, padding-box, padding-box;
+        background-clip: border-box, border-box, border-box;
+        background-blend-mode: luminosity, overlay, normal;
+        background-attachment: scroll, scroll, scroll;
       }
     }
 
