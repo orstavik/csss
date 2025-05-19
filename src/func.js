@@ -112,12 +112,15 @@ const NativeColorsFunctions = (function () {
     const a = name.match(/^(rgb|hsl)$/) ? "a" : "";
     return `${name}${a}(${args.slice(0, 3).join(SEP)} / ${args[3]})`;
   }
-  function nativeCssColorSpaceFunction(...args) {
+  //todo untested!!
+  function nativeCssColorSpaceFunction(space, ...args) {
     if (args.length < 3 || args.length > 5)
       throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
-    const from_ = CSS.supports("color", args[0]) ? `from ${args.shift()}` : "";
-    const _alpha = args.length == 4 ? ` / ${args.pop()}` : "";
-    return `${this.name}(${from_}${args.join(" ")}${_alpha})`;
+    const from = CSS.supports("color", args[0]) && args.shift();
+    if (args.length == 4) args.splice(-1, 0, "/");
+    args.unshift(space);
+    if (from) args.unshift("from", from);
+    return `color(${args.join(" ")})`;
   }
   function nativeCssColorMixFunction(cSpace, ...args) {
     cSpace = "in " + cSpace.replaceAll("_", " "); //we don't support '_' in --var-names
@@ -130,8 +133,9 @@ const NativeColorsFunctions = (function () {
     if (others.length) throw "hash(can only have 1 argument)";
     //#123 => hash(123) => #123
     //#primary_a80 => hash(primary) => var(--color_primary_a80)
-    return !a.match(/^[a-f0-9]{3,8}$/) || a.length == 5 || a.length == 7 ?
-      `var(--color_${a})` : `#${a}`;
+    if (a.match(/^[a-f0-9]{3,8}$/) && a.length != 5 && a.length != 7)
+      return `#${a}`;
+    return `var(--color_${a})`;
   }
 
   const res = {
@@ -145,7 +149,16 @@ const NativeColorsFunctions = (function () {
     lch: (...args) => nativeCssColorFunction("lch", ...args),
     oklab: (...args) => nativeCssColorFunction("oklab", ...args),
     oklch: (...args) => nativeCssColorFunction("oklch", ...args),
-    color: nativeCssColorSpaceFunction,
+    srgb: (...args) => nativeCssColorSpaceFunction("srgb", ...args),
+    srgbLinear: (...args) => nativeCssColorSpaceFunction("srgb-linear", ...args),
+    displayP3: (...args) => nativeCssColorSpaceFunction("display-p3", ...args),
+    a98Rgb: (...args) => nativeCssColorSpaceFunction("a98-rgb", ...args),
+    prophotoRgb: (...args) => nativeCssColorSpaceFunction("prophoto-rgb", ...args),
+    rec2020: (...args) => nativeCssColorSpaceFunction("rec2020", ...args),
+    xyz: (...args) => nativeCssColorSpaceFunction("xyz", ...args),
+    xyzD50: (...args) => nativeCssColorSpaceFunction("xyz-d50", ...args),
+    xyzD65: (...args) => nativeCssColorSpaceFunction("xyz-d65", ...args),
+    color: (...args) => nativeCssColorSpaceFunction("srgb", ...args),
     colorMix: nativeCssColorMixFunction,
   };
   for (const cb of Object.values(res))
@@ -156,7 +169,8 @@ const NativeColorsFunctions = (function () {
 const ColorNames = /^(aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen)$/i.source;
 const ColorFunctionStart = /^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color|colorMix)\(/.source;
 const ColorVar = /^var\(--color_/.source;
-const ColorString = new RegExp(`${ColorNames}|${ColorFunctionStart}|${ColorVar}`);
+const ColorHash = /^#[a-fA-F0-9]{3,8}$/.source;
+const ColorString = new RegExp(`${ColorNames}|${ColorFunctionStart}|${ColorVar}|${ColorHash}`);
 
 export function isColor(x) {
   return ColorString.test(x) && x;
@@ -165,7 +179,7 @@ export function isColor(x) {
 // const SpecializedNativeCssFunctions = {
 //    element: (...args) => `element(${args.join(",")})`,
 //    paint: (...args) => `paint(${args.join(",")})`,
-//    env: (...args) => `env(${args.join(",")})`,   
+//    env: (...args) => `env(${args.join(",")})`,   //todo handle as css vars.
 //    path: (...args) => `path(${args.join(",")})`,
 //    imageSet: (...args) => `image-set(${args.join(",")})`,
 // };
@@ -261,26 +275,6 @@ const NativeCssTransformFunctions = {
 for (const cb of Object.values(NativeCssTransformFunctions))
   cb.scope = { ...NativeCssScopeMath };
 
-//UNPACKED $gradient scope functions
-const NativeCssGradientFunctions = {
-  "linearGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "radialGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "conicGradient": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "repeatingLinearGradient": (...args) => ({ background: `repeating-linear-gradient(${args.join(",")})` }),
-  "repeatingRadialGradient": (...args) => ({ background: `repeating-radial-gradient(${args.join(",")})` }),
-  "repeatingConicGradient": (...args) => ({ background: `repeating-conic-gradient(${args.join(",")})` }),
-  "radial": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "conic": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-  "repeatingLinear": (...args) => ({ background: `repeating-linear-gradient(${args.join(",")})` }),
-  "repeatingRadial": (...args) => ({ background: `repeating-radial-gradient(${args.join(",")})` }),
-  "repeatingConic": (...args) => ({ background: `repeating-conic-gradient(${args.join(",")})` }),
-  //collides with {transition: linear()}, but is done as a scope function now, so no problem
-  "linear": (...args) => ({ background: `linear-gradient(${args.join(",")})` }),
-};
-for (const k in NativeCssGradientFunctions)
-  NativeCssGradientFunctions[k].scope = { ...NativeCssScopeMath, ...NativeColorsFunctions };
-
-
 const ANIMATION_FUNCTIONS = {
   linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,
   ease: (...args) => `ease(${args.join(",")})`,
@@ -296,11 +290,119 @@ const UnpackedNativeCssProperties = {
   ...NativeCssTransformFunctions,
   filter: undefined,
   ...NativeCssFilterFunctions,
-  ...NativeCssGradientFunctions,
 };
 
 
 
+//$bg
+function bgImpl(...args) {
+  const res = {
+    backgroundImage: undefined,
+    backgroundPosition: "0% 0%",
+    backgroundRepeat: "repeat",
+    backgroundSize: "auto auto",
+    backgroundOrigin: "padding-box",
+    backgroundClip: "border-box",
+    backgroundBlendMode: "normal",
+    backgroundAttachment: "scroll",
+  };
+  const colors = [], args2 = [];
+  for (const a of args)
+    (a && typeof a === 'object') ? Object.assign(res, a) :
+      isColor(a) ? colors.push(a) :
+        args2.push(a.replaceAll(/[A-Z]/g, ' $&').toLowerCase());
+  return { res, colors, args2 };
+}
+
+function doGradient(name, ...args) {
+  const { res, colors, args2 } = bgImpl(...args);
+  if (res.stops) {
+    for (let i = 0; i < res.stops?.length && i < colors.length; i++)
+      colors[i] += " " + res.stops[i];
+    delete res.stops;
+  }
+  res.backgroundImage = `${name}-gradient(${[...args2, ...colors].join(",")})`;
+  return res;
+}
+
+function bg(...args) {
+  const { res, colors, args2 } = bgImpl(...args);
+  if (!colors.length && !args2.length)
+    throw new SyntaxError(`$bg(${args.join(",")}) is missing a color or url argument.`);
+  if (colors.length > 1)
+    throw new SyntaxError(`use $bg(color1,left)$bg(color2,right) for layered backgrounds, not $bg(${colors.join(",")}).`);
+  if (args2.length > 1)
+    throw new SyntaxError(`use $bg(url1)$bg(url2) for layered backgrounds, not $bg(${args2.join(",")}).`);
+  if (colors.length && args2.length)
+    throw new SyntaxError(`use $bg(color)$bg(url) for layered backgrounds, not $bg(${colors.join(",")},${args2.join(",")}).`);
+  res.backgroundImage = colors.length ? `linear-gradient(${colors[0]})` : args2[0];
+  return res;
+}
+
+const BackgroundFunctions = {
+  linear: (...args) => doGradient("linear", ...args),
+  radial: (...args) => doGradient("radial", ...args),
+  conic: (...args) => doGradient("conic", ...args),
+  repeatingLinear: (...args) => doGradient("repeating-linear", ...args),
+  repeatingRadial: (...args) => doGradient("repeating-radial", ...args),
+  repeatingConic: (...args) => doGradient("repeating-conic", ...args),
+  bg,
+  background: bg,
+};
+
+for (const k in BackgroundFunctions)
+  BackgroundFunctions[k].scope = {
+    stops: (...args) => ({ stops: args }),
+    ...NativeCssProperties.background.scope,
+    ...NativeCssScopeMath, //todo do we need this, or is it covered by background above?
+    pos: (block = "0", inline = "0") => ({ backgroundPosition: `${block[0] === "-" ? `bottom ${block.slice(1)}` : block} ${inline[0] === "-" ? `right ${inline.slice(1)}` : inline}` }),
+    position: (block = "0", inline = "0") => ({ backgroundPosition: `${block[0] === "-" ? `bottom ${block.slice(1)}` : block} ${inline[0] === "-" ? `right ${inline.slice(1)}` : inline}` }),
+    size: (inline, block = "auto") => ({ backgroundSize: `${inline} ${block}` }),
+    top: { backgroundPosition: "top" },
+    bottom: { backgroundPosition: "bottom" },
+    left: { backgroundPosition: "left" },
+    right: { backgroundPosition: "right" },
+    center: { backgroundPosition: "center" },
+    topLeft: { backgroundPosition: "top left" },
+    topRight: { backgroundPosition: "top right" },
+    bottomLeft: { backgroundPosition: "bottom left" },
+    bottomRight: { backgroundPosition: "bottom right" },
+    topCenter: { backgroundPosition: "top center" },
+    bottomCenter: { backgroundPosition: "bottom center" },
+    leftCenter: { backgroundPosition: "left center" },
+    rightCenter: { backgroundPosition: "right center" },
+    repeatX: { backgroundRepeat: "repeat-x" },
+    repeatY: { backgroundRepeat: "repeat-y" },
+    space: { backgroundRepeat: "space" },
+    round: { backgroundRepeat: "round" },
+    noRepeat: { backgroundRepeat: "no-repeat" },
+    cover: { backgroundSize: "cover" },
+    contain: { backgroundSize: "contain" },
+    contentBox: { backgroundOrigin: "content-box" },
+    borderBox: { backgroundOrigin: "border-box" },
+    clipPaddingBox: { backgroundClip: "padding-box" },
+    clipContentBox: { backgroundClip: "content-box" },
+    clipText: { backgroundClip: "text" },
+    clipBorderArea: { backgroundClip: "border-area" },
+    multiply: { backgroundBlendMode: "multiply" },
+    screen: { backgroundBlendMode: "screen" },
+    overlay: { backgroundBlendMode: "overlay" },
+    darken: { backgroundBlendMode: "darken" },
+    lighten: { backgroundBlendMode: "lighten" },
+    colorDodge: { backgroundBlendMode: "color-dodge" },
+    colorBurn: { backgroundBlendMode: "color-burn" },
+    hardLight: { backgroundBlendMode: "hard-light" },
+    softLight: { backgroundBlendMode: "soft-light" },
+    difference: { backgroundBlendMode: "difference" },
+    exclusion: { backgroundBlendMode: "exclusion" },
+    hue: { backgroundBlendMode: "hue" },
+    saturation: { backgroundBlendMode: "saturation" },
+    color: { backgroundBlendMode: "color" },
+    luminosity: { backgroundBlendMode: "luminosity" },
+    scroll: { backgroundAttachment: "scroll" },
+    fixed: { backgroundAttachment: "fixed" },
+    local: { backgroundAttachment: "local" },
+  };
 
 //border: 2px 4px solid red blue;
 //$border(w(2px,4px),solid,c(red,blue))
@@ -310,9 +412,7 @@ function border(...args) {
     if (!(typeof a === "string")) return a;
     if (isColor(a))
       return { Color: a };
-    if (a.match(/solid|dotted|dashed|double|none|groove|ridge|inset|outset|hidden/))
-      return { Style: a };
-    if (isLength(a) || a.match(/(^(min|max|clamp)\()/) || a.match(/^(thin|medium|thick)$/))
+    if (isLength(a) || a.match(/(^(min|max|clamp)\()/))
       return { Width: a };
     return a; //todo this throws, right?
   });
@@ -342,71 +442,23 @@ border.scope = {
   color: borderColor,
   c: borderColor,
   ...transitionFunctionSet("border-width"),
+  solid: { Style: "solid" },
+  dotted: { Style: "dotted" },
+  dashed: { Style: "dashed" },
+  double: { Style: "double" },
+  groove: { Style: "groove" },
+  ridge: { Style: "ridge" },
+  inset: { Style: "inset" },
+  outset: { Style: "outset" },
+  hidden: { Style: "hidden" },
+  none: { Style: "none" },
+  thin: { Width: "thin" },
+  medium: { Width: "medium" },
+  thick: { Width: "thick" },
 };
 
 // NativeCssProperties.borderColor = (...args) => borderSwitch(toLogicalFour("Color", ...args));
 // NativeCssProperties.borderColor.scope = NativeCssProperties.color.scope;
-
-
-function isFontFamily(x) {
-  //"Zapf Dingbats"|"Arial Black"|"Andale Mono"|"Palatino Times"|"DejaVu Sans"|"DejaVu Serif"|"DejaVu Sans Mono"|"Liberation Sans"|"Liberation Serif"|"Liberation Mono"|"Nimbus Roman No9 L"|"Nimbus Sans L"|"Nimbus Mono L"|"Century Schoolbook L"|"URW Chancery L"|"URW Gothic L"|"URW Bookman L"|"Comic Sans MS"|"Apple Chancery"|"Marker Felt"|"Lucida Console"|"Lucida Sans Unicode"|"Palatino Linotype"|"Segoe UI"|"Times New Roman"|"Trebuchet MS"|"Lucida Grande"|"Hoefler Text"|"American Typewriter"|"Gill Sans"|"Book Antiqua"|"Century Gothic"|"Franklin Gothic Medium"|"Bookman Old Style"|"Brush Script MT"|"Helvetica Neue"|"Courier Monaco"|"sans-serif"|"system-ui"|"ui-serif"|"ui-sans-serif"|"ui-monospace"|"ui-rounded"|"-apple-system"
-  if (x.match?.(/^(serif|monospace|cursive|fantasy|emoji|math|fangsong|Arial|Calibri|Cambria|Candara|Consolas|Constantia|Corbel|Georgia|Impact|Tahoma|Verdana|Garamond|Helvetica|Geneva|Didot|Optima|Futura|Baskerville|Copperplate|Menlo|Monaco|Chalkboard|Wingdings|Webdings|Symbol|BlinkMacSystemFont|Roboto)$/i))
-    return x;
-  if (x[0] === "'" || x[0] === '"')
-    return x.replaceAll("+", " ");
-  if (x.match(/^url\(/))
-    return x;
-  const KNOWN_BAD_FONT_NAMES = {
-    "comic": "Comic Sans MS",
-    "comic sans": "Comic Sans MS",
-    "times": "Times New Roman",
-    "courier": "Courier New",
-    "palatino": "Palatino Linotype",
-    "helvetica": "Helvetica Neue",
-    "lucida": "Lucida Sans Unicode",
-  };
-  return KNOWN_BAD_FONT_NAMES[x];
-}
-//$font("Arial+Black",serif,bold,small-caps,ultra-condensed,capitalize,sans-serif,oblique(-10deg),ui-sans-serif)
-//$font("Arial+Black",sans-serif,ui-sans-serif,900,small-caps,ultra-condensed,capitalize,oblique(10deg))
-const FONT = {
-  fontStyle: x => x.match(/^(italic|oblique)$/i),
-  fontWeight: x => x.match(/^(bold|bolder|lighter|[1-9]00)$/i),
-  fontVariantCaps: x => x.match(/^(small-caps|all-small-caps|petite-caps|all-petite-caps|unicase|titling-caps)$/i),
-  fontStretch: x => x.match(/^(ultra-condensed|extra-condensed|condensed|semi-condensed|normal|semi-expanded|expanded|extra-expanded|ultra-expanded)$/i),
-  textTransform: x => x.match(/^(capitalize|uppercase|lowercase|full-width|full-size-kana|math-auto)$/i),
-  letterSpacing: x => x.match(/^-?[0-9]*\.?[0-9]+([a-z]+|%)$/i),
-  // fontSize: x => x.match(/^(xx-small|x-small|small|medium|large|x-large|xx-large|smaller|larger)$/i),
-  // fontSizeAdjust: x => x.match(/^[0-9]*\.?[0-9]+$/),
-  // color: isColor,
-};
-function matchFontProperty(a) {
-  for (const type in FONT)
-    if (FONT[type](a))
-      return type;
-}
-
-function font(...args) {
-  const res = Object.entries(FONT).reduce((acc, [k, v]) => ((acc[k] = "unset"), acc), {});
-  let v;
-  for (const a of args) {
-    const type = matchFontProperty(a);
-    if (type)
-      res[type] = a;
-    else if (v = isFontFamily(a))
-      (res.fontFamily ??= []).push(v);
-    else
-      throw `Unrecognized font property: ${a}`;
-  }
-  return res;
-}
-font.scope = {
-  oblique: (...args) => ["oblique", ...args].join(" "),
-  url: (...args) => `url(${args.join(" ")})`,
-}
-
-const bg = (...args) => ({ background: args.join(" ") || "var(--background-color)" });
-bg.scope = NativeCssProperties.background.scope;
 
 //todo do something like this instead:
 //   12><--var
@@ -443,10 +495,8 @@ export default {
   borderRadius: undefined,
   // borderColor: undefined,
 
-  font,
   em: NativeCssProperties.fontSize,
-  bg,
-  background: bg,
+  ...BackgroundFunctions,
   w: width,
   h: height,
   width,

@@ -1,68 +1,32 @@
-function interpretMedias(medias, supers) {
-  return medias?.map(m => supers[m] ?? m)
-    .map(m => m.replace(/^@/, ""))
-    .map(m => m === "!" ? "not" : m)
-    .join(" and ").replaceAll("and , and", ",").replaceAll("not and ", "not ");
-}
-
-export class ShortBlock {
-
-  constructor(exp) {
-    this.exp = exp;
-    this.clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
-    const { medias, shorts } = parse$Expression(exp);
-    this.medias = medias;
-    this.shorts = shorts;
-  }
-
-  interpret(SHORTS, supers) {
-    let media = interpretMedias(this.medias, supers);
-    if (media) media = `@media ${media}`;
-    const owner = this.shorts?.[0]?.exprList?.[0]?.name;
-    const ownerMain = supers["$" + owner]?.exprList?.[0]?.name ?? owner;
-    //only allow the global scope for item |$shorts when there is an empty $container| short??
-    const itemScope = SHORTS[ownerMain]?.itemScope ?? SHORTS; /* can we remove ?? SHORTS soon? i want to not be as wide as this */
-    const shorts = this.shorts?.map((short, i) => short.interpret(i ? itemScope : SHORTS, supers, i ? owner : ""));
-    return { media, shorts };
-  }
-
-  static #rename(shorts, renameMap) {
-    return shorts && Object.fromEntries(Object.entries(shorts).map(([k, v]) => [renameMap[k] ?? k, v]));
-  }
-
-  *rules(SHORTS, supers, renameMap) {
-    let { media, shorts } = this.interpret(SHORTS, supers);
-    if (!shorts) return;
-    shorts = shorts.map(({ shorts, selector }) => ({ selector, shorts: ShortBlock.#rename(shorts, renameMap) }));
-    let [container, ...items] = shorts;
-    items = items.filter(item => item.shorts);
-    const cRule = new Rule(media, this.clazz + container.selector, container.shorts);
-    if (cRule.shorts) //todo this we can't do, because we need the sequence data for the empty rules too.
-      yield cRule;
-    for (const item of items)
-      yield new Rule(media, cRule.selector + ">*" + item.selector, item.shorts, true);
-  }
-}
-
-class Rule {
-  constructor(media, selector, shorts, item) {
-    this.media = media;
-    this.selector = selector;
-    this.shorts = shorts;
-    this.item = item;
-  }
-  get body() {
-    return this.shorts && Object.entries(this.shorts).map(([k, v]) => {
-      k = k.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase());
-      if (!CSS.supports(k, v))
-        throw new SyntaxError(`Invalid CSS value: ${k} = ${v}`);
-      return `  ${k}: ${v};`;
+export class Rule {
+  static interpret(exp, registries, renames) {
+    const { shorts: scope, medias: MEDIA_WORDS } = registries;
+    const clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
+    const { str, media } = parseMediaQuery(exp, MEDIA_WORDS);
+    exp = str;
+    let [sel, ...exprList] = exp?.split("$");
+    exprList = exprList.map(s => parseNestedExpression(s));
+    exprList = exprList.map(s => s.interpret(scope));
+    exprList &&= clashOrStack(exprList);
+    let { selector, item } = parseSelectorPipe(sel);
+    selector = clazz + selector;
+    const body = Object.entries(exprList).map(([k, v]) => {
+      if (v.match?.(/^[a-zA-Z][a-zA-Z0-9]+$/))
+        v = v.replace(/[A-Z]/g, "-$&").toLowerCase();
+      k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
+      if (CSS.supports(k, "inherit"))
+        if (!CSS.supports(k, v) && !CSS.supports(k = renames[k] ?? k, v))
+          throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
+      //the browser might not support the property, because the property is too modern.
+      return `  ${k}: ${v};`
     }).join("\n");
-  }
-  get rule() {
-    return this.media ?
-      `${this.media} { ${this.selector} {\n${this.body}\n} }` :
-      `${this.selector} {\n${this.body}\n}`;
+    let rule = `${selector} {\n${body}\n}`;
+    let key = selector;
+    if (media) {
+      rule = `${media} { ${rule} }`;
+      key = `${media} { ${selector}`;
+    }
+    return { rule, key, item };
   }
 }
 
@@ -72,26 +36,38 @@ class Expression {
     this.args = args;
     this.name = name;
   }
-  toString() {
-    return `${this.name}(${this.args.join(",")})`;
-  }
-  get signature() {
-    return this.name + "/" + this.args.length;
-  }
-  interpret(scope, supers) {
+
+  interpret(scope) {
     const cb = scope?.[this.name];
     if (!cb)
-      throw new SyntaxError(`Unknown short function: ${this.name}`);
-    const args = this.args.map(x =>
-      x instanceof Expression ? x.interpret(cb.scope, supers) :
-        x === "." ? "unset" : //todo move this into the parser??
-          x);
-    return cb.call(this, ...args);
+      throw new ReferenceError(this.name);
+    try {
+      const args = this.args.map(x =>
+        x instanceof Expression ? x.interpret(cb.scope) :
+          x === "." ? "unset" : //todo move this into the parser??
+            cb.scope?.[x] instanceof Function ? cb.scope[x].call(cb.scope) :
+              cb.scope?.[x] ? cb.scope[x] :
+                x);
+      return cb.call(scope, ...args);
+    } catch (e) {
+      if (e instanceof ReferenceError)
+        e.message = this.name + "." + e.message;
+      throw e;
+    }
   }
 }
+
 const clashOrStack = (function () {
   const STACKABLE_PROPERTIES = {
-    background: ",",
+    background: ", ",
+    backgroundImage: ", ",
+    backgroundPosition: ", ",
+    backgroundRepeat: ", ",
+    backgroundSize: ", ",
+    backgroundOrigin: ", ",
+    backgroundClip: ", ",
+    backgroundBlendMode: ", ",
+    backgroundAttachment: ", ",
     transition: ",",
     fontFamily: ",",
     voiceFamily: ",",
@@ -114,11 +90,6 @@ const clashOrStack = (function () {
     for (const obj of shortsI) {
       for (let [k, v] of Object.entries(obj)) {
         if (v == null) continue;
-        const k2 = k.replace(/[A-Z]/g, "-$&").toLowerCase();
-        if (CSS.supports(k2, "inherit"))
-          if (!CSS.supports(k2, v))
-            throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
-        //else, the browser doesn't support the property, because the property is too modern.
         if (!(k in res))
           res[k] = v;
         else if (k in STACKABLE_PROPERTIES)
@@ -130,39 +101,6 @@ const clashOrStack = (function () {
     return res;
   }
 })();
-
-
-function cloneAndReplaceExpr(argMap, { name, args }) {
-  args = args.map(arg => arg instanceof Expression ? cloneAndReplaceExpr(argMap, arg) : argMap[arg] ?? arg);
-  return new Expression(name, args);
-}
-
-class Short {
-  constructor(selectorList, exprList) {
-    this.selectorList = selectorList;
-    this.exprList = exprList || undefined;
-  }
-
-  interpret(scope, supers, owner) {
-    const unSuperExprList = this.exprList?.map(s => {
-      const sup = supers["$" + (owner ? owner + "." : "") + s.name];
-      if (!sup)
-        return s;
-      if (s.name in scope)
-        throw `Superclash: ${s.name} is both a super and defined in the scope.`;
-      const { name, argNames, exprList } = sup;
-      if (argNames.length > s.args.length)
-        throw `missing argument: ${name}(...${argNames[s.args.length]})`;
-      const argMap = argNames.reduce((res, n) => ((res[n] = s.args.shift() || "."), res), {});
-      if (s.args.length)  //adding superflous arguments to the first expression in the super's body
-        exprList[0].args.push(...s.args);
-      return exprList.map(expr => cloneAndReplaceExpr(argMap, expr));
-    }).flat();
-    const shorts = unSuperExprList && clashOrStack(unSuperExprList.map(s => s.interpret(scope, supers)));
-    let selector = this.selectorList && this.selectorList.map(s => s.interpret(supers)).join(", ");
-    return { selector, shorts };
-  }
-}
 
 function varAndSpaceOperators(tokens) {
   const res = tokens.join("").split(/(--[a-z][a-z0-9_-]*)/g);
@@ -201,9 +139,9 @@ function parseVarCalc(tokens) {
   return str.includes(" ") ? `calc(${str})` : str;
 }
 
-const WORD = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
-const CPP = /[,()|$=;{}]/.source;
-const nCPP = /[^,()|$=;{}]+/.source;
+const WORD = /^\$?[a-zA-Z_][a-zA-Z0-9_]*$/;
+const CPP = /[,()$=;{}]/.source;
+const nCPP = /[^,()$=;{}]+/.source;
 const QUOTE = /([`'"])(?:\\.|(?!\2).)*?\2/.source;
 const TOKENS = new RegExp(`(${QUOTE})|(\\s+)|(${CPP})|(${nCPP})`, "g");
 
@@ -248,8 +186,10 @@ function diveDeep(tokens, top) {
       a = new Expression(a, diveDeep(tokens));
       b = tokens.shift();
     }
-    if (a.match?.(WORD))
-      a = a.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase());
+    // if (a.match?.(WORD)) 
+    //   a = a.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase());
+    if (b === ")" && top && tokens.length)
+      throw "too many ')'";
     if (b === ")" || (top && b === undefined))
       return res.push(a), res;
     if (b == ",")
@@ -266,73 +206,14 @@ function parseNestedExpression(short) {
     return new Expression(tokensOG[0], []); //todo no calc top level
   const tokens = tokensOG.slice();
   try {
-    const res = diveDeep(tokens, true);
-    if (tokens.length)
-      throw "too many ')'";
-    return res[0];
+    return diveDeep(tokens, true)[0];
   } catch (e) {
+    //todo add the error string to the e.message
     const i = tokensOG.length - tokens.length;
     tokensOG.splice(i, 0, `{{{${e}}}}`);
     const msg = tokensOG.join("");
     throw new SyntaxError("Invalid short: " + msg);
   }
-}
-
-function parseMediaHead(str) {
-  let medias;
-  for (const m of str.matchAll(/(@(?:\([^)]+\)|[a-zA-Z][a-zA-Z0-9_-]*))|([,!])|\s|(.)/g)) {
-    if (m[3])
-      return { medias, rest: str.slice(m.index) || undefined };
-    if (m[1] ?? m[2])
-      (medias ??= []).push(m[1] ?? m[2]);
-  }
-  return { medias };
-}
-
-function parse$Expression(exp) {
-  const { medias, rest } = parseMediaHead(exp);
-  const shorts = rest?.split("|").map(seg => seg.split("$"))
-    .map(([sel, ...shorts]) => new Short(
-      sel && parseSelectorBody(sel)?.map(s => new Selector(s)),
-      shorts.length && shorts.map(parseNestedExpression)
-    ));
-  return { shorts, medias };
-}
-const ARG = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;
-const ARGLIST = new RegExp(`\\(${ARG}(?:,\\s*${ARG})*\\)`).source;
-const SUPER_NAME = /[a-zA-Z_][a-zA-Z0-9_-]*/.source;
-const SUPER_LINE = /((["'`])(?:\\.|(?!\3).)*?\3|\/\*[\s\S]*?\*\/|[^;]+)(?:;|$)/.source; // (body1, quoteSign)
-const SUPER_BODY = /{((["'`])(?:\\.|(?!\5).)*?\5|\/\*[\s\S]*?\*\/|[^}]+)}/.source;// (body2, quoteSign)
-const SUPER = new RegExp(
-  `([$:@])(${SUPER_NAME}\\.)?(${SUPER_NAME})(${ARGLIST})?\\s*=\\s*(?:${SUPER_LINE}|${SUPER_BODY})`, "g");
-
-function checkSuperBody(type, name, { medias, shorts }) {
-  if (!medias && !shorts) throw `is empty`;
-  if (medias && shorts) throw `contains both medias and selector/shorts`;
-  if (medias && type !== "@") throw `type error: did you mean "@${name}"?`;
-  if (medias) return { medias };
-  if (shorts.length > 1) throw `item selector not allowed in superShorts.`;
-  const { selectorList, exprList } = shorts[0];
-  if (selectorList && exprList) throw `contains both selector and shorts`;
-  if (selectorList && type !== ":") throw `type error: did you mean ":${name}"?`;
-  if (exprList && type !== "$") throw `type error: did you mean "$${name}"?`;
-  return { exprList, selectorList };
-}
-
-function interpretSuper(type, head, body) {
-  const parsed = new ShortBlock(body);
-  const { name, args: argNames } = new ShortBlock("$" + head).shorts[0].exprList[0];
-  const { medias, selectorList, exprList } = checkSuperBody(type, name, parsed);
-  if (medias) return interpretMedias(medias, {});
-  if (selectorList) return selectorList.map(s => s.interpret({})).join(", ");
-  return { name, argNames, exprList };
-}
-
-export function extractSuperShorts(txt) {
-  const res = {};
-  for (let [, type, owner = "", name, args = "", b, , body = b] of txt.matchAll(SUPER))
-    res[type + owner + name] = interpretSuper(type, name + args, body);
-  return res;
 }
 
 //todo we don't support nested :not(:has(...))
@@ -343,7 +224,20 @@ const clazz = /\.[a-zA-Z][a-zA-Z0-9_-]*/.source; //class
 const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
-function parseSelectorBody(str) {
+function parseSelectorPipe(str) {
+  //todo body1 must have star at the end. body2 must have star at the start. The where is star doesn't work with this.
+  //todo also. I think that we should always have a star, and not end with empty. It is less confusing with ".something>*" than ".something>".
+  //todo this will make the selector far more readable! also, it will make the parsing of body1 and body2 easier.
+
+  let [body1, body2] = str.split("|").map(parseSelectorComma);
+  body1 = body1?.join(", ");
+  if (!body2)
+    return { selector: body1 };
+  body2 = body2?.join(", ");
+  return { selector: body1 + ">" + (body2 || "*"), item: true };
+}
+
+function parseSelectorComma(str) {
   let tokens = [...str.matchAll(selectorTokens)];
   const badToken = tokens.find(([t, ws, select, error]) => error);
   if (badToken)
@@ -352,7 +246,7 @@ function parseSelectorBody(str) {
   const selects = [[]];
   for (const [t] of tokens)
     t === "," ? selects.push([]) : selects.at(-1).push(t);
-  return selects;
+  return selects.map(Selector.interpret);
 }
 
 class Selector {
@@ -383,62 +277,99 @@ class Selector {
     return last ? [select] : [null, ...Selector.findTail(select)];
   }
 
-  static superAndNots(select, supers) {
-    return select?.map(s => supers[s] ?? s)
-      .map((el, i, ar) => ar[i - 1] === "!" ? `:not(${el})` : el)
+  static superAndNots(select) {
+    return select?.map((el, i, ar) => ar[i - 1] === "!" ? `:not(${el})` : el)
       .filter(el => el !== "!")
       .join("");
   }
 
-  constructor(select) {
-    select = select.map(s => s == ">>" ? " " : s);
+  static interpret(select) {
     if (!select.length || select.length === 1 && select[0] === "*")
       return;
-    let [head, body, tail] = Selector.whereIsStar(select);
-    this.head = head;
-    this.body = body;
-    this.tail = tail;
-  }
-
-  whereWrap(selector) {
-    if (!selector)
-      return selector;
-    if (!selector.startsWith(":where("))
-      return `:where(${selector})`;
-    for (let depth = 1, i = 7; i < selector.length; i++) {
-      if (selector[i] === "(") depth++;
-      if (selector[i] === ")") depth--;
-      if (!depth)
-        return i === selector.length - 1 ? selector : `:where(${selector})`;
-    }
-    throw "missing ')'";
-  }
-
-  interpret(supers) {
-    let head = Selector.superAndNots(this.head, supers);
-    let body = Selector.superAndNots(this.body, supers);
-    let tail = Selector.superAndNots(this.tail, supers);
+    select = select.map(s => s == ">>" ? " " : s);
+    let [head, body, tail] = Selector.whereIsStar(select).map(Selector.superAndNots);
     tail &&= `:has(${tail})`;
     head &&= `:where(${head})`;
-    let selector = [head, body, tail].filter(Boolean).join("");
-    if (selector) selector = this.whereWrap(selector);
-    return selector;
+    const selector = [head, body, tail].filter(Boolean).join("");
+    return selector ? `:where(${selector})` : selector;
   }
 }
 
+function mediaComparator(str) {
+  const rx = new RegExp(
+    "^(?:" +
+    "(width|height|aspectRatio|resolution|color|monochrome|colorIndex)" +
+    "(<=|>=|==|<|>)" +
+    "(\\d+(?:\\.\\d+)?)" +
+    "(?:" +
+    "(px|em|rem|in|cm|mm|pt|pc)|" +
+    "(dpi|dpcm|dppx)|" +
+    "(\\/\\d+(?:\\.\\d+)?)" +
+    ")?" +
+    ")$");
+  const m = str.match(rx);
+  if (!m)
+    return;
+  let [, name, op, num, length, res, frac] = m;
+  const type = length ?? res ?? frac ?? "";
+  if (
+    (name.match(/width|height/) && !length) ||
+    (name == "aspectRatio" && (length || res)) ||
+    (name == "resolution" && !res) ||
+    (name.match(/color|monochrome|colorIndex/) && type)
+  )
+    throw new SyntaxError(`Invalid ${name}: ${num}${type}`);
+  let snake = name.replace(/[A-Z]/g, "-$&").toLowerCase();
+  if (op == "<")
+    num = parseFloat(num) - 0.01;
+  else if (op == ">")
+    num = parseFloat(num) + 0.01;
+  if (op.includes("<"))
+    snake = `max-${snake}`;
+  else if (op.includes(">"))
+    snake = `min-${snake}`;
+  return `${snake}: ${num}${type}`;
+}
 
-// --var-value123-123_123.... recognize this first. and extract them.
-//
-// -after:  + ( 1230 .123 1e123 var(something)..
-// before-: + ) 1230 .123 1e123 var(something)..
-//
-// not calc [a-z]-1|1-[a-z]
-// space-between = [a-z]-[a-z], and this cannot be calc()
-// if the last character is an operator /[+/*<>]/, then we need to eat all tokens
-// until we find the matching closing bracket.
-//
-// --var-bob+---var-alice*(--var-joe+--var-jane);
-//if we stumble upon a [+/*<>], in a, then we need to step into a
-//calc expression style
-//or, if name is empty. and we cannot be on the top level.
-//  --klaj-ldkjf /[+/*<>]/ (
+function parseMediaQuery(str, register) {
+  if (str[0] !== "@")
+    return { str };
+  if (str[1] !== "(") {
+    const m = str.slice(1).match(/^[a-z][a-z0-9_]*/i);
+    if (!m)
+      throw new SyntaxError(`Invalid media query: "${str}".`);
+    const word = m[0]
+    const t = register[word];
+    if (!t)
+      throw new ReferenceError(word);
+    return { str: str.slice(1 + word.length), media: `@media (${t})` };
+  }
+  let i = 2, tokens = [], level = 1;
+  for (; i < str.length; i++) {
+    if (str[i] == ",") tokens.push(str[i]);
+    else if (str[i] == "(") level++, tokens.push(str[i]);
+    else if (str[i] == ")") {
+      if (!--level) { i++; break; }
+      tokens.push(str[i]);
+    }
+    else if (str[i] === "!") tokens.push("not");
+    else if (str[i] === "&") tokens.push("and");
+    else if (str[i] === "|") tokens.push("or");
+    else {
+      let start = i;
+      while (i < str.length && /[^,()&|!]/.test(str[i]))
+        i++;
+      const word = str.slice(start, i--);
+      const t = mediaComparator(word) ?? register[word];
+      if (!t)
+        throw word.match(/^[a-z][a-z_0-9]*$/i) ?
+          new ReferenceError(word) :
+          new SyntaxError(`Invalid media query: "${word}" in "${str}".`);
+      tokens.push(
+        t == "all" || t == "print" || t == "screen" ? t :
+          `(${t})`
+      );
+    }
+  }
+  return { str: str.slice(i), media: `@media ${tokens.join(" ")}` };
+}

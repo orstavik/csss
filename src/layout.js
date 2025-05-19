@@ -1,10 +1,6 @@
 import { toLogicalFour, default as AllFunctions } from "./func.js";
 
-const O2 = "(?:(visible|hidden|clip)|(auto|scroll)(?:-snap(?:-mandatory)?)?)";
-const OVERFLOW2 = new RegExp(`^${O2}(?::${O2})?$`); //$block(hidden:scroll-snap-mandatory,...)
-
 //todo rename the text block layout unit to $page
-
 function defaultLayout(display, ...args) {
   const containerDefaults = {
     wordSpacing: "unset",
@@ -17,6 +13,8 @@ function defaultLayout(display, ...args) {
   return Object.assign({ display }, containerDefaults, ...args);
 }
 
+const O2 = "(?:(visible|hidden|clip)|(auto|scroll)(?:-snap(?:-mandatory)?)?)";
+const OVERFLOW2 = new RegExp(`^${O2}(?::${O2})?$`); //$block(hidden:scroll-snap-mandatory,...)
 function overflow(a) {
   const m = a.match(OVERFLOW2);
   if (!m) return;
@@ -31,36 +29,11 @@ function overflow(a) {
   return res;
 }
 
-function hyphens(a) { //$block(shy,...)
-  const m = a.match(/^(hyphens|shy)$/);
-  if (m) return { hyphens: m[0] === "shy" ? "manual" : "auto" };
-}
-
-function whiteSpace(a) { //$block(pre-wrap,...)
-  const m = a.match(/^(nowrap|pre|pre-wrap|pre-line|break-spaces|ellipsis)$/);
-  if (m?.[0] === "ellipsis") return { whiteSpace: "nowrap", textOverflow: m[0] };
-  if (m) return { whiteSpace: m[0] };
-}
-
-function overflowWrap(a) { //$block(break-word,...)
-  const m = a.match(/^(break-word|anywhere)$/);
-  if (m) return { overflowWrap: m[0] };
-}
-
-function wordBreak(a) { //$block(break-all,...)
-  const m = a.match(/^(break-all|keep-all)$/);
-  if (m) return { wordBreak: m[0] };
-}
-
-function wrap(a) {
-  return wordBreak(a) ?? overflow(a) ?? whiteSpace(a) ?? hyphens(a) ?? overflowWrap(a);
-}
-
 function checkNoArgs(args) {
   if (args.some(a => a != null)) throw `This $short takes no arguments: ${args.join(", ")}")}`;
 }
 
-function lineClamp(num, ...ignored) {
+function lineClamp(num) {
   return {
     "display": "-webkit-box",
     WebkitLineClamp: num,
@@ -112,6 +85,18 @@ const LAYOUT = {
   p: toLogicalFour.bind(null, "padding"),
   scrollPadding: toLogicalFour.bind(null, "scroll-padding"),
   textAlign: AllFunctions.textAlign,
+  shy: { hyphens: "manual" },
+  hyphens: { hyphens: "auto" },
+  "break-word": { overflowWrap: "break-word" },
+  "break-anywhere": { overflowWrap: "anywhere" },
+  "nowrap": { whiteSpace: "nowrap" },
+  "pre-wrap": { whiteSpace: "pre-wrap" },
+  "pre-line": { whiteSpace: "pre-line" },
+  "pre": { whiteSpace: "pre" },
+  "break-spaces": { whiteSpace: "break-spaces" },
+  "ellipsis": { whiteSpace: "nowrap", textOverflow: "ellipsis" },
+  "break-all": { wordBreak: "break-all" },
+  "keep-all": { wordBreak: "keep-all" },
 };
 
 const _LAYOUT = {
@@ -143,7 +128,7 @@ function block(...args) {
   args = args.map(a => {
     if (typeof a !== "string") return a;
     let m;
-    if (m = wrap(a))
+    if (m = overflow(a))
       return m;
     if (m = a.match(/^[abcs]$/))
       return ({ textAlign: TextAlignAliases[a[0]] });
@@ -157,9 +142,16 @@ block.scope = {
   gap: blockGap,
   g: blockGap,
 };
-block.itemScope = {
+function _block(...args) {
+  for (const a of args)
+    if (!(a instanceof Object))
+      throw new ReferenceError(a);
+  return Object.assign(...args);
+}
+_block.scope = {
   ..._LAYOUT,
-  float: a => ({ float: "inline-" + a }),
+  "float-start": { float: "inline-start" },
+  "float-end": { float: "inline-end" },
   textIndent: AllFunctions.textIndent,
   indent: AllFunctions.textIndent,
 };
@@ -168,10 +160,10 @@ function grid(...args) {
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
     let m;
-    if (m = wrap(a))
+    if (m = overflow(a))
       return m;
-    if (m = a.match(/(dense)-?(column)/))
-      return { gridAutoFlow: `${m[1]} ${m[2] || "row"}` };
+    // if (m = a.match(/(dense)-?(column|row|)/))
+    //   return { gridAutoFlow: `${m[1]} ${m[2] || "row"}` };
     if (m = a.match(/^[abcsuvw.][abcsuvw.]?[abcs_.]?[abcs]?$/)) {
       const [b, i = b, b2 = ".", i2 = b2] = m[0];
       return {
@@ -182,7 +174,7 @@ function grid(...args) {
         justifyItems: AlignAliases[i2],
       };
     }
-    return a;
+    throw new ReferenceError(a);
   });
   return defaultLayout("grid", ...args);
 }
@@ -200,7 +192,12 @@ grid.scope = {
   rows: nativeGrid.gridTemplateRows,
   areas: nativeGrid.gridTemplateAreas,
   ...LAYOUT,
-  ...GAP
+  ...GAP,
+  //todo test this!!
+  column: { gridAutoFlow: "column" },
+  dense: { gridAutoFlow: "dense row" },
+  denseColumn: { gridAutoFlow: "dense column" },
+  denseRow: { gridAutoFlow: "dense row" },
 };
 
 const column = (start, end = start) => ({ gridColumn: `${start} / ${end}` });
@@ -209,7 +206,13 @@ const span = arg => `span ${arg}`;
 column.scope = { span };
 row.scope = { span };
 
-grid.itemScope = {
+function _grid(...args) {
+  for (const a of args)
+    if (!(a instanceof Object))
+      throw new ReferenceError(a);
+  return Object.assign(...args);
+}
+_grid.scope = {
   ..._LAYOUT,
   column,
   row,
@@ -236,10 +239,8 @@ grid.itemScope = {
 function flex(...args) {
   args = args.map(a => {
     if (!(typeof a === "string")) return a;
-    let m = wrap(a);
+    let m = overflow(a);
     if (m) return m;
-    if (m = a.match(/^(column|column-reverse|row-reverse|row)$/)) return { flexDirection: a };
-    if (m = a.match(/^(wrap|wrap-reverse|no-wrap)$/)) return { flexWrap: a };
     if (m = a.match(/^[abcsuvw.][abcsuvw.]?[abcs_]?$/)) {
       const [b, i = b, i2 = "."] = m[0];
       return {
@@ -249,12 +250,18 @@ function flex(...args) {
         alignItems: AlignItemsFlexAliases[i2],
       };
     }
-    if (m = wrap(a)) return m;
-    return a;
+    throw new ReferenceError(a);
   });
   return defaultLayout("flex", ...args);
 }
 flex.scope = {
+  "column": { flexDirection: "column" },
+  "column-reverse": { flexDirection: "column-reverse" },
+  "row-reverse": { flexDirection: "row-reverse" },
+  "row": { flexDirection: "row" },
+  "wrap": { flexWrap: "wrap" },
+  "wrap-reverse": { flexWrap: "wrap-reverse" },
+  "no-wrap": { flexWrap: "nowrap" },
   placeContent: AllFunctions.placeContent,
   justifyContent: AllFunctions.justifyContent,
   alignContent: AllFunctions.alignContent,
@@ -262,8 +269,14 @@ flex.scope = {
   ...LAYOUT,
   ...GAP
 };
+function _flex(...args) {
+  for (const a of args)
+    if (!(a instanceof Object))
+      throw new ReferenceError(a);
+  return Object.assign(...args);
+}
 
-flex.itemScope = {
+_flex.scope = {
   ..._LAYOUT,
   basis: a => ({ flexBasis: a }),
   grow: a => ({ flexGrow: a }),
@@ -284,6 +297,9 @@ flex.itemScope = {
 
 export default {
   block,
+  _block,
   grid,
+  _grid,
   flex,
+  _flex,
 };
