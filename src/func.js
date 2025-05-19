@@ -486,6 +486,65 @@ const height = (...args) => toSize("blockSize", ...args);
 width.scope = NativeCssProperties.width.scope;
 height.scope = NativeCssProperties.height.scope;
 
+
+//text decorations
+//sequence based
+//color defaults to --color_textdecorationcolor, then currentcolor
+//todo work with color inheritance happening here..
+function textDecoration(
+  textDecorationStyle = "unset",
+  textDecorationLine = "underline",
+  textDecorationThickness = "unset",
+  textDecorationColor = "var(--color_textdecorationcolor, currentcolor)") {
+  return { textDecorationLine, textDecorationThickness, textDecorationStyle, textDecorationColor };
+}
+textDecoration.scope = {
+  ...NativeCssProperties.textDecorationThickness.scope,
+  ...NativeCssProperties.textDecorationColor.scope,
+}
+const textDecorations = {
+  dashedOverLine: function (...args) { return textDecoration.call(this, "dashed", "overline", ...args); },
+  dashedOverLineThrough: function (...args) { return textDecoration.call(this, "dashed", "overline line-through", ...args); },
+  dashedOverUnderLine: function (...args) { return textDecoration.call(this, "dashed", "overline underline", ...args); },
+  dashedOverUnderLineThrough: function (...args) { return textDecoration.call(this, "dashed", "overline underline line-through", ...args); },
+  dashedLineThrough: function (...args) { return textDecoration.call(this, "dashed", "line-through", ...args); },
+  dashedUnderLine: function (...args) { return textDecoration.call(this, "dashed", "underline", ...args); },
+  dashedUnderLineThrough: function (...args) { return textDecoration.call(this, "dashed", "underline line-through", ...args); },
+  dottedOverLine: function (...args) { return textDecoration.call(this, "dotted", "overline", ...args); },
+  dottedOverLineThrough: function (...args) { return textDecoration.call(this, "dotted", "overline line-through", ...args); },
+  dottedOverUnderLine: function (...args) { return textDecoration.call(this, "dotted", "overline underline", ...args); },
+  dottedOverUnderLineThrough: function (...args) { return textDecoration.call(this, "dotted", "overline underline line-through", ...args); },
+  dottedLineThrough: function (...args) { return textDecoration.call(this, "dotted", "line-through", ...args); },
+  dottedUnderLine: function (...args) { return textDecoration.call(this, "dotted", "underline", ...args); },
+  dottedUnderLineThrough: function (...args) { return textDecoration.call(this, "dotted", "underline line-through", ...args); },
+  doubleOverLine: function (...args) { return textDecoration.call(this, "double", "overline", ...args); },
+  doubleOverLineThrough: function (...args) { return textDecoration.call(this, "double", "overline line-through", ...args); },
+  doubleOverUnderLine: function (...args) { return textDecoration.call(this, "double", "overline underline", ...args); },
+  doubleOverUnderLineThrough: function (...args) { return textDecoration.call(this, "double", "overline underline line-through", ...args); },
+  doubleLineThrough: function (...args) { return textDecoration.call(this, "double", "line-through", ...args); },
+  doubleUnderLine: function (...args) { return textDecoration.call(this, "double", "underline", ...args); },
+  doubleUnderLineThrough: function (...args) { return textDecoration.call(this, "double", "underline line-through", ...args); },
+  wavyOverLine: function (...args) { return textDecoration.call(this, "wavy", "overline", ...args); },
+  wavyOverLineThrough: function (...args) { return textDecoration.call(this, "wavy", "overline line-through", ...args); },
+  wavyOverUnderLine: function (...args) { return textDecoration.call(this, "wavy", "overline underline", ...args); },
+  wavyOverUnderLineThrough: function (...args) { return textDecoration.call(this, "wavy", "overline underline line-through", ...args); },
+  wavyLineThrough: function (...args) { return textDecoration.call(this, "wavy", "line-through", ...args); },
+  wavyUnderLine: function (...args) { return textDecoration.call(this, "wavy", "underline", ...args); },
+  wavyUnderLineThrough: function (...args) { return textDecoration.call(this, "wavy", "underline line-through", ...args); },
+  overLine: function (...args) { return textDecoration.call(this, "solid", "overline", ...args); },
+  overLineThrough: function (...args) { return textDecoration.call(this, "solid", "overline line-through", ...args); },
+  overUnderLine: function (...args) { return textDecoration.call(this, "solid", "overline underline", ...args); },
+  overUnderLineThrough: function (...args) { return textDecoration.call(this, "solid", "overline underline line-through", ...args); },
+  lineThrough: function (...args) { return textDecoration.call(this, "solid", "line-through", ...args); },
+  underLine: function (...args) { return textDecoration.call(this, "solid", "underline", ...args); },
+  underLineThrough: function (...args) { return textDecoration.call(this, "solid", "underline line-through", ...args); },
+  blink: function (...args) { return textDecoration.call(this, null, "blink", ...args); },
+  grammarError: function (...args) { return textDecoration.call(this, null, "grammar-error", ...args); },
+  spellingError: function (...args) { return textDecoration.call(this, null, "spelling-error", ...args); },
+}
+for (let func of Object.values(textDecorations))
+  func.scope = textDecoration.scope;
+
 export default {
   ...UnpackedNativeCssProperties,
 
@@ -501,4 +560,7 @@ export default {
   h: height,
   width,
   height,
+
+  textDecoration,
+  ...textDecorations,
 };

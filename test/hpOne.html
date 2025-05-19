@@ -1,44 +1,148 @@
 <test-html title="border+color+items">
   <div class="
-  $palette(#ec1221)
-  
+  $gradient(primary,#ec1221,white)
+  $color(#primary)
   $border(solid,2px)
   |*$border(double,2px,radius(0.25rem))
   |.new$border(solid,4px,radius(1rem))
-  |.sale$border(dashed,3px,radius(0.5rem))
-                        
- $color(grey,text)
-  |*$color(--primary)
-  |.new$color(--secondary)
-  |.sale$color(--tertiary)
-           ">
-
-    <div class="new">New Arrival: Product 1</div>
-    <div class="sale $h(300px) $w(600px) $border(r(10px,30px,60px))">On Sale: Product 2</div>
-    <div>Product 3</div>
-    <div class="sale">On Sale: Product 4</div>
-    <div class="new">New Arrival: Product 5</div>
+  |.sale$border(dashed,3px,radius(0.5rem))""
+  >
+    <div class=" new $color(#primary_a20)">New Arrival: Product 1</div>
+  <div class="sale $h(300px) $w(600px) $border(r(10px,30px,60px))">On Sale: Product 2</div>
+  <div>Product 3</div>
+  <div class="sale $color(#primary_a40)">On Sale: Product 4</div>
+  <div class="new">New Arrival: Product 5</div>
   </div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$palette\(\#ec1221\) {
-        --primary: #ec1221;
-        --secondary: oklch(from #ec1221 50 c calc(h - 60));
-        --tertiary: oklch(from #ec1221 50 c calc(h + 60));
-        --neutral: oklch(from #ec1221 50 0.02 h);
-        --primary-chroma: 0.23746015283192687;
-        --palette-bw-fg: 0;
-        --palette-text-fg: 0.23;
-        --palette-box-fg: 0.23;
-        --palette-flip-fg: 0.99;
-        --palette-darkflip-fg: 0.9;
-        --palette-bw-bg: 1;
-        --palette-text-bg: 0.99;
-        --palette-box-bg: 0.92;
-        --palette-flip-bg: 0.66;
-        --palette-darkflip-bg: 0.33;
+      .\$gradient\(primary\,\#ec1221\,white\) {
+        --color_primary: #ec1221;
+        --color_primary10: color-mix(in oklch, #ec1221 90%, white 10%);
+        --color_primary20: color-mix(in oklch, #ec1221 80%, white 20%);
+        --color_primary30: color-mix(in oklch, #ec1221 70%, white 30%);
+        --color_primary40: color-mix(in oklch, #ec1221 60%, white 40%);
+        --color_primary50: color-mix(in oklch, #ec1221 50%, white 50%);
+        --color_primary60: color-mix(in oklch, #ec1221 40%, white 60%);
+        --color_primary70: color-mix(in oklch, #ec1221 30%, white 70%);
+        --color_primary80: color-mix(in oklch, #ec1221 20%, white 80%);
+        --color_primary90: color-mix(in oklch, #ec1221 10%, white 90%);
+        --color_primary100: color-mix(in oklch, #ec1221 0%, white 100%);
+        --color_primary_a10: oklch(from #ec1221 l c h / 10%);
+        --color_primary_a20: oklch(from #ec1221 l c h / 20%);
+        --color_primary_a30: oklch(from #ec1221 l c h / 30%);
+        --color_primary_a40: oklch(from #ec1221 l c h / 40%);
+        --color_primary_a50: oklch(from #ec1221 l c h / 50%);
+        --color_primary_a60: oklch(from #ec1221 l c h / 60%);
+        --color_primary_a70: oklch(from #ec1221 l c h / 70%);
+        --color_primary_a80: oklch(from #ec1221 l c h / 80%);
+        --color_primary_a90: oklch(from #ec1221 l c h / 90%);
+        --color_primary_a100: oklch(from #ec1221 l c h / 100%);
+        --color_primary10_a10: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 10%);
+        --color_primary10_a20: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 20%);
+        --color_primary10_a30: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 30%);
+        --color_primary10_a40: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 40%);
+        --color_primary10_a50: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 50%);
+        --color_primary10_a60: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 60%);
+        --color_primary10_a70: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 70%);
+        --color_primary10_a80: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 80%);
+        --color_primary10_a90: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 90%);
+        --color_primary10_a100: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 100%);
+        --color_primary20_a10: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 10%);
+        --color_primary20_a20: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 20%);
+        --color_primary20_a30: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 30%);
+        --color_primary20_a40: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 40%);
+        --color_primary20_a50: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 50%);
+        --color_primary20_a60: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 60%);
+        --color_primary20_a70: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 70%);
+        --color_primary20_a80: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 80%);
+        --color_primary20_a90: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 90%);
+        --color_primary20_a100: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 100%);
+        --color_primary30_a10: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 10%);
+        --color_primary30_a20: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 20%);
+        --color_primary30_a30: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 30%);
+        --color_primary30_a40: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 40%);
+        --color_primary30_a50: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 50%);
+        --color_primary30_a60: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 60%);
+        --color_primary30_a70: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 70%);
+        --color_primary30_a80: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 80%);
+        --color_primary30_a90: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 90%);
+        --color_primary30_a100: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 100%);
+        --color_primary40_a10: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 10%);
+        --color_primary40_a20: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 20%);
+        --color_primary40_a30: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 30%);
+        --color_primary40_a40: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 40%);
+        --color_primary40_a50: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 50%);
+        --color_primary40_a60: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 60%);
+        --color_primary40_a70: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 70%);
+        --color_primary40_a80: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 80%);
+        --color_primary40_a90: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 90%);
+        --color_primary40_a100: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 100%);
+        --color_primary50_a10: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 10%);
+        --color_primary50_a20: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 20%);
+        --color_primary50_a30: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 30%);
+        --color_primary50_a40: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 40%);
+        --color_primary50_a50: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 50%);
+        --color_primary50_a60: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 60%);
+        --color_primary50_a70: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 70%);
+        --color_primary50_a80: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 80%);
+        --color_primary50_a90: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 90%);
+        --color_primary50_a100: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 100%);
+        --color_primary60_a10: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 10%);
+        --color_primary60_a20: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 20%);
+        --color_primary60_a30: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 30%);
+        --color_primary60_a40: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 40%);
+        --color_primary60_a50: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 50%);
+        --color_primary60_a60: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 60%);
+        --color_primary60_a70: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 70%);
+        --color_primary60_a80: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 80%);
+        --color_primary60_a90: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 90%);
+        --color_primary60_a100: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 100%);
+        --color_primary70_a10: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 10%);
+        --color_primary70_a20: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 20%);
+        --color_primary70_a30: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 30%);
+        --color_primary70_a40: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 40%);
+        --color_primary70_a50: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 50%);
+        --color_primary70_a60: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 60%);
+        --color_primary70_a70: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 70%);
+        --color_primary70_a80: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 80%);
+        --color_primary70_a90: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 90%);
+        --color_primary70_a100: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 100%);
+        --color_primary80_a10: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 10%);
+        --color_primary80_a20: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 20%);
+        --color_primary80_a30: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 30%);
+        --color_primary80_a40: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 40%);
+        --color_primary80_a50: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 50%);
+        --color_primary80_a60: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 60%);
+        --color_primary80_a70: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 70%);
+        --color_primary80_a80: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 80%);
+        --color_primary80_a90: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 90%);
+        --color_primary80_a100: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 100%);
+        --color_primary90_a10: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 10%);
+        --color_primary90_a20: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 20%);
+        --color_primary90_a30: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 30%);
+        --color_primary90_a40: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 40%);
+        --color_primary90_a50: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 50%);
+        --color_primary90_a60: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 60%);
+        --color_primary90_a70: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 70%);
+        --color_primary90_a80: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 80%);
+        --color_primary90_a90: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 90%);
+        --color_primary90_a100: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 100%);
+        --color_primary100_a10: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 10%);
+        --color_primary100_a20: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 20%);
+        --color_primary100_a30: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 30%);
+        --color_primary100_a40: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 40%);
+        --color_primary100_a50: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 50%);
+        --color_primary100_a60: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 60%);
+        --color_primary100_a70: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 70%);
+        --color_primary100_a80: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 80%);
+        --color_primary100_a90: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 90%);
+        --color_primary100_a100: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 100%);
+      }
+
+      .\$color\(\#primary\) {
+        color: var(--color_primary);
       }
 
       .\$border\(solid\,2px\) {
@@ -46,10 +150,8 @@
         border-width: 2px;
       }
 
-      .\$color\(grey\,text\) {
-        color: oklch(from grey var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from grey var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: grey;
+      .\$color\(\#primary_a20\) {
+        color: var(--color_primary_a20);
       }
 
       .\$h\(300px\) {
@@ -66,6 +168,10 @@
         border-end-end-radius: 60px;
         border-start-end-radius: 30px;
         border-end-start-radius: 30px;
+      }
+
+      .\$color\(\#primary_a40\) {
+        color: var(--color_primary_a40);
       }
     }
 
@@ -86,24 +192,6 @@
         border-style: dashed;
         border-width: 3px;
         border-radius: 0.5rem;
-      }
-
-      .\|\*\$color\(--primary\)>* {
-        color: oklch(from var(--primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from var(--primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: var(--primary);
-      }
-
-      .\|\.new\$color\(--secondary\)> :where(.new) {
-        color: oklch(from var(--secondary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from var(--secondary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: var(--secondary);
-      }
-
-      .\|\.sale\$color\(--tertiary\)> :where(.sale) {
-        color: oklch(from var(--tertiary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from var(--tertiary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: var(--tertiary);
       }
     }
   </style>
@@ -159,72 +247,291 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="$palette(blue) $color(oklch(green,.5,.85,h))">
-  <div class="$palette(blue) $color(oklch(green,.5,.85,h))">
+<test-html title="$gradient(primary,blue,green)">
+  <div class="$gradient(primary,blue,green) $color(#primary_a90) $bg(#primary_a30)">
     hello
   </div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$palette\(blue\) {
-        --primary: blue;
-        --secondary: oklch(from blue 50 c calc(h - 60));
-        --tertiary: oklch(from blue 50 c calc(h + 60));
-        --neutral: oklch(from blue 50 0.02 h);
-        --primary-chroma: 0.3132940092833078;
-        --palette-bw-fg: 0;
-        --palette-text-fg: 0.23;
-        --palette-box-fg: 0.23;
-        --palette-flip-fg: 0.99;
-        --palette-darkflip-fg: 0.9;
-        --palette-bw-bg: 1;
-        --palette-text-bg: 0.99;
-        --palette-box-bg: 0.92;
-        --palette-flip-bg: 0.66;
-        --palette-darkflip-bg: 0.33;
+      .\$gradient\(primary\,blue\,green\) {
+        --color_primary: blue;
+        --color_primary10: color-mix(in oklch, blue 90%, green 10%);
+        --color_primary20: color-mix(in oklch, blue 80%, green 20%);
+        --color_primary30: color-mix(in oklch, blue 70%, green 30%);
+        --color_primary40: color-mix(in oklch, blue 60%, green 40%);
+        --color_primary50: color-mix(in oklch, blue 50%, green 50%);
+        --color_primary60: color-mix(in oklch, blue 40%, green 60%);
+        --color_primary70: color-mix(in oklch, blue 30%, green 70%);
+        --color_primary80: color-mix(in oklch, blue 20%, green 80%);
+        --color_primary90: color-mix(in oklch, blue 10%, green 90%);
+        --color_primary100: color-mix(in oklch, blue 0%, green 100%);
+        --color_primary_a10: oklch(from blue l c h / 10%);
+        --color_primary_a20: oklch(from blue l c h / 20%);
+        --color_primary_a30: oklch(from blue l c h / 30%);
+        --color_primary_a40: oklch(from blue l c h / 40%);
+        --color_primary_a50: oklch(from blue l c h / 50%);
+        --color_primary_a60: oklch(from blue l c h / 60%);
+        --color_primary_a70: oklch(from blue l c h / 70%);
+        --color_primary_a80: oklch(from blue l c h / 80%);
+        --color_primary_a90: oklch(from blue l c h / 90%);
+        --color_primary_a100: oklch(from blue l c h / 100%);
+        --color_primary10_a10: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 10%);
+        --color_primary10_a20: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 20%);
+        --color_primary10_a30: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 30%);
+        --color_primary10_a40: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 40%);
+        --color_primary10_a50: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 50%);
+        --color_primary10_a60: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 60%);
+        --color_primary10_a70: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 70%);
+        --color_primary10_a80: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 80%);
+        --color_primary10_a90: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 90%);
+        --color_primary10_a100: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 100%);
+        --color_primary20_a10: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 10%);
+        --color_primary20_a20: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 20%);
+        --color_primary20_a30: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 30%);
+        --color_primary20_a40: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 40%);
+        --color_primary20_a50: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 50%);
+        --color_primary20_a60: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 60%);
+        --color_primary20_a70: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 70%);
+        --color_primary20_a80: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 80%);
+        --color_primary20_a90: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 90%);
+        --color_primary20_a100: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 100%);
+        --color_primary30_a10: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 10%);
+        --color_primary30_a20: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 20%);
+        --color_primary30_a30: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 30%);
+        --color_primary30_a40: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 40%);
+        --color_primary30_a50: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 50%);
+        --color_primary30_a60: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 60%);
+        --color_primary30_a70: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 70%);
+        --color_primary30_a80: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 80%);
+        --color_primary30_a90: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 90%);
+        --color_primary30_a100: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 100%);
+        --color_primary40_a10: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 10%);
+        --color_primary40_a20: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 20%);
+        --color_primary40_a30: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 30%);
+        --color_primary40_a40: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 40%);
+        --color_primary40_a50: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 50%);
+        --color_primary40_a60: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 60%);
+        --color_primary40_a70: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 70%);
+        --color_primary40_a80: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 80%);
+        --color_primary40_a90: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 90%);
+        --color_primary40_a100: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 100%);
+        --color_primary50_a10: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 10%);
+        --color_primary50_a20: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 20%);
+        --color_primary50_a30: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 30%);
+        --color_primary50_a40: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 40%);
+        --color_primary50_a50: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 50%);
+        --color_primary50_a60: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 60%);
+        --color_primary50_a70: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 70%);
+        --color_primary50_a80: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 80%);
+        --color_primary50_a90: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 90%);
+        --color_primary50_a100: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 100%);
+        --color_primary60_a10: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 10%);
+        --color_primary60_a20: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 20%);
+        --color_primary60_a30: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 30%);
+        --color_primary60_a40: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 40%);
+        --color_primary60_a50: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 50%);
+        --color_primary60_a60: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 60%);
+        --color_primary60_a70: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 70%);
+        --color_primary60_a80: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 80%);
+        --color_primary60_a90: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 90%);
+        --color_primary60_a100: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 100%);
+        --color_primary70_a10: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 10%);
+        --color_primary70_a20: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 20%);
+        --color_primary70_a30: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 30%);
+        --color_primary70_a40: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 40%);
+        --color_primary70_a50: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 50%);
+        --color_primary70_a60: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 60%);
+        --color_primary70_a70: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 70%);
+        --color_primary70_a80: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 80%);
+        --color_primary70_a90: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 90%);
+        --color_primary70_a100: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 100%);
+        --color_primary80_a10: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 10%);
+        --color_primary80_a20: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 20%);
+        --color_primary80_a30: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 30%);
+        --color_primary80_a40: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 40%);
+        --color_primary80_a50: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 50%);
+        --color_primary80_a60: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 60%);
+        --color_primary80_a70: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 70%);
+        --color_primary80_a80: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 80%);
+        --color_primary80_a90: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 90%);
+        --color_primary80_a100: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 100%);
+        --color_primary90_a10: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 10%);
+        --color_primary90_a20: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 20%);
+        --color_primary90_a30: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 30%);
+        --color_primary90_a40: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 40%);
+        --color_primary90_a50: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 50%);
+        --color_primary90_a60: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 60%);
+        --color_primary90_a70: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 70%);
+        --color_primary90_a80: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 80%);
+        --color_primary90_a90: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 90%);
+        --color_primary90_a100: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 100%);
+        --color_primary100_a10: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 10%);
+        --color_primary100_a20: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 20%);
+        --color_primary100_a30: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 30%);
+        --color_primary100_a40: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 40%);
+        --color_primary100_a50: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 50%);
+        --color_primary100_a60: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 60%);
+        --color_primary100_a70: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 70%);
+        --color_primary100_a80: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 80%);
+        --color_primary100_a90: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 90%);
+        --color_primary100_a100: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 100%);
       }
 
-      .\$color\(oklch\(green\,\.5\,\.85\,h\)\) {
-        color: oklch(from oklch(from green .5 .85 h) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from oklch(from green .5 .85 h) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: oklch(from green 0.5 0.85 h);
+      .\$color\(\#primary_a90\) {
+        color: var(--color_primary_a90);
+      }
+
+      .\$bg\(\#primary_a30\) {
+        background-image: linear-gradient(var(--color_primary_a30));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
       }
     }
 
     @layer items {}
   </style>
 </test-html>
-<test-html title="$palette(blue) $color(rgb(0,12,255,0.6))">
-  <div class="$palette(blue) $color(rgb(0,12,255,0.6))">
+<test-html title="$gradient(primary,blue,yellow) $color(rgb(0,12,255,0.6))">
+  <div class="$gradient(primary,blue,yellow) $color(rgb(0,12,255,0.6))">
     hello
   </div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$palette\(blue\) {
-        --primary: blue;
-        --secondary: oklch(from blue 50 c calc(h - 60));
-        --tertiary: oklch(from blue 50 c calc(h + 60));
-        --neutral: oklch(from blue 50 0.02 h);
-        --primary-chroma: 0.3132940092833078;
-        --palette-bw-fg: 0;
-        --palette-text-fg: 0.23;
-        --palette-box-fg: 0.23;
-        --palette-flip-fg: 0.99;
-        --palette-darkflip-fg: 0.9;
-        --palette-bw-bg: 1;
-        --palette-text-bg: 0.99;
-        --palette-box-bg: 0.92;
-        --palette-flip-bg: 0.66;
-        --palette-darkflip-bg: 0.33;
+      .\$gradient\(primary\,blue\,yellow\) {
+        --color_primary: blue;
+        --color_primary10: color-mix(in oklch, blue 90%, yellow 10%);
+        --color_primary20: color-mix(in oklch, blue 80%, yellow 20%);
+        --color_primary30: color-mix(in oklch, blue 70%, yellow 30%);
+        --color_primary40: color-mix(in oklch, blue 60%, yellow 40%);
+        --color_primary50: color-mix(in oklch, blue 50%, yellow 50%);
+        --color_primary60: color-mix(in oklch, blue 40%, yellow 60%);
+        --color_primary70: color-mix(in oklch, blue 30%, yellow 70%);
+        --color_primary80: color-mix(in oklch, blue 20%, yellow 80%);
+        --color_primary90: color-mix(in oklch, blue 10%, yellow 90%);
+        --color_primary100: color-mix(in oklch, blue 0%, yellow 100%);
+        --color_primary_a10: oklch(from blue l c h / 10%);
+        --color_primary_a20: oklch(from blue l c h / 20%);
+        --color_primary_a30: oklch(from blue l c h / 30%);
+        --color_primary_a40: oklch(from blue l c h / 40%);
+        --color_primary_a50: oklch(from blue l c h / 50%);
+        --color_primary_a60: oklch(from blue l c h / 60%);
+        --color_primary_a70: oklch(from blue l c h / 70%);
+        --color_primary_a80: oklch(from blue l c h / 80%);
+        --color_primary_a90: oklch(from blue l c h / 90%);
+        --color_primary_a100: oklch(from blue l c h / 100%);
+        --color_primary10_a10: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 10%);
+        --color_primary10_a20: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 20%);
+        --color_primary10_a30: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 30%);
+        --color_primary10_a40: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 40%);
+        --color_primary10_a50: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 50%);
+        --color_primary10_a60: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 60%);
+        --color_primary10_a70: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 70%);
+        --color_primary10_a80: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 80%);
+        --color_primary10_a90: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 90%);
+        --color_primary10_a100: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 100%);
+        --color_primary20_a10: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 10%);
+        --color_primary20_a20: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 20%);
+        --color_primary20_a30: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 30%);
+        --color_primary20_a40: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 40%);
+        --color_primary20_a50: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 50%);
+        --color_primary20_a60: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 60%);
+        --color_primary20_a70: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 70%);
+        --color_primary20_a80: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 80%);
+        --color_primary20_a90: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 90%);
+        --color_primary20_a100: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 100%);
+        --color_primary30_a10: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 10%);
+        --color_primary30_a20: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 20%);
+        --color_primary30_a30: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 30%);
+        --color_primary30_a40: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 40%);
+        --color_primary30_a50: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 50%);
+        --color_primary30_a60: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 60%);
+        --color_primary30_a70: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 70%);
+        --color_primary30_a80: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 80%);
+        --color_primary30_a90: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 90%);
+        --color_primary30_a100: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 100%);
+        --color_primary40_a10: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 10%);
+        --color_primary40_a20: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 20%);
+        --color_primary40_a30: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 30%);
+        --color_primary40_a40: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 40%);
+        --color_primary40_a50: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 50%);
+        --color_primary40_a60: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 60%);
+        --color_primary40_a70: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 70%);
+        --color_primary40_a80: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 80%);
+        --color_primary40_a90: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 90%);
+        --color_primary40_a100: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 100%);
+        --color_primary50_a10: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 10%);
+        --color_primary50_a20: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 20%);
+        --color_primary50_a30: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 30%);
+        --color_primary50_a40: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 40%);
+        --color_primary50_a50: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 50%);
+        --color_primary50_a60: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 60%);
+        --color_primary50_a70: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 70%);
+        --color_primary50_a80: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 80%);
+        --color_primary50_a90: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 90%);
+        --color_primary50_a100: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 100%);
+        --color_primary60_a10: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 10%);
+        --color_primary60_a20: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 20%);
+        --color_primary60_a30: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 30%);
+        --color_primary60_a40: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 40%);
+        --color_primary60_a50: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 50%);
+        --color_primary60_a60: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 60%);
+        --color_primary60_a70: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 70%);
+        --color_primary60_a80: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 80%);
+        --color_primary60_a90: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 90%);
+        --color_primary60_a100: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 100%);
+        --color_primary70_a10: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 10%);
+        --color_primary70_a20: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 20%);
+        --color_primary70_a30: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 30%);
+        --color_primary70_a40: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 40%);
+        --color_primary70_a50: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 50%);
+        --color_primary70_a60: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 60%);
+        --color_primary70_a70: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 70%);
+        --color_primary70_a80: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 80%);
+        --color_primary70_a90: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 90%);
+        --color_primary70_a100: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 100%);
+        --color_primary80_a10: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 10%);
+        --color_primary80_a20: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 20%);
+        --color_primary80_a30: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 30%);
+        --color_primary80_a40: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 40%);
+        --color_primary80_a50: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 50%);
+        --color_primary80_a60: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 60%);
+        --color_primary80_a70: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 70%);
+        --color_primary80_a80: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 80%);
+        --color_primary80_a90: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 90%);
+        --color_primary80_a100: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 100%);
+        --color_primary90_a10: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 10%);
+        --color_primary90_a20: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 20%);
+        --color_primary90_a30: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 30%);
+        --color_primary90_a40: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 40%);
+        --color_primary90_a50: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 50%);
+        --color_primary90_a60: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 60%);
+        --color_primary90_a70: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 70%);
+        --color_primary90_a80: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 80%);
+        --color_primary90_a90: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 90%);
+        --color_primary90_a100: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 100%);
+        --color_primary100_a10: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 10%);
+        --color_primary100_a20: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 20%);
+        --color_primary100_a30: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 30%);
+        --color_primary100_a40: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 40%);
+        --color_primary100_a50: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 50%);
+        --color_primary100_a60: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 60%);
+        --color_primary100_a70: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 70%);
+        --color_primary100_a80: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 80%);
+        --color_primary100_a90: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 90%);
+        --color_primary100_a100: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 100%);
       }
 
       .\$color\(rgb\(0\,12\,255\,0\.6\)\) {
-        color: oklch(from rgba(0 12 255 / 0.6) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h);
-        --background-color: oklch(from rgba(0 12 255 / 0.6) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h);
-        border-color: rgba(0, 12, 255, 0.6);
+        color: rgba(0, 12, 255, 0.6);
       }
     }
 
@@ -745,7 +1052,7 @@
 </test-html>
 <test-html title="overline lineThrough">
   <div class="$lineThrough(3px)">hello</div>
-  <div class="$overLine(2px)">sunshine</div>
+  <div class="$overLine(2px,#myblue)">sunshine</div>
   <style>
     @layer container, items;
 
@@ -754,14 +1061,14 @@
         text-decoration-line: line-through;
         text-decoration-thickness: 3px;
         text-decoration-style: solid;
-        text-decoration-color: var(--text-decoration-color, currentcolor);
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
       }
 
-      .\$overLine\(2px\) {
+      .\$overLine\(2px\,\#myblue\) {
         text-decoration-line: overline;
         text-decoration-thickness: 2px;
         text-decoration-style: solid;
-        text-decoration-color: var(--text-decoration-color, currentcolor);
+        text-decoration-color: var(--color_myblue);
       }
     }
 
@@ -787,42 +1094,42 @@
       .\$grammarError\(2px\) {
         text-decoration-line: grammar-error;
         text-decoration-thickness: 2px;
-        text-decoration-color: var(--text-decoration-color, currentcolor);
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
       }
 
       .\$overUnderLineThrough\(2px\) {
         text-decoration-line: underline overline line-through;
         text-decoration-thickness: 2px;
         text-decoration-style: solid;
-        text-decoration-color: var(--text-decoration-color, currentcolor);
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
       }
 
       .\$wavyOverUnderLineThrough\(2px\) {
         text-decoration-line: underline overline line-through;
         text-decoration-thickness: 2px;
         text-decoration-style: wavy;
-        text-decoration-color: var(--text-decoration-color, currentcolor);
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
       }
 
       .\$dottedUnderLine\(2px\) {
         text-decoration-line: underline;
         text-decoration-thickness: 2px;
         text-decoration-style: dotted;
-        text-decoration-color: var(--text-decoration-color, currentcolor);
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
       }
 
       .\$dashedOverUnderLineThrough\(2px\) {
         text-decoration-line: underline overline line-through;
         text-decoration-thickness: 2px;
         text-decoration-style: dashed;
-        text-decoration-color: var(--text-decoration-color, currentcolor);
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
       }
 
       .\$doubleOverLine\(2px\) {
         text-decoration-line: overline;
         text-decoration-thickness: 2px;
         text-decoration-style: double;
-        text-decoration-color: var(--text-decoration-color, currentcolor);
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
       }
     }
 
@@ -864,10 +1171,10 @@
   </style>
 </test-html>
 <test-html title="$grid(layout,gap(2rem))">
-  <main style="--color_bg: pink;" csss="OLD: $layout = $grid(cols(1fr,1fr,1fr))$gap(1rem);">
+  <main style="--color_fg: pink" csss="OLD: $layout = $grid(cols(1fr,1fr,1fr))$gap(1rem);">
     <div class="$grid(layout,gap(2rem))">
-      <div class="$color(white,blue,) $bg(--color_bg) $padding(1rem) $textAlign(center)">1</div>
-      <div class="$color(white,yellow,) $bg(--color_bg) $padding(1rem) $textAlign(center)">2</div>
+      <div class="$color(#fg) $bg(yellow) $padding(1rem) $textAlign(center)">1</div>
+      <div class="$color(#fg) $bg(blue) $padding(1rem) $textAlign(center)">2</div>
     </div>
     <script type="module">
       import { registerShort } from "/src/engine.js";
@@ -890,14 +1197,12 @@
         gap: 2rem;
       }
 
-      .\$color\(white\,blue\,\) {
-        color: white;
-        --background-color: blue;
-        border-color: white;
+      .\$color\(\#fg\) {
+        color: var(--color_fg);
       }
 
-      .\$bg\(--color_bg\) {
-        background-image: linear-gradient(var(--color_bg));
+      .\$bg\(yellow\) {
+        background-image: linear-gradient(yellow);
         background-position: 0% 0%;
         background-repeat: repeat;
         background-size: auto;
@@ -915,10 +1220,15 @@
         text-align: center;
       }
 
-      .\$color\(white\,yellow\,\) {
-        color: white;
-        --background-color: yellow;
-        border-color: white;
+      .\$bg\(blue\) {
+        background-image: linear-gradient(blue);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
       }
     }
 
@@ -928,8 +1238,8 @@
 <test-html title="$flex2">
   <main csss="OLD.  $flex2 = $flex(row,gap(1rem),textAlign(center),padding(1rem));">
     <div class="$flex2">
-      <div class="$color(white,red,) $bg(red)">1</div>
-      <div class="$color(white,green,) $bg(green)">2</div>
+      <div class="$color(white) $bg(red)">1</div>
+      <div class="$color(white) $bg(green)">2</div>
     </div>
   </main>
   <script type="module">
@@ -961,10 +1271,8 @@
         padding: 1rem;
       }
 
-      .\$color\(white\,red\,\) {
+      .\$color\(white\) {
         color: white;
-        --background-color: red;
-        border-color: white;
       }
 
       .\$bg\(red\) {
@@ -976,12 +1284,6 @@
         background-clip: border-box;
         background-blend-mode: normal;
         background-attachment: scroll;
-      }
-
-      .\$color\(white\,green\,\) {
-        color: white;
-        --background-color: green;
-        border-color: white;
       }
 
       .\$bg\(green\) {
