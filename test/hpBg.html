@@ -1,0 +1,34 @@
+<test-html title="linear background">
+  <body class="$w(100vh) $h(100vh) $linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c)">
+    <div class=""></div>
+hello sunshine!
+  </body>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$linear\(0\.25turn\,\#3f87a6\,\#ebf8e1\,\#f69d3c\) {
+        background: linear-gradient(0.25turn, #3f87a6, #ebf8e1, #f69d3c);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="bg blend mode">
+  <body class="$w(100vh) $h(100vh)
+  $bg(url(--pic.jpg),30%,noRepeat,center,blend(luminosity))$linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,size(100%,100%))">
+hello sunshine!
+  </body>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$linear\(0\.25turn\,\#3f87a6\,\#ebf8e1\,\#f69d3c\) {
+        background: linear-gradient(0.25turn, #3f87a6, #ebf8e1, #f69d3c);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
