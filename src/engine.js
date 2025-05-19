@@ -2,7 +2,8 @@ import { Rule } from "./Parser.js";
 import nativeAndMore from "./func.js";
 import fonts from "./font.js";
 import layouts from "./layout.js";
-import colorPalette from "./palette.js";
+import gradients from "./gradient.js";
+// import colorPalette from "./palette.js";
 
 const MEDIA_WORDS = {
   progressive: "scan: progressive",
@@ -137,7 +138,8 @@ class UpgradeRegistry {
 const upgrades = new UpgradeRegistry({
   ...nativeAndMore,
   ...fonts,
-  ...colorPalette,
+  ...gradients,
+  // ...colorPalette,
   ...layouts,
 });
 
@@ -226,7 +228,7 @@ class SheetWrapper {
       this.#cleanTask = null;
       this.#removeUnused(this.container.layer);
       this.#removeUnused(this.items.layer);
-      this.sheet.ownerNode.textContent = [...this.sheet.cssRules].map(r => r.cssText).join('\n');
+      this.sheet.ownerNode.textContent = [...this.sheet.cssRules].map(r => r.cssText).join('\n\n');
       this.sheet = this.styleEl.sheet;
       this.items = this.setupLayer("items", this.sheet);
       this.container = this.setupLayer("container", this.sheet);

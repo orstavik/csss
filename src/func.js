@@ -133,8 +133,9 @@ const NativeColorsFunctions = (function () {
     if (others.length) throw "hash(can only have 1 argument)";
     //#123 => hash(123) => #123
     //#primary_a80 => hash(primary) => var(--color_primary_a80)
-    return !a.match(/^[a-f0-9]{3,8}$/) || a.length == 5 || a.length == 7 ?
-      `var(--color_${a})` : `#${a}`;
+    if (a.match(/^[a-f0-9]{3,8}$/) && a.length != 5 && a.length != 7)
+      return `#${a}`;
+    return `var(--color_${a})`;
   }
 
   const res = {
