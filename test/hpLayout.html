@@ -176,7 +176,7 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="Layout 4 - Basic Flex (Potential Supershorts?)">
+<test-html title="Layout 4 - Basic Flex">
   <main>
     <h3>Row Flex (default)</h3>
     <div class="$flex(gap(1rem)) $border $padding(1rem)">
@@ -462,28 +462,46 @@
         baseline</div>
     </div>
 
-    <h3>4e. Only align-items - $flex(..s)</h3>
+    <h3>4c. Only align-items - $flex(..s)</h3>
     <div class="$flex(..s,gap(1rem)) $border $padding(1rem) $h(200px)">
       <div class="$border $padding(0.5rem)">only align-items: stretch</div>
       <div class="$border $padding(0.5rem)">only align-items: stretch</div>
       <div class="$border $padding(0.5rem)">only align-items: stretch</div>
     </div>
 
-    <h2>Flex Item Alignment Tests</h2>
+    <h3>5. Single value shorthand - $flex(a)</h3>
+    <div class="$flex(a,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">should produce: place-content: start start, text-align: start</div>
+      <div class="$border $padding(0.5rem)">using 'a' for both align-content and justify-content</div>
+      <div class="$border $padding(0.5rem)">and no align-items</div>
+    </div>
 
-    <h3>Basic Item Alignments</h3>
-    <div class="
-      $flex(gap(1rem))
-      |:first$start
-      |:second$end
-      |:third$center
-      |:fourth$baseline
-      $border $padding(1rem) $h(200px)">
-      <div class="$border $padding(0.5rem)">align-self: start</div>
-      <div class="$border $padding(0.5rem)">align-self: end</div>
-      <div class="$border $padding(0.5rem)">align-self: center</div>
-      <div class="$border $padding(0.5rem)">align-self: stretch</div>
-      <div class="$border $padding(0.5rem)">align-self: baseline</div>
+    <h3>6. Only justify-content provided - $flex(.b)</h3>
+    <div class="$flex(.b,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">should produce: justify-content: end, text-align: end</div>
+      <div class="$border $padding(0.5rem)">with no explicit align-content</div>
+      <div class="$border $padding(0.5rem)">and no align-items</div>
+    </div>
+
+    <h3>7. Three-value mix - $flex(acb)</h3>
+    <div class="$flex(acb,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: start, justify-content: center</div>
+      <div class="$border $padding(0.5rem)">align-items: end</div>
+      <div class="$border $padding(0.5rem)">text-align: center</div>
+    </div>
+
+    <h3>8. Three-value mix with align-items as baseline - $flex(.c_)</h3>
+    <div class="$flex(.c_,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">justify-content: center, text-align: center</div>
+      <div class="$border $padding(0.5rem)">align-items: baseline</div>
+      <div class="$border $padding(0.5rem)">first character is placeholder</div>
+    </div>
+
+    <h3>9. Three-value mix with space-evenly and center - $flex(vvc)</h3>
+    <div class="$flex(vvc,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: space-evenly</div>
+      <div class="$border $padding(0.5rem)">justify-content: space-evenly</div>
+      <div class="$border $padding(0.5rem)">align-items: center</div>
     </div>
   </main>
   <style>
@@ -528,6 +546,7 @@
         text-align: unset;
         text-indent: unset;
         place-content: space-between;
+        align-items: unset;
         gap: 1rem;
       }
 
@@ -537,10 +556,10 @@
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: end;
+        text-align: unset;
         text-indent: unset;
         place-content: start end;
-        align-items: end;
+        align-items: unset;
         gap: 1rem;
       }
 
@@ -550,10 +569,10 @@
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: justify;
+        text-align: unset;
         text-indent: unset;
         place-content: space-evenly space-around;
-        align-items: space-around;
+        align-items: unset;
         gap: 1rem;
       }
 
@@ -567,6 +586,7 @@
         text-indent: unset;
         align-content: stretch;
         justify-content: unset;
+        align-items: unset;
         gap: 1rem;
       }
 
@@ -580,6 +600,7 @@
         text-indent: unset;
         align-content: unset;
         justify-content: space-between;
+        align-items: unset;
         gap: 1rem;
       }
 
@@ -589,7 +610,7 @@
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: center;
+        text-align: justify;
         text-indent: unset;
         place-content: center;
         align-items: stretch;
@@ -602,10 +623,10 @@
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: justify;
+        text-align: unset;
         text-indent: unset;
         place-content: space-between stretch;
-        align-items: baseline;
+        align-items: start;
         gap: 1rem;
       }
 
@@ -615,14 +636,14 @@
         line-height: unset;
         white-space: unset;
         hyphens: unset;
-        text-align: unset;
+        text-align: justify;
         text-indent: unset;
         place-content: unset;
         align-items: stretch;
         gap: 1rem;
       }
 
-      .\$flex\(gap\(1rem\)\)\|\:first\$start\|\:second\$end\|\:third\$center\|\:fourth\$baseline {
+      .\$flex\(a\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -630,31 +651,67 @@
         hyphens: unset;
         text-align: unset;
         text-indent: unset;
+        place-content: start;
+        align-items: unset;
+        gap: 1rem;
+      }
+
+      .\$flex\(\.b\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        align-content: unset;
+        justify-content: end;
+        align-items: unset;
+        gap: 1rem;
+      }
+
+      .\$flex\(acb\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: end;
+        text-indent: unset;
+        place-content: start center;
+        align-items: end;
+        gap: 1rem;
+      }
+
+      .\$flex\(\.c_\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        align-content: unset;
+        justify-content: center;
+        align-items: start;
+        gap: 1rem;
+      }
+
+      .\$flex\(vvc\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: center;
+        text-indent: unset;
+        place-content: space-evenly;
+        align-items: center;
         gap: 1rem;
       }
     }
 
-    @layer items {
-      .\$flex\(gap\(1rem\)\)\|\:first\$start\|\:second\$end\|\:third\$center\|\:fourth\$baseline> :where(:first-child) {
-        text-align: unset;
-        align-self: start;
-      }
-
-      .\$flex\(gap\(1rem\)\)\|\:first\$start\|\:second\$end\|\:third\$center\|\:fourth\$baseline> :where(:nth-child(2)) {
-        text-align: unset;
-        align-self: end;
-      }
-
-      .\$flex\(gap\(1rem\)\)\|\:first\$start\|\:second\$end\|\:third\$center\|\:fourth\$baseline> :where(:nth-child(3)) {
-        text-align: unset;
-        align-self: center;
-      }
-
-      .\$flex\(gap\(1rem\)\)\|\:first\$start\|\:second\$end\|\:third\$center\|\:fourth\$baseline> :where(:nth-child(4)) {
-        text-align: unset;
-        align-self: stretch;
-      }
-    }
+    @layer items {}
   </style>
 </test-html>
 <test-html title="Layout 6 - Flex Wrap">
@@ -1440,12 +1497,11 @@
   <main>
     <h3>Flex Item Properties</h3>
     <div class="$border $padding(1rem) 
-                $flex(gap(1rem))
-                |:first-child$_flex(grow(1))
-                |:nth-child(2)$_flex(grow(2))
-                |:nth-child(3)$_flex(shrink(0.5))
-                |:nth-child(4)$_flex(basis(100px))
-    ">
+    $flex(gap(1rem))
+      |:nth-child(1)$_flex(grow(1))
+      |:nth-child(2)$_flex(grow(2))
+      |:nth-child(3)$_flex(shrink(0.5))
+      |:nth-child(4)$_flex(basis(100px))">
       <div class="$border $padding(0.5rem)">
         <p>Flex-grow: 1</p>
       </div>
@@ -1461,11 +1517,11 @@
     </div>
     <h3>Grid Item Properties</h3>
     <div class="$border $padding(1rem)
-                $grid(cols(1fr,1fr,1fr),rows(100px,100px),gap(1rem))
-                |:first-child$_grid(column(1,3))
-                |:nth-child(2)$_grid(row(4))
-                |:nth-child(3)$_grid(column(1))
-                |:nth-child(4)$_grid(row(1,2),column(2,3))
+    $grid(cols(1fr,1fr,1fr),rows(100px,100px),gap(1rem))
+    |:nth-child(1)$_grid(column(1,3))
+    |:nth-child(2)$_grid(row(4,4))
+    |:nth-child(3)$_grid(column(1,1))
+    |:nth-child(4)$_grid(row(1,2),column(2,3))
       ">
       <div class="$border $padding(0.5rem)">Grid column: 1 / 3</div>
       <div class="$border $padding(0.5rem)">Grid row: 4 / 4</div>
@@ -1515,7 +1571,7 @@
     }
 
     @layer items {
-      .\|\:first-child\$_flex\(grow\(1\)\)> :where(:first-child) {
+      .\|\:nth-child\(1\)\$_flex\(grow\(1\)\)> :where(:nth-child(1)) {
         flex-grow: 1;
       }
 
@@ -1531,15 +1587,15 @@
         flex-basis: 100px;
       }
 
-      .\|\:first-child\$_grid\(column\(1\,3\)\)> :where(:first-child) {
+      .\|\:nth-child\(1\)\$_grid\(column\(1\,3\)\)> :where(:nth-child(1)) {
         grid-column: 1 / 3;
       }
 
-      .\|\:nth-child\(2\)\$_grid\(row\(4\)\)> :where(:nth-child(2)) {
+      .\|\:nth-child\(2\)\$_grid\(row\(4\,4\)\)> :where(:nth-child(2)) {
         grid-row: 4 / 4;
       }
 
-      .\|\:nth-child\(3\)\$_grid\(column\(1\)\)> :where(:nth-child(3)) {
+      .\|\:nth-child\(3\)\$_grid\(column\(1\,1\)\)> :where(:nth-child(3)) {
         grid-column: 1 / 1;
       }
 
@@ -1593,7 +1649,6 @@
     @layer items {}
   </style>
 </test-html>
-
 <!-- <test-html title="Layout 14 - Grid Position Properties">
   <main>
     <h3>Individual Start/End Properties</h3>
