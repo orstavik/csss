@@ -1,0 +1,392 @@
+<!-- <test-html title="Color System 1 - Basic Palette">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$palette(#d41c84) $color(primary) 
+      $bg $border $grid(g(1rem),p(1rem))">
+        <div class="$color(primary-bw) $bg $border">primary-bw</div>
+        <div class="$color(primary-box) $bg $border">primary-box</div>
+        <div class="$color(primary-flip) $bg $border">primary-flip</div>
+        <div class="$color(primary-darkflip) $bg $border">primary-darkflip</div>
+        <div class="$color(primary-pop-flip) $bg $border">primary-pop-flip</div>
+      </div>
+      <div class="$palette(#1c03dc) $color(primary) 
+      $bg $border $grid(g(1rem),p(1rem))">
+        <div class="$color(secondary-box) $bg $border">secondary-box</div>
+        <div class="$color(tertiary-box) $bg $border">tertiary-box</div>
+        <div class="$color(neutral-box) $bg $border">neutral-box</div>
+        <div class="$color(grey-box) $bg $border">grey-box</div>
+        <div class="$color(red-blend-box) $bg $border">red-blend-box</div>
+        <div class="$color(blue-blend-box) $bg $border">blue-blend-box</div>
+        <div class="$color(green-blend-box) $bg $border">green-blend-box</div>
+        <div class="$color(orange-blend-box) $bg $border">oragne-blend-box</div>
+      </div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) { 
+        display: grid; 
+        word-spacing: unset; 
+        line-height: unset; 
+        white-space: unset; 
+        hyphens: unset; 
+        text-align: unset; 
+        text-indent: unset; 
+        grid-template-columns: 1fr 1fr; 
+        gap: 1rem; 
+      }
+      .\$palette\(\#d41c84\) { 
+        --palette-primary: #d41c84; 
+        --palette-secondary: oklch(from #d41c84 50 c calc(h - 60)); 
+        --palette-tertiary: oklch(from #d41c84 50 c calc(h + 60)); 
+        --palette-neutral: oklch(from #d41c84 50 0.02 h); 
+        --palette-bw-fg: 0; 
+        --palette-bw-bg: 1; 
+        --palette-text-fg: 0.23; 
+        --palette-text-bg: 0.99; 
+        --palette-box-fg: 0.23; 
+        --palette-box-bg: 0.92; 
+        --palette-flip-fg: 0.99; 
+        --palette-flip-bg: 0.66; 
+        --palette-darkflip-fg: 0.9; 
+        --palette-darkflip-bg: 0.33; 
+        --palette-chroma: 0.22526825830796882; 
+        --palette-pop: calc(c * 2); 
+      }
+      .\$color\(primary\) { 
+        color: oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-text-bg) calc(c - (c * max(var(--palette-text-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-text-fg) calc(c - (c * max(var(--palette-text-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$bg { 
+        background: var(--background-color); 
+      }
+      .\$border { 
+        border-style: solid; 
+        border-width: medium; 
+      }
+      .\$grid\(g\(1rem\)\,p\(1rem\)\) { 
+        display: grid; 
+        word-spacing: unset; 
+        line-height: unset; 
+        white-space: unset; 
+        hyphens: unset; 
+        text-align: unset; 
+        text-indent: unset; 
+        gap: 1rem; 
+        padding: 1rem; 
+      }
+      .\$color\(primary-bw\) { 
+        color: oklch(from var(--palette-primary) var(--palette-bw-fg) calc(c - (c * max(var(--palette-bw-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-primary) var(--palette-bw-bg) calc(c - (c * max(var(--palette-bw-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-bw-bg) calc(c - (c * max(var(--palette-bw-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-bw-fg) calc(c - (c * max(var(--palette-bw-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(primary-box\) { 
+        color: oklch(from var(--palette-primary) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-primary) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(primary-flip\) { 
+        color: oklch(from var(--palette-primary) var(--palette-flip-fg) calc(c - (c * max(var(--palette-flip-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-primary) var(--palette-flip-bg) calc(c - (c * max(var(--palette-flip-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-flip-bg) calc(c - (c * max(var(--palette-flip-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-flip-fg) calc(c - (c * max(var(--palette-flip-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(primary-darkflip\) { 
+        color: oklch(from var(--palette-primary) var(--palette-darkflip-fg) calc(c - (c * max(var(--palette-darkflip-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-primary) var(--palette-darkflip-bg) calc(c - (c * max(var(--palette-darkflip-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-primary) var(--palette-darkflip-bg) calc(c - (c * max(var(--palette-darkflip-bg) - .8, 0) * 5)) h), oklch(from var(--palette-primary) var(--palette-darkflip-fg) calc(c - (c * max(var(--palette-darkflip-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(primary-pop-flip\) { 
+        color: oklch(from oklch(from var(--palette-primary) l var(--palette-pop) h) var(--palette-flip-fg) calc(c - (c * max(var(--palette-flip-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from oklch(from var(--palette-primary) l var(--palette-pop) h) var(--palette-flip-bg) calc(c - (c * max(var(--palette-flip-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from oklch(from var(--palette-primary) l var(--palette-pop) h) var(--palette-flip-bg) calc(c - (c * max(var(--palette-flip-bg) - .8, 0) * 5)) h), oklch(from oklch(from var(--palette-primary) l var(--palette-pop) h) var(--palette-flip-fg) calc(c - (c * max(var(--palette-flip-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$palette\(\#1c03dc\) { 
+        --palette-primary: #1c03dc; 
+        --palette-secondary: oklch(from #1c03dc 50 c calc(h - 60)); 
+        --palette-tertiary: oklch(from #1c03dc 50 c calc(h + 60)); 
+        --palette-neutral: oklch(from #1c03dc 50 0.02 h); 
+        --palette-bw-fg: 0; 
+        --palette-bw-bg: 1; 
+        --palette-text-fg: 0.23; 
+        --palette-text-bg: 0.99; 
+        --palette-box-fg: 0.23; 
+        --palette-box-bg: 0.92; 
+        --palette-flip-fg: 0.99; 
+        --palette-flip-bg: 0.66; 
+        --palette-darkflip-fg: 0.9; 
+        --palette-darkflip-bg: 0.33; 
+        --palette-chroma: 0.2748111793828722; 
+        --palette-pop: calc(c * 2); 
+      }
+      .\$color\(secondary-box\) { 
+        color: oklch(from var(--palette-secondary) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-secondary) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-secondary) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from var(--palette-secondary) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(tertiary-box\) { 
+        color: oklch(from var(--palette-tertiary) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-tertiary) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-tertiary) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from var(--palette-tertiary) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(neutral-box\) { 
+        color: oklch(from var(--palette-neutral) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from var(--palette-neutral) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from var(--palette-neutral) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from var(--palette-neutral) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(grey-box\) { 
+        color: oklch(from grey var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from grey var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from grey var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from grey var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(red-blend-box\) { 
+        color: oklch(from oklch(from red l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from oklch(from red l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from oklch(from red l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from oklch(from red l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(blue-blend-box\) { 
+        color: oklch(from oklch(from blue l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from oklch(from blue l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from oklch(from blue l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from oklch(from blue l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(green-blend-box\) { 
+        color: oklch(from oklch(from green l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h); 
+        --background-color: oklch(from oklch(from green l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h); 
+        border-color: color-mix(in oklch, oklch(from oklch(from green l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from oklch(from green l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%); 
+      }
+      .\$color\(orange-blend-box\) {
+        color: oklch(from oklch(from orange l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h);
+        --background-color: oklch(from oklch(from orange l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h);
+        border-color: color-mix(in oklch, oklch(from oklch(from orange l var(--palette-chroma) h) var(--palette-box-bg) calc(c - (c * max(var(--palette-box-bg) - .8, 0) * 5)) h), oklch(from oklch(from orange l var(--palette-chroma) h) var(--palette-box-fg) calc(c - (c * max(var(--palette-box-fg) - .8, 0) * 5)) h) 30%);
+      }
+    }
+    @layer items {}
+  </style>
+</test-html> -->
+<!-- <test-html title="Color System 5 - Gradient Backgrounds">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$bg(linear-gradient(to right, red, blue))">Linear Gradient</div>
+      <div class="$bg(radial-gradient(circle, red, blue))">Radial Gradient</div>
+      <div class="$bg(conic-gradient(from 0deg, red, blue))">Conic Gradient</div>
+      <div class="$bg(linear(to right, primary, secondary))">Palette Gradient</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+    }
+    @layer items {}
+  </style>
+</test-html> -->
+<test-html title="Gradient Function Test">
+  <main csss="
+    $primary(color,onColor) = $gradient(primary,color,onColor);
+    $secondary(color,onColor) = $gradient(secondary,color,onColor);
+    $accent(color,onColor) = $gradient(accent,color,onColor);
+  ">
+    <div class="
+      $primary(blue,red) $secondary(yellow,orange) $accent(purple,yellow) $padding(1rem) $flex(column,gap(1rem))
+    ">
+      <h2>Color Palette System</h2>
+      
+      <p>Primary Color Progression (0-100):</p>
+      <div class="$flex(row,gap(0.2rem)) $h(40px)">
+        <!-- Primary -->
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary0); color: var(--color_primary100); flex: 1;">0</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary10); color: var(--color_primary100); flex: 1;">10</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary20); color: var(--color_primary100); flex: 1;">20</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary30); color: var(--color_primary100); flex: 1;">30</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary40); color: var(--color_primary100); flex: 1;">40</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary50); color: black; flex: 1;">50</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary60); color: black; flex: 1;">60</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary70); color: black; flex: 1;">70</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary80); color: black; flex: 1;">80</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary90); color: black; flex: 1;">90</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary100); color: black; flex: 1;">100</div>
+      </div>
+      
+      <p>Secondary Color Progression (0-100):</p>
+      <div class="$flex(row,gap(0.2rem)) $h(40px)">
+        <!-- Secondary -->
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_secondary0); color: var(--color_secondary100); flex: 1;">0</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_secondary10); color: var(--color_secondary100); flex: 1;">10</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_secondary20); color: var(--color_secondary100); flex: 1;">20</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_secondary30); color: var(--color_secondary100); flex: 1;">30</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_secondary40); color: var(--color_secondary100); flex: 1;">40</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_secondary50); color: black; flex: 1;">50</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_secondary60); color: black; flex: 1;">60</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_secondary70); color: black; flex: 1;">70</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_secondary80); color: black; flex: 1;">80</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_secondary90); color: black; flex: 1;">90</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_secondary100); color: black; flex: 1;">100</div>
+      </div>
+      
+      <p>Accent Color Progression (0-100):</p>
+      <div class="$flex(row,gap(0.2rem)) $h(40px)">
+        <!-- Accent -->
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_accent0); color: var(--color_accent100); flex: 1;">0</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_accent10); color: var(--color_accent100); flex: 1;">10</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_accent20); color: var(--color_accent100); flex: 1;">20</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_accent30); color: var(--color_accent100); flex: 1;">30</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_accent40); color: var(--color_accent100); flex: 1;">40</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_accent50); color: black; flex: 1;">50</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_accent60); color: black; flex: 1;">60</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_accent70); color: black; flex: 1;">70</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_accent80); color: black; flex: 1;">80</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_accent90); color: black; flex: 1;">90</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_accent100); color: black; flex: 1;">100</div>
+      </div>
+
+      <p>Alpha Progression (var(--color_primary50_aX)):</p>
+      <div class="$flex(row,gap(0.2rem)) $h(40px)" style="background: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc), linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc); background-size: 20px 20px; background-position: 0 0, 10px 10px;">
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary50_a10); color: black; flex: 1;">10%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary50_a20); color: black; flex: 1;">20%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary50_a30); color: black; flex: 1;">30%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary50_a40); color: black; flex: 1;">40%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary50_a50); color: black; flex: 1;">50%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary50_a60); color: black; flex: 1;">60%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary50_a70); color: black; flex: 1;">70%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary50_a80); color: black; flex: 1;">80%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary50_a90); color: black; flex: 1;">90%</div>
+        <div class="$flex(cc) $border(solid,r(4px))" style="background-color: var(--color_primary50_a100); color: black; flex: 1;">100%</div>
+      </div>
+
+      <p>Chroma Variations (var(--color_primary50_...)):</p>
+      <div class="$flex(row,gap(0.2rem)) $h(40px)">
+         <div class="$flex(cc) $border(radius(4px))" style="background-color: var(--color_primary50_b1); color: black; flex: 1;">b1</div>
+         <div class="$flex(cc) $border(radius(4px))" style="background-color: var(--color_primary50); color: black; flex: 1;">base (50)</div>
+         <div class="$flex(cc) $border(radius(4px))" style="background-color: var(--color_primary50_p1); color: black; flex: 1;">p1</div>
+      </div>
+    </div>
+  </main>
+  <style>
+   @layer container, items;
+   @layer container {
+      
+    }
+
+    @layer items {
+    }
+  </style>
+</test-html>
+<test-html title="">
+  <main csss="
+    $primary(color,onColor) = $gradient(primary,color,onColor);
+    $secondary(color,onColor) = $gradient(secondary,color,onColor);
+    $accent(color,onColor) = $gradient(accent,color,onColor);
+
+
+  ">
+  <h3>Practical Examples</h3>    
+  <div class="$flex(column,gap(1rem)) $primary(white,blue) $secondary(skyblue,green) $accent(red,white)">
+    <!-- UI Component Examples -->
+    <div class="$flex(row,gap(1rem))">
+      <!-- Primary Button -->
+      <button class="$padding(0.5rem,1rem) $border(none,radius(4px))" 
+             style="background-color: var(--color_primary50); color: var(--color_primary0); cursor: pointer;">
+        Primary Button
+      </button>
+      
+      <!-- Secondary Button -->
+      <button class="$padding(0.5rem,1rem) $border(none,radius(4px))" 
+             style="background-color: var(--color_secondary50); color: var(--color_secondary0); cursor: pointer;">
+        Secondary Button
+      </button>
+      
+      <!-- Accent Button -->
+      <button class="$padding(0.5rem,1rem) $border(none,radius(4px))" 
+             style="background-color: var(--color_accent50); color: var(--color_accent0); cursor: pointer;">
+        Accent Button
+      </button>
+    </div>
+    
+    <!-- Card Example -->
+    <div class="$padding(1rem) $border(solid,radius(8px))" 
+         style="background-color: var(--color_primary10); border-color: var(--color_primary30);">
+      <h4 style="color: var(--color_primary90); margin-top: 0;">Card Title</h4>
+      <p style="color: var(--color_primary80);">This card uses various shades from the primary palette for a cohesive design.</p>
+      <div class="$flex(b.,row,gap(0.5rem))">
+        <button class="$padding(0.25rem,0.75rem) $border(none,radius(4px))" 
+               style="background-color: var(--color_primary40_a80); color: var(--color_primary100);">
+          Cancel
+        </button>
+        <button class="$padding(0.25rem,0.75rem) $border(none,radius(4px))" 
+               style="background-color: var(--color_primary60); color: var(--color_primary0);">
+          Submit
+        </button>
+      </div>
+    </div>
+    
+    <!-- Alert Examples -->
+    <div class="$flex(column,gap(0.5rem))">
+      <div class="$padding(1rem) $border(solid,radius(4px))" 
+           style="background-color: var(--color_primary20_a40); border-color: var(--color_primary30);">
+        <strong style="color: var(--color_primary90);">Info Alert</strong>
+        <p style="color: var(--color_primary80); margin: 0.5rem 0 0;">Using primary colors with transparency.</p>
+      </div>
+      
+      <div class="$padding(1rem) $border(solid,radius(4px))" 
+           style="background-color: var(--color_secondary20_a40); border-color: var(--color_secondary30);">
+        <strong style="color: var(--color_secondary90);">Warning Alert</strong>
+        <p style="color: var(--color_secondary80); margin: 0.5rem 0 0;">Using secondary colors with transparency.</p>
+      </div>
+      
+      <div class="$padding(1rem) $border(solid,radius(4px))" 
+           style="background-color: var(--color_accent20_a40); border-color: var(--color_accent30);">
+        <strong style="color: var(--color_accent0);">Danger Alert</strong>
+        <p style="color: var(--color_accent10); margin: 0.5rem 0 0;">Using accent colors with transparency.</p>
+      </div>
+    </div>
+  </div>
+  </main>
+  <style>
+   @layer container, items;
+   @layer container {
+      
+    }
+
+    @layer items {
+    }
+  </style>
+</test-html>
+<test-html title="Gradient Function Test">
+  <main class="
+    $popGradient(primary,darkblue,#eee)$gradient(neutral,#eee,#111)
+    @dark$popGradient(primary,#eee,darkblue)$gradient(neutral,#111,#eee)
+  ">
+    <div class="$padding(1rem) $flex(column,gap(1rem))">
+      <h2>Color Palette System</h2>
+
+      <p>Primary Color Progression (0-100):</p>
+      <div class="$flex(row,gap(0.2rem))|*$flex(1) $h(40px)">
+        <div class="$flex(cc) $border(solid,r(4px)) $bg(#primary) $color(#primary100_p3)">Normal</div>
+        <div class="$flex(cc) $border(solid,r(4px)) $bg(#primary10_a80) $color(#primary90_a80_p3)">10-a80</div>
+        <div class="$flex(cc) $border(solid,r(4px)) $bg(#primary20_a80_p2) $color(#primary80_p3)">20-a80-p2</div>
+      </div>
+    </div>
+  </main>
+  //todo 1. $bg must recognize the color variables as colors?
+  
+  //        color(--primary20-a80-p2)
+  //        c(--primary20-a80-p2)
+  //        #primary20-a80-p2
+  
+  //        #primary20-a80-p2? That this is turned into color(--primary20-a80-p2)
+  // #primary20-a80-p2 => if #111/#abcdef ? color(#111/#abcdef or color(var(--primary20-a80-p2)))
+
+  //todo 2. $font-color?
+  <style>
+    @layer container, items;
+
+    @layer container {}
+
+    @layer items {}
+  </style>
+</test-html>
