@@ -145,6 +145,12 @@ const upgrades = new UpgradeRegistry({
 
 const parseCssShorts = (str) => Rule.interpret(str, upgrades, RENAME);
 const registerShort = (name, func) => upgrades.registerShort(name, func);
+const registerMedia = (name, txt) => upgrades.registerMedia(name, txt);
+registerMedia("sm", "min-width:640px");
+registerMedia("md", "min-width:768px");
+registerMedia("lg", "min-width:1024px");
+registerMedia("xl", "min-width:1280px");
+registerMedia("xxl", "min-width:1536px");
 
 class SheetWrapper {
   rules = {};
@@ -236,4 +242,4 @@ class SheetWrapper {
   }
 }
 
-export { SheetWrapper, registerShort, parseCssShorts };
+export { SheetWrapper, registerShort, parseCssShorts, registerMedia };

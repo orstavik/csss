@@ -341,7 +341,7 @@ function parseMediaQuery(str, register) {
     const word = m[0]
     const t = register[word];
     if (!t)
-      throw new ReferenceError(word);
+      throw new ReferenceError("@" + word);
     return { str: str.slice(1 + word.length), media: `@media (${t})` };
   }
   let i = 2, tokens = [], level = 1;
@@ -363,7 +363,7 @@ function parseMediaQuery(str, register) {
       const t = mediaComparator(word) ?? register[word];
       if (!t)
         throw word.match(/^[a-z][a-z_0-9]*$/i) ?
-          new ReferenceError(word) :
+          new ReferenceError("@" + word) :
           new SyntaxError(`Invalid media query: "${word}" in "${str}".`);
       tokens.push(
         t == "all" || t == "print" || t == "screen" ? t :
