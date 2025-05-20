@@ -14,9 +14,11 @@ Then go to: (http://127.0.0.1:3003/test)[http://127.0.0.1:3003/test]
 
 CSSS (CSS Shorts) is a CSS preprocessor engine that introduces two main concepts for simplified CSS authoring:
 
-1. **Dollar Shorts**: Shorthand syntax patterns that start with `$`. These provide concise, expressive ways to write common CSS patterns.
+1. **Dollar Shorts**: Shorthand syntax patterns that start with `$`. These provide concise, expressive ways to write common CSS patterns, either built-in or custom-defined in JavaScript.
    
-2. **Supershorts**: An even more concise way to combine multiple dollar shorts together, creating reusable style combinations.
+2. **Custom Style Groups (JS Registered)**: Define reusable sets of styles in JavaScript using `registerShort()`. This is the modern way to create components or complex aliases (effectively replacing legacy "Supershorts").
+
+(A legacy "Supershorts" system using `=` in CSSS to define aliases also existed but is now deprecated.)
 
 ## Core Features
 
@@ -42,12 +44,14 @@ Target child elements without writing separate CSS rules:
 
 ### Color System
 
-Define and use color palettes with intelligent color relationships:
+Define and use color schemes by generating CSS custom properties with `$gradient` or `$popGradient`, then apply them using shorts like `$color`, `$bg`, etc.
 
 ```html
-<div class="$palette(#14a69b) $color(primary) $border(solid,2px)">
-  <div class="$color(secondary)">Secondary color text</div>
-</div>
+<body class="$gradient(theme, #14a69b, white)">
+  <div class="$bg(#theme10) $color(#theme90) $border(solid,2px,#theme50)">
+    <div class="$color(#theme70)">Text using a theme color variant.</div>
+  </div>
+</body>
 ```
 
 ### Layout Utilities
@@ -72,17 +76,28 @@ Responsive design with built-in media query shortcuts:
 </div>
 ```
 
-### Custom Super Shorts
+### Custom Style Groups (JavaScript Registration)
 
-Define your own reusable combinations of styles:
+Define your own reusable combinations of styles in JavaScript for more power and flexibility.
 
-```css
-$myButton = $padding(1rem,2rem) $border(solid,2px) $flex(cc)
+```javascript
+// Example: Registering a custom button style in your project's JS
+// import { registerShort } from '/src/engine.js'; 
+// registerShort('myButton', () => ({
+//   padding: '1rem 2rem',
+//   border: 'solid 2px blue',
+//   display: 'flex',
+//   alignItems: 'center',
+//   justifyContent: 'center'
+// }));
 ```
 
+Usage in HTML:
 ```html
 <button class="$myButton">Styled Button</button>
 ```
+
+(Previously, a CSS-based syntax with `=` was used for "Supershorts", but the JavaScript approach is now recommended.)
 
 ## Project Structure
 

@@ -13,41 +13,30 @@ alwaysApply: true
 ## Overview
 CSSS (CSS Shorts) is a CSS preprocessor engine that introduces two main concepts for simplified CSS authoring:
 
-1.  **Dollar Shorts**: Shorthand syntax patterns that start with `$`. These are typically JavaScript functions (defined in `func.js`, `layout.js`, `palette.js`) that generate CSS property objects. For example, `$padding(1rem, 2rem)` calls a function to generate logical padding properties, and `$flex(cc)` calls a function to configure flexbox centering.
+1.  **Dollar Shorts**: Shorthand syntax patterns that start with `$`. These are typically JavaScript functions (defined in `func.js`, `layout.js`, `gradient.js`, etc.) or can be custom defined via JavaScript (see Custom Style Groups below) to generate CSS property objects.
 
-2.  **Supershorts (Defined with `=`):** A way to define custom shortcuts using the `=` syntax within `<style csss="...">` or `csss="..."` attributes. These definitions create wrapper functions using the internal `makeSuperShort` mechanism.
-    *   **Simple Aliases (`$name = $short1$short2;`):** Creates a function that, when called (e.g., by using `$name` in a class), executes the original sequence (`$short1`, then `$short2`) using the main function registry (`this.shorts`). This correctly handles built-ins like `$block` or `$border` by interpreting them at runtime.
-    *   **Parameterized Functions (`$name(arg) = $short1(arg);`):** Creates a function that accepts arguments. When called (e.g., `$name(value)`), it substitutes the provided arguments into the remembered definition and then executes the resulting sequence using the main function registry.
-    *   **Media/Selector Aliases (`@name = @media...;`, `:name = :pseudo...;`):** These are simple string replacements stored separately and used for media query or selector substitutions.
+2.  **Custom Style Groups (via JavaScript)**: The primary way to create reusable, complex style components or aliases by registering them in JavaScript using `registerShort()`. This allows for namespacing (e.g., `grid.card`) and access to item-specific utilities.
 
-The engine comes with "BuiltinSupers" (`BuiltinSupers.js`) - a set of predefined simple aliases (like `$name = ...`), which are also processed using the `makeSuperShort` mechanism during initialization.
+(A legacy system for defining "Supershorts" using an `=` syntax within `<style csss="...">` or `csss="..."` attributes also exists but is deprecated.)
 
 ## Core Components
 
 ### Parser System
 - **Parser.js**: Main parser for CSSS syntax.
-  - Handles parsing of dollar shorts and supershort definitions (`=`).
-  - Contains `extractSuperShorts` to parse definitions.
-  - Contains `makeSuperShort` to create function wrappers for `$`-based supershorts.
-  - Contains `Expression.interpret` to execute dollar short functions (both built-in and those created by `makeSuperShort`).
-- **BuiltinSupers.js**: Predefined simple aliases (`$name = ...`).
-  - Loaded first and processed by `extractSuperShorts` / `makeSuperShort`.
-  - Examples: `$bold = $fontWeight(bold);`, `$italic = $fontStyle(italic);`
+  - Handles parsing of dollar shorts.
+  - Contains `extractSuperShorts` and `makeSuperShort` to handle legacy CSSS-defined supershort definitions (`=`) when encountered in `<style csss>` tags.
+  - Contains `Expression.interpret` to execute dollar short functions (both built-in and those registered via JavaScript or created by the legacy `makeSuperShort`).
+- **BuiltinSupers.js**: Contains predefined simple aliases using the legacy `=` syntax. This file is no longer automatically processed by the engine at startup but serves as a reference for deprecated patterns.
 
 ### Function System
-- **func.js**: Core CSS function implementations (borders, basic properties, transforms, filters, gradients, fonts).
-- **layout.js**: Layout-specific function implementations (`$block`, `$flex`, `$grid`, `$_block`, etc.). Includes `display` logic and resets.
-- **palette.js**: Color system and palette function implementations (`$palette`, `$color`, shadows, text decorations).
+- **func.js**: Core CSS function implementations (borders, basic properties, transforms, filters, etc.).
+- **gradient.js**: Defines `$gradient` and `$popGradient` for CSS variable generation.
 
 ### Engine
 - **engine.js**: Core processing engine.
-  - Initializes (`this.shorts` with functions from `func.js`, `layout.js`, `palette.js`).
-  - Reads and processes `BuiltinSupers.js` and other supershort definitions using `readSupers` -> `extractSuperShorts`. Stores resulting functions/aliases in `this.shorts` or `this.supers`.
-  - Processes class attributes (`addRule`) by creating `ShortBlock` instances.
-  - Interprets the shorts within a `ShortBlock` (`Expression.interpret`):
-    - The first short (container) is interpreted using the global `this.shorts`.
-    - Subsequent shorts (items, separated by `|`) are interpreted using the `itemScope` provided by the container's main function (e.g., `$grid` provides `$_grid` scope).
-  - Handles CSS rule generation and insertion into the stylesheet layers (`container` and `items`).
+  - Initializes `this.shorts` with built-in functions (from `func.js`, `layout.js`, `gradient.js`, etc.) and provides `registerShort()` for defining custom style groups in JavaScript.
+  - (Legacy Support) Reads and processes legacy supershort definitions (`=`) if they are encountered directly in `<style csss="...">` or `csss="..."` attributes at runtime, using `Parser.js`'s `extractSuperShorts`.
+  - Processes class attributes (`addRule`) by creating `Rule` instances and interpreting them (`Expression.interpret`) using the populated `this.shorts` (which includes JS-registered shorts and any runtime-parsed legacy supershorts).
 
 ## Key Features
 
@@ -62,12 +51,44 @@ Dollar shorts are direct calls to JavaScript functions that return CSS property 
 .\$flex\(row\,c\) { display: flex; flex-direction: row; align-items: center; }
 ```
 
-### Supershorts (`=`)
-Supershorts create callable functions via `makeSuperShort`.
+### Custom Style Groups (JavaScript Registration)
+
+The recommended way to define reusable combinations of styles is by registering them in JavaScript using `registerShort(name, func)`.
+
+- **Example (`grid.holyGrail` concept)**:
+  ```javascript
+  // In a JS module that runs before CSSS processes relevant elements:
+  import { registerShort } from '/src/engine.js';
+
+  registerShort('grid.hg', () => ({
+    gridTemplateRows: "auto 1fr auto",
+    gridTemplateColumns: "auto 1fr auto",
+    gap: "1rem",
+    blockSize: "100vh"
+  }));
+
+  registerShort('_grid.hgHeader', function() { return this.column(1, 4); });
+  // ... other hg parts ...
+  ```
+  Usage in HTML:
+  ```html
+  <div class="$grid(hg)|header$_grid(hgHeader)|main$_grid(hgMain)">
+    <header class="header">Header</header>
+    <main>Main</main>
+    <!-- ... -->
+  </div>
+  ```
+This approach allows for namespacing, complex logic, and proper integration with item scopes.
+
+### Legacy Supershorts (`=` - Deprecated)
+
+CSSS previously supported defining "Supershorts" using an `=` syntax within `<style csss="...">`. This method is now deprecated in favor of JavaScript registration.
+
+*How it worked (Legacy)*:
 ```css
-/* Defining and Using Supershorts */
+/* Defining and Using Supershorts (Legacy Example) */
 <style csss="
-  /* Simple Alias (creates a function wrapper) */
+  /* Simple Alias (created a function wrapper) */
   $cardBase = $border(solid, 1px)$padding(1rem);
   /* Parameterized Function */
   $rounded(r) = $border(radius(r));
@@ -75,107 +96,38 @@ Supershorts create callable functions via `makeSuperShort`.
 </style>
 
 <div class="$cardBase $rounded(8px)"></div>
-
-/* How it works internally: */
-/* 1. $cardBase definition creates a function in this.shorts['cardBase'] */
-/* 2. $rounded definition creates a function in this.shorts['rounded'] */
-/* 3. When class="$cardBase $rounded(8px)" is processed: */
-/*    - this.shorts.cardBase() is called -> runs $border(solid, 1px), then $padding(1rem) */
-/*    - this.shorts.rounded('8px') is called -> substitutes 'r', runs $border(radius('8px')) */
-
-/* Resulting CSS (Simplified) */
-.\$cardBase { border: solid 1px; padding: 1rem; }
-.\$rounded\(8px\) { border-radius: 8px; }
 ```
+These definitions were converted into function wrappers by `makeSuperShort` at runtime.
 
-### Item Scopes (`|`)
-The `|` character separates container styles from item styles within a single class attribute. Item styles are interpreted within the specific `itemScope` provided by the container's primary layout function (e.g., `$grid` provides `$_grid`, `$flex` provides `$_flex`).
+## Color System: `$gradient` and CSS Variables
 
-There are two main ways to apply item styles:
+The color system has been redesigned to use CSS custom properties generated by new dollar shorts:
 
-1.  **Direct Item Function Call (Preferred):** Call the item function directly.
-    ```css
-    /* Apply grid column styles to all direct children (*) */
-    <div class="$grid(cols(3))|*$column(1, 3)"></div>
+- **`$gradient(role, color, onColor, steps?)`**: This is the primary function for defining a color scheme. It generates a set of CSS custom properties for a given `role` (e.g., `primary`, `accent`) by mixing a base `color` with an `onColor` (e.g., white or black for contrast) over a number of `steps`.
+  - It creates variables like `--color_primary`, `--color_primary10` (10% mix), `--color_primary20`, etc.
+  - It also generates alpha versions: `--color_primary_a50` (50% alpha), `--color_primary10_a50`.
 
-    /* How it works: */
-    /* 1. $grid(cols(3)) is interpreted in the global scope, sets display:grid */
-    /*    and provides the $_grid object as the itemScope. */
-    /* 2. $column(1, 3) is interpreted using the $_grid itemScope, */
-    /*    which finds and executes the column() function. */
+- **`$popGradient(role, color, onColor, steps?)`**: Similar to `$gradient`, but also generates additional variations by modifying the chroma of the generated colors (e.g., `--color_primary_p1`, `--color_primary10_b2`).
 
-    /* Resulting CSS (Simplified) */
-    .\$grid\(cols\(3\)\)\|\*\$column\(1\,3\) { display: grid; grid-template-columns: repeat(3, 1fr); }
-    .\$grid\(cols\(3\)\)\|\*\$column\(1\,3\) > * { grid-column: 1 / 3; }
-    ```
+These shorts are typically applied to a parent HTML element. The generated CSS variables are then available to all child elements.
 
-2.  **Using Item Scope Function (Redundant but Works):** Explicitly call the item scope function (`$_grid`, `$_flex`, etc.).
-    ```css
-    /* Apply grid column styles using the explicit $_grid function */
-    <div class="$grid(cols(3))|*$_grid(column(1, 3))"></div>
+To apply these colors, individual CSS property shorts are used, referencing the generated variables with a `#` prefix (which CSSS converts to `var(--color_...)`):
 
-    /* How it works: */
-    /* 1. Same as above, $_grid is the itemScope. */
-    /* 2. $_grid(column(1, 3)) is interpreted using the $_grid itemScope. */
-    /* 3. The $_grid function itself is called and processes its arguments, */
-    /*    eventually calling the column() function. */
-    ```
+- **`$color(#variableName)`**: Sets the text `color`.
+- **`$bg(#variableName)`**: Sets the `background-color`.
+- **`$borderColor(#variableName)`**: Sets border colors.
+- Other specific color properties (e.g., `$caretColor`, `$accentColor`) also accept these variable references.
 
-3.  **Using Supershorts:** Reference a defined supershort.
-    ```css
-    /* Define item styles as supershorts */
-    <main csss="
-      $hg = $grid(rows(auto,1fr,auto),cols(auto,1fr,auto));
-      $hg.header = $column(1,4);
-      $hg.main = $column(2,3);
-    ">
-      <div class="$hg|header$header|main$main">...</div>
-    </main>
+This new system replaces the previous `$palette()` and relief-based color generation.
 
-    /* How it works: */
-    /* 1. $hg sets the context and provides the $_grid itemScope. */
-    /* 2. For |header$header: */
-    /*    - The selector is 'header'. */
-    /*    - The short is '$header'. */
-    /*    - The engine looks up the supershort $hg.header ($column(1,4)). */
-    /*    - $column(1,4) is interpreted using the $_grid itemScope. */
-    /* 3. Similar process for |main$main. */
-    ```
-
-### BuiltinSupers System (`BuiltinSupers.js`)
-- Provides a default set of simple aliases (like `$bold`, `$italic`).
-- These are also converted into function wrappers via `makeSuperShort` on initialization.
-- Example: `$bold` in a class calls the function created from `$bold = $fontWeight(bold);`, which in turn calls the actual `$fontWeight` function.
-
-## Color System and Palettes
-```css
-/* Using $palette to define a color scheme */
-.\$palette\(\#d41c84\) {
-    /* Sets primary color and generates secondary, tertiary, and neutral colors */
-}
-
-/* Using $color with palette colors and modifiers */
-.element {
-  $color(primary)           /* Use primary color */
-  $color(primary-box)      /* Primary color with box relief */
-  $color(primary-flip)     /* Primary color with flip relief */
-  $color(neutral-box)      /* Neutral color with box relief */
-  $color(red-blend-box)    /* Red color blended with box relief */
-}
+**Example Usage**:
+```html
+<div class="$gradient(interactive, blue, white)">
+  <button class="$bg(#interactive60) $color(#interactive10)">
+    Click Me
+  </button>
+</div>
 ```
-
-The palette system provides:
-- **Color Roles**: primary, secondary, tertiary, and neutral colors
-- **Color Reliefs**: bw (black/white), text, box, flip, darkflip
-- **Color Blending**: Support for red, green, orange, blue with blend modifiers
-- **Border Intensities**: b0 through b9 for fine-tuned border colors
-- **Special Effects**: pop and blend modifiers for enhanced color effects
-
-Each palette color can be combined with various modifiers:
-- Relief types (box, flip, darkflip)
-- Border intensities (b0-b9)
-- Special effects (pop, blend)
-- Color mixing and blending
 
 ## Testing
 - HTML-based test files in `/test`
@@ -189,16 +141,14 @@ Each palette color can be combined with various modifiers:
    - Clarified item scope (`|`) handling: Item styles (`selector$short`) are now interpreted using the specific `itemScope` provided by the container's layout function (e.g., `$grid` provides `$_grid`). The preferred syntax is to call item functions directly (e.g., `|$column(1,3)`) rather than wrapping them (e.g., `|$_grid(column(1,3))`).
    - Moved layout-specific functions (`$block`, `$grid`, `$flex`, `$_block`, etc.) including `display` logic into `layout.js`.
    - Cleaned up function/alias storage (`this.shorts` for functions, `this.supers` for `@`/`:` aliases).
+   - Redesigned Color System: Replaced the `$palette()` and relief-based system with `$gradient()` and `$popGradient()` for generating CSS custom properties. Colors are now applied using individual shorts like `$color()`, `$bg()`, `$borderColor()`, etc., which reference these variables (e.g., `$color(#primary)`).
+   - **Introduced JavaScript-based Custom Style Groups**: The `registerShort(name, func)` mechanism in JavaScript is now the primary and recommended way to define reusable, namespaced style components, effectively replacing the legacy `=` supershort syntax for new development.
 
 2. Active Issues:
-   - Supershorts system complexity: The current supershorts system is overly complex and planned for replacement with a more direct custom word approach. This will simplify the syntax and make it more consistent with how colors work.
-   
+   - Legacy Supershorts (`=` syntax): The parsing code for the old `=` supershort definitions still exists but is considered deprecated. This legacy code might be removed in future versions to simplify the parser.
    - Media query handling: Plans to implement media queries as shorts (e.g., `@md`, `@dark`) with a consistent expression syntax, making them more aligned with the rest of the CSSS system.
-   
    - Smart loading system: Implementing an "upgrade" sequence where the system doesn't fail on unregistered shorts but stores them for later when they become available.
-   
-   - Layout naming conventions: Working toward a more semantic layout system with named layouts (e.g., `$grid(holyGrail)`), allowing complex layouts to be defined with single words.
-   
+   - Layout naming conventions: Working toward a more semantic layout system with named layouts (e.g., `$grid(holyGrail)` registered via JS), allowing complex layouts to be defined with single words.
    - Single registry consolidation: Moving toward a single unified registry that includes both $ and @ shorts with their prefixes, simplifying the system architecture.
 
 3. Ongoing Work:
