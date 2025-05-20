@@ -5,8 +5,6 @@
     const style = document.querySelector('style');
     style.textContent = "";
     const sheetWrapper = new SheetWrapper(style.sheet);
-    for (let el of document.body.querySelectorAll('[csss]'))
-      try { sheetWrapper.readSupers(el.getAttribute("csss")); } catch (er) { console.error(er); }
     for (let el of document.body.querySelectorAll('[class*="$"]'))
       for (let clazz of el.classList)
         if (clazz.includes("$"))
