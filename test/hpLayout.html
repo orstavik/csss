@@ -454,9 +454,12 @@
 
     <h3>4b. With align-items - Different content values - $flex(ws_)</h3>
     <div class="$flex(ws_,gap(1rem)) $border $padding(1rem) $h(200px)">
-      <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items: baseline</div>
-      <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items: baseline</div>
-      <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items: baseline</div>
+      <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items:
+        baseline</div>
+      <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items:
+        baseline</div>
+      <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items:
+        baseline</div>
     </div>
 
     <h3>4c. Only align-items - $flex(..s)</h3>
@@ -465,35 +468,35 @@
       <div class="$border $padding(0.5rem)">only align-items: stretch</div>
       <div class="$border $padding(0.5rem)">only align-items: stretch</div>
     </div>
-    
+
     <h3>5. Single value shorthand - $flex(a)</h3>
     <div class="$flex(a,gap(1rem)) $border $padding(1rem) $h(200px)">
       <div class="$border $padding(0.5rem)">should produce: place-content: start start, text-align: start</div>
       <div class="$border $padding(0.5rem)">using 'a' for both align-content and justify-content</div>
       <div class="$border $padding(0.5rem)">and no align-items</div>
     </div>
-    
+
     <h3>6. Only justify-content provided - $flex(.b)</h3>
     <div class="$flex(.b,gap(1rem)) $border $padding(1rem) $h(200px)">
       <div class="$border $padding(0.5rem)">should produce: justify-content: end, text-align: end</div>
       <div class="$border $padding(0.5rem)">with no explicit align-content</div>
       <div class="$border $padding(0.5rem)">and no align-items</div>
     </div>
-    
+
     <h3>7. Three-value mix - $flex(acb)</h3>
     <div class="$flex(acb,gap(1rem)) $border $padding(1rem) $h(200px)">
       <div class="$border $padding(0.5rem)">align-content: start, justify-content: center</div>
       <div class="$border $padding(0.5rem)">align-items: end</div>
       <div class="$border $padding(0.5rem)">text-align: center</div>
     </div>
-    
+
     <h3>8. Three-value mix with align-items as baseline - $flex(.c_)</h3>
     <div class="$flex(.c_,gap(1rem)) $border $padding(1rem) $h(200px)">
       <div class="$border $padding(0.5rem)">justify-content: center, text-align: center</div>
       <div class="$border $padding(0.5rem)">align-items: baseline</div>
       <div class="$border $padding(0.5rem)">first character is placeholder</div>
     </div>
-    
+
     <h3>9. Three-value mix with space-evenly and center - $flex(vvc)</h3>
     <div class="$flex(vvc,gap(1rem)) $border $padding(1rem) $h(200px)">
       <div class="$border $padding(0.5rem)">align-content: space-evenly</div>
@@ -517,18 +520,23 @@
         align-items: unset;
         gap: 1rem;
       }
+
       .\$border {
         border-style: solid;
       }
+
       .\$padding\(1rem\) {
         padding: 1rem;
       }
+
       .\$h\(200px\) {
         block-size: 200px;
       }
+
       .\$padding\(0\.5rem\) {
         padding: 0.5rem;
       }
+
       .\$flex\(ww\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -541,6 +549,7 @@
         align-items: unset;
         gap: 1rem;
       }
+
       .\$flex\(ab\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -553,6 +562,7 @@
         align-items: unset;
         gap: 1rem;
       }
+
       .\$flex\(vu\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -565,6 +575,7 @@
         align-items: unset;
         gap: 1rem;
       }
+
       .\$flex\(s\.\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -578,6 +589,7 @@
         align-items: unset;
         gap: 1rem;
       }
+
       .\$flex\(\.w\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -591,6 +603,7 @@
         align-items: unset;
         gap: 1rem;
       }
+
       .\$flex\(ccs\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -603,6 +616,7 @@
         align-items: stretch;
         gap: 1rem;
       }
+
       .\$flex\(ws_\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -615,6 +629,7 @@
         align-items: start;
         gap: 1rem;
       }
+
       .\$flex\(\.\.s\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -627,6 +642,7 @@
         align-items: stretch;
         gap: 1rem;
       }
+
       .\$flex\(a\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -639,6 +655,7 @@
         align-items: unset;
         gap: 1rem;
       }
+
       .\$flex\(\.b\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -652,6 +669,7 @@
         align-items: unset;
         gap: 1rem;
       }
+
       .\$flex\(acb\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -664,6 +682,7 @@
         align-items: end;
         gap: 1rem;
       }
+
       .\$flex\(\.c_\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -677,6 +696,7 @@
         align-items: start;
         gap: 1rem;
       }
+
       .\$flex\(vvc\,gap\(1rem\)\) {
         display: flex;
         word-spacing: unset;
@@ -691,9 +711,7 @@
       }
     }
 
-    @layer items {
-      
-    }
+    @layer items {}
   </style>
 </test-html>
 <test-html title="Layout 6 - Flex Wrap">
@@ -1230,7 +1248,7 @@
 
       <div>
         <h4>Anywhere</h4>
-        <div class="$block(anywhere) $border $padding(1rem) $w(200px)">
+        <div class="$block(break-anywhere) $border $padding(1rem) $w(200px)">
           <p>This text demonstrates anywhere overflow-wrap with a very long word: supercalifragilisticexpialidocious.
           </p>
         </div>
@@ -1306,7 +1324,7 @@
         word-break: keep-all;
       }
 
-      .\$block\(anywhere\) {
+      .\$block\(break-anywhere\) {
         display: block;
         word-spacing: unset;
         line-height: unset;
@@ -1351,14 +1369,6 @@
         <div class="$block(hyphens) $border $padding(1rem) $w(80px)">
           <p>This text demonstrates auto hyphenation for long words like internationalization and
             antidisestablishmentarianism.</p>
-        </div>
-      </div>
-
-      <div>
-        <h4>Manual Hyphens (shy)</h4>
-        <div class="$block(shy) $border $w(100px)">
-          <p>This text demonstrates manual hyphenation using the shy parameter. You would need to add soft hyphe&shy;ns
-            manually.</p>
         </div>
       </div>
     </div>
@@ -1427,20 +1437,6 @@
 
       .\$w\(80px\) {
         inline-size: 80px;
-      }
-
-      .\$block\(shy\) {
-        display: block;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: manual;
-        text-align: unset;
-        text-indent: unset;
-      }
-
-      .\$w\(100px\) {
-        inline-size: 100px;
       }
 
       .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
@@ -1575,39 +1571,82 @@
     }
 
     @layer items {
-      .\|\:nth-child\(1\)\$_flex\(grow\(1\)\) > :where(:nth-child(1)) {
+      .\|\:nth-child\(1\)\$_flex\(grow\(1\)\)> :where(:nth-child(1)) {
         flex-grow: 1;
       }
 
-      .\|\:nth-child\(2\)\$_flex\(grow\(2\)\) > :where(:nth-child(2)) {
+      .\|\:nth-child\(2\)\$_flex\(grow\(2\)\)> :where(:nth-child(2)) {
         flex-grow: 2;
       }
 
-      .\|\:nth-child\(3\)\$_flex\(shrink\(0\.5\)\) > :where(:nth-child(3)) {
+      .\|\:nth-child\(3\)\$_flex\(shrink\(0\.5\)\)> :where(:nth-child(3)) {
         flex-shrink: 0.5;
       }
 
-      .\|\:nth-child\(4\)\$_flex\(basis\(100px\)\) > :where(:nth-child(4)) {
+      .\|\:nth-child\(4\)\$_flex\(basis\(100px\)\)> :where(:nth-child(4)) {
         flex-basis: 100px;
       }
 
-      .\|\:nth-child\(1\)\$_grid\(column\(1\,3\)\) > :where(:nth-child(1)) {
+      .\|\:nth-child\(1\)\$_grid\(column\(1\,3\)\)> :where(:nth-child(1)) {
         grid-column: 1 / 3;
       }
 
-      .\|\:nth-child\(2\)\$_grid\(row\(4\,4\)\) > :where(:nth-child(2)) {
+      .\|\:nth-child\(2\)\$_grid\(row\(4\,4\)\)> :where(:nth-child(2)) {
         grid-row: 4 / 4;
       }
 
-      .\|\:nth-child\(3\)\$_grid\(column\(1\,1\)\) > :where(:nth-child(3)) {
+      .\|\:nth-child\(3\)\$_grid\(column\(1\,1\)\)> :where(:nth-child(3)) {
         grid-column: 1 / 1;
       }
 
-      .\|\:nth-child\(4\)\$_grid\(row\(1\,2\)\,column\(2\,3\)\) > :where(:nth-child(4)) {
+      .\|\:nth-child\(4\)\$_grid\(row\(1\,2\)\,column\(2\,3\)\)> :where(:nth-child(4)) {
         grid-area: 1 / 2 / 2 / 3;
       }
     }
+  </style>
+</test-html>
+<test-html title="Layout X - hyphens">
+  <main>
+    <h4>Hyphens (shy/hyphens)</h4>
+    <div class="$w(100px) $block(shy)">
+      This text demonstrates manual hyphenation using the shy parameter. You would need to add soft hyphe&shy;ns
+      manually.
+    </div>
+    <div class="$flex(hyphens) $w(100px)">
+      This text demonstrates auto hyphenation using the shy parameter. You would need to add soft hyphe&shy;ns
+      manually.
+    </div>
+  </main>
+  <style>
+    @layer container, items;
 
+    @layer container {
+      .\$w\(100px\) {
+        inline-size: 100px;
+      }
+
+      .\$block\(shy\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: manual;
+        text-align: unset;
+        text-indent: unset;
+      }
+
+      .\$flex\(hyphens\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: auto;
+        text-align: unset;
+        text-indent: unset;
+      }
+    }
+
+    @layer items {}
   </style>
 </test-html>
 <!-- <test-html title="Layout 14 - Grid Position Properties">
