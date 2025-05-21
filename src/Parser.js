@@ -103,12 +103,19 @@ const clashOrStack = (function () {
 })();
 
 function varAndSpaceOperators(tokens) {
-  const res = tokens.join("").split(/(--[a-z][a-z0-9_-]*)/g);
+  const res = tokens.join("").split(/(---?[a-z][a-z0-9_-]*)/g);
   for (let i = res.length - 1; i >= 0; i--) {
+    const env = res[i].startsWith("---");
+    const comma = res[i + 1] == ",";
+    const afterComma = res[i + 2];
     if (!res[i])
       res.splice(i, 1);
-    else if (i % 2 && res[i + 1] == "," && i + 2 < res.length)
-      res.splice(i, 3, `var(${res[i] + res[i + 1] + res[i + 2]})`);
+    else if (env && i % 2 && comma && afterComma)
+      res.splice(i, 3, `env(${res[i].slice(3)}, ${res[i + 2]})`);
+    else if (env && i % 2)
+      res[i] = `env(${res[i].slice(3)})`;
+    else if (i % 2 && comma && afterComma)
+      res.splice(i, 3, `var(${res[i]}, ${res[i + 2]})`);
     else if (i % 2)
       res[i] = `var(${res[i]})`;
     else
@@ -134,7 +141,6 @@ function parseVarCalc(tokens) {
     t3.shift(), t3.pop();
   if (t3.length === 1 && t3[0].startsWith("var(--"))
     return t3[0];
-  //wrap in calc() if needed
   const str = t3.join("");
   return str.includes(" ") ? `calc(${str})` : str;
 }
