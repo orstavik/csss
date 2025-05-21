@@ -1136,6 +1136,24 @@
     @layer items {}
   </style>
 </test-html>
+<test-html title="Text transform">
+  <div class="$smallCaps $allCaps">small- and allCaps</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$smallCaps {
+        text-transform: lowercase;
+      }
+
+      .\$allCaps {
+        text-transform: uppercase;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
 <test-html title="$lineClamp(2)">
   <div class="$lineClamp(2)"> hello </div>
   <script type="module">

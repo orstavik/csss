@@ -184,6 +184,8 @@ const WORDS = {
   text: {
     Transform: {
       capitalize: "capitalize",
+      allCaps: "uppercase",
+      smallCaps: "lowercase",
       uppercase: "uppercase",
       lowercase: "lowercase",
       fullWidth: "full-width",
