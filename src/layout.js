@@ -189,6 +189,7 @@ grid.scope = {
   alignItems: AllFunctions.alignItems,
   ...nativeGrid,
   cols: nativeGrid.gridTemplateColumns,
+  columns: nativeGrid.gridTemplateColumns,
   rows: nativeGrid.gridTemplateRows,
   areas: nativeGrid.gridTemplateAreas,
   ...LAYOUT,

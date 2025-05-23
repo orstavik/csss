@@ -86,10 +86,13 @@ const NativeCssScopeMath = {
   min: (...args) => `min(${args.join(",")})`,
   max: (...args) => `max(${args.join(",")})`,
   clamp: (...args) => `clamp(${args.join(",")})`,
+  minmax: (...args) => `minmax(${args.join(",")})`,  //only used in grid, but native valid property+value check captures wrong use
 };
 for (const v of Object.values(NativeCssScopeMath))
   v.scope = NativeCssScopeMath;
 
+const NativeCssScopeRepeat = (i, ...args) => `repeat(${i}, ${args.join(" ")})`;
+NativeCssScopeRepeat.scope = NativeCssScopeMath;
 const NativeCssScopeUrl = (...args) => `url(${args.join(" ")})`;
 
 const NativeCssScopeAttrCounter = {
@@ -226,6 +229,8 @@ const NativeCssProperties = (function () {
       Object.assign(res[camel].scope, NativeColorsFunctions);
     if (CSS.supports("transition", name + " 1s linear"))
       Object.assign(res[camel].scope, transitionFunctionSet(name));
+    if (camel.match(/^(gridTemplateColumns|gridTemplateRows|gridTemplateAreas|gridTemplate|grid)$/))
+      res[camel].scope.repeat = NativeCssScopeRepeat;
   }
   //if name == "content"
   res.content.scope = Object.assign(res.content.scope ?? {}, NativeCssScopeAttrCounter);

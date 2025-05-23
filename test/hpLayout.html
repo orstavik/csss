@@ -1652,24 +1652,30 @@
 <test-html title="Layout 13 - repeat minmax">
   <main>
     <h3>Repeat and Minmax</h3>
-    <div class="$grid(cols(repeat(3,minmax(100px,1fr))),gap(1rem))">
-      <div class="$border $padding(0.5rem)">Item 1</div>
-      <div class="$border $padding(0.5rem)">Item 2</div>
-      <div class="$border $padding(0.5rem)">Item 3</div>
+    <div class="
+      $grid(cols(repeat(3,minmax(100px,1fr))),gap(1rem))
+      |$border$padding(0.5rem)
+      ">
+      <div>Item 1</div>
+      <div>Item 2</div>
+      <div>Item 3</div>
     </div>
 
     <h3>Repeat with Auto Rows</h3>
-    <div class="$grid(cols(repeat(auto-fill,minmax(100px,1fr))),gap(1rem))">
-      <div class="$border $padding(0.5rem)">Item 1</div>
-      <div class="$border $padding(0.5rem)">Item 2</div>
-      <div class="$border $padding(0.5rem)">Item 3</div>
+    <div class="
+      $grid(cols(repeat(auto-fill,minmax(100px,1fr))),gap(1rem))
+      |$border$padding(0.5rem)
+    ">
+      <div>Item 1</div>
+      <div>Item 2</div>
+      <div>Item 3</div>
     </div>
   </main>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$grid\(cols\(repeat\(3\,minmax\(100px\,1fr\)\)\,gap\(1rem\)\) {
+      .\$grid\(cols\(repeat\(3\,minmax\(100px\,1fr\)\)\)\,gap\(1rem\)\) {
         display: grid;
         word-spacing: unset;
         line-height: unset;
@@ -1681,7 +1687,7 @@
         gap: 1rem;
       }
 
-      .\$grid\(cols\(repeat\(auto-fill\,minmax\(100px\,1fr\)\)\,gap\(1rem\)\) {
+      .\$grid\(cols\(repeat\(auto-fill\,minmax\(100px\,1fr\)\)\)\,gap\(1rem\)\) {
         display: grid;
         word-spacing: unset;
         line-height: unset;
@@ -1692,17 +1698,14 @@
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
         gap: 1rem;
       }
+    }
 
-      .\$border {
+    @layer items {
+      .\|\$border\$padding\(0\.5rem\)>* {
         border-style: solid;
-      }
-
-      .\$padding\(0\.5rem\) {
         padding: 0.5rem;
       }
     }
-
-    @layer items {}
   </style>
 </test-html>
 <!-- <test-html title="Layout 14 - Grid Position Properties">
