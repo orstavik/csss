@@ -11,8 +11,9 @@ export class Rule {
     let { selector, item } = parseSelectorPipe(sel);
     selector = clazz + selector;
     const body = Object.entries(exprList).map(([k, v]) => {
-      if (v.match?.(/^[a-zA-Z][a-zA-Z0-9]+$/))
-        v = v.replace(/[A-Z]/g, "-$&").toLowerCase();
+      //todo this doesn't work. We need to do a more thorough check for - in calc i think. need to check calc.
+      // if (v.match?.(/^[a-zA-Z][a-zA-Z0-9]+$/))
+      //   v = v.replace(/[A-Z]/g, "-$&").toLowerCase();  //todo this doesn't work with fonts like Arial and Helvetica.
       k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
       if (CSS.supports(k, "inherit"))
         if (!CSS.supports(k, v) && !CSS.supports(k = renames[k] ?? k, v))

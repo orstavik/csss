@@ -145,7 +145,6 @@ const WORDS = {
       Times: "Times New Roman",
       Courier: "Courier New",
       Palatino: "Palatino Linotype",
-      Helvetica: "Helvetica Neue",
       Lucida: "Lucida Sans Unicode",
     },
     Weight: {
