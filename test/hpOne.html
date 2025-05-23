@@ -1136,6 +1136,37 @@
     @layer items {}
   </style>
 </test-html>
+<test-html title="$textDecoration(none)">
+  <main>
+    <a href="#" class="
+    $textDecoration(none) 
+    $textDecoration(.)
+    ">
+      This link should not have underline.
+    </a>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$textDecoration\(none\) {
+        text-decoration-line: none;
+        text-decoration-thickness: unset;
+        text-decoration-style: unset;
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+      }
+
+      .\$textDecoration\(\.\) {
+        text-decoration-line: unset;
+        text-decoration-thickness: unset;
+        text-decoration-style: unset;
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
 <test-html title="Text transform">
   <div class="$smallCaps $allCaps">small- and allCaps</div>
   <style>
