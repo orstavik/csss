@@ -664,3 +664,81 @@
     @layer items {}
   </style>
 </test-html>
+<test-html title="boxShadow simple with hex">
+  <main">
+    <div class="$boxShadow(10px,5px,5px,2px,#5c6bc0)">
+      Look a shadow!
+    </div>
+    </main>
+    <style>
+      @layer container, items;
+
+      @layer container {
+        .\$boxShadow\(10px\,5px\,5px\,2px\,\#5c6bc0\) {
+          box-shadow: rgb(92, 107, 192) 10px 5px 5px 2px;
+        }
+      }
+
+      @layer items {}
+    </style>
+</test-html>
+<test-html title="boxShadow two colors">
+  <main">
+    <div class="$boxShadow(0,1rem,.25rem,#3f51b5)$boxShadow(0,.5rem,.5rem,blue)">
+      Two or more colors are possible in box shadows!
+    </div>
+    </main>
+    <style>
+      @layer container, items;
+
+      @layer container {
+        .\$boxShadow\(0\,1rem\,\.25rem\,\#3f51b5\)\$boxShadow\(0\,\.5rem\,\.5rem\,blue\) {
+          box-shadow: rgb(63, 81, 181) 0px 1rem 0.25rem, blue 0px 0.5rem 0.5rem;
+        }
+      }
+
+      @layer items {}
+    </style>
+</test-html>
+<test-html title="boxShadow with rgb and inset">
+  <main class="$flex(gap(2rem))">
+    <div class="$boxShadow(0,.125rem,.25rem,rgba(0,0,0,.175))">Small</div>
+    <div class="$boxShadow(0,.5rem,1rem,rgba(0,0,0,0.15))">Regular</div>
+    <div class="$boxShadow(0,1rem,3rem,rgba(0,0,0,0.175))">Large</div>
+    <div class="$boxShadow(inset,0,2px,4px,0,rgba(0,0,0,0.6))">Inset</div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$flex\(gap\(2rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        gap: 2rem;
+      }
+
+      .\$boxShadow\(0\,\.125rem\,\.25rem\,rgba\(0\,0\,0\,\.175\)\) {
+        box-shadow: rgba(0, 0, 0, 0.176) 0px 0.125rem 0.25rem;
+      }
+
+      .\$boxShadow\(0\,\.5rem\,1rem\,rgba\(0\,0\,0\,0\.15\)\) {
+        box-shadow: rgba(0, 0, 0, 0.15) 0px 0.5rem 1rem;
+      }
+
+      .\$boxShadow\(0\,1rem\,3rem\,rgba\(0\,0\,0\,0\.175\)\) {
+        box-shadow: rgba(0, 0, 0, 0.176) 0px 1rem 3rem;
+      }
+
+      .\$boxShadow\(inset\,0\,2px\,4px\,0\,rgba\(0\,0\,0\,0\.6\)\) {
+        box-shadow: rgba(0, 0, 0, 0.6) 0px 2px 4px 0px inset;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>

@@ -1,7 +1,9 @@
 //func is the basic of native css. And it shouldn't be altered. Only fixed.
 // border and font should be outside this file.
 
-export const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|in|pt|pc|ch|ex|%/.source;
+//https://developer.mozilla.org/en-US/docs/Web/CSS/length#browser_compatibility
+//mdn specifies more lengths, but we don't support them yet.
+export const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%/.source;
 export const N = /-?[0-9]*\.?[0-9]+(?:e[+-]?[0-9]+)?/.source;
 export const NUM = `(${N})(?:\\/(${N}))?`; //num frac allows for -.5e+0/-122.5e-12
 
@@ -225,7 +227,7 @@ const NativeCssProperties = (function () {
       Object.assign(res[camel].scope, NativeCssScopeMath);
     if (CSS.supports(name, "url(http://example.com)"))
       res[camel].scope.url = NativeCssScopeUrl;
-    if (CSS.supports(name, "#123456")) // CSS.supports(name,"1px solid #123456") || CSS.supports(name,"underline #123456") || CSS.supports(name,"dot #123456") ||    
+    if (CSS.supports(name, "#123456") || CSS.supports(name, "#123 1px 1px"))
       Object.assign(res[camel].scope, NativeColorsFunctions);
     if (CSS.supports("transition", name + " 1s linear"))
       Object.assign(res[camel].scope, transitionFunctionSet(name));
