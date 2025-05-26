@@ -5,6 +5,7 @@ on:
     paths:
       - '*.js'
       - '*.js.map'
+      - 'test/all.html'
 
 permissions:
   contents: write

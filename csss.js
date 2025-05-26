@@ -1,27 +1,27 @@
-// src/Parser.js
-var Rule = class {
+class Rule {
   static interpret(exp, registries, renames) {
-    const { shorts: scope, medias: MEDIA_WORDS2 } = registries;
-    const clazz2 = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
-    const { str, media } = parseMediaQuery(exp, MEDIA_WORDS2);
+    const { shorts: scope, medias: MEDIA_WORDS } = registries;
+    const clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
+    const { str, media } = parseMediaQuery(exp, MEDIA_WORDS);
     exp = str;
     let [sel, ...exprList] = exp?.split("$");
-    exprList = exprList.map((s) => parseNestedExpression(s));
-    exprList = exprList.map((s) => s.interpret(scope));
+    exprList = exprList.map(s => parseNestedExpression(s));
+    exprList = exprList.map(s => s.interpret(scope));
     exprList &&= clashOrStack(exprList);
     let { selector, item } = parseSelectorPipe(sel);
-    selector = clazz2 + selector;
+    selector = clazz + selector;
     const body = Object.entries(exprList).map(([k, v]) => {
+      //todo this doesn't work. We need to do a more thorough check for - in calc i think. need to check calc.
+      // if (v.match?.(/^[a-zA-Z][a-zA-Z0-9]+$/))
+      //   v = v.replace(/[A-Z]/g, "-$&").toLowerCase();  //todo this doesn't work with fonts like Arial and Helvetica.
       k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
-      if (CSS.supports(k, "inherit")) {
+      if (CSS.supports(k, "inherit"))
         if (!CSS.supports(k, v) && !CSS.supports(k = renames[k] ?? k, v))
           throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
-      }
-      return `  ${k}: ${v};`;
+      //the browser might not support the property, because the property is too modern.
+      return `  ${k}: ${v};`
     }).join("\n");
-    let rule = `${selector} {
-${body}
-}`;
+    let rule = `${selector} {\n${body}\n}`;
     let key = selector;
     if (media) {
       rule = `${media} { ${rule} }`;
@@ -29,21 +29,26 @@ ${body}
     }
     return { rule, key, item };
   }
-};
-var Expression = class _Expression {
+}
+
+class Expression {
+
   constructor(name, args) {
     this.args = args;
     this.name = name;
   }
+
   interpret(scope) {
     const cb = scope?.[this.name];
     if (!cb)
       throw new ReferenceError(this.name);
     try {
-      const args = this.args.map((x) => x instanceof _Expression ? x.interpret(cb.scope) : x === "." ? "unset" : (
-        //todo move this into the parser??
-        cb.scope?.[x] instanceof Function ? cb.scope[x].call(cb.scope) : cb.scope?.[x] ? cb.scope[x] : x
-      ));
+      const args = this.args.map(x =>
+        x instanceof Expression ? x.interpret(cb.scope) :
+          x === "." ? "unset" : //todo move this into the parser??
+            cb.scope?.[x] instanceof Function ? cb.scope[x].call(cb.scope) :
+              cb.scope?.[x] ? cb.scope[x] :
+                x);
       return cb.call(scope, ...args);
     } catch (e) {
       if (e instanceof ReferenceError)
@@ -51,8 +56,9 @@ var Expression = class _Expression {
       throw e;
     }
   }
-};
-var clashOrStack = /* @__PURE__ */ function() {
+}
+
+const clashOrStack = (function () {
   const STACKABLE_PROPERTIES = {
     background: ", ",
     backgroundImage: ", ",
@@ -72,13 +78,15 @@ var clashOrStack = /* @__PURE__ */ function() {
     mask: ",",
     fontFeatureSettings: ",",
     willChange: ",",
+
     transform: " ",
     filter: " ",
     counterReset: " ",
     counterIncrement: " ",
-    fontVariant: " "
+    fontVariant: " ",
   };
-  return function clashOrStack2(shortsI) {
+
+  return function clashOrStack(shortsI) {
     const res = {};
     for (const obj of shortsI) {
       for (let [k, v] of Object.entries(obj)) {
@@ -86,14 +94,15 @@ var clashOrStack = /* @__PURE__ */ function() {
         if (!(k in res))
           res[k] = v;
         else if (k in STACKABLE_PROPERTIES)
-          res[k] += STACKABLE_PROPERTIES[k] + v;
+          res[k] += (STACKABLE_PROPERTIES[k] + v);
         else
           throw new SyntaxError(`CSS$ clash: ${k} = ${res[k]}  AND = ${v}.`);
       }
     }
     return res;
-  };
-}();
+  }
+})();
+
 function varAndSpaceOperators(tokens) {
   const res = tokens.join("").split(/(---?[a-z][a-z0-9_-]*)/g);
   for (let i = res.length - 1; i >= 0; i--) {
@@ -115,6 +124,7 @@ function varAndSpaceOperators(tokens) {
   }
   return res;
 }
+
 function impliedMultiplication(tokens) {
   for (let i = tokens.length - 2; i >= 1; i--) {
     if (tokens[i] === "(" && !tokens[i - 1].match(/(min|max|clamp|[+*/-])$/))
@@ -124,6 +134,7 @@ function impliedMultiplication(tokens) {
   }
   return tokens;
 }
+
 function parseVarCalc(tokens) {
   const t2 = impliedMultiplication(tokens);
   const t3 = varAndSpaceOperators(t2);
@@ -134,16 +145,19 @@ function parseVarCalc(tokens) {
   const str = t3.join("");
   return str.includes(" ") ? `calc(${str})` : str;
 }
-var WORD = /^\$?[a-zA-Z_][a-zA-Z0-9_]*$/;
-var CPP = /[,()$=;{}]/.source;
-var nCPP = /[^,()$=;{}]+/.source;
-var QUOTE = /([`'"])(?:\\.|(?!\2).)*?\2/.source;
-var TOKENS = new RegExp(`(${QUOTE})|(\\s+)|(${CPP})|(${nCPP})`, "g");
+
+const WORD = /^\$?[a-zA-Z_][a-zA-Z0-9_]*$/;
+const CPP = /[,()$=;{}]/.source;
+const nCPP = /[^,()$=;{}]+/.source;
+const QUOTE = /([`'"])(?:\\.|(?!\2).)*?\2/.source;
+const TOKENS = new RegExp(`(${QUOTE})|(\\s+)|(${CPP})|(${nCPP})`, "g");
+
 function processToken([m, , , space]) {
-  return space ? void 0 : m;
+  return space ? undefined : m;
 }
+
 function eatTokens(tokens) {
-  for (let res = [], depth = 0; tokens.length; ) {
+  for (let res = [], depth = 0; tokens.length;) {
     if (!depth && (tokens[0] === "," || tokens[0] === ")"))
       return res;
     if (tokens[0] === "(") depth++;
@@ -152,16 +166,19 @@ function eatTokens(tokens) {
   }
   throw "missing ')'";
 }
+
 function diveDeep(tokens, top) {
   const res = [];
   while (tokens.length) {
-    let a = tokens[0].match(/^\($|^(?!["']).*[+/*]|(?<![a-z])-|-(?![a-z])/) ? parseVarCalc(eatTokens(tokens)) : tokens.shift();
+    let a = tokens[0].match(/^\($|^(?!["']).*[+/*]|(?<![a-z])-|-(?![a-z])/) ?
+      parseVarCalc(eatTokens(tokens)) :
+      tokens.shift();
     if (a[0] === "#")
       a = new Expression("_hash", [a.slice(1)]);
     if (top && a === ",") throw "can't start with ','";
     if (top && a === ")") throw "can't start with ')'";
-    if (a === "," || a === ")") {
-      res.push(void 0);
+    if (a === "," || a === ")") {         //empty
+      res.push(undefined);
       if (a === ")" && !res.length)
         throw new SyntaxError("empty function not allowed in CSSs");
       if (a === ")")
@@ -176,9 +193,11 @@ function diveDeep(tokens, top) {
       a = new Expression(a, diveDeep(tokens));
       b = tokens.shift();
     }
+    // if (a.match?.(WORD)) 
+    //   a = a.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase());
     if (b === ")" && top && tokens.length)
       throw "too many ')'";
-    if (b === ")" || top && b === void 0)
+    if (b === ")" || (top && b === undefined))
       return res.push(a), res;
     if (b == ",")
       res.push(a);
@@ -187,27 +206,36 @@ function diveDeep(tokens, top) {
   }
   throw "missing ')'";
 }
+
 function parseNestedExpression(short) {
   const tokensOG = [...short.matchAll(TOKENS)].map(processToken).filter(Boolean);
   if (tokensOG.length === 1)
-    return new Expression(tokensOG[0], []);
+    return new Expression(tokensOG[0], []); //todo no calc top level
   const tokens = tokensOG.slice();
   try {
     return diveDeep(tokens, true)[0];
   } catch (e) {
+    //todo add the error string to the e.message
     const i = tokensOG.length - tokens.length;
     tokensOG.splice(i, 0, `{{{${e}}}}`);
     const msg = tokensOG.join("");
     throw new SyntaxError("Invalid short: " + msg);
   }
 }
-var pseudo = /:[a-zA-Z][a-zA-Z0-9_-]*(?:\([^)]+\))?/.source;
-var at = /\[[a-zA-Z][a-zA-Z0-9_-]*(?:[$*~|^]?=(?:'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"))?\]/.source;
-var tag = /[a-zA-Z][a-zA-Z0-9-]*/.source;
-var clazz = /\.[a-zA-Z][a-zA-Z0-9_-]*/.source;
-var op = />>|[>+~&,!]/.source;
-var selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
+
+//todo we don't support nested :not(:has(...))
+const pseudo = /:[a-zA-Z][a-zA-Z0-9_-]*(?:\([^)]+\))?/.source;
+const at = /\[[a-zA-Z][a-zA-Z0-9_-]*(?:[$*~|^]?=(?:'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"))?\]/.source;
+const tag = /[a-zA-Z][a-zA-Z0-9-]*/.source; //tag
+const clazz = /\.[a-zA-Z][a-zA-Z0-9_-]*/.source; //class
+const op = />>|[>+~&,!]/.source;
+const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
+
 function parseSelectorPipe(str) {
+  //todo body1 must have star at the end. body2 must have star at the start. The where is star doesn't work with this.
+  //todo also. I think that we should always have a star, and not end with empty. It is less confusing with ".something>*" than ".something>".
+  //todo this will make the selector far more readable! also, it will make the parsing of body1 and body2 easier.
+
   let [body1, body2] = str.split("|").map(parseSelectorComma);
   body1 = body1?.join(", ");
   if (!body2)
@@ -215,6 +243,7 @@ function parseSelectorPipe(str) {
   body2 = body2?.join(", ");
   return { selector: body1 + ">" + (body2 || "*"), item: true };
 }
+
 function parseSelectorComma(str) {
   let tokens = [...str.matchAll(selectorTokens)];
   const badToken = tokens.find(([t, ws, select, error]) => error);
@@ -226,9 +255,11 @@ function parseSelectorComma(str) {
     t === "," ? selects.push([]) : selects.at(-1).push(t);
   return selects.map(Selector.interpret);
 }
-var Selector = class _Selector {
+
+class Selector {
+
   static findTail(body) {
-    const j = body.findIndex((s) => s === ">" || s === "+" || s === "~" || s === " ");
+    const j = body.findIndex(s => s === ">" || s === "+" || s === "~" || s === " ");
     if (j < 0)
       return [body];
     if (j === 0)
@@ -237,56 +268,76 @@ var Selector = class _Selector {
     body = body.slice(0, j);
     return [body, tail];
   }
+
   static whereIsStar(select) {
     let i = select.indexOf("*");
     if (i === select.length - 1)
       return [select];
     if (i === 0)
-      return [null, ..._Selector.findTail(select)];
+      return [null, ...Selector.findTail(select)];
     if (i > 0)
-      return [select.slice(0, i), ..._Selector.findTail(select.slice(i + 1))];
+      return [select.slice(0, i), ...Selector.findTail(select.slice(i + 1))];
     const first = select[0].match(/^[>+~]$/);
     const last = select.at(-1).match(/^[>+~]$/);
     if (first && last)
       throw `Relationship selector both front and back: ${select.join("")}`;
-    return last ? [select] : [null, ..._Selector.findTail(select)];
+    return last ? [select] : [null, ...Selector.findTail(select)];
   }
+
   static superAndNots(select) {
-    return select?.map((el, i, ar) => ar[i - 1] === "!" ? `:not(${el})` : el).filter((el) => el !== "!").join("");
+    return select?.map((el, i, ar) => ar[i - 1] === "!" ? `:not(${el})` : el)
+      .filter(el => el !== "!")
+      .join("");
   }
+
   static interpret(select) {
     if (!select.length || select.length === 1 && select[0] === "*")
       return;
-    select = select.map((s) => s == ">>" ? " " : s);
-    let [head, body, tail] = _Selector.whereIsStar(select).map(_Selector.superAndNots);
+    select = select.map(s => s == ">>" ? " " : s);
+    let [head, body, tail] = Selector.whereIsStar(select).map(Selector.superAndNots);
     tail &&= `:has(${tail})`;
     head &&= `:where(${head})`;
     const selector = [head, body, tail].filter(Boolean).join("");
     return selector ? `:where(${selector})` : selector;
   }
-};
+}
+
 function mediaComparator(str) {
   const rx = new RegExp(
-    "^(?:(width|height|aspectRatio|resolution|color|monochrome|colorIndex)(<=|>=|==|<|>)(\\d+(?:\\.\\d+)?)(?:(px|em|rem|in|cm|mm|pt|pc)|(dpi|dpcm|dppx)|(\\/\\d+(?:\\.\\d+)?))?)$"
-  );
+    "^(?:" +
+    "(width|height|aspectRatio|resolution|color|monochrome|colorIndex)" +
+    "(<=|>=|==|<|>)" +
+    "(\\d+(?:\\.\\d+)?)" +
+    "(?:" +
+    "(px|em|rem|in|cm|mm|pt|pc)|" +
+    "(dpi|dpcm|dppx)|" +
+    "(\\/\\d+(?:\\.\\d+)?)" +
+    ")?" +
+    ")$");
   const m = str.match(rx);
   if (!m)
     return;
-  let [, name, op2, num, length, res, frac] = m;
+  let [, name, op, num, length, res, frac] = m;
   const type = length ?? res ?? frac ?? "";
-  if (name.match(/width|height/) && !length || name == "aspectRatio" && (length || res) || name == "resolution" && !res || name.match(/color|monochrome|colorIndex/) && type)
+  if (
+    (name.match(/width|height/) && !length) ||
+    (name == "aspectRatio" && (length || res)) ||
+    (name == "resolution" && !res) ||
+    (name.match(/color|monochrome|colorIndex/) && type)
+  )
     throw new SyntaxError(`Invalid ${name}: ${num}${type}`);
   let snake = name.replace(/[A-Z]/g, "-$&").toLowerCase();
-  if (op2 == "<")
+  if (op == "<")
     num = parseFloat(num) - 0.01;
-  else if (op2 == ">")
+  else if (op == ">")
     num = parseFloat(num) + 0.01;
-  if (op2.includes("<"))
+  if (op.includes("<"))
     snake = `max-${snake}`;
-  else if (op2.includes(">"))
+  else if (op.includes(">"))
     snake = `min-${snake}`;
   return `${snake}: ${num}${type}`;
 }
+
 function parseMediaQuery(str, register) {
   if (str[0] !== "@")
     return { str };
@@ -305,12 +356,10 @@ function parseMediaQuery(str, register) {
     if (str[i] == ",") tokens.push(str[i]);
     else if (str[i] == "(") level++, tokens.push(str[i]);
     else if (str[i] == ")") {
-      if (!--level) {
-        i++;
-        break;
-      }
+      if (!--level) { i++; break; }
       tokens.push(str[i]);
-    } else if (str[i] === "!") tokens.push("not");
+    }
+    else if (str[i] === "!") tokens.push("not");
     else if (str[i] === "&") tokens.push("and");
     else if (str[i] === "|") tokens.push("or");
     else {
@@ -320,19 +369,27 @@ function parseMediaQuery(str, register) {
       const word = str.slice(start, i--);
       const t = mediaComparator(word) ?? register[word];
       if (!t)
-        throw word.match(/^[a-z][a-z_0-9]*$/i) ? new ReferenceError("@" + word) : new SyntaxError(`Invalid media query: "${word}" in "${str}".`);
+        throw word.match(/^[a-z][a-z_0-9]*$/i) ?
+          new ReferenceError("@" + word) :
+          new SyntaxError(`Invalid media query: "${word}" in "${str}".`);
       tokens.push(
-        t == "all" || t == "print" || t == "screen" ? t : `(${t})`
+        t == "all" || t == "print" || t == "screen" ? t :
+          `(${t})`
       );
     }
   }
   return { str: str.slice(i), media: `@media ${tokens.join(" ")}` };
 }
 
-// src/func.js
-var LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%/.source;
-var N = /-?[0-9]*\.?[0-9]+(?:e[+-]?[0-9]+)?/.source;
-var NUM = `(${N})(?:\\/(${N}))?`;
+//func is the basic of native css. And it shouldn't be altered. Only fixed.
+// border and font should be outside this file.
+
+//https://developer.mozilla.org/en-US/docs/Web/CSS/length#browser_compatibility
+//mdn specifies more lengths, but we don't support them yet.
+const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%/.source;
+const N = /-?[0-9]*\.?[0-9]+(?:e[+-]?[0-9]+)?/.source;
+const NUM = `(${N})(?:\\/(${N}))?`; //num frac allows for -.5e+0/-122.5e-12
+
 function toRadiusFour(NAME, ...ar) {
   if (!(ar instanceof Array))
     return { [NAME]: ar };
@@ -342,7 +399,7 @@ function toRadiusFour(NAME, ...ar) {
     [NAME + "StartStart"]: ar[0],
     [NAME + "EndEnd"]: ar[2] ?? ar[0],
     [NAME + "StartEnd"]: ar[1],
-    [NAME + "EndStart"]: ar[3] ?? ar[1]
+    [NAME + "EndStart"]: ar[3] ?? ar[1],
   };
 }
 function toLogicalFour(NAME, ...ar) {
@@ -353,13 +410,13 @@ function toLogicalFour(NAME, ...ar) {
   if (ar.length === 2)
     return {
       [NAME + "Block"]: ar[0],
-      [NAME + "Inline"]: ar[1]
+      [NAME + "Inline"]: ar[1],
     };
   if (ar.length === 3)
     return {
       [NAME + "BlockStart"]: ar[0],
       [NAME + "Inline"]: ar[1],
-      [NAME + "BlockEnd"]: ar[2]
+      [NAME + "BlockEnd"]: ar[2],
     };
   return {
     [NAME + "BlockStart"]: ar[0],
@@ -368,6 +425,10 @@ function toLogicalFour(NAME, ...ar) {
     [NAME + "InlineEnd"]: ar[3]
   };
 }
+//todo there are different ways to do the logic here..
+//todo length == 2, I think that we could have top/bottom too
+//todo length == 3, then the third becomes all the inline ones
+//todo length === 4, then forth is the inline on the end side
 function toLogicalEight(NAME, DEFAULT, ...args) {
   if (!(args instanceof Array))
     return { [NAME]: args };
@@ -387,6 +448,7 @@ function toLogicalEight(NAME, DEFAULT, ...args) {
   if (bee || iee) res[NAME + "BottomRight"] = `${bee ?? DEFAULT} ${iee ?? DEFAULT}`;
   return res;
 }
+
 function borderSwitch(obj) {
   return Object.fromEntries(Object.entries(obj).map(([k, v]) => {
     if (k === "transition") return [k, v];
@@ -394,34 +456,37 @@ function borderSwitch(obj) {
     return [["border", ...dirs, wsr].join(""), v];
   }));
 }
+
 function isLength(x) {
   if (x === "0") return x;
   const m = x.match?.(new RegExp(`^(${NUM})(${LENGTHS_PER})$`));
   if (!m) return;
   let [, , n, frac, unit] = m;
-  return frac ? Number(n) / Number(frac) + unit : x;
+  return frac ? (Number(n) / Number(frac)) + unit :
+    x;
 }
-var NativeCssScopeMath = {
+
+//scope functions start
+const NativeCssScopeMath = {
   min: (...args) => `min(${args.join(",")})`,
   max: (...args) => `max(${args.join(",")})`,
   clamp: (...args) => `clamp(${args.join(",")})`,
-  minmax: (...args) => `minmax(${args.join(",")})`
-  //only used in grid, but native valid property+value check captures wrong use
+  minmax: (...args) => `minmax(${args.join(",")})`,  //only used in grid, but native valid property+value check captures wrong use
 };
 for (const v of Object.values(NativeCssScopeMath))
   v.scope = NativeCssScopeMath;
-var NativeCssScopeRepeat = (i, ...args) => `repeat(${i}, ${args.join(" ")})`;
+
+const NativeCssScopeRepeat = (i, ...args) => `repeat(${i}, ${args.join(" ")})`;
 NativeCssScopeRepeat.scope = NativeCssScopeMath;
-var NativeCssScopeUrl = (...args) => `url(${args.join(" ")})`;
-var NativeCssScopeAttrCounter = {
+const NativeCssScopeUrl = (...args) => `url(${args.join(" ")})`;
+
+const NativeCssScopeAttrCounter = {
   counter: (...args) => `counter(${args.join(",")})`,
   counters: (...args) => `counters(${args.join(",")})`,
-  attr: (...args) => {
-    args[0] = args[0].replace(":", " ");
-    return `attr(${args.join(",")})`;
-  }
+  attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
 };
-var NativeColorsFunctions = function() {
+
+const NativeColorsFunctions = (function () {
   function nativeCssColorFunction(name, ...args) {
     if (args.length < 3 || args.length > 5)
       throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
@@ -435,6 +500,7 @@ var NativeColorsFunctions = function() {
     const a = name.match(/^(rgb|hsl)$/) ? "a" : "";
     return `${name}${a}(${args.slice(0, 3).join(SEP)} / ${args[3]})`;
   }
+  //todo untested!!
   function nativeCssColorSpaceFunction(space, ...args) {
     if (args.length < 3 || args.length > 5)
       throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
@@ -445,18 +511,21 @@ var NativeColorsFunctions = function() {
     return `color(${args.join(" ")})`;
   }
   function nativeCssColorMixFunction(cSpace, ...args) {
-    cSpace = "in " + cSpace.replaceAll("_", " ");
+    cSpace = "in " + cSpace.replaceAll("_", " "); //we don't support '_' in --var-names
     if (args[0]?.match(/^(shorter|longer|increasing|decreasing)$/))
       cSpace += ` ${args.shift()} hue`;
-    args = args.map((a) => (a.match(/^\d?\d%$/i) ? " " : ", ") + a);
+    args = args.map(a => (a.match(/^\d?\d%$/i) ? " " : ", ") + a);
     return `color-mix(${cSpace}${args.join("")})`;
   }
   function _hash(a, ...others) {
     if (others.length) throw "hash(can only have 1 argument)";
+    //#123 => hash(123) => #123
+    //#primary_a80 => hash(primary) => var(--color_primary_a80)
     if (a.match(/^[a-f0-9]{3,8}$/) && a.length != 5 && a.length != 7)
       return `#${a}`;
     return `var(--color_${a})`;
   }
+
   const res = {
     _hash,
     rgb: (...args) => nativeCssColorFunction("rgb", ...args),
@@ -478,25 +547,38 @@ var NativeColorsFunctions = function() {
     xyzD50: (...args) => nativeCssColorSpaceFunction("xyz-d50", ...args),
     xyzD65: (...args) => nativeCssColorSpaceFunction("xyz-d65", ...args),
     color: (...args) => nativeCssColorSpaceFunction("srgb", ...args),
-    colorMix: nativeCssColorMixFunction
+    colorMix: nativeCssColorMixFunction,
   };
   for (const cb of Object.values(res))
     cb.scope = { ...NativeCssScopeMath };
   return res;
-}();
-var ColorNames = /^(aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen)$/i.source;
-var ColorFunctionStart = /^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color|colorMix)\(/.source;
-var ColorVar = /^var\(--color_/.source;
-var ColorHash = /^#[a-fA-F0-9]{3,8}$/.source;
-var ColorString = new RegExp(`${ColorNames}|${ColorFunctionStart}|${ColorVar}|${ColorHash}`);
+})();
+
+const ColorNames = /^(aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen)$/i.source;
+const ColorFunctionStart = /^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color|colorMix)\(/.source;
+const ColorVar = /^var\(--color_/.source;
+const ColorHash = /^#[a-fA-F0-9]{3,8}$/.source;
+const ColorString = new RegExp(`${ColorNames}|${ColorFunctionStart}|${ColorVar}|${ColorHash}`);
+
 function isColor(x) {
   return ColorString.test(x) && x;
 }
-var transitionFunctionSet = /* @__PURE__ */ function() {
+
+// const SpecializedNativeCssFunctions = {
+//    element: (...args) => `element(${args.join(",")})`,
+//    paint: (...args) => `paint(${args.join(",")})`,
+//    env: (...args) => `env(${args.join(",")})`,   //todo handle as css vars.
+//    path: (...args) => `path(${args.join(",")})`,
+//    imageSet: (...args) => `image-set(${args.join(",")})`,
+// };
+
+const transitionFunctionSet = (function () {
+
   function transition(props, dur, type, delay = "") {
     return { transition: `${props} ${dur} ${type} ${delay}` };
   }
-  return function transitionFunctionSet2(...props) {
+
+  return function transitionFunctionSet(...props) {
     props = props.join(" ");
     return {
       ease: (dur, delay) => transition(props, dur, "ease", delay),
@@ -508,12 +590,16 @@ var transitionFunctionSet = /* @__PURE__ */ function() {
       jumpEnd: (dur, steps = 1, delay) => transition(props, dur, `jump-end(${steps})`, delay),
       jumpNone: (dur, steps = 1, delay) => transition(props, dur, `jump-none(${steps})`, delay),
       jumpBoth: (dur, steps = 1, delay) => transition(props, dur, `jump-both(${steps})`, delay),
-      cubicBezier: (dur, x1, y1, x2, y2, delay) => transition(props, dur, `cubic-bezier(${x1},${y1},${x2},${y2})`, delay)
+      cubicBezier: (dur, x1, y1, x2, y2, delay) => transition(props, dur, `cubic-bezier(${x1},${y1},${x2},${y2})`, delay),
     };
-  };
-}();
-var NativeCssProperties = function() {
-  const style = document.createElement("div").style;
+  }
+})();
+//scope functions end
+
+
+//no shorts before this point
+const NativeCssProperties = (function () {
+  const style = document.createElement('div').style;
   const res = {};
   for (const camel of Object.getOwnPropertyNames(style)) {
     res[camel] = (...args) => ({ [camel]: args.join(" ") });
@@ -531,10 +617,13 @@ var NativeCssProperties = function() {
     if (camel.match(/^(gridTemplateColumns|gridTemplateRows|gridTemplateAreas|gridTemplate|grid)$/))
       res[camel].scope.repeat = NativeCssScopeRepeat;
   }
+  //if name == "content"
   res.content.scope = Object.assign(res.content.scope ?? {}, NativeCssScopeAttrCounter);
   return res;
-}();
-var NativeCssFilterFunctions = {
+})();
+
+//UNPACKED $filter scope functions
+const NativeCssFilterFunctions = {
   blur: (...args) => ({ filter: `blur(${args.join(" ")})` }),
   brightness: (...args) => ({ filter: `brightness(${args.join(" ")})` }),
   contrast: (...args) => ({ filter: `contrast(${args.join(" ")})` }),
@@ -544,12 +633,14 @@ var NativeCssFilterFunctions = {
   saturate: (...args) => ({ filter: `saturate(${args.join(" ")})` }),
   sepia: (...args) => ({ filter: `sepia(${args.join(" ")})` }),
   dropShadow: (...args) => ({ filter: `drop-shadow(${args.join(" ")})` }),
-  hueRotate: (...args) => ({ filter: `hue-rotate(${args.join(" ")})` })
+  hueRotate: (...args) => ({ filter: `hue-rotate(${args.join(" ")})` }),
 };
 for (const cb of Object.values(NativeCssFilterFunctions))
   cb.scope = { ...NativeCssScopeMath };
 NativeCssFilterFunctions.filterUrl = (...args) => ({ filter: `url(${args.join(" ")})` });
-var NativeCssTransformFunctions = {
+
+//UNPACKED $transform scope functions
+const NativeCssTransformFunctions = {
   matrix: (...args) => ({ transform: `matrix(${args.join(",")})` }),
   matrix3d: (...args) => ({ transform: `matrix3d(${args.join(",")})` }),
   translate: (...args) => ({ transform: `translate(${args.join(",")})` }),
@@ -569,40 +660,50 @@ var NativeCssTransformFunctions = {
   rotateY: (...args) => ({ transform: `rotateY(${args.join(",")})` }),
   rotateZ: (...args) => ({ transform: `rotateZ(${args.join(",")})` }),
   skewX: (...args) => ({ transform: `skewX(${args.join(",")})` }),
-  skewY: (...args) => ({ transform: `skewY(${args.join(",")})` })
+  skewY: (...args) => ({ transform: `skewY(${args.join(",")})` }),
 };
 for (const cb of Object.values(NativeCssTransformFunctions))
   cb.scope = { ...NativeCssScopeMath };
-var ANIMATION_FUNCTIONS = {
+
+const ANIMATION_FUNCTIONS = {
   linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,
   ease: (...args) => `ease(${args.join(",")})`,
   steps: (...args) => `steps(${args.join(",")})`,
-  cubicBezier: (...args) => `cubic-bezier(${args.join(",")})`
+  cubicBezier: (...args) => `cubic-bezier(${args.join(",")})`,
 };
+
 NativeCssProperties.animation.scope = ANIMATION_FUNCTIONS;
-var UnpackedNativeCssProperties = {
+
+const UnpackedNativeCssProperties = {
   ...NativeCssProperties,
-  transform: void 0,
+  transform: undefined,
   ...NativeCssTransformFunctions,
-  filter: void 0,
-  ...NativeCssFilterFunctions
+  filter: undefined,
+  ...NativeCssFilterFunctions,
 };
+
+
+
+//$bg
 function bgImpl(...args) {
   const res = {
-    backgroundImage: void 0,
+    backgroundImage: undefined,
     backgroundPosition: "0% 0%",
     backgroundRepeat: "repeat",
     backgroundSize: "auto auto",
     backgroundOrigin: "padding-box",
     backgroundClip: "border-box",
     backgroundBlendMode: "normal",
-    backgroundAttachment: "scroll"
+    backgroundAttachment: "scroll",
   };
   const colors = [], args2 = [];
   for (const a of args)
-    a && typeof a === "object" ? Object.assign(res, a) : isColor(a) ? colors.push(a) : args2.push(a.replaceAll(/[A-Z]/g, " $&").toLowerCase());
+    (a && typeof a === 'object') ? Object.assign(res, a) :
+      isColor(a) ? colors.push(a) :
+        args2.push(a.replaceAll(/[A-Z]/g, ' $&').toLowerCase());
   return { res, colors, args2 };
 }
+
 function doGradient(name, ...args) {
   const { res, colors, args2 } = bgImpl(...args);
   if (res.stops) {
@@ -613,6 +714,7 @@ function doGradient(name, ...args) {
   res.backgroundImage = `${name}-gradient(${[...args2, ...colors].join(",")})`;
   return res;
 }
+
 function bg(...args) {
   const { res, colors, args2 } = bgImpl(...args);
   if (!colors.length && !args2.length)
@@ -626,7 +728,8 @@ function bg(...args) {
   res.backgroundImage = colors.length ? `linear-gradient(${colors[0]})` : args2[0];
   return res;
 }
-var BackgroundFunctions = {
+
+const BackgroundFunctions = {
   linear: (...args) => doGradient("linear", ...args),
   radial: (...args) => doGradient("radial", ...args),
   conic: (...args) => doGradient("conic", ...args),
@@ -634,17 +737,17 @@ var BackgroundFunctions = {
   repeatingRadial: (...args) => doGradient("repeating-radial", ...args),
   repeatingConic: (...args) => doGradient("repeating-conic", ...args),
   bg,
-  background: bg
+  background: bg,
 };
+
 for (const k in BackgroundFunctions)
   BackgroundFunctions[k].scope = {
     stops: (...args) => ({ stops: args }),
     ...NativeCssProperties.background.scope,
-    ...NativeCssScopeMath,
-    //todo do we need this, or is it covered by background above?
-    pos: (block2 = "0", inline = "0") => ({ backgroundPosition: `${block2[0] === "-" ? `bottom ${block2.slice(1)}` : block2} ${inline[0] === "-" ? `right ${inline.slice(1)}` : inline}` }),
-    position: (block2 = "0", inline = "0") => ({ backgroundPosition: `${block2[0] === "-" ? `bottom ${block2.slice(1)}` : block2} ${inline[0] === "-" ? `right ${inline.slice(1)}` : inline}` }),
-    size: (inline, block2 = "auto") => ({ backgroundSize: `${inline} ${block2}` }),
+    ...NativeCssScopeMath, //todo do we need this, or is it covered by background above?
+    pos: (block = "0", inline = "0") => ({ backgroundPosition: `${block[0] === "-" ? `bottom ${block.slice(1)}` : block} ${inline[0] === "-" ? `right ${inline.slice(1)}` : inline}` }),
+    position: (block = "0", inline = "0") => ({ backgroundPosition: `${block[0] === "-" ? `bottom ${block.slice(1)}` : block} ${inline[0] === "-" ? `right ${inline.slice(1)}` : inline}` }),
+    size: (inline, block = "auto") => ({ backgroundSize: `${inline} ${block}` }),
     top: { backgroundPosition: "top" },
     bottom: { backgroundPosition: "bottom" },
     left: { backgroundPosition: "left" },
@@ -688,29 +791,35 @@ for (const k in BackgroundFunctions)
     luminosity: { backgroundBlendMode: "luminosity" },
     scroll: { backgroundAttachment: "scroll" },
     fixed: { backgroundAttachment: "fixed" },
-    local: { backgroundAttachment: "local" }
+    local: { backgroundAttachment: "local" },
   };
+
+//border: 2px 4px solid red blue;
+//$border(w(2px,4px),solid,c(red,blue))
+//$border(2px,solid,red)
 function border(...args) {
-  args = args.map((a) => {
+  args = args.map(a => {
     if (!(typeof a === "string")) return a;
     if (isColor(a))
       return { Color: a };
     if (isLength(a) || a.match(/(^(min|max|clamp)\()/))
       return { Width: a };
-    return a;
+    return a; //todo this throws, right?
   });
   return borderSwitch(Object.assign({ Style: "solid" }, ...args));
 }
-var borderColor = toLogicalFour.bind(null, "Color");
+
+const borderColor = toLogicalFour.bind(null, "Color");
 borderColor.scope = NativeCssProperties.borderColor.scope;
-var borderWidth = toLogicalFour.bind(null, "Width");
+const borderWidth = toLogicalFour.bind(null, "Width");
 borderWidth.scope = NativeCssProperties.borderWidth.scope;
-var borderRadius = toRadiusFour.bind(null, "Radius");
+const borderRadius = toRadiusFour.bind(null, "Radius");
 borderRadius.scope = NativeCssProperties.borderRadius.scope;
-var borderRadius8 = toLogicalEight.bind(null, "Radius", 0);
+const borderRadius8 = toLogicalEight.bind(null, "Radius", 0);
 borderRadius8.scope = NativeCssProperties.borderRadius.scope;
-var borderStyle = toLogicalFour.bind(null, "Style");
+const borderStyle = toLogicalFour.bind(null, "Style");
 borderStyle.scope = NativeCssProperties.borderStyle.scope;
+
 border.scope = {
   width: borderWidth,
   w: borderWidth,
@@ -735,169 +844,119 @@ border.scope = {
   none: { Style: "none" },
   thin: { Width: "thin" },
   medium: { Width: "medium" },
-  thick: { Width: "thick" }
+  thick: { Width: "thick" },
 };
+
+// NativeCssProperties.borderColor = (...args) => borderSwitch(toLogicalFour("Color", ...args));
+// NativeCssProperties.borderColor.scope = NativeCssProperties.color.scope;
+
+//todo do something like this instead:
+//   12><--var
+//   12<>--var
+//   45>23>--var
+
+//$w(50%)
+//$w(1,2) not allowed, only 1 or 3 arguments.
+//$w(max(30em,35%),50%,min(60cm,80vw,100%))
 function toSize(NAME, ...args) {
-  args = args.map((a) => a?.replace(/^(min|max)$/, "$&-content"));
+  args = args.map(a => a?.replace(/^(min|max)$/, "$&-content"));
   if (args.length === 1)
     return { [NAME]: args[0] };
   if (args.length === 3) {
-    const NAME2 = NAME.replace(/^./, (c) => c.toUpperCase());
+    const NAME2 = NAME.replace(/^./, c => c.toUpperCase());
     return {
       [`min${NAME2}`]: args[0],
       [NAME]: args[1],
       [`max${NAME2}`]: args[2]
     };
-  }
-  throw new SyntaxError(`$${NAME} accepts only 1 or 3 arguments: ${args}`);
+  } throw new SyntaxError(`$${NAME} accepts only 1 or 3 arguments: ${args}`);
 }
-var width = (...args) => toSize("inlineSize", ...args);
-var height = (...args) => toSize("blockSize", ...args);
+const width = (...args) => toSize("inlineSize", ...args);
+const height = (...args) => toSize("blockSize", ...args);
 width.scope = NativeCssProperties.width.scope;
 height.scope = NativeCssProperties.height.scope;
-function textDecoration(textDecorationLine = "underline", textDecorationStyle = "unset", textDecorationThickness = "unset", textDecorationColor = "var(--color_textdecorationcolor, currentcolor)") {
+
+
+//text decorations
+//sequence based
+//color defaults to --color_textdecorationcolor, then currentcolor
+//todo work with color inheritance happening here..
+function textDecoration(
+  textDecorationLine = "underline",
+  textDecorationStyle = "unset",
+  textDecorationThickness = "unset",
+  textDecorationColor = "var(--color_textdecorationcolor, currentcolor)") {
   return { textDecorationLine, textDecorationThickness, textDecorationStyle, textDecorationColor };
 }
 textDecoration.scope = {
   ...NativeCssProperties.textDecorationThickness.scope,
-  ...NativeCssProperties.textDecorationColor.scope
+  ...NativeCssProperties.textDecorationColor.scope,
 };
-var textDecorations = {
-  dashedOverLine: function(...args) {
-    return textDecoration.call(this, "overline", "dashed", ...args);
-  },
-  dashedOverLineThrough: function(...args) {
-    return textDecoration.call(this, "overline line-through", "dashed", ...args);
-  },
-  dashedOverUnderLine: function(...args) {
-    return textDecoration.call(this, "overline underline", "dashed", ...args);
-  },
-  dashedOverUnderLineThrough: function(...args) {
-    return textDecoration.call(this, "overline underline line-through", "dashed", ...args);
-  },
-  dashedLineThrough: function(...args) {
-    return textDecoration.call(this, "line-through", "dashed", ...args);
-  },
-  dashedUnderLine: function(...args) {
-    return textDecoration.call(this, "underline", "dashed", ...args);
-  },
-  dashedUnderLineThrough: function(...args) {
-    return textDecoration.call(this, "underline line-through", "dashed", ...args);
-  },
-  dottedOverLine: function(...args) {
-    return textDecoration.call(this, "overline", "dotted", ...args);
-  },
-  dottedOverLineThrough: function(...args) {
-    return textDecoration.call(this, "overline line-through", "dotted", ...args);
-  },
-  dottedOverUnderLine: function(...args) {
-    return textDecoration.call(this, "overline underline", "dotted", ...args);
-  },
-  dottedOverUnderLineThrough: function(...args) {
-    return textDecoration.call(this, "overline underline line-through", "dotted", ...args);
-  },
-  dottedLineThrough: function(...args) {
-    return textDecoration.call(this, "line-through", "dotted", ...args);
-  },
-  dottedUnderLine: function(...args) {
-    return textDecoration.call(this, "underline", "dotted", ...args);
-  },
-  dottedUnderLineThrough: function(...args) {
-    return textDecoration.call(this, "underline line-through", "dotted", ...args);
-  },
-  doubleOverLine: function(...args) {
-    return textDecoration.call(this, "overline", "double", ...args);
-  },
-  doubleOverLineThrough: function(...args) {
-    return textDecoration.call(this, "overline line-through", "double", ...args);
-  },
-  doubleOverUnderLine: function(...args) {
-    return textDecoration.call(this, "overline underline", "double", ...args);
-  },
-  doubleOverUnderLineThrough: function(...args) {
-    return textDecoration.call(this, "overline underline line-through", "double", ...args);
-  },
-  doubleLineThrough: function(...args) {
-    return textDecoration.call(this, "line-through", "double", ...args);
-  },
-  doubleUnderLine: function(...args) {
-    return textDecoration.call(this, "underline", "double", ...args);
-  },
-  doubleUnderLineThrough: function(...args) {
-    return textDecoration.call(this, "underline line-through", "double", ...args);
-  },
-  wavyOverLine: function(...args) {
-    return textDecoration.call(this, "overline", "wavy", ...args);
-  },
-  wavyOverLineThrough: function(...args) {
-    return textDecoration.call(this, "overline line-through", "wavy", ...args);
-  },
-  wavyOverUnderLine: function(...args) {
-    return textDecoration.call(this, "overline underline", "wavy", ...args);
-  },
-  wavyOverUnderLineThrough: function(...args) {
-    return textDecoration.call(this, "overline underline line-through", "wavy", ...args);
-  },
-  wavyLineThrough: function(...args) {
-    return textDecoration.call(this, "line-through", "wavy", ...args);
-  },
-  wavyUnderLine: function(...args) {
-    return textDecoration.call(this, "underline", "wavy", ...args);
-  },
-  wavyUnderLineThrough: function(...args) {
-    return textDecoration.call(this, "underline line-through", "wavy", ...args);
-  },
-  overLine: function(...args) {
-    return textDecoration.call(this, "overline", "solid", ...args);
-  },
-  overLineThrough: function(...args) {
-    return textDecoration.call(this, "overline line-through", "solid", ...args);
-  },
-  overUnderLine: function(...args) {
-    return textDecoration.call(this, "overline underline", "solid", ...args);
-  },
-  overUnderLineThrough: function(...args) {
-    return textDecoration.call(this, "overline underline line-through", "solid", ...args);
-  },
-  lineThrough: function(...args) {
-    return textDecoration.call(this, "line-through", "solid", ...args);
-  },
-  underLine: function(...args) {
-    return textDecoration.call(this, "underline", "solid", ...args);
-  },
-  underLineThrough: function(...args) {
-    return textDecoration.call(this, "underline line-through", "solid", ...args);
-  },
-  blink: function(...args) {
-    return textDecoration.call(this, "blink", null, ...args);
-  },
-  grammarError: function(...args) {
-    return textDecoration.call(this, "grammar-error", null, ...args);
-  },
-  spellingError: function(...args) {
-    return textDecoration.call(this, "spelling-error", null, ...args);
-  }
+const textDecorations = {
+  dashedOverLine: function (...args) { return textDecoration.call(this, "overline", "dashed", ...args); },
+  dashedOverLineThrough: function (...args) { return textDecoration.call(this, "overline line-through", "dashed", ...args); },
+  dashedOverUnderLine: function (...args) { return textDecoration.call(this, "overline underline", "dashed", ...args); },
+  dashedOverUnderLineThrough: function (...args) { return textDecoration.call(this, "overline underline line-through", "dashed", ...args); },
+  dashedLineThrough: function (...args) { return textDecoration.call(this, "line-through", "dashed", ...args); },
+  dashedUnderLine: function (...args) { return textDecoration.call(this, "underline", "dashed", ...args); },
+  dashedUnderLineThrough: function (...args) { return textDecoration.call(this, "underline line-through", "dashed", ...args); },
+  dottedOverLine: function (...args) { return textDecoration.call(this, "overline", "dotted", ...args); },
+  dottedOverLineThrough: function (...args) { return textDecoration.call(this, "overline line-through", "dotted", ...args); },
+  dottedOverUnderLine: function (...args) { return textDecoration.call(this, "overline underline", "dotted", ...args); },
+  dottedOverUnderLineThrough: function (...args) { return textDecoration.call(this, "overline underline line-through", "dotted", ...args); },
+  dottedLineThrough: function (...args) { return textDecoration.call(this, "line-through", "dotted", ...args); },
+  dottedUnderLine: function (...args) { return textDecoration.call(this, "underline", "dotted", ...args); },
+  dottedUnderLineThrough: function (...args) { return textDecoration.call(this, "underline line-through", "dotted", ...args); },
+  doubleOverLine: function (...args) { return textDecoration.call(this, "overline", "double", ...args); },
+  doubleOverLineThrough: function (...args) { return textDecoration.call(this, "overline line-through", "double", ...args); },
+  doubleOverUnderLine: function (...args) { return textDecoration.call(this, "overline underline", "double", ...args); },
+  doubleOverUnderLineThrough: function (...args) { return textDecoration.call(this, "overline underline line-through", "double", ...args); },
+  doubleLineThrough: function (...args) { return textDecoration.call(this, "line-through", "double", ...args); },
+  doubleUnderLine: function (...args) { return textDecoration.call(this, "underline", "double", ...args); },
+  doubleUnderLineThrough: function (...args) { return textDecoration.call(this, "underline line-through", "double", ...args); },
+  wavyOverLine: function (...args) { return textDecoration.call(this, "overline", "wavy", ...args); },
+  wavyOverLineThrough: function (...args) { return textDecoration.call(this, "overline line-through", "wavy", ...args); },
+  wavyOverUnderLine: function (...args) { return textDecoration.call(this, "overline underline", "wavy", ...args); },
+  wavyOverUnderLineThrough: function (...args) { return textDecoration.call(this, "overline underline line-through", "wavy", ...args); },
+  wavyLineThrough: function (...args) { return textDecoration.call(this, "line-through", "wavy", ...args); },
+  wavyUnderLine: function (...args) { return textDecoration.call(this, "underline", "wavy", ...args); },
+  wavyUnderLineThrough: function (...args) { return textDecoration.call(this, "underline line-through", "wavy", ...args); },
+  overLine: function (...args) { return textDecoration.call(this, "overline", "solid", ...args); },
+  overLineThrough: function (...args) { return textDecoration.call(this, "overline line-through", "solid", ...args); },
+  overUnderLine: function (...args) { return textDecoration.call(this, "overline underline", "solid", ...args); },
+  overUnderLineThrough: function (...args) { return textDecoration.call(this, "overline underline line-through", "solid", ...args); },
+  lineThrough: function (...args) { return textDecoration.call(this, "line-through", "solid", ...args); },
+  underLine: function (...args) { return textDecoration.call(this, "underline", "solid", ...args); },
+  underLineThrough: function (...args) { return textDecoration.call(this, "underline line-through", "solid", ...args); },
+  blink: function (...args) { return textDecoration.call(this, "blink", null, ...args); },
+  grammarError: function (...args) { return textDecoration.call(this, "grammar-error", null, ...args); },
+  spellingError: function (...args) { return textDecoration.call(this, "spelling-error", null, ...args); },
 };
 for (let func of Object.values(textDecorations))
   func.scope = textDecoration.scope;
-var func_default = {
+
+var nativeAndMore = {
   ...UnpackedNativeCssProperties,
+
   border,
-  borderWidth: void 0,
-  borderStyle: void 0,
-  borderRadius: void 0,
+  borderWidth: undefined,
+  borderStyle: undefined,
+  borderRadius: undefined,
   // borderColor: undefined,
+
   em: NativeCssProperties.fontSize,
   ...BackgroundFunctions,
   w: width,
   h: height,
   width,
   height,
+
   textDecoration,
-  ...textDecorations
+  ...textDecorations,
 };
 
-// src/font.js
+//$font("Arial+Black",serif,bold,small-caps,ultra-condensed,capitalize,sans-serif,oblique(-10deg),ui-sans-serif)
+//$font("Arial+Black",sans-serif,ui-sans-serif,900,small-caps,ultra-condensed,capitalize,oblique(10deg))
 function font(...args) {
   const res = {
     fontStyle: "unset",
@@ -907,7 +966,7 @@ function font(...args) {
     textTransform: "unset",
     letterSpacing: "unset"
   };
-  args = args.map((a) => {
+  args = args.map(a => {
     if (a instanceof Object) return a;
     if (a.match(/^[1-9]00$/)) return { fontWeight: a };
     if (isLength(a)) return { letterSpacing: a };
@@ -916,19 +975,22 @@ function font(...args) {
     throw `Unrecognized font property: ${a}`;
   });
   Object.assign(res, ...args);
-  res.fontFamily = args.map((a) => a.fontFamily).filter(Boolean).join(", ");
+  res.fontFamily = args.map(a => a.fontFamily).filter(Boolean).join(", ");
   return res;
 }
 font.scope = {
   url: (...args) => `url(${args.join(" ")})`,
-  weight: (a) => ({ fontWeight: a }),
-  style: (a) => ({ fontStyle: a }),
-  variant: (a) => ({ fontVariant: a }),
-  stretch: (a) => ({ fontStretch: a }),
-  transform: (a) => ({ textTransform: a }),
-  letterSpacing: (a) => ({ letterSpacing: a })
+  weight: a => ({ fontWeight: a }),
+  style: a => ({ fontStyle: a }),
+  variant: a => ({ fontVariant: a }),
+  stretch: a => ({ fontStretch: a }),
+  transform: a => ({ textTransform: a }),
+  letterSpacing: a => ({ letterSpacing: a }),
 };
-var WORDS = {
+
+//adding words
+
+const WORDS = {
   font: {
     Family: {
       serif: "serif",
@@ -939,6 +1001,7 @@ var WORDS = {
       math: "math",
       fangsong: "fangsong",
       ui: "ui",
+
       //Pascal no translate
       Arial: "Arial",
       Calibri: "Calibri",
@@ -967,6 +1030,7 @@ var WORDS = {
       Symbol: "Symbol",
       BlinkMacSystemFont: "BlinkMacSystemFont",
       Roboto: "Roboto",
+
       //Pascal add spaces
       ArialBlack: "Arial Black",
       AndaleMono: "Andale Mono",
@@ -1004,6 +1068,7 @@ var WORDS = {
       BrushScriptMT: "Brush Script MT",
       HelveticaNeue: "Helvetica Neue",
       CourierMonaco: "Courier Monaco",
+
       //Pascal to kebab
       uiSerif: "ui-serif",
       uiSansSerif: "ui-sans-serif",
@@ -1014,6 +1079,7 @@ var WORDS = {
       sansSerif: "sans-serif",
       systemUi: "system-ui",
       AppleSystem: "-apple-system",
+
       //added
       CourierNew: "Courier New",
       Palatino: "Palatino",
@@ -1029,20 +1095,21 @@ var WORDS = {
       DroidSans: "Droid Sans",
       DroidSerif: "Droid Serif",
       DroidSansMono: "Droid Sans Mono",
+
       //KNOWN BAD FONTS
       Comic: "Comic Sans MS",
       Times: "Times New Roman",
       Courier: "Courier New",
-      Lucida: "Lucida Sans Unicode"
+      Lucida: "Lucida Sans Unicode",
     },
     Weight: {
       bold: "bold",
       bolder: "bolder",
-      lighter: "lighter"
+      lighter: "lighter",
     },
     Style: {
       italic: "italic",
-      oblique: "oblique"
+      oblique: "oblique",
     },
     Variants: {
       smallCaps: "small-caps",
@@ -1050,7 +1117,7 @@ var WORDS = {
       petiteCaps: "petite-caps",
       allPetiteCaps: "all-petite-caps",
       unicase: "unicase",
-      titlingCaps: "titling-caps"
+      titlingCaps: "titling-caps",
     },
     Stretch: {
       ultraCondensed: "ultra-condensed",
@@ -1060,7 +1127,7 @@ var WORDS = {
       semiExpanded: "semi-expanded",
       expanded: "expanded",
       extraExpanded: "extra-expanded",
-      ultraExpanded: "ultra-expanded"
+      ultraExpanded: "ultra-expanded",
     }
     //  stretch(.) => { fontStretch: "normal" },
     //  style(.)=> { fontStyle: "unset" },
@@ -1077,7 +1144,7 @@ var WORDS = {
       lowercase: "lowercase",
       "full-width": "full-width",
       "full-size-kana": "full-size-kana",
-      "math-auto": "math-auto"
+      "math-auto": "math-auto",
     }
   }
 };
@@ -1087,21 +1154,26 @@ function* fontWords() {
       for (let [short, value] of Object.entries(two))
         yield { prop: main + prop, short, value };
 }
+//0. adding all fonts under small first letter too Arial => arial, Times => times, etc.
 for (let short in WORDS.font.Family)
   WORDS.font.Family[short[0].toLowerCase() + short.slice(1)] = WORDS.font.Family[short];
+
+//1. adding words under the font.scope
 for (let { short, prop, value } of fontWords())
   font.scope[short] = font.scope[short[0].toLowerCase() + short.slice()] = { [prop]: value };
-var SHORTS = { font };
+
+//2. adding words as superShorts.
+const SHORTS = { font };
 for (let { short, prop, value } of fontWords()) {
-  SHORTS[short] = function() {
-    return { [prop]: value };
-  };
+  SHORTS[short] = function () { return { [prop]: value }; }; //todo i can't just use objects here, right?
+  //question, should the superShort words be added as the full font? Or just using their property?
+  // SHORTS[short] = function (...args) { return this.font({ [prop]: value }, ...args); }
+  // SHORTS[short].scope = font.scope;
   Object.defineProperty(SHORTS[short], "name", { value: short });
   SHORTS[short];
 }
-var font_default = SHORTS;
 
-// src/layout.js
+//todo rename the text block layout unit to $page
 function defaultLayout(display, ...args) {
   const containerDefaults = {
     wordSpacing: "unset",
@@ -1109,35 +1181,41 @@ function defaultLayout(display, ...args) {
     whiteSpace: "unset",
     hyphens: "unset",
     textAlign: "unset",
-    textIndent: "unset"
+    textIndent: "unset",
   };
   return Object.assign({ display }, containerDefaults, ...args);
 }
-var O2 = "(?:(visible|hidden|clip)|(auto|scroll)(?:-snap(?:-mandatory)?)?)";
-var OVERFLOW2 = new RegExp(`^${O2}(?::${O2})?$`);
+
+const O2 = "(?:(visible|hidden|clip)|(auto|scroll)(?:-snap(?:-mandatory)?)?)";
+const OVERFLOW2 = new RegExp(`^${O2}(?::${O2})?$`); //$block(hidden:scroll-snap-mandatory,...)
 function overflow(a) {
   const m = a.match(OVERFLOW2);
   if (!m) return;
   let [_, vhc, overflowInline = vhc, snap, man, vhc2, overflowBlock = vhc2, snap2, man2] = m;
-  const res = overflowBlock && (overflowBlock !== overflowInline && snap2 !== snap && man !== man2) ? { overflowX: overflowInline, overflowY: overflowBlock } : { overflow: overflowInline };
+  const res = (overflowBlock && (overflowBlock !== overflowInline && snap2 !== snap && man !== man2)) ?
+    { overflowX: overflowInline, overflowY: overflowBlock } :
+    { overflow: overflowInline };
   if (snap || snap2) {
     res.scrollSnapType = snap && snap2 ? "both" : snap ? "x" : "y";
     if (man || man2) res.scrollSnapType += " mandatory";
   }
   return res;
 }
+
 function checkNoArgs(args) {
-  if (args.some((a) => a != null)) throw `This $short takes no arguments: ${args.join(", ")}")}`;
+  if (args.some(a => a != null)) throw `This $short takes no arguments: ${args.join(", ")}")}`;
 }
+
 function lineClamp(num) {
   return {
     "display": "-webkit-box",
     WebkitLineClamp: num,
     WebkitBoxOrient: "vertical",
-    overflowBlock: "hidden"
-  };
+    overflowBlock: "hidden",
+  }
 }
-var TextAlignAliases = {
+
+const TextAlignAliases = {
   a: "start",
   b: "end",
   c: "center",
@@ -1146,24 +1224,21 @@ var TextAlignAliases = {
   v: "unset",
   w: "unset",
   _: "unset",
-  ".": "unset"
+  ".": "unset",
 };
-var AlignAliases = {
+const AlignAliases = {
   a: "start",
   b: "end",
   c: "center",
   s: "stretch",
-  u: "space-around",
-  //narrow stretch
-  v: "space-evenly",
-  //medium stretch
-  w: "space-between",
-  //wide stretch
-  _: "baseline",
-  //todo what about "(first|last) baseline"
-  ".": "unset"
+  u: "space-around", //narrow stretch
+  v: "space-evenly", //medium stretch
+  w: "space-between",//wide stretch
+  _: "baseline",     //todo what about "(first|last) baseline"
+  ".": "unset",
 };
-var AlignItemsFlexAliases = {
+
+const AlignItemsFlexAliases = {
   a: "start",
   b: "end",
   c: "center",
@@ -1172,13 +1247,17 @@ var AlignItemsFlexAliases = {
   v: "stretch",
   w: "stretch",
   _: "start",
-  ".": "unset"
+  ".": "unset",
 };
-var LAYOUT = {
+
+// todo this doesn't need to be in the scope here.
+//todo because we only 
+//todo move this into the NativeCssPropertis in func.js
+const LAYOUT = {
   padding: toLogicalFour.bind(null, "padding"),
   p: toLogicalFour.bind(null, "padding"),
   scrollPadding: toLogicalFour.bind(null, "scroll-padding"),
-  textAlign: func_default.textAlign,
+  textAlign: nativeAndMore.textAlign,
   shy: { hyphens: "manual" },
   hyphens: { hyphens: "auto" },
   "break-word": { overflowWrap: "break-word" },
@@ -1190,19 +1269,21 @@ var LAYOUT = {
   "break-spaces": { whiteSpace: "break-spaces" },
   "ellipsis": { whiteSpace: "nowrap", textOverflow: "ellipsis" },
   "break-all": { wordBreak: "break-all" },
-  "keep-all": { wordBreak: "keep-all" }
+  "keep-all": { wordBreak: "keep-all" },
 };
-var _LAYOUT = {
+
+const _LAYOUT = {
   margin: toLogicalFour.bind(null, "margin"),
   m: toLogicalFour.bind(null, "margin"),
   scrollMargin: toLogicalFour.bind(null, "scroll-margin"),
-  textAlign: func_default.textAlign,
-  w: func_default.width,
-  h: func_default.height,
-  width: func_default.width,
-  height: func_default.height
+  textAlign: nativeAndMore.textAlign,
+  w: nativeAndMore.width,
+  h: nativeAndMore.height,
+  width: nativeAndMore.width,
+  height: nativeAndMore.height,
   // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
+
 function toGap(...args) {
   if (args.length === 1)
     return { gap: args[0] };
@@ -1210,18 +1291,20 @@ function toGap(...args) {
     return { columnGap: args[0], rowGap: args[1] };
   throw new SyntaxError("gap only accepts 1 or 2 arguments");
 }
-var GAP = { gap: toGap, g: toGap };
+const GAP = { gap: toGap, g: toGap };
+
 function blockGap(wordSpacing, lineHeight) {
   return { wordSpacing, lineHeight };
 }
+
 function block(...args) {
-  args = args.map((a) => {
+  args = args.map(a => {
     if (typeof a !== "string") return a;
     let m;
     if (m = overflow(a))
       return m;
     if (m = a.match(/^[abcs]$/))
-      return { textAlign: TextAlignAliases[a[0]] };
+      return ({ textAlign: TextAlignAliases[a[0]] });
   });
   return defaultLayout("block", ...args);
 }
@@ -1230,7 +1313,7 @@ block.scope = {
   lineClamp,
   clamp: lineClamp,
   gap: blockGap,
-  g: blockGap
+  g: blockGap,
 };
 function _block(...args) {
   for (const a of args)
@@ -1242,15 +1325,18 @@ _block.scope = {
   ..._LAYOUT,
   "float-start": { float: "inline-start" },
   "float-end": { float: "inline-end" },
-  textIndent: func_default.textIndent,
-  indent: func_default.textIndent
+  textIndent: nativeAndMore.textIndent,
+  indent: nativeAndMore.textIndent,
 };
+
 function grid(...args) {
-  args = args.map((a) => {
+  args = args.map(a => {
     if (!(typeof a === "string")) return a;
     let m;
     if (m = overflow(a))
       return m;
+    // if (m = a.match(/(dense)-?(column|row|)/))
+    //   return { gridAutoFlow: `${m[1]} ${m[2] || "row"}` };
     if (m = a.match(/^[abcsuvw.][abcsuvw.]?[abcs_.]?[abcs]?$/)) {
       const [b, i = b, b2 = ".", i2 = b2] = m[0];
       return {
@@ -1258,23 +1344,22 @@ function grid(...args) {
         alignContent: AlignAliases[b],
         justifyContent: AlignAliases[i],
         alignItems: AlignAliases[b2],
-        justifyItems: AlignAliases[i2]
+        justifyItems: AlignAliases[i2],
       };
     }
     throw new ReferenceError(a);
   });
   return defaultLayout("grid", ...args);
 }
-var nativeGrid = Object.fromEntries(Object.entries(func_default).filter(
-  ([k]) => k.match(/^grid[A-Z]/)
-));
+const nativeGrid = Object.fromEntries(Object.entries(nativeAndMore).filter(
+  ([k]) => k.match(/^grid[A-Z]/)));
 grid.scope = {
-  placeContent: func_default.placeContent,
-  justifyContent: func_default.justifyContent,
-  alignContent: func_default.alignContent,
-  placeItems: func_default.placeItems,
-  justifyItems: func_default.justifyItems,
-  alignItems: func_default.alignItems,
+  placeContent: nativeAndMore.placeContent,
+  justifyContent: nativeAndMore.justifyContent,
+  alignContent: nativeAndMore.alignContent,
+  placeItems: nativeAndMore.placeItems,
+  justifyItems: nativeAndMore.justifyItems,
+  alignItems: nativeAndMore.alignItems,
   ...nativeGrid,
   cols: nativeGrid.gridTemplateColumns,
   columns: nativeGrid.gridTemplateColumns,
@@ -1286,13 +1371,15 @@ grid.scope = {
   column: { gridAutoFlow: "column" },
   dense: { gridAutoFlow: "dense row" },
   denseColumn: { gridAutoFlow: "dense column" },
-  denseRow: { gridAutoFlow: "dense row" }
+  denseRow: { gridAutoFlow: "dense row" },
 };
-var column = (start, end = start) => ({ gridColumn: `${start} / ${end}` });
-var row = (start, end = start) => ({ gridRow: `${start} / ${end}` });
-var span = (arg) => `span ${arg}`;
+
+const column = (start, end = start) => ({ gridColumn: `${start} / ${end}` });
+const row = (start, end = start) => ({ gridRow: `${start} / ${end}` });
+const span = arg => `span ${arg}`;
 column.scope = { span };
 row.scope = { span };
+
 function _grid(...args) {
   for (const a of args)
     if (!(a instanceof Object))
@@ -1303,11 +1390,11 @@ _grid.scope = {
   ..._LAYOUT,
   column,
   row,
-  placeSelf: func_default.placeSelf,
-  justifySelf: func_default.justifySelf,
-  alignSelf: func_default.alignSelf,
+  placeSelf: nativeAndMore.placeSelf,
+  justifySelf: nativeAndMore.justifySelf,
+  alignSelf: nativeAndMore.alignSelf,
   // area: (...args) => ({ ["grid-area"]: args.join(" ") }),
-  align: (a) => {
+  align: a => {
     const m = a.match(/^[abcs_.][abcs_.]?$/)?.[0];
     if (!m)
       throw `$_grid|$align(${a}): "${a}" doesn't match /^[abcs_.][abcs_.]?$/`;
@@ -1315,12 +1402,16 @@ _grid.scope = {
     return {
       textAlign: TextAlignAliases[i],
       alignSelf: AlignAliases[b],
-      justifySelf: AlignAliases[i]
+      justifySelf: AlignAliases[i],
     };
   }
 };
+
+
+
+
 function flex(...args) {
-  args = args.map((a) => {
+  args = args.map(a => {
     if (!(typeof a === "string")) return a;
     let m = overflow(a);
     if (m) return m;
@@ -1330,7 +1421,7 @@ function flex(...args) {
         textAlign: TextAlignAliases[i2],
         alignContent: AlignAliases[b],
         justifyContent: AlignAliases[i],
-        alignItems: AlignItemsFlexAliases[i2]
+        alignItems: AlignItemsFlexAliases[i2],
       };
     }
     throw new ReferenceError(a);
@@ -1345,10 +1436,10 @@ flex.scope = {
   "wrap": { flexWrap: "wrap" },
   "wrap-reverse": { flexWrap: "wrap-reverse" },
   "no-wrap": { flexWrap: "nowrap" },
-  placeContent: func_default.placeContent,
-  justifyContent: func_default.justifyContent,
-  alignContent: func_default.alignContent,
-  alignItems: func_default.alignItems,
+  placeContent: nativeAndMore.placeContent,
+  justifyContent: nativeAndMore.justifyContent,
+  alignContent: nativeAndMore.alignContent,
+  alignItems: nativeAndMore.alignItems,
   ...LAYOUT,
   ...GAP
 };
@@ -1358,50 +1449,58 @@ function _flex(...args) {
       throw new ReferenceError(a);
   return Object.assign(...args);
 }
+
 _flex.scope = {
   ..._LAYOUT,
-  basis: (a) => ({ flexBasis: a }),
-  grow: (a) => ({ flexGrow: a }),
-  g: (a) => ({ flexGrow: a }),
-  shrink: (a) => ({ flexShrink: a }),
-  s: (a) => ({ flexShrink: a }),
-  order: (a) => ({ order: a }),
-  o: (a) => ({ order: a }),
+  basis: a => ({ flexBasis: a }),
+  grow: a => ({ flexGrow: a }),
+  g: a => ({ flexGrow: a }),
+  shrink: a => ({ flexShrink: a }),
+  s: a => ({ flexShrink: a }),
+  order: a => ({ order: a }),
+  o: a => ({ order: a }),
   //todo safe
-  center: (...args) => (checkNoArgs(args), { alignSelf: "center", textAlign: "center" }),
-  end: (...args) => (checkNoArgs(args), { alignSelf: "end", textAlign: "end" }),
-  start: (...args) => (checkNoArgs(args), { alignSelf: "start", textAlign: "start" }),
-  stretch: (...args) => (checkNoArgs(args), { alignSelf: "stretch", textAlign: "stretch" }),
-  baseline: (...args) => (checkNoArgs(args), { alignSelf: "baseline", textAlign: "unset" }),
-  alignSelf: func_default.alignSelf,
-  textAlign: func_default.textAlign
+  center: (...args) => (checkNoArgs(args), ({ alignSelf: "center", textAlign: "center" })),
+  end: (...args) => (checkNoArgs(args), ({ alignSelf: "end", textAlign: "end" })),
+  start: (...args) => (checkNoArgs(args), ({ alignSelf: "start", textAlign: "start" })),
+  stretch: (...args) => (checkNoArgs(args), ({ alignSelf: "stretch", textAlign: "stretch" })),
+  baseline: (...args) => (checkNoArgs(args), ({ alignSelf: "baseline", textAlign: "unset" })),
+  alignSelf: nativeAndMore.alignSelf,
+  textAlign: nativeAndMore.textAlign,
 };
-var layout_default = {
+
+var layouts = {
   block,
   _block,
   grid,
   _grid,
   flex,
-  _flex
+  _flex,
 };
 
-// src/gradient.js
+// import { Color } from "./Color.js";
+
 function gradient(role, color, onColor, steps = 10) {
   if (!role || !color || !onColor)
     throw "Missing parameters";
+
   const alpha = new Array(10).fill(0).map((_, i) => (i + 1) * steps);
   steps = new Array(10).fill(0).map((_, i) => (i + 1) * steps);
+
   let res = { [`--color_${role}`]: color };
-  const res2 = Object.fromEntries(steps.map((i) => [`--color_${role}${i}`, `color-mix(in oklch, ${color} ${100 - i}%, ${onColor} ${i}%)`]));
+  const res2 = Object.fromEntries(steps.map(i =>
+    [`--color_${role}${i}`, `color-mix(in oklch, ${color} ${100 - i}%, ${onColor} ${i}%)`]));
   res = Object.assign(res, res2);
-  const alphaColors = Object.fromEntries(Object.entries(res).map(
-    ([name, color2]) => alpha.map((a) => [`${name}_a${a}`, `oklch(from ${color2} l c h / ${a}%)`])
+
+  const alphaColors = Object.fromEntries(Object.entries(res).map(([name, color]) =>
+    alpha.map(a => [`${name}_a${a}`, `oklch(from ${color} l c h / ${a}%)`])
   ).flat());
   return { ...res, ...alphaColors };
 }
 gradient.scope = {
-  ...func_default.color.scope
+  ...nativeAndMore.color.scope
 };
+
 function popGradient(name, color, onColor) {
   const chromas = {
     "b3": `calc(c * .25)`,
@@ -1411,20 +1510,27 @@ function popGradient(name, color, onColor) {
     "p": `calc(c * 1.1)`,
     "p1": `calc(c * 1.25)`,
     "p2": `calc(c * 1.5)`,
-    "p3": `calc(c * 2)`
+    "p3": `calc(c * 2)`,
   };
   let res = gradient(name, color, onColor);
-  return Object.fromEntries(Object.entries(res).map(
-    ([name2, c]) => chromas.entries().map(([p, pV]) => [`${name2}_${p}`, `oklch(from var(--${c}) l ${pV} h)`])
+  return Object.fromEntries(Object.entries(res).map(([name, c]) =>
+    chromas.entries().map(([p, pV]) =>
+      [`${name}_${p}`, `oklch(from var(--${c}) l ${pV} h)`])
   ).flat());
 }
-var gradient_default = {
+// (function () {
+//   debugger
+//   gradient("primary", "darkred", "white", 10);
+// })();
+
+var gradients = {
   gradient,
-  popGradient
+  popGradient,
 };
 
-// src/engine.js
-var MEDIA_WORDS = {
+// import colorPalette from "./palette.js";
+
+const MEDIA_WORDS = {
   progressive: "scan: progressive",
   interlace: "scan: interlace",
   dim: "light-level: dim",
@@ -1436,6 +1542,7 @@ var MEDIA_WORDS = {
   initScript: "scripting: initial-only",
   reloadScript: "scripting: reload",
   stableScript: "scripting: stable",
+
   dark: "prefers-color-scheme: dark",
   light: "prefers-color-scheme: light",
   noColorScheme: "prefers-color-scheme: no-preference",
@@ -1450,9 +1557,9 @@ var MEDIA_WORDS = {
   noForcedColors: "forced-colors: none",
   invertedColors: "inverted-colors: inverted",
   noInvertedColors: "inverted-colors: none",
-  p3: "color-gamut: p3",
-  srgb: "color-gamut: srgb",
-  rec2020: "color-gamut: rec2020",
+  p3: 'color-gamut: p3',
+  srgb: 'color-gamut: srgb',
+  rec2020: 'color-gamut: rec2020',
   highDynamicRange: "dynamic-range: high",
   standardDynamicRange: "dynamic-range: standard",
   reducedMotion: "prefers-reduced-motion: reduce",
@@ -1482,33 +1589,42 @@ var MEDIA_WORDS = {
   anyBitmap: "any-grid: 0",
   screen: "screen",
   print: "print",
-  all: "all"
+  all: "all",
 };
-var RENAME = {
+
+// todo make this work with @media.
+// | **overflow-block**       | `none`, `scroll`, `optional-paged`, `paged` | `@media (overflow-block: scroll) {…}`
+// | **overflow-inline**      | `none`, `scroll`, `optional-paged`, `paged` | `@media (overflow-inline: none) {…}`
+const RENAME = {
   "overflow-block": "overflow-y",
-  "overflow-inline": "overflow-x"
+  "overflow-inline": "overflow-x",
 };
-var UpgradeRegistry = class {
+
+class UpgradeRegistry {
   #register = {};
-  #shorts = {};
+  #shorts = {}
+
   constructor(dict) {
     for (const [k, short] of Object.entries(dict))
       this.registerShort(k, short);
   }
-  waitFor(name, element, clazz2) {
-    (this.#register[name] ??= []).push({ clazz: clazz2, element: new WeakRef(element) });
+
+  waitFor(name, element, clazz) {
+    (this.#register[name] ??= []).push({ clazz, element: new WeakRef(element) });
   }
+
   enoughWaiting(name) {
     let undone = this.#register[name];
     if (!undone) return;
     delete this.#register[name];
-    undone = undone.reduce((res, { clazz: clazz2, element }) => {
+    undone = undone.reduce((res, { clazz, element }) => {
       element = element.deref();
-      element?.classList.contains(clazz2) && res.push({ clazz: clazz2, element });
+      element?.classList.contains(clazz) && res.push({ clazz, element });
       return res;
     }, []);
-    return undone.length ? undone : void 0;
+    return undone.length ? undone : undefined;
   }
+
   registerShort(name, func) {
     const [main, name2 = main] = name.split(".");
     const table = name2 != main ? this.#shorts[main].scope ??= {} : this.#shorts;
@@ -1517,60 +1633,70 @@ var UpgradeRegistry = class {
     table[name2] = func;
     this.rerun(name);
   }
+
   get shorts() {
     return this.#shorts;
   }
+
   get medias() {
     return MEDIA_WORDS;
   }
+
   registerMedia(name, txt) {
     if (name in MEDIA_WORDS)
       throw new Error(`Media name ${name} already exists`);
     MEDIA_WORDS[name] = txt;
     this.rerun(`@${name}`);
   }
+
   rerun(name) {
     const todos = this.enoughWaiting(name);
     if (!todos)
       return;
     const style = document.querySelector("style");
     const csss = new SheetWrapper(style.sheet);
-    for (const { clazz: clazz2, element } of todos)
-      csss.addRule(clazz2, element);
+    for (const { clazz, element } of todos)
+      csss.addRule(clazz, element);
   }
-};
-var upgrades = new UpgradeRegistry({
-  ...func_default,
-  ...font_default,
-  ...gradient_default,
+}
+
+const upgrades = new UpgradeRegistry({
+  ...nativeAndMore,
+  ...SHORTS,
+  ...gradients,
   // ...colorPalette,
-  ...layout_default
+  ...layouts,
 });
-var parseCssShorts = (str) => Rule.interpret(str, upgrades, RENAME);
-var registerShort = (name, func) => upgrades.registerShort(name, func);
-var registerMedia = (name, txt) => upgrades.registerMedia(name, txt);
+
+const parseCssShorts = (str) => Rule.interpret(str, upgrades, RENAME);
+const registerShort = (name, func) => upgrades.registerShort(name, func);
+const registerMedia = (name, txt) => upgrades.registerMedia(name, txt);
 registerMedia("sm", "min-width:640px");
 registerMedia("md", "min-width:768px");
 registerMedia("lg", "min-width:1024px");
 registerMedia("xl", "min-width:1280px");
 registerMedia("xxl", "min-width:1536px");
-var SheetWrapper = class _SheetWrapper {
+
+class SheetWrapper {
   rules = {};
+
   static getKey(r) {
     return [r.parentRule?.media?.mediaText, r.selectorText].filter(Boolean).join(" { ");
   }
+
   static layerMediaRules(layer) {
-    const res = /* @__PURE__ */ new Map();
+    const res = new Map();
     for (const a of layer.cssRules) {
       if (a instanceof CSSMediaRule) {
         for (const b of a.cssRules)
           if (b instanceof CSSStyleRule)
-            res.set(_SheetWrapper.getKey(b), b);
+            res.set(SheetWrapper.getKey(b), b);
       } else if (a instanceof CSSStyleRule)
-        res.set(_SheetWrapper.getKey(a), a);
+        res.set(SheetWrapper.getKey(a), a);
     }
     return res;
   }
+
   constructor(sheet) {
     this.styleEl = sheet.ownerNode;
     this.sheet = sheet;
@@ -1578,19 +1704,22 @@ var SheetWrapper = class _SheetWrapper {
     this.container = this.setupLayer("container", sheet);
     this.setupStatement();
   }
+
   setupStatement() {
     for (const r of this.sheet.cssRules)
       if (r instanceof CSSLayerStatementRule && "@layer container, items;" === r.cssText.replaceAll(/\s+/g, " "))
         return;
     this.sheet.insertRule("@layer container, items;", 0);
   }
+
   setupLayer(name) {
     for (const layer of this.sheet.cssRules)
       if (layer instanceof CSSLayerBlockRule && layer.name === name)
-        return { layer, registry: _SheetWrapper.layerMediaRules(layer) };
+        return { layer, registry: SheetWrapper.layerMediaRules(layer) };
     this.sheet.insertRule(`@layer ${name} {}`, 0);
-    return { layer: this.sheet.cssRules[0], registry: /* @__PURE__ */ new Map() };
+    return { layer: this.sheet.cssRules[0], registry: new Map() };
   }
+
   addRule(str, el) {
     try {
       const rule = Rule.interpret(str, upgrades, RENAME);
@@ -1610,31 +1739,33 @@ var SheetWrapper = class _SheetWrapper {
       throw err;
     }
   }
+
   #isInUse(r) {
     if (r instanceof CSSMediaRule) r = r.cssRules[0];
     if (!(r instanceof CSSStyleRule)) return false;
     const className = r.selectorText.match(/^\.((\\.|[a-zA-Z0-9_-])+)/)?.[1].replaceAll(/\\(.)/g, "$1");
     return className && this.styleEl.getRootNode().querySelector(`[class~="${className}"]`);
   }
+
   #removeUnused(layer) {
     for (let i = layer.cssRules.length - 1; i >= 0; i--)
       if (!this.#isInUse(layer.cssRules[i]))
         layer.deleteRule(i);
   }
+
   #cleanTask;
   cleanup() {
-    this.#cleanTask ??= requestAnimationFrame((_) => {
+    this.#cleanTask ??= requestAnimationFrame(_ => {
       this.#cleanTask = null;
       this.#removeUnused(this.container.layer);
       this.#removeUnused(this.items.layer);
-      this.sheet.ownerNode.textContent = [...this.sheet.cssRules].map((r) => r.cssText).join("\n\n");
+      this.sheet.ownerNode.textContent = [...this.sheet.cssRules].map(r => r.cssText).join('\n\n');
       this.sheet = this.styleEl.sheet;
       this.items = this.setupLayer("items", this.sheet);
       this.container = this.setupLayer("container", this.sheet);
     });
   }
-};
-export {
-  SheetWrapper
-};
+}
+
+export { SheetWrapper };
 //# sourceMappingURL=csss.js.map

@@ -1,0 +1,5052 @@
+<test-html title="Holy Grail Layout">
+  <main csss="
+      $hg = $grid(rows(auto,1fr,auto),cols(auto,1fr,auto),gap(1rem))$h(100vh);
+      $hg.header = $column(1,4);
+      $hg.footer = $column(1,4);
+      $hg.left = $column(1,2);
+      $hg.right = $column(3,4);
+      $hg.main = $column(2,3);
+  ">
+    <script type="module">
+      import { registerShort } from '/src/engine.js';
+      await new Promise(r => setTimeout(r, 100));
+      registerShort('grid.hg', () => {
+        return ({
+          gridTemplateRows: "auto 1fr auto",
+          gridTemplateColumns: "auto 1fr auto",
+          gap: "1rem",
+          blockSize: "100vh"
+        })
+      });
+      registerShort('_grid.hgHeader', function () { return this.column(1, 4); });
+      registerShort('_grid.hgFooter', function () { return this.column(1, 4); });
+      registerShort('_grid.hgLeft', function () { return this.column(1, 2); });
+      registerShort('_grid.hgRight', function () { return this.column(3, 4); });
+      registerShort('_grid.hgMain', function () { return this.column(2, 3); });
+    </script>
+    <div class="
+                $grid(hg)
+                |header$_grid(hgHeader)
+                |.left$_grid(hgLeft)
+                |main$_grid(hgMain)
+                |aside.right$_grid(hgRight)
+                |.footer$_grid(hgFooter)
+    ">
+      <header class="header $bg(azure) $border">
+        <h1>Header</h1>
+      </header>
+      <aside class="left $bg(lightgreen) $border">
+        <h2>Left Sidebar</h2>
+        <p>Navigation links could go here</p>
+        <ul>
+          <li>Home</li>
+          <li>About</li>
+          <li>Services</li>
+          <li>Contact</li>
+        </ul>
+      </aside>
+      <main class="$bg(white) $border">
+        <h2>Main Content</h2>
+        <p>This is the main content area of the page. In a real website, this would contain the primary content.</p>
+        <p>The Holy Grail layout is a classic web design pattern with header, footer, main content, and two sidebars.
+        </p>
+        <p>Using CSS Grid makes this layout much simpler than older techniques that required floats and negative
+          margins.</p>
+      </main>
+      <aside class="right |:nth-child(3)$margin(1rem,0)">
+        <h2>Right Sidebar</h2>
+        <p>Additional information, ads, or related content could go here.</p>
+        <div class="$padding(0.5rem) $bg(white) $border">
+          <h3>Related Article</h3>
+          <p>Check out our guide to CSS layout techniques!</p>
+        </div>
+      </aside>
+      <footer class="footer $bg(lightblue) $border">
+        <h2>Footer</h2>
+        <p>Copyright © 2024 Example Company</p>
+      </footer>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$bg\(azure\) {
+        background-image: linear-gradient(azure);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$bg\(lightgreen\) {
+        background-image: linear-gradient(lightgreen);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+
+      .\$bg\(white\) {
+        background-image: linear-gradient(white);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+
+      .\$padding\(0\.5rem\) {
+        padding: 0.5rem;
+      }
+
+      .\$bg\(lightblue\) {
+        background-image: linear-gradient(lightblue);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+
+      .\$grid\(hg\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-rows: auto 1fr auto;
+        grid-template-columns: auto 1fr auto;
+        gap: 1rem;
+        block-size: 100vh;
+      }
+    }
+
+    @layer items {
+      .\|\:nth-child\(3\)\$margin\(1rem\,0\)> :where(:nth-child(3)) {
+        margin: 1rem 0px;
+      }
+
+      .\|header\$_grid\(hgHeader\)> :where(header) {
+        grid-column: 1 / 4;
+      }
+
+      .\|\.footer\$_grid\(hgFooter\)> :where(.footer) {
+        grid-column: 1 / 4;
+      }
+
+      .\|\.left\$_grid\(hgLeft\)> :where(.left) {
+        grid-column: 1 / 2;
+      }
+
+      .\|aside\.right\$_grid\(hgRight\)> :where(aside.right) {
+        grid-column: 3 / 4;
+      }
+
+      .\|main\$_grid\(hgMain\)> :where(main) {
+        grid-column: 2 / 3;
+      }
+    }
+  </style>
+</test-html>
+
+<!-- 
+$twoCol = $grid(template(auto 1fr / 3fr 1fr))$gap(2rem);
+$twoColMain = $grid(column(1 / 2));
+$twoColSidebar = $grid(column(2 / 3));
+
+$dashboard = $grid(template(60px 1fr / 250px 1fr))$h(100vh);
+$dashboardHeader = $grid(column(1 / 3))$flex(center,between)$padding(1rem);
+$dashboardSidebar = $grid(column(1 / 2))$grid(row(2 / 3));
+$dashboardContent = $grid(column(2 / 3))$grid(row(2 / 3))$overflow(auto);
+
+$card = $flex(column)$border(radius(8px))$overflow(hidden)$shadow(sm);
+$cardHeader = $padding(1rem)$flex(center,between);
+$cardImage = $w(100%)$h(200px)$object(cover);
+$cardContent = $padding(1rem)$flex(1);
+$cardFooter = $padding(1rem)$bg(neutral-100);
+
+$productCard = $flex(column)$border(radius(8px))$border$padding(1rem)$gap(0.5rem)$h(100%);
+$productImage = $w(100%)$h(180px)$object(contain);
+$productTitle = $font(bold)$margin(0.5rem,0);
+$productPrice = $font(lg,bold)$color(primary);
+$productActions = $flex(center,end)$margin(auto,0,0);
+
+$featureCard = $padding(1.5rem)$flex(column,center,center)$text(center)$gap(1rem);
+$featureIcon = $w(60px)$h(60px)$margin(0,auto,1rem);
+
+$cardGrid = $grid(cols(repeat(auto-fit,minmax(280px,1fr))))$gap(2rem);
+
+$gallery = $grid(cols(repeat(auto-fill,minmax(200px,1fr))))$gap(1rem);
+$galleryItem = $aspect(1/1)$overflow(hidden);
+$galleryImage = $w(100%)$h(100%)$object(cover);
+
+$masonry = $columns(3)$gap(1rem);
+$masonryItem = $break-inside(avoid)$margin(0,0,1rem);
+
+$navbar = $flex(center,between)$padding(1rem)$sticky(top)$bg(white)$shadow(sm);
+$navbarBrand = $flex(center)$gap(0.5rem)$font(xl,bold);
+$navbarLinks = $flex(center)$gap(1.5rem);
+
+$hero = $grid(place(center))$padding(3rem,1rem)$min-h(80vh)$bg(cover,center)$text(center);
+$heroContent = $max-w(800px)$padding(2rem)$flex(column,center,center)$gap(2rem);
+
+$footer = $padding(4rem,1rem)$bg(neutral-900)$color(white);
+$footerGrid = $grid(cols(repeat(auto-fit,minmax(200px,1fr))))$gap(2rem);
+$footerBottom = $padding(1rem,0)$flex(center,between)$border(top);
+
+$formGrid = $grid(cols(1fr))$gap(1.5rem);
+$formRow = $flex(column)$gap(0.5rem);
+$formGroup = $grid(cols(auto,1fr))$gap(1rem)$align(center);
+
+$mediaObject = $flex(start)$gap(1rem);
+$mediaImage = $w(60px)$h(60px)$object(cover);
+$mediaBody = $flex(1)$flex(column)$gap(0.5rem);
+
+$cta = $padding(3rem,1rem)$text(center)$bg(primary-50);
+$ctaContent = $max-w(600px)$margin(0,auto)$flex(column,center,center)$gap(2rem);
+
+
+$stickyFooter = $grid(template(auto 1fr auto / 1fr))$gap(1rem)$min-h(100vh);
+$stickyFooterContent = $grid(column(1 / 3))$grid(row(2 / 3))$padding(1rem);
+$stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neutral-100);
+
+ --><!-- <pre>
+
+inline elements. all other properties should inherit for these elements. 
+display: inline means inherit all.
+display: block means inherit everything except layout and borders. That means that we need to find the $paragraph
+properties that should not inherit.
+
+inline, 
+b, i, strong, em, sub, sup, small, q, cite, time, abbr, code, samp, var => 
+  span + $font shortcuts (incl $padding)
+
+inline-block => block element, that can be positioned as a text string.
+kbd, 
+
+mark, s, u =>
+  span + $color$bg and $text-decoration (they don't inherit, but principally inherits).
+
+bdi, bdo, ruby, rt, rp, => 
+  i think this is an inline-block.$language
+
+$text-decoration
+  small-caps, uppercase, lowercase, capitalize, overline, underline, line-through
+
+//all of these are just span with some font style or text-decoration props?
+
+  //background inherits in principle, through transparent
+  //text-decoration inherits in principle, through line over the space where the inner element is. like a border in the text.
+
+Semantic, special context meaning font styling.
+    dfn, var, code, kbd, samp,
+
+inline-block thing
+  ruby, bdi, bdo
+Text Direction & Internationalization
+  bdi, bdo
+
+1. $font, inherits across block levels.
+font-family
+font-style
+font-variant
+font-weight
+letter-spacing
+
+//$paragraph = layout for text blocks
+2. $paragraph, inherits within block level elements. this means that 
+word-spacing    //override to become initial? or should we in all $layout elements, set these properties to initial?
+line-height     //override to become initial? or should we in all $layout elements, set these properties to initial?
+text-align      //override to become initial? or should we in all $layout elements, set these properties to initial?
+white-space     //override to become initial? or should we in all $layout elements, set these properties to initial?
+overflow-wrap   //override to become initial? or should we in all $layout elements, set these properties to initial?
+hyphens         //override to become initial? or should we in all $layout elements, set these properties to initial?
+text-overflow   //override to become initial? or should we in all $layout elements, set these properties to initial?
+2. $_paragraph    only apply to direct children
+_text-indent
+
+
+3. inherits!
+text-transform  //
+text-decoration //in principle, same as background
+
+
+font-stretch ??
+
+
+
+<div class="$grid-table $shadow">
+  <span>hello<a href>click <i class="$shadow(off)">sunshine</i></a></span>
+</div>
+
+  $text-container = {
+    $font(Abz)
+    |*$font(times)
+    |.par$normal_space_between_letters
+    |.hea$font(arial)$bold$wider_letter_space
+    |.info$font(600)$text(bold)$just_a_little_bit_wider_between_letters
+  }
+  
+  /*gap|g(letter,word,line)*/
+  /* gap(block,inline) or gap(inline,block) => inline is word and letter spacing, block is line height */
+  
+  text-align - /*c|center|a|start|b|end|l|left|r|right|j|justify|m|match-parent*/ 
+  
+  /* font / text / em ? */
+  /* is the paragraphing, is the text or font? is it a separate unit, $par? layout for text block? */
+  /* will font / text / paragraph eat text to be gone? */
+  /* inherit non-inherit default value for the different properties. 
+  
+  text = non-inherit                            vs font = inherit ?
+  text = word and up (lines, text-block)        vs font = word and down (letters)
+  text = word and down style (bold/italic) vs font = word and up decoration
+  text-decoration = $text-decoration-color()
+  */
+  /* $em(10px) */
+  
+  --
+  
+  Okay so what should I consider?
+  1. Inheritance
+  2. Block or inline? Paragprah or Font?
+  3. Groupings
+  
+</pre> -->
+<test-html title="$text, $font, $spacing">
+  <main>
+    <div class="$w(70%) $border(solid,2px) $padding(1rem) $font(justify)">
+      <p class="$text(uppercase,condensed,indent(20%)) $spacing(0.1rem,0.5rem,2rem)">
+        Lorem ipsum dolor sit amet. Et quia temporibus est officia ipsam a sunt voluptatem et autem ullam sit
+        voluptate libero hic doloremque nobis eum dolor quas. Id magni tenetur aut exercitationem voluptates ut
+        voluptates distinctio aut doloribus voluptatibus aut ipsa iusto eos asperiores velit aut rerum facilis.
+        Ut itaque obcaecati et expedita voluptatibus et voluptas incidunt ut incidunt sunt vel totam laudantium eos
+        velit veritatis. Ut incidunt cumque in perspiciatis reiciendis sed dolorum temporibus? Ut harum
+        laudantium quo perferendis sint in laborum molestias qui aliquam dolore non consequatur enim aut
+        eaque harum. Et minima dolores id pariatur quia ut accusamus placeat et odit quia sit cumque natus. Eum veniam
+        laboriosam aut quia tempora et quas debitis et nulla minima ut autem assumenda.
+        Eos nemo perferendis id libero numquam et maiores quam aut quis quis.
+      </p>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(70\%\) {
+        inline-size: 70%;
+      }
+
+      .\$border\(solid\,2px\) {
+        border-style: solid;
+        border-width: 2px;
+      }
+
+      .\$font\(justify\) {
+        text-align: justify;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$text\(uppercase\,condensed\,indent\(20\%\)\) {
+        text-transform: uppercase;
+        font-stretch: condensed;
+        text-indent: 20%;
+      }
+
+      .\$spacing\(0\.1rem\,0\.5rem\,2rem\) {
+        letter-spacing: 0.1rem;
+        /* inline */
+        word-spacing: 0.5rem;
+        /* inline*/
+        line-height: 2em;
+        /* block */
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$text-decoration() and $color() 1">
+  <main>
+    <h2 class="$text-decoration(underline,dotted,4px) $color(,,,orange)">
+      Hello!
+    </h2>
+    <h3 class="$text-decoration(overline,solid) $color(,,,blue)">
+      Sunshine!!!
+    </h3>
+    <p class="$text-decoration(linethrough,underline,wavy,2px) $color(,,,#ff1493)">
+      I am a text decoration.
+    </p>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$text\-decoration\(underline\,dotted\,4px\) {
+        text-decoration-line: underline;
+        text-decoration-style: dotted;
+        text-decoration-thickness: 4px;
+      }
+
+      .\$color\(\,\,\,orange\) {
+        text-decoration-color: orange;
+      }
+
+      .\$text\-decoration\(overline\,solid\) {
+        text-decoration-line: overline;
+        text-decoration-style: solid;
+      }
+
+      .\$color\(\,\,\,blue\) {
+        text-decoration-color: blue;
+      }
+
+      .\$text\-decoration\(linethrough\,underline\,wavy\,2px\) {
+        text-decoration-line: line-through underline;
+        text-decoration-style: wavy;
+        text-decoration-thickness: 2px;
+      }
+
+      .\$color\(\,\,\,\#ff1493\) {
+        text-decoration-color: #ff1493;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$text-decoration() and $color() 2">
+  <main>
+    <ul>
+      <li class="$text-decoration(underline,solid,4px) $color(,,,yellow)">$text-decoration(line/s,style,thickness)</li>
+      <br>
+      <a href="" class="$text-decoration(none)">
+        <li>Underline, overline, and line-through can be stacked on top of each other.</li>
+      </a>
+      <li class="$text-decoration(line-through,dashed,0.5%)">If they're stacked, they share the same style.</li>
+      <br>
+      <li class="$text-decoration(overline,underline,wavy,20%) $color(green)">Like this.</li>
+    </ul>
+
+    <h4> This property shoould be <span class="$text-decoration(underline,double,4px) $color(,,,red)">specific</span>.
+      Not inherited. </h4>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$text\-decoration\(underline\,solid\,4px\) {
+        text-decoration-line: underline;
+        text-decoration-style: solid;
+        text-decoration-thickness: 4px;
+      }
+
+      .\$color\(\,\,\,yellow\) {
+        text-decoration-color: yellow;
+      }
+
+      .\$text\-decoration\(none\) {
+        text-decoration: none;
+      }
+
+      .\$text\-decoration\(line\-through\,dashed\,0\.5\%\) {
+        text-decoration-line: line-through;
+        text-decoration-style: dashed;
+        text-decoration-thickness: 0.5%;
+      }
+
+      .\$text\-decoration\(overline\,underline\,wavy\,20\%\) {
+        text-decoration-line: overline underline;
+        text-decoration-style: wavy;
+        text-decoration-thickness: 20%;
+      }
+
+      .\$color\(green\) {
+        color: green;
+      }
+
+      .\$text\-decoration\(underline\,double\,4px\) {
+        text-decoration-line: underline;
+        text-decoration-style: double;
+        text-decoration-thickness: 4px;
+      }
+
+      .\$color\(\,\,\,red\) {
+        text-decoration-color: red;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$text-shadow()">
+  <main>
+    Option 1:
+    <h2 class="$text-shadow((2px,4px,6px),(4px,6px,8px)) $color(,white,,,rgba(0,0,0,0.5)/rgba(0,128,0,0.3))">
+      Text Shadows are awesome?!
+    </h2>
+    <p class="$text-shadow(1px,2px,5px) $color(,,,,pink)">
+      I have a shadow colored pink.
+    </p>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$text\-shadow\(\(2px\,4px\,6px\)\,\(4px\,6px\,8px\)\) {
+        text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5), 4px 6px 8px rgba(0, 128, 0, 0.3);
+      }
+
+      .\$color\(\,white\,\,\,rgba\(0\,0\,0\,0\.5\)\/rgba\(0\,128\,0\,0\.3\)\) {
+        background-color: white;
+      }
+
+      .\$text\-shadow\(1px\,2px\,5px\) {
+        text-shadow: 1px 2px 5px pink;
+      }
+
+      .\$color\(\,\,\,\,pink\) {
+        color: pink;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html><test-html title="$unknown(22px)">
+  <div class="$unknown(22px)">hello</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$unknown\(22px\) {
+        font-size: 22px;
+      }
+    }
+
+    @layer items {}
+  </style>
+  <script type="module">
+    import { registerShort } from '/src/engine.js';
+    await new Promise(r => setTimeout(r, 100));
+    registerShort('unknown', a => ({ fontSize: a }));
+  </script>
+</test-html>
+<test-html title="$grid(unknown(22px))">
+  <div class="$grid(unknown(22px))">sunshine</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(unknown\(22px\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        min-width: 22px;
+        max-width: 22px;
+      }
+    }
+
+    @layer items {}
+  </style>
+  <script type="module">
+    import { registerShort } from '/src/engine.js';
+    await new Promise(r => setTimeout(r, 100));
+    registerShort('grid.unknown', a => ({ minWidth: a, maxWidth: a }));
+  </script>
+</test-html>
+<test-html title="@xxl$w(20px)">
+  <div class="@xxl$w(20px)">sunshine</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      @media (min-width:1536px) {
+
+        .\@xxl\$w\(20px\) {
+          inline-size: 20px;
+        }
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="@xxxl$w(20px)">
+  <div class="@xxxl$w(20px)">sunshine</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      @media (min-width:2000px) {
+
+        .\@xxxl\$w\(20px\) {
+          inline-size: 20px;
+        }
+      }
+    }
+
+    @layer items {}
+  </style>
+  <script type="module">
+    import { registerMedia } from '/src/engine.js';
+    await new Promise(r => setTimeout(r, 100));
+    registerMedia("xxxl", "min-width:2000px");
+  </script>
+</test-html><test-html title="Basic CSS Variables">
+  <div style="--color_my: blue;" class="$bg(--color_my)">
+    This text should be blue from a CSS variable
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$bg\(--color_my\) {
+        background-image: linear-gradient(var(--color_my));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="CSS Variables with Fallbacks">
+  <main style="--color_primary: red; --color_secondary: blue;">
+    <div class="$bg((--color_undefined,--color_primary))">
+      This text should use the fallback variable
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$bg\(\(--color_undefined\,--color_primary\)\) {
+        background-image: linear-gradient(var(--color_undefined, var(--color_primary)));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Simple Calc Expression">
+  <div class="$width(100px+20px)">
+    This div should be 120px wide
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$width\(100px\+20px\) {
+        inline-size: calc(120px);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Calc with Different Units">
+  <div class="$width(100%-20px) $height(2rem+1em)">
+    This div should have width and height from calc expressions
+    For some reason, it flips 2rem + 1em to 1em + 2rem when it adds the style.
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$width\(100\%-20px\) {
+        inline-size: calc(100% - 20px);
+      }
+
+      .\$height\(2rem\+1em\) {
+        block-size: calc(1em + 2rem);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Calc with Multiple Operations">
+  <div class="$margin(10px+5px*2) $padding(1rem+2px/2)">
+    Testing native compilation of rules and multiple operations in calc
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$margin\(10px\+5px\*2\) {
+        margin: calc(20px);
+      }
+
+      .\$padding\(1rem\+2px\/2\) {
+        padding: calc(1px + 1rem);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Calc with Parentheses">
+  <div class="$width((100px+5vw)*2) $height(3rem*(1+0.5))">
+    Testing calc with parentheses
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$width\(\(100px\+5vw\)\*2\) {
+        inline-size: calc(200px + 10vw);
+      }
+
+      .\$height\(3rem\*\(1\+0\.5\)\) {
+        block-size: calc(4.5rem);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="CSS Variables in Calc">
+  <main style="--base-size: 16px;">
+    <div class="$width(--base-size*2) $height(--base-size+10px)">
+      Testing CSS variables inside calc
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$width\(--base-size\*2\) {
+        inline-size: calc(var(--base-size) * 2);
+      }
+
+      .\$height\(--base-size\+10px\) {
+        block-size: calc(var(--base-size) + 10px);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Negative Values in Calc">
+  <div class="$margin(-10px+20px) $padding(1rem-5px)">
+    Testing negative values in calc
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$margin\(-10px\+20px\) {
+        margin: calc(10px);
+      }
+
+      .\$padding\(1rem-5px\) {
+        padding: calc(-5px + 1rem);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Complex Nested Calc">
+  <div class="$width((100px+50px)*(2-0.5))">
+    Testing complex nested calc expressions
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$width\(\(100px\+50px\)\*\(2-0\.5\)\) {
+        inline-size: calc(225px);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="CSS Variables with Multiple Fallbacks">
+  <main style="--color_primary: red; --color_secondary: blue;">
+    <div class="$bg((--color_undefined1,--color_primary,--color_secondary))">
+      Testing multiple fallbacks in CSS variables
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$bg\(\(--color_undefined1\,--color_primary\,--color_secondary\)\) {
+        background-image: linear-gradient(var(--color_undefined1, var(--color_primary, var(--color_secondary))));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Simple Division Expression (1em/--var)">
+  <div class="$width(1em/--var)">
+    Testing Simple Division expression
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$width\(1em\/--var\) {
+        inline-size: calc(1em / var(--var));
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Complex Expression with Operations ((1em+20px)*20+40px)">
+  <div class="$width((1em+20px)*20+40px) $bg(lightblue) $padding(1rem)">
+    Testing complex expression with operations outside parentheses
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$width\(\(1em\+20px\)\*20\+40px\) {
+        inline-size: calc(20em + 440px);
+      }
+
+      .\$bg\(lightblue\) {
+        background-image: linear-gradient(lightblue);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="With Nested Calculation (2px+5px*(--var/3.5))">
+  <div class="$margin(2px+5px*(--var/3.5)) $border(solid,1px) $padding(1rem)">
+    With nested calculation
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$margin\(2px\+5px\*\(--var\/3\.5\)\) {
+        margin: calc(2px + 5px * (var(--var) / 3.5));
+      }
+
+      .\$border\(solid\,1px\) {
+        border-style: solid;
+        border-width: 1px;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="min max clamp">
+  <div class="$w(min(2px+1em,10%)) $h(max(2px+1em,10%,3vw)) $em(clamp(10%,2px+1em,20%))">
+    With nested calculation
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(min\(2px\+1em\,10\%\)\) {
+        inline-size: min(1em + 2px, 10%);
+      }
+
+      .\$h\(max\(2px\+1em\,10\%\,3vw\)\) {
+        block-size: max(1em + 2px, 10%, 3vw);
+      }
+
+      .\$em\(clamp\(10\%\,2px\+1em\,20\%\)\) {
+        font-size: clamp(10%, 1em + 2px, 20%);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="env() in body">
+  <div class="$w(---safe-area-inset-top) $h(---safe-area-inset-top*2)">
+    With nested calculation
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(---safe-area-inset-top\) {
+        inline-size: env(safe-area-inset-top);
+      }
+
+      .\$h\(---safe-area-inset-top\*2\) {
+        block-size: calc(env(safe-area-inset-top) * 2);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="calc() and env() in @media">
+  <div class="
+  @(width<=---safe-area-inset-top)$bold
+  @(width>---safe-area-inset-top*2)$bold
+  @(width>--not-allowed)$bold
+  ">
+    With nested calculation
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      @media (max-width: env(safe-area-inset-top)) {
+        .\@\(width\<\=---safe-area-inset-top\)\$bold {
+          font-weight: bold;
+        }
+      }
+
+      @media (min-width: calc(env(safe-area-inset-top) * 2)) {
+        .\@\(width\>\---safe-area-inset-top\*2\)\$bold {
+          font-weight: bold;
+        }
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+
+<!--
+ //how do we do calc(var(--a) - var(--b))
+ --><test-html title="border+color+items">
+  <div class="
+  $gradient(primary,#ec1221,white)
+  $color(#primary)
+  $border(solid,2px)
+  |*$border(double,2px,radius(0.25rem))
+  |.new$border(solid,4px,radius(1rem))
+  |.sale$border(dashed,3px,radius(0.5rem))""
+  >
+    <div class=" new $color(#primary_a20)">New Arrival: Product 1</div>
+  <div class="sale $h(300px) $w(600px) $border(r(10px,30px,60px))">On Sale: Product 2</div>
+  <div>Product 3</div>
+  <div class="sale $color(#primary_a40)">On Sale: Product 4</div>
+  <div class="new">New Arrival: Product 5</div>
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$gradient\(primary\,\#ec1221\,white\) {
+        --color_primary: #ec1221;
+        --color_primary10: color-mix(in oklch, #ec1221 90%, white 10%);
+        --color_primary20: color-mix(in oklch, #ec1221 80%, white 20%);
+        --color_primary30: color-mix(in oklch, #ec1221 70%, white 30%);
+        --color_primary40: color-mix(in oklch, #ec1221 60%, white 40%);
+        --color_primary50: color-mix(in oklch, #ec1221 50%, white 50%);
+        --color_primary60: color-mix(in oklch, #ec1221 40%, white 60%);
+        --color_primary70: color-mix(in oklch, #ec1221 30%, white 70%);
+        --color_primary80: color-mix(in oklch, #ec1221 20%, white 80%);
+        --color_primary90: color-mix(in oklch, #ec1221 10%, white 90%);
+        --color_primary100: color-mix(in oklch, #ec1221 0%, white 100%);
+        --color_primary_a10: oklch(from #ec1221 l c h / 10%);
+        --color_primary_a20: oklch(from #ec1221 l c h / 20%);
+        --color_primary_a30: oklch(from #ec1221 l c h / 30%);
+        --color_primary_a40: oklch(from #ec1221 l c h / 40%);
+        --color_primary_a50: oklch(from #ec1221 l c h / 50%);
+        --color_primary_a60: oklch(from #ec1221 l c h / 60%);
+        --color_primary_a70: oklch(from #ec1221 l c h / 70%);
+        --color_primary_a80: oklch(from #ec1221 l c h / 80%);
+        --color_primary_a90: oklch(from #ec1221 l c h / 90%);
+        --color_primary_a100: oklch(from #ec1221 l c h / 100%);
+        --color_primary10_a10: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 10%);
+        --color_primary10_a20: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 20%);
+        --color_primary10_a30: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 30%);
+        --color_primary10_a40: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 40%);
+        --color_primary10_a50: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 50%);
+        --color_primary10_a60: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 60%);
+        --color_primary10_a70: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 70%);
+        --color_primary10_a80: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 80%);
+        --color_primary10_a90: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 90%);
+        --color_primary10_a100: oklch(from color-mix(in oklch, #ec1221 90%, white 10%) l c h / 100%);
+        --color_primary20_a10: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 10%);
+        --color_primary20_a20: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 20%);
+        --color_primary20_a30: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 30%);
+        --color_primary20_a40: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 40%);
+        --color_primary20_a50: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 50%);
+        --color_primary20_a60: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 60%);
+        --color_primary20_a70: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 70%);
+        --color_primary20_a80: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 80%);
+        --color_primary20_a90: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 90%);
+        --color_primary20_a100: oklch(from color-mix(in oklch, #ec1221 80%, white 20%) l c h / 100%);
+        --color_primary30_a10: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 10%);
+        --color_primary30_a20: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 20%);
+        --color_primary30_a30: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 30%);
+        --color_primary30_a40: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 40%);
+        --color_primary30_a50: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 50%);
+        --color_primary30_a60: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 60%);
+        --color_primary30_a70: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 70%);
+        --color_primary30_a80: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 80%);
+        --color_primary30_a90: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 90%);
+        --color_primary30_a100: oklch(from color-mix(in oklch, #ec1221 70%, white 30%) l c h / 100%);
+        --color_primary40_a10: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 10%);
+        --color_primary40_a20: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 20%);
+        --color_primary40_a30: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 30%);
+        --color_primary40_a40: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 40%);
+        --color_primary40_a50: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 50%);
+        --color_primary40_a60: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 60%);
+        --color_primary40_a70: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 70%);
+        --color_primary40_a80: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 80%);
+        --color_primary40_a90: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 90%);
+        --color_primary40_a100: oklch(from color-mix(in oklch, #ec1221 60%, white 40%) l c h / 100%);
+        --color_primary50_a10: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 10%);
+        --color_primary50_a20: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 20%);
+        --color_primary50_a30: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 30%);
+        --color_primary50_a40: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 40%);
+        --color_primary50_a50: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 50%);
+        --color_primary50_a60: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 60%);
+        --color_primary50_a70: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 70%);
+        --color_primary50_a80: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 80%);
+        --color_primary50_a90: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 90%);
+        --color_primary50_a100: oklch(from color-mix(in oklch, #ec1221 50%, white 50%) l c h / 100%);
+        --color_primary60_a10: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 10%);
+        --color_primary60_a20: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 20%);
+        --color_primary60_a30: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 30%);
+        --color_primary60_a40: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 40%);
+        --color_primary60_a50: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 50%);
+        --color_primary60_a60: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 60%);
+        --color_primary60_a70: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 70%);
+        --color_primary60_a80: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 80%);
+        --color_primary60_a90: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 90%);
+        --color_primary60_a100: oklch(from color-mix(in oklch, #ec1221 40%, white 60%) l c h / 100%);
+        --color_primary70_a10: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 10%);
+        --color_primary70_a20: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 20%);
+        --color_primary70_a30: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 30%);
+        --color_primary70_a40: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 40%);
+        --color_primary70_a50: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 50%);
+        --color_primary70_a60: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 60%);
+        --color_primary70_a70: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 70%);
+        --color_primary70_a80: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 80%);
+        --color_primary70_a90: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 90%);
+        --color_primary70_a100: oklch(from color-mix(in oklch, #ec1221 30%, white 70%) l c h / 100%);
+        --color_primary80_a10: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 10%);
+        --color_primary80_a20: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 20%);
+        --color_primary80_a30: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 30%);
+        --color_primary80_a40: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 40%);
+        --color_primary80_a50: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 50%);
+        --color_primary80_a60: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 60%);
+        --color_primary80_a70: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 70%);
+        --color_primary80_a80: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 80%);
+        --color_primary80_a90: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 90%);
+        --color_primary80_a100: oklch(from color-mix(in oklch, #ec1221 20%, white 80%) l c h / 100%);
+        --color_primary90_a10: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 10%);
+        --color_primary90_a20: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 20%);
+        --color_primary90_a30: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 30%);
+        --color_primary90_a40: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 40%);
+        --color_primary90_a50: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 50%);
+        --color_primary90_a60: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 60%);
+        --color_primary90_a70: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 70%);
+        --color_primary90_a80: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 80%);
+        --color_primary90_a90: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 90%);
+        --color_primary90_a100: oklch(from color-mix(in oklch, #ec1221 10%, white 90%) l c h / 100%);
+        --color_primary100_a10: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 10%);
+        --color_primary100_a20: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 20%);
+        --color_primary100_a30: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 30%);
+        --color_primary100_a40: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 40%);
+        --color_primary100_a50: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 50%);
+        --color_primary100_a60: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 60%);
+        --color_primary100_a70: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 70%);
+        --color_primary100_a80: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 80%);
+        --color_primary100_a90: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 90%);
+        --color_primary100_a100: oklch(from color-mix(in oklch, #ec1221 0%, white 100%) l c h / 100%);
+      }
+
+      .\$color\(\#primary\) {
+        color: var(--color_primary);
+      }
+
+      .\$border\(solid\,2px\) {
+        border-style: solid;
+        border-width: 2px;
+      }
+
+      .\$color\(\#primary_a20\) {
+        color: var(--color_primary_a20);
+      }
+
+      .\$h\(300px\) {
+        block-size: 300px;
+      }
+
+      .\$w\(600px\) {
+        inline-size: 600px;
+      }
+
+      .\$border\(r\(10px\,30px\,60px\)\) {
+        border-style: solid;
+        border-start-start-radius: 10px;
+        border-end-end-radius: 60px;
+        border-start-end-radius: 30px;
+        border-end-start-radius: 30px;
+      }
+
+      .\$color\(\#primary_a40\) {
+        color: var(--color_primary_a40);
+      }
+    }
+
+    @layer items {
+      .\|\*\$border\(double\,2px\,radius\(0\.25rem\)\)>* {
+        border-style: double;
+        border-width: 2px;
+        border-radius: 0.25rem;
+      }
+
+      .\|\.new\$border\(solid\,4px\,radius\(1rem\)\)> :where(.new) {
+        border-style: solid;
+        border-width: 4px;
+        border-radius: 1rem;
+      }
+
+      .\|\.sale\$border\(dashed\,3px\,radius\(0\.5rem\)\)> :where(.sale) {
+        border-style: dashed;
+        border-width: 3px;
+        border-radius: 0.5rem;
+      }
+    }
+  </style>
+</test-html>
+<test-html title="border-radius">
+  <div class="$border(0,radius(1rem))">hello</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$border\(0\,radius\(1rem\)\) {
+        border-style: solid;
+        border-width: 0px;
+        border-radius: 1rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="big border">
+  <div class="$border(w(0,1px,2px,),s(.,.,solid,dashed))">sunshine</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$border\(w\(0\,1px\,2px\,\)\,s\(\.\,\.\,solid\,dashed\)\) {
+        border-style: solid;
+        border-block-width: 0px 2px;
+        border-inline-start-width: 1px;
+        border-block-start-style: unset;
+        border-inline-start-style: unset;
+        border-block-end-style: solid;
+        border-inline-end-style: dashed;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="border-thin">
+  <div class="$border(thin)">!!!</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$border\(thin\) {
+        border-style: solid;
+        border-width: thin;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$gradient(primary,blue,green)">
+  <div class="$gradient(primary,blue,green) $color(#primary_a90) $bg(#primary_a30)">
+    hello
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$gradient\(primary\,blue\,green\) {
+        --color_primary: blue;
+        --color_primary10: color-mix(in oklch, blue 90%, green 10%);
+        --color_primary20: color-mix(in oklch, blue 80%, green 20%);
+        --color_primary30: color-mix(in oklch, blue 70%, green 30%);
+        --color_primary40: color-mix(in oklch, blue 60%, green 40%);
+        --color_primary50: color-mix(in oklch, blue 50%, green 50%);
+        --color_primary60: color-mix(in oklch, blue 40%, green 60%);
+        --color_primary70: color-mix(in oklch, blue 30%, green 70%);
+        --color_primary80: color-mix(in oklch, blue 20%, green 80%);
+        --color_primary90: color-mix(in oklch, blue 10%, green 90%);
+        --color_primary100: color-mix(in oklch, blue 0%, green 100%);
+        --color_primary_a10: oklch(from blue l c h / 10%);
+        --color_primary_a20: oklch(from blue l c h / 20%);
+        --color_primary_a30: oklch(from blue l c h / 30%);
+        --color_primary_a40: oklch(from blue l c h / 40%);
+        --color_primary_a50: oklch(from blue l c h / 50%);
+        --color_primary_a60: oklch(from blue l c h / 60%);
+        --color_primary_a70: oklch(from blue l c h / 70%);
+        --color_primary_a80: oklch(from blue l c h / 80%);
+        --color_primary_a90: oklch(from blue l c h / 90%);
+        --color_primary_a100: oklch(from blue l c h / 100%);
+        --color_primary10_a10: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 10%);
+        --color_primary10_a20: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 20%);
+        --color_primary10_a30: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 30%);
+        --color_primary10_a40: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 40%);
+        --color_primary10_a50: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 50%);
+        --color_primary10_a60: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 60%);
+        --color_primary10_a70: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 70%);
+        --color_primary10_a80: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 80%);
+        --color_primary10_a90: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 90%);
+        --color_primary10_a100: oklch(from color-mix(in oklch, blue 90%, green 10%) l c h / 100%);
+        --color_primary20_a10: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 10%);
+        --color_primary20_a20: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 20%);
+        --color_primary20_a30: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 30%);
+        --color_primary20_a40: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 40%);
+        --color_primary20_a50: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 50%);
+        --color_primary20_a60: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 60%);
+        --color_primary20_a70: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 70%);
+        --color_primary20_a80: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 80%);
+        --color_primary20_a90: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 90%);
+        --color_primary20_a100: oklch(from color-mix(in oklch, blue 80%, green 20%) l c h / 100%);
+        --color_primary30_a10: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 10%);
+        --color_primary30_a20: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 20%);
+        --color_primary30_a30: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 30%);
+        --color_primary30_a40: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 40%);
+        --color_primary30_a50: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 50%);
+        --color_primary30_a60: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 60%);
+        --color_primary30_a70: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 70%);
+        --color_primary30_a80: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 80%);
+        --color_primary30_a90: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 90%);
+        --color_primary30_a100: oklch(from color-mix(in oklch, blue 70%, green 30%) l c h / 100%);
+        --color_primary40_a10: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 10%);
+        --color_primary40_a20: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 20%);
+        --color_primary40_a30: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 30%);
+        --color_primary40_a40: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 40%);
+        --color_primary40_a50: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 50%);
+        --color_primary40_a60: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 60%);
+        --color_primary40_a70: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 70%);
+        --color_primary40_a80: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 80%);
+        --color_primary40_a90: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 90%);
+        --color_primary40_a100: oklch(from color-mix(in oklch, blue 60%, green 40%) l c h / 100%);
+        --color_primary50_a10: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 10%);
+        --color_primary50_a20: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 20%);
+        --color_primary50_a30: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 30%);
+        --color_primary50_a40: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 40%);
+        --color_primary50_a50: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 50%);
+        --color_primary50_a60: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 60%);
+        --color_primary50_a70: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 70%);
+        --color_primary50_a80: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 80%);
+        --color_primary50_a90: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 90%);
+        --color_primary50_a100: oklch(from color-mix(in oklch, blue 50%, green 50%) l c h / 100%);
+        --color_primary60_a10: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 10%);
+        --color_primary60_a20: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 20%);
+        --color_primary60_a30: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 30%);
+        --color_primary60_a40: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 40%);
+        --color_primary60_a50: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 50%);
+        --color_primary60_a60: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 60%);
+        --color_primary60_a70: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 70%);
+        --color_primary60_a80: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 80%);
+        --color_primary60_a90: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 90%);
+        --color_primary60_a100: oklch(from color-mix(in oklch, blue 40%, green 60%) l c h / 100%);
+        --color_primary70_a10: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 10%);
+        --color_primary70_a20: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 20%);
+        --color_primary70_a30: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 30%);
+        --color_primary70_a40: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 40%);
+        --color_primary70_a50: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 50%);
+        --color_primary70_a60: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 60%);
+        --color_primary70_a70: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 70%);
+        --color_primary70_a80: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 80%);
+        --color_primary70_a90: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 90%);
+        --color_primary70_a100: oklch(from color-mix(in oklch, blue 30%, green 70%) l c h / 100%);
+        --color_primary80_a10: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 10%);
+        --color_primary80_a20: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 20%);
+        --color_primary80_a30: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 30%);
+        --color_primary80_a40: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 40%);
+        --color_primary80_a50: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 50%);
+        --color_primary80_a60: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 60%);
+        --color_primary80_a70: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 70%);
+        --color_primary80_a80: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 80%);
+        --color_primary80_a90: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 90%);
+        --color_primary80_a100: oklch(from color-mix(in oklch, blue 20%, green 80%) l c h / 100%);
+        --color_primary90_a10: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 10%);
+        --color_primary90_a20: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 20%);
+        --color_primary90_a30: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 30%);
+        --color_primary90_a40: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 40%);
+        --color_primary90_a50: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 50%);
+        --color_primary90_a60: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 60%);
+        --color_primary90_a70: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 70%);
+        --color_primary90_a80: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 80%);
+        --color_primary90_a90: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 90%);
+        --color_primary90_a100: oklch(from color-mix(in oklch, blue 10%, green 90%) l c h / 100%);
+        --color_primary100_a10: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 10%);
+        --color_primary100_a20: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 20%);
+        --color_primary100_a30: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 30%);
+        --color_primary100_a40: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 40%);
+        --color_primary100_a50: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 50%);
+        --color_primary100_a60: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 60%);
+        --color_primary100_a70: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 70%);
+        --color_primary100_a80: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 80%);
+        --color_primary100_a90: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 90%);
+        --color_primary100_a100: oklch(from color-mix(in oklch, blue 0%, green 100%) l c h / 100%);
+      }
+
+      .\$color\(\#primary_a90\) {
+        color: var(--color_primary_a90);
+      }
+
+      .\$bg\(\#primary_a30\) {
+        background-image: linear-gradient(var(--color_primary_a30));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$gradient(primary,blue,yellow) $color(rgb(0,12,255,0.6))">
+  <div class="$gradient(primary,blue,yellow) $color(rgb(0,12,255,0.6))">
+    hello
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$gradient\(primary\,blue\,yellow\) {
+        --color_primary: blue;
+        --color_primary10: color-mix(in oklch, blue 90%, yellow 10%);
+        --color_primary20: color-mix(in oklch, blue 80%, yellow 20%);
+        --color_primary30: color-mix(in oklch, blue 70%, yellow 30%);
+        --color_primary40: color-mix(in oklch, blue 60%, yellow 40%);
+        --color_primary50: color-mix(in oklch, blue 50%, yellow 50%);
+        --color_primary60: color-mix(in oklch, blue 40%, yellow 60%);
+        --color_primary70: color-mix(in oklch, blue 30%, yellow 70%);
+        --color_primary80: color-mix(in oklch, blue 20%, yellow 80%);
+        --color_primary90: color-mix(in oklch, blue 10%, yellow 90%);
+        --color_primary100: color-mix(in oklch, blue 0%, yellow 100%);
+        --color_primary_a10: oklch(from blue l c h / 10%);
+        --color_primary_a20: oklch(from blue l c h / 20%);
+        --color_primary_a30: oklch(from blue l c h / 30%);
+        --color_primary_a40: oklch(from blue l c h / 40%);
+        --color_primary_a50: oklch(from blue l c h / 50%);
+        --color_primary_a60: oklch(from blue l c h / 60%);
+        --color_primary_a70: oklch(from blue l c h / 70%);
+        --color_primary_a80: oklch(from blue l c h / 80%);
+        --color_primary_a90: oklch(from blue l c h / 90%);
+        --color_primary_a100: oklch(from blue l c h / 100%);
+        --color_primary10_a10: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 10%);
+        --color_primary10_a20: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 20%);
+        --color_primary10_a30: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 30%);
+        --color_primary10_a40: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 40%);
+        --color_primary10_a50: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 50%);
+        --color_primary10_a60: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 60%);
+        --color_primary10_a70: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 70%);
+        --color_primary10_a80: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 80%);
+        --color_primary10_a90: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 90%);
+        --color_primary10_a100: oklch(from color-mix(in oklch, blue 90%, yellow 10%) l c h / 100%);
+        --color_primary20_a10: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 10%);
+        --color_primary20_a20: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 20%);
+        --color_primary20_a30: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 30%);
+        --color_primary20_a40: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 40%);
+        --color_primary20_a50: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 50%);
+        --color_primary20_a60: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 60%);
+        --color_primary20_a70: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 70%);
+        --color_primary20_a80: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 80%);
+        --color_primary20_a90: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 90%);
+        --color_primary20_a100: oklch(from color-mix(in oklch, blue 80%, yellow 20%) l c h / 100%);
+        --color_primary30_a10: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 10%);
+        --color_primary30_a20: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 20%);
+        --color_primary30_a30: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 30%);
+        --color_primary30_a40: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 40%);
+        --color_primary30_a50: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 50%);
+        --color_primary30_a60: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 60%);
+        --color_primary30_a70: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 70%);
+        --color_primary30_a80: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 80%);
+        --color_primary30_a90: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 90%);
+        --color_primary30_a100: oklch(from color-mix(in oklch, blue 70%, yellow 30%) l c h / 100%);
+        --color_primary40_a10: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 10%);
+        --color_primary40_a20: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 20%);
+        --color_primary40_a30: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 30%);
+        --color_primary40_a40: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 40%);
+        --color_primary40_a50: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 50%);
+        --color_primary40_a60: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 60%);
+        --color_primary40_a70: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 70%);
+        --color_primary40_a80: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 80%);
+        --color_primary40_a90: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 90%);
+        --color_primary40_a100: oklch(from color-mix(in oklch, blue 60%, yellow 40%) l c h / 100%);
+        --color_primary50_a10: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 10%);
+        --color_primary50_a20: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 20%);
+        --color_primary50_a30: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 30%);
+        --color_primary50_a40: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 40%);
+        --color_primary50_a50: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 50%);
+        --color_primary50_a60: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 60%);
+        --color_primary50_a70: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 70%);
+        --color_primary50_a80: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 80%);
+        --color_primary50_a90: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 90%);
+        --color_primary50_a100: oklch(from color-mix(in oklch, blue 50%, yellow 50%) l c h / 100%);
+        --color_primary60_a10: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 10%);
+        --color_primary60_a20: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 20%);
+        --color_primary60_a30: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 30%);
+        --color_primary60_a40: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 40%);
+        --color_primary60_a50: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 50%);
+        --color_primary60_a60: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 60%);
+        --color_primary60_a70: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 70%);
+        --color_primary60_a80: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 80%);
+        --color_primary60_a90: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 90%);
+        --color_primary60_a100: oklch(from color-mix(in oklch, blue 40%, yellow 60%) l c h / 100%);
+        --color_primary70_a10: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 10%);
+        --color_primary70_a20: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 20%);
+        --color_primary70_a30: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 30%);
+        --color_primary70_a40: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 40%);
+        --color_primary70_a50: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 50%);
+        --color_primary70_a60: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 60%);
+        --color_primary70_a70: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 70%);
+        --color_primary70_a80: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 80%);
+        --color_primary70_a90: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 90%);
+        --color_primary70_a100: oklch(from color-mix(in oklch, blue 30%, yellow 70%) l c h / 100%);
+        --color_primary80_a10: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 10%);
+        --color_primary80_a20: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 20%);
+        --color_primary80_a30: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 30%);
+        --color_primary80_a40: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 40%);
+        --color_primary80_a50: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 50%);
+        --color_primary80_a60: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 60%);
+        --color_primary80_a70: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 70%);
+        --color_primary80_a80: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 80%);
+        --color_primary80_a90: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 90%);
+        --color_primary80_a100: oklch(from color-mix(in oklch, blue 20%, yellow 80%) l c h / 100%);
+        --color_primary90_a10: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 10%);
+        --color_primary90_a20: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 20%);
+        --color_primary90_a30: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 30%);
+        --color_primary90_a40: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 40%);
+        --color_primary90_a50: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 50%);
+        --color_primary90_a60: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 60%);
+        --color_primary90_a70: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 70%);
+        --color_primary90_a80: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 80%);
+        --color_primary90_a90: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 90%);
+        --color_primary90_a100: oklch(from color-mix(in oklch, blue 10%, yellow 90%) l c h / 100%);
+        --color_primary100_a10: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 10%);
+        --color_primary100_a20: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 20%);
+        --color_primary100_a30: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 30%);
+        --color_primary100_a40: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 40%);
+        --color_primary100_a50: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 50%);
+        --color_primary100_a60: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 60%);
+        --color_primary100_a70: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 70%);
+        --color_primary100_a80: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 80%);
+        --color_primary100_a90: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 90%);
+        --color_primary100_a100: oklch(from color-mix(in oklch, blue 0%, yellow 100%) l c h / 100%);
+      }
+
+      .\$color\(rgb\(0\,12\,255\,0\.6\)\) {
+        color: rgba(0, 12, 255, 0.6);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$w(min-content)">
+  <div class="$w(min-content)">
+    hello
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(min-content\) {
+        inline-size: min-content;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$w(min-content,2px,max-content)">
+  <style>
+    @layer container, items;
+
+    @layer container {
+
+      .\$w\(min-content\,2px\,max-content\) {
+        min-inline-size: min-content;
+        inline-size: 2px;
+        max-inline-size: max-content;
+      }
+    }
+
+    @layer items {}
+  </style>
+  <div class="$w(min-content,2px,max-content)">
+    hello
+  </div>
+</test-html>
+<test-html title="$w(1px,2px,)">
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(1px\,2px\,\) {
+        min-inline-size: 1px;
+        inline-size: 2px;
+      }
+    }
+
+    @layer items {}
+  </style>
+  <div class="$w(1px,2px,)">
+    hello
+  </div>
+</test-html>
+<test-html title="$h(,2px,)">
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$h\(\,2px\,\) {
+        block-size: 2px;
+      }
+    }
+
+    @layer items {}
+  </style>
+  <div class="$h(,2px,)">
+    hello
+  </div>
+</test-html>
+<test-html title="$flex(row-reverse,p(1%,,3%),gap(,3rem))">
+  <div class="$flex(row-reverse,p(1%,,3%),gap(,3rem))">
+    hello
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$flex\(row-reverse\,p\(1\%\,\,3\%\)\,gap\(\,3rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        flex-direction: row-reverse;
+        padding-block: 1% 3%;
+        row-gap: 3rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$flex(...) |$_flex">
+  <div class="
+  $flex(gap(4px),padding(22px,33px,44px))
+  |$_flex(margin(,0.1px,,20%))">
+    hello
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        gap: 4px;
+        padding-block: 22px 44px;
+        padding-inline: 33px;
+      }
+    }
+
+    @layer items {
+      .\|\$_flex\(margin\(\,0\.1px\,\,20\%\)\)>* {
+        margin-inline: 0.1px 20%;
+      }
+    }
+  </style>
+</test-html>
+<test-html title="$flex(cc) |*$_flex(margin(10px))">
+  <div class="$flex(cc) |*$_flex(margin(10px))">
+    hello
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$flex\(cc\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: center;
+        align-items: unset;
+      }
+    }
+
+    @layer items {
+      .\|\*\$_flex\(margin\(10px\)\)>* {
+        margin: 10px;
+      }
+    }
+  </style>
+</test-html>
+<test-html title="$flex(ellipsis)">
+  <div class="$flex(ellipsis)">
+    hello
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$flex\(ellipsis\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: nowrap;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        text-overflow: ellipsis;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$flex |$_flex(items)">
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        gap: 1rem;
+        overflow: visible;
+        padding: 1rem;
+        inline-size: 80%;
+      }
+    }
+
+    @layer items {
+      .\|\*\$_flex\(shrink\(0\)\,center\,w\(7rem\)\,h\(3rem\)\)>* {
+        flex-shrink: 0;
+        align-self: center;
+        text-align: center;
+        inline-size: 7rem;
+        block-size: 3rem;
+      }
+    }
+  </style>
+  <div class="
+    $flex(gap(1rem),visible:auto,padding(1rem))$w(80%)
+    |*$_flex(shrink(0),center,w(7rem),h(3rem))">
+    hello
+  </div>
+</test-html>
+<test-html title="$cursor(pointer)">
+  <div class="$cursor(pointer)">
+    hello
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$cursor\(pointer\) {
+        cursor: pointer;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$cursor(ew-resize)">
+  <div class="$cursor(ew-resize)">
+    hello
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$cursor\(ew-resize\) {
+        cursor: ew-resize;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$translate(10px)$rotate(45deg)">
+  <div class="$translate(10px)$rotate(45deg)">
+    hello
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$translate\(10px\)\$rotate\(45deg\) {
+        transform: translate(10px) rotate(45deg);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+
+<test-html title="#1 font family">
+  <div class="$font(helvetica,arial)">
+    Hello Arial and Helvetica! This is a test to see if the font family is applied correctly.
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$font\(helvetica\,arial\) {
+        font-style: unset;
+        font-weight: unset;
+        font-variant-caps: unset;
+        font-stretch: unset;
+        text-transform: unset;
+        letter-spacing: unset;
+        font-family: Helvetica, Arial;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$font(times,serif,700,capitalize)">
+  <main class="$font(times,serif,500,2px,italic)">
+    <h2 class="$font(helvetica,arial,'sans-serif',900,capitalize)">
+      $font(fontFamily[], fontStyle, fontWeight, fontVariant, fontStretch, textTransform, letterSpacing)
+    </h2>
+    Notes:
+    <p>
+      For future maybe because they are not widely supported: text-wrap&hypens
+    </p>
+    <p class="$font('comic+sans',lucida,'DejaVu+Sans+Mono')">goofy</p>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$font\(times\,serif\,500\,2px\,italic\) {
+        font-style: italic;
+        font-weight: 500;
+        font-variant-caps: unset;
+        font-stretch: unset;
+        text-transform: unset;
+        letter-spacing: 2px;
+        font-family: "Times New Roman", serif;
+      }
+
+      .\$font\(helvetica\,arial\,\'sans-serif\'\,900\,capitalize\) {
+        font-style: unset;
+        font-weight: 900;
+        font-variant-caps: unset;
+        font-stretch: unset;
+        text-transform: capitalize;
+        letter-spacing: unset;
+        font-family: Helvetica, Arial, "sans-serif";
+      }
+
+      .\$font\(\'comic\+sans\'\,lucida\,\'DejaVu\+Sans\+Mono\'\) {
+        font-style: unset;
+        font-weight: unset;
+        font-variant-caps: unset;
+        font-stretch: unset;
+        text-transform: unset;
+        letter-spacing: unset;
+        font-family: "comic sans", "Lucida Sans Unicode", "DejaVu Sans Mono";
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Simple Paragraph Sample ($block with container-item)">
+  <div class=" 
+    $w(100%)
+    $em(15px)
+    
+    $block(s,gap(0.3em,1em))
+    |$_block(indent(15%))
+    |.head$_block(indent(-5%))
+    |.subheading$_block(indent(0))
+    ">
+    <h1 class="head">The Article Heading</h1>
+    <h4 class="subheading">Sub-information... Lorem ipsum dolor sit amet. Et quia temporibus est officia ipsam a sunt
+      voluptatem et autem ullam sit voluptate libero hic doloremque nobis eum dolor quas.
+    </h4>
+    <p>Lorem ipsum dolor sit amet. Et quia temporibus est officia ipsam a sunt voluptatem et autem ullam sit
+      voluptate libero hic doloremque nobis eum dolor quas. Id magni tenetur aut exercitationem voluptates ut
+      voluptates distinctio aut doloribus voluptatibus aut ipsa iusto eos asperiores velit aut rerum facilis.
+      Ut itaque obcaecati et expedita voluptatibus et voluptas incidunt ut incidunt sunt vel totam laudantium eos
+      velit veritatis.
+    </p>
+    <p>Ut incidunt cumque in perspiciatis reiciendis sed dolorum temporibus? Ut harum
+      laudantium quo perferendis sint in laborum molestias qui aliquam dolore non consequatur enim aut
+      eaque harum. Et minima dolores id pariatur quia ut accusamus placeat et odit quia sit cumque natus.
+    </p>
+    <p>Eum veniam laboriosam aut quia tempora et quas debitis et nulla minima ut autem assumenda.
+      Eos nemo perferendis id libero numquam et maiores quam aut quis quis.
+    </p>
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(100\%\) {
+        inline-size: 100%;
+      }
+
+      .\$em\(15px\) {
+        font-size: 15px;
+      }
+
+      .\$block\(s\,gap\(0\.3em\,1em\)\) {
+        display: block;
+        word-spacing: 0.3em;
+        line-height: 1em;
+        white-space: unset;
+        hyphens: unset;
+        text-align: justify;
+        text-indent: unset;
+      }
+    }
+
+    @layer items {
+      .\|\$_block\(indent\(15\%\)\)>* {
+        text-indent: 15%;
+      }
+
+      .\|\.head\$_block\(indent\(-5\%\)\)> :where(.head) {
+        text-indent: -5%;
+      }
+
+      .\|\.subheading\$_block\(indent\(0\)\)> :where(.subheading) {
+        text-indent: 0px;
+      }
+    }
+  </style>
+</test-html>
+
+<test-html title="@(print,screen):hover$border(solid,2px)|:valid$border(dotted,2px)|.first$border(dashed,2px)">
+  <style>
+    @layer container, items;
+
+    @layer container {
+
+      @media print,
+      screen {
+        .\@\(print\,screen\)\:hover\$border\(solid\,2px\):where(:hover) {
+          border-style: solid;
+          border-width: 2px;
+        }
+      }
+    }
+
+    @layer items {
+
+      @media print,
+      screen {
+        .\@\(print\,screen\)\:hover\|\:valid\$border\(dotted\,2px\):where(:hover)> :where(:valid) {
+          border-style: dotted;
+          border-width: 2px;
+        }
+      }
+
+      @media print,
+      screen {
+        .\@\(print\,screen\)\:hover\|\.first\$border\(dashed\,2px\):where(:hover)> :where(.first) {
+          border-style: dashed;
+          border-width: 2px;
+        }
+      }
+    }
+  </style>
+  <div class="
+    @(print,screen):hover$border(solid,2px)
+    @(print,screen):hover|:valid$border(dotted,2px)
+    @(print,screen):hover|.first$border(dashed,2px)">
+    hello
+  </div>
+</test-html>
+
+<test-html title="Border 8 - Calc Expressions">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$border(solid,w(1px+1em)) $padding(1rem)">Calc width</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(solid\,w\(1px\+1em\)\) {
+        border-style: solid;
+        border-width: calc(1em + 1px);
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+
+<test-html title="Border 13 - Test on Auto Wrapping of var and calc">
+  <main style="--border-width: 3px;">
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$border(solid,w(--border-width)) $padding(1rem)">CSS Variable Auto-Wrap</div>
+      <div class="$border(solid,w(1px+2px)) $padding(1rem)">Calculation Auto-Wrap</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(solid\,w\(--border-width\)\) {
+        border-style: solid;
+        border-width: var(--border-width);
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$border\(solid\,w\(1px\+2px\)\) {
+        border-style: solid;
+        border-width: calc(3px);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$ultraCondensed">
+  <div class="$ultraCondensed">
+    hello
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$ultraCondensed {
+        font-stretch: ultra-condensed;
+      }
+    }
+
+    @layer items {}
+  </style>
+
+</test-html>
+<test-html title="overline lineThrough">
+  <div class="$lineThrough(3px)">hello</div>
+  <div class="$overLine(2px,#myblue)">sunshine</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$lineThrough\(3px\) {
+        text-decoration-line: line-through;
+        text-decoration-thickness: 3px;
+        text-decoration-style: solid;
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+      }
+
+      .\$overLine\(2px\,\#myblue\) {
+        text-decoration-line: overline;
+        text-decoration-thickness: 2px;
+        text-decoration-style: solid;
+        text-decoration-color: var(--color_myblue);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Text Decoration - Basic Test">
+  <main>
+    <h2>Grammar & Spelling</h2>
+    <div class="$grammarError(2px)">grammarError(2px)</div>
+    <h2>Default (no style)</h2>
+    <div class="$overUnderLineThrough(2px)">overUnderLineThrough(2px)</div>
+    <h2>Styles</h2>
+    <div class="$wavyOverUnderLineThrough(2px)">wavyOverUnderLineThrough(2px)</div>
+    <div class="$dottedUnderLine(2px)">dottedUnderLine(2px)</div>
+    <div class="$dashedOverUnderLineThrough(2px)">dashedOverUnderLineThrough(2px)</div>
+    <div class="$doubleOverLine(2px)">doubleOverLine(2px)</div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grammarError\(2px\) {
+        text-decoration-line: grammar-error;
+        text-decoration-thickness: 2px;
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+      }
+
+      .\$overUnderLineThrough\(2px\) {
+        text-decoration-line: underline overline line-through;
+        text-decoration-thickness: 2px;
+        text-decoration-style: solid;
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+      }
+
+      .\$wavyOverUnderLineThrough\(2px\) {
+        text-decoration-line: underline overline line-through;
+        text-decoration-thickness: 2px;
+        text-decoration-style: wavy;
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+      }
+
+      .\$dottedUnderLine\(2px\) {
+        text-decoration-line: underline;
+        text-decoration-thickness: 2px;
+        text-decoration-style: dotted;
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+      }
+
+      .\$dashedOverUnderLineThrough\(2px\) {
+        text-decoration-line: underline overline line-through;
+        text-decoration-thickness: 2px;
+        text-decoration-style: dashed;
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+      }
+
+      .\$doubleOverLine\(2px\) {
+        text-decoration-line: overline;
+        text-decoration-thickness: 2px;
+        text-decoration-style: double;
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$textDecoration(none)">
+  <main>
+    <a href="#" class="
+    $textDecoration(none) 
+    $textDecoration(.)
+    ">
+      This link should not have underline.
+    </a>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$textDecoration\(none\) {
+        text-decoration-line: none;
+        text-decoration-thickness: unset;
+        text-decoration-style: unset;
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+      }
+
+      .\$textDecoration\(\.\) {
+        text-decoration-line: unset;
+        text-decoration-thickness: unset;
+        text-decoration-style: unset;
+        text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Text transform">
+  <div class="$smallCaps $allCaps">small- and allCaps</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$smallCaps {
+        text-transform: lowercase;
+      }
+
+      .\$allCaps {
+        text-transform: uppercase;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$lineClamp(2)">
+  <div class="$lineClamp(2)"> hello </div>
+  <script type="module">
+    import { registerShort } from "/src/engine.js";
+    registerShort("lineClamp", function (lines, ...args) {
+      return this.block({
+        display: "-webkit-box",
+        WebkitLineClamp: lines,
+        WebkitBoxOrient: "vertical",
+        overflowY: "hidden"
+      }, ...args);
+    });
+  </script>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$lineClamp\(2\) {
+        display: -webkit-box;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow-y: hidden;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$grid(layout,gap(2rem))">
+  <main style="--color_fg: pink" csss="OLD: $layout = $grid(cols(1fr,1fr,1fr))$gap(1rem);">
+    <div class="$grid(layout,gap(2rem))">
+      <div class="$color(#fg) $bg(yellow) $padding(1rem) $textAlign(center)">1</div>
+      <div class="$color(#fg) $bg(blue) $padding(1rem) $textAlign(center)">2</div>
+    </div>
+    <script type="module">
+      import { registerShort } from "/src/engine.js";
+      registerShort("grid.layout", () => ({ gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }));
+    </script>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(layout\,gap\(2rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 2rem;
+      }
+
+      .\$color\(\#fg\) {
+        color: var(--color_fg);
+      }
+
+      .\$bg\(yellow\) {
+        background-image: linear-gradient(yellow);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$textAlign\(center\) {
+        text-align: center;
+      }
+
+      .\$bg\(blue\) {
+        background-image: linear-gradient(blue);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="$flex2">
+  <main csss="OLD.  $flex2 = $flex(row,gap(1rem),textAlign(center),padding(1rem));">
+    <div class="$flex2">
+      <div class="$color(white) $bg(red)">1</div>
+      <div class="$color(white) $bg(green)">2</div>
+    </div>
+  </main>
+  <script type="module">
+    import { registerShort } from "/src/engine.js";
+    registerShort("flex2", function (...args) {
+      return this.flex({
+        display: "flex",
+        flexDirection: "row",
+        gap: "1rem",
+        textAlign: "center",
+        padding: "1rem"
+      }, ...args)
+    });
+  </script>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$flex2 {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: center;
+        text-indent: unset;
+        flex-direction: row;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .\$color\(white\) {
+        color: white;
+      }
+
+      .\$bg\(red\) {
+        background-image: linear-gradient(red);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+
+      .\$bg\(green\) {
+        background-image: linear-gradient(green);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Bug: empty argument on supershorts">
+  <main csss="OLD:   $layout = $block$border;  ">
+    <div class="$block(layout)">
+      <h1>Hello Sunshine! This is error.</h1>
+    </div>
+    <div class="$block $border">
+      <h1>Hello Sunshine! No error?</h1>
+    </div>
+    <script type="module">
+      import { registerShort } from "/src/engine.js";
+      registerShort("block.layout", function () {
+        return this.$border(); //this throws an error
+      });
+    </script>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+
+      .\$block {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+
+<test-html title="transition">
+  <div class="$border(dotted,50px,easeIn(10s))">Hello Sunshine!</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$border\(dotted\,50px\,easeIn\(10s\)\) {
+        border-style: dotted;
+        border-width: 50px;
+        transition: border-width 10s ease-in;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html><test-html title="linear background">
+  <div class="$w(100vh) $h(100vh) $linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c)">
+    hello sunshine!
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(100vh\) {
+        inline-size: 100vh;
+      }
+
+      .\$h\(100vh\) {
+        block-size: 100vh;
+      }
+
+      .\$linear\(0\.25turn\,\#3f87a6\,\#ebf8e1\,\#f69d3c\) {
+        background-image: linear-gradient(0.25turn, rgb(63, 135, 166), rgb(235, 248, 225), rgb(246, 157, 60));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+
+<test-html title="$repeatingLinear(stops)">
+  <div class="$w(100vh) $h(100vh) $repeatingLinear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,stops(10%,67%))">
+    hello sunshine!
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(100vh\) {
+        inline-size: 100vh;
+      }
+
+      .\$h\(100vh\) {
+        block-size: 100vh;
+      }
+
+      .\$repeatingLinear\(0\.25turn\,\#3f87a6\,\#ebf8e1\,\#f69d3c\,stops\(10\%\,67\%\)\) {
+        background-image: repeating-linear-gradient(0.25turn, rgb(63, 135, 166) 10%, rgb(235, 248, 225) 67%, rgb(246, 157, 60));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+
+<test-html title="$linear(stops)">
+  <div class="$w(100vh) $h(100vh) $linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,stops(10%,25%,35%))">
+    hello sunshine!
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(100vh\) {
+        inline-size: 100vh;
+      }
+
+      .\$h\(100vh\) {
+        block-size: 100vh;
+      }
+
+      .\$linear\(0\.25turn\,\#3f87a6\,\#ebf8e1\,\#f69d3c\,stops\(10\%\,25\%\,35\%\)\) {
+        background-image: linear-gradient(0.25turn, rgb(63, 135, 166) 10%, rgb(235, 248, 225) 25%, rgb(246, 157, 60) 35%);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+
+<test-html title="bg blend mode">
+
+  <div
+    style="--picjpg: url('https://pikaso.cdnpk.net/private/production/1896828186/original-assistant-remove-background.png?token=exp=1757980800~hmac=a4698d06f4bc828c21e316dfb910f9f56f33b24a02086d65d594bf83d3adeacd');"
+    class="$w(100vh) $h(100vh)
+  $bg(--picjpg,size(30%),noRepeat,center,luminosity)$bg(--picjpg,size(30%),noRepeat,left,overlay)$linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,topRight,size(70%,70%))
+  ">
+    hello sunshine!
+  </div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(100vh\) {
+        inline-size: 100vh;
+      }
+
+      .\$h\(100vh\) {
+        block-size: 100vh;
+      }
+
+      .\$bg\(--picjpg\,size\(30\%\)\,noRepeat\,center\,luminosity\)\$bg\(--picjpg\,size\(30\%\)\,noRepeat\,left\,overlay\)\$linear\(0\.25turn\,\#3f87a6\,\#ebf8e1\,\#f69d3c\,topRight\,size\(70\%\,70\%\)\) {
+        background-image: var(--picjpg), var(--picjpg), linear-gradient(0.25turn, #3f87a6, #ebf8e1, #f69d3c);
+        background-position: center center, left center, right top;
+        background-repeat: no-repeat, no-repeat, repeat;
+        background-size: 30%, 30%, 70% 70%;
+        background-origin: padding-box, padding-box, padding-box;
+        background-clip: border-box, border-box, border-box;
+        background-blend-mode: luminosity, overlay, normal;
+        background-attachment: scroll, scroll, scroll;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html><test-html title="Layout 1 - Basic Grid">
+  <main>
+    <div class="$grid(cols(1fr,1fr,1fr),gap(1rem))">
+      <div class="$border $padding(1rem)">Grid Item 1</div>
+      <div class="$border $padding(1rem)">Grid Item 2</div>
+      <div class="$border $padding(1rem)">Grid Item 3</div>
+      <div class="$border $padding(1rem)">Grid Item 4</div>
+      <div class="$border $padding(1rem)">Grid Item 5</div>
+      <div class="$border $padding(1rem)">Grid Item 6</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Layout 2 - Grid with Rows and Columns">
+  <main>
+    <div class="$grid(cols(100px,auto,1fr),rows(50px,100px,auto),gap(1rem))">
+      <div class="$border $padding(0.5rem)">100px x 50px</div>
+      <div class="$border $padding(0.5rem)">auto x 50px</div>
+      <div class="$border $padding(0.5rem)">1fr x 50px</div>
+      <div class="$border $padding(0.5rem)">100px x 100px</div>
+      <div class="$border $padding(0.5rem)">auto x 100px</div>
+      <div class="$border $padding(0.5rem)">1fr x 100px</div>
+      <div class="$border $padding(0.5rem)">100px x auto</div>
+      <div class="$border $padding(0.5rem)">auto x auto</div>
+      <div class="$border $padding(0.5rem)">1fr x auto</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(100px\,auto\,1fr\)\,rows\(50px\,100px\,auto\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 100px auto 1fr;
+        grid-template-rows: 50px 100px auto;
+        gap: 1rem;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$padding\(0\.5rem\) {
+        padding: 0.5rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Layout 3 - Grid Alignment">
+  <main>
+    <h3>Content and Items Alignment (ccss)</h3>
+    <div class="$grid(cols(1fr,1fr),rows(100px,100px),gap(1rem),ccss) $border $padding(1rem) $h(300px)">
+      <div class="$border $padding(0.5rem)">Center Content</div>
+      <div class="$border $padding(0.5rem)">Center Items</div>
+      <div class="$border $padding(0.5rem)">Center Content</div>
+      <div class="$border $padding(0.5rem)">Center Items</div>
+    </div>
+
+    <h3>Start and End Alignment (abab)</h3>
+    <div class="$grid(cols(1fr,1fr),rows(100px,100px),gap(1rem),abab) $border $padding(1rem) $h(300px)">
+      <div class="$border $padding(0.5rem)">Start Content</div>
+      <div class="$border $padding(0.5rem)">End Items</div>
+      <div class="$border $padding(0.5rem)">Start Content</div>
+      <div class="$border $padding(0.5rem)">End Items</div>
+    </div>
+
+    <h3>Space Between and Around (wucs)</h3>
+    <div class="$grid(cols(1fr,1fr),rows(50px,50px),gap(1rem),wucs) $border $padding(1rem) $h(300px)">
+      <div class="$border $padding(0.5rem)">Space Between</div>
+      <div class="$border $padding(0.5rem)">Space Around</div>
+      <div class="$border $padding(0.5rem)">Center Stretch</div>
+      <div class="$border $padding(0.5rem)">Stretch</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+
+      .\$grid\(cols\(1fr\,1fr\)\,rows\(100px\,100px\)\,gap\(1rem\)\,ccss\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: justify;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 100px 100px;
+        gap: 1rem;
+        place-content: center;
+        place-items: stretch;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$h\(300px\) {
+        block-size: 300px;
+      }
+
+      .\$padding\(0\.5rem\) {
+        padding: 0.5rem;
+      }
+
+      .\$grid\(cols\(1fr\,1fr\)\,rows\(100px\,100px\)\,gap\(1rem\)\,abab\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: end;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 100px 100px;
+        gap: 1rem;
+        place-content: start end;
+        place-items: start end;
+      }
+
+      .\$grid\(cols\(1fr\,1fr\)\,rows\(50px\,50px\)\,gap\(1rem\)\,wucs\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: justify;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 50px 50px;
+        gap: 1rem;
+        place-content: space-between space-around;
+        place-items: center stretch;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Layout 4 - Basic Flex">
+  <main>
+    <h3>Row Flex (default)</h3>
+    <div class="$flex(gap(1rem)) $border $padding(1rem)">
+      <div class="$border $padding(0.5rem)">Flex Item 1</div>
+      <div class="$border $padding(0.5rem)">Flex Item 2</div>
+      <div class="$border $padding(0.5rem)">Flex Item 3</div>
+    </div>
+
+    <h3>Column Flex</h3>
+    <div class="$flex(column,gap(1rem)) $border $padding(1rem)">
+      <div class="$border $padding(0.5rem)">Flex Item 1</div>
+      <div class="$border $padding(0.5rem)">Flex Item 2</div>
+      <div class="$border $padding(0.5rem)">Flex Item 3</div>
+    </div>
+
+    <h3>Reverse Row Flex</h3>
+    <div class="$flex(row-reverse,gap(1rem)) $border $padding(1rem)">
+      <div class="$border $padding(0.5rem)">Flex Item 1</div>
+      <div class="$border $padding(0.5rem)">Flex Item 2</div>
+      <div class="$border $padding(0.5rem)">Flex Item 3</div>
+    </div>
+
+    <h3>Reverse Column Flex</h3>
+    <div class="$flex(column-reverse,gap(1rem)) $border $padding(1rem)">
+      <div class="$border $padding(0.5rem)">Flex Item 1</div>
+      <div class="$border $padding(0.5rem)">Flex Item 2</div>
+      <div class="$border $padding(0.5rem)">Flex Item 3</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$flex\(gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        gap: 1rem;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$padding\(0\.5rem\) {
+        padding: 0.5rem;
+      }
+
+      .\$flex\(column\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .\$flex\(row-reverse\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        flex-direction: row-reverse;
+        gap: 1rem;
+      }
+
+      .\$flex\(column-reverse\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        flex-direction: column-reverse;
+        gap: 1rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Layout 5 - Flex Alignment">
+  <main>
+    <h3>Center Alignment (c)</h3>
+    <div class="$flex(c,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">Center Aligned</div>
+      <div class="$border $padding(0.5rem)">Center Aligned</div>
+      <div class="$border $padding(0.5rem)">Center Aligned</div>
+    </div>
+
+    <h3>Start-End Alignment (ab)</h3>
+    <div class="$flex(ab,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">Start-End Aligned</div>
+      <div class="$border $padding(0.5rem)">Start-End Aligned</div>
+      <div class="$border $padding(0.5rem)">Start-End Aligned</div>
+    </div>
+
+    <h3>Space Between (w)</h3>
+    <div class="$flex(w,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">Space Between</div>
+      <div class="$border $padding(0.5rem)">Space Between</div>
+      <div class="$border $padding(0.5rem)">Space Between</div>
+    </div>
+
+    <h3>Space Around (u)</h3>
+    <div class="$flex(u,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">Space Around</div>
+      <div class="$border $padding(0.5rem)">Space Around</div>
+      <div class="$border $padding(0.5rem)">Space Around</div>
+    </div>
+
+    <h3>Space Evenly (v)</h3>
+    <div class="$flex(v,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">Space Evenly</div>
+      <div class="$border $padding(0.5rem)">Space Evenly</div>
+      <div class="$border $padding(0.5rem)">Space Evenly</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$flex\(c\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: center;
+        align-items: unset;
+        gap: 1rem;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$h\(200px\) {
+        block-size: 200px;
+      }
+
+      .\$padding\(0\.5rem\) {
+        padding: 0.5rem;
+      }
+
+      .\$flex\(ab\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: start end;
+        align-items: unset;
+        gap: 1rem;
+      }
+
+      .\$flex\(w\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: space-between;
+        align-items: unset;
+        gap: 1rem;
+      }
+
+      .\$flex\(u\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: space-around;
+        align-items: unset;
+        gap: 1rem;
+      }
+
+      .\$flex\(v\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: space-evenly;
+        align-items: unset;
+        gap: 1rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Layout 5.1 - All Flex Alignment Combinations">
+  <main>
+    <h2>Flex Container Alignment Tests</h2>
+
+    <h3>1. Two values but the same - $flex(cc)</h3>
+    <div class="$flex(cc,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">place-content: center</div>
+      <div class="$border $padding(0.5rem)">place-content: center</div>
+      <div class="$border $padding(0.5rem)">place-content: center</div>
+    </div>
+
+    <h3>1a. Two values the same - $flex(ww)</h3>
+    <div class="$flex(ww,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">place-content: space-between</div>
+      <div class="$border $padding(0.5rem)">place-content: space-between</div>
+      <div class="$border $padding(0.5rem)">place-content: space-between</div>
+    </div>
+
+    <h3>2. Two values but different - $flex(ab)</h3>
+    <div class="$flex(ab,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: start, justify-content: end</div>
+      <div class="$border $padding(0.5rem)">align-content: start, justify-content: end</div>
+      <div class="$border $padding(0.5rem)">align-content: start, justify-content: end</div>
+    </div>
+
+    <h3>2a. Two values different (spaces) - $flex(vu)</h3>
+    <div class="$flex(vu,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: space-evenly, justify-content: space-around</div>
+      <div class="$border $padding(0.5rem)">align-content: space-evenly, justify-content: space-around</div>
+      <div class="$border $padding(0.5rem)">align-content: space-evenly, justify-content: space-around</div>
+    </div>
+
+    <h3>3a. Only align-content - $flex(s.)</h3>
+    <div class="$flex(s.,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: stretch only</div>
+      <div class="$border $padding(0.5rem)">align-content: stretch only</div>
+      <div class="$border $padding(0.5rem)">align-content: stretch only</div>
+    </div>
+
+    <h3>3b. Only justify-content - $flex(.w)</h3>
+    <div class="$flex(.w,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">justify-content: space-between only</div>
+      <div class="$border $padding(0.5rem)">justify-content: space-between only</div>
+      <div class="$border $padding(0.5rem)">justify-content: space-between only</div>
+    </div>
+
+    <h3>4a. With align-items - Same content values - $flex(ccs)</h3>
+    <div class="$flex(ccs,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">place-content: center, align-items: stretch</div>
+      <div class="$border $padding(0.5rem)">place-content: center, align-items: stretch</div>
+      <div class="$border $padding(0.5rem)">place-content: center, align-items: stretch</div>
+    </div>
+
+    <h3>4b. With align-items - Different content values - $flex(ws_)</h3>
+    <div class="$flex(ws_,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items:
+        baseline</div>
+      <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items:
+        baseline</div>
+      <div class="$border $padding(0.5rem)">align-content: space-between, justify-content: stretch, align-items:
+        baseline</div>
+    </div>
+
+    <h3>4c. Only align-items - $flex(..s)</h3>
+    <div class="$flex(..s,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">only align-items: stretch</div>
+      <div class="$border $padding(0.5rem)">only align-items: stretch</div>
+      <div class="$border $padding(0.5rem)">only align-items: stretch</div>
+    </div>
+
+    <h3>5. Single value shorthand - $flex(a)</h3>
+    <div class="$flex(a,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">should produce: place-content: start start, text-align: start</div>
+      <div class="$border $padding(0.5rem)">using 'a' for both align-content and justify-content</div>
+      <div class="$border $padding(0.5rem)">and no align-items</div>
+    </div>
+
+    <h3>6. Only justify-content provided - $flex(.b)</h3>
+    <div class="$flex(.b,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">should produce: justify-content: end, text-align: end</div>
+      <div class="$border $padding(0.5rem)">with no explicit align-content</div>
+      <div class="$border $padding(0.5rem)">and no align-items</div>
+    </div>
+
+    <h3>7. Three-value mix - $flex(acb)</h3>
+    <div class="$flex(acb,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: start, justify-content: center</div>
+      <div class="$border $padding(0.5rem)">align-items: end</div>
+      <div class="$border $padding(0.5rem)">text-align: center</div>
+    </div>
+
+    <h3>8. Three-value mix with align-items as baseline - $flex(.c_)</h3>
+    <div class="$flex(.c_,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">justify-content: center, text-align: center</div>
+      <div class="$border $padding(0.5rem)">align-items: baseline</div>
+      <div class="$border $padding(0.5rem)">first character is placeholder</div>
+    </div>
+
+    <h3>9. Three-value mix with space-evenly and center - $flex(vvc)</h3>
+    <div class="$flex(vvc,gap(1rem)) $border $padding(1rem) $h(200px)">
+      <div class="$border $padding(0.5rem)">align-content: space-evenly</div>
+      <div class="$border $padding(0.5rem)">justify-content: space-evenly</div>
+      <div class="$border $padding(0.5rem)">align-items: center</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$flex\(cc\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: center;
+        align-items: unset;
+        gap: 1rem;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$h\(200px\) {
+        block-size: 200px;
+      }
+
+      .\$padding\(0\.5rem\) {
+        padding: 0.5rem;
+      }
+
+      .\$flex\(ww\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: space-between;
+        align-items: unset;
+        gap: 1rem;
+      }
+
+      .\$flex\(ab\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: start end;
+        align-items: unset;
+        gap: 1rem;
+      }
+
+      .\$flex\(vu\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: space-evenly space-around;
+        align-items: unset;
+        gap: 1rem;
+      }
+
+      .\$flex\(s\.\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        align-content: stretch;
+        justify-content: unset;
+        align-items: unset;
+        gap: 1rem;
+      }
+
+      .\$flex\(\.w\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        align-content: unset;
+        justify-content: space-between;
+        align-items: unset;
+        gap: 1rem;
+      }
+
+      .\$flex\(ccs\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: justify;
+        text-indent: unset;
+        place-content: center;
+        align-items: stretch;
+        gap: 1rem;
+      }
+
+      .\$flex\(ws_\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: space-between stretch;
+        align-items: start;
+        gap: 1rem;
+      }
+
+      .\$flex\(\.\.s\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: justify;
+        text-indent: unset;
+        place-content: unset;
+        align-items: stretch;
+        gap: 1rem;
+      }
+
+      .\$flex\(a\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        place-content: start;
+        align-items: unset;
+        gap: 1rem;
+      }
+
+      .\$flex\(\.b\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        align-content: unset;
+        justify-content: end;
+        align-items: unset;
+        gap: 1rem;
+      }
+
+      .\$flex\(acb\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: end;
+        text-indent: unset;
+        place-content: start center;
+        align-items: end;
+        gap: 1rem;
+      }
+
+      .\$flex\(\.c_\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        align-content: unset;
+        justify-content: center;
+        align-items: start;
+        gap: 1rem;
+      }
+
+      .\$flex\(vvc\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: center;
+        text-indent: unset;
+        place-content: space-evenly;
+        align-items: center;
+        gap: 1rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Layout 6 - Flex Wrap">
+  <main>
+    <h3>No Wrap (default)</h3>
+    <div class="$flex(gap(1rem)) $border $padding(1rem) $w(300px)">
+      <div class="$border $padding(0.5rem) $w(100px)">Item 1</div>
+      <div class="$border $padding(0.5rem) $w(100px)">Item 2</div>
+      <div class="$border $padding(0.5rem) $w(100px)">Item 3</div>
+      <div class="$border $padding(0.5rem) $w(100px)">Item 4</div>
+    </div>
+
+    <h3>Wrap</h3>
+    <div class="$flex(wrap,gap(1rem)) $border $padding(1rem) $w(300px)">
+      <div class="$border $padding(0.5rem) $w(100px)">Item 1</div>
+      <div class="$border $padding(0.5rem) $w(100px)">Item 2</div>
+      <div class="$border $padding(0.5rem) $w(100px)">Item 3</div>
+      <div class="$border $padding(0.5rem) $w(100px)">Item 4</div>
+    </div>
+
+    <h3>Wrap Reverse</h3>
+    <div class="$flex(wrap-reverse,gap(1rem)) $border $padding(1rem) $w(300px)">
+      <div class="$border $padding(0.5rem) $w(100px)">Item 1</div>
+      <div class="$border $padding(0.5rem) $w(100px)">Item 2</div>
+      <div class="$border $padding(0.5rem) $w(100px)">Item 3</div>
+      <div class="$border $padding(0.5rem) $w(100px)">Item 4</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$flex\(gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        gap: 1rem;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$w\(300px\) {
+        inline-size: 300px;
+      }
+
+      .\$padding\(0\.5rem\) {
+        padding: 0.5rem;
+      }
+
+      .\$w\(100px\) {
+        inline-size: 100px;
+      }
+
+      .\$flex\(wrap\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .\$flex\(wrap-reverse\,gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        flex-wrap: wrap-reverse;
+        gap: 1rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Layout 7 - Block Gap and Text Alignment">
+  <main>
+    <h3>Block with Gap</h3>
+    <div class="$block(g(0.5em,1.5)) $border $padding(1rem)">
+      <p>This is a block with word spacing of 0.5em and line height of 1.5.</p>
+      <p>The gap function in block layout controls word spacing and line height.</p>
+      <p>This creates proper spacing for readable text content.</p>
+    </div>
+
+    <h3>Block with Text Alignment</h3>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$block(a) $border $padding(1rem)">
+        <p>This text is aligned to the start.</p>
+        <p>The 'a' parameter sets text-align to start.</p>
+      </div>
+      <div class="$block(c) $border $padding(1rem)">
+        <p>This text is centered.</p>
+        <p>The 'c' parameter sets text-align to center.</p>
+      </div>
+      <div class="$block(b) $border $padding(1rem)">
+        <p>This text is aligned to the end.</p>
+        <p>The 'b' parameter sets text-align to end.</p>
+      </div>
+      <div class="$block(s) $border $padding(1rem)">
+        <p>This text is justified. This text is justified. This text is justified. This text is justified.</p>
+        <p>The 's' parameter sets text-align to justify.</p>
+      </div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$block\(g\(0\.5em\,1\.5\)\) {
+        display: block;
+        word-spacing: 0.5em;
+        line-height: 1.5;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$block\(a\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: start;
+        text-indent: unset;
+      }
+
+      .\$block\(c\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: center;
+        text-indent: unset;
+      }
+
+      .\$block\(b\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: end;
+        text-indent: unset;
+      }
+
+      .\$block\(s\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: justify;
+        text-indent: unset;
+      }
+
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Layout 8 - Block Overflow">
+  <main>
+    <h3>Overflow Properties</h3>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div>
+        <h4>Visible (default)</h4>
+        <div class="$block(visible) $border $padding(1rem) $h(100px) $w(200px)">
+          <p>This text demonstrates the visible overflow property. It will continue to be visible outside the container
+            if it's too long to fit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget
+            ultricies tincidunt.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Hidden</h4>
+        <div class="$block(hidden) $border $padding(1rem) $h(100px) $w(200px)">
+          <p>This text demonstrates the hidden overflow property. It will be clipped and not visible outside the
+            container if it's too long to fit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor,
+            nisl eget ultricies tincidunt.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Scroll</h4>
+        <div class="$block(scroll) $border $padding(1rem) $h(100px) $w(200px)">
+          <p>This text demonstrates the scroll overflow property. It will add scrollbars when the content is too large
+            to fit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies
+            tincidunt.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Auto</h4>
+        <div class="$block(auto) $border $padding(1rem) $h(100px) $w(200px)">
+          <p>This text demonstrates the auto overflow property. It will add scrollbars only when necessary. Lorem ipsum
+            dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Mixed Overflow (Block:Inline)</h3>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div>
+        <h4>Hidden:Scroll</h4>
+        <div class="$block(hidden:scroll) $border $padding(1rem) $h(100px) $w(200px)">
+          <p>This demonstrates hidden overflow-y and scroll overflow-x. Lorem ipsum dolor sit amet, consectetur
+            adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Scroll:Hidden</h4>
+        <div class="$block(scroll:hidden) $border $padding(1rem) $h(100px) $w(200px)">
+          <p>This demonstrates scroll overflow-y and hidden overflow-x. Lorem ipsum dolor sit amet, consectetur
+            adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$block\(visible\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        overflow: visible;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$h\(100px\) {
+        block-size: 100px;
+      }
+
+      .\$w\(200px\) {
+        inline-size: 200px;
+      }
+
+      .\$block\(hidden\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        overflow: hidden;
+      }
+
+      .\$block\(scroll\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        overflow: scroll;
+      }
+
+      .\$block\(auto\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        overflow: auto;
+      }
+
+      .\$block\(hidden\:scroll\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        overflow: hidden;
+      }
+
+      .\$block\(scroll\:hidden\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        overflow: scroll;
+        scroll-snap-type: x;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Layout 9 - Block White Space">
+  <main>
+    <h3>White Space Properties</h3>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div>
+        <h4>Normal (default)</h4>
+        <div class="$border $padding(1rem)">
+          <p>This text demonstrates
+            normal white-space
+            handling. Multiple spaces are collapsed.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Nowrap</h4>
+        <div class="$block(nowrap) $border $padding(1rem) $w(200px)">
+          <p>This text demonstrates nowrap white-space handling. It will not wrap to the next line even if it's too long
+            to fit in the container.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Pre</h4>
+        <div class="$block(pre) $border $padding(1rem)">
+          <p>This text demonstrates
+            pre white-space
+            handling. Multiple spaces are preserved.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Pre-wrap</h4>
+        <div class="$block(pre-wrap) $border $padding(1rem) $w(200px)">
+          <p>This text demonstrates
+            pre-wrap white-space
+            handling. Multiple spaces are preserved and text wraps.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Pre-line</h4>
+        <div class="$block(pre-line) $border $padding(1rem) $w(200px)">
+          <p>This text demonstrates
+            pre-line white-space
+            handling. Multiple spaces are collapsed but line breaks are preserved.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Break-spaces</h4>
+        <div class="$block(break-spaces) $border $padding(1rem) $w(200px)">
+          <p>This text demonstrates
+            break-spaces white-space
+            handling. Multiple spaces are preserved and may break.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$block\(nowrap\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: nowrap;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+      }
+
+      .\$w\(200px\) {
+        inline-size: 200px;
+      }
+
+      .\$block\(pre\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: pre;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+      }
+
+      .\$block\(pre-wrap\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: pre-wrap;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+      }
+
+      .\$block\(pre-line\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: pre-line;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+      }
+
+      .\$block\(break-spaces\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: break-spaces;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Layout 10 - Text Wrapping and Overflow">
+  <main>
+    <h3>Word Break and Overflow Wrap</h3>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div>
+        <h4>Normal Wrapping</h4>
+        <div class="$border $padding(1rem) $w(200px)">
+          <p>This text demonstrates normal wrapping behavior with a very long word: supercalifragilisticexpialidocious.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Break Word</h4>
+        <div class="$block(break-word) $border $padding(1rem) $w(200px)">
+          <p>This text demonstrates break-word behavior with a very long word: supercalifragilisticexpialidocious.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Break All</h4>
+        <div class="$block(break-all) $border $padding(1rem) $w(200px)">
+          <p>This text demonstrates break-all behavior with a very long word: supercalifragilisticexpialidocious.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Keep All</h4>
+        <div class="$block(keep-all) $border $padding(1rem) $w(200px)">
+          <p>This text demonstrates keep-all behavior with multiple words: word1 word2 word3 word4 word5 word6.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Anywhere</h4>
+        <div class="$block(break-anywhere) $border $padding(1rem) $w(200px)">
+          <p>This text demonstrates anywhere overflow-wrap with a very long word: supercalifragilisticexpialidocious.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Ellipsis</h4>
+        <div class="$border $padding(1rem) $w(200px)">
+          <p class="$block(ellipsis,hidden)">This text demonstrates ellipsis behavior when the text is too long to fit
+            in the container. It should truncate with an ellipsis at the end.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$w\(200px\) {
+        inline-size: 200px;
+      }
+
+      .\$block\(break-word\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        overflow-wrap: break-word;
+      }
+
+      .\$block\(break-all\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        word-break: break-all;
+      }
+
+      .\$block\(keep-all\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        word-break: keep-all;
+      }
+
+      .\$block\(break-anywhere\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        overflow-wrap: anywhere;
+      }
+
+      .\$block\(ellipsis\,hidden\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: nowrap;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Layout 11 - Hyphens and Line Clamp">
+  <meta charset="UTF-8">
+  <main lang="en">
+    <h3>Hyphenation</h3>
+    <div class="$grid(cols(1fr,1fr))">
+      <div>
+        <h4>No Hyphens</h4>
+        <div class="$border $padding(1rem) $w(150px)">
+          <p>This text demonstrates normal behavior without hyphenation for long words like internationalization and
+            antidisestablishmentarianism.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Auto Hyphens</h4>
+        <div class="$block(hyphens) $border $padding(1rem) $w(80px)">
+          <p>This text demonstrates auto hyphenation for long words like internationalization and
+            antidisestablishmentarianism.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Line Clamp</h3>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div>
+        <h4>Line Clamp (2 lines)</h4>
+        <div class="$border $padding(1rem) $w(300px)">
+          <p class="$block(clamp(2)) $height(2*1.2em)">This text demonstrates line clamping to 2 lines. Remember to
+            always add overflow hidden to achieve the effect.
+            Any text beyond the second line will be truncated with an ellipsis. Lorem ipsum dolor sit amet, consectetur
+            adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nunc nunc lacinia nunc, eget lacinia nunc
+            nunc eget nunc.</p>
+        </div>
+      </div>
+      <div>
+        <h4>Line Clamp (3 lines)</h4>
+        <div class="$border $padding(1rem) $w(300px)">
+          <p class="$block(clamp(3)) $height(3*(1.2em))">This text demonstrates line clamping to 3 lines. Remember to
+            always add overflow hidden to achieve the effect.
+            Any text beyond the third line will be truncated with an ellipsis. Lorem ipsum dolor sit amet, consectetur
+            adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nunc nunc lacinia nunc, eget lacinia nunc
+            nunc eget nunc.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+
+      .\$grid\(cols\(1fr\,1fr\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$w\(150px\) {
+        inline-size: 150px;
+      }
+
+      .\$block\(hyphens\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: auto;
+        text-align: unset;
+        text-indent: unset;
+      }
+
+      .\$w\(80px\) {
+        inline-size: 80px;
+      }
+
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$w\(300px\) {
+        inline-size: 300px;
+      }
+
+      .\$block\(clamp\(2\)\) {
+        display: -webkit-box;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow-block: hidden;
+      }
+
+      .\$height\(2\*1\.2em\) {
+        block-size: calc(2.4em);
+      }
+
+      .\$block\(clamp\(3\)\) {
+        display: -webkit-box;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow-block: hidden;
+      }
+
+      .\$height\(3\*\(1\.2em\)\) {
+        block-size: calc(3.6em);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Layout 12 - Flex and Grid Item Properties">
+  <main>
+    <h3>Flex Item Properties</h3>
+    <div class="$border $padding(1rem) 
+    $flex(gap(1rem))
+      |:nth-child(1)$_flex(grow(1))
+      |:nth-child(2)$_flex(grow(2))
+      |:nth-child(3)$_flex(shrink(0.5))
+      |:nth-child(4)$_flex(basis(100px))">
+      <div class="$border $padding(0.5rem)">
+        <p>Flex-grow: 1</p>
+      </div>
+      <div class="$border $padding(0.5rem)">
+        <p>Flex-grow: 2</p>
+      </div>
+      <div class="$border $padding(0.5rem)">
+        <p>Flex-shrink: 0.5</p>
+      </div>
+      <div class="$border $padding(0.5rem)">
+        <p>Flex-basis: 100px</p>
+      </div>
+    </div>
+    <h3>Grid Item Properties</h3>
+    <div class="$border $padding(1rem)
+    $grid(cols(1fr,1fr,1fr),rows(100px,100px),gap(1rem))
+    |:nth-child(1)$_grid(column(1,3))
+    |:nth-child(2)$_grid(row(4,4))
+    |:nth-child(3)$_grid(column(1,1))
+    |:nth-child(4)$_grid(row(1,2),column(2,3))
+      ">
+      <div class="$border $padding(0.5rem)">Grid column: 1 / 3</div>
+      <div class="$border $padding(0.5rem)">Grid row: 4 / 4</div>
+      <div class="$border $padding(0.5rem)">Grid column: 1 / 1</div>
+      <div class="$border $padding(0.5rem)">Grid row: 1 / 2, Grid column: 2 / 3</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$flex\(gap\(1rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        gap: 1rem;
+      }
+
+      .\$padding\(0\.5rem\) {
+        padding: 0.5rem;
+      }
+
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,rows\(100px\,100px\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 100px 100px;
+        gap: 1rem;
+      }
+    }
+
+    @layer items {
+      .\|\:nth-child\(1\)\$_flex\(grow\(1\)\)> :where(:nth-child(1)) {
+        flex-grow: 1;
+      }
+
+      .\|\:nth-child\(2\)\$_flex\(grow\(2\)\)> :where(:nth-child(2)) {
+        flex-grow: 2;
+      }
+
+      .\|\:nth-child\(3\)\$_flex\(shrink\(0\.5\)\)> :where(:nth-child(3)) {
+        flex-shrink: 0.5;
+      }
+
+      .\|\:nth-child\(4\)\$_flex\(basis\(100px\)\)> :where(:nth-child(4)) {
+        flex-basis: 100px;
+      }
+
+      .\|\:nth-child\(1\)\$_grid\(column\(1\,3\)\)> :where(:nth-child(1)) {
+        grid-column: 1 / 3;
+      }
+
+      .\|\:nth-child\(2\)\$_grid\(row\(4\,4\)\)> :where(:nth-child(2)) {
+        grid-row: 4 / 4;
+      }
+
+      .\|\:nth-child\(3\)\$_grid\(column\(1\,1\)\)> :where(:nth-child(3)) {
+        grid-column: 1 / 1;
+      }
+
+      .\|\:nth-child\(4\)\$_grid\(row\(1\,2\)\,column\(2\,3\)\)> :where(:nth-child(4)) {
+        grid-area: 1 / 2 / 2 / 3;
+      }
+    }
+  </style>
+</test-html>
+<test-html title="Layout X - hyphens">
+  <main>
+    <h4>Hyphens (shy/hyphens)</h4>
+    <div class="$w(100px) $block(shy)">
+      This text demonstrates manual hyphenation using the shy parameter. You would need to add soft hyphe&shy;ns
+      manually.
+    </div>
+    <div class="$flex(hyphens) $w(100px)">
+      This text demonstrates auto hyphenation using the shy parameter. You would need to add soft hyphe&shy;ns
+      manually.
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$w\(100px\) {
+        inline-size: 100px;
+      }
+
+      .\$block\(shy\) {
+        display: block;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: manual;
+        text-align: unset;
+        text-indent: unset;
+      }
+
+      .\$flex\(hyphens\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: auto;
+        text-align: unset;
+        text-indent: unset;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Layout 13 - repeat minmax">
+  <main>
+    <h3>Repeat and Minmax</h3>
+    <div class="
+      $grid(cols(repeat(3,minmax(100px,1fr))),gap(1rem))
+      |$border$padding(0.5rem)
+      ">
+      <div>Item 1</div>
+      <div>Item 2</div>
+      <div>Item 3</div>
+    </div>
+
+    <h3>Repeat with Auto Rows</h3>
+    <div class="
+      $grid(cols(repeat(auto-fill,minmax(100px,1fr))),gap(1rem))
+      |$border$padding(0.5rem)
+    ">
+      <div>Item 1</div>
+      <div>Item 2</div>
+      <div>Item 3</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(repeat\(3\,minmax\(100px\,1fr\)\)\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: repeat(3, minmax(100px, 1fr));
+        gap: 1rem;
+      }
+
+      .\$grid\(cols\(repeat\(auto-fill\,minmax\(100px\,1fr\)\)\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 1rem;
+      }
+    }
+
+    @layer items {
+      .\|\$border\$padding\(0\.5rem\)>* {
+        border-style: solid;
+        padding: 0.5rem;
+      }
+    }
+  </style>
+</test-html>
+<!-- <test-html title="Layout 14 - Grid Position Properties">
+  <main>
+    <h3>Individual Start/End Properties</h3>
+    <div class="$grid(cols(repeat(3,1fr)),rows(repeat(3,100px)),gap(1rem))
+      |:first$_grid(column(,2))
+      |:second$_grid(column(2,))
+      |:third$_grid(row(,3))
+      |:fourth$_grid(row(2,))
+      |:fifth$_grid(column(1,3),row(2,4))">
+
+      <div class="$border $padding(0.5rem)">Grid Column End: 2</div>
+      <div class="$border $padding(0.5rem)">Grid Column Start: 2</div>
+      <div class="$border $padding(0.5rem)">Grid Row End: 3</div>
+      <div class="$border $padding(0.5rem)">Grid Row Start: 2</div>
+      <div class="$border $padding(0.5rem)">Spans Multiple</div>
+
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(repeat\(3\,1fr\)\)\,rows\(repeat\(3\,100px\)\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 100px);
+        gap: 1rem;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$padding\(0\.5rem\) {
+        padding: 0.5rem;
+      }
+    }
+
+    @layer items {
+      .\$border\$padding\(0\.5rem\)\_grid\(column\(\,2\)\) > :where(:first-child) {
+        grid-column-end: 2;
+      }
+
+      .\$border\$padding\(0\.5rem\)\_grid\(column\(2\,\)\) {
+        grid-column-start: 2;
+      }
+
+      .\$border\$padding\(0\.5rem\)\_grid\(row\(\,3\)\) {
+        grid-row-end: 3;
+      }
+
+      .\$border\$padding\(0\.5rem\)\_grid\(row\(2\,\)\) {
+        grid-row-start: 2;
+      }
+
+      .\$border\$padding\(0\.5rem\)\_grid\(column\(1\,3\)\,row\(2\,4\)\) {
+        grid-column: 1 / 3;
+        grid-row: 2 / 4;
+      }
+    }
+  </style>
+</test-html> --><test-html title="$border">
+  <div class="$border">Solid Border</div>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$border {
+        border-style: solid;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 1 - Styles">
+  <main>
+    <div class="$grid(cols(1fr,1fr,1fr,1fr),gap(1rem))">
+      <div class="$border $padding(1rem)">Solid Border</div>
+      <div class="$border(dashed) $padding(1rem)">Dashed Border</div>
+      <div class="$border(dotted) $padding(1rem)">Dotted Border</div>
+      <div class="$border(double) $padding(1rem)">Double Border</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border {
+        border-style: solid;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$border\(dashed\) {
+        border-style: dashed;
+      }
+
+      .\$border\(dotted\) {
+        border-style: dotted;
+      }
+
+      .\$border\(double\) {
+        border-style: double;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 2 - Widths">
+  <main>
+    <div class="$grid(cols(1fr,1fr,1fr),gap(1rem))">
+      <div class="$border(solid,thin) $padding(1rem)">Thin Border</div>
+      <div class="$border(solid,medium) $padding(1rem)">Medium Border</div>
+      <div class="$border(solid,thick) $padding(1rem)">Thick Border</div>
+      <div class="$border(solid,1px) $padding(1rem)">1px Border</div>
+      <div class="$border(solid,0.25rem) $padding(1rem)">0.25rem Border</div>
+      <div class="$border(solid,5px) $padding(1rem)">5px Border</div>
+      <div class="$border(w(1em,2px,3cm,4rem)) $padding(1rem)">Mixed units</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(solid\,thin\) {
+        border-style: solid;
+        border-width: thin;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$border\(solid\,medium\) {
+        border-style: solid;
+        border-width: medium;
+      }
+
+      .\$border\(solid\,thick\) {
+        border-style: solid;
+        border-width: thick;
+      }
+
+      .\$border\(solid\,1px\) {
+        border-style: solid;
+        border-width: 1px;
+      }
+
+      .\$border\(solid\,0\.25rem\) {
+        border-style: solid;
+        border-width: 0.25rem;
+      }
+
+      .\$border\(solid\,5px\) {
+        border-style: solid;
+        border-width: 5px;
+      }
+
+      .\$border\(w\(1em\,2px\,3cm\,4rem\)\) {
+        border-style: solid;
+        border-block-width: 1em 3cm;
+        border-inline-width: 2px 4rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 3 - Radius">
+  <main>
+    <div class="$grid(cols(1fr,1fr,1fr),gap(1rem))">
+      <div class="$border(solid,2px,radius(0.25rem)) $padding(1rem)">Small Radius</div>
+      <div class="$border(solid,2px,radius(1rem)) $padding(1rem)">Medium Radius</div>
+      <div class="$border(solid,2px,radius(50%)) $padding(1rem)">Circle</div>
+      <div class="$border(solid,2px,r(10px,20px,30px,40px)) $padding(1rem)">Mixed Radius</div>
+      <div class="$border(solid,2px,r(50%,10%,50%,10%)) $padding(1rem)">Alternating %</div>
+      <div class="$border(solid,2px,r(1px,99%,2px,98%)) $padding(1rem)">Extreme asymmetric radius</div>
+      <div class="$border(solid,2px,r(1em,2vh,3%,4px)) $padding(1rem)">Mixed unit radius</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(solid\,2px\,radius\(0\.25rem\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 0.25rem;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$border\(solid\,2px\,radius\(1rem\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 1rem;
+      }
+
+      .\$border\(solid\,2px\,radius\(50\%\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 50%;
+      }
+
+      .\$border\(solid\,2px\,r\(10px\,20px\,30px\,40px\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-start-start-radius: 10px;
+        border-end-end-radius: 30px;
+        border-start-end-radius: 20px;
+        border-end-start-radius: 40px;
+      }
+
+      .\$border\(solid\,2px\,r\(50\%\,10\%\,50\%\,10\%\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-start-start-radius: 50%;
+        border-end-end-radius: 50%;
+        border-start-end-radius: 10%;
+        border-end-start-radius: 10%;
+      }
+
+      .\$border\(solid\,2px\,r\(1px\,99\%\,2px\,98\%\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-start-start-radius: 1px;
+        border-end-end-radius: 2px;
+        border-start-end-radius: 99%;
+        border-end-start-radius: 98%;
+      }
+
+      .\$border\(solid\,2px\,r\(1em\,2vh\,3\%\,4px\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-start-start-radius: 1em;
+        border-end-end-radius: 3%;
+        border-start-end-radius: 2vh;
+        border-end-start-radius: 4px;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 4 - Color">
+  <main>
+    <div class="$grid(cols(1fr,1fr,1fr),gap(1rem))">
+      <div class="$border(solid,2px) $borderColor(red) $padding(1rem)">Red Border (using color)</div>
+      <div class="$border(solid,2px) $borderColor(blue) $padding(1rem)">Blue Border (using color)</div>
+      <div class="$border(solid,2px) $borderColor(#00ff00) $padding(1rem)">Green Border (hex)</div>
+      <div class="$border(solid,2px) $borderColor(rgba(128,0,128,0.5)) $padding(1rem)">Purple Border (rgba)</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(solid\,2px\) {
+        border-style: solid;
+        border-width: 2px;
+      }
+
+      .\$borderColor\(red\) {
+        border-color: red;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$borderColor\(blue\) {
+        border-color: blue;
+      }
+
+      .\$borderColor\(\#00ff00\) {
+        border-color: rgb(0, 255, 0);
+      }
+
+      .\$borderColor\(rgba\(128\,0\,128\,0\.5\)\) {
+        border-color: rgba(128, 0, 128, 0.5);
+      }
+
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 5 - Mixed Properties">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$border(w(1px,2px,3px,4px),s(solid,dashed,dotted,double)) $padding(1rem)">Mixed Widths & Styles</div>
+      <div class="$border(w(.,2px,.,4px),s(.,solid,.,dotted)) $padding(1rem)">Partial Borders (with dots)</div>
+      <div class="$border(w(0,3px,0,3px)) $padding(1rem)">Horizontal Only</div>
+      <div class="$border(w(3px,0,3px,0)) $padding(1rem)">Vertical Only</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(w\(1px\,2px\,3px\,4px\)\,s\(solid\,dashed\,dotted\,double\)\) {
+        border-style: solid;
+        border-block-width: 1px 3px;
+        border-inline-width: 2px 4px;
+        border-block-style: solid dotted;
+        border-inline-style: dashed double;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$border\(w\(\.\,2px\,\.\,4px\)\,s\(\.\,solid\,\.\,dotted\)\) {
+        border-style: solid;
+        border-block-width: unset;
+        border-inline-width: 2px 4px;
+        border-block-style: unset;
+        border-inline-style: solid dotted;
+      }
+
+      .\$border\(w\(0\,3px\,0\,3px\)\) {
+        border-style: solid;
+        border-block-width: 0px;
+        border-inline-width: 3px;
+      }
+
+      .\$border\(w\(3px\,0\,3px\,0\)\) {
+        border-style: solid;
+        border-block-width: 3px;
+        border-inline-width: 0px;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 6 - Edge Cases">
+  <main>
+    <div class="$grid(cols(1fr,1fr,1fr),gap(1rem))">
+      <div class="$border(0) $padding(1rem)">Zero Border</div>
+      <div class="$border(none) $padding(1rem)">None Border</div>
+      <div class="$border(solid,2px,r(0)) $padding(1rem)">Zero Radius</div>
+      <div class="$border(w(0,1px,2px,),s(.,.,solid,dashed)) $padding(1rem)">Missing Values with Fallbacks</div>
+      <div class="$border(solid,0.0001px) $padding(1rem)">Microscopic border</div>
+      <div class="$border(solid,99px) $padding(1rem)">Enormous border</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(0\) {
+        border-style: solid;
+        border-width: 0px;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$border\(none\) {
+        border-style: none;
+      }
+
+      .\$border\(solid\,2px\,r\(0\)\) {
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 0px;
+      }
+
+      .\$border\(w\(0\,1px\,2px\,\)\,s\(\.\,\.\,solid\,dashed\)\) {
+        border-style: solid;
+        border-block-width: 0px 2px;
+        border-inline-start-width: 1px;
+        border-block-start-style: unset;
+        border-inline-start-style: unset;
+        border-block-end-style: solid;
+        border-inline-end-style: dashed;
+      }
+
+      .\$border\(solid\,0\.0001px\) {
+        border-style: solid;
+        border-width: 0.0001px;
+      }
+
+      .\$border\(solid\,99px\) {
+        border-style: solid;
+        border-width: 99px;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 7 - Interactive">
+  <main>
+    <div class="$block(g(1rem))">
+      <button class="$border(solid,1px) $padding(0.5rem,1rem) :hover$border(solid,2px,r(0.5rem))">
+        Hover Changes Border
+      </button>
+      <div class="$border(solid,1px) $padding(1rem) :hover$border(dashed,3px,r(1rem))">
+        Hover to change border style, width, and radius
+      </div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$block\(g\(1rem\)\) {
+        display: block;
+        word-spacing: 1rem;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+      }
+
+      .\$border\(solid\,1px\) {
+        border-style: solid;
+        border-width: 1px;
+      }
+
+      .\$padding\(0\.5rem\,1rem\) {
+        padding: 0.5rem 1rem;
+      }
+
+      .\:hover\$border\(solid\,2px\,r\(0\.5rem\)\):where(:hover) {
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 0.5rem;
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\:hover\$border\(dashed\,3px\,r\(1rem\)\):where(:hover) {
+        border-style: dashed;
+        border-width: 3px;
+        border-radius: 1rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 8 - Calc Expressions">
+  <main>
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$border(solid,w(1px+1em)) $padding(1rem)">Calc width</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(solid\,w\(1px\+1em\)\) {
+        border-style: solid;
+        border-width: calc(1em + 1px);
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 9 - On Item Alone">
+  <main>
+    <div class="|*$border(r(25%))$padding(1rem)">
+      <div>Test style inheritance</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {}
+
+    @layer items {
+      .\|\*\$border\(r\(25\%\)\)\$padding\(1rem\)>* {
+        border-style: solid;
+        border-radius: 25%;
+        padding: 1rem;
+      }
+    }
+  </style>
+</test-html>
+<test-html title="Border 10 - Multiple Property With Hover">
+  <main>
+    <div class="
+      $border(w(1px,2px,3px,4px),s(solid,dashed,dotted,double))
+      :hover$border(w(4px,3px,2px,1px),s(double,dotted,dashed,solid))">Complex state changes</div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$border\(w\(1px\,2px\,3px\,4px\)\,s\(solid\,dashed\,dotted\,double\)\) {
+        border-style: solid;
+        border-block-width: 1px 3px;
+        border-inline-width: 2px 4px;
+        border-block-style: solid dotted;
+        border-inline-style: dashed double;
+      }
+
+      .\:hover\$border\(w\(4px\,3px\,2px\,1px\)\,s\(double\,dotted\,dashed\,solid\)\):where(:hover) {
+        border-style: solid;
+        border-block-width: 4px 2px;
+        border-inline-width: 3px 1px;
+        border-block-style: double dashed;
+        border-inline-style: dotted solid;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 11 - Container and Item with multiple properties">
+  <main>
+    <div class="
+      $border(1px)
+      |*$border(dotted,2px,r(2rem))
+      |.special$border(dashed,3px,r(3rem))
+      |.super$border(double,4px,r(4rem))
+    ">
+      Deep nesting with multiple overrides
+      <div class="special">Special</div>
+      <div class="super">Super</div>
+      <div> Normal </div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$border\(1px\) {
+        border-style: solid;
+        border-width: 1px;
+      }
+    }
+
+    @layer items {
+      .\|\*\$border\(dotted\,2px\,r\(2rem\)\)>* {
+        border-style: dotted;
+        border-width: 2px;
+        border-radius: 2rem;
+      }
+
+      .\|\.special\$border\(dashed\,3px\,r\(3rem\)\)> :where(.special) {
+        border-style: dashed;
+        border-width: 3px;
+        border-radius: 3rem;
+      }
+
+      .\|\.super\$border\(double\,4px\,r\(4rem\)\)> :where(.super) {
+        border-style: double;
+        border-width: 4px;
+        border-radius: 4rem;
+      }
+    }
+  </style>
+</test-html>
+<test-html title="Border 12 - Competing border properties">
+  <main>
+    <div class="
+      $border(solid,1px)
+      $border(dotted,2px)
+      $border(dashed,3px)
+    ">Multiple direct border declarations</div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$border\(solid\,1px\) {
+        border-style: solid;
+        border-width: 1px;
+      }
+
+      .\$border\(dotted\,2px\) {
+        border-style: dotted;
+        border-width: 2px;
+      }
+
+      .\$border\(dashed\,3px\) {
+        border-style: dashed;
+        border-width: 3px;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="Border 13 - Test on Auto Wrapping of var and calc">
+  <main style="--border-width: 3px;">
+    <div class="$grid(cols(1fr,1fr),gap(1rem))">
+      <div class="$border(solid,w(--border-width)) $padding(1rem)">CSS Variable Auto-Wrap</div>
+      <div class="$border(solid,w(1px+2px)) $padding(1rem)">Calculation Auto-Wrap</div>
+    </div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
+        display: grid;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .\$border\(solid\,w\(--border-width\)\) {
+        border-style: solid;
+        border-width: var(--border-width);
+      }
+
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+
+      .\$border\(solid\,w\(1px\+2px\)\) {
+        border-style: solid;
+        border-width: calc(3px);
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
+<test-html title="boxShadow simple with hex">
+  <main">
+    <div class="$boxShadow(10px,5px,5px,2px,#5c6bc0)">
+      Look a shadow!
+    </div>
+    </main>
+    <style>
+      @layer container, items;
+
+      @layer container {
+        .\$boxShadow\(10px\,5px\,5px\,2px\,\#5c6bc0\) {
+          box-shadow: rgb(92, 107, 192) 10px 5px 5px 2px;
+        }
+      }
+
+      @layer items {}
+    </style>
+</test-html>
+<test-html title="boxShadow two colors">
+  <main">
+    <div class="$boxShadow(0,1rem,.25rem,#3f51b5)$boxShadow(0,.5rem,.5rem,blue)">
+      Two or more colors are possible in box shadows!
+    </div>
+    </main>
+    <style>
+      @layer container, items;
+
+      @layer container {
+        .\$boxShadow\(0\,1rem\,\.25rem\,\#3f51b5\)\$boxShadow\(0\,\.5rem\,\.5rem\,blue\) {
+          box-shadow: rgb(63, 81, 181) 0px 1rem 0.25rem, blue 0px 0.5rem 0.5rem;
+        }
+      }
+
+      @layer items {}
+    </style>
+</test-html>
+<test-html title="boxShadow with rgb and inset">
+  <main class="$flex(gap(2rem))">
+    <div class="$boxShadow(0,.125rem,.25rem,rgba(0,0,0,.175))">Small</div>
+    <div class="$boxShadow(0,.5rem,1rem,rgba(0,0,0,0.15))">Regular</div>
+    <div class="$boxShadow(0,1rem,3rem,rgba(0,0,0,0.175))">Large</div>
+    <div class="$boxShadow(inset,0,2px,4px,0,rgba(0,0,0,0.6))">Inset</div>
+  </main>
+  <style>
+    @layer container, items;
+
+    @layer container {
+      .\$flex\(gap\(2rem\)\) {
+        display: flex;
+        word-spacing: unset;
+        line-height: unset;
+        white-space: unset;
+        hyphens: unset;
+        text-align: unset;
+        text-indent: unset;
+        gap: 2rem;
+      }
+
+      .\$boxShadow\(0\,\.125rem\,\.25rem\,rgba\(0\,0\,0\,\.175\)\) {
+        box-shadow: rgba(0, 0, 0, 0.176) 0px 0.125rem 0.25rem;
+      }
+
+      .\$boxShadow\(0\,\.5rem\,1rem\,rgba\(0\,0\,0\,0\.15\)\) {
+        box-shadow: rgba(0, 0, 0, 0.15) 0px 0.5rem 1rem;
+      }
+
+      .\$boxShadow\(0\,1rem\,3rem\,rgba\(0\,0\,0\,0\.175\)\) {
+        box-shadow: rgba(0, 0, 0, 0.176) 0px 1rem 3rem;
+      }
+
+      .\$boxShadow\(inset\,0\,2px\,4px\,0\,rgba\(0\,0\,0\,0\.6\)\) {
+        box-shadow: rgba(0, 0, 0, 0.6) 0px 2px 4px 0px inset;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
