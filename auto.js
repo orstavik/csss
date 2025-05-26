@@ -5,8 +5,6 @@ function initCssShorts(style, interval = 500) {
   const sheetWrapper = new SheetWrapper(style.sheet);
 
   function update() {
-    for (let el of document.body.querySelectorAll('[csss]'))
-      try { sheetWrapper.readSupers(el.getAttribute("csss")); } catch (er) { console.error(er); }
     for (let el of document.body.querySelectorAll('[class*="$"]'))
       for (let clazz of el.classList)
         if (clazz.includes("$"))
