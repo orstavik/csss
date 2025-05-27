@@ -1138,8 +1138,6 @@ const WORDS = {
   text: {
     Transform: {
       capitalize: "capitalize",
-      allcaps: "uppercase",
-      smallcaps: "lowercase",
       uppercase: "uppercase",
       lowercase: "lowercase",
       "full-width": "full-width",
@@ -1370,8 +1368,8 @@ grid.scope = {
   //todo test this!!
   column: { gridAutoFlow: "column" },
   dense: { gridAutoFlow: "dense row" },
-  denseColumn: { gridAutoFlow: "dense column" },
-  denseRow: { gridAutoFlow: "dense row" },
+  "dense-column": { gridAutoFlow: "dense column" },
+  "dense-row": { gridAutoFlow: "dense row" },
 };
 
 const column = (start, end = start) => ({ gridColumn: `${start} / ${end}` });
