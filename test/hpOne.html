@@ -823,7 +823,7 @@
 <test-html title="$font(times,serif,700,capitalize)">
   <main class="$font(times,serif,500,2px,italic)">
     <h2 class="$font(helvetica,arial,'sans-serif',900,capitalize)">
-      $font(fontFamily[], fontStyle, fontWeight, fontVariant, fontStretch, textTransform, letterSpacing)
+      $font(helvetica,arial,'sans-serif',900,capitalize)
     </h2>
     Notes:
     <p>
@@ -1190,16 +1190,17 @@
   </style>
 </test-html>
 <test-html title="Text transform">
-  <div class="$smallCaps $allCaps">small- and allCaps</div>
+  <div class="$lowercase">what Is Going On</div>
+  <div class="$uppercase">what Is Going On</div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$smallCaps {
+      .\$lowercase {
         text-transform: lowercase;
       }
 
-      .\$allCaps {
+      .\$uppercase {
         text-transform: uppercase;
       }
     }

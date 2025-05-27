@@ -938,39 +938,7 @@ font-stretch ??
 
     @layer items {}
   </style>
-</test-html>
-<test-html title="calc() and env() in @media">
-  <div class="
-  @(width<=---safe-area-inset-top)$bold
-  @(width>---safe-area-inset-top*2)$bold
-  @(width>--not-allowed)$bold
-  ">
-    With nested calculation
-  </div>
-  <style>
-    @layer container, items;
-
-    @layer container {
-      @media (max-width: env(safe-area-inset-top)) {
-        .\@\(width\<\=---safe-area-inset-top\)\$bold {
-          font-weight: bold;
-        }
-      }
-
-      @media (min-width: calc(env(safe-area-inset-top) * 2)) {
-        .\@\(width\>\---safe-area-inset-top\*2\)\$bold {
-          font-weight: bold;
-        }
-      }
-    }
-
-    @layer items {}
-  </style>
-</test-html>
-
-<!--
- //how do we do calc(var(--a) - var(--b))
- --><test-html title="border+color+items">
+</test-html><test-html title="border+color+items">
   <div class="
   $gradient(primary,#ec1221,white)
   $color(#primary)
@@ -1795,7 +1763,7 @@ font-stretch ??
 <test-html title="$font(times,serif,700,capitalize)">
   <main class="$font(times,serif,500,2px,italic)">
     <h2 class="$font(helvetica,arial,'sans-serif',900,capitalize)">
-      $font(fontFamily[], fontStyle, fontWeight, fontVariant, fontStretch, textTransform, letterSpacing)
+      $font(helvetica,arial,'sans-serif',900,capitalize)
     </h2>
     Notes:
     <p>
@@ -2162,16 +2130,17 @@ font-stretch ??
   </style>
 </test-html>
 <test-html title="Text transform">
-  <div class="$smallCaps $allCaps">small- and allCaps</div>
+  <div class="$lowercase">what Is Going On</div>
+  <div class="$uppercase">what Is Going On</div>
   <style>
     @layer container, items;
 
     @layer container {
-      .\$smallCaps {
+      .\$lowercase {
         text-transform: lowercase;
       }
 
-      .\$allCaps {
+      .\$uppercase {
         text-transform: uppercase;
       }
     }

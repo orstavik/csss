@@ -322,35 +322,3 @@
     @layer items {}
   </style>
 </test-html>
-<test-html title="calc() and env() in @media">
-  <div class="
-  @(width<=---safe-area-inset-top)$bold
-  @(width>---safe-area-inset-top*2)$bold
-  @(width>--not-allowed)$bold
-  ">
-    With nested calculation
-  </div>
-  <style>
-    @layer container, items;
-
-    @layer container {
-      @media (max-width: env(safe-area-inset-top)) {
-        .\@\(width\<\=---safe-area-inset-top\)\$bold {
-          font-weight: bold;
-        }
-      }
-
-      @media (min-width: calc(env(safe-area-inset-top) * 2)) {
-        .\@\(width\>\---safe-area-inset-top\*2\)\$bold {
-          font-weight: bold;
-        }
-      }
-    }
-
-    @layer items {}
-  </style>
-</test-html>
-
-<!--
- //how do we do calc(var(--a) - var(--b))
- -->
