@@ -1512,14 +1512,11 @@ function popGradient(name, color, onColor) {
   };
   let res = gradient(name, color, onColor);
   return Object.fromEntries(Object.entries(res).map(([name, c]) =>
-    chromas.entries().map(([p, pV]) =>
-      [`${name}_${p}`, `oklch(from var(--${c}) l ${pV} h)`])
+    Object.entries(chromas).map(([p, pV]) =>
+      [`${name}_${p}`, `oklch(from ${c} l ${pV} h)`])
   ).flat());
 }
-// (function () {
-//   debugger
-//   gradient("primary", "darkred", "white", 10);
-// })();
+popGradient.scope = { ...gradient.scope };
 
 var gradients = {
   gradient,
