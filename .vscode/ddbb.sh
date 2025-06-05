@@ -13,7 +13,7 @@
 #   --legal-comments=none \
 #   --tree-shaking=false
 
-npx rollup --input src/csss.js --file csss.js --format=esm --sourcemap --no-treeshake --preserveEntrySignature=strict
+npx rollup --input src/csss.js --file csss.js --format=esm --sourcemap --no-treeshake --preserveEntrySignatures=strict
 output_files=$(find . -maxdepth 1 -type f -name "*.js" -o -name "*.js.map")
 git add $output_files
 

@@ -3,7 +3,7 @@
     This text should be blue from a CSS variable
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$bg\(--color_my\) {
@@ -28,7 +28,7 @@
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$bg\(\(--color_undefined\,--color_primary\)\) {
@@ -51,7 +51,7 @@
     This div should be 120px wide
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$width\(100px\+20px\) {
@@ -68,7 +68,7 @@
     For some reason, it flips 2rem + 1em to 1em + 2rem when it adds the style.
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$width\(100\%-20px\) {
@@ -88,7 +88,7 @@
     Testing native compilation of rules and multiple operations in calc
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$margin\(10px\+5px\*2\) {
@@ -108,7 +108,7 @@
     Testing calc with parentheses
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$width\(\(100px\+5vw\)\*2\) {
@@ -130,7 +130,7 @@
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$width\(--base-size\*2\) {
@@ -150,7 +150,7 @@
     Testing negative values in calc
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$margin\(-10px\+20px\) {
@@ -170,7 +170,7 @@
     Testing complex nested calc expressions
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$width\(\(100px\+50px\)\*\(2-0\.5\)\) {
@@ -188,7 +188,7 @@
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$bg\(\(--color_undefined1\,--color_primary\,--color_secondary\)\) {
@@ -211,7 +211,7 @@
     Testing Simple Division expression
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$width\(1em\/--var\) {
@@ -227,7 +227,7 @@
     Testing complex expression with operations outside parentheses
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$width\(\(1em\+20px\)\*20\+40px\) {
@@ -258,7 +258,7 @@
     With nested calculation
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$margin\(2px\+5px\*\(--var\/3\.5\)\) {
@@ -283,7 +283,7 @@
     With nested calculation
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$w\(min\(2px\+1em\,10\%\)\) {
@@ -307,7 +307,7 @@
     With nested calculation
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$w\(---safe-area-inset-top\) {

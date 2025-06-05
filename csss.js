@@ -1702,9 +1702,9 @@ class SheetWrapper {
 
   setupStatement() {
     for (const r of this.sheet.cssRules)
-      if (r instanceof CSSLayerStatementRule && "@layer container, items;" === r.cssText.replaceAll(/\s+/g, " "))
+      if (r instanceof CSSLayerStatementRule && "@layer items, container;" === r.cssText.replaceAll(/\s+/g, " "))
         return;
-    this.sheet.insertRule("@layer container, items;", 0);
+    this.sheet.insertRule("@layer items, container;", 0);
   }
 
   setupLayer(name) {

@@ -1,7 +1,7 @@
 <test-html title="$border">
   <div class="$border">Solid Border</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$border {
@@ -22,7 +22,7 @@
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
@@ -74,7 +74,7 @@
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
@@ -146,7 +146,7 @@
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
@@ -233,7 +233,7 @@
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
@@ -288,7 +288,7 @@
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
@@ -351,7 +351,7 @@
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
@@ -421,7 +421,7 @@
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$block\(g\(1rem\)\) {
@@ -469,7 +469,7 @@
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
@@ -504,7 +504,7 @@
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {}
 
@@ -524,7 +524,7 @@
       :hover$border(w(4px,3px,2px,1px),s(double,dotted,dashed,solid))">Complex state changes</div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$border\(w\(1px\,2px\,3px\,4px\)\,s\(solid\,dashed\,dotted\,double\)\) {
@@ -562,7 +562,7 @@
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$border\(1px\) {
@@ -601,7 +601,7 @@
     ">Multiple direct border declarations</div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$border\(solid\,1px\) {
@@ -631,7 +631,7 @@
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
@@ -671,7 +671,7 @@
     </div>
     </main>
     <style>
-      @layer container, items;
+      @layer items, container;
 
       @layer container {
         .\$boxShadow\(10px\,5px\,5px\,2px\,\#5c6bc0\) {
@@ -689,7 +689,7 @@
     </div>
     </main>
     <style>
-      @layer container, items;
+      @layer items, container;
 
       @layer container {
         .\$boxShadow\(0\,1rem\,\.25rem\,\#3f51b5\)\$boxShadow\(0\,\.5rem\,\.5rem\,blue\) {
@@ -708,7 +708,7 @@
     <div class="$boxShadow(inset,0,2px,4px,0,rgba(0,0,0,0.6))">Inset</div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$flex\(gap\(2rem\)\) {

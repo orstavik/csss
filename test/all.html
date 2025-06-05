@@ -68,7 +68,7 @@
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$bg\(azure\) {
@@ -230,7 +230,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
  --><test-html title="$unknown(22px)">
   <div class="$unknown(22px)">hello</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$unknown\(22px\) {
@@ -249,7 +249,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
 <test-html title="$grid(unknown(22px))">
   <div class="$grid(unknown(22px))">sunshine</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(unknown\(22px\)\) {
@@ -276,7 +276,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
 <test-html title="@xxl$w(20px)">
   <div class="@xxl$w(20px)">sunshine</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       @media (min-width:1536px) {
@@ -293,7 +293,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
 <test-html title="@xxxl$w(20px)">
   <div class="@xxxl$w(20px)">sunshine</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       @media (min-width:2000px) {
@@ -316,7 +316,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     This text should be blue from a CSS variable
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$bg\(--color_my\) {
@@ -341,7 +341,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$bg\(\(--color_undefined\,--color_primary\)\) {
@@ -364,7 +364,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     This div should be 120px wide
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$width\(100px\+20px\) {
@@ -381,7 +381,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     For some reason, it flips 2rem + 1em to 1em + 2rem when it adds the style.
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$width\(100\%-20px\) {
@@ -401,7 +401,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     Testing native compilation of rules and multiple operations in calc
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$margin\(10px\+5px\*2\) {
@@ -421,7 +421,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     Testing calc with parentheses
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$width\(\(100px\+5vw\)\*2\) {
@@ -443,7 +443,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$width\(--base-size\*2\) {
@@ -463,7 +463,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     Testing negative values in calc
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$margin\(-10px\+20px\) {
@@ -483,7 +483,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     Testing complex nested calc expressions
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$width\(\(100px\+50px\)\*\(2-0\.5\)\) {
@@ -501,7 +501,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$bg\(\(--color_undefined1\,--color_primary\,--color_secondary\)\) {
@@ -524,7 +524,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     Testing Simple Division expression
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$width\(1em\/--var\) {
@@ -540,7 +540,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     Testing complex expression with operations outside parentheses
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$width\(\(1em\+20px\)\*20\+40px\) {
@@ -571,7 +571,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     With nested calculation
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$margin\(2px\+5px\*\(--var\/3\.5\)\) {
@@ -596,7 +596,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     With nested calculation
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$w\(min\(2px\+1em\,10\%\)\) {
@@ -620,7 +620,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     With nested calculation
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$w\(---safe-area-inset-top\) {
@@ -650,7 +650,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
   <div class="new">New Arrival: Product 5</div>
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$gradient\(primary\,\#ec1221\,white\) {
@@ -835,7 +835,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
 <test-html title="border-radius">
   <div class="$border(0,radius(1rem))">hello</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$border\(0\,radius\(1rem\)\) {
@@ -851,7 +851,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
 <test-html title="big border">
   <div class="$border(w(0,1px,2px,),s(.,.,solid,dashed))">sunshine</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$border\(w\(0\,1px\,2px\,\)\,s\(\.\,\.\,solid\,dashed\)\) {
@@ -871,7 +871,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
 <test-html title="border-thin">
   <div class="$border(thin)">!!!</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$border\(thin\) {
@@ -888,7 +888,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     hello
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$gradient\(primary\,blue\,green\) {
@@ -1039,7 +1039,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     hello
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$gradient\(primary\,blue\,yellow\) {
@@ -1179,7 +1179,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     hello
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$w\(min-content\) {
@@ -1192,7 +1192,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
 </test-html>
 <test-html title="$w(min-content,2px,max-content)">
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
 
@@ -1211,7 +1211,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
 </test-html>
 <test-html title="$w(1px,2px,)">
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$w\(1px\,2px\,\) {
@@ -1228,7 +1228,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
 </test-html>
 <test-html title="$h(,2px,)">
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$h\(\,2px\,\) {
@@ -1247,7 +1247,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     hello
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$flex\(row-reverse\,p\(1\%\,\,3\%\)\,gap\(\,3rem\)\) {
@@ -1274,7 +1274,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     hello
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\) {
@@ -1303,7 +1303,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     hello
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$flex\(cc\) {
@@ -1331,7 +1331,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     hello
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$flex\(ellipsis\) {
@@ -1351,7 +1351,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
 </test-html>
 <test-html title="$flex |$_flex(items)">
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\) {
@@ -1390,7 +1390,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     hello
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$cursor\(pointer\) {
@@ -1406,7 +1406,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     hello
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$cursor\(ew-resize\) {
@@ -1422,7 +1422,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     hello
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$translate\(10px\)\$rotate\(45deg\) {
@@ -1439,7 +1439,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     Hello Arial and Helvetica! This is a test to see if the font family is applied correctly.
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$font\(helvetica\,arial\) {
@@ -1468,7 +1468,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     <p class="$font('comic+sans',lucida,'DejaVu+Sans+Mono')">goofy</p>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$font\(times\,serif\,500\,2px\,italic\) {
@@ -1534,7 +1534,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </p>
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$w\(100\%\) {
@@ -1574,7 +1574,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
 
 <test-html title="@(print,screen):hover$border(solid,2px)|:valid$border(dotted,2px)|.first$border(dashed,2px)">
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
 
@@ -1621,7 +1621,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
@@ -1658,7 +1658,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
@@ -1696,7 +1696,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     hello
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$ultraCondensed {
@@ -1712,7 +1712,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
   <div class="$lineThrough(3px)">hello</div>
   <div class="$overLine(2px,#myblue)">sunshine</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$lineThrough\(3px\) {
@@ -1746,7 +1746,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     <div class="$doubleOverLine(2px)">doubleOverLine(2px)</div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grammarError\(2px\) {
@@ -1804,7 +1804,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </a>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$textDecoration\(none\) {
@@ -1829,7 +1829,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
   <div class="$lowercase">what Is Going On</div>
   <div class="$uppercase">what Is Going On</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$lowercase {
@@ -1858,7 +1858,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     });
   </script>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$lineClamp\(2\) {
@@ -1890,7 +1890,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </script>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(layout\,gap\(2rem\)\) {
@@ -1963,7 +1963,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     });
   </script>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$flex2 {
@@ -2025,7 +2025,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </script>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
 
@@ -2051,7 +2051,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
 <test-html title="transition">
   <div class="$border(dotted,50px,easeIn(10s))">Hello Sunshine!</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$border\(dotted\,50px\,easeIn\(10s\)\) {
@@ -2080,7 +2080,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$popGradient\(accent\,darkblue\,white\) {
@@ -3207,7 +3207,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$popGradient\(primary\,\#d41c84\,\#eee\) {
@@ -4282,7 +4282,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     hello sunshine!
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$w\(100vh\) {
@@ -4314,7 +4314,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     hello sunshine!
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$w\(100vh\) {
@@ -4346,7 +4346,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     hello sunshine!
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$w\(100vh\) {
@@ -4383,7 +4383,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     hello sunshine!
   </div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$w\(100vh\) {
@@ -4420,7 +4420,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
@@ -4462,7 +4462,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(100px\,auto\,1fr\)\,rows\(50px\,100px\,auto\)\,gap\(1rem\)\) {
@@ -4517,7 +4517,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
 
@@ -4617,7 +4617,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$flex\(gap\(1rem\)\) {
@@ -4721,7 +4721,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$flex\(c\,gap\(1rem\)\) {
@@ -4915,7 +4915,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$flex\(cc\,gap\(1rem\)\) {
@@ -5151,7 +5151,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$flex\(gap\(1rem\)\) {
@@ -5243,7 +5243,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$block\(g\(0\.5em\,1\.5\)\) {
@@ -5381,7 +5381,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
@@ -5542,7 +5542,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
@@ -5674,7 +5674,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
@@ -5808,7 +5808,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
 
@@ -5940,7 +5940,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$border {
@@ -6028,7 +6028,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$w\(100px\) {
@@ -6082,7 +6082,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(repeat\(3\,minmax\(100px\,1fr\)\)\)\,gap\(1rem\)\) {
@@ -6137,7 +6137,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(repeat\(3\,1fr\)\)\,rows\(repeat\(3\,100px\)\)\,gap\(1rem\)\) {
@@ -6188,7 +6188,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
 </test-html> --><test-html title="$border">
   <div class="$border">Solid Border</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$border {
@@ -6209,7 +6209,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
@@ -6261,7 +6261,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
@@ -6333,7 +6333,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
@@ -6420,7 +6420,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
@@ -6475,7 +6475,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
@@ -6538,7 +6538,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
@@ -6608,7 +6608,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$block\(g\(1rem\)\) {
@@ -6656,7 +6656,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
@@ -6691,7 +6691,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {}
 
@@ -6711,7 +6711,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
       :hover$border(w(4px,3px,2px,1px),s(double,dotted,dashed,solid))">Complex state changes</div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$border\(w\(1px\,2px\,3px\,4px\)\,s\(solid\,dashed\,dotted\,double\)\) {
@@ -6749,7 +6749,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$border\(1px\) {
@@ -6788,7 +6788,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     ">Multiple direct border declarations</div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$border\(solid\,1px\) {
@@ -6818,7 +6818,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
@@ -6858,7 +6858,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
     </main>
     <style>
-      @layer container, items;
+      @layer items, container;
 
       @layer container {
         .\$boxShadow\(10px\,5px\,5px\,2px\,\#5c6bc0\) {
@@ -6876,7 +6876,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     </div>
     </main>
     <style>
-      @layer container, items;
+      @layer items, container;
 
       @layer container {
         .\$boxShadow\(0\,1rem\,\.25rem\,\#3f51b5\)\$boxShadow\(0\,\.5rem\,\.5rem\,blue\) {
@@ -6895,7 +6895,7 @@ $stickyFooterFooter = $grid(column(1 / 3))$grid(row(3 / 4))$padding(1rem)$bg(neu
     <div class="$boxShadow(inset,0,2px,4px,0,rgba(0,0,0,0.6))">Inset</div>
   </main>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$flex\(gap\(2rem\)\) {

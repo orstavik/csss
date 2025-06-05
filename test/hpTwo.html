@@ -1,7 +1,7 @@
 <test-html title="$unknown(22px)">
   <div class="$unknown(22px)">hello</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$unknown\(22px\) {
@@ -20,7 +20,7 @@
 <test-html title="$grid(unknown(22px))">
   <div class="$grid(unknown(22px))">sunshine</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       .\$grid\(unknown\(22px\)\) {
@@ -47,7 +47,7 @@
 <test-html title="@xxl$w(20px)">
   <div class="@xxl$w(20px)">sunshine</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       @media (min-width:1536px) {
@@ -64,7 +64,7 @@
 <test-html title="@xxxl$w(20px)">
   <div class="@xxxl$w(20px)">sunshine</div>
   <style>
-    @layer container, items;
+    @layer items, container;
 
     @layer container {
       @media (min-width:2000px) {
