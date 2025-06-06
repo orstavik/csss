@@ -217,8 +217,10 @@ const transitionFunctionSet = (function () {
 //no shorts before this point
 const NativeCssProperties = (function () {
   const style = document.createElement('div').style;
+  const allCSSProps = new Set([...Object.keys(Object.getPrototypeOf(style)), ...Object.getOwnPropertyNames(style)]);
+  const camelCssProps = [...allCSSProps].filter(prop => !prop.includes("-")); //filter out kebab
   const res = {};
-  for (const camel of Object.getOwnPropertyNames(style)) {
+  for (const camel of camelCssProps) {
     res[camel] = (...args) => ({ [camel]: args.join(" ") });
     Object.defineProperty(res[camel], "name", { value: camel });
     res[camel].scope = {};
