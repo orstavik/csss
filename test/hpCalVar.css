@@ -1,0 +1,210 @@
+    /*$bg(--color_my)*/
+    @layer container {
+      .\$bg\(--color_my\) {
+        background-image: linear-gradient(var(--color_my));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+    
+    /*$bg((--color_undefined,--color_primary))*/
+    @layer container {
+      .\$bg\(\(--color_undefined\,--color_primary\)\) {
+        background-image: linear-gradient(var(--color_undefined, var(--color_primary)));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+    
+    /*$width(100px+20px)*/
+    @layer container {
+      .\$width\(100px\+20px\) {
+        inline-size: calc(120px);
+      }
+    }
+    
+    /*$width(100%-20px)*/
+    @layer container {
+      .\$width\(100\%-20px\) {
+        inline-size: calc(100% - 20px);
+      }
+    }
+    
+    /*$height(2rem+1em)*/
+    @layer container {
+      .\$height\(2rem\+1em\) {
+        block-size: calc(1em + 2rem);
+      }
+    }
+    
+    /*$margin(10px+5px*2)*/
+    @layer container {
+      .\$margin\(10px\+5px\*2\) {
+        margin: calc(20px);
+      }
+    }
+    
+    /*$padding(1rem+2px/2)*/
+    @layer container {
+      .\$padding\(1rem\+2px\/2\) {
+        padding: calc(1px + 1rem);
+      }
+    }
+    
+    /*$width((100px+5vw)*2)*/
+    @layer container {
+      .\$width\(\(100px\+5vw\)\*2\) {
+        inline-size: calc(200px + 10vw);
+      }
+    }
+    
+    /*$height(3rem*(1+0.5))*/
+    @layer container {
+      .\$height\(3rem\*\(1\+0\.5\)\) {
+        block-size: calc(4.5rem);
+      }
+    }
+    
+    /*$width(--base-size*2)*/
+    @layer container {
+      .\$width\(--base-size\*2\) {
+        inline-size: calc(var(--base-size) * 2);
+      }
+    }
+    
+    /*$height(--base-size+10px)*/
+    @layer container {
+      .\$height\(--base-size\+10px\) {
+        block-size: calc(var(--base-size) + 10px);
+      }
+    }
+    
+    /*$margin(-10px+20px)*/
+    @layer container {
+      .\$margin\(-10px\+20px\) {
+        margin: calc(10px);
+      }
+    }
+    
+    /*$padding(1rem-5px)*/
+    @layer container {
+      .\$padding\(1rem-5px\) {
+        padding: calc(-5px + 1rem);
+      }
+    }
+    
+    /*$width((100px+50px)*(2-0.5))*/
+    @layer container {
+      .\$width\(\(100px\+50px\)\*\(2-0\.5\)\) {
+        inline-size: calc(225px);
+      }
+    }
+    
+    /*$bg((--color_undefined1,--color_primary,--color_secondary))*/
+    @layer container {
+      .\$bg\(\(--color_undefined1\,--color_primary\,--color_secondary\)\) {
+        background-image: linear-gradient(var(--color_undefined1, var(--color_primary, var(--color_secondary))));
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+    
+    /*$width(1em/--var)*/
+    @layer container {
+      .\$width\(1em\/--var\) {
+        inline-size: calc(1em / var(--var));
+      }
+    }
+    
+    /*$width((1em+20px)*20+40px)*/
+    @layer container {
+      .\$width\(\(1em\+20px\)\*20\+40px\) {
+        inline-size: calc(20em + 440px);
+      }
+    }
+    
+    /*$bg(lightblue)*/
+    @layer container {
+      .\$bg\(lightblue\) {
+        background-image: linear-gradient(lightblue);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+    
+    /*$padding(1rem)*/
+    @layer container {
+      .\$padding\(1rem\) {
+        padding: 1rem;
+      }
+    }
+    
+    /*$margin(2px+5px*(--var/3.5))*/
+    @layer container {
+      .\$margin\(2px\+5px\*\(--var\/3\.5\)\) {
+        margin: calc(2px + 5px * (var(--var) / 3.5));
+      }
+    }
+    
+    /*$border(solid,1px)*/
+    @layer container {
+      .\$border\(solid\,1px\) {
+        border-style: solid;
+        border-width: 1px;
+      }
+    }
+    
+    /*$w(min(2px+1em,10%))*/
+    @layer container {
+      .\$w\(min\(2px\+1em\,10\%\)\) {
+        inline-size: min(1em + 2px, 10%);
+      }
+    }
+    
+    /*$h(max(2px+1em,10%,3vw))*/
+    @layer container {
+      .\$h\(max\(2px\+1em\,10\%\,3vw\)\) {
+        block-size: max(1em + 2px, 10%, 3vw);
+      }
+    }
+    
+    /*$em(clamp(10%,2px+1em,20%))*/
+    @layer container {
+      .\$em\(clamp\(10\%\,2px\+1em\,20\%\)\) {
+        font-size: clamp(10%, 1em + 2px, 20%);
+      }
+    }
+    
+    /*$w(---safe-area-inset-top)*/
+    @layer container {
+      .\$w\(---safe-area-inset-top\) {
+        inline-size: env(safe-area-inset-top);
+      }
+    }
+    
+    /*$h(---safe-area-inset-top*2)*/
+    @layer container {
+      .\$h\(---safe-area-inset-top\*2\) {
+        block-size: calc(env(safe-area-inset-top) * 2);
+      }
+    }
