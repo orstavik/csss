@@ -28,6 +28,9 @@ export class Rule {
       key = `${media} { ${selector}`;
     }
     return { rule, key, item };
+    //todo return a string, not an object.
+    // const layer = "@layer " + (item ? "items" : "container");
+    // return [selector, media, layer].filter(Boolean).reduce((acc, part) => `${part}{${acc}}`, body);
   }
 }
 
