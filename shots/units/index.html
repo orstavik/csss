@@ -7,19 +7,20 @@
   }
 
   function splitMd(txt) {
-    const entry = txt.split(/(?:^|\n)\*\*([a-z]+):\*\*/).slice(1);
+    const entry = txt.split(/(?:^|\n)\*\*([a-z]+):\*\*/i).slice(1);
     const res = [];
     for (let i = 0, j = 1, now; j < entry.length; i += 2, j += 2) {
-      const key = entry[i].trim();
-      const value = entry[j].trim();
+      const key = entry[i];
+      const body = entry[j].trim();
       if (!now || key in now)
         res.push(now = {});
-      now[key] = value;
+      const [, type, value] = body.match(/^```([a-z]+)\s*(.*?)\s*```$/mis) ?? [, "txt", body];
+      now[key] = { type, value };
     }
     return res;
   }
 
-  import { parseCssShorts } from "../src/engine1.js";
+  import { parseCssShorts } from "/src/engine1.js";
   import { diff } from "https://cdn.jsdelivr.net/gh/orstavik/making-a@25.07.20.08/difference.js";
   // if (!location.hash) location.hash = "hpSupers";
   if (!location.hash) location.hash = "hpBorder,hpLayout,hpCalVar,hpBg,hpOne,hpOne2,hpTwo";
@@ -27,20 +28,20 @@
   for (let file of paths) {
     console.info(`Testing ${file}`);
     const txt = await (await fetch(file)).text();
-    for (let { css, csss } of splitMd(txt)) {
-      css = normalize(css.slice(7, -4));
-      const actual = normalize(parseCssShorts(csss).full);
+    for (let { csss, css } of splitMd(txt)) {
+      css = normalize(css.value)//.slice(7, -4));
+      const actual = normalize(parseCssShorts(csss.value).full);
       if (actual == css) {
-        // console.log(`✅ ${csss}`);
+        // console.log(`✅ ${csss.value}`);
         continue;
       }
       const d = diff(css, actual);
       const noMatch = d.find(({ type, a, b }) => type != "match" && (a.trim() || b.trim()))
       if (!noMatch) {
-        console.log(`🟦 ${csss}`);
+        console.log(`🟦 ${csss.value}`);
       } else {
         // debugger;
-        console.log(`❌ ${csss}`);
+        console.log(`❌ ${csss.value}`);
         console.log("expected:", css);
         console.log("actual:", actual);
         console.log(`noMatch:`, noMatch);

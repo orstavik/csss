@@ -598,6 +598,7 @@
     padding: 0.5rem 1rem;
   }
 }
+```
 
 **csss:** :hover$border(solid,2px,r(0.5rem))
 **css:**
@@ -619,6 +620,7 @@
     padding: 1rem;
   }
 }
+```
 
 **csss:** :hover$border(dashed,3px,r(1rem))
 **css:**
@@ -669,6 +671,7 @@
     padding: 1rem;
   }
 }
+```
 
 **csss:** |*$border(r(25%))$padding(1rem)
 **css:**
@@ -694,6 +697,7 @@
     border-inline-style: dashed double;
   }
 }
+```
 
 **csss:** :hover$border(w(4px,3px,2px,1px),s(double,dotted,dashed,solid))
 **css:**
@@ -718,6 +722,7 @@
     border-width: 1px;
   }
 }
+```
 
 **csss:** |*$border(dotted,2px,r(2rem))
 **css:**
@@ -728,8 +733,8 @@
     border-width: 2px;
     border-radius: 2rem;
   }
-
 }
+```
 
 **csss:** |.special$border(dashed,3px,r(3rem))
 **css:**
@@ -741,6 +746,7 @@
     border-radius: 3rem;
   }
 }
+```
 
 **csss:** |.super$border(double,4px,r(4rem))
 **css:**
@@ -912,3 +918,4 @@
     box-shadow: rgba(0, 0, 0, 0.6) 0px 2px 4px 0px inset;
   }
 }
+```
