@@ -1,6 +1,5 @@
 export class Rule {
-  static interpret(exp, registries, renames) {
-    const { shorts: scope, medias: MEDIA_WORDS } = registries;
+  static interpret(exp, scope, MEDIA_WORDS, renames) {
     const clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
     const { str, media } = parseMediaQuery(exp, MEDIA_WORDS);
     exp = str;
@@ -28,8 +27,16 @@ export class Rule {
       key = `${media} { ${selector}`;
     }
     const layer = "@layer " + (item ? "items" : "container");
-    const full = [selector, media, layer].filter(Boolean).reduce((acc, part) => `${part}{${acc}}`, body);
+    const full = [selector, media, layer].filter(Boolean).reduce((acc, part) => `${part} {\n ${acc}\n}`, body);
     return { rule, key, item, full };
+  }
+  extractShort(rule) {
+    if (r instanceof CSSLayerBlockRule) r = r.cssRules[0];
+    if (r instanceof CSSMediaRule) r = r.cssRules[0];
+    if (!r) return;
+    const selectorText = r.selectorText;
+    debugger
+    return selectorText;
   }
 }
 

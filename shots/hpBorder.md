@@ -1,11 +1,16 @@
-/*$border*/
+**csss:** $border
+**css:**
+```css
 @layer container {
   .\$border {
     border-style: solid;
   }
 }
+```
 
-/*$grid(cols(1fr,1fr,1fr,1fr),gap(1rem))*/
+**csss:** $grid(cols(1fr,1fr,1fr,1fr),gap(1rem))
+**css:**
+```css
 @layer container {
   .\$grid\(cols\(1fr\,1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
     display: grid;
@@ -19,43 +24,61 @@
     gap: 1rem;
   }
 }
+```
 
-/*$border*/
+**csss:** $border
+**css:**
+```css
 @layer container {
   .\$border {
     border-style: solid;
   }
 }
+```
 
-/*$padding(1rem)*/
+**csss:** $padding(1rem)
+**css:**
+```css
 @layer container {
   .\$padding\(1rem\) {
     padding: 1rem;
   }
 }
+```
 
-/*$border(dashed)*/
+**csss:** $border(dashed)
+**css:**
+```css
 @layer container {
   .\$border\(dashed\) {
     border-style: dashed;
   }
 }
+```
 
-/*$border(dotted)*/
+**csss:** $border(dotted)
+**css:**
+```css
 @layer container {
   .\$border\(dotted\) {
     border-style: dotted;
   }
 }
+```
 
-/*$border(double)*/
+**csss:** $border(double)
+**css:**
+```css
 @layer container {
   .\$border\(double\) {
     border-style: double;
   }
 }
+```
 
-/*$grid(cols(1fr,1fr,1fr),gap(1rem))*/
+**csss:** $grid(cols(1fr,1fr,1fr),gap(1rem))
+**css:**
+```css
 @layer container {
   .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
     display: grid;
@@ -69,63 +92,87 @@
     gap: 1rem;
   }
 }
+```
 
-/*$border(solid,thin)*/
+**csss:** $border(solid,thin)
+**css:**
+```css
 @layer container {
   .\$border\(solid\,thin\) {
     border-style: solid;
     border-width: thin;
   }
 }
+```
 
-/*$padding(1rem)*/
+**csss:** $padding(1rem)
+**css:**
+```css
 @layer container {
   .\$padding\(1rem\) {
     padding: 1rem;
   }
 }
+```
 
-/*$border(solid,medium)*/
+**csss:** $border(solid,medium)
+**css:**
+```css
 @layer container {
   .\$border\(solid\,medium\) {
     border-style: solid;
     border-width: medium;
   }
 }
+```
 
-/*$border(solid,thick)*/
+**csss:** $border(solid,thick)
+**css:**
+```css
 @layer container {
   .\$border\(solid\,thick\) {
     border-style: solid;
     border-width: thick;
   }
 }
+```
 
-/*$border(solid,1px)*/
+**csss:** $border(solid,1px)
+**css:**
+```css
 @layer container {
   .\$border\(solid\,1px\) {
     border-style: solid;
     border-width: 1px;
   }
 }
+```
 
-/*$border(solid,0.25rem)*/
+**csss:** $border(solid,0.25rem)
+**css:**
+```css
 @layer container {
   .\$border\(solid\,0\.25rem\) {
     border-style: solid;
     border-width: 0.25rem;
   }
 }
+```
 
-/*$border(solid,5px)*/
+**csss:** $border(solid,5px)
+**css:**
+```css
 @layer container {
   .\$border\(solid\,5px\) {
     border-style: solid;
     border-width: 5px;
   }
 }
+```
 
-/*$border(w(1em,2px,3cm,4rem))*/
+**csss:** $border(w(1em,2px,3cm,4rem))
+**css:**
+```css
 @layer container {
   .\$border\(w\(1em\,2px\,3cm\,4rem\)\) {
     border-style: solid;
@@ -133,8 +180,11 @@
     border-inline-width: 2px 4rem;
   }
 }
+```
 
-/*$grid(cols(1fr,1fr,1fr),gap(1rem))*/
+**csss:** $grid(cols(1fr,1fr,1fr),gap(1rem))
+**css:**
+```css
 @layer container {
   .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
     display: grid;
@@ -148,8 +198,11 @@
     gap: 1rem;
   }
 }
+```
 
-/*$border(solid,2px,radius(0.25rem))*/
+**csss:** $border(solid,2px,radius(0.25rem))
+**css:**
+```css
 @layer container {
   .\$border\(solid\,2px\,radius\(0\.25rem\)\) {
     border-style: solid;
@@ -157,15 +210,21 @@
     border-radius: 0.25rem;
   }
 }
+```
 
-/*$padding(1rem)*/
+**csss:** $padding(1rem)
+**css:**
+```css
 @layer container {
   .\$padding\(1rem\) {
     padding: 1rem;
   }
 }
+```
 
-/*$border(solid,2px,radius(1rem))*/
+**csss:** $border(solid,2px,radius(1rem))
+**css:**
+```css
 @layer container {
   .\$border\(solid\,2px\,radius\(1rem\)\) {
     border-style: solid;
@@ -173,8 +232,11 @@
     border-radius: 1rem;
   }
 }
+```
 
-/*$border(solid,2px,radius(50%))*/
+**csss:** $border(solid,2px,radius(50%))
+**css:**
+```css
 @layer container {
   .\$border\(solid\,2px\,radius\(50\%\)\) {
     border-style: solid;
@@ -182,8 +244,11 @@
     border-radius: 50%;
   }
 }
+```
 
-/*$border(solid,2px,r(10px,20px,30px,40px))*/
+**csss:** $border(solid,2px,r(10px,20px,30px,40px))
+**css:**
+```css
 @layer container {
   .\$border\(solid\,2px\,r\(10px\,20px\,30px\,40px\)\) {
     border-style: solid;
@@ -194,8 +259,11 @@
     border-end-start-radius: 40px;
   }
 }
+```
 
-/*$border(solid,2px,r(50%,10%,50%,10%))*/
+**csss:** $border(solid,2px,r(50%,10%,50%,10%))
+**css:**
+```css
 @layer container {
   .\$border\(solid\,2px\,r\(50\%\,10\%\,50\%\,10\%\)\) {
     border-style: solid;
@@ -206,8 +274,11 @@
     border-end-start-radius: 10%;
   }
 }
+```
 
-/*$border(solid,2px,r(1px,99%,2px,98%))*/
+**csss:** $border(solid,2px,r(1px,99%,2px,98%))
+**css:**
+```css
 @layer container {
   .\$border\(solid\,2px\,r\(1px\,99\%\,2px\,98\%\)\) {
     border-style: solid;
@@ -218,8 +289,11 @@
     border-end-start-radius: 98%;
   }
 }
+```
 
-/*$border(solid,2px,r(1em,2vh,3%,4px))*/
+**csss:** $border(solid,2px,r(1em,2vh,3%,4px))
+**css:**
+```css
 @layer container {
   .\$border\(solid\,2px\,r\(1em\,2vh\,3\%\,4px\)\) {
     border-style: solid;
@@ -230,8 +304,11 @@
     border-end-start-radius: 4px;
   }
 }
+```
 
-/*$grid(cols(1fr,1fr,1fr),gap(1rem))*/
+**csss:** $grid(cols(1fr,1fr,1fr),gap(1rem))
+**css:**
+```css
 @layer container {
   .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
     display: grid;
@@ -245,51 +322,72 @@
     gap: 1rem;
   }
 }
+```
 
-/*$border(solid,2px)*/
+**csss:** $border(solid,2px)
+**css:**
+```css
 @layer container {
   .\$border\(solid\,2px\) {
     border-style: solid;
     border-width: 2px;
   }
 }
+```
 
-/*$borderColor(red)*/
+**csss:** $borderColor(red)
+**css:**
+```css
 @layer container {
   .\$borderColor\(red\) {
     border-color: red;
   }
 }
+```
 
-/*$padding(1rem)*/
+**csss:** $padding(1rem)
+**css:**
+```css
 @layer container {
   .\$padding\(1rem\) {
     padding: 1rem;
   }
 }
+```
 
-/*$borderColor(blue)*/
+**csss:** $borderColor(blue)
+**css:**
+```css
 @layer container {
   .\$borderColor\(blue\) {
     border-color: blue;
   }
 }
+```
 
-/*$borderColor(#00ff00)*/
+**csss:** $borderColor(#00ff00)
+**css:**
+```css
 @layer container {
   .\$borderColor\(\#00ff00\) {
     border-color: rgb(0, 255, 0);
   }
 }
+```
 
-/*$borderColor(rgba(128,0,128,0.5))*/
+**csss:** $borderColor(rgba(128,0,128,0.5))
+**css:**
+```css
 @layer container {
   .\$borderColor\(rgba\(128\,0\,128\,0\.5\)\) {
     border-color: rgba(128, 0, 128, 0.5);
   }
 }
+```
 
-/*$grid(cols(1fr,1fr),gap(1rem))*/
+**csss:** $grid(cols(1fr,1fr),gap(1rem))
+**css:**
+```css
 @layer container {
   .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
     display: grid;
@@ -303,8 +401,11 @@
     gap: 1rem;
   }
 }
+```
 
-/*$border(w(1px,2px,3px,4px),s(solid,dashed,dotted,double))*/
+**csss:** $border(w(1px,2px,3px,4px),s(solid,dashed,dotted,double))
+**css:**
+```css
 @layer container {
   .\$border\(w\(1px\,2px\,3px\,4px\)\,s\(solid\,dashed\,dotted\,double\)\) {
     border-style: solid;
@@ -314,15 +415,21 @@
     border-inline-style: dashed double;
   }
 }
+```
 
-/*$padding(1rem)*/
+**csss:** $padding(1rem)
+**css:**
+```css
 @layer container {
   .\$padding\(1rem\) {
     padding: 1rem;
   }
 }
+```
 
-/*$border(w(.,2px,.,4px),s(.,solid,.,dotted))*/
+**csss:** $border(w(.,2px,.,4px),s(.,solid,.,dotted))
+**css:**
+```css
 @layer container {
   .\$border\(w\(\.\,2px\,\.\,4px\)\,s\(\.\,solid\,\.\,dotted\)\) {
     border-style: solid;
@@ -332,8 +439,11 @@
     border-inline-style: solid dotted;
   }
 }
+```
 
-/*$border(w(0,3px,0,3px))*/
+**csss:** $border(w(0,3px,0,3px))
+**css:**
+```css
 @layer container {
   .\$border\(w\(0\,3px\,0\,3px\)\) {
     border-style: solid;
@@ -341,8 +451,11 @@
     border-inline-width: 3px;
   }
 }
+```
 
-/*$border(w(3px,0,3px,0))*/
+**csss:** $border(w(3px,0,3px,0))
+**css:**
+```css
 @layer container {
   .\$border\(w\(3px\,0\,3px\,0\)\) {
     border-style: solid;
@@ -350,8 +463,11 @@
     border-inline-width: 0px;
   }
 }
+```
 
-/*$grid(cols(1fr,1fr,1fr),gap(1rem))*/
+**csss:** $grid(cols(1fr,1fr,1fr),gap(1rem))
+**css:**
+```css
 @layer container {
   .\$grid\(cols\(1fr\,1fr\,1fr\)\,gap\(1rem\)\) {
     display: grid;
@@ -365,30 +481,42 @@
     gap: 1rem;
   }
 }
+```
 
-/*$border(0)*/
+**csss:** $border(0)
+**css:**
+```css
 @layer container {
   .\$border\(0\) {
     border-style: solid;
     border-width: 0px;
   }
 }
+```
 
-/*$padding(1rem)*/
+**csss:** $padding(1rem)
+**css:**
+```css
 @layer container {
   .\$padding\(1rem\) {
     padding: 1rem;
   }
 }
+```
 
-/*$border(none)*/
+**csss:** $border(none)
+**css:**
+```css
 @layer container {
   .\$border\(none\) {
     border-style: none;
   }
 }
+```
 
-/*$border(solid,2px,r(0))*/
+**csss:** $border(solid,2px,r(0))
+**css:**
+```css
 @layer container {
   .\$border\(solid\,2px\,r\(0\)\) {
     border-style: solid;
@@ -396,8 +524,11 @@
     border-radius: 0px;
   }
 }
+```
 
-/*$border(w(0,1px,2px,),s(.,.,solid,dashed))*/
+**csss:** $border(w(0,1px,2px,),s(.,.,solid,dashed))
+**css:**
+```css
 @layer container {
   .\$border\(w\(0\,1px\,2px\,\)\,s\(\.\,\.\,solid\,dashed\)\) {
     border-style: solid;
@@ -409,24 +540,33 @@
     border-inline-end-style: dashed;
   }
 }
+```
 
-/*$border(solid,0.0001px)*/
+**csss:** $border(solid,0.0001px)
+**css:**
+```css
 @layer container {
   .\$border\(solid\,0\.0001px\) {
     border-style: solid;
     border-width: 0.0001px;
   }
 }
+```
 
-/*$border(solid,99px)*/
+**csss:** $border(solid,99px)
+**css:**
+```css
 @layer container {
   .\$border\(solid\,99px\) {
     border-style: solid;
     border-width: 99px;
   }
 }
+```
 
-/*$block(g(1rem))*/
+**csss:** $block(g(1rem))
+**css:**
+```css
 @layer container {
   .\$block\(g\(1rem\)\) {
     display: block;
@@ -437,23 +577,31 @@
     text-indent: unset;
   }
 }
+```
 
-/*$border(solid,1px)*/
+**csss:** $border(solid,1px)
+**css:**
+```css
 @layer container {
   .\$border\(solid\,1px\) {
     border-style: solid;
     border-width: 1px;
   }
 }
+```
 
-/*$padding(0.5rem,1rem)*/
+**csss:** $padding(0.5rem,1rem)
+**css:**
+```css
 @layer container {
   .\$padding\(0\.5rem\,1rem\) {
     padding: 0.5rem 1rem;
   }
 }
 
-/*:hover$border(solid,2px,r(0.5rem))*/
+**csss:** :hover$border(solid,2px,r(0.5rem))
+**css:**
+```css
 @layer container {
   .\:hover\$border\(solid\,2px\,r\(0\.5rem\)\):where(:hover) {
     border-style: solid;
@@ -461,15 +609,20 @@
     border-radius: 0.5rem;
   }
 }
+```
 
-/*$padding(1rem)*/
+**csss:** $padding(1rem)
+**css:**
+```css
 @layer container {
   .\$padding\(1rem\) {
     padding: 1rem;
   }
 }
 
-/*:hover$border(dashed,3px,r(1rem))*/
+**csss:** :hover$border(dashed,3px,r(1rem))
+**css:**
+```css
 @layer container {
   .\:hover\$border\(dashed\,3px\,r\(1rem\)\):where(:hover) {
     border-style: dashed;
@@ -477,8 +630,11 @@
     border-radius: 1rem;
   }
 }
+```
 
-/*$grid(cols(1fr,1fr),gap(1rem))*/
+**csss:** $grid(cols(1fr,1fr),gap(1rem))
+**css:**
+```css
 @layer container {
   .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
     display: grid;
@@ -492,23 +648,31 @@
     gap: 1rem;
   }
 }
+```
 
-/*$border(solid,w(1px+1em))*/
+**csss:** $border(solid,w(1px+1em))
+**css:**
+```css
 @layer container {
   .\$border\(solid\,w\(1px\+1em\)\) {
     border-style: solid;
     border-width: calc(1em + 1px);
   }
 }
+```
 
-/*$padding(1rem)*/
+**csss:** $padding(1rem)
+**css:**
+```css
 @layer container {
   .\$padding\(1rem\) {
     padding: 1rem;
   }
 }
 
-/*|*$border(r(25%))$padding(1rem)*/
+**csss:** |*$border(r(25%))$padding(1rem)
+**css:**
+```css
 @layer items {
   .\|\*\$border\(r\(25\%\)\)\$padding\(1rem\)>* {
     border-style: solid;
@@ -516,8 +680,11 @@
     padding: 1rem;
   }
 }
+```
 
-/*$border(w(1px,2px,3px,4px),s(solid,dashed,dotted,double))*/
+**csss:** $border(w(1px,2px,3px,4px),s(solid,dashed,dotted,double))
+**css:**
+```css
 @layer container {
   .\$border\(w\(1px\,2px\,3px\,4px\)\,s\(solid\,dashed\,dotted\,double\)\) {
     border-style: solid;
@@ -528,7 +695,9 @@
   }
 }
 
-/*:hover$border(w(4px,3px,2px,1px),s(double,dotted,dashed,solid))*/
+**csss:** :hover$border(w(4px,3px,2px,1px),s(double,dotted,dashed,solid))
+**css:**
+```css
 @layer container {
   .\:hover\$border\(w\(4px\,3px\,2px\,1px\)\,s\(double\,dotted\,dashed\,solid\)\):where(:hover) {
     border-style: solid;
@@ -538,8 +707,11 @@
     border-inline-style: dotted solid;
   }
 }
+```
 
-/*$border(1px)*/
+**csss:** $border(1px)
+**css:**
+```css
 @layer container {
   .\$border\(1px\) {
     border-style: solid;
@@ -547,7 +719,9 @@
   }
 }
 
-/*|*$border(dotted,2px,r(2rem))*/
+**csss:** |*$border(dotted,2px,r(2rem))
+**css:**
+```css
 @layer items {
   .\|\*\$border\(dotted\,2px\,r\(2rem\)\)>* {
     border-style: dotted;
@@ -557,7 +731,9 @@
 
 }
 
-/*|.special$border(dashed,3px,r(3rem))*/
+**csss:** |.special$border(dashed,3px,r(3rem))
+**css:**
+```css
 @layer items {
   .\|\.special\$border\(dashed\,3px\,r\(3rem\)\)> :where(.special) {
     border-style: dashed;
@@ -566,7 +742,9 @@
   }
 }
 
-/*|.super$border(double,4px,r(4rem))*/
+**csss:** |.super$border(double,4px,r(4rem))
+**css:**
+```css
 @layer items {
   .\|\.super\$border\(double\,4px\,r\(4rem\)\)> :where(.super) {
     border-style: double;
@@ -574,32 +752,44 @@
     border-radius: 4rem;
   }
 }
+```
 
-/*$border(solid,1px)*/
+**csss:** $border(solid,1px)
+**css:**
+```css
 @layer container {
   .\$border\(solid\,1px\) {
     border-style: solid;
     border-width: 1px;
   }
 }
+```
 
-/*$border(dotted,2px)*/
+**csss:** $border(dotted,2px)
+**css:**
+```css
 @layer container {
   .\$border\(dotted\,2px\) {
     border-style: dotted;
     border-width: 2px;
   }
 }
+```
 
-/*$border(dashed,3px)*/
+**csss:** $border(dashed,3px)
+**css:**
+```css
 @layer container {
   .\$border\(dashed\,3px\) {
     border-style: dashed;
     border-width: 3px;
   }
 }
+```
 
-/*$grid(cols(1fr,1fr),gap(1rem))*/
+**csss:** $grid(cols(1fr,1fr),gap(1rem))
+**css:**
+```css
 @layer container {
   .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
     display: grid;
@@ -613,45 +803,63 @@
     gap: 1rem;
   }
 }
+```
 
-/*$border(solid,w(--border-width))*/
+**csss:** $border(solid,w(--border-width))
+**css:**
+```css
 @layer container {
   .\$border\(solid\,w\(--border-width\)\) {
     border-style: solid;
     border-width: var(--border-width);
   }
 }
+```
 
-/*$padding(1rem)*/
+**csss:** $padding(1rem)
+**css:**
+```css
 @layer container {
   .\$padding\(1rem\) {
     padding: 1rem;
   }
 }
+```
 
-/*$border(solid,w(1px+2px))*/
+**csss:** $border(solid,w(1px+2px))
+**css:**
+```css
 @layer container {
   .\$border\(solid\,w\(1px\+2px\)\) {
     border-style: solid;
     border-width: calc(3px);
   }
 }
+```
 
-/*$boxShadow(10px,5px,5px,2px,#5c6bc0)*/
+**csss:** $boxShadow(10px,5px,5px,2px,#5c6bc0)
+**css:**
+```css
 @layer container {
   .\$boxShadow\(10px\,5px\,5px\,2px\,\#5c6bc0\) {
     box-shadow: rgb(92, 107, 192) 10px 5px 5px 2px;
   }
 }
+```
 
-/*$boxShadow(0,1rem,.25rem,#3f51b5)$boxShadow(0,.5rem,.5rem,blue)*/
+**csss:** $boxShadow(0,1rem,.25rem,#3f51b5)$boxShadow(0,.5rem,.5rem,blue)
+**css:**
+```css
 @layer container {
   .\$boxShadow\(0\,1rem\,\.25rem\,\#3f51b5\)\$boxShadow\(0\,\.5rem\,\.5rem\,blue\) {
     box-shadow: rgb(63, 81, 181) 0px 1rem 0.25rem, blue 0px 0.5rem 0.5rem;
   }
 }
+```
 
-/*$flex(gap(2rem))*/
+**csss:** $flex(gap(2rem))
+**css:**
+```css
 @layer container {
   .\$flex\(gap\(2rem\)\) {
     display: flex;
@@ -664,29 +872,41 @@
     gap: 2rem;
   }
 }
+```
 
-/*$boxShadow(0,.125rem,.25rem,rgba(0,0,0,.175))*/
+**csss:** $boxShadow(0,.125rem,.25rem,rgba(0,0,0,.175))
+**css:**
+```css
 @layer container {
   .\$boxShadow\(0\,\.125rem\,\.25rem\,rgba\(0\,0\,0\,\.175\)\) {
     box-shadow: rgba(0, 0, 0, 0.176) 0px 0.125rem 0.25rem;
   }
 }
+```
 
-/*$boxShadow(0,.5rem,1rem,rgba(0,0,0,0.15))*/
+**csss:** $boxShadow(0,.5rem,1rem,rgba(0,0,0,0.15))
+**css:**
+```css
 @layer container {
   .\$boxShadow\(0\,\.5rem\,1rem\,rgba\(0\,0\,0\,0\.15\)\) {
     box-shadow: rgba(0, 0, 0, 0.15) 0px 0.5rem 1rem;
   }
 }
+```
 
-/*$boxShadow(0,1rem,3rem,rgba(0,0,0,0.175))*/
+**csss:** $boxShadow(0,1rem,3rem,rgba(0,0,0,0.175))
+**css:**
+```css
 @layer container {
   .\$boxShadow\(0\,1rem\,3rem\,rgba\(0\,0\,0\,0\.175\)\) {
     box-shadow: rgba(0, 0, 0, 0.176) 0px 1rem 3rem;
   }
 }
+```
 
-/*$boxShadow(inset,0,2px,4px,0,rgba(0,0,0,0.6))*/
+**csss:** $boxShadow(inset,0,2px,4px,0,rgba(0,0,0,0.6))
+**css:**
+```css
 @layer container {
   .\$boxShadow\(inset\,0\,2px\,4px\,0\,rgba\(0\,0\,0\,0\.6\)\) {
     box-shadow: rgba(0, 0, 0, 0.6) 0px 2px 4px 0px inset;
