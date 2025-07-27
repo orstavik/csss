@@ -99,8 +99,6 @@ const SHORTS = {
 };
 
 const parseCssShorts = (str) => Rule.interpret(str, SHORTS, MEDIA_WORDS, RENAME);
-// const registerShort = (name, func) => upgrades.registerShort(name, func);
-// const registerMedia = (name, txt) => upgrades.registerMedia(name, txt);
 
 class SheetWrapper {
   #array = null;

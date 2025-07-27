@@ -31,7 +31,7 @@
       css = normalize(css.slice(7, -4));
       const actual = normalize(parseCssShorts(csss).full);
       if (actual == css) {
-        console.log(`✅ ${csss}`);
+        // console.log(`✅ ${csss}`);
         continue;
       }
       const d = diff(actual, css);

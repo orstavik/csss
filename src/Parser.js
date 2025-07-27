@@ -11,7 +11,8 @@ export class Rule {
     const { str, media } = parseMediaQuery(exp1, MEDIA_WORDS);
     const exp = str;
     let [sel, ...exprList] = exp?.split("$");
-    exprList = exprList.map(s => parseNestedExpression(s));
+    exprList = exprList.filter(Boolean);
+    exprList = exprList.map(parseNestedExpression);
     exprList = exprList.map(s => s.interpret(scope));
     exprList &&= clashOrStack(exprList);
     let { selector, item } = parseSelectorPipe(sel);
@@ -38,13 +39,16 @@ export class Rule {
     return { rule, key, item, full };
   }
 
-  extractShort(r) {
-    if (r instanceof CSSLayerBlockRule) r = r.cssRules[0];
-    if (r instanceof CSSMediaRule) r = r.cssRules[0];
+  extractLongestCssClass(r) {
+    while (r?.cssRules)
+      r = r.cssRules[0];
+    r = r?.selectorText;
     if (!r) return;
-    const selectorText = r.selectorText;
-    debugger
-    return selectorText;
+    let res;
+    for (let clz of r.matchAll(/\.((\\.|[a-zA-Z0-9_-])+)/g) ?? [])
+      if (!res || res.length < clz[1].length)
+        res = clz[1];
+    return res?.replaceAll("\\", "");
   }
 }
 
