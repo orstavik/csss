@@ -1,0 +1,28 @@
+<script type="module">
+  import { parseCssShorts, SheetWrapper } from "/src/engine1.js";
+  import runTests from "/shots/mdTester.js";
+
+  document.head.append(document.createElement('template'));
+  const template = document.head.lastElementChild;
+
+
+  async function test({ htmlx, html }) {
+    htmlx = htmlx.value;
+    const expected = html.value;
+    template.innerHTML = htmlx;
+    const sheetWrapper = new SheetWrapper();
+    for (let el of template.content.querySelectorAll('[class*="$"]'))
+      sheetWrapper.checkClassList(el.classList);
+    await sheetWrapper.cleanup(template.content);
+    const actual = sheetWrapper.styleEl.outerHTML + "\n" + template.innerHTML;
+
+    return {
+      key: htmlx.slice(0, 33),
+      actual,
+      expected,
+      type: "html"
+    };
+  }
+
+  runTests("border", test);
+</script>
