@@ -1,7 +1,7 @@
 **csss:** $flex(ellipsis)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$flex\(ellipsis\) {
     display: flex;
     word-spacing: unset;
@@ -18,7 +18,7 @@
 **csss:** $flex(gap(1rem),visible:auto,padding(1rem))$w(80%)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\) {
     display: flex;
     word-spacing: unset;
@@ -52,7 +52,7 @@
 **csss:** $cursor(pointer)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$cursor\(pointer\) {
     cursor: pointer;
   }
@@ -62,7 +62,7 @@
 **csss:** $cursor(ew-resize)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$cursor\(ew-resize\) {
     cursor: ew-resize;
   }
@@ -72,7 +72,7 @@
 **csss:** $translate(10px)$rotate(45deg)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$translate\(10px\)\$rotate\(45deg\) {
     transform: translate(10px) rotate(45deg);
   }
@@ -82,7 +82,7 @@
 **csss:** $font(helvetica,arial)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$font\(helvetica\,arial\) {
     font-style: unset;
     font-weight: unset;
@@ -98,7 +98,7 @@
 **csss:** $font(times,serif,500,2px,italic)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$font\(times\,serif\,500\,2px\,italic\) {
     font-style: italic;
     font-weight: 500;
@@ -114,7 +114,7 @@
 **csss:** $font(helvetica,arial,'sans-serif',900,capitalize)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$font\(helvetica\,arial\,\'sans-serif\'\,900\,capitalize\) {
     font-style: unset;
     font-weight: 900;
@@ -130,7 +130,7 @@
 **csss:** $font('comic+sans',lucida,'DejaVu+Sans+Mono')
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$font\(\'comic\+sans\'\,lucida\,\'DejaVu\+Sans\+Mono\'\) {
     font-style: unset;
     font-weight: unset;
@@ -146,7 +146,7 @@
 **csss:** $w(100%)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$w\(100\%\) {
     inline-size: 100%;
   }
@@ -156,7 +156,7 @@
 **csss:** $em(15px)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$em\(15px\) {
     font-size: 15px;
   }
@@ -166,7 +166,7 @@
 **csss:** $block(s,gap(0.3em,1em))
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$block\(s\,gap\(0\.3em\,1em\)\) {
     display: block;
     word-spacing: 0.3em;
@@ -182,7 +182,7 @@
 **csss:** |$_block(indent(15%))
 **css:**
 ```css
-@layer items {
+@layer itemsDefault {
   .\|\$_block\(indent\(15\%\)\)>* {
     text-indent: 15%;
   }
@@ -254,7 +254,7 @@
 **csss:** $grid(cols(1fr,1fr),gap(1rem))
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$grid\(cols\(1fr\,1fr\)\,gap\(1rem\)\) {
     display: grid;
     word-spacing: unset;
@@ -272,7 +272,7 @@
 **csss:** $border(solid,w(1px+1em))
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$border\(solid\,w\(1px\+1em\)\) {
     border-style: solid;
     border-width: calc(1em + 1px);
@@ -283,7 +283,7 @@
 **csss:** $padding(1rem)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$padding\(1rem\) {
     padding: 1rem;
   }
@@ -293,7 +293,7 @@
 **csss:** $border(solid,w(--border-width))
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$border\(solid\,w\(--border-width\)\) {
     border-style: solid;
     border-width: var(--border-width);
@@ -304,7 +304,7 @@
 **csss:** $border(solid,w(1px+2px))
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$border\(solid\,w\(1px\+2px\)\) {
     border-style: solid;
     border-width: calc(3px);
@@ -315,7 +315,7 @@
 **csss:** $ultraCondensed
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$ultraCondensed {
     font-stretch: ultra-condensed;
   }
@@ -325,7 +325,7 @@
 **csss:** $lineThrough(3px)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$lineThrough\(3px\) {
     text-decoration-line: line-through;
     text-decoration-thickness: 3px;
@@ -338,7 +338,7 @@
 **csss:** $overLine(2px,#myblue)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$overLine\(2px\,\#myblue\) {
     text-decoration-line: overline;
     text-decoration-thickness: 2px;
@@ -351,7 +351,7 @@
 **csss:** $grammarError(2px)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$grammarError\(2px\) {
     text-decoration-line: grammar-error;
     text-decoration-thickness: 2px;
@@ -363,7 +363,7 @@
 **csss:** $overUnderLineThrough(2px)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$overUnderLineThrough\(2px\) {
     text-decoration-line: underline overline line-through;
     text-decoration-thickness: 2px;
@@ -376,7 +376,7 @@
 **csss:** $wavyOverUnderLineThrough(2px)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$wavyOverUnderLineThrough\(2px\) {
     text-decoration-line: underline overline line-through;
     text-decoration-thickness: 2px;
@@ -389,7 +389,7 @@
 **csss:** $dottedUnderLine(2px)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$dottedUnderLine\(2px\) {
     text-decoration-line: underline;
     text-decoration-thickness: 2px;
@@ -402,7 +402,7 @@
 **csss:** $dashedOverUnderLineThrough(2px)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$dashedOverUnderLineThrough\(2px\) {
     text-decoration-line: underline overline line-through;
     text-decoration-thickness: 2px;
@@ -415,7 +415,7 @@
 **csss:** $doubleOverLine(2px)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$doubleOverLine\(2px\) {
     text-decoration-line: overline;
     text-decoration-thickness: 2px;
@@ -428,7 +428,7 @@
 **csss:** $textDecoration(none)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$textDecoration\(none\) {
     text-decoration-line: none;
     text-decoration-thickness: unset;
@@ -441,7 +441,7 @@
 **csss:** $textDecoration(.)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$textDecoration\(\.\) {
     text-decoration-line: unset;
     text-decoration-thickness: unset;
@@ -454,7 +454,7 @@
 **csss:** $lowercase
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$lowercase {
     text-transform: lowercase;
   }
@@ -464,7 +464,7 @@
 **csss:** $uppercase
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$uppercase {
     text-transform: uppercase;
   }
@@ -474,7 +474,7 @@
 **csss:** $lineClamp(2)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$lineClamp\(2\) {
     display: -webkit-box;
     word-spacing: unset;
@@ -493,7 +493,7 @@
 **csss:** $color(#fg)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$color\(\#fg\) {
     color: var(--color_fg);
   }
@@ -503,7 +503,7 @@
 **csss:** $bg(yellow)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$bg\(yellow\) {
     background-image: linear-gradient(yellow);
     background-position: 0% 0%;
@@ -520,7 +520,7 @@
 **csss:** $textAlign(center)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$textAlign\(center\) {
     text-align: center;
   }
@@ -530,7 +530,7 @@
 **csss:** $bg(blue)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$bg\(blue\) {
     background-image: linear-gradient(blue);
     background-position: 0% 0%;
@@ -547,7 +547,7 @@
 **csss:** $color(white)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$color\(white\) {
     color: white;
   }
@@ -557,7 +557,7 @@
 **csss:** $bg(red)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$bg\(red\) {
     background-image: linear-gradient(red);
     background-position: 0% 0%;
@@ -574,7 +574,7 @@
 **csss:** $bg(green)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$bg\(green\) {
     background-image: linear-gradient(green);
     background-position: 0% 0%;
@@ -591,7 +591,7 @@
 **csss:** $block
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$block {
     display: block;
     word-spacing: unset;
@@ -607,7 +607,7 @@
 **csss:** $border
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$border {
     border-style: solid;
   }
@@ -617,7 +617,7 @@
 **csss:** $border(dotted,50px,easeIn(10s))
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$border\(dotted\,50px\,easeIn\(10s\)\) {
     border-style: dotted;
     border-width: 50px;

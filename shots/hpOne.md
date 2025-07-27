@@ -1,7 +1,7 @@
 **csss:** $gradient(primary,#ec1221,white)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$gradient\(primary\,\#ec1221\,white\) {
     --color_primary: #ec1221;
     --color_primary10: color-mix(in oklch, #ec1221 90%, white 10%);
@@ -131,7 +131,7 @@
 **csss:** $color(#primary)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$color\(\#primary\) {
     color: var(--color_primary);
   }
@@ -141,7 +141,7 @@
 **csss:** $border(solid,2px)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$border\(solid\,2px\) {
     border-style: solid;
     border-width: 2px;
@@ -152,7 +152,7 @@
 **csss:** $color(#primary_a20)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$color\(\#primary_a20\) {
     color: var(--color_primary_a20);
   }
@@ -162,7 +162,7 @@
 **csss:** $h(300px)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$h\(300px\) {
     block-size: 300px;
   }
@@ -172,7 +172,7 @@
 **csss:** $w(600px)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$w\(600px\) {
     inline-size: 600px;
   }
@@ -182,7 +182,7 @@
 **csss:** $border(r(10px,30px,60px))
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$border\(r\(10px\,30px\,60px\)\) {
     border-style: solid;
     border-start-start-radius: 10px;
@@ -196,7 +196,7 @@
 **csss:** $color(#primary_a40)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$color\(\#primary_a40\) {
     color: var(--color_primary_a40);
   }
@@ -242,7 +242,7 @@
 **csss:** $border(0,radius(1rem))
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$border\(0\,radius\(1rem\)\) {
     border-style: solid;
     border-width: 0px;
@@ -254,7 +254,7 @@
 **csss:** $border(w(0,1px,2px,),s(.,.,solid,dashed))
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$border\(w\(0\,1px\,2px\,\)\,s\(\.\,\.\,solid\,dashed\)\) {
     border-style: solid;
     border-block-width: 0px 2px;
@@ -270,7 +270,7 @@
 **csss:** $border(thin)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$border\(thin\) {
     border-style: solid;
     border-width: thin;
@@ -281,7 +281,7 @@
 **csss:** $gradient(primary,blue,green)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$gradient\(primary\,blue\,green\) {
     --color_primary: blue;
     --color_primary10: color-mix(in oklch, blue 90%, green 10%);
@@ -411,7 +411,7 @@
 **csss:** $color(#primary_a90)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$color\(\#primary_a90\) {
     color: var(--color_primary_a90);
   }
@@ -421,7 +421,7 @@
 **csss:** $bg(#primary_a30)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$bg\(\#primary_a30\) {
     background-image: linear-gradient(var(--color_primary_a30));
     background-position: 0% 0%;
@@ -438,7 +438,7 @@
 **csss:** $gradient(primary,blue,yellow)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$gradient\(primary\,blue\,yellow\) {
     --color_primary: blue;
     --color_primary10: color-mix(in oklch, blue 90%, yellow 10%);
@@ -568,7 +568,7 @@
 **csss:** $color(rgb(0,12,255,0.6))
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$color\(rgb\(0\,12\,255\,0\.6\)\) {
     color: rgba(0, 12, 255, 0.6);
   }
@@ -578,7 +578,7 @@
 **csss:** $w(min-content)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$w\(min-content\) {
     inline-size: min-content;
   }
@@ -588,7 +588,7 @@
 **csss:** $w(min-content,2px,max-content)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$w\(min-content\,2px\,max-content\) {
     min-inline-size: min-content;
     inline-size: 2px;
@@ -600,7 +600,7 @@
 **csss:** $w(1px,2px,)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$w\(1px\,2px\,\) {
     min-inline-size: 1px;
     inline-size: 2px;
@@ -611,7 +611,7 @@
 **csss:** $h(,2px,)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$h\(\,2px\,\) {
     block-size: 2px;
   }
@@ -621,7 +621,7 @@
 **csss:** $flex(row-reverse,p(1%,,3%),gap(,3rem))
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$flex\(row-reverse\,p\(1\%\,\,3\%\)\,gap\(\,3rem\)\) {
     display: flex;
     word-spacing: unset;
@@ -640,7 +640,7 @@
 **csss:** $flex(gap(4px),padding(22px,33px,44px))
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$flex\(gap\(4px\)\,padding\(22px\,33px\,44px\)\) {
     display: flex;
     word-spacing: unset;
@@ -658,7 +658,7 @@
 **csss:** |$_flex(margin(,0.1px,,20%))
 **css:**
 ```css
-@layer items {
+@layer itemsDefault {
   .\|\$_flex\(margin\(\,0\.1px\,\,20\%\)\)>* {
     margin-inline: 0.1px 20%;
   }
@@ -668,7 +668,7 @@
 **csss:** $flex(cc)
 **css:**
 ```css
-@layer container {
+@layer containerDefault {
   .\$flex\(cc\) {
     display: flex;
     word-spacing: unset;
