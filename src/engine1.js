@@ -105,10 +105,8 @@ class SheetWrapper {
   constructor(sheet) {
     this.styleEl = sheet.ownerNode;
     this.sheet = sheet;
-    //setup sheet
     if (!this.sheet.cssRules[0].cssText.startsWith("@layer itemsDefault,"))
       this.sheet.insertRule("@layer itemsDefault, items, containerDefault, container;", 0);
-    //update #array if needed
     this.#array = [...this.sheet.cssRules].map(Rule.extractShort);
   }
 
