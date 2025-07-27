@@ -1,4 +1,4 @@
-import { Rule } from "./Parser.js";
+import { Rule, extractLongestCssClass, shortClassName } from "./Parser.js";
 import nativeAndMore from "./func.js";
 import fonts from "./font.js";
 import layouts from "./layout.js";
@@ -102,36 +102,58 @@ const parseCssShorts = (str) => Rule.interpret(str, SHORTS, MEDIA_WORDS, RENAME)
 
 class SheetWrapper {
   #array = null;
-  constructor(sheet) {
-    this.styleEl = sheet.ownerNode;
-    this.sheet = sheet;
-    if (!this.sheet.cssRules[0].cssText.startsWith("@layer itemsDefault,"))
-      this.sheet.insertRule("@layer itemsDefault, items, containerDefault, container;", 0);
-    this.#array = [...this.sheet.cssRules].map(Rule.extractShort);
+  constructor(styleEl) {
+    !styleEl && document.head.append(styleEl = document.createElement("style"));
+    this.styleEl = styleEl;
+    this.sheet = styleEl.sheet;
+    if (!this.sheet.cssRules[0]?.cssText.startsWith("@layer container,"))
+      this.sheet.insertRule("@layer container, containerDefault, items, itemsDefault;", 0);
+    this.#array = [...this.sheet.cssRules].map(extractLongestCssClass);
   }
 
-  addRule(str) {
-    let pos = this.#array.indexOf(str);
+  async cleanup(doc = this.styleEl.ownerDocument) {
+    await new Promise(r => requestAnimationFrame(r));
+    for (const short of this.#array)
+      if (short && !doc.querySelector(shortClassName(short)))
+        this.deleteShort(short);
+    this.styleEl.textContent = [...this.sheet.cssRules].map(r => r.cssText).join('\n');
+    this.sheet = this.styleEl.sheet;
+  }
+
+  addShort(short) {
+    let pos = this.#array.indexOf(short);
     if (pos >= 0) return pos;
-    const rule = parseCssShorts(str);
-    this.sheet.cssRules.insertRule(rule, this.sheet.cssRules.length);
-    this.#array.push(rule);
+    const rule = parseCssShorts(short)?.full;
+    if (!rule)
+      return -1;
+    this.sheet.insertRule(rule, this.sheet.cssRules.length);
+    this.#array.push(short);
     return this.#array.length - 1;
   }
 
-  deleteRule(short) {
-    this.sheet.deleteRule(this.sheet.cssRules.indexOf(short));
-    this.#array.splice(this.#array.indexOf(short), 1);
+  deleteShort(short) {
+    const i = this.#array.indexOf(short);
+    if (i < 0) return;
+    this.sheet.deleteRule(i);
+    this.#array.splice(i, 1);
   }
 
-  cleanup() {
-    requestAnimationFrame(_ => {
-      for (const short of this.#array)
-        if (!querySelector(`.${short}`))
-          this.deleteRule(short);
-      this.sheet.ownerNode.textContent = [...this.sheet.cssRules].map(r => r.cssText).join('\n\n');
-      this.sheet = this.styleEl.sheet;
-    });
+  checkClassList(classList) {
+    const latestInLayer = {};
+    for (let i = 0; i < classList.length; i++) {
+      const cls = classList[i];
+      let pos = this.#array.indexOf(cls);
+      if (pos < 0)
+        pos = this.addShort(cls);
+      if (pos < 0)
+        continue; // not a short
+      const layerRule = this.sheet.cssRules[pos];
+      const layerName = layerRule.name;
+      if (!(latestInLayer[layerName] > pos))
+        latestInLayer[layerName] = pos;
+      else
+        classList.replace(cls, cls + "$"), i--;
+    }
   }
 }
 
