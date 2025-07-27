@@ -134,14 +134,33 @@ const NativeColorsFunctions = (function () {
     args = args.map(a => (a.match(/^\d?\d%$/i) ? " " : ", ") + a);
     return `color-mix(${cSpace}${args.join("")})`;
   }
-  function _hash(a, ...others) {
-    if (others.length) throw "hash(can only have 1 argument)";
-    //#123 => hash(123) => #123
-    //#primary_a80 => hash(primary) => var(--color_primary_a80)
-    if (a.match(/^[a-f0-9]{3,8}$/) && a.length != 5 && a.length != 7)
-      return `#${a}`;
-    return `var(--color_${a})`;
+  //#123 => hash(123) => #123
+  //#primary#30 => hash(primary,30)
+  //#primary#30#a80 => hash(primary,30,a80)
+  function _hash(name, ...colors) {
+    if (name.match(/^[a-f0-9]{3,8}$/) && name.length != 5 && name.length != 7)
+      return `#${name}`;
+    name = "--color-" + name;
+    let res = `var(${name})`;
+    for (let i = 0; i < colors.length; i++) {
+      const c = colors[i];
+      const alpha = c[0] === "a";
+      const now = alpha ? "transparent" : `var(${name + (i + 1)})`;
+      const n = alpha ? 100 - parseInt(c.slice(1)) : parseInt(c);
+      if (n < 0 || n > 100)
+        throw new SyntaxError(`In color-vectors (#color#num#num), the num must match a?<0-100>. (#${name}#${colors.join("#")})`);
+      res = `color-mix(in oklab, ${res} ${100 - n}%, ${now} ${n}%)`;
+    }
+    return res;
   }
+  // function _hash(a, ...others) {
+  //   if (others.length) throw "hash(can only have 1 argument)";
+  //   //#123 => hash(123) => #123
+  //   //#primary_a80 => hash(primary) => var(--color_primary_a80)
+  //   if (a.match(/^[a-f0-9]{3,8}$/) && a.length != 5 && a.length != 7)
+  //     return `#${a}`;
+  //   return `var(--color_${a})`;
+  // }
 
   const res = {
     _hash,
@@ -172,8 +191,8 @@ const NativeColorsFunctions = (function () {
 })();
 
 const ColorNames = /^(aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen)$/i.source;
-const ColorFunctionStart = /^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color|colorMix)\(/.source;
-const ColorVar = /^var\(--color_/.source;
+const ColorFunctionStart = /^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color|color-mix|colorMix)\(/.source;
+const ColorVar = /^var\(--color-/.source;
 const ColorHash = /^#[a-fA-F0-9]{3,8}$/.source;
 const ColorString = new RegExp(`${ColorNames}|${ColorFunctionStart}|${ColorVar}|${ColorHash}`);
 
@@ -502,7 +521,7 @@ function textDecoration(
   textDecorationLine = "underline",
   textDecorationStyle = "unset",
   textDecorationThickness = "unset",
-  textDecorationColor = "var(--color_textdecorationcolor, currentcolor)") {
+  textDecorationColor = "var(--color-textdecorationcolor, currentcolor)") {
   return { textDecorationLine, textDecorationThickness, textDecorationStyle, textDecorationColor };
 }
 textDecoration.scope = {

@@ -330,7 +330,7 @@
     text-decoration-line: line-through;
     text-decoration-thickness: 3px;
     text-decoration-style: solid;
-    text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+    text-decoration-color: var(--color-textdecorationcolor, currentcolor);
   }
 }
 ```
@@ -343,7 +343,7 @@
     text-decoration-line: overline;
     text-decoration-thickness: 2px;
     text-decoration-style: solid;
-    text-decoration-color: var(--color_myblue);
+    text-decoration-color: var(--color-myblue);
   }
 }
 ```
@@ -355,7 +355,7 @@
   .\$grammarError\(2px\) {
     text-decoration-line: grammar-error;
     text-decoration-thickness: 2px;
-    text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+    text-decoration-color: var(--color-textdecorationcolor, currentcolor);
   }
 }
 ```
@@ -368,7 +368,7 @@
     text-decoration-line: underline overline line-through;
     text-decoration-thickness: 2px;
     text-decoration-style: solid;
-    text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+    text-decoration-color: var(--color-textdecorationcolor, currentcolor);
   }
 }
 ```
@@ -381,7 +381,7 @@
     text-decoration-line: underline overline line-through;
     text-decoration-thickness: 2px;
     text-decoration-style: wavy;
-    text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+    text-decoration-color: var(--color-textdecorationcolor, currentcolor);
   }
 }
 ```
@@ -394,7 +394,7 @@
     text-decoration-line: underline;
     text-decoration-thickness: 2px;
     text-decoration-style: dotted;
-    text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+    text-decoration-color: var(--color-textdecorationcolor, currentcolor);
   }
 }
 ```
@@ -407,7 +407,7 @@
     text-decoration-line: underline overline line-through;
     text-decoration-thickness: 2px;
     text-decoration-style: dashed;
-    text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+    text-decoration-color: var(--color-textdecorationcolor, currentcolor);
   }
 }
 ```
@@ -420,7 +420,7 @@
     text-decoration-line: overline;
     text-decoration-thickness: 2px;
     text-decoration-style: double;
-    text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+    text-decoration-color: var(--color-textdecorationcolor, currentcolor);
   }
 }
 ```
@@ -433,7 +433,7 @@
     text-decoration-line: none;
     text-decoration-thickness: unset;
     text-decoration-style: unset;
-    text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+    text-decoration-color: var(--color-textdecorationcolor, currentcolor);
   }
 }
 ```
@@ -446,7 +446,7 @@
     text-decoration-line: unset;
     text-decoration-thickness: unset;
     text-decoration-style: unset;
-    text-decoration-color: var(--color_textdecorationcolor, currentcolor);
+    text-decoration-color: var(--color-textdecorationcolor, currentcolor);
   }
 }
 ```
@@ -495,7 +495,7 @@
 ```css
 @layer containerDefault {
   .\$color\(\#fg\) {
-    color: var(--color_fg);
+    color: var(--color-fg);
   }
 }
 ```

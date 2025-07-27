@@ -195,7 +195,7 @@ function diveDeep(tokens, top) {
       parseVarCalc(eatTokens(tokens)) :
       tokens.shift();
     if (a[0] === "#")
-      a = new Expression("_hash", [a.slice(1)]);
+      a = new Expression("_hash", a.slice(1).split("#"));
     if (top && a === ",") throw "can't start with ','";
     if (top && a === ")") throw "can't start with ')'";
     if (a === "," || a === ")") {         //empty

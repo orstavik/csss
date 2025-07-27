@@ -1,9 +1,9 @@
-**csss:** $bg(--color_my)
+**csss:** $bg(--color-my)
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(--color_my\) {
-    background-image: linear-gradient(var(--color_my));
+  .\$bg\(--color-my\) {
+    background-image: linear-gradient(var(--color-my));
     background-position: 0% 0%;
     background-repeat: repeat;
     background-size: auto;
@@ -15,12 +15,12 @@
 }
 ```
 
-**csss:** $bg((--color_undefined,--color_primary))
+**csss:** $bg((--color-undefined,--color-primary))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(\(--color_undefined\,--color_primary\)\) {
-    background-image: linear-gradient(var(--color_undefined, var(--color_primary)));
+  .\$bg\(\(--color-undefined\,--color-primary\)\) {
+    background-image: linear-gradient(var(--color-undefined, var(--color-primary)));
     background-position: 0% 0%;
     background-repeat: repeat;
     background-size: auto;
@@ -152,12 +152,12 @@
 }
 ```
 
-**csss:** $bg((--color_undefined1,--color_primary,--color_secondary))
+**csss:** $bg((--color-undefined1,--color-primary,--color-secondary))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(\(--color_undefined1\,--color_primary\,--color_secondary\)\) {
-    background-image: linear-gradient(var(--color_undefined1, var(--color_primary, var(--color_secondary))));
+  .\$bg\(\(--color-undefined1\,--color-primary\,--color-secondary\)\) {
+    background-image: linear-gradient(var(--color-undefined1, var(--color-primary, var(--color-secondary))));
     background-position: 0% 0%;
     background-repeat: repeat;
     background-size: auto;

@@ -1,3 +1,13 @@
+**csss:** $color(#primary#80#a25)
+**css:**
+```css
+@layer containerDefault {
+  .\$color\(\#primary\#80\#a25\) {
+    color: color-mix(in oklab, color-mix(in oklab, var(--color-primary) 20%, var(--color-primary1) 80%) 25%, transparent 75%);
+  }
+}
+```
+
 **csss:** @xxl$w(20px)
 **css:**
 ```css

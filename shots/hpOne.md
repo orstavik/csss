@@ -133,7 +133,7 @@
 ```css
 @layer containerDefault {
   .\$color\(\#primary\) {
-    color: var(--color_primary);
+    color: var(--color-primary);
   }
 }
 ```
@@ -149,12 +149,12 @@
 }
 ```
 
-**csss:** $color(#primary_a20)
+**csss:** $color(#primary#a20)
 **css:**
 ```css
 @layer containerDefault {
-  .\$color\(\#primary_a20\) {
-    color: var(--color_primary_a20);
+  .\$color\(\#primary\#a20\) {
+    color: color-mix(in oklab, var(--color-primary) 20%, transparent 80%);
   }
 }
 ```
@@ -189,16 +189,6 @@
     border-end-end-radius: 60px;
     border-start-end-radius: 30px;
     border-end-start-radius: 30px;
-  }
-}
-```
-
-**csss:** $color(#primary_a40)
-**css:**
-```css
-@layer containerDefault {
-  .\$color\(\#primary_a40\) {
-    color: var(--color_primary_a40);
   }
 }
 ```
@@ -408,22 +398,12 @@
 }
 ```
 
-**csss:** $color(#primary_a90)
+**csss:** $bg(#primary#90)
 **css:**
 ```css
 @layer containerDefault {
-  .\$color\(\#primary_a90\) {
-    color: var(--color_primary_a90);
-  }
-}
-```
-
-**csss:** $bg(#primary_a30)
-**css:**
-```css
-@layer containerDefault {
-  .\$bg\(\#primary_a30\) {
-    background-image: linear-gradient(var(--color_primary_a30));
+  .\$bg\(\#primary\#90\) {
+    background-image: linear-gradient(color-mix(in oklab, var(--color-primary) 10%, var(--color-primary1) 90%));
     background-position: 0% 0%;
     background-repeat: repeat;
     background-size: auto;

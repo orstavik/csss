@@ -34,7 +34,7 @@
         // console.log(`✅ ${csss}`);
         continue;
       }
-      const d = diff(actual, css);
+      const d = diff(css, actual);
       const noMatch = d.find(({ type, a, b }) => type != "match" && (a.trim() || b.trim()))
       if (!noMatch) {
         console.log(`🟦 ${csss}`);
