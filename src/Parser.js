@@ -1,8 +1,15 @@
+function layerName(exp, item) {
+  const body = item ? "items" : "container";
+  const d = exp.match(/^(\$|\|\$)/) ? "Default" : "";
+  const num = exp.match(/(\$+)$/)?.[0].length ?? "";
+  return body + d + num;
+}
+
 export class Rule {
-  static interpret(exp, scope, MEDIA_WORDS, renames) {
-    const clazz = "." + exp.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
-    const { str, media } = parseMediaQuery(exp, MEDIA_WORDS);
-    exp = str;
+  static interpret(exp1, scope, MEDIA_WORDS, renames) {
+    const clazz = "." + exp1.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
+    const { str, media } = parseMediaQuery(exp1, MEDIA_WORDS);
+    const exp = str;
     let [sel, ...exprList] = exp?.split("$");
     exprList = exprList.map(s => parseNestedExpression(s));
     exprList = exprList.map(s => s.interpret(scope));
@@ -26,11 +33,12 @@ export class Rule {
       rule = `${media} { ${rule} }`;
       key = `${media} { ${selector}`;
     }
-    const layer = "@layer " + (item ? "items" : "container");
+    const layer = "@layer " + layerName(exp1, item);
     const full = [selector, media, layer].filter(Boolean).reduce((acc, part) => `${part} {\n ${acc}\n}`, body);
     return { rule, key, item, full };
   }
-  extractShort(rule) {
+
+  extractShort(r) {
     if (r instanceof CSSLayerBlockRule) r = r.cssRules[0];
     if (r instanceof CSSMediaRule) r = r.cssRules[0];
     if (!r) return;
