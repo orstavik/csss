@@ -10,7 +10,7 @@
     const key = csss.value, b = css.value;
     return {
       key,
-      actual: normalizeCss(parseCssShorts(key).full),
+      actual: normalizeCss(parseCssShorts(key).cssText),
       expected: normalizeCss(b)
     };
   }

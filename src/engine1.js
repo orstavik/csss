@@ -1,4 +1,4 @@
-import { Rule, extractLongestCssClass, shortClassName } from "./Parser.js";
+import { Rule, extractShort, shortClassName } from "./Parser.js";
 import nativeAndMore from "./func.js";
 import fonts from "./font.js";
 import layouts from "./layout.js";
@@ -100,41 +100,105 @@ const SHORTS = {
 
 const parseCssShorts = (str) => Rule.interpret(str, SHORTS, MEDIA_WORDS, RENAME);
 
+function findLayerType(short) {
+  if (!short.includes("$")) return;
+  const num = short.match(/\$*$/)?.[0].length ?? "";
+  if (short[0] === "$") return "containerDefault" + num;
+  if (short[0] === "|" && short[1] === "$") return "itemDefault" + num;
+  const shortWithoutQuote = short.replaceAll(/''/g, ""); // remove all text within quotes
+  const i = shortWithoutQuote.indexOf("$");
+  const j = shortWithoutQuote.indexOf("|");
+  if (j < 0 || i < j) return "container" + num;
+  return "item" + num;
+}
+//make a memoize ho function that caches on the string value first argument
+function memoize(fn) {
+  const cache = {};
+  return function (arg) {
+    return cache[arg] ??= fn(arg);
+  };
+}
+
+export function sequenceClasslistRaw(rulesWithShorts, shortToLayerName, classList) {
+  const layerPostions = {};
+  const res = [...classList];
+  for (let i = 0; i < res.length; i++) {
+    const cls = res[i];
+    const layerName = shortToLayerName[cls];
+    if (!layerName)
+      continue;
+    let pos = rulesWithShorts.findIndex(r => r.short == cls);
+    if (pos < 0) pos = Infinity;
+    if (pos < layerPostions[layerName]) {
+      res[i] = cls + "$"; // mark as not the latest in layer
+      i--;
+      continue; //try again
+    } else {
+      layerPostions[layerName] = pos;
+    }
+  }
+  return res;
+}
+
+export function sequenceClasslist(style, classList) {
+  const rulesWithShorts = style.sheet.cssRules;
+  for (let rule of rulesWithShorts)
+    rule.short ??= extractShort(rule);
+  const shortToLayerName = {};
+  for (let cls of classList)
+    shortToLayerName[cls] ??= findLayerType(cls);
+  return sequenceClasslistRaw(rulesWithShorts, shortToLayerName, classList);
+}
+
 class SheetWrapper {
+
   #array = null;
+  #el = null;
+  #sheet = null;
+
   constructor(styleEl) {
-    !styleEl && document.head.append(styleEl = document.createElement("style"));
-    this.styleEl = styleEl;
-    this.sheet = styleEl.sheet;
-    if (!this.sheet.cssRules[0]?.cssText.startsWith("@layer container,"))
-      this.sheet.insertRule("@layer container, containerDefault, items, itemsDefault;", 0);
-    this.#array = [...this.sheet.cssRules].map(extractLongestCssClass);
+    this.#el = styleEl ?? document.createElement("style");
+    this.#sheet = styleEl.sheet;
+    if (!this.#sheet.cssRules[0]?.cssText.startsWith("@layer container,"))
+      this.#sheet.insertRule("@layer container, containerDefault, items, itemsDefault;", 0);
+    this.#array = [...this.#sheet.cssRules].map(extractShort);
   }
 
-  async cleanup(doc = this.styleEl.ownerDocument) {
-    await new Promise(r => requestAnimationFrame(r));
-    for (const short of this.#array)
-      if (short && !doc.querySelector(shortClassName(short)))
-        this.deleteShort(short);
-    this.styleEl.textContent = [...this.sheet.cssRules].map(r => r.cssText).join('\n');
-    this.sheet = this.styleEl.sheet;
+  removeUnusedShorts(doc = this.#el.ownerDocument) {
+    if (doc.isConnected)
+      for (const short of this.#array)
+        if (short && !doc.querySelector(shortClassName(short)))
+          this.deleteShort(short);
+  }
+
+  cleanup() {
+    this.#el.textContent = [...this.#sheet.cssRules].map(r => r.cssText).join('\n');
+    this.#sheet = this.#el.sheet;
+  }
+
+  indexOf(short) {
+    return this.#array.indexOf(short);
+  }
+
+  #appendShort(short) {
+    const rule = parseCssShorts(short)?.full;
+    if (!rule)
+      return -1;
+    this.#sheet.insertRule(rule, this.#sheet.cssRules.length);
+    this.#array.push(short);
+    return this.#array.length - 1;
   }
 
   addShort(short) {
     let pos = this.#array.indexOf(short);
     if (pos >= 0) return pos;
-    const rule = parseCssShorts(short)?.full;
-    if (!rule)
-      return -1;
-    this.sheet.insertRule(rule, this.sheet.cssRules.length);
-    this.#array.push(short);
-    return this.#array.length - 1;
+    this.#appendShort(short);
   }
 
   deleteShort(short) {
     const i = this.#array.indexOf(short);
     if (i < 0) return;
-    this.sheet.deleteRule(i);
+    this.#sheet.deleteRule(i);
     this.#array.splice(i, 1);
   }
 
@@ -147,7 +211,7 @@ class SheetWrapper {
         pos = this.addShort(cls);
       if (pos < 0)
         continue; // not a short
-      const layerRule = this.sheet.cssRules[pos];
+      const layerRule = this.#sheet.cssRules[pos];
       const layerName = layerRule.name;
       if (!(latestInLayer[layerName] > pos))
         latestInLayer[layerName] = pos;
@@ -158,3 +222,46 @@ class SheetWrapper {
 }
 
 export { SheetWrapper, parseCssShorts };
+
+// function correctlySequencedClassList(shortsInSequence, rulesInSequence, clsList) {
+//   const res = [];
+//   const latestInLayer = {};
+//   for (let i = 0; i < clsList.length; i++) {
+//     const cls = clsList[i];
+//     const pos = sheetWrapper.indexOf(cls);
+//     if (pos < 0) {
+//       res.push(cls);
+//       continue; // not a short
+//     }
+
+//     let pos = res.indexOf(cls);
+//     if (pos >= 0) {
+//       if (latestInLayer[cls] > pos) {
+//         res.splice(pos, 1);
+//         i--;
+//       } else {
+//         latestInLayer[cls] = pos;
+//       }
+//       continue;
+//     }
+//     pos = res.length;
+//     res.push(cls);
+//     latestInLayer[cls] = pos;
+//   }
+// }
+
+//styleEl,[$bob,.hello$bob$,$alice] => [$bob,$bob$,$alice$$]
+
+function sequenceShorts(styleEl, classList) {
+  return classList.map(cls => {
+    const pos = getShortPosition(styleEl, cls);
+    //this is a stateful function, that can cache the positioning of styleEl
+    //this would then need to block all the calls to that function. We would need to wrap it to protect it from being used by others.
+    //we can wrap the styleEl in a custom HTMLElement prototype that blocks .textContent and .innerHTML and .insertRule, .deleteRule and .sheet?
+  });
+}
+
+// To sort, i use .className. To append $ to class, we use .classList.replace(oldName, oldName+"$")
+// The pure function is to sort the classList (which we will not use?),
+// and rename classList. It will return an array with the classes correctly named according to the stylesheet. Array in, array out.
+// Find unspecified. Iterate an array and find the classes that is not in a stylesheet unDefinedShorts(styleEl, iterOfClasses)

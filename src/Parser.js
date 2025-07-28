@@ -5,6 +5,19 @@ function layerName(exp, item) {
   return body + d + num;
 }
 
+export function shortClassName(short) { return "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&"); }
+export function extractShort(rule) {
+  if (!(rule instanceof CSSLayerStatementRule) || rule.cssRules.length != 1) return false;
+  rule = rule.cssRules[0];
+  if (rule instanceof CSSMediaRule && rule.cssRules.length == 1) rule = rule.cssRules[0];
+  if (!(rule instanceof CSSStyleRule) || rule.cssRules.length != 1) return false;
+  let res;
+  for (let [, clz] of rule.selectorText.matchAll(/\.((\\.|[a-zA-Z0-9_-])+)/g) ?? [])
+    if (!res || res.length < clz.length)
+      res = clz;
+  return res?.replaceAll("\\", "") ?? false;
+}
+
 export class Rule {
   static interpret(exp1, scope, MEDIA_WORDS, renames) {
     const clazz = "." + exp1.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
@@ -16,39 +29,21 @@ export class Rule {
     exprList = exprList.map(s => s.interpret(scope));
     exprList &&= clashOrStack(exprList);
     let { selector, item } = parseSelectorPipe(sel);
-    selector = clazz + selector;
-    const body = Object.entries(exprList).map(([k, v]) => {
-      //todo this doesn't work. We need to do a more thorough check for - in calc i think. need to check calc.
-      // if (v.match?.(/^[a-zA-Z][a-zA-Z0-9]+$/))
-      //   v = v.replace(/[A-Z]/g, "-$&").toLowerCase();  //todo this doesn't work with fonts like Arial and Helvetica.
+    const layer = layerName(exp1, item);
+    selector = clazz + selector; //todo, we always start with the class in the selector..
+    const props = Object.fromEntries(Object.entries(exprList).map(([k, v]) => {
       k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
       if (CSS.supports(k, "inherit"))
         if (!CSS.supports(k, v) && !CSS.supports(k = renames[k] ?? k, v))
           throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
       //the browser might not support the property, because the property is too modern.
-      return `  ${k}: ${v};`
-    }).join("\n");
-    let rule = `${selector} {\n${body}\n}`;
-    let key = selector;
-    if (media) {
-      rule = `${media} { ${rule} }`;
-      key = `${media} { ${selector}`;
-    }
-    const layer = "@layer " + layerName(exp1, item);
-    const full = [selector, media, layer].filter(Boolean).reduce((acc, part) => `${part} {\n ${acc}\n}`, body);
-    return { rule, key, item, full };
-  }
-
-  extractLongestCssClass(r) {
-    while (r?.cssRules)
-      r = r.cssRules[0];
-    r = r?.selectorText;
-    if (!r) return;
-    let res;
-    for (let clz of r.matchAll(/\.((\\.|[a-zA-Z0-9_-])+)/g) ?? [])
-      if (!res || res.length < clz[1].length)
-        res = clz[1];
-    return res?.replaceAll("\\", "");
+      return [k, v];
+    }));
+    const body = Object.entries(props).map(([k, v]) => `  ${k}: ${v};`).join("\n");
+    const rule = media ? [selector, "@media " + media, "@layer " + layer] : [selector, "@layer " + layer];
+    const cssText = rule.reduce((acc, part) => `${part} {\n ${acc}\n}`, body);
+    // const miniCssRule = {cssText: full, name: layer, cssRules: [{ media, cssRules: [{ selectorText: selector, style: { cssText: body } }] }]};
+    return { layer, media, selector, props, cssText };
   }
 }
 
@@ -370,7 +365,7 @@ function parseMediaQuery(str, register) {
     const t = register[word];
     if (!t)
       throw new ReferenceError("@" + word);
-    return { str: str.slice(1 + word.length), media: `@media (${t})` };
+    return { str: str.slice(1 + word.length), media: `(${t})` };
   }
   let i = 2, tokens = [], level = 1;
   for (; i < str.length; i++) {
@@ -399,5 +394,5 @@ function parseMediaQuery(str, register) {
       );
     }
   }
-  return { str: str.slice(i), media: `@media ${tokens.join(" ")}` };
+  return { str: str.slice(i), media: `${tokens.join(" ")}` };
 }
