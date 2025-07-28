@@ -1,4 +1,4 @@
-import { Rule, extractShort, shortClassName } from "./Parser.js";
+import { interpret, extractShort, extractShortSelector } from "./Parser.js";
 import nativeAndMore from "./func.js";
 import fonts from "./font.js";
 import layouts from "./layout.js";
@@ -98,170 +98,114 @@ const SHORTS = {
   },
 };
 
-const parseCssShorts = (str) => Rule.interpret(str, SHORTS, MEDIA_WORDS, RENAME);
-
-function findLayerType(short) {
-  if (!short.includes("$")) return;
-  const num = short.match(/\$*$/)?.[0].length ?? "";
-  if (short[0] === "$") return "containerDefault" + num;
-  if (short[0] === "|" && short[1] === "$") return "itemDefault" + num;
-  const shortWithoutQuote = short.replaceAll(/''/g, ""); // remove all text within quotes
-  const i = shortWithoutQuote.indexOf("$");
-  const j = shortWithoutQuote.indexOf("|");
-  if (j < 0 || i < j) return "container" + num;
-  return "item" + num;
+/**
+ * Use memoize to cache the results of this function.
+ *    memoize(parseCssShorts, 333);
+ * 
+ * @param {String} short string to parse 
+ * @returns {{ short: string, layer: string, media: string, selector: string, props: Object, cssText:string }}
+ */
+function parseCssShorts(short) {
+  return interpret(short, SHORTS, MEDIA_WORDS, RENAME);
 }
-//make a memoize ho function that caches on the string value first argument
-function memoize(fn) {
-  const cache = {};
+
+function memoize(fn, max = 333) {
+  let young = new Map(), old = new Map();
   return function (arg) {
-    return cache[arg] ??= fn(arg);
+    if (young.size > max) { old = young; young = new Map(); }
+    if (young.has(arg)) return young.get(arg);
+    if (old.has(arg)) { const v = old.get(arg); young.set(arg, v); return v; }
+    const v = fn(arg);
+    young.set(arg, v);
+    return v;
   };
 }
 
-export function sequenceClasslistRaw(rulesWithShorts, shortToLayerName, classList) {
-  const layerPostions = {};
-  const res = [...classList];
+function updateClassList(classList, sequencedClassList) {
+  for (let i = 0; i < classList.length; i++) {
+    const cls = classList[i];
+    const sequencedCls = sequencedClassList[i];
+    if (cls !== sequencedCls)
+      classList.replace(cls, sequencedCls);
+  }
+}
+
+/**
+ * If you have a cssRules object, then you need to do:
+ *   const extractShort = memoize(extractShortSelector, 333);
+ *   const allShorts = [...cssRules].map(extractShort);
+ *   const parseFun = memoize(parseCssShorts, 333);
+ *   sequence(allShorts, el.classList, parseFun);
+ * 
+ * @param {[string]} allShorts 
+ * @param {[string]} classListShorts 
+ * @param {Function} parseFun 
+ * @returns {[string]} sequenced classListShorts
+ */
+function sequence(allShorts, classListShorts, parseFun) {
+  const layerPosition = {};
+  const res = [...classListShorts];
   for (let i = 0; i < res.length; i++) {
     const cls = res[i];
-    const layerName = shortToLayerName[cls];
-    if (!layerName)
-      continue;
-    let pos = rulesWithShorts.findIndex(r => r.short == cls);
-    if (pos < 0) pos = Infinity;
-    if (pos < layerPostions[layerName]) {
-      res[i] = cls + "$"; // mark as not the latest in layer
-      i--;
-      continue; //try again
-    } else {
-      layerPostions[layerName] = pos;
-    }
+    const shortObj = parseFun(cls);
+    if (!shortObj) continue; // not a short
+    let pos = allShorts.indexOf(cls);
+    if (pos == -1) pos = Infinity;
+    if (pos >= layerPosition[shortObj.layer])
+      layerPosition[shortObj.layer] = pos;
+    else
+      res[--i] = cls + "!"; // mark and redo!
   }
   return res;
 }
 
-export function sequenceClasslist(style, classList) {
-  const rulesWithShorts = style.sheet.cssRules;
-  for (let rule of rulesWithShorts)
-    rule.short ??= extractShort(rule);
-  const shortToLayerName = {};
-  for (let cls of classList)
-    shortToLayerName[cls] ??= findLayerType(cls);
-  return sequenceClasslistRaw(rulesWithShorts, shortToLayerName, classList);
+
+/**
+ * Use like this:
+ *   const layerStatement = `@layer ${extractLayerNames(cssRules).join(", ")};`;
+ *   styleSheet.insertRule(layerStatement, 0);
+ * 
+ * @param {cssRules} cssRules 
+ * @returns list 
+ */
+function extractLayerNames(cssRules) {
+  const res = new Set();
+  for (const rule of cssRules)
+    if (rule instanceof CSSLayerBlock)
+      res.add(rule.name);
+  return [...res].sort((a, b) => a.localeCompare(b));
 }
 
-class SheetWrapper {
-
-  #array = null;
-  #el = null;
-  #sheet = null;
-
-  constructor(styleEl) {
-    this.#el = styleEl ?? document.createElement("style");
-    this.#sheet = styleEl.sheet;
-    if (!this.#sheet.cssRules[0]?.cssText.startsWith("@layer container,"))
-      this.#sheet.insertRule("@layer container, containerDefault, items, itemsDefault;", 0);
-    this.#array = [...this.#sheet.cssRules].map(extractShort);
-  }
-
-  removeUnusedShorts(doc = this.#el.ownerDocument) {
-    if (doc.isConnected)
-      for (const short of this.#array)
-        if (short && !doc.querySelector(shortClassName(short)))
-          this.deleteShort(short);
-  }
-
-  cleanup() {
-    this.#el.textContent = [...this.#sheet.cssRules].map(r => r.cssText).join('\n');
-    this.#sheet = this.#el.sheet;
-  }
-
-  indexOf(short) {
-    return this.#array.indexOf(short);
-  }
-
-  #appendShort(short) {
-    const rule = parseCssShorts(short)?.full;
-    if (!rule)
-      return -1;
-    this.#sheet.insertRule(rule, this.#sheet.cssRules.length);
-    this.#array.push(short);
-    return this.#array.length - 1;
-  }
-
-  addShort(short) {
-    let pos = this.#array.indexOf(short);
-    if (pos >= 0) return pos;
-    this.#appendShort(short);
-  }
-
-  deleteShort(short) {
-    const i = this.#array.indexOf(short);
-    if (i < 0) return;
-    this.#sheet.deleteRule(i);
-    this.#array.splice(i, 1);
-  }
-
-  checkClassList(classList) {
-    const latestInLayer = {};
-    for (let i = 0; i < classList.length; i++) {
-      const cls = classList[i];
-      let pos = this.#array.indexOf(cls);
-      if (pos < 0)
-        pos = this.addShort(cls);
-      if (pos < 0)
-        continue; // not a short
-      const layerRule = this.#sheet.cssRules[pos];
-      const layerName = layerRule.name;
-      if (!(latestInLayer[layerName] > pos))
-        latestInLayer[layerName] = pos;
-      else
-        classList.replace(cls, cls + "$"), i--;
-    }
+/**
+ * @param {Element} root from where to check for short occurrences 
+ * @param {CSSStyleSheet} styleSheet with the shorts to check
+ * @param {Function} extractSelector function to extract the short from a rule (this can be a memoized function) 
+ */
+function removeUnusedShorts(root, styleSheet, extractSelector = extractShortSelector) {
+  for (let i = styleSheet.cssRules.length - 1; i >= 0; i--) {
+    const rule = styleSheet.cssRules[i];
+    const shortSelector = extractSelector(rule);
+    if (shortSelector && !root.querySelector(shortSelector))
+      styleSheet.deleteRule(i);
   }
 }
 
-export { SheetWrapper, parseCssShorts };
+function updateStyleText(styleEl) {
+  styleEl.textContent = [...styleEl.sheet.cssRules].map(r => r.cssText).join('\n');
+}
 
-// function correctlySequencedClassList(shortsInSequence, rulesInSequence, clsList) {
-//   const res = [];
-//   const latestInLayer = {};
-//   for (let i = 0; i < clsList.length; i++) {
-//     const cls = clsList[i];
-//     const pos = sheetWrapper.indexOf(cls);
-//     if (pos < 0) {
-//       res.push(cls);
-//       continue; // not a short
-//     }
+export {
+  parseCssShorts,
+  memoize,
+  sequence,
+  extractShort,
+  extractShortSelector,
 
-//     let pos = res.indexOf(cls);
-//     if (pos >= 0) {
-//       if (latestInLayer[cls] > pos) {
-//         res.splice(pos, 1);
-//         i--;
-//       } else {
-//         latestInLayer[cls] = pos;
-//       }
-//       continue;
-//     }
-//     pos = res.length;
-//     res.push(cls);
-//     latestInLayer[cls] = pos;
-//   }
-// }
+  updateClassList,
+  extractLayerNames,
+  removeUnusedShorts,
+  updateStyleText,
+};
+
 
 //styleEl,[$bob,.hello$bob$,$alice] => [$bob,$bob$,$alice$$]
-
-function sequenceShorts(styleEl, classList) {
-  return classList.map(cls => {
-    const pos = getShortPosition(styleEl, cls);
-    //this is a stateful function, that can cache the positioning of styleEl
-    //this would then need to block all the calls to that function. We would need to wrap it to protect it from being used by others.
-    //we can wrap the styleEl in a custom HTMLElement prototype that blocks .textContent and .innerHTML and .insertRule, .deleteRule and .sheet?
-  });
-}
-
-// To sort, i use .className. To append $ to class, we use .classList.replace(oldName, oldName+"$")
-// The pure function is to sort the classList (which we will not use?),
-// and rename classList. It will return an array with the classes correctly named according to the stylesheet. Array in, array out.
-// Find unspecified. Iterate an array and find the classes that is not in a stylesheet unDefinedShorts(styleEl, iterOfClasses)
