@@ -290,7 +290,7 @@ _flex.scope = {
   center: (...args) => (checkNoArgs(args), ({ alignSelf: "center", textAlign: "center" })),
   end: (...args) => (checkNoArgs(args), ({ alignSelf: "end", textAlign: "end" })),
   start: (...args) => (checkNoArgs(args), ({ alignSelf: "start", textAlign: "start" })),
-  stretch: (...args) => (checkNoArgs(args), ({ alignSelf: "stretch", textAlign: "stretch" })),
+  stretch: (...args) => (checkNoArgs(args), ({ alignSelf: "stretch", textAlign: "justify" })),
   baseline: (...args) => (checkNoArgs(args), ({ alignSelf: "baseline", textAlign: "unset" })),
   alignSelf: AllFunctions.alignSelf,
   textAlign: AllFunctions.textAlign,
