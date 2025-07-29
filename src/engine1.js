@@ -2,8 +2,7 @@ import { interpret, extractShort, extractShortSelector } from "./Parser.js";
 import nativeAndMore from "./func.js";
 import fonts from "./font.js";
 import layouts from "./layout.js";
-import gradients from "./gradient.js";
-// import colorPalette from "./palette.js";
+import palette from "./palette1.js";
 
 const MEDIA_WORDS = {
   progressive: "scan: progressive",
@@ -85,8 +84,7 @@ const RENAME = {
 const SHORTS = {
   ...nativeAndMore,
   ...fonts,
-  ...gradients,
-  // ...colorPalette,
+  ...palette,
   ...layouts,
   lineClamp: function (lines, ...args) {
     return this.block({

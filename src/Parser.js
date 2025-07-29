@@ -1,50 +1,52 @@
-function layerName(exp, item) {
-  const body = item ? "items" : "container";
-  const d = exp.match(/^(\$|\|\$)/) ? "Default" : "";
-  const num = exp.match(/(\$+)$/)?.[0].length ?? "";
-  return body + d + num;
-}
+//not useful, should be under interpret.
+// function findLayerType(short) {
+//   if (!short.includes("$")) return;
+//   const num = short.match(/\$*$/)?.[0].length ?? "";
+//   if (short[0] === "$") return "containerDefault" + num;
+//   if (short[0] === "|" && short[1] === "$") return "itemDefault" + num;
+//   const shortWithoutQuote = short.replaceAll(/''/g, ""); // remove all text within quotes
+//   const i = shortWithoutQuote.indexOf("$");
+//   const j = shortWithoutQuote.indexOf("|");
+//   if (j < 0 || i < j) return "container" + num;
+//   return "item" + num;
+// }
 
-export function shortClassName(short) { return "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&"); }
-export function extractShort(rule) {
+export function extractShortSelector(rule) {
   if (!(rule instanceof CSSLayerStatementRule) || rule.cssRules.length != 1) return false;
   rule = rule.cssRules[0];
   if (rule instanceof CSSMediaRule && rule.cssRules.length == 1) rule = rule.cssRules[0];
   if (!(rule instanceof CSSStyleRule) || rule.cssRules.length != 1) return false;
-  let res;
-  for (let [, clz] of rule.selectorText.matchAll(/\.((\\.|[a-zA-Z0-9_-])+)/g) ?? [])
-    if (!res || res.length < clz.length)
-      res = clz;
-  return res?.replaceAll("\\", "") ?? false;
+  return rule.selectorText.match(/^\.((\\.|[a-zA-Z0-9_-])+)/g)?.[0] || false;
+}
+export function extractShort(rule) {
+  const className = extractShortSelector(rule);
+  return className && className.slice(1).replaceAll("\\", "");
 }
 
-export class Rule {
-  static interpret(exp1, scope, MEDIA_WORDS, renames) {
-    const clazz = "." + exp1.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
-    const { str, media } = parseMediaQuery(exp1, MEDIA_WORDS);
-    const exp = str;
-    let [sel, ...exprList] = exp?.split("$");
-    exprList = exprList.filter(Boolean);
-    exprList = exprList.map(parseNestedExpression);
-    exprList = exprList.map(s => s.interpret(scope));
-    exprList &&= clashOrStack(exprList);
-    let { selector, item } = parseSelectorPipe(sel);
-    const layer = layerName(exp1, item);
-    selector = clazz + selector; //todo, we always start with the class in the selector..
-    const props = Object.fromEntries(Object.entries(exprList).map(([k, v]) => {
-      k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
-      if (CSS.supports(k, "inherit"))
-        if (!CSS.supports(k, v) && !CSS.supports(k = renames[k] ?? k, v))
-          throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
-      //the browser might not support the property, because the property is too modern.
-      return [k, v];
-    }));
-    const body = Object.entries(props).map(([k, v]) => `  ${k}: ${v};`).join("\n");
-    const rule = media ? [selector, "@media " + media, "@layer " + layer] : [selector, "@layer " + layer];
-    const cssText = rule.reduce((acc, part) => `${part} {\n ${acc}\n}`, body);
-    // const miniCssRule = {cssText: full, name: layer, cssRules: [{ media, cssRules: [{ selectorText: selector, style: { cssText: body } }] }]};
-    return { layer, media, selector, props, cssText };
-  }
+export function interpret(short, scope, MEDIA_WORDS, renames) {
+  const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
+  short = short.match(/(.*?)\!*$/)[1];
+  const { str: exp, media } = parseMediaQuery(short, MEDIA_WORDS);
+  let [sel, ...exprList] = exp?.split("$");
+  exprList = exprList.map(parseNestedExpression);
+  exprList = exprList.map(s => s.interpret(scope));
+  exprList &&= clashOrStack(exprList);
+  let { selector, item } = parseSelectorPipe(sel);
+  const layer = (item ? "items" : "container") + (short.match(/^(\$|\|\$)/) ? "Default" : "");
+  selector = clazz + selector; //todo, we always start with the class in the selector..
+  const props = Object.fromEntries(Object.entries(exprList).map(([k, v]) => {
+    k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
+    if (CSS.supports(k, "inherit"))
+      if (!CSS.supports(k, v) && !CSS.supports(k = renames[k] ?? k, v))
+        throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
+    //the browser might not support the property, because the property is too modern.
+    return [k, v];
+  }));
+  const body = Object.entries(props).map(([k, v]) => `  ${k}: ${v};`).join("\n");
+  const rule = media ? [selector, "@media " + media, "@layer " + layer] : [selector, "@layer " + layer];
+  const cssText = rule.reduce((acc, part) => `${part} {\n ${acc}\n}`, body);
+  return { short, layer, media, selector, props, cssText };
+  // const miniCssRule = {cssText, name: layer, cssRules: [{ media, cssRules: [{ selectorText: selector, style: { cssText: body }, props }] }]};
 }
 
 class Expression {
