@@ -159,23 +159,6 @@ function sequence(allShorts, classListShorts, parseFun) {
   return res;
 }
 
-
-/**
- * Use like this:
- *   const layerStatement = `@layer ${extractLayerNames(cssRules).join(", ")};`;
- *   styleSheet.insertRule(layerStatement, 0);
- * 
- * @param {cssRules} cssRules 
- * @returns list 
- */
-function extractLayerNames(cssRules) {
-  const res = new Set();
-  for (const rule of cssRules)
-    if (rule instanceof CSSLayerBlock)
-      res.add(rule.name);
-  return [...res].sort((a, b) => a.localeCompare(b));
-}
-
 /**
  * @param {Element} root from where to check for short occurrences 
  * @param {CSSStyleSheet} styleSheet with the shorts to check
@@ -202,7 +185,6 @@ export {
   extractShortSelector,
 
   updateClassList,
-  extractLayerNames,
   removeUnusedShorts,
   updateStyleText,
 };
