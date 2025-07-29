@@ -222,7 +222,7 @@ _grid.scope = {
   alignSelf: AllFunctions.alignSelf,
   // area: (...args) => ({ ["grid-area"]: args.join(" ") }),
   align: a => {
-    const m = a.match(/^[abcs_.][abcs_.]?$/)?.[0];
+    const m = a.match(/^[abcs_.][abcs_.]?$/);
     if (!m)
       throw `$_grid|$align(${a}): "${a}" doesn't match /^[abcs_.][abcs_.]?$/`;
     const [b, i = b] = m[0];
