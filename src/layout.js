@@ -201,8 +201,8 @@ grid.scope = {
   "dense-row": { gridAutoFlow: "dense row" },
 };
 
-const column = (start, end = start) => ({ gridColumn: `${start} / ${end}` });
-const row = (start, end = start) => ({ gridRow: `${start} / ${end}` });
+const column = (start, end) => ({ gridColumn: end ? `${start} / ${end}` : start });
+const row = (start, end) => ({ gridRow: end ? `${start} / ${end}` : start });
 const span = arg => `span ${arg}`;
 column.scope = { span };
 row.scope = { span };
