@@ -28,7 +28,8 @@
     text-align: unset;
     text-indent: unset;
     gap: 1rem;
-    overflow: visible;
+    overflow-inline: visible;
+    overflow-block: auto;
     padding: 1rem;
     inline-size: 80%;
   }

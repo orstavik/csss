@@ -807,11 +807,11 @@
 }
 ```
 
-**csss:** $block(hidden:scroll)
+**csss:** $block(hidden:scroll-snap-mandatory)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(hidden\:scroll\) {
+  .\$block\(hidden\:scroll-snap-mandatory\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -819,16 +819,18 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    overflow: hidden;
+    overflow-inline: hidden;
+    overflow-block: scroll;
+    scroll-snap-type: block mandatory;
   }
 }
 ```
 
-**csss:** $block(scroll:hidden)
+**csss:** $block(scroll-snap:hidden)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(scroll\:hidden\) {
+  .\$block\(scroll-snap\:hidden\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -836,8 +838,9 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    overflow: scroll;
-    scroll-snap-type: x;
+    overflow-inline: scroll;
+    overflow-block: hidden;
+    scroll-snap-type: inline;
   }
 }
 ```
@@ -1286,6 +1289,24 @@
   .\|\$border\$padding\(0\.5rem\)>* {
     border-style: solid;
     padding: 0.5rem;
+  }
+}
+```
+
+**csss:** $block(hidden:scroll)
+**css:**
+```css
+@layer containerDefault {
+  .\$block\(hidden\:scroll\) {
+    display: block;
+    word-spacing: unset;
+    line-height: unset;
+    white-space: unset;
+    hyphens: unset;
+    text-align: unset;
+    text-indent: unset;
+    overflow-inline: hidden;
+    overflow-block: scroll;
   }
 }
 ```

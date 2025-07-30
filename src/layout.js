@@ -13,20 +13,22 @@ function defaultLayout(display, ...args) {
   return Object.assign({ display }, containerDefaults, ...args);
 }
 
-const O2 = "(?:(visible|hidden|clip)|(auto|scroll)(?:-snap(?:-mandatory)?)?)";
-const OVERFLOW2 = new RegExp(`^${O2}(?::${O2})?$`); //$block(hidden:scroll-snap-mandatory,...)
+const O2 = /^(visible|hidden|clip)|(auto|scroll)(-snap(-mandatory)?)?$/
 function overflow(a) {
-  const m = a.match(OVERFLOW2);
-  if (!m) return;
-  let [_, vhc, overflowInline = vhc, snap, man, vhc2, overflowBlock = vhc2, snap2, man2] = m;
-  const res = (overflowBlock && (overflowBlock !== overflowInline && snap2 !== snap && man !== man2)) ?
-    { overflowInline, overflowBlock } :
-    // { overflowX: overflowInline, overflowY: overflowBlock } :
-    { overflow: overflowInline };
-  if (snap || snap2) {
-    res.scrollSnapType = snap && snap2 ? "both" : snap ? "x" : "y";
-    if (man || man2) res.scrollSnapType += " mandatory";
-  }
+  let [inline, block] = a.split(":");
+  const mI = inline.match(O2);
+  if (!mI) return;
+  const [, vhcI, overflowInline = vhcI, snapI, manI] = mI;
+  const mB = block?.match(O2);
+  let vhcB, overflowBlock, snapB, manB;
+  if (mB)
+    ([, vhcB, overflowBlock = vhcB, snapB, manB] = mB);
+  const res = (!overflowBlock || overflowBlock == overflowInline) ?
+    { overflow: overflowInline } :
+    { overflowInline, overflowBlock };
+  if (!snapI && !snapB) return res;
+  res.scrollSnapType = snapI && snapB ? "both" : snapI ? "inline" : "block";
+  if (manI || manB) res.scrollSnapType += " mandatory";
   return res;
 }
 
