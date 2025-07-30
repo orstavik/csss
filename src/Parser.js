@@ -61,6 +61,8 @@ class Expression {
     const cb = scope?.[this.name];
     if (!cb)
       throw new ReferenceError(this.name);
+    if (!(cb instanceof Function)) 
+      return cb;
     try {
       const args = this.args.map(x =>
         x instanceof Expression ? x.interpret(cb.scope) :
