@@ -137,6 +137,15 @@ const NativeColorsFunctions = (function () {
   //#123 => hash(123) => #123
   //#primary#30 => hash(primary,30)
   //#primary#30#a80 => hash(primary,30,a80)
+  //color-mix part 2
+  // First is only isColor || --color-<name>
+  // Is either (a|isColor|name|)(0-100)? => color,number
+  // If !color&!num, skip
+  // If !num, num = 50
+  // If !color, then color = currentName+(i-currentNameI).
+  // If color ==a, color =transparent, num =100-num
+  // If color is a name, then add var(--color-$) to it.
+
   function _hash(name, ...colors) {
     if (name.match(/^[a-f0-9]{3,8}$/) && name.length != 5 && name.length != 7)
       return `#${name}`;
@@ -153,15 +162,7 @@ const NativeColorsFunctions = (function () {
     }
     return res;
   }
-  // function _hash(a, ...others) {
-  //   if (others.length) throw "hash(can only have 1 argument)";
-  //   //#123 => hash(123) => #123
-  //   //#primary_a80 => hash(primary) => var(--color_primary_a80)
-  //   if (a.match(/^[a-f0-9]{3,8}$/) && a.length != 5 && a.length != 7)
-  //     return `#${a}`;
-  //   return `var(--color_${a})`;
-  // }
-
+  
   const res = {
     _hash,
     rgb: (...args) => nativeCssColorFunction("rgb", ...args),

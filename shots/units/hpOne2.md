@@ -485,7 +485,7 @@
     text-indent: unset;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    overflow-y: hidden;
+    overflow-block: hidden;
   }
 }
 ```

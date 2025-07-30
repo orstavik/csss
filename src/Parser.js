@@ -1,14 +1,15 @@
+import { SHORTS, MEDIA_WORDS } from "./vocabulary.js";
+
 //not useful, should be under interpret.
 // function findLayerType(short) {
 //   if (!short.includes("$")) return;
-//   const num = short.match(/\$*$/)?.[0].length ?? "";
-//   if (short[0] === "$") return "containerDefault" + num;
-//   if (short[0] === "|" && short[1] === "$") return "itemDefault" + num;
+//   if (short[0] === "$") return "containerDefault";
+//   if (short.startsWith("|$") return "itemDefault";
 //   const shortWithoutQuote = short.replaceAll(/''/g, ""); // remove all text within quotes
 //   const i = shortWithoutQuote.indexOf("$");
 //   const j = shortWithoutQuote.indexOf("|");
-//   if (j < 0 || i < j) return "container" + num;
-//   return "item" + num;
+//   if (j < 0 || i < j) return "container";
+//   return "item";
 // }
 
 export function extractShortSelector(rule) {
@@ -23,13 +24,13 @@ export function extractShort(rule) {
   return className && className.slice(1).replaceAll("\\", "");
 }
 
-export function interpret(short, scope, MEDIA_WORDS, renames) {
+export function interpret(short) {
   const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
   short = short.match(/(.*?)\!*$/)[1];
   const { str: exp, media } = parseMediaQuery(short, MEDIA_WORDS);
   let [sel, ...exprList] = exp?.split("$");
   exprList = exprList.map(parseNestedExpression);
-  exprList = exprList.map(s => s.interpret(scope));
+  exprList = exprList.map(s => s.interpret(SHORTS));
   exprList &&= clashOrStack(exprList);
   let { selector, item } = parseSelectorPipe(sel);
   const layer = (item ? "items" : "container") + (short.match(/^(\$|\|\$)/) ? "Default" : "");
@@ -37,7 +38,7 @@ export function interpret(short, scope, MEDIA_WORDS, renames) {
   const props = Object.fromEntries(Object.entries(exprList).map(([k, v]) => {
     k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
     if (CSS.supports(k, "inherit"))
-      if (!CSS.supports(k, v) && !CSS.supports(k = renames[k] ?? k, v))
+      if (!CSS.supports(k, v))
         throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
     //the browser might not support the property, because the property is too modern.
     return [k, v];

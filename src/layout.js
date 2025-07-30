@@ -20,7 +20,8 @@ function overflow(a) {
   if (!m) return;
   let [_, vhc, overflowInline = vhc, snap, man, vhc2, overflowBlock = vhc2, snap2, man2] = m;
   const res = (overflowBlock && (overflowBlock !== overflowInline && snap2 !== snap && man !== man2)) ?
-    { overflowX: overflowInline, overflowY: overflowBlock } :
+    { overflowInline, overflowBlock } :
+    // { overflowX: overflowInline, overflowY: overflowBlock } :
     { overflow: overflowInline };
   if (snap || snap2) {
     res.scrollSnapType = snap && snap2 ? "both" : snap ? "x" : "y";
@@ -33,13 +34,14 @@ function checkNoArgs(args) {
   if (args.some(a => a != null)) throw `This $short takes no arguments: ${args.join(", ")}")}`;
 }
 
-function lineClamp(num) {
-  return {
-    "display": "-webkit-box",
-    WebkitLineClamp: num,
+function lineClamp(lines, ...args) {
+  return Object.assign(block(...args), {
+    display: "-webkit-box",
+    WebkitLineClamp: lines,
     WebkitBoxOrient: "vertical",
-    overflowBlock: "hidden",
-  }
+    overflowBlock: "hidden"
+    // overflowY: "hidden"
+  });
 }
 
 const TextAlignAliases = {
@@ -303,4 +305,5 @@ export default {
   _grid,
   flex,
   _flex,
+  lineClamp,
 };
