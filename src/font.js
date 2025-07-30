@@ -15,6 +15,8 @@ function font(...args) {
     if (a instanceof Object) return a;
     if (a.match(/^[1-9]00$/)) return { fontWeight: a };
     if (isLength(a)) return { letterSpacing: a };
+    //todo with font-size added, this should not be letter spacing.
+    //todo i think letterSpacing should be spacing() or gap() or letterSpacing() or space()?
     if (a[0] === "'" || a[0] === '"') return { fontFamily: a.replaceAll("+", " ") };
     if (a.startsWith("url(")) return { fontFamily: a };
     throw `Unrecognized font property: ${a}`;
@@ -25,6 +27,7 @@ function font(...args) {
 }
 font.scope = {
   url: (...args) => `url(${args.join(" ")})`,
+  size: a => ({ fontSize: a }),
   weight: a => ({ fontWeight: a }),
   style: a => ({ fontStyle: a }),
   variant: a => ({ fontVariant: a }),
@@ -128,6 +131,7 @@ const WORDS = {
       //added
       CourierNew: "Courier New",
       Palatino: "Palatino",
+      // Palatino: "Palatino Linotype",
       Bookman: "Bookman",
       GoudyOldStyle: "Goudy Old Style",
       AvantGarde: "Avant Garde",
@@ -144,7 +148,6 @@ const WORDS = {
       Comic: "Comic Sans MS",
       Times: "Times New Roman",
       Courier: "Courier New",
-      Palatino: "Palatino Linotype",
       Lucida: "Lucida Sans Unicode",
     },
     Weight: {
@@ -163,6 +166,12 @@ const WORDS = {
       allPetiteCaps: "all-petite-caps",
       unicase: "unicase",
       titlingCaps: "titling-caps",
+
+      titling: "titling-caps",
+      small: "small-caps",
+      allSmall: "all-small-caps",
+      petite: "petite-caps",
+      allPetite: "all-petite-caps",
     },
     Stretch: {
       ultraCondensed: "ultra-condensed",
@@ -183,13 +192,15 @@ const WORDS = {
   text: {
     Transform: {
       capitalize: "capitalize",
-      allCaps: "uppercase",
-      smallCaps: "lowercase",
       uppercase: "uppercase",
       lowercase: "lowercase",
       fullWidth: "full-width",
       fullSizeKana: "full-size-kana",
       mathAuto: "math-auto",
+      math: "math-auto",
+      kana: "full-size-kana",
+      upper: "uppercase",
+      lower: "lowercase",
     }
   }
 };
@@ -199,23 +210,15 @@ function* fontWords() {
       for (let [short, value] of Object.entries(two))
         yield { prop: main + prop, short, value };
 }
-//0. adding all fonts under small first letter too Arial => arial, Times => times, etc.
+//0. adding all fonts under small first letter too. Ie. [Arial] => [Arial,arial], [Times] => [times,Times].
 for (let short in WORDS.font.Family)
   WORDS.font.Family[short[0].toLowerCase() + short.slice(1)] = WORDS.font.Family[short];
 
-//1. adding words under the font.scope
-for (let { short, prop, value } of fontWords())
-  font.scope[short] = font.scope[short[0].toLowerCase() + short.slice()] = { [prop]: value };
-
-//2. adding words as superShorts.
 const SHORTS = { font };
 for (let { short, prop, value } of fontWords()) {
-  SHORTS[short] = function () { return { [prop]: value }; } //todo i can't just use objects here, right?
-  //question, should the superShort words be added as the full font? Or just using their property?
-  // SHORTS[short] = function (...args) { return this.font({ [prop]: value }, ...args); }
-  // SHORTS[short].scope = font.scope;
-  Object.defineProperty(SHORTS[short], "name", { value: short });
-  SHORTS[short]
+  //1. add the short both in the scope of $font and top level
+  SHORTS[short] = font.scope[short] = font.scope[short[0].toLowerCase() + short.slice()] = { [prop]: value };
+  //2. adding words as superShorts.
 }
 
 export default SHORTS;
