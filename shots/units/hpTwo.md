@@ -3,7 +3,7 @@
 ```css
 @layer containerDefault {
   .\$color\(\#primary\#80\#a25\)\!\! {
-    color: color-mix(in oklab, color-mix(in oklab, var(--color-primary) 20%, var(--color-primary1) 80%) 25%, transparent 75%);
+    color: color-mix(in oklab, color-mix(in oklab, var(--color-primary), var(--color-primary1) 80%), transparent 75%);
   }
 }
 ```

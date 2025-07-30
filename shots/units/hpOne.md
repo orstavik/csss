@@ -41,7 +41,7 @@
 ```css
 @layer containerDefault {
   .\$color\(\#primary\#a20\) {
-    color: color-mix(in oklab, var(--color-primary) 20%, transparent 80%);
+    color: color-mix(in oklab, var(--color-primary), transparent 80%);
   }
 }
 ```
@@ -177,7 +177,7 @@
 ```css
 @layer containerDefault {
   .\$bg\(\#primary\#90\) {
-    background-image: linear-gradient(color-mix(in oklab, var(--color-primary) 10%, var(--color-primary1) 90%));
+    background-image: linear-gradient(color-mix(in oklab, var(--color-primary), var(--color-primary1) 90%));
     background-position: 0% 0%;
     background-repeat: repeat;
     background-size: auto;

@@ -137,32 +137,46 @@ const NativeColorsFunctions = (function () {
   //#123 => hash(123) => #123
   //#primary#30 => hash(primary,30)
   //#primary#30#a80 => hash(primary,30,a80)
-  //color-mix part 2
-  // First is only isColor || --color-<name>
-  // Is either (a|isColor|name|)(0-100)? => color,number
-  // If !color&!num, skip
-  // If !num, num = 50
-  // If !color, then color = currentName+(i-currentNameI).
-  // If color ==a, color =transparent, num =100-num
-  // If color is a name, then add var(--color-$) to it.
 
-  function _hash(name, ...colors) {
-    if (name.match(/^[a-f0-9]{3,8}$/) && name.length != 5 && name.length != 7)
-      return `#${name}`;
-    name = "--color-" + name;
-    let res = `var(${name})`;
-    for (let i = 0; i < colors.length; i++) {
-      const c = colors[i];
-      const alpha = c[0] === "a";
-      const now = alpha ? "transparent" : `var(${name + (i + 1)})`;
-      const n = alpha ? 100 - parseInt(c.slice(1)) : parseInt(c);
-      if (n < 0 || n > 100)
-        throw new SyntaxError(`In color-vectors (#color#num#num), the num must match a?<0-100>. (#${name}#${colors.join("#")})`);
-      res = `color-mix(in oklab, ${res} ${100 - n}%, ${now} ${n}%)`;
-    }
-    return res;
+  const ColorNames = new Set("aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black", "blanchedalmond", "blue", "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk", "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgreen", "darkgrey", "darkkhaki", "darkmagenta", "darkolivegreen", "darkorange", "darkorchid", "darkred", "darksalmon", "darkseagreen", "darkslateblue", "darkslategray", "darkslategrey", "darkturquoise", "darkviolet", "deeppink", "deepskyblue", "dimgray", "dimgrey", "dodgerblue", "firebrick", "floralwhite", "forestgreen", "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod", "gray", "green", "greenyellow", "grey", "honeydew", "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender", "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrodyellow", "lightgray", "lightgreen", "lightgrey", "lightpink", "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray", "lightslategrey", "lightsteelblue", "lightyellow", "lime", "limegreen", "linen", "magenta", "maroon", "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue", "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin", "navajowhite", "navy", "oldlace", "olive", "olivedrab", "orange", "orangered", "orchid", "palegoldenrod", "palegreen", "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "purple", "rebeccapurple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna", "silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "springgreen", "steelblue", "tan", "teal", "thistle", "tomato", "transparent", "turquoise", "violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen");
+
+  //To get the transparent last number in hex colors to work, it is simply turned into a mix percentage. Works as if transparent)
+  function parseSecondColor(c, i, vectorName, first) {
+    const [, h3, p3, h6, p6] = c.match(/^(?:([0-9a-f]{3}[0-9a-e])|([0-9a-f]{7}[0-9a-e]))/i) ?? [];
+    if (h3)
+      return `#${h3} ${Math.round(parseInt(p3, 16) / 15) * 100}%`;
+    if (h6)
+      return `#${h6} ${Math.round(parseInt(p6, 16) / 255) * 100}%`;
+    let [, name, percent] = c.match(/(.*?)(\d\d?)$/);
+    if (!percent)
+      throw new SyntaxError(
+        `Illegal #colormix#${c}: Missing percent postfix.
+Did you mean to mix half'n'half, ie. #${c}5 or #${c}50?`
+      );
+    if (!name && !vectorName)
+      throw new SyntaxError(
+        `Illegal #colormix#${c}. "#${first}" is not a color vector. Did you forget to use or define a color vector such as #primary or #accent?`);
+    if (percent.length === 1)
+      percent = percent + "0";
+    return !name ? `var(${vectorName + ++i}) ${percent}%` :
+      name == "a" ? `transparent ${100 - parseInt(percent)}%` :
+        ColorNames.has(name) ? `${name} ${percent}%` :
+          `var(--color-${name}) ${percent}%`;
   }
-  
+
+  function _hash(first, ...colors) {
+    let vector, res;
+    res = ColorNames.has(first) ? first :
+      first.match(/^([a-f0-9]{3,4}|[a-f0-9]{6}|[a-f0-9]{8})$/i) ? "#" + first :
+        undefined;
+    if (!res && first.match(/^[a-z][a-z0-9_-]*/i))
+      res = `var(${vector = `--color-${first}`})`;
+    else if (!res)
+      throw new SyntaxError(`Invalid #color name: ${first}`);
+    return colors.reduce((res, c, i) =>
+      `color-mix(in oklab, ${res}, ${parseSecondColor(c, i, vector, first)})`, res);
+  }
+
   const res = {
     _hash,
     rgb: (...args) => nativeCssColorFunction("rgb", ...args),
