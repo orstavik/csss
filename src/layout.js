@@ -101,17 +101,28 @@ const LAYOUT = {
   "ellipsis": { whiteSpace: "nowrap", textOverflow: "ellipsis" },
   "break-all": { wordBreak: "break-all" },
   "keep-all": { wordBreak: "keep-all" },
+  "snap-stop": { scrollSnapStop: "always" },
 };
 
 const _LAYOUT = {
   margin: toLogicalFour.bind(null, "margin"),
   m: toLogicalFour.bind(null, "margin"),
   scrollMargin: toLogicalFour.bind(null, "scroll-margin"),
-  textAlign: AllFunctions.textAlign,
+  textAlign: AllFunctions.textAlign, //todo is this here??
   w: AllFunctions.width,
   h: AllFunctions.height,
   width: AllFunctions.width,
   height: AllFunctions.height,
+  "snap-start": { scrollSnapAlign: "start" },
+  "snap-start-center": { scrollSnapAlign: "start center" },
+  "snap-start-end": { scrollSnapAlign: "start end" },
+  "snap-center": { scrollSnapAlign: "center" },
+  "snap-center-start": { scrollSnapAlign: "center start" },
+  "snap-center-end": { scrollSnapAlign: "center end" },
+  "snap-end": { scrollSnapAlign: "end" },
+  "snap-end-start": { scrollSnapAlign: "end start" },
+  "snap-end-center": { scrollSnapAlign: "end center" },
+  "snap-none": { scrollSnapAlign: "none" },
   // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
 

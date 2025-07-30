@@ -807,11 +807,11 @@
 }
 ```
 
-**csss:** $block(hidden:scroll-snap-mandatory)
+**csss:** $block(hidden:scroll-snap-mandatory,snap-stop)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(hidden\:scroll-snap-mandatory\) {
+  .\$block\(hidden\:scroll-snap-mandatory\,snap-stop\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -822,6 +822,27 @@
     overflow-inline: hidden;
     overflow-block: scroll;
     scroll-snap-type: block mandatory;
+    scroll-snap-stop: always;
+  }
+}
+```
+
+**csss:** |$_block(snap-end)
+**css:**
+```css
+@layer itemsDefault {
+  .\|\$_block\(snap-end\) > * {
+    scroll-snap-align: end;
+  }
+}
+```
+
+**csss:** |$_block(snap-center-start)
+**css:**
+```css
+@layer itemsDefault {
+  .\|\$_block\(snap-center-start\) > * {
+    scroll-snap-align: center start;
   }
 }
 ```
