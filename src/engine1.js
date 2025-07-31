@@ -19,15 +19,6 @@ function memoize(fn, max = 333) {
   };
 }
 
-function updateClassList(classList, sequencedClassList) {
-  for (let i = 0; i < classList.length; i++) {
-    const cls = classList[i];
-    const sequencedCls = sequencedClassList[i];
-    if (cls !== sequencedCls)
-      classList.replace(cls, sequencedCls);
-  }
-}
-
 /**
  * If you have a cssRules object, then you need to do:
  *   const extractShort = memoize(extractShortSelector, 333);
@@ -55,6 +46,15 @@ function sequence(allShorts, classListShorts, parseFun) {
       res[--i] = cls + "!"; // mark and redo!
   }
   return res;
+}
+
+function updateClassList(currentClassList, newClasses) {
+  for (let i = 0; i < currentClassList.length; i++) {
+    const cls = currentClassList[i];
+    const sequencedCls = newClasses[i];
+    if (cls !== sequencedCls)
+      currentClassList.replace(cls, sequencedCls);
+  }
 }
 
 /**
