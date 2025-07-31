@@ -1,5 +1,5 @@
 <script type="module">
-  import { parseCssShorts } from "/src/engine1.js";
+  import { parseCssShorts } from "/src/engine.js";
   import runTests from "/shots/mdTester.js";
 
   document.head.append(document.createElement('style'));
@@ -14,7 +14,6 @@
     } catch (error) {
       actual = error.message ?? error;
     }
-    debugger
     return { key, actual, expected };
   }
 
