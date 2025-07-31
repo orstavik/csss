@@ -77,6 +77,7 @@ const MEDIA_WORDS = {
   xl: "min-width:1280px",
   xxl: "min-width:1536px",
   xxxl: "min-width:1920px",
+  dark: "(prefers-color-scheme:dark)",
 };
 
 // | **overflow-block**       | `none`, `scroll`, `optional-paged`, `paged` | `@media (overflow-block: scroll) {…}`

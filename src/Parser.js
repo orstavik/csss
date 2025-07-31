@@ -401,3 +401,21 @@ function parseMediaQuery(str, register) {
   }
   return { str: str.slice(i), media: `${tokens.join(" ")}` };
 }
+
+/*
+todo not implemented. :edge should be included!
+:first = :first-child;
+:second = :nth-child(2);
+:third = :nth-child(3);
+:fourth = :nth-child(4);
+:fifth = :nth-child(5);
+:sixth = :nth-child(6);
+:seventh = :nth-child(7);
+:eighth = :nth-child(8);
+:ninth = :nth-child(9);
+:tenth = :nth-child(10);
+:last = :last-child;
+:edge = :first-child,:last-child;
+:edge = :where(:first-child,:last-child); //this is correct
+:edge = :is(:first,:last); //todo this is not correct, but it is a good start.
+*/
