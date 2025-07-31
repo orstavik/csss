@@ -1,5 +1,34 @@
 import { SHORTS, MEDIA_WORDS } from "./vocabulary.js";
 
+/**
+ * If you have a cssRules object, then you need to do:
+ *   const extract = memoize(extractSelector, 333);
+ *   const allShorts = [...cssRules].map(CSSS.extract);
+ *   const parseFun = memoize(CSSS.parse, 333);
+ *   sequence(allShorts, el.classList, parseFun);
+ * 
+ * @param {[string]} allShorts 
+ * @param {[string]} classListShorts 
+ * @param {Function} parseFun 
+ * @returns {[string]} sequenced classListShorts
+ */
+export function sequence(allShorts, classListShorts, parseFun) {
+  const layerPosition = {};
+  const res = [...classListShorts];
+  for (let i = 0; i < res.length; i++) {
+    const cls = res[i];
+    const shortObj = parseFun(cls);
+    if (!shortObj) continue; // not a short
+    let pos = allShorts.indexOf(cls);
+    if (pos == -1) pos = Infinity;
+    if (pos >= layerPosition[shortObj.layer])
+      layerPosition[shortObj.layer] = pos;
+    else
+      res[--i] = cls + "!"; // mark and redo!
+  }
+  return res;
+}
+
 //not useful, should be under interpret.
 // function findLayerType(short) {
 //   if (!short.includes("$")) return;
