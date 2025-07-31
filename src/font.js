@@ -1,7 +1,7 @@
 import { isLength } from "./func.js";
 
-//$font("Arial+Black",serif,bold,small-caps,ultra-condensed,capitalize,sans-serif,oblique(-10deg),ui-sans-serif)
-//$font("Arial+Black",sans-serif,ui-sans-serif,900,small-caps,ultra-condensed,capitalize,oblique(10deg))
+//$font("Arial+Black",serif,bold,smallCaps,ultraCondensed,capitalize,sansSerif,oblique(-10deg),uiSansSerif)
+//$font("Arial+Black",sansSerif,uiSansSerif,900,smallCaps,ultraCondensed,capitalize,oblique(10deg))
 function font(...args) {
   const res = {
     fontStyle: "unset",
@@ -173,6 +173,15 @@ const WORDS = {
       petite: "petite-caps",
       allPetite: "all-petite-caps",
     },
+
+    //add some more
+
+    // Synthesis: {
+    //   style: "style",
+    //   smallCaps: "smallCaps",
+    //   weight: "weight",
+    //   position: "position",
+    // },
     Stretch: {
       ultraCondensed: "ultra-condensed",
       extraCondensed: "extra-condensed",
@@ -216,9 +225,7 @@ for (let short in WORDS.font.Family)
 
 const SHORTS = { font };
 for (let { short, prop, value } of fontWords()) {
-  //1. add the short both in the scope of $font and top level
   SHORTS[short] = font.scope[short] = font.scope[short[0].toLowerCase() + short.slice()] = { [prop]: value };
-  //2. adding words as superShorts.
+  // SHORTS[prop] //here we should work on droplets??
 }
-
 export default SHORTS;
