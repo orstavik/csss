@@ -24,7 +24,7 @@ export function extractShort(rule) {
   return className && className.slice(1).replaceAll("\\", "");
 }
 
-export function interpret(short) {
+export function parse(short) {
   const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
   short = short.match(/(.*?)\!*$/)[1];
   const { str: exp, media } = parseMediaQuery(short, MEDIA_WORDS);
@@ -61,7 +61,7 @@ class Expression {
     const cb = scope?.[this.name];
     if (!cb)
       throw new ReferenceError(this.name);
-    if (!(cb instanceof Function)) 
+    if (!(cb instanceof Function))
       return cb;
     try {
       const args = this.args.map(x =>

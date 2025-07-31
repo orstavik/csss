@@ -1,5 +1,5 @@
 <script type="module">
-  import { parseCssShorts } from "/src/engine.js";
+  import { default as CSSS } from "/src/engine.js";
   import runTests from "/shots/mdTester.js";
 
   document.head.append(document.createElement('style'));
@@ -10,7 +10,7 @@
     const key = csss.value, b = css.value;
     return {
       key,
-      actual: normalizeCss(parseCssShorts(key).cssText),
+      actual: normalizeCss(CSSS.parse(key).cssText),
       expected: normalizeCss(b)
     };
   }

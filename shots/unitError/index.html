@@ -1,5 +1,5 @@
 <script type="module">
-  import { parseCssShorts } from "/src/engine.js";
+  import { default as CSSS } from "/src/engine.js";
   import runTests from "/shots/mdTester.js";
 
   document.head.append(document.createElement('style'));
@@ -10,7 +10,7 @@
     const expected = error.value;
     let actual;
     try {
-      actual = parseCssShorts(key);
+      actual = CSSS.parse(key);
     } catch (error) {
       actual = error.message ?? error;
     }
