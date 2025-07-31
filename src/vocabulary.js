@@ -1,7 +1,7 @@
 import nativeAndMore from "./func.js";
 import fonts from "./font.js";
 import layouts from "./layout.js";
-import palette from "./palette1.js";
+import palette from "./color.js";
 
 const SHORTS = {
   ...nativeAndMore,
