@@ -1,5 +1,16 @@
 import { isLength } from "./func.js";
 
+function noSynthesis(...args) {
+  if (!args.length) return { fontSynthesis: "none" };
+  const res = ["style", "weight", "small-caps", "position"];
+  for (let a of args) {
+    if (a === "smallCaps") a = "small-caps";
+    if (res.includes(a)) res.splice(res.indexOf(a), 1);
+    else throw new SyntaxError(`Unknown font synthesis property: ${a}`);
+  }
+  return { fontSynthesis: res.join(" ") };
+}
+
 //$font("Arial+Black",serif,bold,smallCaps,ultraCondensed,capitalize,sansSerif,oblique(-10deg),uiSansSerif)
 //$font("Arial+Black",sansSerif,uiSansSerif,900,smallCaps,ultraCondensed,capitalize,oblique(10deg))
 function font(...args) {
@@ -9,7 +20,8 @@ function font(...args) {
     fontVariantCaps: "unset",
     fontStretch: "unset",
     textTransform: "unset",
-    letterSpacing: "unset"
+    letterSpacing: "unset",
+    fontSynthesis: "unset",
   };
   args = args.map(a => {
     if (a instanceof Object) return a;
@@ -21,7 +33,7 @@ function font(...args) {
     if (a.startsWith("url(")) return { fontFamily: a };
     throw `Unrecognized font property: ${a}`;
   });
-  Object.assign(res, ...args);
+  Object.assign(res, ...args); //todo this doesn't stack array values??
   res.fontFamily = args.map(a => a.fontFamily).filter(Boolean).join(", ");
   return res;
 }
@@ -34,6 +46,7 @@ font.scope = {
   stretch: a => ({ fontStretch: a }),
   transform: a => ({ textTransform: a }),
   letterSpacing: a => ({ letterSpacing: a }),
+  noSynthesis,
 }
 
 //adding words
@@ -176,12 +189,12 @@ const WORDS = {
 
     //add some more
 
-    // Synthesis: {
-    //   style: "style",
-    //   smallCaps: "smallCaps",
+    Synthesis: {
+      noSynthesis: "none",
+    //   noSynthesisPosition: "smallCaps",
     //   weight: "weight",
     //   position: "position",
-    // },
+    },
     Stretch: {
       ultraCondensed: "ultra-condensed",
       extraCondensed: "extra-condensed",
