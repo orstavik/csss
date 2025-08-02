@@ -65,7 +65,8 @@ export function parse(short) {
   const layer = (item ? "items" : "container") + (short.match(/^(\$|\|\$)/) ? "Default" : "");
   selector = clazz + selector; //todo, we always start with the class in the selector..
   const props = Object.fromEntries(Object.entries(exprList).map(([k, v]) => {
-    k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
+    if (!k.startsWith("--")) //dont kebabcase css variables.
+      k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
     if (CSS.supports(k, "inherit"))
       if (!CSS.supports(k, v))
         throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
