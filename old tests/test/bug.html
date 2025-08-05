@@ -1,0 +1,72 @@
+<test-html title="Conic Gradient (Simple)">
+  <main>
+    <div>
+      <h3>Failing Cases - Missing Spaces in Numeric Parameters</h3>
+      <div class="$conic(from45deg,red,blue)">`from45deg` becomes `conic-gradient(from45deg, ...)` which is wrong</div>
+      <div class="$conic(at50%50%,red,blue)">`at50%50%` becomes `conic-gradient(at50%50%, ...)` which is wrong</div>
+      <div class="$conic(from90deg,at30%80%,red,blue)">`from90deg,at30%80%` Also a parameter that doesn't work.</div>
+      <div class="$conic(from45deg,atTopLeft,red,blue)">`from45deg,atTopLeft` Also a parameter that doesn't work.</div>
+    </div>
+    <div>
+      <p><strong>Issue:</strong> CSSS camelCase conversion fails with numeric values (no uppercase letters to
+        convert)</p>
+      <p><strong>Valid Conic Syntax:</strong>
+        <code>conic-gradient([from &lt;angle&gt;] [at &lt;position&gt;], colors...)</code>
+      </p>
+      <p><strong>Root Cause:</strong> Regex <code>/[A-Z]/g</code> only converts uppercase letters, missing numeric
+        combinations</p>
+      <p><strong>Fix Needed:</strong> Enhanced parameter conversion to handle digits + units (deg, %, px, etc.)</p>
+    </div>
+  </main>
+  <style>
+    @layer items, container;
+
+    @layer container {
+      .\$conic\(from45deg\,red\,blue\) {
+        background-image: conic-gradient(from 45deg, red, blue);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+
+      .\$conic\(at50\%50\%\,red\,blue\) {
+        background-image: conic-gradient(at 50% 50%, red, blue);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+
+      .\$conic\(from90deg\,at30\%80\%\,red\,blue\) {
+        background-image: conic-gradient(from 90deg at 30% 80%, red, blue);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+
+      .\$conic\(from45deg\,atTopLeft\,red\,blue\) {
+        background-image: conic-gradient(from 45deg at top left, red, blue);
+        background-position: 0% 0%;
+        background-repeat: repeat;
+        background-size: auto;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-blend-mode: normal;
+        background-attachment: scroll;
+      }
+    }
+
+    @layer items {}
+  </style>
+</test-html>
