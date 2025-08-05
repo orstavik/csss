@@ -46,3 +46,48 @@ export function removeUnusedShorts(root, styleSheet, reverseEngineer = extractSe
 export function updateStyleText(styleEl) {
   styleEl.textContent = [...styleEl.sheet.cssRules].map(r => r.cssText).join('\n');
 }
+
+//DEMO FOR HOW TO PATCH FONT IMPORTS IN CSSS
+// (function () {
+
+//   //extracts only the first fontFamily if it is in a body.
+//   function extractFontFamily(style) {
+//     const fontFamily = style.fontFamily ??
+//       Object.entries(style).find(([k]) => k.endsWith('FontFamily'))?.[1];
+//     return fontFamily.split(',')[0].trim().replace(/['"]/g, '');
+//   }
+
+//   //adds a fonts.googleapis.com/css2 import to the styleSheet if needed for the fontFamily
+//   async function patchFontFamilyIfNeeded(styleSheet, family) {
+//     await document.fonts.ready();
+//     if (document.fonts.check(family))
+//       return;
+//     family = `@import url('https://fonts.googleapis.com/css2?display=swap&family=${family.replace(/ /g, '+')}');`;
+//     styleSheet.insertRule(familyImport, 1); //1 is the first @import; 0 is the @layer; rule
+//   }
+
+
+//   //ho function that returns undefined if the same result has already been given before
+//   function onlyOnce(fn) {
+//     const done = new Set();
+//     return function onlyOnce(...args) {
+//       const res = fn(...args);
+//       if (done.has(res)) return undefined;
+//       done.add(res);
+//       return res;
+//     };
+//   }
+
+//   let shorts;      //list of shorts to parse and check.
+//   let styleSheet; // the stylesheet that is used to check for font patches.
+
+//   const familyExtractor = onlyOnce(extractFontFamily);
+//   for (let short of shorts) {
+//     const { full, body } = CSSS.parser(short);
+//     styleSheet.insertRule(full, styleSheet.cssRules.length);
+//     //the rule is now added, and the browser will try to load the font. async.
+//     const family = familyExtractor(body);
+//     if (family) //first and only time we encounter a new fontFamily
+//       patchFontImports(styleSheet, family);
+//   }
+// });
