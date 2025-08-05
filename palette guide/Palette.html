@@ -1,0 +1,61 @@
+<style>
+  main {
+    background: var(--grey-98);
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  div {
+    background: var(--background-color);
+  }
+
+  span {
+    display: inline-block;
+    height: 2rem;
+    margin: 2px;
+    padding: 10px;
+    background: var(--background-color);
+    border-width: 3px;
+    border-style: solid;
+  }
+</style>
+<main class="$palette(#ff3412)"></main>
+<script>
+  const names = "--secondary|--primary|--tertiary|--neutral|grey|red|orange|green|blue".split("|");
+  const ops = "|blend|pop".split("|");
+  const types = "|bw|box|flip|darkflip".split("|");
+  const str = [];
+  for (op of ops) {
+    str.push(`<h2>${op}</h2>`);
+    for (const type of types) {
+      for (let name of names) {
+        const n = op ? `${op}(${name})` : name;
+        str.push(`<span class="$color(${[n, type].filter(Boolean).join(",")})"> hello sunshine </span>`);
+      }
+      str.push("<hr>");
+    }
+  }
+  document.querySelector("main").insertAdjacentHTML("beforeend", str.join("\n"));
+</script>
+
+</main>
+
+<script type="module">
+  import { SheetWrapper } from "../src/engine.js";
+  const sheetWrapper = new SheetWrapper(document.querySelector('style').sheet);
+
+  (function happyTest() {
+    const res = [];
+    for (let el of document.body.querySelectorAll('[class*="$"]'))
+      for (let clazz of el.classList)
+        if (clazz.includes("$"))
+          try {
+            sheetWrapper.addRule(clazz, el);
+          } catch (er) {
+            console.log(er);
+          }
+    requestAnimationFrame(_ => sheetWrapper.cleanup());
+  })();
+</script>
