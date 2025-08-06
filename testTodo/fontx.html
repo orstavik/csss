@@ -30,13 +30,14 @@
       const width = parseFloat(container.getBoundingClientRect().width);
       const fontSize = parseFloat(getComputedStyle(container).fontSize);
       const rem = width / container.textContent.length;
-      document.body.innerHTML += `
+      const res = `
       <pre>
         width = ${width}px
         rem = ${rem}px
         fontSize = ${fontSize}px
-        difference = ${(fontSize / rem * 100) - 100}%
-        close enough?</pre>`;
+        difference = ${(fontSize / rem) - 1}  (close enough?)
+      </pre>`;
+      document.body.insertAdjacentHTML('beforeend', res);
     }, 50);
   </script>
 
