@@ -1,244 +1,197 @@
 import { isLength } from "./func.js";
 
-function noSynthesis(...args) {
-  if (!args.length) return { fontSynthesis: "none" };
-  const res = ["style", "weight", "small-caps", "position"];
-  for (let a of args) {
-    if (a === "smallCaps") a = "small-caps";
-    if (res.includes(a)) res.splice(res.indexOf(a), 1);
-    else throw new SyntaxError(`Unknown font synthesis property: ${a}`);
-  }
-  return { fontSynthesis: res.join(" ") };
+const FONT_RESET = {
+  fontFamily: `var(--fontFamily, unset)`,
+  fontSize: `var(--fontSize, 1rem)`,
+  fontStyle: `var(--fontStyle, unset)`,
+  fontWeight: `var(--fontWeight, unset)`,
+  fontVariantCaps: `var(--fontVariantCaps, unset)`,
+  fontStretch: `var(--fontStretch, unset)`,
+  fontSynthesis: `var(--fontSynthesis, unset)`,
+  fontSizeAdjust: `var(--fontSizeAdjust, unset)`,
+  letterSpacing: `var(--letterSpacing, unset)`,
+};
+
+const FONT_DEFAULTS = {
+  fontFamily: "unset",
+  fontSize: "1rem",
+  fontStyle: "unset",
+  fontWeight: "unset",
+  fontVariantCaps: "unset",
+  fontSizeAdjust: "unset",
+  fontStretch: "unset",
+  fontSynthesis: "unset",
+  letterSpacing: "unset",
+};
+
+const KEYWORDS = {
+  bold: { fontWeight: "bold" },
+  b: { fontWeight: "bold" },
+  bolder: { fontWeight: "bolder" },
+  lighter: { fontWeight: "lighter" },
+  noWeight: { fontWeight: "normal" },
+
+  italic: { fontStyle: "italic" },
+  ital: { fontStyle: "italic" },
+  i: { fontStyle: "italic" },
+  noStyle: { fontStyle: "normal" },
+  smallCaps: { fontVariantCaps: "small-caps" },
+  allSmallCaps: { fontVariantCaps: "all-small-caps" },
+  petiteCaps: { fontVariantCaps: "petite-caps" },
+  allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
+  unicase: { fontVariantCaps: "unicase" },
+  titlingCaps: { fontVariantCaps: "titling-caps" },
+
+  condensed: { Stretch: "condensed" },
+  expanded: { Stretch: "expanded" },
+  semiCondensed: { Stretch: "semi-condensed" },
+  semiExpanded: { Stretch: "semi-expanded" },
+  extraCondensed: { Stretch: "extra-condensed" },
+  extraExpanded: { Stretch: "extra-expanded" },
+  ultraCondensed: { Stretch: "ultra-condensed" },
+  ultraExpanded: { Stretch: "ultra-expanded" },
+  noStretch: { Stretch: "normal" },
+
+  kerning: { fontKerning: "normal" },
+  noKerning: { fontKerning: "none" },
+
+  normal: { fontStyle: "normal", fontWeight: "normal" },
+};
+
+function noSynthesis(a) {
+  const args = a.match(/^no((Weight|Style|SmallCaps|Position)*)Synthesis$/)?.[1];
+  if (args == null) return;
+  if (!args) return "none";
+  return ["Style", "Weight", "SmallCaps", "Position"]
+    .filter(a => args.includes(a))
+    .join(" ")
+    .replace("Caps", "-caps").toLowerCase();
 }
 
-//$font("Arial+Black",serif,bold,smallCaps,ultraCondensed,capitalize,sansSerif,oblique(-10deg),uiSansSerif)
-//$font("Arial+Black",sansSerif,uiSansSerif,900,smallCaps,ultraCondensed,capitalize,oblique(10deg))
+function nonFontArg(a) {
+  if (a instanceof Object) return a;
+  if (isLength(a)) return { fontSize: a };
+  const aNum = parseFloat(a);
+  if (a == aNum && Number.isInteger(aNum) && aNum >= 1 && aNum <= 1000) return { fontWeight: a };
+  if (aNum == a && !Number.isInteger(aNum) && aNum > 0) return { fontSizeAdjust: aNum };
+  if (aNum + "deg" == a) return { fontStyle: "oblique " + a };
+  const fontSynthesis = noSynthesis(a);
+  if (fontSynthesis) return { fontSynthesis };
+}
+
 function font(...args) {
-  const res = {
-    fontStyle: "unset",
-    fontWeight: "unset",
-    fontVariantCaps: "unset",
-    fontStretch: "unset",
-    textTransform: "unset",
-    letterSpacing: "unset",
-    fontSynthesis: "unset",
-  };
-  args = args.map(a => {
-    if (a instanceof Object) return a;
-    if (a.match(/^[1-9]00$/)) return { fontWeight: a };
-    if (isLength(a)) return { letterSpacing: a };
-    //todo with font-size added, this should not be letter spacing.
-    //todo i think letterSpacing should be spacing() or gap() or letterSpacing() or space()?
-    if (a[0] === "'" || a[0] === '"') return { fontFamily: a.replaceAll("+", " ") };
-    if (a.startsWith("url(")) return { fontFamily: a };
-    throw `Unrecognized font property: ${a}`;
-  });
-  Object.assign(res, ...args); //todo this doesn't stack array values??
-  res.fontFamily = args.map(a => a.fontFamily).filter(Boolean).join(", ");
+  if (!args.length) return { ...FONT_RESET };
+  const res = { ...FONT_DEFAULTS };
+  const ff = [];
+  for (let a of args) {
+    const nonFont = nonFontArg(a);
+    if (nonFont)
+      Object.assign(res, nonFont);
+    else {
+      const family = typeof a == "string" && a.replaceAll(/^['"]|['"]$/g, "").replaceAll("+", " ");
+      if (!family)
+        throw new SyntaxError(`Unrecognized $font argument: ${a}`);
+      ff.push(family);
+    }
+  }
+  if (ff.length)
+    res.fontFamily = ff.join(", ");
   return res;
 }
 font.scope = {
-  url: (...args) => `url(${args.join(" ")})`,
+  // ...NativeCssProperties.font.scope,
+  ...KEYWORDS,
   size: a => ({ fontSize: a }),
   weight: a => ({ fontWeight: a }),
   style: a => ({ fontStyle: a }),
   variant: a => ({ fontVariant: a }),
   stretch: a => ({ fontStretch: a }),
-  transform: a => ({ textTransform: a }),
-  letterSpacing: a => ({ letterSpacing: a }),
-  noSynthesis,
-}
-
-//adding words
-
-const WORDS = {
-  font: {
-    Family: {
-      serif: "serif",
-      monospace: "monospace",
-      cursive: "cursive",
-      fantasy: "fantasy",
-      emoji: "emoji",
-      math: "math",
-      fangsong: "fangsong",
-      ui: "ui",
-
-      //Pascal no translate
-      Arial: "Arial",
-      Calibri: "Calibri",
-      Cambria: "Cambria",
-      Candara: "Candara",
-      Consolas: "Consolas",
-      Constantia: "Constantia",
-      Corbel: "Corbel",
-      Georgia: "Georgia",
-      Impact: "Impact",
-      Tahoma: "Tahoma",
-      Verdana: "Verdana",
-      Garamond: "Garamond",
-      Helvetica: "Helvetica",
-      Geneva: "Geneva",
-      Didot: "Didot",
-      Optima: "Optima",
-      Futura: "Futura",
-      Baskerville: "Baskerville",
-      Copperplate: "Copperplate",
-      Menlo: "Menlo",
-      Monaco: "Monaco",
-      Chalkboard: "Chalkboard",
-      Wingdings: "Wingdings",
-      Webdings: "Webdings",
-      Symbol: "Symbol",
-      BlinkMacSystemFont: "BlinkMacSystemFont",
-      Roboto: "Roboto",
-
-      //Pascal add spaces
-      ArialBlack: "Arial Black",
-      AndaleMono: "Andale Mono",
-      PalatinoTimes: "Palatino Times",
-      DejaVuSans: "DejaVu Sans",
-      DejaVuSerif: "DejaVu Serif",
-      DejaVuSansMono: "DejaVu Sans Mono",
-      LiberationSans: "Liberation Sans",
-      LiberationSerif: "Liberation Serif",
-      LiberationMono: "Liberation Mono",
-      NimbusRomanNo9L: "Nimbus Roman No9 L",
-      NimbusSansL: "Nimbus Sans L",
-      NimbusMonoL: "Nimbus Mono L",
-      CenturySchoolbookL: "Century Schoolbook L",
-      URWChanceryL: "URW Chancery L",
-      URWGothicL: "URW Gothic L",
-      URWBookmanL: "URW Bookman L",
-      ComicSansMS: "Comic Sans MS",
-      AppleChancery: "Apple Chancery",
-      MarkerFelt: "Marker Felt",
-      LucidaConsole: "Lucida Console",
-      LucidaSansUnicode: "Lucida Sans Unicode",
-      PalatinoLinotype: "Palatino Linotype",
-      SegoeUI: "Segoe UI",
-      TimesNewRoman: "Times New Roman",
-      TrebuchetMS: "Trebuchet MS",
-      LucidaGrande: "Lucida Grande",
-      HoeflerText: "Hoefler Text",
-      AmericanTypewriter: "American Typewriter",
-      GillSans: "Gill Sans",
-      BookAntiqua: "Book Antiqua",
-      CenturyGothic: "Century Gothic",
-      FranklinGothicMedium: "Franklin Gothic Medium",
-      BookmanOldStyle: "Bookman Old Style",
-      BrushScriptMT: "Brush Script MT",
-      HelveticaNeue: "Helvetica Neue",
-      CourierMonaco: "Courier Monaco",
-
-      //Pascal to kebab
-      uiSerif: "ui-serif",
-      uiSansSerif: "ui-sans-serif",
-      uiMonospace: "ui-monospace",
-      uiRounded: "ui-rounded",
-      uiEmoji: "ui-emoji",
-      uiFangsong: "ui-fangsong",
-      sansSerif: "sans-serif",
-      systemUi: "system-ui",
-      AppleSystem: "-apple-system",
-
-      //added
-      CourierNew: "Courier New",
-      Palatino: "Palatino",
-      // Palatino: "Palatino Linotype",
-      Bookman: "Bookman",
-      GoudyOldStyle: "Goudy Old Style",
-      AvantGarde: "Avant Garde",
-      ArialNarrow: "Arial Narrow",
-      ArialRoundedMTB: "Arial Rounded MT Bold",
-      MSSansSerif: "MS Sans Serif",
-      Ubuntu: "Ubuntu",
-      Cantarell: "Cantarell",
-      DroidSans: "Droid Sans",
-      DroidSerif: "Droid Serif",
-      DroidSansMono: "Droid Sans Mono",
-
-      //KNOWN BAD FONTS
-      Comic: "Comic Sans MS",
-      Times: "Times New Roman",
-      Courier: "Courier New",
-      Lucida: "Lucida Sans Unicode",
-    },
-    Weight: {
-      bold: "bold",
-      bolder: "bolder",
-      lighter: "lighter",
-    },
-    Style: {
-      italic: "italic",
-      oblique: "oblique",
-    },
-    Variants: {
-      smallCaps: "small-caps",
-      allSmallCaps: "all-small-caps",
-      petiteCaps: "petite-caps",
-      allPetiteCaps: "all-petite-caps",
-      unicase: "unicase",
-      titlingCaps: "titling-caps",
-
-      titling: "titling-caps",
-      small: "small-caps",
-      allSmall: "all-small-caps",
-      petite: "petite-caps",
-      allPetite: "all-petite-caps",
-    },
-
-    //add some more
-
-    Synthesis: {
-      noSynthesis: "none",
-    //   noSynthesisPosition: "smallCaps",
-    //   weight: "weight",
-    //   position: "position",
-    },
-    Stretch: {
-      ultraCondensed: "ultra-condensed",
-      extraCondensed: "extra-condensed",
-      condensed: "condensed",
-      semiCondensed: "semi-condensed",
-      semiExpanded: "semi-expanded",
-      expanded: "expanded",
-      extraExpanded: "extra-expanded",
-      ultraExpanded: "ultra-expanded",
-    }
-    //  stretch(.) => { fontStretch: "normal" },
-    //  style(.)=> { fontStyle: "unset" },
-    //  variant(.) => { fontVariant: "unset" },
-    //  transform(.) => { textTransform: "unset" },
-    //  letterSpacing(.) => { letterSpacing: "unset" },
-  },
-  text: {
-    Transform: {
-      capitalize: "capitalize",
-      uppercase: "uppercase",
-      lowercase: "lowercase",
-      fullWidth: "full-width",
-      fullSizeKana: "full-size-kana",
-      mathAuto: "math-auto",
-      math: "math-auto",
-      kana: "full-size-kana",
-      upper: "uppercase",
-      lower: "lowercase",
-    }
-  }
+  space: a => ({ letterSpacing: a }),
+  adjust: a => ({ fontSizeAdjust: a }),
 };
-function* fontWords() {
-  for (let [main, one] of Object.entries(WORDS))
-    for (let [prop, two] of Object.entries(one))
-      for (let [short, value] of Object.entries(two))
-        yield { prop: main + prop, short, value };
-}
-//0. adding all fonts under small first letter too. Ie. [Arial] => [Arial,arial], [Times] => [times,Times].
-for (let short in WORDS.font.Family)
-  WORDS.font.Family[short[0].toLowerCase() + short.slice(1)] = WORDS.font.Family[short];
 
-const SHORTS = { font };
-for (let { short, prop, value } of fontWords()) {
-  SHORTS[short] = font.scope[short] = font.scope[short[0].toLowerCase() + short.slice()] = { [prop]: value };
-  // SHORTS[prop] //here we should work on droplets??
+//100%lob
+//$font("company orange",grotesque)
+//  <h1 $bold>
+//  <div $italic ...>
+//    <p   
+//    <p $font>  //resets to last known font
+
+//lob -1, but with 4 token exact reference for portal. $type(name
+//$typeface(flow,"company orange",grotesque,condensed,italic,-10deg,uppercase,spacing(-3),700)
+//$typeface(flow)
+//   $bold
+//      $type
+
+//$type(name,...args) => creates a type with the given name and properties.
+//$type(name) => uses a type and sets the font properties to the type's properties.
+function type(...args) {
+  if (!args.length) throw new SyntaxError("The $type() function must always include a name as first argument");
+
+  const name = args[0];
+  if (!(typeof name != "string"))
+    throw new SyntaxError(`The typename in $type(typename,...args) is not interpreted as a string: "${JSON.stringify(name)}"`);
+  if (!name.match(/^[a-z][a-z0-9-]*$/))
+    throw new SyntaxError(`The typename in $type(typename,...args) must be lowercase and match(/^[a-z][a-z0-9-]*$/): "${name}"`);
+  if (args.length === 1)
+    return {
+      fontFamily: `var(--${name}FontFamily, unset)`,
+      fontStyle: `var(--${name}FontStyle, unset)`,
+      fontWeight: `var(--${name}FontWeight, unset)`,
+      fontVariantCaps: `var(--${name}FontVariantCaps, unset)`,
+      fontStretch: `var(--${name}FontStretch, unset)`,
+      letterSpacing: `var(--${name}LetterSpacing, unset)`,
+      fontSynthesis: `var(--${name}FontSynthesis, unset)`,
+      "--fontFamily": `var(--${name}FontFamily, unset)`,
+      "--fontStyle": `var(--${name}FontStyle, unset)`,
+      "--fontWeight": `var(--${name}FontWeight, unset)`,
+      "--fontVariantCaps": `var(--${name}FontVariantCaps, unset)`,
+      "--fontStretch": `var(--${name}FontStretch, unset)`,
+      "--letterSpacing": `var(--${name}LetterSpacing, unset)`,
+      "--fontSynthesis": `var(--${name}FontSynthesis, unset)`,
+    };
+  const fs = font(...args.slice(1)); //do we want to rename the font here to type?
+  const res = {};
+  for (const k in fs)
+    if (!k.startsWith("--"))
+      res["--" + name + k[0].toUpperCase() + k.slice(1)] = fs[k];
+  return res;
 }
-export default SHORTS;
+type.scope = { ...font.scope };
+
+export default {
+  font,
+  type,
+
+  //droplets
+  fontFamily: a => ({ [p]: a == "unset" ? `var(--fontFamily, unset)` : a }),
+  fontStyle: a => ({ [p]: a == "unset" ? `var(--fontStyle, unset)` : a }),
+  fontWeight: a => ({ [p]: a == "unset" ? `var(--fontWeight, unset)` : a }),
+  fontVariantCaps: a => ({ [p]: a == "unset" ? `var(--fontVariantCaps, unset)` : a }),
+  fontStretch: a => ({ [p]: a == "unset" ? `var(--fontStretch, unset)` : a }),
+  fontSynthesis: a => ({ [p]: a == "unset" ? `var(--fontSynthesis, unset)` : a }),
+  fontSizeAdjust: a => ({ [p]: a == "unset" ? `var(--fontSizeAdjust, unset)` : a }),
+  letterSpacing: a => ({ [p]: a == "unset" ? `var(--letterSpacing, unset)` : a }),
+
+  //global font words
+  bold: { fontWeight: "bold" },
+  bolder: { fontWeight: "bolder" },
+  lighter: { fontWeight: "lighter" },
+  italic: { fontStyle: "italic" },
+  smallCaps: { fontVariantCaps: "small-caps" },
+  allSmallCaps: { fontVariantCaps: "all-small-caps" },
+  petiteCaps: { fontVariantCaps: "petite-caps" },
+  allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
+  unicase: { fontVariantCaps: "unicase" },
+  titlingCaps: { fontVariantCaps: "titling-caps" },
+  condensed: { Stretch: "condensed" },
+  expanded: { Stretch: "expanded" },
+  semiCondensed: { Stretch: "semi-condensed" },
+  semiExpanded: { Stretch: "semi-expanded" },
+  extraCondensed: { Stretch: "extra-condensed" },
+  extraExpanded: { Stretch: "extra-expanded" },
+  ultraCondensed: { Stretch: "ultra-condensed" },
+  ultraExpanded: { Stretch: "ultra-expanded" },
+  kerning: { fontKerning: "normal" },
+  noKerning: { fontKerning: "none" },
+};
