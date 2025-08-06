@@ -228,10 +228,9 @@ function diveDeep(tokens, top) {
       a = new Expression("_hash", a.slice(1).split("#"));
     if (top && a === ",") throw "can't start with ','";
     if (top && a === ")") throw "can't start with ')'";
+    if (a === ")" && !res.length) throw new SyntaxError("empty function not allowed in CSSs");
     if (a === "," || a === ")") {         //empty
       res.push(undefined);
-      if (a === ")" && !res.length)
-        throw new SyntaxError("empty function not allowed in CSSs");
       if (a === ")")
         return res;
       continue;

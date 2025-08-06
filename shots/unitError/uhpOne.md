@@ -1,5 +1,6 @@
 **csss:** $font(ccccooommmiiccc)
-**error:** stupid! you have the wrong name for font here. what the hell does cccccooommmmiccc mean?
+**error:** Unrecognized font property: ccccooommmiiccc
+**shouldbeerror:** stupid! you have the wrong name for font here. what the hell does cccccooommmmiccc mean?
 **corrected:** $font(comic-sans)
 **css:**
 ```css
@@ -7,7 +8,8 @@
 ```
 
 **csss:** $laaayoout(this,is,wrong)
-**error:** Some error message from $font and csss
+**error:** laaayoout
+**shouldbeerror:** stupid! thats no name for a proper csss short: laaaayoout
 **corrected:** $block
 **css:**
 ```css
