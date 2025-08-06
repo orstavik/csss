@@ -202,11 +202,11 @@ background-attachment: scroll;
 }
 ```
 
-**csss:** $conic(from90deg,at30%80%,red,blue)
+**csss:** $conic(from90degAt30%80%,red,blue)
 **css:**
 ```css
 @layer containerDefault {
-  .\$conic\(from90deg\,at30\%80\%\,red\,blue\) {
+  .\$conic\(from90degAt30\%80\%\,red\,blue\) {
     background-image: conic-gradient(from 90deg at 30% 80%, red, blue);
     background-position: 0% 0%;
     background-repeat: repeat;
@@ -304,11 +304,11 @@ background-attachment: scroll;
 }
 ```
 
-**csss:** $conic(from45deg,atTopLeft,red,blue)
+**csss:** $conic(from45degAtTopLeft,red,blue)
 **css:**
 ```css
 @layer containerDefault {
-  .\$conic\(from45deg\,atTopLeft\,red\,blue\) {
+  .\$conic\(from45degAtTopLeft\,red\,blue\) {
     background-image: conic-gradient(from 45deg at top left, red, blue);
     background-position: 0% 0%;
     background-repeat: repeat;
@@ -317,6 +317,93 @@ background-attachment: scroll;
     background-clip: border-box;
     background-blend-mode: normal;
     background-attachment: scroll;
+  }
+}
+```
+
+**csss:** $radial(ellipseAt50%0%,yellow,blue,white,stops(0%,40%,100%))
+**css:**
+```css
+@layer containerDefault {
+  .\$radial\(ellipseAt50\%0\%\,yellow\,blue\,white\,stops\(0\%\,40\%\,100\%\)\) { 
+    background-image: radial-gradient(at 50% 0%, yellow 0%, blue 40%, white 100%); 
+    background-position: 0% 0%; 
+    background-repeat: repeat; 
+    background-size: auto; 
+    background-origin: padding-box; 
+    background-clip: border-box; 
+    background-blend-mode: normal; 
+    background-attachment: scroll; 
+  }
+}
+```
+
+**csss:** $radial(ellipseAt50%0%,yellow,blue,white,stops(0%,40%,100%))
+**css:**
+```css
+@layer containerDefault {
+  .\$radial\(ellipseAt50\%0\%\,yellow\,blue\,white\,stops\(0\%\,40\%\,100\%\)\) { 
+    background-image: radial-gradient(at 50% 0%, yellow 0%, blue 40%, white 100%); 
+    background-position: 0% 0%; 
+    background-repeat: repeat; 
+    background-size: auto; 
+    background-origin: padding-box; 
+    background-clip: border-box; 
+    background-blend-mode: normal; 
+    background-attachment: scroll; 
+  }
+}
+```
+
+**csss:** $radial(circleClosestSideAt30%40%,red,blue)
+**css:**
+```css
+@layer containerDefault {
+  .\$radial\(circleClosestSideAt30\%40\%\,red\,blue\) { 
+    background-image: radial-gradient(circle closest-side at 30% 40%, red, blue);
+    background-position: 0% 0%; 
+    background-repeat: repeat; 
+    background-size: auto; 
+    background-origin: padding-box; 
+    background-clip: border-box; 
+    background-blend-mode: normal; 
+    background-attachment: scroll; 
+  }
+}
+```
+
+**csss:** $radial(circleAt20em30%,yellow,green)
+**css:**
+```css
+@layer containerDefault {
+  
+  .\$radial\(circleAt20em30\%\,yellow\,green\) { 
+    background-image: radial-gradient(circle at 20em 30%, yellow, green); 
+    background-position: 0% 0%; 
+    background-repeat: repeat; 
+    background-size: auto; 
+    background-origin: padding-box; 
+    background-clip: border-box; 
+    background-blend-mode: normal; 
+    background-attachment: scroll; 
+  }
+}
+```
+
+**csss:** $radial(ellipse10em40%AtCenter,red,blue)
+**css:**
+```css
+@layer containerDefault {
+  
+  .\$radial\(ellipse10em40\%AtCenter\,red\,blue\) { 
+    background-image: radial-gradient(ellipse 10em 40% at center, red, blue); 
+    background-position: 0% 0%; 
+    background-repeat: repeat; 
+    background-size: auto; 
+    background-origin: padding-box; 
+    background-clip: border-box; 
+    background-blend-mode: normal; 
+    background-attachment: scroll; 
   }
 }
 ```

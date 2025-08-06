@@ -351,7 +351,13 @@ function bgImpl(...args) {
   for (const a of args)
     (a && typeof a === 'object') ? Object.assign(res, a) :
       isColor(a) ? colors.push(a) :
-        args2.push(a.replaceAll(/[A-Z]/g, ' $&').toLowerCase());
+      args2.push(a
+        .replaceAll(/[A-Z]/g, ' $&')  // Handle camelCase
+        .replaceAll(/([a-z])(\d)/g, '$1 $2')  // from45deg to from 45deg  
+        .replaceAll(/(\d+(?:\.\d+)?(?:px|%|em|rem|vh|vw|deg|turn|grad|rad))(\d)/g, '$1 $2')  // 50%50% to 50% 50%
+        .replaceAll(/\b(closest|farthest) (side|corner)\b/gi, '$1-$2') // for radial: closest-side, closest-corner, farthest-side, farthest-corner
+        .toLowerCase()
+      );
   return { res, colors, args2 };
 }
 
