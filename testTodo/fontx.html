@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monospace Font Width/Height Test</title>
+  <style>
+    html {
+      font-family: monospace;
+      font-size: 8px;
+      font-size-adjust: ch-width 1;
+    }
+
+    .container {
+      font-size: 1rem;
+      margin: 0;
+      padding: 0;
+      display: inline-block;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container">10rem=80px</div>
+  <script>
+    setTimeout(_ => {
+      const container = document.querySelector('.container');
+      const width = parseFloat(container.getBoundingClientRect().width);
+      const fontSize = parseFloat(getComputedStyle(container).fontSize);
+      const rem = width / container.textContent.length;
+      document.body.innerHTML += `
+      <pre>
+        width = ${width}px
+        rem = ${rem}px
+        fontSize = ${fontSize}px
+        difference = ${(fontSize / rem * 100) - 100}%
+        close enough?</pre>`;
+    }, 50);
+  </script>
+
+</body>
+
+</html>
