@@ -1,0 +1,148 @@
+<style>
+  /*
+  Polyfill Font. Using CSS-ONLY.
+  1. TrueFontDefaults is only serif, sans-serif, or monospace. These are universal, even cursive is not always implemented on Linux.
+  2. In the font-stack, the last type must be a TrueFontDefault.
+  3. The second last type should be the typeface name.
+  4. If you need to patch a typeface, you add a @font-face rule for the typeface name. Example below.
+*/
+  .handwritten {
+    font-family: 'Segoe Print', 'Bradley Hand', Chilanka, TSCu_Comic, casual, handwritten, cursive;
+  }
+
+  @font-face {
+    font-family: "handwritten";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 300 800;
+    src: local("handwritten"),
+      url("https://cdn.jsdelivr.net/fontsource/fonts/shantell-sans:vf@latest/latin-wght-normal.woff2") format("woff2-variations");
+  }
+
+  @font-face {
+    font-family: "handwritten";
+    font-style: italic;
+    font-display: swap;
+    font-weight: 300 800;
+    src: local("handwritten"),
+      url("https://cdn.jsdelivr.net/fontsource/fonts/shantell-sans:vf@latest/latin-wght-italic.woff2") format("woff2-variations");
+  }
+</style>
+
+<script type="module">
+  //Polyfill Font. Using JS.
+
+  const isFontAvailable = (async function () {
+
+    async function fontWidth(fontFamily) {
+      await new Promise(r => (requestIdleCallback ?? setTimeout)(r));
+      document.body.insertAdjacentHTML("beforeend",
+        `<span style="font-family: ${fontFamily}; position:absolute; width:auto; font-size:128px; left:-99999px;">${"wi".repeat(100)}</span>`
+      );
+      const res = document.body.lastElementChild.clientWidth;
+      document.body.lastElementChild.remove();
+      return res;
+    }
+
+    const w1 = await fontWidth("monospace");
+    const w2 = await fontWidth("serif");
+    const w3 = await fontWidth("sans-serif");
+
+    const cache = new Map();
+    /**
+     * If you need to recheck a font, use `isFontAvailableCached.recheck(font)`.
+     * 
+     * @param {string} fontFamily - The font family name to test, such as "Times New Roman".
+     * @returns {Promise<boolean>} - True if the font is available
+     */
+    async function isFontAvailable(fontFamily) {
+      if (cache.has(font)) return cache.get(font);
+      const result = w1 !== await fontWidth(`${fontFamily},monospace`) ||
+        w3 !== await fontWidth(`${fontFamily},sans-serif`) ||
+        w2 !== await fontWidth(`${fontFamily},serif`);
+      cache.set(font, result);
+      return result;
+    }
+    isFontAvailable.recheck = async (font) => (cache.delete(font), await isFontAvailable(font));
+    return isFontAvailable;
+  })();
+
+  const PolyfillMapExample = {
+    Rockwell: `
+@font-face {
+  font-family: 'Rockwell'; 
+  src: local('Rockwell'); 
+  ascent-override: '100%';
+}`,
+    handwritten: `
+@font-face {
+  font-family: "handwritten";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 800;
+  src: local("handwritten"),
+    url("https://cdn.jsdelivr.net/fontsource/fonts/shantell-sans:vf@latest/latin-wght-normal.woff2") format("woff2-variations");
+  }
+
+@font-face {
+  font-family: "handwritten";
+  font-style: italic;
+  font-display: swap;
+  font-weight: 300 800;
+  src: local("handwritten"),
+    url("https://cdn.jsdelivr.net/fontsource/fonts/shantell-sans:vf@latest/latin-wght-italic.woff2") format("woff2-variations");
+  }
+`
+  };
+
+  /**
+   * Polyfill font stacks in CSS rules. Example use:
+   * 
+   *   for (const sheet of document.styleSheets)
+   *     polyfillFont(sheet.cssRules, PolyfillMapExample);
+   * 
+   * @param {CSSStyleSheet} cssRules - The CSS rules to polyfill.
+   * @param {Object<string, string>} polyfillMap - A map of font names to @font-face rules.
+   * @returns {AsyncGenerator<boolean>} - Yields true if a font was polyfilled, false otherwise.
+   */
+  async function polyfillFont(cssRules, polyfillMap) {
+
+    /**
+     * @param {CSSStyleSheet} cssRules - The CSS rules to polyfill.
+     * @yields {string} - the value of style properties named `font-family` | `--fontFamily` | `.match(/^--.+FontFamily$/)` 
+     */
+    function* findFontStacks(cssRules) {
+      for (const rule of cssRules) {
+        if (rule.cssRules)
+          yield* findFontStacks(rule.cssRules);
+        if (rule.style?.styleMap)
+          for (const [k, v] of rule.style.styleMap.entries())
+            if (k === "font-family" || k === "--fontFamily" || k.match(/^--.+FontFamily$/))
+              yield v.split(",").map(s => s.trim()).filter(Boolean);
+      }
+    }
+
+    async function polyfillFontStack(fontStack, polyfillMap) {
+      for (let font of fontStack) {
+        if (font.match(/^((sans-)?serif|monospace)$/))
+          return false;
+        if (await isFontAvailableCached(font))
+          return true;
+        const poly = polyfillMap[font];
+        if (poly) {
+          cssRules.insertRule(poly, 0); //i assume it is always ok to insert @font-face rules at the top.
+          await document.fonts.ready; //todo is this broken?
+          if (await isFontAvailableCached.recheck(font))
+            return true;
+        }
+      }
+      return false;
+    }
+
+    for (const fontStack of findFontStacks(cssRules)) {
+      const ok = await polyfillFontStack(fontStack, polyfillMap);
+      if (!ok)
+        console.warn(`Polyfill fontStack revert to serif,sans-serif,monospace: ${fontStack.join(", ")}`);
+    }
+  }
+</script>
