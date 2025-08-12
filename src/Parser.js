@@ -56,7 +56,7 @@ export function extractShort(rule) {
 export function parse(short) {
   const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
   short = short.match(/(.*?)\!*$/)[1];
-  const { str: exp, media } = parseMediaQuery(short, MEDIA_WORDS);
+  const { exp, media } = parseMediaQuery(short, MEDIA_WORDS);
   let [sel, ...exprList] = exp?.split("$");
   exprList = exprList.map(parseNestedExpression);
   exprList = exprList.map(s => s.interpret(SHORTS));
@@ -390,7 +390,7 @@ function mediaComparator(str) {
 
 function parseMediaQuery(str, register) {
   if (str[0] !== "@")
-    return { str };
+    return { exp: str };
   if (str[1] !== "(") {
     const m = str.slice(1).match(/^[a-z][a-z0-9_]*/i);
     if (!m)
@@ -399,7 +399,7 @@ function parseMediaQuery(str, register) {
     const t = register[word];
     if (!t)
       throw new ReferenceError("@" + word);
-    return { str: str.slice(1 + word.length), media: `(${t})` };
+    return { exp: str.slice(1 + word.length), media: `(${t})` };
   }
   let i = 2, tokens = [], level = 1;
   for (; i < str.length; i++) {
@@ -428,5 +428,5 @@ function parseMediaQuery(str, register) {
       );
     }
   }
-  return { str: str.slice(i), media: `${tokens.join(" ")}` };
+  return { exp: str.slice(i), media: `${tokens.join(" ")}` };
 }
