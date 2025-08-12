@@ -53,6 +53,30 @@ export function extractShort(rule) {
   return className && className.slice(1).replaceAll("\\", "");
 }
 
+function extractAtRules(obj) {
+  const atRules = {}, mainRule = {};
+  for (let [k, v] of Object.entries(obj))
+    (k.startsWith("@") ? atRules : mainRule)[k] = v;
+  return { atRules, mainRule };
+}
+
+function kebabcaseKeys(obj) {
+  return Object.fromEntries(Object.entries(obj).map(([k, v]) =>
+    [k.startsWith("--") ? k : k.replace(/[A-Z]/g, "-$&").toLowerCase(), v]));
+}
+
+function checkProperty(obj) {
+  for (let k in obj)
+    if (CSS.supports(k, "inherit"))
+      if (!CSS.supports(k, obj[k]))
+        throw new SyntaxError(`Invalid CSS$ value: ${k} = ${obj[k]}`);
+}
+
+function bodyToTxt(rule, props) {
+  const body = Object.entries(props).map(([k, v]) => `  ${k}: ${v};`).join("\n");
+  return `${rule} {\n${body}\n}`;
+}
+
 export function parse(short) {
   const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
   short = short.match(/(.*?)\!*$/)[1];
@@ -64,19 +88,17 @@ export function parse(short) {
   let { selector, item } = parseSelectorPipe(sel);
   const layer = (item ? "items" : "container") + (short.match(/^(\$|\|\$)/) ? "Default" : "");
   selector = clazz + selector; //todo, we always start with the class in the selector..
-  const props = Object.fromEntries(Object.entries(exprList).map(([k, v]) => {
-    if (!k.startsWith("--")) //dont kebabcase css variables.
-      k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
-    if (CSS.supports(k, "inherit"))
-      if (!CSS.supports(k, v))
-        throw new SyntaxError(`Invalid CSS$ value: ${k} = ${v}`);
-    //the browser might not support the property, because the property is too modern.
-    return [k, v];
-  }));
-  const body = Object.entries(props).map(([k, v]) => `  ${k}: ${v};`).join("\n");
-  const rule = media ? [selector, "@media " + media, "@layer " + layer] : [selector, "@layer " + layer];
-  const cssText = rule.reduce((acc, part) => `${part} {\n ${acc}\n}`, body);
-  return { short, layer, media, selector, props, cssText };
+  exprList = kebabcaseKeys(exprList);
+  const { atRules, mainRule } = extractAtRules(exprList);
+  checkProperty(mainRule);
+  let cssText = bodyToTxt(selector, mainRule);
+  if (media) cssText = `@media ${media} {\n${cssText}\n}`;
+  cssText = `@layer ${layer} {\n${cssText}\n}`;
+
+  for (let atRule in atRules)
+    atRules[atRule] = kebabcaseKeys(atRules[atRule]);
+  const atRuleText = Object.entries(atRules).map(([rule, body]) => bodyToTxt(rule, body)).join("\n\n");
+  return { short, layer, media, selector, mainRule, cssText, atRules, atRuleText };
   // const miniCssRule = {cssText, name: layer, cssRules: [{ media, cssRules: [{ selectorText: selector, style: { cssText: body }, props }] }]};
 }
 
