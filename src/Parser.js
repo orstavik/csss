@@ -67,9 +67,8 @@ function kebabcaseKeys(obj) {
 
 function checkProperty(obj) {
   for (let k in obj)
-    if (CSS.supports(k, "inherit"))
-      if (!CSS.supports(k, obj[k]))
-        throw new SyntaxError(`Invalid CSS$ value: ${k} = ${obj[k]}`);
+    if (CSS.supports(k, "inherit") && !CSS.supports(k, obj[k]))
+      throw new SyntaxError(`Invalid CSS$ value: ${k} = ${obj[k]}`);
 }
 
 function bodyToTxt(rule, props) {
