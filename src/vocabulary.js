@@ -1,5 +1,5 @@
 import nativeAndMore from "./func.js";
-import fonts from "./font.js";
+import fonts from "./fontX.js";
 import layouts from "./layout.js";
 import palette from "./color.js";
 

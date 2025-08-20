@@ -127,11 +127,11 @@ const _LAYOUT = {
 };
 
 function toGap(...args) {
-  if (args.length === 1)
+  if (!args.length || args.length > 2)
+    throw new SyntaxError("gap only accepts 1 or 2 arguments");
+  if (args.length === 1 || args[0] == args[1])
     return { gap: args[0] };
-  if (args.length === 2)
-    return { columnGap: args[0], rowGap: args[1] };
-  throw new SyntaxError("gap only accepts 1 or 2 arguments");
+  return { rowGap: args[0], columnGap: args[1] };
 }
 const GAP = { gap: toGap, g: toGap };
 
@@ -319,4 +319,6 @@ export default {
   flex,
   _flex,
   lineClamp,
+  margin: _LAYOUT.margin,
+  padding: LAYOUT.padding,
 };

@@ -20,27 +20,11 @@ export function toRadiusFour(NAME, ...ar) {
   };
 }
 export function toLogicalFour(NAME, ...ar) {
-  if (!(ar instanceof Array))
-    return { [NAME]: ar };
-  if (ar.length === 1)
-    return { [NAME]: ar[0] };
-  if (ar.length === 2)
-    return {
-      [NAME + "Block"]: ar[0],
-      [NAME + "Inline"]: ar[1],
+  return ar.length === 1 ? { [NAME]: ar[0] } :
+    {
+      [NAME + "Block"]: ar[2] != null && ar[2] != ar[0] ? ar[0] + " " + ar[2] : ar[0],
+      [NAME + "Inline"]: ar[3] != null && ar[3] != ar[1] ? (ar[1] ?? ar[0]) + " " + ar[3] : ar[1] ?? ar[0],
     };
-  if (ar.length === 3)
-    return {
-      [NAME + "BlockStart"]: ar[0],
-      [NAME + "Inline"]: ar[1],
-      [NAME + "BlockEnd"]: ar[2],
-    };
-  return {
-    [NAME + "BlockStart"]: ar[0],
-    [NAME + "InlineStart"]: ar[1],
-    [NAME + "BlockEnd"]: ar[2],
-    [NAME + "InlineEnd"]: ar[3]
-  };
 }
 //todo there are different ways to do the logic here..
 //todo length == 2, I think that we could have top/bottom too
@@ -179,8 +163,8 @@ Did you mean to mix half'n'half, ie. #${c}5 or #${c}50?`
 
   const res = {
     _hash,
-    rgb: (...args) => nativeCssColorFunction("rgb", ...args),
-    rgba: (...args) => nativeCssColorFunction("rgba", ...args),
+    rgb: (...rgb) => "#" + rgb.map(c => Number(c).toString(16).padStart(2, '0')).join(''),
+    rgba: (r, g, b, a = 1) => "#" + [r, g, b, Math.round(a * 255)].map(c => Number(c).toString(16).padStart(2, '0')).join(''),
     hsl: (...args) => nativeCssColorFunction("hsl", ...args),
     hsla: (...args) => nativeCssColorFunction("hsla", ...args),
     hwb: (...args) => nativeCssColorFunction("hwb", ...args),
@@ -351,13 +335,13 @@ function bgImpl(...args) {
   for (const a of args)
     (a && typeof a === 'object') ? Object.assign(res, a) :
       isColor(a) ? colors.push(a) :
-      args2.push(a
-        .replaceAll(/[A-Z]/g, ' $&')  // Handle camelCase
-        .replaceAll(/([a-z])(\d)/g, '$1 $2')  // from45deg to from 45deg  
-        .replaceAll(/(\d+(?:\.\d+)?(?:px|%|em|rem|vh|vw|deg|turn|grad|rad))(\d)/g, '$1 $2')  // 50%50% to 50% 50%
-        .replaceAll(/\b(closest|farthest) (side|corner)\b/gi, '$1-$2') // for radial: closest-side, closest-corner, farthest-side, farthest-corner
-        .toLowerCase()
-      );
+        args2.push(a
+          .replaceAll(/[A-Z]/g, ' $&')  // Handle camelCase
+          .replaceAll(/([a-z])(\d)/g, '$1 $2')  // from45deg to from 45deg  
+          .replaceAll(/(\d+(?:\.\d+)?(?:px|%|em|rem|vh|vw|deg|turn|grad|rad))(\d)/g, '$1 $2')  // 50%50% to 50% 50%
+          .replaceAll(/\b(closest|farthest) (side|corner)\b/gi, '$1-$2') // for radial: closest-side, closest-corner, farthest-side, farthest-corner
+          .toLowerCase()
+        );
   return { res, colors, args2 };
 }
 

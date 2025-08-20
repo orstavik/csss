@@ -242,7 +242,7 @@ function eatTokens(tokens) {
 function diveDeep(tokens, top) {
   const res = [];
   while (tokens.length) {
-    let a = tokens[0].match(/^\($|^(?!["']).*[+/*]|(?<![a-z])-|-(?![a-z])/) ?
+    let a = tokens[0].match(/^(?!["'])(?:\($|.*[+/*]|(?<![a-z])-|-(?![a-z]))/i) ?
       parseVarCalc(eatTokens(tokens)) :
       tokens.shift();
     if (a[0] === "#")

@@ -1,15 +1,20 @@
 import { isLength } from "./func.js";
 
-const FONT_DEFAULTS = Object.freeze({
-  fontFamily: "system-ui, sans-serif",
-  fontSize: "1rem",
-  fontStyle: "unset",
-  fontWeight: "unset",
-  fontVariantCaps: "unset",
-  fontSizeAdjust: "unset",
-  fontStretch: "unset",
-  fontSynthesis: "unset",
-  letterSpacing: "unset",
+const FONT_DEFAULTS = Object.entries({
+  fontFamily: "FontFamily",
+  fontSize: "FontSize",
+  fontStyle: "FontStyle",
+  fontWeight: "FontWeight",
+  fontSizeAdjust: "FontSizeAdjust",
+  letterSpacing: "LetterSpacing",
+  fontStretch: "FontStretch",
+  fontVariantCaps: "FontVariantCaps",
+  fontSynthesis: "FontSynthesis",
+  fontFeatureSettings: "FontFeatureSettings",
+  fontVariationSettings: "FontVariationSettings",
+  WebkitFontSmoothing: "WebkitFontSmoothing",
+  MozOsxFontSmoothing: "MozOsxFontSmoothing",
+  fontKerning: "FontKerning",
 });
 
 const KEYWORDS = {
@@ -23,40 +28,41 @@ const KEYWORDS = {
   ital: { fontStyle: "italic" },
   i: { fontStyle: "italic" },
   noStyle: { fontStyle: "normal" },
+
   smallCaps: { fontVariantCaps: "small-caps" },
   allSmallCaps: { fontVariantCaps: "all-small-caps" },
   petiteCaps: { fontVariantCaps: "petite-caps" },
   allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
   unicase: { fontVariantCaps: "unicase" },
   titlingCaps: { fontVariantCaps: "titling-caps" },
+  noVariant: { fontVariantCaps: "normal" },
 
-  condensed: { Stretch: "condensed" },
-  expanded: { Stretch: "expanded" },
-  semiCondensed: { Stretch: "semi-condensed" },
-  semiExpanded: { Stretch: "semi-expanded" },
-  extraCondensed: { Stretch: "extra-condensed" },
-  extraExpanded: { Stretch: "extra-expanded" },
-  ultraCondensed: { Stretch: "ultra-condensed" },
-  ultraExpanded: { Stretch: "ultra-expanded" },
-  noStretch: { Stretch: "normal" },
+  condensed: { fontStretch: "condensed" },
+  expanded: { fontStretch: "expanded" },
+  semiCondensed: { fontStretch: "semi-condensed" },
+  semiExpanded: { fontStretch: "semi-expanded" },
+  extraCondensed: { fontStretch: "extra-condensed" },
+  extraExpanded: { fontStretch: "extra-expanded" },
+  ultraCondensed: { fontStretch: "ultra-condensed" },
+  ultraExpanded: { fontStretch: "ultra-expanded" },
+  noStretch: { fontStretch: "normal" },
 
   kerning: { fontKerning: "normal" },
   noKerning: { fontKerning: "none" },
 
   normal: { fontStyle: "normal", fontWeight: "normal" },
-  smooth: { WebkitFontSmoothing: "auto", MozOsxFontSmoothing: "auto" },
-  emoji: { fontEmoji: ", 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'" },
+  smooth: { WebkitFontSmoothing: "auto", MozOsxFontSmoothing: "auto" }, //todo this is wrong? should be "antialiased" for WebkitFontSmoothing and "grayscale" for MozOsxFontSmoothing??
 
   larger: { fontSize: "larger" },
   smaller: { fontSize: "smaller" },
-  xxSmall: { fontSize: "xx-small" },
-  xSmall: { fontSize: "x-small" },
-  small: { fontSize: "small" },
-  medium: { fontSize: "medium" },
-  large: { fontSize: "large" },
-  xLarge: { fontSize: "x-large" },
-  xxLarge: { fontSize: "xx-large" },
-  xxxLarge: { fontSize: "xxx-large" },
+  xxs: { fontSize: "xx-small" },
+  xs: { fontSize: "x-small" },
+  sm: { fontSize: "small" },
+  md: { fontSize: "medium" },
+  lg: { fontSize: "large" },
+  xl: { fontSize: "x-large" },
+  xxl: { fontSize: "xx-large" },
+  xxxl: { fontSize: "xxx-large" },
 };
 
 function noSynthesis(a) {
@@ -70,57 +76,97 @@ function noSynthesis(a) {
     .toLowerCase();
 }
 
-function nonFamilyArg(a) {
-  if (a instanceof Object) return a;
-  if (isLength(a)) return { fontSize: a };
+function fontNumbers(a) {
   const aNum = parseFloat(a);
-  if (a == aNum && Number.isInteger(aNum) && aNum >= 1 && aNum <= 1000) return { fontWeight: a };
-  if (aNum == a && !Number.isInteger(aNum) && aNum > 0) return { fontSizeAdjust: aNum };
-  if (aNum + "deg" == a) return { fontStyle: "oblique " + a };
-  const fontSynthesis = noSynthesis(a);
-  if (fontSynthesis) return { fontSynthesis };
+  if (a == aNum && Number.isInteger(aNum) && 1 <= aNum && aNum <= 1000)
+    return { fontWeight: a };
+  if (aNum == a && !Number.isInteger(aNum) && 1 > aNum && aNum > 0)
+    return { fontSizeAdjust: aNum };
+  if (aNum + "deg" == a)
+    return { fontStyle: "oblique " + a };
 }
 
-function fontImpl(...args) {
-  if (!args.length)
-    return Object.fromEntries(Object.entries(FONT_DEFAULTS).map(([k, v]) => [k, `var(--${k}, ${v})`]));
-  const res = { ...FONT_DEFAULTS };
-  const ff = [];
+//first have a function that extracts all the nonFamily 
+function fontImpl(fontFaceName, ...args) {
+  const res = {};
+  let family = [];
+  let b, emoji, faces = [];
   for (let a of args) {
-    const nonFont = nonFamilyArg(a);
-    if (nonFont)
-      Object.assign(res, nonFont);
-    else {
-      const family = typeof a == "string" && a.replaceAll(/^['"]|['"]$/g, "").replaceAll("+", " ");
-      if (!family)
-        throw new SyntaxError(`Unrecognized $font argument: ${a}`);
-      ff.push(family);
-    }
+    if (a == undefined)
+      throw new SyntaxError(`Empty arguments in $font: ${a}`);
+    else if (faces.length && a.face)
+      faces.push(a.face);
+    else if (a.face)
+      family.push(fontFaceName ??= a.face.src), faces.push(a.face);
+    else if (a instanceof Object)
+      Object.assign(res, a);
+    else if (isLength(a))
+      res.fontSize = a;
+    else if (b = noSynthesis(a))
+      res.fontSynthesis = b;
+    else if (b = fontNumbers(a))
+      Object.assign(res, b);
+    else if (a == "emoji")
+      emoji = ['Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'];
+    else if (typeof a == "string")
+      family.push(a.replaceAll(/^['"]|['"]$/g, "").replaceAll("+", " "));
+    else
+      throw new SyntaxError(`Unrecognized $font argument: ${a}`);
   }
-  if (ff.length)
-    res.fontFamily = ff.join(", ");
-  if (res.fontEmoji) {
-    res.fontFamily += res.fontEmoji;
-    delete res.fontEmoji;
+  for (let i = 0; i < faces.length; i++) {
+    const face = faces[i];
+    res[`@fontFace /*${fontFaceName} ${face.fontStyle}*/`] = {
+      fontFamily: fontFaceName,
+      ...face,
+      src: `local('${fontFaceName}'), url(${face.src})`,
+    };
   }
+  if (emoji)
+    family.push(...emoji);
+  if (!family.length)
+    throw new SyntaxError(`No font family specified in $font: ${args}`);
+  res.fontFamily = family.map(s => s.match(/[^a-z0-9_-]/gi) ? `"${s}"` : s).join(", ");
   return res;
 }
 
+function face(src, ...args) {
+  args = args.map(a => {
+    if (a instanceof Object)
+      return a;
+    if (a === "i" || a === "italic" || a === "ital")
+      return { fontStyle: "italic" };
+    throw new SyntaxError(`Unrecognized font face argument: ${a}`);
+  });
+  return { face: { src: src.slice(1, -1), fontStyle: "normal", ...args } };
+}
+face.feature = (...args) => args.map(a => a.split("=")).map(([k, v = 1]) => `"${k}" ${v}`).join(", ");
+face.variation = (...args) => args.map(a => a.split("=")).map(([k, v = 1]) => `"${k}" ${v}`).join(", ");
+
+
 function font(...args) {
-  return fontImpl(...args);
-  //todo add all the --fontVariableName: value
+  if (typeof args[0] != "string")
+    throw new SyntaxError(`The first argument of $font must be a string type name, but got: ${JSON.stringify(args[0])}`);
+  const typeName = args[0].replaceAll(/[^a-z0-9-]/g, "_").replaceAll(/-[a-z]/g, m => m[1].toUpperCase());
+  const tmp = fontImpl(undefined, ...args);
+  const vars = {}, res = {};
+  for (let [k, varKey] of FONT_DEFAULTS)
+    vars["--font" + varKey] = (res[k] = tmp[k] ?? `var(--${typeName + varKey}, unset)`);
+  return { ...res, ...vars };
 }
 font.scope = {
   // ...NativeCssProperties.font.scope,
   ...KEYWORDS,
+  face,
+
   size: a => ({ fontSize: a }),
   weight: a => ({ fontWeight: a }),
   style: a => ({ fontStyle: a }),
   variant: a => ({ fontVariant: a }),
   stretch: a => ({ fontStretch: a }),
-  space: a => ({ letterSpacing: a }),
+  spacing: a => ({ letterSpacing: a }),
   adjust: a => ({ fontSizeAdjust: a }),
 };
+
 
 //100%lob
 //$font("company orange",grotesque)
@@ -158,37 +204,27 @@ const BUILTIN_TYPES = {
   handwritten: { fontFamily: "'Segoe Print','Bradley Hand',Chilanka,TSCu_Comic,casual,cursive" },
 };
 
-function makeConstUse(obj, name) {
+function type(name, ...args) {
+  // if (typeof name != "string")
+  //   throw new SyntaxError(`The typename in $type(typename,...args) is not interpreted as a string: "${JSON.stringify(name)}"`);
+  // if (!name.match(/^[a-z][a-z0-9-]*$/))
+  //   throw new SyntaxError(`The typename in $type(typename,...args) must be lowercase and match(/^[a-z][a-z0-9-]*$/): "${name}"`);
+  if (!name || typeof name != "string")
+    throw new SyntaxError("The $typeface(name) function must always include a string name as first argument.");
+  const tmp = fontImpl(name, ...args);
   const res = {};
-  for (const [k, v] of Object.entries(obj))
-    res[k] = res["--" + k] = `var(--${name + k[0].toUpperCase() + k.slice(1)}, ${v})`;
+  for (let [k, varKey] of FONT_DEFAULTS)
+    res[`--${name + varKey}`] = tmp[k] ?? "unset";
+  for (let k in tmp)
+    if (k.startsWith("@"))
+      res[k] = tmp[k];
   return res;
-}
-function makeConstDeclaration(obj, name) {
-  const res = {};
-  for (const [k, v] of Object.entries(obj))
-    res["--" + name + k[0].toUpperCase() + k.slice(1)] = v;
-  return res;
-}
-
-function type(...args) {
-  if (!args.length)
-    throw new SyntaxError("The $type() function must always include a name as first argument");
-  const name = args[0];
-  if (!(typeof name != "string"))
-    throw new SyntaxError(`The typename in $type(typename,...args) is not interpreted as a string: "${JSON.stringify(name)}"`);
-  if (!name.match(/^[a-z][a-z0-9-]*$/))
-    throw new SyntaxError(`The typename in $type(typename,...args) must be lowercase and match(/^[a-z][a-z0-9-]*$/): "${name}"`);
-
-  return args.length === 1 ?
-    makeConstUse(BUILTIN_TYPES[name] ?? FONT_DEFAULTS, name) :
-    makeConstDeclaration(font(...args), name);
 }
 type.scope = { ...font.scope };
 
 export default {
   font,
-  type,
+  typeface: type,
 
   //droplets
   fontFamily: a => ({ [p]: a == "unset" ? `var(--fontFamily, unset)` : a }),
