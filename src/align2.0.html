@@ -1,0 +1,196 @@
+<script>
+
+  const baseline = {
+    Baseline: "baseline",
+    First: "first baseline",
+    Last: "last baseline",
+  };
+
+  const contentDistribution = {
+    Stretch: "stretch",
+    Around: "space-around",
+    Between: "space-between",
+    Evenly: "space-evenly",
+  };
+
+  const positions = {
+    Start: "start",
+    End: "end",
+    Center: "center",
+    SafeStart: "safe start",
+    SafeEnd: "safe end",
+    SafeCenter: "safe center",
+    UnsafeStart: "unsafe start",
+    UnsafeEnd: "unsafe end",
+    UnsafeCenter: "unsafe center",
+
+    FlexStart: "flex-start",
+    FlexEnd: "flex-end",
+    SafeFlexStart: "safe flex-start",
+    SafeFlexEnd: "safe flex-end",
+    UnsafeFlexStart: "unsafe flex-start",
+    UnsafeFlexEnd: "unsafe flex-end",
+  };
+
+  const leftRight = {
+    Left: "left",
+    Right: "right",
+    SafeLeft: "safe left",
+    SafeRight: "safe right",
+    UnsafeLeft: "unsafe left",
+    UnsafeRight: "unsafe right",
+  };
+  const selfPosition = {
+    SelfStart: "self-start",
+    SelfEnd: "self-end",
+    SafeSelfStart: "safe self-start",
+    SafeSelfEnd: "safe self-end",
+    UnsafeSelfStart: "unsafe self-start",
+    UnsafeSelfEnd: "unsafe self-end",
+  }
+
+
+  const AlignContent = {
+    "Normal": "normal",
+    ...positions,
+    ...contentDistribution,
+    ...baseline,
+  };
+  const JustifyContent = {
+    "Normal": "normal",
+    ...positions,
+    ...contentDistribution,
+    ...leftRight
+  };
+  const AlignItems = {
+    "Normal": "normal",
+    ...positions,
+    ...selfPosition,
+    ...baseline,
+    "Stretch": "stretch",
+    "AnchorCenter": "anchor-center",
+  };
+  const JustifyItems = {
+    "Normal": "normal",
+    ...positions,
+    ...selfPosition,
+    ...leftRight,
+    ...baseline,
+    "Stretch": "stretch",
+    "AnchorCenter": "anchor-center",
+    "Legacy": "legacy",
+    "LegacyLeft": "legacy left",
+    "LegacyRight": "legacy right",
+    "LegacyCenter": "legacy center",
+  };
+  const AlignSelf = {
+    "Auto": "auto",
+    "Normal": "normal",
+    ...positions,
+    ...selfPosition,
+    ...baseline,
+    "Stretch": "stretch",
+    "AnchorCenter": "anchor-center",
+  };
+  const JustifySelf = {
+    "Auto": "auto",
+    "Normal": "normal",
+    ...positions,
+    ...selfPosition,
+    ...leftRight,
+    ...baseline,
+    "Stretch": "stretch",
+    "AnchorCenter": "anchor-center",
+  };
+
+  function makeAlign(prefix, As) {
+    const regex = new RegExp(`^${prefix}(${Object.keys(As).join("|")})$`);
+    console.log("align", prefix, regex);
+    return function (str) {
+      const a = str.match(regex)?.[1];
+      return a && { ["align-" + prefix]: As[a] };
+    }
+  }
+
+  function makePlace(prefix, As, Bs) {
+    const regex = new RegExp(`^${prefix}(${Object.keys(As).join("|")})(${Object.keys(Bs).join("|")})?$`);
+    console.log("place", prefix, regex);
+    return function (str) {
+      const m = str.match(regex);
+      if (!m) return;
+      const [_, a, b] = m;
+      return { ["place-" + prefix]: As[a] + (!b || b == a ? "" : " " + Bs[b]) };
+    }
+  }
+
+  const extractPlaceContent = makePlace("content", AlignContent, JustifyContent);
+  const extractPlaceItems = makePlace("items", AlignItems, JustifyItems);
+  const extractPlaceSelf = makePlace("self", AlignSelf, JustifySelf);
+  const extractAlignItems = makeAlign("items", AlignItems);
+  const extractAlignSelf = makeAlign("self", AlignSelf);
+
+
+  const PLACECONTENT = /^content(Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|Stretch|Around|Between|Evenly|Baseline|First|Last)(Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|Stretch|Around|Between|Evenly|Left|Right|SafeLeft|SafeRight|UnsafeLeft|UnsafeRight)?$/;
+  const PLACEITEMS = /^items(Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Baseline|First|Last|Stretch|AnchorCenter)(Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Left|Right|SafeLeft|SafeRight|UnsafeLeft|UnsafeRight|Baseline|First|Last|Stretch|AnchorCenter|Legacy|LegacyLeft|LegacyRight|LegacyCenter)?$/;
+  const PLACESELF = /^self(Auto|Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Baseline|First|Last|Stretch|AnchorCenter)(Auto|Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Left|Right|SafeLeft|SafeRight|UnsafeLeft|UnsafeRight|Baseline|First|Last|Stretch|AnchorCenter)?$/;
+  const ALIGNITEMS = /^items(Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Baseline|First|Last|Stretch|AnchorCenter)$/;
+  const ALIGNSELF = /^self(Auto|Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Baseline|First|Last|Stretch|AnchorCenter)$/;
+  const TEXTALIGN = /^textAlign(Normal|Start|End|Center|Justify|Left|Right)$/;
+
+  function oneOrTwoRegex(regex, str) {
+    const m = str.match(regex);
+    if (!m) return;
+    let [_, a, b] = m;
+    return (!b || b == a) ? a : a + " " + b;
+  }
+
+  function spaceKebab(str) {
+    return str
+      .replace(/(Unsafe|Safe|Legacy)(?!$)/g, "$& ")
+      .replace(/(Self|Flex|Anchor)(?!$)/g, "$&-")
+      .replaceAll(/First|Last/g, "$& baseline")
+      .toLowerCase();
+  }
+
+  const placeContent = str => ({ placeContent: spaceKebab(oneOrTwoRegex(PLACECONTENT, str)) });
+  const placeItems = str => ({ placeItems: spaceKebab(oneOrTwoRegex(PLACEITEMS, str)) });
+  const placeSelf = str => ({ placeSelf: spaceKebab(oneOrTwoRegex(PLACESELF, str)) });
+  const alignItems = str => ({ placeItems: spaceKebab(oneOrTwoRegex(ALIGNITEMS, str)) });
+  const alignSelf = str => ({ placeSelf: spaceKebab(oneOrTwoRegex(ALIGNSELF, str)) });
+  const textAlign = str => ({ textAlign: oneOrTwoRegex(TEXTALIGN, str) });
+
+
+  // function makeSettings(prop, name, As, Bs) {
+  //   const res = {};
+  //   for (let [a, A] of Object.entries(As))
+  //     for (let [b, B] of Object.entries(Bs))
+  //       res[`${name}${a}${b}`] = { [prop]: A == B ? A : `${A} ${B}` };
+  //   return res;
+  // }
+
+  // const GRID_ALIGNMENTS = {
+  //   ...makeSettings("placeContent", "content", contentOptions, contentOptions),
+  //   ...makeSettings("placeItems", "items", itemsOptions, itemsOptions),
+  //   ...makeSettings("placeSelf", "self", selfOptions, selfOptions),
+  // };
+
+  // const FLEX_ALIGNMENTS = {
+  //   ...makeSettings("placeContent", "content", contentOptions, contentOptions),
+  //   ...makeSettings("alignItems", "items", itemsOptions, { "": "" }),
+  //   ...makeSettings("alignSelf", "self", selfOptions, { "": "" }),
+  // };
+
+  // makePlace("placeContent", "content", contentOptions, contentOptions);
+  // makePlace("placeItems", "items", itemsOptions, itemsOptions);
+  // makePlace("placeSelf", "self", selfOptions, selfOptions);
+
+  // function roughSizeOfObject(object) {
+  //   const str = JSON.stringify(object);
+  //   return new TextEncoder().encode(str).length; // UTF-8 bytes
+  // }
+
+  // console.log(Object.keys(GRID_ALIGNMENTS).length);
+  // console.log(roughSizeOfObject(GRID_ALIGNMENTS));
+  // console.log(Object.keys(FLEX_ALIGNMENTS).length);
+  // console.log(roughSizeOfObject(FLEX_ALIGNMENTS));
+</script>
