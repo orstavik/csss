@@ -10,6 +10,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    align-items: unset;
+    place-content: unset;
     flex-direction: row;
     gap: 1rem;
     padding: 1rem;
@@ -49,6 +51,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    align-items: unset;
+    place-content: unset;
     gap: 0.5rem;
   }
 }
@@ -69,14 +73,13 @@
 }
 ```
 
-**csss:** |.two$_flex(order(1),center)
+**csss:** |.two$_flex(order(1),selfCenter)
 **css:**
 ```css
 @layer items {
-  .\|\.two\$_flex\(order\(1\)\,center\)> :where(.two) {
+  .\|\.two\$_flex\(order\(1\)\,selfCenter\)> :where(.two) {
     order: 1;
     align-self: center;
-    text-align: center;
   }
 }
 ```

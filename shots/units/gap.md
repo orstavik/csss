@@ -26,9 +26,10 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    align-items: unset;
+    place-content: unset;
     flex-wrap: wrap;
-    row-gap: 1rem;
-    column-gap: 2rem;
+    gap: 1rem 2rem;
   }
 }
 ```
@@ -45,9 +46,10 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    place-items: unset;
+    place-content: unset;
     grid-template-columns: repeat(2, 1fr);
-    row-gap: 1rem;
-    column-gap: 0.5rem;
+    gap: 1rem 0.5rem;
   }
 }
 ```

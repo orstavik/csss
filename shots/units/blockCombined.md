@@ -1,8 +1,8 @@
-**csss:** $block(s,gap(0.3em,1.6))
+**csss:** $block(textAlignJustify,gap(0.3em,1.6))
 **css:**
 ```css
 @layer containerDefault {
-.\$block\(s\,gap\(0\.3em\,1\.6\)\) {
+.\$block\(textAlignJustify\,gap\(0\.3em\,1\.6\)\) {
 display: block;
 word-spacing: 0.3em;
 line-height: 1.6;
@@ -60,11 +60,11 @@ max-inline-size: 600px;
 }
 ```
 
-**csss:** $block(break-word,gap(0.2em,1.4))
+**csss:** $block(breakWord,gap(0.2em,1.4))
 **css:**
 ```css
 @layer containerDefault {
-.\$block\(break-word\,gap\(0\.2em\,1\.4\)\) {
+.\$block\(breakWord\,gap\(0\.2em\,1\.4\)\) {
 display: block;
 word-spacing: 0.2em;
 line-height: 1.4;
@@ -98,11 +98,11 @@ text-indent: 0;
 }
 ```
 
-**csss:** $block(auto,c)
+**csss:** $block(auto,textAlignCenter)
 **css:**
 ```css
 @layer containerDefault {
-.\$block\(auto\,c\) {
+.\$block\(auto\,textAlignCenter\) {
 display: block;
 word-spacing: unset;
 line-height: unset;
@@ -115,11 +115,11 @@ overflow: auto;
 }
 ```
 
-**csss:** |.box$_block(float-start,m(0,1rem,1rem,0))
+**csss:** |.box$_block(floatStart,m(0,1rem,1rem,0))
 **css:**
 ```css
 @layer items {
-.\|\.box\$_block\(float-start\,m\(0\,1rem\,1rem\,0\)\)> :where(.box) {
+.\|\.box\$_block\(floatStart\,m\(0\,1rem\,1rem\,0\)\)> :where(.box) {
 float: inline-start;
 margin-block: 0 1rem;
 margin-inline: 1rem 0;
@@ -190,11 +190,11 @@ margin-inline: 0;
 }
 ```
 
-**csss:** |.note$_block(float-end,m(0,0,1rem,1rem))
+**csss:** |.note$_block(floatEnd,m(0,0,1rem,1rem))
 **css:**
 ```css
 @layer items {
-.\|\.note\$_block\(float-end\,m\(0\,0\,1rem\,1rem\)\)> :where(.note) {
+.\|\.note\$_block\(floatEnd\,m\(0\,0\,1rem\,1rem\)\)> :where(.note) {
 float: inline-end;
 margin-block: 0 1rem;
 margin-inline: 0 1rem;

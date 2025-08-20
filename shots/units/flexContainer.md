@@ -3,13 +3,15 @@
 ```css
 @layer containerDefault {
   .\$flex\(column\,gap\(0\.5rem\)\,p\(1rem\)\) {
-        display: flex;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
+    display: flex;
+    word-spacing: unset;
+    line-height: unset;
+    white-space: unset;
+    hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    align-items: unset;
+    place-content: unset;
     flex-direction: column;
     gap: 0.5rem;
     padding: 1rem;
@@ -17,11 +19,11 @@
 }
 ```
 
-**csss:** $flex(row-reverse,gap(0.5rem),p(1rem))
+**csss:** $flex(rowReverse,gap(0.5rem),p(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(row-reverse\,gap\(0\.5rem\)\,p\(1rem\)\) {
+  .\$flex\(rowReverse\,gap\(0\.5rem\)\,p\(1rem\)\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -29,6 +31,8 @@
         hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    align-items: unset;
+    place-content: unset;
     flex-direction: row-reverse;
     gap: 0.5rem;
     padding: 1rem;
@@ -48,6 +52,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    align-items: unset;
+    place-content: unset;
     flex-wrap: wrap;
     gap: 0.5rem;
     padding: 1rem;
@@ -55,11 +61,11 @@
 }
 ```
 
-**csss:** $flex(a,gap(1rem),p(1rem),wrap)
+**csss:** $flex(contentStart,itemsStart,gap(1rem),p(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(a\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
+  .\$flex\(contentStart\,itemsStart\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -67,9 +73,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    align-content: start;
-    justify-content: start;
-    align-items: unset;
+    align-items: start;
+    place-content: start;
     gap: 1rem;
     padding: 1rem;
     flex-wrap: wrap;
@@ -79,11 +84,11 @@
 
 
 
-**csss:** $flex(ab,gap(1rem),p(1rem),wrap)
+**csss:** $flex(contentStartEnd,gap(1rem),p(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(ab\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
+  .\$flex\(contentStartEnd\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -91,21 +96,20 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    align-content: start;
-    justify-content: end;
     align-items: unset;
+    place-content: start end;
     gap: 1rem;
     padding: 1rem;
     flex-wrap: wrap;
-    }
+  }
 }
 ```
 
-**csss:** $flex(s.,gap(1rem),p(1rem),wrap)
+**csss:** $flex(contentStretchNormal,gap(1rem),p(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(s\.\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
+  .\$flex\(contentStretchNormal\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -113,9 +117,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    align-content: stretch;
-    justify-content: unset;
     align-items: unset;
+    place-content: stretch normal;
     gap: 1rem;
     padding: 1rem;
     flex-wrap: wrap;
@@ -123,11 +126,11 @@
 }
 ```
 
-**csss:** $flex(.w,gap(1rem),p(1rem),wrap)
+**csss:** $flex(contentNormalBetween,gap(1rem),p(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(\.w\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
+  .\$flex\(contentNormalBetween\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -135,21 +138,20 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    align-content: unset;
-    justify-content: space-between;
     align-items: unset;
+    place-content: normal space-between;
     gap: 1rem;
     padding: 1rem;
     flex-wrap: wrap;
-    }
+  }
 }
 ```
 
-**csss:** $flex(ccs,gap(1rem),p(1rem),wrap)
+**csss:** $flex(contentCenter,itemsStretch,textAlignJustify,gap(1rem),p(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(ccs\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
+  .\$flex\(contentCenter\,itemsStretch\,textAlignJustify\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -157,21 +159,20 @@
     hyphens: unset;
     text-align: justify;
     text-indent: unset;
-    align-content:center;
-    justify-content:center;
     align-items: stretch;
+    place-content: center;
     gap: 1rem;
     padding: 1rem;
     flex-wrap: wrap;
-    }
+  }
 }
 ```
 
-**csss:** $flex(ws_,gap(1rem),p(1rem),wrap)
+**csss:** $flex(contentBetweenStretch,itemsStart,gap(1rem),p(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(ws_\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
+  .\$flex\(contentBetweenStretch\,itemsStart\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -179,9 +180,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    align-content: space-between;
-    justify-content: stretch;
     align-items: start;
+    place-content: space-between stretch;
     gap: 1rem;
     padding: 1rem;
     flex-wrap: wrap;
@@ -189,11 +189,11 @@
 }
 ```
 
-**csss:** $flex(..s,gap(1rem),p(1rem),wrap)
+**csss:** $flex(textAlignJustify,itemsStretch,gap(1rem),p(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(\.\.s\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
+  .\$flex\(textAlignJustify\,itemsStretch\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -201,9 +201,8 @@
     hyphens: unset;
     text-align: justify;
     text-indent: unset;
-    align-content: unset;
-    justify-content: unset;
     align-items: stretch;
+    place-content: unset;
     gap: 1rem;
     padding: 1rem;
     flex-wrap: wrap;
@@ -223,6 +222,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    align-items: unset;
+    place-content: unset;
     gap: 2rem;
     padding: 1rem;
     }
@@ -241,6 +242,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    align-items: unset;
+    place-content: unset;
     overflow: scroll;
     padding: 1rem;
     }

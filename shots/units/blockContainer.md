@@ -1,8 +1,8 @@
-**csss:** $block(s)
+**csss:** $block(textAlignJustify)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(s\) {
+  .\$block\(textAlignJustify\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -14,11 +14,11 @@
 }
 ```
 
-**csss:** $block(c)
+**csss:** $block(textAlignCenter)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(c\) {
+  .\$block\(textAlignCenter\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -30,11 +30,11 @@
 }
 ```
 
-**csss:** $block(a)
+**csss:** $block(textAlignStart)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(a\) {
+  .\$block\(textAlignStart\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -46,11 +46,11 @@
 }
 ```
 
-**csss:** $block(b)
+**csss:** $block(textAlignEnd)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(b\) {
+  .\$block\(textAlignEnd\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -193,11 +193,11 @@
 }
 ```
 
-**csss:** $block(pre-wrap)
+**csss:** $block(preWrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(pre-wrap\) {
+  .\$block\(preWrap\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -209,11 +209,11 @@
 }
 ```
 
-**csss:** $block(break-word)
+**csss:** $block(breakWord)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(break-word\) {
+  .\$block\(breakWord\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -226,11 +226,11 @@
 }
 ```
 
-**csss:** $block(break-all)
+**csss:** $block(breakAll)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(break-all\) {
+  .\$block\(breakAll\) {
     display: block;
     word-spacing: unset;
     line-height: unset;

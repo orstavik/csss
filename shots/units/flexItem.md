@@ -10,6 +10,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    align-items: unset;
+    place-content: unset;
     gap: 1rem;
   }
 }
@@ -111,6 +113,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    align-items: unset;
+    place-content: unset;
     gap: 1rem;
     padding: 1rem;
 }
