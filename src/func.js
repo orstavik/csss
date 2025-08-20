@@ -336,6 +336,22 @@ const UnpackedNativeCssProperties = {
 
 
 //$bg
+function formatCssString(str) {
+  const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%|deg|grad|rad|turn/.source;
+  return str
+    //split units from letters: 20pxtop -> 20px top
+    .replaceAll(new RegExp(`(${LENGTHS_PER})([a-zA-Z])`, 'g'), '$1 $2')
+    //split letters from numbers: left20px -> left 20px
+    .replaceAll(/([a-zA-Z])(\d)/g, '$1 $2')
+    //split camelCase: atLeft -> at Left
+    .replaceAll(/([a-z])([A-Z])/g, '$1 $2')
+    //split units from numbers: 50%50% -> 50% 50%
+    .replaceAll(new RegExp(`(${LENGTHS_PER})(-?\\d)`, 'g'), '$1 $2')
+    //final cleanup for special keywords
+    .replaceAll(/\b(closest|farthest) (side|corner)\b/gi, '$1-$2')
+    .toLowerCase();
+}
+
 function bgImpl(...args) {
   const res = {
     backgroundImage: undefined,
@@ -351,24 +367,61 @@ function bgImpl(...args) {
   for (const a of args)
     (a && typeof a === 'object') ? Object.assign(res, a) :
       isColor(a) ? colors.push(a) :
-      args2.push(a
-        .replaceAll(/[A-Z]/g, ' $&')  // Handle camelCase
-        .replaceAll(/([a-z])(\d)/g, '$1 $2')  // from45deg to from 45deg  
-        .replaceAll(/(\d+(?:\.\d+)?(?:px|%|em|rem|vh|vw|deg|turn|grad|rad))(\d)/g, '$1 $2')  // 50%50% to 50% 50%
-        .replaceAll(/\b(closest|farthest) (side|corner)\b/gi, '$1-$2') // for radial: closest-side, closest-corner, farthest-side, farthest-corner
-        .toLowerCase()
-      );
+        args2.push(formatCssString(a));
   return { res, colors, args2 };
 }
 
+function isLengthOrPercentage(str) {
+  return /^-?[0-9]*\.?[0-9]+(?:e[+-]?[0-9]+)?(?:px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%)$/.test(str);
+}
+
+function isAngle(str) {
+  return /^-?[0-9]*\.?[0-9]+(?:e[+-]?[0-9]+)?(?:deg|grad|rad|turn)$/.test(str);
+}
+
+//process arguments sequentially, separating geometry from color stops.
 function doGradient(name, ...args) {
-  const { res, colors, args2 } = bgImpl(...args);
-  if (res.stops) {
-    for (let i = 0; i < res.stops?.length && i < colors.length; i++)
-      colors[i] += " " + res.stops[i];
-    delete res.stops;
+  const { res } = bgImpl(); // Get default background properties
+  const geometry = [];
+  const colorStops = [];
+  let inColorStops = false;
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+
+    if (arg && typeof arg === 'object') {
+      Object.assign(res, arg);
+      continue;
+    }
+
+    if (isColor(arg)) {
+      inColorStops = true;
+      let colorStop = arg;
+
+      let positionsCollected = 0;
+      while (i + 1 < args.length && positionsCollected < 2) {
+        const nextArg = args[i + 1];
+        if (isLengthOrPercentage(nextArg) || (name.includes('conic') && isAngle(nextArg))) {
+          colorStop += ` ${nextArg}`;
+          i++;
+          positionsCollected++;
+        } else break;
+      }
+
+      colorStops.push(colorStop);
+    } else if (!inColorStops) {
+      const processed = formatCssString(arg);
+
+      if (name === 'conic' && isAngle(processed))
+        geometry.push(`from ${processed}`);
+      else
+        geometry.push(processed);
+    }
   }
-  res.backgroundImage = `${name}-gradient(${[...args2, ...colors].join(",")})`;
+
+  const geometryString = geometry.filter(Boolean).join(" ");
+  const allParams = [geometryString, ...colorStops].filter(Boolean).join(", ");
+  res.backgroundImage = `${name}-gradient(${allParams})`;
   return res;
 }
 
@@ -399,7 +452,6 @@ const BackgroundFunctions = {
 
 for (const k in BackgroundFunctions)
   BackgroundFunctions[k].scope = {
-    stops: (...args) => ({ stops: args }),
     ...NativeCssProperties.background.scope,
     ...NativeCssScopeMath, //todo do we need this, or is it covered by background above?
     pos: (block = "0", inline = "0") => ({ backgroundPosition: `${block[0] === "-" ? `bottom ${block.slice(1)}` : block} ${inline[0] === "-" ? `right ${inline.slice(1)}` : inline}` }),
@@ -611,3 +663,4 @@ export default {
   textDecoration,
   ...textDecorations,
 };
+
