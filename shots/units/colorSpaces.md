@@ -3,7 +3,7 @@
 ```css
 @layer containerDefault {
   .\$color\(rgb\(255\,0\,0\)\) {
-    color: rgb(255, 0, 0);
+    color: #ff0000;
   }
 }
 ```
@@ -13,7 +13,7 @@
 ```css
 @layer containerDefault {
   .\$color\(rgba\(0\,255\,0\,0\.5\)\) {
-    color: rgba(0, 255, 0, 0.5);
+    color: #00ff0080;
   }
 }
 ```
@@ -23,7 +23,7 @@
 ```css
 @layer containerDefault {
   .\$color\(hsl\(240\,100\%\,50\%\)\) {
-    color: rgb(0, 0, 255);
+    color: hsl(240 100% 50%);
   }
 }
 ```
@@ -33,7 +33,7 @@
 ```css
 @layer containerDefault {
   .\$color\(hsla\(60\,100\%\,50\%\,0\.8\)\) {
-    color: rgba(255, 255, 0, 0.8);
+    color: hsla(60 100% 50% / 0.8);
   }
 }
 ```
@@ -43,7 +43,7 @@
 ```css
 @layer containerDefault {
   .\$color\(hwb\(180\,20\%\,20\%\)\) {
-    color: rgb(51, 204, 204);
+    color: hwb(180 20% 20%);
   }
 }
 ```
@@ -53,7 +53,7 @@
 ```css
 @layer containerDefault {
   .\$color\(lab\(50\%\,20\,-30\)\) {
-    color: lab(50 20 -30);
+    color: lab(50% 20 -30);
   }
 }
 ```
@@ -63,7 +63,7 @@
 ```css
 @layer containerDefault {
   .\$color\(lch\(70\%\,45\,120\)\) {
-    color: lch(70 45 120);
+    color: lch(70% 45 120);
   }
 }
 ```
@@ -153,7 +153,7 @@
 ```css
 @layer containerDefault {
   .\$color\(xyz\(0\.5\,0\.3\,0\.1\)\) {
-    color: color(xyz-d65 0.5 0.3 0.1);
+    color: color(xyz 0.5 0.3 0.1);
   }
 }
 ```
@@ -183,7 +183,7 @@
 ```css
 @layer containerDefault {
   .\$color\(colorMix\(oklch\,red\,blue\,50\%\)\) {
-    color: color-mix(in oklch, red, blue);
+    color: color-mix(in oklch, red, blue 50%);
   }
 }
 ```
@@ -193,7 +193,7 @@
 ```css
 @layer containerDefault {
   .\$color\(colorMix\(lab\,orange\,purple\,75\%\)\) {
-    color: color-mix(in lab, orange 25%, purple);
+    color: color-mix(in lab, orange, purple 75%);
   }
 }
 ```
@@ -203,10 +203,10 @@
 ```css
 @layer containerDefault {
   .\$bg\(oklch\(70\%\,0\.15\,180\+30\)\) {
-    background-image: linear-gradient(oklch(0.7 0.15 210));
+    background-image: linear-gradient(oklch(70% 0.15 calc(180 + 30)));
     background-position: 0% 0%;
     background-repeat: repeat;
-    background-size: auto;
+    background-size: auto auto;
     background-origin: padding-box;
     background-clip: border-box;
     background-blend-mode: normal;
@@ -220,10 +220,10 @@
 ```css
 @layer containerDefault {
   .\$bg\(lab\(50\%\+20\%\,10\,-20\)\) {
-    background-image: linear-gradient(lab(70 10 -20));
+    background-image: linear-gradient(lab(calc(50% + 20%) 10 -20));
     background-position: 0% 0%;
     background-repeat: repeat;
-    background-size: auto;
+    background-size: auto auto;
     background-origin: padding-box;
     background-clip: border-box;
     background-blend-mode: normal;

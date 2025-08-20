@@ -20,7 +20,7 @@
 @layer items {
   .\|\*\$_block\(m\(1rem\,0\,0\.5rem\)\)>* {
     margin-block: 1rem 0.5rem;
-    margin-inline: 0px;
+    margin-inline: 0;
   }
 }
 ```
@@ -30,8 +30,8 @@
 ```css
 @layer items {
   .\|\*\$_block\(m\(0\,0\,1rem\)\)>* {
-    margin-block: 0px 1rem;
-    margin-inline: 0px;
+    margin-block: 0 1rem;
+    margin-inline: 0;
   }
 }
 ```
@@ -41,7 +41,8 @@
 ```css
 @layer containerDefault {
   .\$margin\(2rem\,0\,0\,0\) {
-    margin: 2rem 0px 0px;
+    margin-block: 2rem 0;
+    margin-inline: 0;
   }
 }
 ```
@@ -72,8 +73,8 @@
 @layer items {
   .\|\.start\$_block\(float-start\,m\(0\.5rem\,0\,0\,0\)\)> :where(.start) {
     float: inline-start;
-    margin-block: 0.5rem 0px;
-    margin-inline: 0px;
+    margin-block: 0.5rem 0;
+    margin-inline: 0;
   }
 }
 ```
@@ -84,8 +85,8 @@
 @layer items {
   .\|\.end\$_block\(float-end\,m\(0\.5rem\,0\,0\,0\)\)> :where(.end) {
     float: inline-end;
-    margin-block: 0.5rem 0px;
-    margin-inline: 0px;
+    margin-block: 0.5rem 0;
+    margin-inline: 0;
   }
 }
 ```

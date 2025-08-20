@@ -20,8 +20,8 @@ text-indent: unset;
 @layer items {
 .\|\*\$_block\(indent\(2em\)\,m\(0\,0\,1rem\)\)>* {
 text-indent: 2em;
-margin-block: 0px 1rem;
-margin-inline: 0px;
+margin-block: 0 1rem;
+margin-inline: 0;
 }
 }
 ```
@@ -31,9 +31,9 @@ margin-inline: 0px;
 ```css
 @layer items {
 .\|\.title\$_block\(indent\(0\)\,m\(0\,0\,2rem\)\)> :where(.title) {
-text-indent: 0px;
-margin-block: 0px 2rem;
-margin-inline: 0px;
+text-indent: 0;
+margin-block: 0 2rem;
+margin-inline: 0;
 }
 }
 ```
@@ -44,8 +44,8 @@ margin-inline: 0px;
 @layer items {
 .\|\.subtitle\$_block\(indent\(1em\)\,m\(0\,0\,1\.5rem\)\)> :where(.subtitle) {
 text-indent: 1em;
-margin-block: 0px 1.5rem;
-margin-inline: 0px;
+margin-block: 0 1.5rem;
+margin-inline: 0;
 }
 }
 ```
@@ -93,7 +93,7 @@ margin-inline: 1rem;
 ```css
 @layer items {
 .\|\.highlight\$_block\(indent\(0\)\)> :where(.highlight) {
-text-indent: 0px;
+text-indent: 0;
 }
 }
 ```
@@ -121,8 +121,8 @@ overflow: auto;
 @layer items {
 .\|\.box\$_block\(float-start\,m\(0\,1rem\,1rem\,0\)\)> :where(.box) {
 float: inline-start;
-margin-block: 0px 1rem;
-margin-inline: 1rem 0px;
+margin-block: 0 1rem;
+margin-inline: 1rem 0;
 }
 }
 ```
@@ -132,8 +132,8 @@ margin-inline: 1rem 0px;
 ```css
 @layer items {
 .\|p\$_block\(m\(0\,0\,1rem\)\)> :where(p) {
-margin-block: 0px 1rem;
-margin-inline: 0px;
+margin-block: 0 1rem;
+margin-inline: 0;
 }
 }
 ```
@@ -160,8 +160,8 @@ padding: 1.5rem;
 ```css
 @layer items {
 .\|h4\$_block\(m\(0\,0\,0\.5rem\)\)> :where(h4) {
-margin-block: 0px 0.5rem;
-margin-inline: 0px;
+margin-block: 0 0.5rem;
+margin-inline: 0;
 }
 }
 ```
@@ -171,9 +171,9 @@ margin-inline: 0px;
 ```css
 @layer items {
 .\|\.intro\$_block\(indent\(0\)\,m\(0\,0\,2rem\)\)> :where(.intro) {
-text-indent: 0px;
-margin-block: 0px 2rem;
-margin-inline: 0px;
+text-indent: 0;
+margin-block: 0 2rem;
+margin-inline: 0;
 }
 }
 ```
@@ -184,8 +184,8 @@ margin-inline: 0px;
 @layer items {
 .\|\.content\$_block\(indent\(1\.5rem\)\,m\(0\,0\,1rem\)\)> :where(.content) {
 text-indent: 1.5rem;
-margin-block: 0px 1rem;
-margin-inline: 0px;
+margin-block: 0 1rem;
+margin-inline: 0;
 }
 }
 ```
@@ -196,8 +196,8 @@ margin-inline: 0px;
 @layer items {
 .\|\.note\$_block\(float-end\,m\(0\,0\,1rem\,1rem\)\)> :where(.note) {
 float: inline-end;
-margin-block: 0px 1rem;
-margin-inline: 0px 1rem;
+margin-block: 0 1rem;
+margin-inline: 0 1rem;
 }
 }
 ```

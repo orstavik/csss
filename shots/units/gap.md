@@ -1,3 +1,19 @@
+**csss:** $block(gap(0.5rem,1.8))
+**css:**
+```css
+@layer containerDefault {
+  .\$block\(gap\(0\.5rem\,1\.8\)\) {
+    display: block;
+    word-spacing: 0.5rem;
+    line-height: 1.8;
+    white-space: unset;
+    hyphens: unset;
+    text-align: unset;
+    text-indent: unset;
+  }
+}
+```
+
 **csss:** $flex(wrap,gap(1rem,2rem))
 **css:**
 ```css
@@ -11,7 +27,8 @@
     text-align: unset;
     text-indent: unset;
     flex-wrap: wrap;
-    gap: 2rem 1rem;
+    row-gap: 1rem;
+    column-gap: 2rem;
   }
 }
 ```
@@ -29,23 +46,8 @@
     text-align: unset;
     text-indent: unset;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem 1rem;
-  }
-}
-```
-
-**csss:** $block(gap(0.5rem,1.8))
-**css:**
-```css
-@layer containerDefault {
-  .\$block\(gap\(0\.5rem\,1\.8\)\) {
-    display: block;
-    word-spacing: 0.5rem;
-    line-height: 1.8;
-    white-space: unset;
-    hyphens: unset;
-    text-align: unset;
-    text-indent: unset;
+    row-gap: 1rem;
+    column-gap: 0.5rem;
   }
 }
 ```

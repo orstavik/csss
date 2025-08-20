@@ -46,12 +46,12 @@
     line-height: unset;
     white-space: unset;
     hyphens: unset;
-text-align: unset;
-text-indent: unset;
-flex-wrap: wrap;
-gap: 0.5rem;
-padding: 1rem;
-}
+    text-align: unset;
+    text-indent: unset;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
 }
 ```
 
@@ -67,12 +67,13 @@ padding: 1rem;
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    place-content: start;
+    align-content: start;
+    justify-content: start;
     align-items: unset;
     gap: 1rem;
     padding: 1rem;
     flex-wrap: wrap;
-    }
+  }
 }
 ```
 
@@ -90,7 +91,8 @@ padding: 1rem;
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    place-content: start end;
+    align-content: start;
+    justify-content: end;
     align-items: unset;
     gap: 1rem;
     padding: 1rem;
@@ -155,7 +157,8 @@ padding: 1rem;
     hyphens: unset;
     text-align: justify;
     text-indent: unset;
-    place-content: center;
+    align-content:center;
+    justify-content:center;
     align-items: stretch;
     gap: 1rem;
     padding: 1rem;
@@ -176,12 +179,13 @@ padding: 1rem;
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    place-content: space-between stretch;
+    align-content: space-between;
+    justify-content: stretch;
     align-items: start;
     gap: 1rem;
     padding: 1rem;
     flex-wrap: wrap;
-    }
+}
 }
 ```
 
@@ -197,12 +201,13 @@ padding: 1rem;
     hyphens: unset;
     text-align: justify;
     text-indent: unset;
-    place-content: unset;
+    align-content: unset;
+    justify-content: unset;
     align-items: stretch;
     gap: 1rem;
     padding: 1rem;
     flex-wrap: wrap;
-    }
+  }
 }
 ```
 

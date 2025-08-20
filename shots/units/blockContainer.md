@@ -84,7 +84,7 @@
 @layer containerDefault {
   .\$block\(g\(0\,1\.2\)\) {
     display: block;
-    word-spacing: 0px;
+    word-spacing: 0;
     line-height: 1.2;
     white-space: unset;
     hyphens: unset;

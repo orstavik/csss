@@ -14,8 +14,10 @@
     grid-template-rows: repeat(3, 80px);
     gap: 1rem;
     padding: 1rem;
-    place-content: start center;
-    place-items: unset;
+    align-content: start;
+    justify-content: center;
+    align-items: unset;
+    justify-items: unset;
   }
 }
 ```
@@ -36,7 +38,8 @@
 ```css
 @layer items {
   .\|\.b\$_grid\(row\(1\,span\(2\)\)\,column\(3\)\)> :where(.b) {
-    grid-area: 1 / 3 / span 2;
+    grid-row: 1 / span 2;
+    grid-column: 3;
   }
 }
 ```
@@ -47,8 +50,10 @@
 @layer items {
   .\|\.c\$_grid\(align\(sa\)\,column\(1\)\,row\(2\,span\(2\)\)\)> :where(.c) {
     text-align: start;
-    place-self: stretch start;
-    grid-area: 2 / 1 / span 2;
+    align-self: stretch;
+    justify-self: start;
+    grid-column: 1;
+    grid-row: 2 / span 2;
   }
 }
 ```

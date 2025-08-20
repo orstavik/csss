@@ -2,20 +2,21 @@
   import * as CSSS from "/src/csss.js";
   import runTests from "/shots/mdTester.js";
 
-  document.head.append(document.createElement('style'));
-  const tester = document.head.lastElementChild.sheet;
-  function normalizeCss(ruleTxt) { return tester.cssRules[tester.insertRule(ruleTxt, 0)].cssText; }
+  // document.head.append(document.createElement('style'));
+  // const tester = document.head.lastElementChild.sheet;
+  // function normalizeCss(ruleTxt) { return tester.cssRules[tester.insertRule(ruleTxt, 0)].cssText; }
 
   function test({ csss, css }) {
     const key = csss.value, b = css.value;
+    const actual = CSSS.parse(key);
     return {
       key,
-      actual: normalizeCss(CSSS.parse(key).cssText),
-      expected: normalizeCss(b)
+      actual: [actual.atRuleText, actual.cssText].filter(Boolean).join("\n\n"),
+      expected: b
     };
   }
 
   //runTests("hpBorder,hpLayout,hpCalVar,hpBg,hpOne,hpOne2,hpTwo", test);
-  runTests("blockCombined,blockContainer,blockItem,colorSpaces,flexCombined,flexContainer,flexItem,gap,gridCombined,gridContainer,gridItem,how2UseGradientColors,margin,font,gradientFunctions", test);
+  runTests("blockCombined,blockContainer,blockItem,colorSpaces,flexCombined,flexContainer,flexItem,gap,gridCombined,gridContainer,gridItem,how2UseGradientColors,margin,fontX,gradientFunctions", test);
   //gradientFunctions.md has errors because of conic gradient
 </script>

@@ -1,4 +1,4 @@
-import { diff } from "https://cdn.jsdelivr.net/gh/orstavik/making-a@25.07.20.08/difference.js";
+import { diff } from "https://cdn.jsdelivr.net/gh/orstavik/making-a@25.08.19.10.34/difference.js";
 
 function splitMd(txt) {
   const entry = txt.split(/(?:^|\n)\*\*([a-z0-9_-]+):\*\*/i).slice(1);
@@ -24,6 +24,7 @@ function printDiff({ key, actual, expected, type }) {
   const noMatch = d.find(({ type, a, b }) => type != "match" && (a.trim() || b.trim()))
   if (!noMatch)
     return console.log(`🟦 ${key}`);
+  // console.log(`**csss:** ${key}\n\n**css:**\n\`\`\`css\n${actual}\n\`\`\`\n\n`);
   console.log(`❌ ${key}`);
   console.log("expected:", expected);
   console.log("actual:", actual);
