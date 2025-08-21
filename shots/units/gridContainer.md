@@ -10,6 +10,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    place-items: unset;
+    place-content: unset;
     grid-template-columns: 1fr 2fr;
     grid-template-rows: auto;
     gap: 1rem;
@@ -18,11 +20,11 @@
 }
 ```
 
-**csss:** $grid(c,cols(repeat(2,1fr)),gap(1rem),p(1rem))
+**csss:** $grid(contentCenter,cols(repeat(2,1fr)),gap(1rem),p(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(c\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,p\(1rem\)\) {
+  .\$grid\(contentCenter\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,p\(1rem\)\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;
@@ -30,8 +32,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    place-items: unset;
     place-content: center;
-    place-items: unset;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     padding: 1rem;
@@ -39,11 +41,11 @@
 }
 ```
 
-**csss:** $grid(aw,cols(repeat(2,1fr)),gap(1rem),p(1rem))
+**csss:** $grid(contentStartBetween,cols(repeat(2,1fr)),gap(1rem),p(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(aw\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,p\(1rem\)\) {
+  .\$grid\(contentStartBetween\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,p\(1rem\)\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;
@@ -51,8 +53,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    place-content: start space-between;
     place-items: unset;
+    place-content: start space-between;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     padding: 1rem;
@@ -60,11 +62,11 @@
 }
 ```
 
-**csss:** $grid(ccs,cols(repeat(2,1fr)),gap(1rem),p(1rem))
+**csss:** $grid(contentCenterCenter,itemsStretch,textAlignJustify,cols(repeat(2,1fr)),gap(1rem),p(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(ccs\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,p\(1rem\)\) {
+  .\$grid\(contentCenterCenter\,itemsStretch\,textAlignJustify\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,p\(1rem\)\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;
@@ -72,8 +74,8 @@
     hyphens: unset;
     text-align: justify;
     text-indent: unset;
-    place-content: center;
     place-items: stretch;
+    place-content: center;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     padding: 1rem;
@@ -81,20 +83,20 @@
 }
 ```
 
-**csss:** $grid(acsa,cols(repeat(2,1fr)),gap(1rem),p(1rem))
+**csss:** $grid(contentStartEnd,itemsStretchStart,cols(repeat(2,1fr)),gap(1rem),p(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(acsa\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,p\(1rem\)\) {
+  .\$grid\(contentStartEnd\,itemsStretchStart\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,p\(1rem\)\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;
     white-space: unset;
     hyphens: unset;
-    text-align: start;
+    text-align: unset;
     text-indent: unset;
-    place-content: start center;
     place-items: stretch start;
+    place-content: start end;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     padding: 1rem;
@@ -102,20 +104,20 @@
 }
 ```
 
-**csss:** $grid(..sa,cols(repeat(2,1fr)),gap(1rem),p(1rem))
+**csss:** $grid(itemsStretchStart,cols(repeat(2,1fr)),gap(1rem),p(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(\.\.sa\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,p\(1rem\)\) {
+  .\$grid\(itemsStretchStart\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,p\(1rem\)\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;
     white-space: unset;
     hyphens: unset;
-    text-align: start;
+    text-align: unset;
     text-indent: unset;
+    place-items: stretch start;
     place-content: unset;
-    place-items: stretch start;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     padding: 1rem;
@@ -135,6 +137,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    place-items: unset;
+    place-content: unset;
     grid-template-rows: repeat(3, 1fr);
     grid-auto-flow: column;
     gap: 0.5rem;
@@ -155,6 +159,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    place-items: unset;
+    place-content: unset;
     grid-template-columns: repeat(4, 1fr);
     overflow-inline: scroll;
     overflow-block: hidden;

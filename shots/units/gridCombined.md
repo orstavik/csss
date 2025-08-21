@@ -1,8 +1,8 @@
-**csss:** $grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),p(1rem),ac)
+**csss:** $grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),p(1rem),contentStartCenter)
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(cols\(repeat\(3\,1fr\)\)\,rows\(repeat\(3\,80px\)\)\,gap\(1rem\)\,p\(1rem\)\,ac\) {
+  .\$grid\(cols\(repeat\(3\,1fr\)\)\,rows\(repeat\(3\,80px\)\)\,gap\(1rem\)\,p\(1rem\)\,contentStartCenter\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;
@@ -10,14 +10,12 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    place-items: unset;
+    place-content: start center;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 80px);
     gap: 1rem;
     padding: 1rem;
-    align-content: start;
-    justify-content: center;
-    align-items: unset;
-    justify-items: unset;
   }
 }
 ```
@@ -44,28 +42,26 @@
 }
 ```
 
-**csss:** |.c$_grid(align(sa),column(1),row(2,span(2)))
+**csss:** |.c$_grid(selfStretchStart,column(1),row(2,span(2)))
 **css:**
 ```css
 @layer items {
-  .\|\.c\$_grid\(align\(sa\)\,column\(1\)\,row\(2\,span\(2\)\)\)> :where(.c) {
-    text-align: start;
-    align-self: stretch;
-    justify-self: start;
+  .\|\.c\$_grid\(selfStretchStart\,column\(1\)\,row\(2\,span\(2\)\)\)> :where(.c) {
+    place-self: stretch start;
     grid-column: 1;
     grid-row: 2 / span 2;
   }
 }
 ```
 
-**csss:** |.d$_grid(align(c),column(2),row(3))
+**csss:** |.d$_grid(selfCenter,column(2),row(3))
 **css:**
 ```css
 @layer items {
-  .\|\.d\$_grid\(align\(c\)\,column\(2\)\,row\(3\)\)> :where(.d) {
-    text-align: center;
+  .\|\.d\$_grid\(selfCenter\,column\(2\)\,row\(3\)\)> :where(.d) {
     place-self: center;
-    grid-area: 3 / 2;
+    grid-column: 2;
+    grid-row: 3;
   }
 }
 ```
