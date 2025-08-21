@@ -50,13 +50,13 @@ margin-inline: 0;
 }
 ```
 
-**csss:** $w(,,600px)
+**csss:** $w(.<.<600px)
 **css:**
 ```css
 @layer containerDefault {
-.\$w\(\,\,600px\) {
-max-inline-size: 600px;
-}
+  .\$w\(\.\<\.\<600px\) {
+    max-inline-size: 600px;
+  }
 }
 ```
 

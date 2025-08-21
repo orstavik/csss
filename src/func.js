@@ -537,26 +537,24 @@ border.scope = {
 // NativeCssProperties.borderColor = (...args) => borderSwitch(toLogicalFour("Color", ...args));
 // NativeCssProperties.borderColor.scope = NativeCssProperties.color.scope;
 
-//todo do something like this instead:
-//   12><--var
-//   12<>--var
-//   45>23>--var
-
-//$w(50%)
-//$w(1,2) not allowed, only 1 or 3 arguments.
-//$w(max(30em,35%),50%,min(60cm,80vw,100%))
-function toSize(NAME, ...args) {
-  args = args.map(a => a?.replace(/^(min|max)$/, "$&-content"));
-  if (args.length === 1)
-    return { [NAME]: args[0] };
-  if (args.length === 3) {
-    const NAME2 = NAME.replace(/^./, c => c.toUpperCase());
-    return {
-      [`min${NAME2}`]: args[0],
-      [NAME]: args[1],
-      [`max${NAME2}`]: args[2]
-    };
-  } throw new SyntaxError(`$${NAME} accepts only 1 or 3 arguments: ${args}`);
+//$w(12px<.<.)
+//$w(.<.<12rem)
+//$w(12px<.<12rem)
+//$w(12%<20px<22%)
+//$w(12px)
+//$w(12px<.<max)
+//$w(min<.<12rem)
+function toSize(NAME, a, ...args) {
+  if (args.length)
+    throw new SyntaxError(`${NAME} accepts only 1 argument: ${JSON.stringify([a, ...args])}`);
+  if (!a.includes("<"))
+    return { [NAME]: a };
+  const [min = ".", normal = ".", max = "."] = a.split("<");
+  const res = {};
+  if (min !== ".") res["min" + NAME[0].toUpperCase() + NAME.slice(1)] = min;
+  if (normal !== ".") res[NAME] = normal;
+  if (max !== ".") res["max" + NAME[0].toUpperCase() + NAME.slice(1)] = max;
+  return res;
 }
 const width = (...args) => toSize("inlineSize", ...args);
 const height = (...args) => toSize("blockSize", ...args);
