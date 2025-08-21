@@ -42,7 +42,7 @@ export function sequence(allShorts, classListShorts, parseFun) {
 // }
 
 export function extractShortSelector(rule) {
-  if (!(rule instanceof CSSLayerStatementRule) || rule.cssRules.length != 1) return false;
+  if (!(rule instanceof CSSLayerStatementRule && rule.cssRules?.length == 1)) return false;
   rule = rule.cssRules[0];
   if (rule instanceof CSSMediaRule && rule.cssRules.length == 1) rule = rule.cssRules[0];
   if (!(rule instanceof CSSStyleRule) || rule.cssRules.length != 1) return false;
@@ -241,7 +241,7 @@ function eatTokens(tokens) {
 
 function diveDeep(tokens, top) {
   const res = [];
-  while (tokens.length) {
+  while (tokens.length) {                       //<
     let a = tokens[0].match(/^(?!["'])(?:\($|.*[+/*]|(?<![a-z])-|-(?![a-z]))/i) ?
       parseVarCalc(eatTokens(tokens)) :
       tokens.shift();
