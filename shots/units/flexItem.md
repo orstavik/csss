@@ -57,55 +57,51 @@
 }
 ```
 
-**csss:** |:nth-child(1)$_flex(start)
+**csss:** |:nth-child(1)$_flex(selfStart)
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(1\)\$_flex\(start\)> :where(:nth-child(1)) {
+  .\|\:nth-child\(1\)\$_flex\(selfStart\)> :where(:nth-child(1)) {
     align-self: start;
-    text-align: start;
   }
 }
 ```
 
-**csss:** |:nth-child(2)$_flex(center)
+**csss:** |:nth-child(2)$_flex(selfCenter)
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(2\)\$_flex\(center\)> :where(:nth-child(2)) {
+  .\|\:nth-child\(2\)\$_flex\(selfCenter\)> :where(:nth-child(2)) {
     align-self: center;
-    text-align: center;
   }
 }
 ```
 
-**csss:** |:nth-child(3)$_flex(end)
+**csss:** |:nth-child(3)$_flex(selfEnd)
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(3\)\$_flex\(end\)> :where(:nth-child(3)) {
+  .\|\:nth-child\(3\)\$_flex\(selfEnd\)> :where(:nth-child(3)) {
     align-self: end;
-    text-align: end;
   }
 }
 ```
 
-**csss:** |:nth-child(4)$_flex(stretch)
+**csss:** |:nth-child(4)$_flex(selfStretch)
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(4\)\$_flex\(stretch\)> :where(:nth-child(4)) {
+  .\|\:nth-child\(4\)\$_flex\(selfStretch\)> :where(:nth-child(4)) {
     align-self: stretch;
-    text-align: justify;
   }
 }
 ```
 
-**csss:** $flex(gap(1rem),p(1rem))
+**csss:** $flex(gap(1rem),padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(gap\(1rem\)\,p\(1rem\)\) {
+  .\$flex\(gap\(1rem\)\,padding\(1rem\)\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -121,11 +117,11 @@
 }
 ```
 
-**csss:** |*$_flex(m(5px),h(120px),w(150px),scrollMargin(10px))
+**csss:** |*$_flex(margin(5px),h(120px),w(150px),scrollMargin(10px))
 **css:**
 ```css
 @layer items {
-  .\|\*\$_flex\(m\(5px\)\,h\(120px\)\,w\(150px\)\,scrollMargin\(10px\)\)>* {
+  .\|\*\$_flex\(margin\(5px\)\,h\(120px\)\,w\(150px\)\,scrollMargin\(10px\)\)>* {
     margin: 5px;
     block-size: 120px;
     inline-size: 150px;

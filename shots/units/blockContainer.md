@@ -1,8 +1,8 @@
-**csss:** $block(textAlignJustify)
+**csss:** $block(textJustify)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(textAlignJustify\) {
+  .\$block\(textJustify\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -14,11 +14,11 @@
 }
 ```
 
-**csss:** $block(textAlignCenter)
+**csss:** $block(textCenter)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(textAlignCenter\) {
+  .\$block\(textCenter\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -30,11 +30,11 @@
 }
 ```
 
-**csss:** $block(textAlignStart)
+**csss:** $block(textStart)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(textAlignStart\) {
+  .\$block\(textStart\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -46,11 +46,11 @@
 }
 ```
 
-**csss:** $block(textAlignEnd)
+**csss:** $block(textEnd)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(textAlignEnd\) {
+  .\$block\(textEnd\) {
     display: block;
     word-spacing: unset;
     line-height: unset;

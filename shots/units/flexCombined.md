@@ -1,8 +1,8 @@
-**csss:** $flex(row,gap(1rem),p(1rem))
+**csss:** $flex(row,gap(1rem),padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(row\,gap\(1rem\)\,p\(1rem\)\) {
+  .\$flex\(row\,gap\(1rem\)\,padding\(1rem\)\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -58,16 +58,13 @@
 }
 ```
 
-
-
-**csss:** |.one$_flex(order(3),start,m(1rem))
+**csss:** |.one$_flex(order(3),selfStart,margin(1rem))
 **css:**
 ```css
 @layer items {
-  .\|\.one\$_flex\(order\(3\)\,start\,m\(1rem\)\)> :where(.one) {
+  .\|\.one\$_flex\(order\(3\)\,selfStart\,margin\(1rem\)\)> :where(.one) {
     order: 3;
     align-self: start;
-    text-align: start;
     margin: 1rem;
   }
 }
@@ -84,25 +81,23 @@
 }
 ```
 
-**csss:** |.three$_flex(order(2),end)
+**csss:** |.three$_flex(order(2),selfEnd)
 **css:**
 ```css
 @layer items {
-  .\|\.three\$_flex\(order\(2\)\,end\)> :where(.three) {
+  .\|\.three\$_flex\(order\(2\)\,selfEnd\)> :where(.three) {
     order: 2;
     align-self: end;
-    text-align: end;
   }
 }
 ```
 
-**csss:** |.four$_flex(stretch)
+**csss:** |.four$_flex(selfStretch)
 **css:**
 ```css
 @layer items {
-  .\|\.four\$_flex\(stretch\)> :where(.four) {
+  .\|\.four\$_flex\(selfStretch\)> :where(.four) {
     align-self: stretch;
-    text-align: justify;
   }
 }
 ```

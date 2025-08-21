@@ -9,21 +9,21 @@
 }
 ```
 
-**csss:** |*$_flex(m(1rem))
+**csss:** |*$_flex(margin(1rem))
 **css:**
 ```css
 @layer items {
-  .\|\*\$_flex\(m\(1rem\)\)>* {
+  .\|\*\$_flex\(margin\(1rem\)\)>* {
     margin: 1rem;
   }
 }
 ```
 
-**csss:** |.a$_flex(m(0,0,2rem))
+**csss:** |.a$_flex(margin(0,0,2rem))
 **css:**
 ```css
 @layer items {
-  .\|\.a\$_flex\(m\(0\,0\,2rem\)\)> :where(.a) {
+  .\|\.a\$_flex\(margin\(0\,0\,2rem\)\)> :where(.a) {
     margin-block: 0 2rem;
     margin-inline: 0;
   }

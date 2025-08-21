@@ -1,8 +1,8 @@
-**csss:** $grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),p(1rem),contentStartCenter)
+**csss:** $grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),padding(1rem),contentStartCenter)
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(cols\(repeat\(3\,1fr\)\)\,rows\(repeat\(3\,80px\)\)\,gap\(1rem\)\,p\(1rem\)\,contentStartCenter\) {
+  .\$grid\(cols\(repeat\(3\,1fr\)\)\,rows\(repeat\(3\,80px\)\)\,gap\(1rem\)\,padding\(1rem\)\,contentStartCenter\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;
@@ -20,11 +20,11 @@
 }
 ```
 
-**csss:** |.a$_grid(column(1,span(2)),m(1rem))
+**csss:** |.a$_grid(column(1,span(2)),margin(1rem))
 **css:**
 ```css
 @layer items {
-  .\|\.a\$_grid\(column\(1\,span\(2\)\)\,m\(1rem\)\)> :where(.a) {
+  .\|\.a\$_grid\(column\(1\,span\(2\)\)\,margin\(1rem\)\)> :where(.a) {
     grid-column: 1 / span 2;
     margin: 1rem;
   }

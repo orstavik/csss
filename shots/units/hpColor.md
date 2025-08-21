@@ -3,27 +3,27 @@
 ```css
 @layer containerDefault {
   .\$textShadow\(2px\,4px\,6px\,rgba\(0\,0\,0\,0\.5\)\) {
-    text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5);
+    text-shadow: 2px 4px 6px #00000080;
   }
 }
 ```
 
-**csss:** $dropShadow(0,0,0.75rem,crimson)
+**csss:** $dropShadow(0,0,0.75rem,#crimson)
 **css:**
 ```css
 @layer containerDefault {
-  .\$dropShadow\(0\,0\,0\.75rem\,crimson\) {
-    filter: drop-shadow(0 0 0.75rem crimson);
+  .\$dropShadow\(0\,0\,0\.75rem\,\#crimson\) {
+    filter: drop-shadow(0 0 0.75rem var(--color-crimson));
   }
 }
 ```
 
-**csss:** $textShadow(0,0,10px,blue)
+**csss:** $textShadow(0,0,10px,#blue)
 **css:**
 ```css
 @layer containerDefault {
-  .\$textShadow\(0\,0\,10px\,blue\) {
-    text-shadow: 0 0 10px blue;
+  .\$textShadow\(0\,0\,10px\,\#blue\) {
+    text-shadow: 0 0 10px var(--color-blue);
   }
 }
 ```
@@ -33,21 +33,21 @@
 ```css
 @layer containerDefault {
   .\$boxShadow\(2px\,4px\,6px\,rgba\(0\,0\,0\,0\.5\)\) {
-    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5);
+    box-shadow: 2px 4px 6px #00000080;
   }
 }
 ```
 
-**csss:** $palette(variations,yellow,blue)
+**csss:** $palette(variations,#yellow,#blue)
 **css:**
 ```css
 @layer containerDefault {
-  .\$palette\(variations\,yellow\,blue\) {
-    --color-variations: yellow;
+  .\$palette\(variations\,\#yellow\,\#blue\) {
+    --color-variations: var(--color-yellow);
     --color-variations-pop: oklch(0.968, 0.110, 110);
     --color-variations-accent: oklch(0.968, 0.196, 110);
     --color-variations-bland: oklch(0.968, 0.105, 110);
-    --color-variations1: blue;
+    --color-variations1: var(--color-blue);
     --color-variations-pop1: oklch(0.968, 0.110, 110);
     --color-variations-accent1: oklch(0.968, 0.196, 110);
     --color-variations-bland1: oklch(0.968, 0.105, 110);
@@ -63,7 +63,7 @@
     background-image: linear-gradient(color-mix(in oklab, var(--color-variations-bland), var(--color-variations-bland1) 50%));
     background-position: 0% 0%;
     background-repeat: repeat;
-    background-size: auto;
+    background-size: auto auto;
     background-origin: padding-box;
     background-clip: border-box;
     background-blend-mode: normal;
@@ -90,7 +90,7 @@
     background-image: linear-gradient(var(--color-variations-accent));
     background-position: 0% 0%;
     background-repeat: repeat;
-    background-size: auto;
+    background-size: auto auto;
     background-origin: padding-box;
     background-clip: border-box;
     background-blend-mode: normal;
@@ -117,7 +117,7 @@
     background-image: linear-gradient(color-mix(in oklab, color-mix(in oklab, var(--color-variations), var(--color-variations1) 20%), transparent 70%));
     background-position: 0% 0%;
     background-repeat: repeat;
-    background-size: auto;
+    background-size: auto auto;
     background-origin: padding-box;
     background-clip: border-box;
     background-blend-mode: normal;

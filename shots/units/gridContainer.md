@@ -1,8 +1,8 @@
-**csss:** $grid(cols(1fr,2fr),rows(auto),gap(1rem),p(1rem))
+**csss:** $grid(cols(1fr,2fr),rows(auto),gap(1rem),padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(cols\(1fr\,2fr\)\,rows\(auto\)\,gap\(1rem\)\,p\(1rem\)\) {
+  .\$grid\(cols\(1fr\,2fr\)\,rows\(auto\)\,gap\(1rem\)\,padding\(1rem\)\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;
@@ -20,11 +20,11 @@
 }
 ```
 
-**csss:** $grid(contentCenter,cols(repeat(2,1fr)),gap(1rem),p(1rem))
+**csss:** $grid(contentCenter,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(contentCenter\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,p\(1rem\)\) {
+  .\$grid\(contentCenter\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;
@@ -41,11 +41,11 @@
 }
 ```
 
-**csss:** $grid(contentStartBetween,cols(repeat(2,1fr)),gap(1rem),p(1rem))
+**csss:** $grid(contentStartBetween,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(contentStartBetween\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,p\(1rem\)\) {
+  .\$grid\(contentStartBetween\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;
@@ -62,11 +62,11 @@
 }
 ```
 
-**csss:** $grid(contentCenterCenter,itemsStretch,textAlignJustify,cols(repeat(2,1fr)),gap(1rem),p(1rem))
+**csss:** $grid(contentCenterCenter,itemsStretch,textJustify,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(contentCenterCenter\,itemsStretch\,textAlignJustify\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,p\(1rem\)\) {
+  .\$grid\(contentCenterCenter\,itemsStretch\,textJustify\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;
@@ -83,11 +83,11 @@
 }
 ```
 
-**csss:** $grid(contentStartEnd,itemsStretchStart,cols(repeat(2,1fr)),gap(1rem),p(1rem))
+**csss:** $grid(contentStartEnd,itemsStretchStart,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(contentStartEnd\,itemsStretchStart\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,p\(1rem\)\) {
+  .\$grid\(contentStartEnd\,itemsStretchStart\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;
@@ -104,11 +104,11 @@
 }
 ```
 
-**csss:** $grid(itemsStretchStart,cols(repeat(2,1fr)),gap(1rem),p(1rem))
+**csss:** $grid(itemsStretchStart,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(itemsStretchStart\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,p\(1rem\)\) {
+  .\$grid\(itemsStretchStart\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;
@@ -125,11 +125,11 @@
 }
 ```
 
-**csss:** $grid(rows(repeat(3,1fr)),column,gap(0.5rem),p(1rem))
+**csss:** $grid(rows(repeat(3,1fr)),column,gap(0.5rem),padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(rows\(repeat\(3\,1fr\)\)\,column\,gap\(0\.5rem\)\,p\(1rem\)\) {
+  .\$grid\(rows\(repeat\(3\,1fr\)\)\,column\,gap\(0\.5rem\)\,padding\(1rem\)\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;

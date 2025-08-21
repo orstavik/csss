@@ -1,8 +1,8 @@
-**csss:** $block(textAlignJustify)
+**csss:** $block(textJustify)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(textAlignJustify\) {
+  .\$block\(textJustify\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -14,22 +14,22 @@
 }
 ```
 
-**csss:** |*$_block(m(1rem,0,0.5rem))
+**csss:** |*$_block(margin(1rem,0,0.5rem))
 **css:**
 ```css
 @layer items {
-  .\|\*\$_block\(m\(1rem\,0\,0\.5rem\)\)>* {
+  .\|\*\$_block\(margin\(1rem\,0\,0\.5rem\)\)>* {
     margin-block: 1rem 0.5rem;
     margin-inline: 0;
   }
 }
 ```
 
-**csss:** |*$_block(m(0,0,1rem))
+**csss:** |*$_block(margin(0,0,1rem))
 **css:**
 ```css
 @layer items {
-  .\|\*\$_block\(m\(0\,0\,1rem\)\)>* {
+  .\|\*\$_block\(margin\(0\,0\,1rem\)\)>* {
     margin-block: 0 1rem;
     margin-inline: 0;
   }
@@ -67,11 +67,11 @@
 }
 ```
 
-**csss:** |.start$_block(floatStart,m(0.5rem,0,0,0))
+**csss:** |.start$_block(floatStart,margin(0.5rem,0,0,0))
 **css:**
 ```css
 @layer items {
-  .\|\.start\$_block\(floatStart\,m\(0\.5rem\,0\,0\,0\)\)> :where(.start) {
+  .\|\.start\$_block\(floatStart\,margin\(0\.5rem\,0\,0\,0\)\)> :where(.start) {
     float: inline-start;
     margin-block: 0.5rem 0;
     margin-inline: 0;
@@ -79,11 +79,11 @@
 }
 ```
 
-**csss:** |.end$_block(floatEnd,m(0.5rem,0,0,0))
+**csss:** |.end$_block(floatEnd,margin(0.5rem,0,0,0))
 **css:**
 ```css
 @layer items {
-  .\|\.end\$_block\(floatEnd\,m\(0\.5rem\,0\,0\,0\)\)> :where(.end) {
+  .\|\.end\$_block\(floatEnd\,margin\(0\.5rem\,0\,0\,0\)\)> :where(.end) {
     float: inline-end;
     margin-block: 0.5rem 0;
     margin-inline: 0;

@@ -1,8 +1,8 @@
-**csss:** $flex(column,gap(0.5rem),p(1rem))
+**csss:** $flex(column,gap(0.5rem),padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(column\,gap\(0\.5rem\)\,p\(1rem\)\) {
+  .\$flex\(column\,gap\(0\.5rem\)\,padding\(1rem\)\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -19,11 +19,11 @@
 }
 ```
 
-**csss:** $flex(rowReverse,gap(0.5rem),p(1rem))
+**csss:** $flex(rowReverse,gap(0.5rem),padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(rowReverse\,gap\(0\.5rem\)\,p\(1rem\)\) {
+  .\$flex\(rowReverse\,gap\(0\.5rem\)\,padding\(1rem\)\) {
         display: flex;
         word-spacing: unset;
         line-height: unset;
@@ -40,11 +40,11 @@
 }
 ```
 
-**csss:** $flex(wrap,gap(0.5rem),p(1rem))
+**csss:** $flex(wrap,gap(0.5rem),padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(wrap\,gap\(0\.5rem\)\,p\(1rem\)\) {
+  .\$flex\(wrap\,gap\(0\.5rem\)\,padding\(1rem\)\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -61,11 +61,11 @@
 }
 ```
 
-**csss:** $flex(contentStart,itemsStart,gap(1rem),p(1rem),wrap)
+**csss:** $flex(contentStart,itemsStart,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(contentStart\,itemsStart\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
+  .\$flex\(contentStart\,itemsStart\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -84,11 +84,11 @@
 
 
 
-**csss:** $flex(contentStartEnd,gap(1rem),p(1rem),wrap)
+**csss:** $flex(contentStartEnd,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(contentStartEnd\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
+  .\$flex\(contentStartEnd\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -105,11 +105,11 @@
 }
 ```
 
-**csss:** $flex(contentStretchNormal,gap(1rem),p(1rem),wrap)
+**csss:** $flex(contentStretchNormal,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(contentStretchNormal\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
+  .\$flex\(contentStretchNormal\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -126,11 +126,11 @@
 }
 ```
 
-**csss:** $flex(contentNormalBetween,gap(1rem),p(1rem),wrap)
+**csss:** $flex(contentNormalBetween,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(contentNormalBetween\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
+  .\$flex\(contentNormalBetween\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -147,11 +147,11 @@
 }
 ```
 
-**csss:** $flex(contentCenter,itemsStretch,textAlignJustify,gap(1rem),p(1rem),wrap)
+**csss:** $flex(contentCenter,itemsStretch,textJustify,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(contentCenter\,itemsStretch\,textAlignJustify\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
+  .\$flex\(contentCenter\,itemsStretch\,textJustify\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -168,11 +168,11 @@
 }
 ```
 
-**csss:** $flex(contentBetweenStretch,itemsStart,gap(1rem),p(1rem),wrap)
+**csss:** $flex(contentBetweenStretch,itemsStart,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(contentBetweenStretch\,itemsStart\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
+  .\$flex\(contentBetweenStretch\,itemsStart\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -189,11 +189,11 @@
 }
 ```
 
-**csss:** $flex(textAlignJustify,itemsStretch,gap(1rem),p(1rem),wrap)
+**csss:** $flex(textJustify,itemsStretch,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(textAlignJustify\,itemsStretch\,gap\(1rem\)\,p\(1rem\)\,wrap\) {
+  .\$flex\(textJustify\,itemsStretch\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -210,11 +210,11 @@
 }
 ```
 
-**csss:** $flex(gap(2rem),p(1rem))
+**csss:** $flex(gap(2rem),padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(gap\(2rem\)\,p\(1rem\)\) {
+  .\$flex\(gap\(2rem\)\,padding\(1rem\)\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
@@ -230,11 +230,11 @@
 }
 ```
 
-**csss:** $flex(scroll,p(1rem))
+**csss:** $flex(scroll,padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(scroll\,p\(1rem\)\) {
+  .\$flex\(scroll\,padding\(1rem\)\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;

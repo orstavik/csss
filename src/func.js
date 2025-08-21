@@ -1,11 +1,22 @@
-//func is the basic of native css. And it shouldn't be altered. Only fixed.
-// border and font should be outside this file.
-
 //https://developer.mozilla.org/en-US/docs/Web/CSS/length#browser_compatibility
 //mdn specifies more lengths, but we don't support them yet.
 export const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%/.source;
+export const ANGLES = /deg|grad|rad|turn/.source;
 export const N = /-?[0-9]*\.?[0-9]+(?:e[+-]?[0-9]+)?/.source;
 export const NUM = `(${N})(?:\\/(${N}))?`; //num frac allows for -.5e+0/-122.5e-12
+
+function isNumberUnit(UNIT) {
+  return function (x) {
+    if (x === "0") return x;
+    const m = x.match?.(new RegExp(`^(${NUM})(${UNIT})$`));
+    if (!m) return;
+    let [, , n, frac, unit] = m;
+    return frac ? (Number(n) / Number(frac)) + unit :
+      x;
+  }
+}
+export const isLength = isNumberUnit(LENGTHS_PER);
+export const isAngle = isNumberUnit(ANGLES);
 
 export function toRadiusFour(NAME, ...ar) {
   if (!(ar instanceof Array))
@@ -58,15 +69,6 @@ export function borderSwitch(obj) {
   }));
 }
 
-export function isLength(x) {
-  if (x === "0") return x;
-  const m = x.match?.(new RegExp(`^(${NUM})(${LENGTHS_PER})$`));
-  if (!m) return;
-  let [, , n, frac, unit] = m;
-  return frac ? (Number(n) / Number(frac)) + unit :
-    x;
-}
-
 //scope functions start
 const NativeCssScopeMath = {
   min: (...args) => `min(${args.join(",")})`,
@@ -91,15 +93,14 @@ const NativeColorsFunctions = (function () {
   function nativeCssColorFunction(name, ...args) {
     if (args.length < 3 || args.length > 5)
       throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
-    const SEP = name.match(/^(rgba?|hsla?)$/) ? " " : " ";
     if (args.length === 3)
-      return `${name}(${args.join(SEP)})`;
+      return `${name}(${args.join(" ")})`;
     if (args.length === 5)
       return `${name}(from ${args.slice(0, 4).join(" ")} / ${args[4]})`;
     if (CSS.supports("color", args[0]))
       return `${name}(from ${args.join(" ")})`;
     const a = name.match(/^(rgb|hsl)$/) ? "a" : "";
-    return `${name}${a}(${args.slice(0, 3).join(SEP)} / ${args[3]})`;
+    return `${name}${a}(${args.slice(0, 3).join(" ")} / ${args[3]})`;
   }
   //todo untested!!
   function nativeCssColorSpaceFunction(space, ...args) {
@@ -122,11 +123,11 @@ const NativeColorsFunctions = (function () {
   //#primary#30 => hash(primary,30)
   //#primary#30#a80 => hash(primary,30,a80)
 
-  const ColorNames = new Set("aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black", "blanchedalmond", "blue", "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk", "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgreen", "darkgrey", "darkkhaki", "darkmagenta", "darkolivegreen", "darkorange", "darkorchid", "darkred", "darksalmon", "darkseagreen", "darkslateblue", "darkslategray", "darkslategrey", "darkturquoise", "darkviolet", "deeppink", "deepskyblue", "dimgray", "dimgrey", "dodgerblue", "firebrick", "floralwhite", "forestgreen", "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod", "gray", "green", "greenyellow", "grey", "honeydew", "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender", "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrodyellow", "lightgray", "lightgreen", "lightgrey", "lightpink", "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray", "lightslategrey", "lightsteelblue", "lightyellow", "lime", "limegreen", "linen", "magenta", "maroon", "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue", "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin", "navajowhite", "navy", "oldlace", "olive", "olivedrab", "orange", "orangered", "orchid", "palegoldenrod", "palegreen", "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "purple", "rebeccapurple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna", "silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "springgreen", "steelblue", "tan", "teal", "thistle", "tomato", "transparent", "turquoise", "violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen");
+  const ColorNames = new Set(["aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black", "blanchedalmond", "blue", "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk", "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgreen", "darkgrey", "darkkhaki", "darkmagenta", "darkolivegreen", "darkorange", "darkorchid", "darkred", "darksalmon", "darkseagreen", "darkslateblue", "darkslategray", "darkslategrey", "darkturquoise", "darkviolet", "deeppink", "deepskyblue", "dimgray", "dimgrey", "dodgerblue", "firebrick", "floralwhite", "forestgreen", "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod", "gray", "green", "greenyellow", "grey", "honeydew", "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender", "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrodyellow", "lightgray", "lightgreen", "lightgrey", "lightpink", "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray", "lightslategrey", "lightsteelblue", "lightyellow", "lime", "limegreen", "linen", "magenta", "maroon", "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue", "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin", "navajowhite", "navy", "oldlace", "olive", "olivedrab", "orange", "orangered", "orchid", "palegoldenrod", "palegreen", "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "purple", "rebeccapurple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna", "silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "springgreen", "steelblue", "tan", "teal", "thistle", "tomato", "transparent", "turquoise", "violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen"]);
 
   //To get the transparent last number in hex colors to work, it is simply turned into a mix percentage. Works as if transparent)
   function parseSecondColor(c, i, vectorName, first) {
-    const [, h3, p3, h6, p6] = c.match(/^(?:([0-9a-f]{3}[0-9a-e])|([0-9a-f]{7}[0-9a-e]))/i) ?? [];
+    const [, h3, p3, h6, p6] = c.match(/^(?:([0-9a-f]{3}([0-9a-e]))|([0-9a-f]{6}([0-9a-e]{2})))/i) ?? [];
     if (h3)
       return `#${h3} ${Math.round(parseInt(p3, 16) / 15) * 100}%`;
     if (h6)
@@ -316,10 +317,26 @@ const UnpackedNativeCssProperties = {
   filter: undefined,
   ...NativeCssFilterFunctions,
 };
+// margin: toLogicalFour.bind(null, "margin"),
+// scrollMargin: toLogicalFour.bind(null, "scroll-margin"),
+// padding: toLogicalFour.bind(null, "padding"),
+// scrollPadding: toLogicalFour.bind(null, "scroll-padding"),
 
+//todo and radius toLogicalEight.. maybe
 
 
 //$bg
+function formatCssString(str) {
+  const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%|deg|grad|rad|turn/.source;
+  return str
+    .replaceAll(new RegExp(`(${LENGTHS_PER})([a-zA-Z])`, 'g'), '$1 $2')
+    .replaceAll(/([a-zA-Z])(\d)/g, '$1 $2')
+    .replaceAll(/([a-z])([A-Z])/g, '$1 $2')
+    .replaceAll(new RegExp(`(${LENGTHS_PER})(-?\\d)`, 'g'), '$1 $2')
+    .replaceAll(/\b(closest|farthest) (side|corner)\b/gi, '$1-$2')
+    .toLowerCase();
+}
+
 function bgImpl(...args) {
   const res = {
     backgroundImage: undefined,
@@ -335,24 +352,53 @@ function bgImpl(...args) {
   for (const a of args)
     (a && typeof a === 'object') ? Object.assign(res, a) :
       isColor(a) ? colors.push(a) :
-        args2.push(a
-          .replaceAll(/[A-Z]/g, ' $&')  // Handle camelCase
-          .replaceAll(/([a-z])(\d)/g, '$1 $2')  // from45deg to from 45deg  
-          .replaceAll(/(\d+(?:\.\d+)?(?:px|%|em|rem|vh|vw|deg|turn|grad|rad))(\d)/g, '$1 $2')  // 50%50% to 50% 50%
-          .replaceAll(/\b(closest|farthest) (side|corner)\b/gi, '$1-$2') // for radial: closest-side, closest-corner, farthest-side, farthest-corner
-          .toLowerCase()
-        );
+        args2.push(formatCssString(a));
   return { res, colors, args2 };
 }
 
+//process arguments sequentially, separating geometry from color stops.
 function doGradient(name, ...args) {
-  const { res, colors, args2 } = bgImpl(...args);
-  if (res.stops) {
-    for (let i = 0; i < res.stops?.length && i < colors.length; i++)
-      colors[i] += " " + res.stops[i];
-    delete res.stops;
+  const { res } = bgImpl(); // Get default background properties
+  const geometry = [];
+  const colorStops = [];
+  let inColorStops = false;
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+
+    if (arg && typeof arg === 'object') {
+      Object.assign(res, arg);
+      continue;
+    }
+
+    if (isColor(arg)) {
+      inColorStops = true;
+      let colorStop = arg;
+
+      let positionsCollected = 0;
+      while (i + 1 < args.length && positionsCollected < 2) {
+        const nextArg = args[i + 1];
+        if (isLength(nextArg) || (name.includes('conic') && isAngle(nextArg))) {
+          colorStop += ` ${nextArg}`;
+          i++;
+          positionsCollected++;
+        } else break;
+      }
+
+      colorStops.push(colorStop);
+    } else if (!inColorStops) {
+      const processed = formatCssString(arg);
+
+      if (name === 'conic' && isAngle(processed))
+        geometry.push(`from ${processed}`);
+      else
+        geometry.push(processed);
+    }
   }
-  res.backgroundImage = `${name}-gradient(${[...args2, ...colors].join(",")})`;
+
+  const geometryString = geometry.filter(Boolean).join(" ");
+  const allParams = [geometryString, ...colorStops].filter(Boolean).join(", ");
+  res.backgroundImage = `${name}-gradient(${allParams})`;
   return res;
 }
 
@@ -383,7 +429,7 @@ const BackgroundFunctions = {
 
 for (const k in BackgroundFunctions)
   BackgroundFunctions[k].scope = {
-    stops: (...args) => ({ stops: args }),
+    // stops: (...args) => ({ stops: args }),
     ...NativeCssProperties.background.scope,
     ...NativeCssScopeMath, //todo do we need this, or is it covered by background above?
     pos: (block = "0", inline = "0") => ({ backgroundPosition: `${block[0] === "-" ? `bottom ${block.slice(1)}` : block} ${inline[0] === "-" ? `right ${inline.slice(1)}` : inline}` }),
