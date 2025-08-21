@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monospace Font Width/Height Test</title>
+  <style>
+    @font-face {
+      font-family: 'Test';
+      src: local('Segoe UI'), local('Helvetica Neue'), local('Arial'), local('Liberation Sans'), local('Ubuntu'), local('Cantarell');
+      size-adjust: 25%;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <h1>Monospace Font Width & Height Test</h1>
+
+  <script type="module">
+    import { WORDS } from '../src/font3.js';
+
+    function makeSample(font) {
+      return `
+      <link rel="stylesheet" href="https://fonts.bunny.net/css2?display=swap&family=${font.replaceAll(" ", '+')}" />
+      <div style="display: grid; grid-template-columns: 10% 50% 40%; font-family: '${font}', Test; font-size: 16px;">
+        <div>${font}</div>
+        <div>
+          <div style="display: inline-block;">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789</div>
+        </div>
+        <div class="metrics"></div>
+      </div>`;
+    }
+
+    async function makeMetrics([font, txt, metrics]) {
+      font = font.textContent;
+      let { width, height } = txt.children[0].getBoundingClientRect();
+      if (width < 200) return;
+      width = Math.round(width);
+      height = Math.round(height);
+      metrics.textContent = JSON.stringify({ width, height });
+    }
+    for (let word in WORDS) {
+      document.body.insertAdjacentHTML('beforeend', `<b>${word}</b>`);
+      for (let sample of WORDS[WORDS]) {
+        const fonts = WORDS.font.Family.mono.split(",").map(f => f.trim().replaceAll(/['"]/g, ''));
+        const added = fonts.map(f => (document.body.insertAdjacentHTML('beforeend', makeSample(f)), document.body.lastChild));
+        await new Promise(resolve => setTimeout(resolve, 1000)); // wait for fonts to load
+        added.map(el => makeMetrics(el.children));
+      }
+    }
+  </script>
+</body>
+
+</html>
