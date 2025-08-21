@@ -454,11 +454,11 @@
 }
 ```
 
-**csss:** $textAlign(center)
+**csss:** $textCenter
 **css:**
 ```css
 @layer containerDefault {
-  .\$textAlign\(center\) {
+  .\$textCenter {
     text-align: center;
   }
 }

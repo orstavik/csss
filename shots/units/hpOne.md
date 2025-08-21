@@ -259,11 +259,11 @@
 }
 ```
 
-**csss:** $flex(row-reverse,p(1%,,3%),gap(,3rem))
+**csss:** $flex(rowReverse,padding(1%,,3%),gap(,3rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(row-reverse\,p\(1\%\,\,3\%\)\,gap\(\,3rem\)\) {
+  .\$flex\(rowReverse\,padding\(1\%\,\,3\%\)\,gap\(\,3rem\)\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;

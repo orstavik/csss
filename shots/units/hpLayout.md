@@ -173,11 +173,11 @@
 }
 ```
 
-**csss:** $flex(row-reverse,gap(1rem))
+**csss:** $flex(rowReverse,gap(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(row-reverse\,gap\(1rem\)\) {
+  .\$flex\(rowReverse\,gap\(1rem\)\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
