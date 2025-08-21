@@ -10,6 +10,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
+    place-items: unset;
+    place-content: unset;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: 100px 100px;
     gap: 1rem;
@@ -52,39 +54,37 @@
 ```css
 @layer items {
   .\|\:nth-child\(4\)\$_grid\(row\(1\,2\)\,column\(2\,3\)\)> :where(:nth-child(4)) {
-    grid-area: 1 / 2 / 2 / 3;
+    grid-row: 1 / 2;
+    grid-column: 2 / 3;
   }
 }
 ```
 
-**csss:** |:nth-child(1)$_grid(align(c))
+**csss:** |:nth-child(1)$_grid(selfCenter)
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(1\)\$_grid\(align\(c\)\)> :where(:nth-child(1)) {
-    text-align: center;
+  .\|\:nth-child\(1\)\$_grid\(selfCenter\)> :where(:nth-child(1)) {
     place-self: center;
   }
 }
 ```
 
-**csss:** |:nth-child(2)$_grid(align(cs))
+**csss:** |:nth-child(2)$_grid(selfCenterStretch)
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(2\)\$_grid\(align\(cs\)\)> :where(:nth-child(2)) {
-    text-align: justify;
+  .\|\:nth-child\(2\)\$_grid\(selfCenterStretch\)> :where(:nth-child(2)) {
     place-self: center stretch;
   }
 }
 ```
 
-**csss:** |:nth-child(3)$_grid(align(ab))
+**csss:** |:nth-child(3)$_grid(selfStartEnd)
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(3\)\$_grid\(align\(ab\)\)> :where(:nth-child(3)) {
-    text-align: end;
+  .\|\:nth-child\(3\)\$_grid\(selfStartEnd\)> :where(:nth-child(3)) {
     place-self: start end;
   }
 }
