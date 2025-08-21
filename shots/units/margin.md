@@ -3,7 +3,8 @@
 ```css
 @layer items {
   .\|\*\$margin\(1rem\,0\)>* {
-    margin: 1rem 0px;
+    margin-block: 1rem;
+    margin-inline: 0;
   }
 }
 ```
@@ -23,8 +24,8 @@
 ```css
 @layer items {
   .\|\.a\$_flex\(m\(0\,0\,2rem\)\)> :where(.a) {
-    margin-block: 0px 2rem;
-    margin-inline: 0px;
+    margin-block: 0 2rem;
+    margin-inline: 0;
   }
 }
 ```
