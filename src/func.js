@@ -132,7 +132,7 @@ const NativeColorsFunctions = (function () {
       return `#${h3} ${Math.round(parseInt(p3, 16) / 15) * 100}%`;
     if (h6)
       return `#${h6} ${Math.round(parseInt(p6, 16) / 255) * 100}%`;
-    let [, name, percent] = c.match(/(.*?)(\d\d?)$/);
+    let [, name, percent] = c.match(/(.*?)(100|\d\d?)$/);  //#blue100  //#primary399
     if (!percent)
       throw new SyntaxError(
         `Illegal #colormix#${c}: Missing percent postfix.
@@ -145,13 +145,13 @@ Did you mean to mix half'n'half, ie. #${c}5 or #${c}50?`
       percent = percent + "0";
     return !name ? `var(${vectorName + ++i}) ${percent}%` :
       name == "a" ? `transparent ${100 - parseInt(percent)}%` :
-        ColorNames.has(name) ? `${name} ${percent}%` :
+        ColorNames.has(name.toLowerCase()) ? `${name} ${percent}%` :
           `var(--color-${name}) ${percent}%`;
   }
 
   function _hash(first, ...colors) {
     let vector, res;
-    res = ColorNames.has(first) ? first :
+    res = ColorNames.has(first.toLowerCase()) ? first :
       first.match(/^([a-f0-9]{3,4}|[a-f0-9]{6}|[a-f0-9]{8})$/i) ? "#" + first :
         undefined;
     if (!res && first.match(/^[a-z][a-z0-9_-]*/i))
