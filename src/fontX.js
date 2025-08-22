@@ -65,16 +65,26 @@ const KEYWORDS = {
   xxxl: { fontSize: "xxx-large" },
 };
 
-function noSynthesis(a) {
-  const args = a.match(/^no((Weight|Style|SmallCaps|Position)*)Synthesis$/)?.[1];
-  if (args == null) return;
-  if (!args) return "none";
-  return ["Style", "Weight", "SmallCaps", "Position"]
-    .filter(a => args.includes(a))
-    .join(" ")
-    .replace("Caps", "-caps")
-    .toLowerCase();
-}
+const SYNTHESIS = (function () {
+  function* permutations(arr, remainder) {
+    for (let i = 0; i < arr.length; i++) {
+      const x = arr[i];
+      const rest = arr.slice(0, i).concat(arr.slice(i + 1));
+      if (remainder == 1)
+        yield [x];
+      else
+        for (let p of permutations(rest, remainder - 1))
+          yield [x, ...p];
+    }
+  }
+  const res = {};
+  const synths = ["Style", "Weight", "SmallCaps", "Position"];
+  for (let k = 1; k <= synths.length - 1; k++)
+    for (const combo of permutations(synths, k))
+      res["no" + combo.join("") + "Synthesis"] = synths.filter(k => !combo.includes(k)).join(" ").replace("Caps", "-caps").toLowerCase();
+  res.noSynthesis = { fontSynthesis: "none" };
+  return res;
+})();
 
 function fontNumbers(a) {
   const aNum = parseFloat(a);
@@ -102,8 +112,8 @@ function fontImpl(fontFaceName, ...args) {
       Object.assign(res, a);
     else if (isLength(a))
       res.fontSize = a;
-    else if (b = noSynthesis(a))
-      res.fontSynthesis = b;
+    // else if (b = noSynthesis(a))
+    //   res.fontSynthesis = b;
     else if (b = fontNumbers(a))
       Object.assign(res, b);
     else if (a == "emoji")
@@ -156,6 +166,7 @@ function font(...args) {
 font.scope = {
   // ...NativeCssProperties.font.scope,
   ...KEYWORDS,
+  ...SYNTHESIS,
   face,
 
   size: a => ({ fontSize: a }),
