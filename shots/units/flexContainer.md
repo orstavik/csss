@@ -230,11 +230,11 @@
 }
 ```
 
-**csss:** $flex(scroll,padding(1rem))
+**csss:** $flex(overflowScroll,padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(scroll\,padding\(1rem\)\) {
+  .\$flex\(overflowScroll\,padding\(1rem\)\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;

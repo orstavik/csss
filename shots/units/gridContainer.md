@@ -62,11 +62,11 @@
 }
 ```
 
-**csss:** $grid(contentCenterCenter,itemsStretch,textJustify,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
+**csss:** $grid(contentCenter,itemsStretch,textJustify,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(contentCenterCenter\,itemsStretch\,textJustify\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
+  .\$grid\(contentCenter\,itemsStretch\,textJustify\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;
@@ -147,11 +147,11 @@
 }
 ```
 
-**csss:** $grid(cols(repeat(4,1fr)),scroll:hidden,gap(1rem))
+**csss:** $grid(cols(repeat(4,1fr)),overflowScrollHidden,gap(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(cols\(repeat\(4\,1fr\)\)\,scroll\:hidden\,gap\(1rem\)\) {
+  .\$grid\(cols\(repeat\(4\,1fr\)\)\,overflowScrollHidden\,gap\(1rem\)\) {
     display: grid;
     word-spacing: unset;
     line-height: unset;
@@ -162,8 +162,8 @@
     place-items: unset;
     place-content: unset;
     grid-template-columns: repeat(4, 1fr);
-    overflow-inline: scroll;
-    overflow-block: hidden;
+    overflow-block: scroll;
+    overflow-inline: hidden;
     gap: 1rem;
   }
 }

@@ -1,36 +1,85 @@
 import { toLogicalFour, default as AllFunctions } from "./func.js";
 
 //todo turn this into memory thing. same with O2
-const PLACECONTENT = /^content(Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|Stretch|Around|Between|Evenly|Baseline|First|Last)(Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|Stretch|Around|Between|Evenly|Left|Right|SafeLeft|SafeRight|UnsafeLeft|UnsafeRight)?$/;
-const PLACEITEMS = /^items(Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Baseline|First|Last|Stretch|AnchorCenter)(Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Left|Right|SafeLeft|SafeRight|UnsafeLeft|UnsafeRight|Baseline|First|Last|Stretch|AnchorCenter|Legacy|LegacyLeft|LegacyRight|LegacyCenter)?$/;
-const PLACESELF = /^self(Auto|Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Baseline|First|Last|Stretch|AnchorCenter)(Auto|Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Left|Right|SafeLeft|SafeRight|UnsafeLeft|UnsafeRight|Baseline|First|Last|Stretch|AnchorCenter)?$/;
-const ALIGNITEMS = /^items(Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Baseline|First|Last|Stretch|AnchorCenter)$/;
-const ALIGNSELF = /^self(Auto|Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Baseline|First|Last|Stretch|AnchorCenter)$/;
-const TEXTALIGN = /^text(Normal|Start|End|Center|Justify|Left|Right)$/;
+const ALIGNMENTS = (_ => {
+  const POSITIONS = "|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd";
+  const SPACE = "|Around|Between|Evenly";
+  const BASELINE = "|Baseline|First|Last";
+  const LEFTRIGHT = "|Left|Right|SafeLeft|SafeRight|UnsafeLeft|UnsafeRight";
+  const SELFSTARTEND = "|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd";
+  const LEGACY = "|Legacy|LegacyLeft|LegacyRight|LegacyCenter";
 
-function placeAlign(prop, regex, str) {
-  const m = str.match(regex);
-  if (!m) return;
-  let [_, a, b] = m;
-  if (b && b != a) a += " " + b;
-  return { [prop]: lowSpaceKebab(a) };
-}
+  const AlignContent = "Normal|Stretch" + POSITIONS + SPACE + BASELINE;
+  const JustifyContent = "Normal|Stretch" + POSITIONS + SPACE + LEFTRIGHT;
+  const AlignItems = "Normal|Stretch|AnchorCenter" + POSITIONS + BASELINE + SELFSTARTEND;
+  const JustifyItems = "Normal|Stretch|AnchorCenter" + POSITIONS + BASELINE + SELFSTARTEND + LEFTRIGHT + LEGACY;
+  const AlignSelf = "Auto|Normal|Stretch|AnchorCenter" + POSITIONS + BASELINE + SELFSTARTEND;
+  const JustifySelf = "Auto|Normal|Stretch|AnchorCenter" + POSITIONS + BASELINE + SELFSTARTEND + LEFTRIGHT;
 
-function lowSpaceKebab(str) {
-  return str
-    .replace(/Around|Between|Evenly/g, "space-$&")
-    .replace(/(Unsafe|Safe|Legacy)(?!$)/g, "$& ")
-    .replace(/(Self|Flex|Anchor)(?!$)/g, "$&-")
-    .replaceAll(/First|Last/g, "$& baseline")
-    .toLowerCase();
-}
+  function lowSpaceKebab(str) {
+    return str
+      .replace(/Around|Between|Evenly/g, "space-$&")
+      .replace(/(Unsafe|Safe|Legacy)(?!$)/g, "$& ")
+      .replace(/(Self|Flex|Anchor)(?!$)/g, "$&-")
+      .replace(/First|Last/g, "$& baseline")
+      .toLowerCase();
+  }
 
-const placeContent = str => placeAlign("placeContent", PLACECONTENT, str);
-const placeItems = str => placeAlign("placeItems", PLACEITEMS, str);
-const placeSelf = str => placeAlign("placeSelf", PLACESELF, str);
-const alignItems = str => placeAlign("alignItems", ALIGNITEMS, str);
-const alignSelf = str => placeAlign("alignSelf", ALIGNSELF, str);
-const textAlign = str => placeAlign("textAlign", TEXTALIGN, str);
+  function makePlaceAligns(prop, name, one, two) {
+
+    const res = {};
+    for (let a of one.split("|")) {
+      res[name + a] = { [prop]: lowSpaceKebab(a) };
+      if (two)
+        for (let b of two.split("|"))
+          if (a != b)
+            res[name + a + b] = { [prop]: lowSpaceKebab(a) + " " + lowSpaceKebab(b) };
+    }
+    return res;
+  }
+
+  return {
+    placeContent: makePlaceAligns("placeContent", "content", AlignContent, JustifyContent),
+    placeItems: makePlaceAligns("placeItems", "items", AlignItems, JustifyItems),
+    placeSelf: makePlaceAligns("placeSelf", "self", AlignSelf, JustifySelf),
+    alignItems: makePlaceAligns("alignItems", "items", AlignItems),
+    alignSelf: makePlaceAligns("alignSelf", "self", AlignSelf),
+    textAlign: makePlaceAligns("textAlign", "text", "Normal|Start|End|Center|Justify|Left|Right"),
+  }
+})();
+
+//todo overflows
+const OVERFLOWS = (_ => {
+  const SETTINGS = {
+    Visible: { overflow: "visible" },
+    Hidden: { overflow: "hidden" },
+    Clip: { overflow: "clip" },
+    Auto: { overflow: "auto" },
+    Scroll: { overflow: "scroll" },
+    Snap: { overflow: "auto", scrollSnapType: "both" },
+    SnapMandatory: { overflow: "auto", scrollSnapType: "both mandatory" },
+    ScrollSnap: { overflow: "scroll", scrollSnapType: "both" },
+    ScrollSnapMandatory: { overflow: "scroll", scrollSnapType: "both mandatory" },
+  };
+  const res = {};
+  for (let [A, a] of Object.entries(SETTINGS)) {
+    res["overflow" + A] = a;
+    for (let [B, b] of Object.entries(SETTINGS)) {
+      if (A == B) continue;
+      res["overflow" + A + B] = {
+        overflowBlock: a.overflow,
+        overflowInline: b.overflow,
+      };
+      if (a.scrollSnapType && b.scrollSnapType)
+        res["overflow" + A + B].scrollSnapType = "both" + (A.endsWith("Mandatory") || B.endsWith("Mandatory") ? " mandatory" : "");
+      else if (a.scrollSnapType)
+        res["overflow" + A + B].scrollSnapType = a.scrollSnapType.replace("both", "block")
+      else if (B.scrollSnapType)
+        res["overflow" + A + B].scrollSnapType = a.scrollSnapType.replace("both", "inline");
+    }
+  }
+  return res;
+})();
 
 //todo rename the text block layout unit to $page
 function defaultLayout(display, ...args) {
@@ -49,26 +98,6 @@ function checkReferenceError(args) {
     if (!(a instanceof Object))
       throw new ReferenceError(a);
 }
-// const O2 = /^(|inline|block)(visible|hidden|clip)|(auto|scroll)(-snap(-mandatory)?)?$/
-
-const O2 = /^(visible|hidden|clip)|(auto|scroll)(-snap(-mandatory)?)?$/
-function overflow(a) {
-  let [inline, block] = a.split(":");
-  const mI = inline.match(O2);
-  if (!mI) return;
-  const [, vhcI, overflowInline = vhcI, snapI, manI] = mI;
-  const mB = block?.match(O2);
-  let vhcB, overflowBlock, snapB, manB;
-  if (mB)
-    ([, vhcB, overflowBlock = vhcB, snapB, manB] = mB);
-  const res = (!overflowBlock || overflowBlock == overflowInline) ?
-    { overflow: overflowInline } :
-    { overflowInline, overflowBlock };
-  if (!snapI && !snapB) return res;
-  res.scrollSnapType = snapI && snapB ? "both" : snapI ? "inline" : "block";
-  if (manI || manB) res.scrollSnapType += " mandatory";
-  return res;
-}
 
 function lineClamp(lines, ...args) {
   return Object.assign(block(...args), {
@@ -76,54 +105,11 @@ function lineClamp(lines, ...args) {
     WebkitLineClamp: lines,
     WebkitBoxOrient: "vertical",
     overflowBlock: "hidden"
-    // overflowY: "hidden"
   });
 }
 
-// function checkNoArgs(args) {
-//   if (args.some(a => a != null)) throw `This $short takes no arguments: ${args.join(", ")}")}`;
-// }
-// const TextAlignAliases = {
-//   a: "start",
-//   b: "end",
-//   c: "center",
-//   s: "justify",
-//   u: "unset",
-//   v: "unset",
-//   w: "unset",
-//   _: "unset",
-//   ".": "unset",
-// };
-// const AlignAliases = {
-//   a: "start",
-//   b: "end",
-//   c: "center",
-//   s: "stretch",
-//   u: "space-around", //narrow stretch
-//   v: "space-evenly", //medium stretch
-//   w: "space-between",//wide stretch
-//   _: "baseline",     //todo what about "(first|last) baseline"
-//   ".": "unset",
-// };
-
-// const AlignItemsFlexAliases = {
-//   a: "start",
-//   b: "end",
-//   c: "center",
-//   s: "stretch",
-//   u: "stretch",
-//   v: "stretch",
-//   w: "stretch",
-//   _: "start",
-//   ".": "unset",
-// };
-
-// todo this doesn't need to be in the scope here.
-//todo because we only 
-//todo move this into the NativeCssPropertis in func.js
 const LAYOUT = {
   padding: toLogicalFour.bind(null, "padding"),
-  // p: toLogicalFour.bind(null, "padding"),
   scrollPadding: toLogicalFour.bind(null, "scroll-padding"),
   textAlign: AllFunctions.textAlign,
   shy: { hyphens: "manual" },
@@ -139,11 +125,11 @@ const LAYOUT = {
   breakAll: { wordBreak: "break-all" },
   keepAll: { wordBreak: "keep-all" },
   snapStop: { scrollSnapStop: "always" },
+  ...ALIGNMENTS.textAlign,
 };
 
 const _LAYOUT = {
   margin: toLogicalFour.bind(null, "margin"),
-  // m: toLogicalFour.bind(null, "margin"),
   scrollMargin: toLogicalFour.bind(null, "scroll-margin"),
   textIndent: AllFunctions.textIndent,
   indent: AllFunctions.textIndent,
@@ -179,12 +165,12 @@ function blockGap(wordSpacing, lineHeight) {
 }
 
 function block(...args) {
-  args = args.map(a => typeof a !== "string" ? a : textAlign(a) ?? overflow(a) ?? a);
   checkReferenceError(args);
   return defaultLayout("block", ...args);
 }
 block.scope = {
   ...LAYOUT,
+  ...OVERFLOWS,
   lineClamp,
   clamp: lineClamp,
   gap: blockGap,
@@ -192,7 +178,7 @@ block.scope = {
 };
 function _block(...args) {
   checkReferenceError(args);
-  return Object.assign(...args);
+  return Object.assign({}, ...args);
 }
 _block.scope = {
   ..._LAYOUT,
@@ -201,18 +187,14 @@ _block.scope = {
 };
 
 function grid(...args) {
-  args = args.map(a =>
-    typeof a != "string" ? a :
-      textAlign(a) ??
-      placeContent(a) ??
-      placeItems(a) ??
-      overflow(a) ??
-      a);
   checkReferenceError(args);
   return defaultLayout("grid", { placeItems: "unset", placeContent: "unset" }, ...args);
 }
 const nativeGrid = Object.fromEntries(Object.entries(AllFunctions).filter(([k]) => k.match(/^grid[A-Z]/)));
 grid.scope = {
+  ...OVERFLOWS,
+  ...ALIGNMENTS.placeContent,
+  ...ALIGNMENTS.placeItems,
   ...nativeGrid,
   cols: nativeGrid.gridTemplateColumns,
   columns: nativeGrid.gridTemplateColumns,
@@ -246,11 +228,11 @@ column.scope = { span };
 row.scope = { span };
 
 function _grid(...args) {
-  args = args.map(a => typeof a == "string" ? placeSelf(a) ?? a : a);
   checkReferenceError(args);
-  return Object.assign(...args);
+  return Object.assign({}, ...args);
 }
 _grid.scope = {
+  ...ALIGNMENTS.placeSelf,
   ..._LAYOUT,
   column,
   row,
@@ -260,7 +242,6 @@ _grid.scope = {
 
 
 function flex(...args) {
-  args = args.map(a => typeof a != "string" ? a : overflow(a) ?? placeContent(a) ?? alignItems(a) ?? textAlign(a) ?? a);
   checkReferenceError(args);
   return defaultLayout("flex", { alignItems: "unset", placeContent: "unset" }, ...args);
 }
@@ -272,17 +253,20 @@ flex.scope = {
   wrap: { flexWrap: "wrap" },
   wrapReverse: { flexWrap: "wrap-reverse" },
   noWrap: { flexWrap: "nowrap" },
+  ...OVERFLOWS,
+  ...ALIGNMENTS.placeContent,
+  ...ALIGNMENTS.alignItems,
   ...LAYOUT,
   ...GAP
 };
 function _flex(...args) {
-  args = args.map(a => typeof a == "string" ? alignSelf(a) ?? a : a);
   checkReferenceError(args);
-  return Object.assign(...args);
+  return Object.assign({}, ...args);
 }
 
 _flex.scope = {
   ..._LAYOUT,
+  ...ALIGNMENTS.alignSelf,
   basis: a => ({ flexBasis: a }),
   grow: a => ({ flexGrow: a }),
   // g: a => ({ flexGrow: a }),

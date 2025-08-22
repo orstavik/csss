@@ -94,11 +94,11 @@
 }
 ```
 
-**csss:** $block(hidden)
+**csss:** $block(overflowHidden)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(hidden\) {
+  .\$block\(overflowHidden\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -142,11 +142,11 @@
 }
 ```
 
-**csss:** $block(scroll)
+**csss:** $block(overflowScroll)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(scroll\) {
+  .\$block\(overflowScroll\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -159,11 +159,11 @@
 }
 ```
 
-**csss:** $block(hidden:scroll)
+**csss:** $block(overflowHiddenScroll)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(hidden\:scroll\) {
+  .\$block\(overflowHiddenScroll\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -171,8 +171,8 @@
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    overflow-inline: hidden;
-    overflow-block: scroll;
+    overflow-block: hidden;
+    overflow-inline: scroll;
   }
 }
 ```
@@ -243,11 +243,11 @@
 }
 ```
 
-**csss:** $block(ellipsis,hidden)
+**csss:** $block(ellipsis,overflowHidden)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(ellipsis\,hidden\) {
+  .\$block\(ellipsis\,overflowHidden\) {
     display: block;
     word-spacing: unset;
     line-height: unset;

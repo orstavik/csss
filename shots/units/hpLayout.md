@@ -756,11 +756,11 @@
 }
 ```
 
-**csss:** $block(hidden)
+**csss:** $block(overflowHidden)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(hidden\) {
+  .\$block\(overflowHidden\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -773,11 +773,11 @@
 }
 ```
 
-**csss:** $block(scroll)
+**csss:** $block(overflowScroll)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(scroll\) {
+  .\$block\(overflowScroll\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -807,11 +807,11 @@
 }
 ```
 
-**csss:** $block(hidden:scroll-snap-mandatory,snap-stop)
+**csss:** $block(overflowHiddenScrollSnapMandatory,snap-stop)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(hidden\:scroll-snap-mandatory\,snap-stop\) {
+  .\$block\(overflowHiddenScrollSnapMandatory\,snap-stop\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -847,11 +847,11 @@
 }
 ```
 
-**csss:** $block(scroll-snap:hidden)
+**csss:** $block(overflowScrollSnapHidden)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(scroll-snap\:hidden\) {
+  .\$block\(overflowScrollSnapHidden\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -1014,11 +1014,11 @@
 }
 ```
 
-**csss:** $block(ellipsis,hidden)
+**csss:** $block(ellipsis,overflowHidden)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(ellipsis\,hidden\) {
+  .\$block\(ellipsis\,overflowHidden\) {
     display: block;
     word-spacing: unset;
     line-height: unset;
@@ -1314,11 +1314,11 @@
 }
 ```
 
-**csss:** $block(hidden:scroll)
+**csss:** $block(overflowHiddenScroll)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(hidden\:scroll\) {
+  .\$block\(overflowHiddenScroll\) {
     display: block;
     word-spacing: unset;
     line-height: unset;

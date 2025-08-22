@@ -98,11 +98,11 @@ text-indent: 0;
 }
 ```
 
-**csss:** $block(auto,textCenter)
+**csss:** $block(overflowAuto,textCenter)
 **css:**
 ```css
 @layer containerDefault {
-.\$block\(auto\,textCenter\) {
+.\$block\(overflowAuto\,textCenter\) {
 display: block;
 word-spacing: unset;
 line-height: unset;

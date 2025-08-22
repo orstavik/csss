@@ -15,11 +15,11 @@
 }
 ```
 
-**csss:** $flex(gap(1rem),visible:auto,padding(1rem))$w(80%)
+**csss:** $flex(gap(1rem),overflowVisibleAuto,padding(1rem))$w(80%)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(gap\(1rem\)\,visible\:auto\,padding\(1rem\)\)\$w\(80\%\) {
+  .\$flex\(gap\(1rem\)\,overflowVisibleAuto\,padding\(1rem\)\)\$w\(80\%\) {
     display: flex;
     word-spacing: unset;
     line-height: unset;
