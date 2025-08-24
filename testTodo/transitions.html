@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cubic Bezier Playground (Split)</title>
+  <style>
+    :root {
+      --left-width: 520px;
+      --gutter: 16px;
+      --box-width: 40px;
+      --box-height: 20px;
+      --track-width: 420px;
+      --track-height: 28px;
+      --border: #e5e7eb;
+      --ink: #111827;
+      --muted: #6b7280;
+      --brand: #2563eb;
+      --bg: #fafafa;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: minmax(340px, var(--left-width)) 1fr;
+      gap: var(--gutter);
+      align-items: start;
+      padding: 20px;
+      min-height: 100svh;
+    }
+
+    /* Left: animation list */
+    .left {
+      position: sticky;
+      top: 0;
+      align-self: start;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      max-height: calc(100svh - 40px);
+      overflow: auto;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
+    }
+
+    .left h2 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px dashed #f0f0f0;
+    }
+
+    .row:last-child {
+      border-bottom: 0;
+    }
+
+    .name {
+      font-size: 12px;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .track {
+      position: relative;
+      height: var(--track-height);
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .track::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(90deg, #0000 0 19px, #f5f5f5 19px 20px);
+      opacity: .6;
+      pointer-events: none;
+    }
+
+    .box {
+      width: var(--box-width);
+      height: var(--box-height);
+      background: var(--brand);
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, .25);
+      will-change: transform;
+    }
+
+    .controls {
+      display: grid;
+      gap: var(--gutter);
+    }
+
+    /* Right: textarea then canvases */
+    .panel {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
+    }
+
+    .panel h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fcfcfc;
+    }
+
+    .canvases {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: var(--gutter);
+    }
+
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .card header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .tag {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    canvas {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      display: block;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .help {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    @media (max-width: 1000px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .left {
+        position: static;
+        max-height: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- LEFT: Only the animated blocks/list -->
+    <section class="left">
+      <h2>Animated Blocks</h2>
+      <div id="animList"></div>
+      <div class="help">Double‑click a diagram on the right to edit its values. Changes update here live.</div>
+    </section>
+
+    <!-- RIGHT: Textarea first, then diagram grid -->
+    <section class="controls">
+      <div class="panel">
+        <h3>Current easing JSON</h3>
+        <textarea id="output" spellcheck="false"></textarea>
+      </div>
+
+      <div class="canvases" id="canvasGrid"></div>
+    </section>
+  </div>
+
+  <script>
+    // --- Data ---
+    const easings = {
+      "ease": ".25,.1,.25,1",
+      "linear": "0,0,1,1",
+      "ease-in": ".42,0,1,1",
+      "ease-out": "0,0,.58,1",
+      "ease-in-out": ".42,0,.58,1",
+
+      "crispIn": ".8,0,1,.45",
+      "crispOut": "0,.55,.2,1",
+      "crispInOut": ".8,0,.2,1",
+
+      "harshIn": ".95,0,1,.2",
+      "harshOut": "0,.8,.15,1",
+      "harshInOut": ".9,0,.1,1",
+
+      "playfulIn": ".6,0,1,.2",
+      "playfulOut": "0,.35,.1,1",
+      "playfulInOut": ".65,0,.35,1",
+
+      "bounceIn": ".36,0,.66,-.56",
+      "bounceOut": ".34,1.56,.64,1",
+      "bounceInOut": ".68,-.6,.32,1.6",
+
+      "easeInCrispOut": ".42,0,.2,1",
+      "easeInHarshOut": ".42,0,.15,1",
+      "easeInPlayfulOut": ".42,0,.1,1",
+      "easeInBounceOut": ".42,0,.64,1",
+
+      "crispInEaseOut": ".8,0,.58,1",
+      "crispInHarshOut": ".8,0,.15,1",
+      "crispInPlayfulOut": ".8,0,.1,1",
+      "crispInBounceOut": ".8,0,.64,1",
+
+      "harshInEaseOut": ".95,0,.58,1",
+      "harshInCrispOut": ".95,0,.2,1",
+      "harshInPlayfulOut": ".95,0,.1,1",
+      "harshInBounceOut": ".95,0,.64,1",
+
+      "playfulInEaseOut": ".6,0,.58,1",
+      "playfulInCrispOut": ".6,0,.2,1",
+      "playfulInHarshOut": ".6,0,.15,1",
+      "playfulInBounceOut": ".6,0,.64,1",
+
+      "bounceInEaseOut": ".36,0,.58,1",
+      "bounceInCrispOut": ".36,0,.2,1",
+      "bounceInHarshOut": ".36,0,.15,1",
+      "bounceInPlayfulOut": ".36,0,.1,1"
+    };
+
+    const outputEl = document.getElementById('output');
+    const listEl = document.getElementById('animList');
+    const gridEl = document.getElementById('canvasGrid');
+
+    // --- Utilities ---
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+    const parseVals = (str) => str.split(',').map(Number).slice(0, 4);
+    const fmt = (n) => Number.isFinite(n) ? (Math.round(n * 1000) / 1000).toString() : "0";
+
+    function updateOutput() {
+      outputEl.value = JSON.stringify(easings, null, 2);
+    }
+
+    function drawCurve(ctx, x1, y1, x2, y2) {
+      const W = ctx.canvas.width, H = ctx.canvas.height;
+      ctx.clearRect(0, 0, W, H);
+
+      // border/frame
+      ctx.strokeStyle = '#e5e7eb';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(10, 10, W - 20, H - 20);
+
+      // grid
+      ctx.save();
+      ctx.strokeStyle = '#f1f5f9';
+      for (let i = 1; i < 10; i++) {
+        const gx = 10 + i * (W - 20) / 10;
+        const gy = 10 + i * (H - 20) / 10;
+        ctx.beginPath(); ctx.moveTo(gx, 10); ctx.lineTo(gx, H - 10); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(10, gy); ctx.lineTo(W - 10, gy); ctx.stroke();
+      }
+      ctx.restore();
+
+      // map 0..1 -> frame
+      const X = v => 10 + v * (W - 20);
+      const Y = v => (H - 10) - v * (H - 20);
+
+      // control lines
+      ctx.strokeStyle = '#9ca3af';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(X(0), Y(0));
+      ctx.lineTo(X(x1), Y(y1));
+      ctx.lineTo(X(x2), Y(y2));
+      ctx.lineTo(X(1), Y(1));
+      ctx.stroke();
+
+      // curve
+      ctx.beginPath();
+      ctx.moveTo(X(0), Y(0));
+      ctx.bezierCurveTo(X(x1), Y(y1), X(x2), Y(y2), X(1), Y(1));
+      ctx.strokeStyle = '#2563eb';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // control points
+      ctx.fillStyle = '#111827';
+      [[x1, y1], [x2, y2]].forEach(([cx, cy]) => {
+        ctx.beginPath();
+        ctx.arc(X(cx), Y(cy), 3.5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    // --- Build Left: animated tracks ---
+    const animRefs = {}; // name -> {box, refresh()}
+
+    function makeAnimRow(name, vals) {
+      const [x1, y1, x2, y2] = parseVals(vals);
+
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const label = document.createElement('div');
+      label.className = 'name';
+      label.textContent = name;
+
+      const track = document.createElement('div');
+      track.className = 'track';
+
+      const box = document.createElement('div');
+      box.className = 'box';
+      track.appendChild(box);
+
+      row.appendChild(label);
+      row.appendChild(track);
+
+      // animate
+      const run = () => {
+        const distance = track.clientWidth - parseFloat(getComputedStyle(box).width) - 6; // padding feel
+        box.style.transition = 'none';
+        box.style.transform = 'translateX(0)';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            box.style.transition = `transform 2s cubic-bezier(${x1},${y1},${x2},${y2})`;
+            box.style.transform = `translateX(${distance}px)`;
+          });
+        });
+      };
+
+      const timer = setInterval(run, 2500);
+      run();
+
+      // store ref with a refresh function that reuses latest values
+      animRefs[name] = {
+        box,
+        refresh: () => {
+          const [nx1, ny1, nx2, ny2] = parseVals(easings[name]);
+          const distance = track.clientWidth - parseFloat(getComputedStyle(box).width) - 6;
+          box.style.transition = 'none';
+          box.style.transform = 'translateX(0)';
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              box.style.transition = `transform 2s cubic-bezier(${nx1},${ny1},${nx2},${ny2})`;
+              box.style.transform = `translateX(${distance}px)`;
+            });
+          });
+        },
+        cleanup: () => clearInterval(timer)
+      };
+
+      return row;
+    }
+
+    // --- Build Right: diagram cards ---
+    function makeCanvasCard(name, vals) {
+      const [x1, y1, x2, y2] = parseVals(vals);
+
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      const header = document.createElement('header');
+      const title = document.createElement('div');
+      title.className = 'tag';
+      title.textContent = name;
+
+      const value = document.createElement('code');
+      value.className = 'tag';
+      value.textContent = `cubic-bezier(${fmt(x1)}, ${fmt(y1)}, ${fmt(x2)}, ${fmt(y2)})`;
+
+      header.appendChild(title);
+      header.appendChild(value);
+
+      const canvas = document.createElement('canvas');
+      // Fixed internal resolution for crisp lines; CSS controls outer size.
+      canvas.width = 220; canvas.height = 220;
+      const ctx = canvas.getContext('2d');
+
+      drawCurve(ctx, x1, y1, x2, y2);
+
+      // Editing: double-click to enter values
+      canvas.title = 'Double‑click to edit values (x1,y1,x2,y2)';
+      canvas.addEventListener('dblclick', () => {
+        const current = easings[name];
+        const input = prompt(`Edit cubic‑bezier for ${name} (x1,y1,x2,y2)`, current);
+        if (!input) return;
+        const nums = input.split(',').map(s => Number(s.trim()));
+        if (nums.length !== 4 || nums.some(n => !Number.isFinite(n))) {
+          alert('Please enter four comma‑separated numbers, e.g. 0.25,0.1,0.25,1');
+          return;
+        }
+        // Clamp x values to [0,1] for standard timing functions; y can exceed for overshoot.
+        nums[0] = clamp(nums[0], 0, 1);
+        nums[2] = clamp(nums[2], 0, 1);
+        const next = nums.map(fmt).join(',');
+        easings[name] = next;
+        drawCurve(ctx, nums[0], nums[1], nums[2], nums[3]);
+        value.textContent = `cubic-bezier(${fmt(nums[0])}, ${fmt(nums[1])}, ${fmt(nums[2])}, ${fmt(nums[3])})`;
+        updateOutput();
+        // refresh left animation for this easing
+        animRefs[name]?.refresh();
+      });
+
+      card.appendChild(header);
+      card.appendChild(canvas);
+      return card;
+    }
+
+    // --- Initial render ---
+    function init() {
+      // Left list
+      const fragList = document.createDocumentFragment();
+      Object.entries(easings).forEach(([name, vals]) => {
+        fragList.appendChild(makeAnimRow(name, vals));
+      });
+      listEl.appendChild(fragList);
+
+      // Right grid of canvases
+      const fragGrid = document.createDocumentFragment();
+      Object.entries(easings).forEach(([name, vals]) => {
+        fragGrid.appendChild(makeCanvasCard(name, vals));
+      });
+      gridEl.appendChild(fragGrid);
+
+      updateOutput();
+
+      // Recompute animations on resize so distances stay correct
+      let raf;
+      window.addEventListener('resize', () => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          Object.values(animRefs).forEach(ref => ref.refresh());
+        });
+      });
+    }
+
+    init();
+  </script>
+</body>
+
+</html>
