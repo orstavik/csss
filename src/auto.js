@@ -8,7 +8,7 @@ const defaultStyleEl = `
 const parse = CSSS.memoize(CSSS.parse, 333);
 
 function updateDoc(style) {
-  for (let el of document.body.querySelectorAll('[class*="$"]'))
+  for (let el of document.querySelectorAll('[class*="$"]'))
     for (let clazz of el.classList)
       if (clazz.includes("$") && !style.shorts.has(clazz))
         try {
