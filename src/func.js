@@ -2,12 +2,13 @@
 //mdn specifies more lengths, but we don't support them yet.
 export const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%/.source;
 export const ANGLES = /deg|grad|rad|turn/.source;
+export const TIMES = /s|ms/.source;
 export const N = /-?[0-9]*\.?[0-9]+(?:e[+-]?[0-9]+)?/.source;
 export const NUM = `(${N})(?:\\/(${N}))?`; //num frac allows for -.5e+0/-122.5e-12
 
 function isNumberUnit(UNIT) {
   return function (x) {
-    if (x === "0") return x;
+    if (!x || x === "0") return x;
     const m = x.match?.(new RegExp(`^(${NUM})(${UNIT})$`));
     if (!m) return;
     let [, , n, frac, unit] = m;
@@ -17,6 +18,8 @@ function isNumberUnit(UNIT) {
 }
 export const isLength = isNumberUnit(LENGTHS_PER);
 export const isAngle = isNumberUnit(ANGLES);
+const innerTime = isNumberUnit(TIMES);
+export const isTime = x => x == "0" ? "0s" : innerTime(x);
 
 export function toRadiusFour(NAME, ...ar) {
   if (!(ar instanceof Array))
@@ -208,31 +211,6 @@ export function isColor(x) {
 //    imageSet: (...args) => `image-set(${args.join(",")})`,
 // };
 
-const transitionFunctionSet = (function () {
-
-  function transition(props, dur, type, delay = "") {
-    return { transition: `${props} ${dur} ${type} ${delay}` };
-  }
-
-  return function transitionFunctionSet(...props) {
-    props = props.join(" ");
-    return {
-      ease: (dur, delay) => transition(props, dur, "ease", delay),
-      easeIn: (dur, delay) => transition(props, dur, "ease-in", delay),
-      easeOut: (dur, delay) => transition(props, dur, "ease-out", delay),
-      easeInOut: (dur, delay) => transition(props, dur, "ease-in-out", delay),
-      linear: (dur, delay) => transition(props, dur, "linear", delay),
-      jumpStart: (dur, steps = 1, delay) => transition(props, dur, `jump-start(${steps})`, delay),
-      jumpEnd: (dur, steps = 1, delay) => transition(props, dur, `jump-end(${steps})`, delay),
-      jumpNone: (dur, steps = 1, delay) => transition(props, dur, `jump-none(${steps})`, delay),
-      jumpBoth: (dur, steps = 1, delay) => transition(props, dur, `jump-both(${steps})`, delay),
-      cubicBezier: (dur, x1, y1, x2, y2, delay) => transition(props, dur, `cubic-bezier(${x1},${y1},${x2},${y2})`, delay),
-    };
-  }
-})();
-//scope functions end
-
-
 //no shorts before this point
 const NativeCssProperties = (function () {
   const style = document.createElement('div').style;
@@ -248,8 +226,6 @@ const NativeCssProperties = (function () {
       res[camel].scope.url = NativeCssScopeUrl;
     if (CSS.supports(name, "#123456") || CSS.supports(name, "#123 1px 1px"))
       Object.assign(res[camel].scope, NativeColorsFunctions);
-    if (CSS.supports("transition", name + " 1s linear"))
-      Object.assign(res[camel].scope, transitionFunctionSet(name));
     if (camel.match(/^(gridTemplateColumns|gridTemplateRows|gridTemplateAreas|gridTemplate|grid)$/))
       res[camel].scope.repeat = NativeCssScopeRepeat;
   }
@@ -518,7 +494,6 @@ border.scope = {
   r8: borderRadius8,
   color: borderColor,
   c: borderColor,
-  ...transitionFunctionSet("border-width"),
   solid: { Style: "solid" },
   dotted: { Style: "dotted" },
   dashed: { Style: "dashed" },
