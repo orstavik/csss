@@ -76,6 +76,7 @@ function bodyToTxt(rule, props) {
   return `${rule} {\n${body}\n}`;
 }
 
+const MAGICWORD = `$"'$`;
 export function parse(short) {
   const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
   short = short.match(/(.*?)\!*$/)[1];
@@ -84,9 +85,8 @@ export function parse(short) {
   exprList = exprList.map(parseNestedExpression);
   exprList = exprList.map(s => s.interpret(SHORTS));
   exprList &&= clashOrStack(exprList);
-  let { selector, item } = parseSelectorPipe(sel);
+  let { selector, item } = parseSelectorPipe(sel, clazz);
   const layer = (item ? "items" : "container") + (short.match(/^(\$|\|\$)/) ? "Default" : "");
-  selector = clazz + selector; //todo, we always start with the class in the selector..
   exprList = kebabcaseKeys(exprList);
   const { atRules, mainRule } = extractAtRules(exprList);
   checkProperty(mainRule);
@@ -302,17 +302,26 @@ const clazz = /\.[a-zA-Z][a-zA-Z0-9_-]*/.source; //class
 const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
-function parseSelectorPipe(str) {
-  //todo body1 must have star at the end. body2 must have star at the start. The where is star doesn't work with this.
-  //todo also. I think that we should always have a star, and not end with empty. It is less confusing with ".something>*" than ".something>".
-  //todo this will make the selector far more readable! also, it will make the parsing of body1 and body2 easier.
-
+function parseSelectorPipe(str, clazz) {
   let [body1, body2] = str.split("|").map(parseSelectorComma);
-  body1 = body1?.join(", ");
+  for (let i = 0; i < body1.length; i++)
+    body1[i] = body1[i].replace(MAGICWORD, clazz);;
+
   if (!body2)
-    return { selector: body1 };
-  body2 = body2?.join(", ");
-  return { selector: body1 + ">" + (body2 || "*"), item: true };
+    return { selector: body1.join(", "), item: false };
+
+  for (let i = 0; i < body2.length; i++) {
+    const expr = body2[i];
+    if (!expr.startsWith(MAGICWORD))
+      throw new SyntaxError("Item selector can't have ancestor expression: " + expr);
+    body2[i] = expr === MAGICWORD ? "*" : expr.slice(MAGICWORD.length);
+  }
+
+  let res = [];
+  for (let con of body1)
+    for (let item of body2)
+      res.push(con + ">" + item);
+  return { selector: res.join(","), item: true };
 }
 
 function parseSelectorComma(str) {
@@ -329,47 +338,55 @@ function parseSelectorComma(str) {
 
 class Selector {
 
-  static findTail(body) {
-    const j = body.findIndex(s => s === ">" || s === "+" || s === "~" || s === " ");
-    if (j < 0)
-      return [body];
-    if (j === 0)
-      return [null, body];
-    const tail = body.slice(j);
-    body = body.slice(0, j);
-    return [body, tail];
-  }
-
-  static whereIsStar(select) {
-    let i = select.indexOf("*");
-    if (i === select.length - 1)
-      return [select];
-    if (i === 0)
-      return [null, ...Selector.findTail(select)];
-    if (i > 0)
-      return [select.slice(0, i), ...Selector.findTail(select.slice(i + 1))];
-    const first = select[0].match(/^[>+~]$/);
-    const last = select.at(-1).match(/^[>+~]$/);
-    if (first && last)
-      throw `Relationship selector both front and back: ${select.join("")}`;
-    return last ? [select] : [null, ...Selector.findTail(select)];
-  }
-
-  static superAndNots(select) {
-    return select?.map((el, i, ar) => ar[i - 1] === "!" ? `:not(${el})` : el)
-      .filter(el => el !== "!")
-      .join("");
+  static replaceNot(select) {
+    const res = [];
+    for (let i = 0; i < select.length; i++) {
+      if (select[i] == "!" && select[i + 1]?.match(/^[^!>+~*\s]$/))
+        res.push(`:not(${select[++i]})`);
+      else if (select[i] == "!")
+        throw new SyntaxError(`! can't come before ${select[i + 1] || "<endof selector>"}`);
+      else
+        res.push(select[i]);
+    }
+    return res;
   }
 
   static interpret(select) {
-    if (!select.length || select.length === 1 && select[0] === "*")
-      return;
+    if (!select.length)
+      return MAGICWORD;
     select = select.map(s => s == ">>" ? " " : s);
-    let [head, body, tail] = Selector.whereIsStar(select).map(Selector.superAndNots);
+    if (select[0].match(/^[>+~\s]$/))
+      select.unshift("*");
+    if (select.at(-1).match(/^[>+~\s]$/))
+      select.push("*");
+    let star = select.indexOf("*");
+    if (star == -1) {
+      select.unshift("*");
+      star = 0;
+    }
+    if (star !== select.lastIndexOf("*"))
+      throw `Only one '*' allowed per selector expression: ${select.join("")} `;
+    select = Selector.replaceNot(select);
+
+    let head = "";
+    while (select.length) {
+      let first = select.shift();
+      if (first === "*") break;
+      if (!first.match(/^[>+~\s]$/))
+        first = `:where(${first})`;
+      head += first;
+    }
+    let body = "";
+    while (select.length) {
+      if (select[0].match(/^[>+~\s]$/))
+        break;
+      body += select.shift();
+    }
+    let tail = select.join("");
     tail &&= `:has(${tail})`;
-    head &&= `:where(${head})`;
-    const selector = [head, body, tail].filter(Boolean).join("");
-    return selector ? `:where(${selector})` : selector;
+    body += tail;
+    body &&= `:where(${body})`;
+    return head + MAGICWORD + body;
   }
 }
 
@@ -396,17 +413,17 @@ function mediaComparator(str) {
     (name == "resolution" && !res) ||
     (name.match(/color|monochrome|colorIndex/) && type)
   )
-    throw new SyntaxError(`Invalid ${name}: ${num}${type}`);
+    throw new SyntaxError(`Invalid ${name}: ${num}${type} `);
   let snake = name.replace(/[A-Z]/g, "-$&").toLowerCase();
   if (op == "<")
     num = parseFloat(num) - 0.01;
   else if (op == ">")
     num = parseFloat(num) + 0.01;
   if (op.includes("<"))
-    snake = `max-${snake}`;
+    snake = `max - ${snake} `;
   else if (op.includes(">"))
-    snake = `min-${snake}`;
-  return `${snake}: ${num}${type}`;
+    snake = `min - ${snake} `;
+  return `${snake}: ${num}${type} `;
 }
 
 function parseMediaQuery(str, register) {
@@ -449,5 +466,5 @@ function parseMediaQuery(str, register) {
       );
     }
   }
-  return { exp: str.slice(i), media: `${tokens.join(" ")}` };
+  return { exp: str.slice(i), media: `${tokens.join(" ")} ` };
 }
