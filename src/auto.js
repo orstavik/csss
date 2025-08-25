@@ -19,6 +19,9 @@ function updateDoc(style) {
         } catch (er) {
           console.error(er);
         }
+  const txt = [...style.sheet.cssRules].map(r => r.cssText).join("\n\n");
+  if (txt != style.textContent)
+    style.innerHTML = txt;
 }
 
 function sleep(interval) {
