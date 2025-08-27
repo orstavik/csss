@@ -217,7 +217,7 @@ class MathExpression extends Expression {
     if (args.length === 1)
       return args[0].text ?? args[0]; //number or var
 
-    //4. var and ??, in reverse
+    //4. --var and ??, in reverse
     args = reduceTriplets(args, (a, b, c) => {
       if (b.kind == "COALESCE" && a.kind == "VAR")
         return `var(${a.text}, ${c?.text || c})`;
@@ -289,70 +289,6 @@ const clashOrStack = (function () {
     return res;
   }
 })();
-
-// function varAndSpaceOperators(tokens) {
-//   const res = tokens.join("").split(/(---?[a-z][a-z0-9_-]*)/g);
-//   for (let i = res.length - 1; i >= 0; i--) {
-//     const env = res[i].startsWith("---");
-//     const comma = res[i + 1] == ",";
-//     const afterComma = res[i + 2];
-//     if (!res[i])
-//       res.splice(i, 1);
-//     else if (env && i % 2 && comma && afterComma)
-//       res.splice(i, 3, `env(${res[i].slice(3)}, ${res[i + 2]})`);
-//     else if (env && i % 2)
-//       res[i] = `env(${res[i].slice(3)})`;
-//     else if (i % 2 && comma && afterComma)
-//       res.splice(i, 3, `var(${res[i]}, ${res[i + 2]})`);
-//     else if (i % 2)
-//       res[i] = `var(${res[i]})`;
-//     else
-//       res[i] = res[i].replaceAll(/(?<!^|[+*/-])-|[+*/]/g, " $& ");
-//   }
-//   return res;
-// }
-
-// function impliedMultiplication(tokens) {
-//   for (let i = tokens.length - 2; i >= 1; i--) {
-//     if (tokens[i] === "(" && !tokens[i - 1].match(/(min|max|clamp|[+*/-])$/))
-//       tokens.splice(i, 0, "*");
-//     else if (tokens[i] === ")" && !tokens[i + 1].match(/^[+*/-]/))
-//       tokens.splice(i + 1, 0, "*");
-//   }
-//   return tokens;
-// }
-
-// function parseVarCalcOld(tokens) {
-//   const t2 = impliedMultiplication(tokens);
-//   const t3 = varAndSpaceOperators(t2);
-//   if (t3.length === 3 && t3[0] === "(" && t3[2] === ")")
-//     t3.shift(), t3.pop();
-//   if (t3.length === 1 && t3[0].startsWith("var(--"))
-//     return t3[0];
-//   const str = t3.join("");
-//   return str.includes(" ") ? `calc(${str})` : str;
-// }
-
-// const WORD = /^\$?[a-zA-Z_][a-zA-Z0-9_]*$/;
-// const CPP = /[,()$=;{}]/.source;
-// const nCPP = /[^,()$=;{}]+/.source;
-// const QUOTE = /([`'"])(?:\\.|(?!\2).)*?\2/.source;
-// const TOKENS = new RegExp(`(${QUOTE})|(\\s+)|(${CPP})|(${nCPP})`, "g");
-
-// function processToken([m, , , space]) {
-//   return space ? undefined : m;
-// }
-
-// function eatTokens(tokens) {
-//   for (let res = [], depth = 0; tokens.length;) {
-//     if (!depth && (tokens[0] === "," || tokens[0] === ")"))
-//       return res;
-//     if (tokens[0] === "(") depth++;
-//     if (tokens[0] === ")") depth--;
-//     res.push(tokens.shift());
-//   }
-//   throw "missing ')'";
-// }
 
 function diveDeep(tokens) {
   const res = [];
@@ -614,7 +550,6 @@ const tokenize = (_ => {
   const COALESCE = /\?\?/.source;
   const MULTIDIVIDE = /[*/]/.source;
   const PLUSMINUS = /[+-]/.source;
-  // const ARROW = /[<>]/.source;
   const CPP = /[,()]/.source;
 
   const TOKENS = new RegExp([
@@ -628,7 +563,6 @@ const tokenize = (_ => {
     COALESCE,
     MULTIDIVIDE,
     PLUSMINUS,
-    // ARROW,
     CPP,
     ".+"
   ].map(x => `(${x})`)
@@ -662,7 +596,6 @@ const tokenize = (_ => {
       else if (coalesce) out.push({ text, kind: "COALESCE", pri: 1 });
       else if (multdiv) out.push({ text, kind: "MULTIDIVIDE", pri: 2 });
       else if (plusminus) out.push({ text, kind: "PLUSMINUS", pri: 3 });
-      // else if (arrow) out.push({ text, kind: "ARROW", pri: 4 });
       else if (cpp) out.push({ text, kind: "CPP", pri: 6 });
       else throw new SyntaxError(`Unknown token: ${text} in ${input}`);
     }
