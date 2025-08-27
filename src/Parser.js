@@ -91,8 +91,8 @@ export function parse(short) {
   const { atRules, mainRule } = extractAtRules(exprList);
   checkProperty(mainRule);
   let cssText = bodyToTxt(selector, mainRule);
-  if (media) cssText = `@media ${media} {\n${cssText}\n}`;
-  cssText = `@layer ${layer} {\n${cssText}\n}`;
+  if (media) cssText = `@media ${media} {\n${cssText.replaceAll(/^|\n/g, "$&  ")}\n}`;
+  cssText = `@layer ${layer} {\n${cssText.replaceAll(/^|\n/g, "$&  ")}\n}`;
 
   for (let atRule in atRules)
     atRules[atRule] = kebabcaseKeys(atRules[atRule]);
