@@ -126,43 +126,22 @@ const NativeColorsFunctions = (function () {
   //#primary#30 => hash(primary,30)
   //#primary#30#a80 => hash(primary,30,a80)
 
-  const ColorNames = new Set(["aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black", "blanchedalmond", "blue", "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk", "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgreen", "darkgrey", "darkkhaki", "darkmagenta", "darkolivegreen", "darkorange", "darkorchid", "darkred", "darksalmon", "darkseagreen", "darkslateblue", "darkslategray", "darkslategrey", "darkturquoise", "darkviolet", "deeppink", "deepskyblue", "dimgray", "dimgrey", "dodgerblue", "firebrick", "floralwhite", "forestgreen", "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod", "gray", "green", "greenyellow", "grey", "honeydew", "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender", "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrodyellow", "lightgray", "lightgreen", "lightgrey", "lightpink", "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray", "lightslategrey", "lightsteelblue", "lightyellow", "lime", "limegreen", "linen", "magenta", "maroon", "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue", "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin", "navajowhite", "navy", "oldlace", "olive", "olivedrab", "orange", "orangered", "orchid", "palegoldenrod", "palegreen", "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "purple", "rebeccapurple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna", "silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "springgreen", "steelblue", "tan", "teal", "thistle", "tomato", "transparent", "turquoise", "violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen"]);
-
-  //To get the transparent last number in hex colors to work, it is simply turned into a mix percentage. Works as if transparent)
-  function parseSecondColor(c, i, vectorName, first) {
-    const [, h3, p3, h6, p6] = c.match(/^(?:([0-9a-f]{3}([0-9a-e]))|([0-9a-f]{6}([0-9a-e]{2})))/i) ?? [];
-    if (h3)
-      return `#${h3} ${Math.round(parseInt(p3, 16) / 15) * 100}%`;
-    if (h6)
-      return `#${h6} ${Math.round(parseInt(p6, 16) / 255) * 100}%`;
-    let [, name, percent] = c.match(/(.*?)(100|\d\d?)$/);  //#blue100  //#primary399
-    if (!percent)
-      throw new SyntaxError(
-        `Illegal #colormix#${c}: Missing percent postfix.
-Did you mean to mix half'n'half, ie. #${c}5 or #${c}50?`
-      );
-    if (!name && !vectorName)
-      throw new SyntaxError(
-        `Illegal #colormix#${c}. "#${first}" is not a color vector. Did you forget to use or define a color vector such as #primary or #accent?`);
-    if (percent.length === 1)
-      percent = percent + "0";
-    return !name ? `var(${vectorName + ++i}) ${percent}%` :
-      name == "a" ? `transparent ${100 - parseInt(percent)}%` :
-        ColorNames.has(name.toLowerCase()) ? `${name} ${percent}%` :
-          `var(--color-${name}) ${percent}%`;
-  }
-
-  function _hash(first, ...colors) {
-    let vector, res;
-    res = ColorNames.has(first.toLowerCase()) ? first :
-      first.match(/^([a-f0-9]{3,4}|[a-f0-9]{6}|[a-f0-9]{8})$/i) ? "#" + first :
-        undefined;
-    if (!res && first.match(/^[a-z][a-z0-9_-]*/i))
-      res = `var(${vector = `--color-${first}`})`;
-    else if (!res)
-      throw new SyntaxError(`Invalid #color name: ${first}`);
-    return colors.reduce((res, c, i) =>
-      `color-mix(in oklab, ${res}, ${parseSecondColor(c, i, vector, first)})`, res);
+  function _hash(...colors) {
+    const colorVector = !colors[0].primitive && colors[0].c;
+    if (!colors[0].hex && colors[0].percent)
+      colors.unshift({ c: "transparent" });  //implied transparent
+    for (let i = 0; i < colors.length; i++) {
+      const c = colors[i];
+      if (c.primitive);
+      else if (!c.c && !colorVector)
+        throw new SyntaxError(`Illegal #colormix#${c.c}: Missing color vector name.
+Did you mean to use or define a color vector such as #Primary or #Accent?`);
+      else
+        c.c = `var(--color-${c.c || (colorVector + i)})`;
+    }
+    const first = colors.unshift();
+    return colors.reduce((res, { c, percent }) =>
+      `color-mix(in oklab, ${res}, ${c} ${percent ?? 50}%)`, first.hex ?? first.c);
   }
 
   const res = {

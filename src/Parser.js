@@ -241,12 +241,15 @@ function eatTokens(tokens) {
 
 function diveDeep(tokens, top) {
   const res = [];
-  while (tokens.length) {                       //<
-    let a = tokens[0].match(/^(?!["'])(?:\($|.*[+/*]|(?<![a-z])-|-(?![a-z]))/i) ?
-      parseVarCalc(eatTokens(tokens)) :
-      tokens.shift();
-    if (a[0] === "#")
-      a = new Expression("_hash", a.slice(1).split("#"));
+  while (tokens.length) {
+    let a;
+    if (tokens[0].kind === "COLOR")
+      a = new Expression("_hash", tokens.splice(0, tokens.findIndex(t => t.kind !== "COLOR")));
+
+    if (!a)
+      a = tokens[0].match(/^(?!["'])(?:\($|.*[+/*]|(?<![a-z])-|-(?![a-z]))/i) ?
+        parseVarCalc(eatTokens(tokens)) :
+        tokens.shift();
     if (top && a === ",") throw "can't start with ','";
     if (top && a === ")") throw "can't start with ')'";
     if (a === ")" && !res.length) throw new SyntaxError("empty function not allowed in CSSs");
@@ -278,19 +281,42 @@ function diveDeep(tokens, top) {
   throw "missing ')'";
 }
 
+//todo this is the function we are working on
 function parseNestedExpression(short) {
-  const tokensOG = [...short.matchAll(TOKENS)].map(processToken).filter(Boolean);
-  if (tokensOG.length === 1)
-    return new Expression(tokensOG[0], []); //todo no calc top level
-  const tokens = tokensOG.slice();
+  const newTokens = tokenize(short);
+  if (newTokens.length === 1)
+    return new Expression(newTokens[0].text, []); //todo no calc top level
+
+  const news = [];
+  let last;
+  for (let t of newTokens) {
+    const { kind, text } = t;
+    if (kind == "QUOTE" || kind == "CPP" || kind == "COLOR") {
+      if (last) {
+        news.push(last);
+        last = null;
+      }
+      news.push(
+        kind == "COLOR" ? t :
+          t.text
+      );
+    } else {
+      last = (last || "") + text;
+    }
+  }
+  if (last)
+    news.push(last);
+  // const tokens = news.slice();
+
   try {
-    return diveDeep(tokens, true)[0];
+    return diveDeep(news, true)[0];
   } catch (e) {
+    debugger
     //todo add the error string to the e.message
-    const i = tokensOG.length - tokens.length;
-    tokensOG.splice(i, 0, `{{{${e}}}}`);
-    const msg = tokensOG.join("");
-    throw new SyntaxError("Invalid short: " + msg);
+    // const i = tokensOG.length - tokens.length;
+    // tokensOG.splice(i, 0, `{{{${e}}}}`);
+    // const msg = tokensOG.join("");
+    // throw new SyntaxError("Invalid short: " + msg);
   }
 }
 
@@ -468,3 +494,72 @@ function parseMediaQuery(str, register) {
   }
   return { exp: str.slice(i), media: `${tokens.join(" ")} ` };
 }
+
+const tokenize = (_ => {
+  const WEB_COLORS = "aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen";
+
+  const QUOTE = /([`'"])(\\.|(?!\2).)*?\2/.source;
+
+  const LENGTHS = "px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%";
+  const ANGLES = "deg|grad|rad|turn";
+  const TIMES = "s|ms";
+  const NUMBER = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${LENGTHS})|(${ANGLES})|(${TIMES}))?`;
+
+  const VAR = /--[a-zA-Z][a-zA-Z0-9_]*/.source;
+  const WORD = /[._a-zA-Z][._%a-zA-Z0-9+-]*/.source;
+  const COLOR_WORD = /#(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch)/.source;
+  const COLOR = `#(?:(a)(\\d\\d)|([0-9a-fA-F]{6})([0-9a-fA-F]{2})?|([0-9a-fA-F]{3})([0-9a-fA-F])?|(${WEB_COLORS}|([a-zA-Z_]+|))(\\d\\d)?)`;
+  const COALESCE = /\?\?/.source;
+  const MULTIDIVIDE = /[*/]/.source;
+  const PLUSMINUS = /[+-]/.source;
+  const ARROW = /[<>]/.source;
+  const CPP = /[,()]/.source;
+
+  const TOKENS = new RegExp([
+    QUOTE,
+    "\\s+",
+    NUMBER,
+    VAR,
+    WORD,
+    COLOR_WORD,
+    COLOR,
+    COALESCE,
+    MULTIDIVIDE,
+    PLUSMINUS,
+    ARROW,
+    CPP,
+    ".+"
+  ].map(x => `(${x})`)
+    .join("|"),
+    "gi");
+
+  return function tokenize(input) {
+    const out = [];
+    for (let m; (m = TOKENS.exec(input));) {
+      const [text, _, q, quote, ws, n, num, length, angle, time, vari, word, colorWord, c, c0, p0, c1, p1, c2, p2, c3, c4, p3, coalesce, multdiv, plusminus, arrow, cpp] = m;
+      if (ws) continue;
+      else if (num) out.push({ text, kind: "NUMBER", pri: 0, num, length, angle, time });
+      else if (c) {
+        const percent =
+          p0 ? 100 - Number(p0) :
+            p1 ? (parseInt(p1, 16) / 15) * 100 :
+              p2 ? (parseInt(p2, 16) / 255) * 100 :
+                p3 ? Number(p3) :
+                  undefined;
+        const c = c0 ? "transparent" : c1 ?? c2 ?? c3;
+        out.push({ text, kind: "COLOR", pri: 0, c, percent, primitive: c4 == null, hex: (c1 || c2) && text });
+      }
+      else if (quote) out.push({ text, kind: "QUOTE", quote, pri: 0 });
+      else if (vari) out.push({ text, kind: "VAR", pri: 0 });
+      else if (word) out.push({ text, kind: "WORD", pri: 0 });
+      else if (colorWord) out.push({ text, kind: "COLORWORD", pri: 0 });
+      else if (coalesce) out.push({ text, kind: "COALESCE", pri: 1 });
+      else if (multdiv) out.push({ text, kind: "MULTIDIVIDE", pri: 2 });
+      else if (plusminus) out.push({ text, kind: "PLUSMINUS", pri: 3 });
+      else if (arrow) out.push({ text, kind: "ARROW", pri: 4 });
+      else if (cpp) out.push({ text, kind: "CPP", pri: 6 });
+      else throw new SyntaxError(`Unknown token: ${text} in ${input}`);
+    }
+    return out;
+  }
+})();
