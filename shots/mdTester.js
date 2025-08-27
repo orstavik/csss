@@ -1,4 +1,4 @@
-import { diff } from "https://cdn.jsdelivr.net/gh/orstavik/making-a@25.08.19.10.34/difference.js";
+import { diff } from "https://cdn.jsdelivr.net/gh/orstavik/making-a@25.08.27/difference.js";
 
 function splitMd(txt) {
   const entry = txt.split(/(?:^|\n)\*\*([a-z0-9_-]+):\*\*/i).slice(1);
