@@ -139,7 +139,7 @@ Did you mean to use or define a color vector such as #Primary or #Accent?`);
       else
         c.c = `var(--color-${c.c || (colorVector + i)})`;
     }
-    const first = colors.unshift();
+    const first = colors.shift();
     return colors.reduce((res, { c, percent }) =>
       `color-mix(in oklab, ${res}, ${c} ${percent ?? 50}%)`, first.hex ?? first.c);
   }

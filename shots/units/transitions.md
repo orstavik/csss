@@ -17,3 +17,13 @@
   }
 }
 ```
+
+**xcsss:** $block((--transitionDuration,2s+0.3s))
+**xcss:**
+```css
+@layer containerDefault {
+  .\$block\(\(--transitionDuration\,2s\+0\.3s\)\) {
+    --transition-duration: calc(2s + 0.3s);
+  }
+}
+```

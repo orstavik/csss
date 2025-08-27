@@ -130,6 +130,121 @@ class Expression {
   }
 }
 
+function reduceTriplets(arr, cb) {
+  const res = arr.slice(0, 1);
+  for (let i = 1; i < arr.length - 1; i++) {
+    const a = res.at(-1);
+    const b = arr[i];
+    const c = arr[i + 1];
+    const r = cb(a, b, c);
+    if (r === undefined) res.push(b, c);
+    else res[res.length - 1] = r;
+  }
+  return res;
+}
+const OPS = {
+  "+": (a, b) => a + b,
+  "-": (a, b) => a - b,
+  "*": (a, b) => a * b,
+  "/": (a, b) => { if (!b) throw new SyntaxError("Division by zero"); return a / b },
+}
+const FACTORS = {
+  // Times
+  s_ms: 1000,
+  // Length
+  in_cm: 2.54,
+  in_mm: 25.4,
+  in_pt: 72,
+  in_pc: 6,
+  cm_mm: 10,
+  pc_mm: 25.4 / 6,
+  pc_pt: 12,
+  cm_Q: 40,
+  mm_Q: 4,
+  in_Q: 25.4 / 0.25,
+  pt_Q: (25.4 / 72) / 0.25,
+  // Frequency
+  kHz_Hz: 1000,
+  // Angles
+  turn_deg: 360,
+  turn_rad: 2 * Math.PI,
+  turn_grad: 400,
+  rad_deg: 180 / Math.PI,
+  rad_grad: 200 / Math.PI,
+  deg_grad: 400 / 360,
+  // Resolution
+  dppx_dpi: 96,
+  dppx_dpcm: 96 / 2.54,
+  dpcm_dpi: 2.54,
+};
+
+function computeNumbers(a, b, c) {
+  if (a.type && c.type && a.type != c.type)
+    throw new SyntaxError(`Incompatible types: ${a.text}<${a.type}> ${b.text} ${c.text}<${c.type}>`);
+  const calc = OPS[b.text];
+  if (!calc)
+    throw new SyntaxError("Unknown operator: " + b.text);
+  const factor = !a.type || !c.type || a.unit == c.unit ? 1 : FACTORS[a.type + "_" + c.type] ?? (1 / FACTORS[c.type + "_" + a.type]);
+  if (factor == undefined) //different types of lengths
+    return;
+  const num = calc(a.num, c.num * factor);
+  const base = a.type ? a : c;
+  const text = num + (base.unit || "");
+  return { ...base, text, num };
+}
+
+class MathExpression extends Expression {
+  constructor(args) {
+    super("$math", args);
+  }
+
+  interpret(scope) {
+    //1. default type and nested parens ()
+    const defaultType = scope?.$math ?? 0;
+    let args = this.args.map(x =>
+      x instanceof Expression ? x.interpret(scope) :
+        x.text == "." ? defaultType :
+          x);
+    //2. check the last argument and convert it to text
+    const lastI = args.length - 1;
+    const last = args[lastI];
+    if (last.kind == "VAR")
+      `var(${last.text})`;
+    else if (last.kind != "NUMBER")
+      throw new SyntaxError("math expressions must end with either a number or a variable, not with +-/* or similar operators.");
+
+    //3. if we only have one argument, return it
+    if (args.length === 1)
+      return args[0].text ?? args[0]; //number or var
+
+    //4. var and ??, in reverse
+    args = reduceTriplets(args, (a, b, c) => {
+      if (b.kind == "COALESCE" && a.kind == "VAR")
+        return `var(${a.text}, ${c?.text || c})`;
+      if (b.kind == "COALESCE")
+        throw new SyntaxError("?? must have a variable on the left hand side.");
+      if (b.kind === "VAR")
+        return `var(${b.text})`;
+    });
+
+    //5. implied default first argument
+    if (args[0].kind == "PLUSMINUS" || args[0].kind == "MULTIDIVIDE")
+      args.unshift(defaultType);
+
+    //5. */
+    args = reduceTriplets(args, (a, b, c) =>
+      b.kind === "MULTIDIVIDE" && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
+    //6. +-
+    args = reduceTriplets(args, (a, b, c) =>
+      b.kind === "PLUSMINUS" && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
+    //7. toString
+    if (args.length === 1)
+      return args[0]?.text ?? args[0];
+    args = reduceTriplets(args, (a, b, c) => (a?.text ?? a) + " " + b.text + " " + (c?.text ?? c));
+    return `calc(${args[0]})`;
+  }
+}
+
 const clashOrStack = (function () {
   const STACKABLE_PROPERTIES = {
     background: ", ",
@@ -175,108 +290,113 @@ const clashOrStack = (function () {
   }
 })();
 
-function varAndSpaceOperators(tokens) {
-  const res = tokens.join("").split(/(---?[a-z][a-z0-9_-]*)/g);
-  for (let i = res.length - 1; i >= 0; i--) {
-    const env = res[i].startsWith("---");
-    const comma = res[i + 1] == ",";
-    const afterComma = res[i + 2];
-    if (!res[i])
-      res.splice(i, 1);
-    else if (env && i % 2 && comma && afterComma)
-      res.splice(i, 3, `env(${res[i].slice(3)}, ${res[i + 2]})`);
-    else if (env && i % 2)
-      res[i] = `env(${res[i].slice(3)})`;
-    else if (i % 2 && comma && afterComma)
-      res.splice(i, 3, `var(${res[i]}, ${res[i + 2]})`);
-    else if (i % 2)
-      res[i] = `var(${res[i]})`;
-    else
-      res[i] = res[i].replaceAll(/(?<!^|[+*/-])-|[+*/]/g, " $& ");
-  }
-  return res;
-}
+// function varAndSpaceOperators(tokens) {
+//   const res = tokens.join("").split(/(---?[a-z][a-z0-9_-]*)/g);
+//   for (let i = res.length - 1; i >= 0; i--) {
+//     const env = res[i].startsWith("---");
+//     const comma = res[i + 1] == ",";
+//     const afterComma = res[i + 2];
+//     if (!res[i])
+//       res.splice(i, 1);
+//     else if (env && i % 2 && comma && afterComma)
+//       res.splice(i, 3, `env(${res[i].slice(3)}, ${res[i + 2]})`);
+//     else if (env && i % 2)
+//       res[i] = `env(${res[i].slice(3)})`;
+//     else if (i % 2 && comma && afterComma)
+//       res.splice(i, 3, `var(${res[i]}, ${res[i + 2]})`);
+//     else if (i % 2)
+//       res[i] = `var(${res[i]})`;
+//     else
+//       res[i] = res[i].replaceAll(/(?<!^|[+*/-])-|[+*/]/g, " $& ");
+//   }
+//   return res;
+// }
 
-function impliedMultiplication(tokens) {
-  for (let i = tokens.length - 2; i >= 1; i--) {
-    if (tokens[i] === "(" && !tokens[i - 1].match(/(min|max|clamp|[+*/-])$/))
-      tokens.splice(i, 0, "*");
-    else if (tokens[i] === ")" && !tokens[i + 1].match(/^[+*/-]/))
-      tokens.splice(i + 1, 0, "*");
-  }
-  return tokens;
-}
+// function impliedMultiplication(tokens) {
+//   for (let i = tokens.length - 2; i >= 1; i--) {
+//     if (tokens[i] === "(" && !tokens[i - 1].match(/(min|max|clamp|[+*/-])$/))
+//       tokens.splice(i, 0, "*");
+//     else if (tokens[i] === ")" && !tokens[i + 1].match(/^[+*/-]/))
+//       tokens.splice(i + 1, 0, "*");
+//   }
+//   return tokens;
+// }
 
-function parseVarCalc(tokens) {
-  const t2 = impliedMultiplication(tokens);
-  const t3 = varAndSpaceOperators(t2);
-  if (t3.length === 3 && t3[0] === "(" && t3[2] === ")")
-    t3.shift(), t3.pop();
-  if (t3.length === 1 && t3[0].startsWith("var(--"))
-    return t3[0];
-  const str = t3.join("");
-  return str.includes(" ") ? `calc(${str})` : str;
-}
+// function parseVarCalcOld(tokens) {
+//   const t2 = impliedMultiplication(tokens);
+//   const t3 = varAndSpaceOperators(t2);
+//   if (t3.length === 3 && t3[0] === "(" && t3[2] === ")")
+//     t3.shift(), t3.pop();
+//   if (t3.length === 1 && t3[0].startsWith("var(--"))
+//     return t3[0];
+//   const str = t3.join("");
+//   return str.includes(" ") ? `calc(${str})` : str;
+// }
 
-const WORD = /^\$?[a-zA-Z_][a-zA-Z0-9_]*$/;
-const CPP = /[,()$=;{}]/.source;
-const nCPP = /[^,()$=;{}]+/.source;
-const QUOTE = /([`'"])(?:\\.|(?!\2).)*?\2/.source;
-const TOKENS = new RegExp(`(${QUOTE})|(\\s+)|(${CPP})|(${nCPP})`, "g");
+// const WORD = /^\$?[a-zA-Z_][a-zA-Z0-9_]*$/;
+// const CPP = /[,()$=;{}]/.source;
+// const nCPP = /[^,()$=;{}]+/.source;
+// const QUOTE = /([`'"])(?:\\.|(?!\2).)*?\2/.source;
+// const TOKENS = new RegExp(`(${QUOTE})|(\\s+)|(${CPP})|(${nCPP})`, "g");
 
-function processToken([m, , , space]) {
-  return space ? undefined : m;
-}
+// function processToken([m, , , space]) {
+//   return space ? undefined : m;
+// }
 
-function eatTokens(tokens) {
-  for (let res = [], depth = 0; tokens.length;) {
-    if (!depth && (tokens[0] === "," || tokens[0] === ")"))
-      return res;
-    if (tokens[0] === "(") depth++;
-    if (tokens[0] === ")") depth--;
-    res.push(tokens.shift());
-  }
-  throw "missing ')'";
-}
+// function eatTokens(tokens) {
+//   for (let res = [], depth = 0; tokens.length;) {
+//     if (!depth && (tokens[0] === "," || tokens[0] === ")"))
+//       return res;
+//     if (tokens[0] === "(") depth++;
+//     if (tokens[0] === ")") depth--;
+//     res.push(tokens.shift());
+//   }
+//   throw "missing ')'";
+// }
 
-function diveDeep(tokens, top) {
+function diveDeep(tokens) {
   const res = [];
   while (tokens.length) {
-    let a;
-    if (tokens[0].kind === "COLOR")
-      a = new Expression("_hash", tokens.splice(0, tokens.findIndex(t => t.kind !== "COLOR")));
-
-    if (!a)
-      a = tokens[0].match(/^(?!["'])(?:\($|.*[+/*]|(?<![a-z])-|-(?![a-z]))/i) ?
-        parseVarCalc(eatTokens(tokens)) :
-        tokens.shift();
-    if (top && a === ",") throw "can't start with ','";
-    if (top && a === ")") throw "can't start with ')'";
-    if (a === ")" && !res.length) throw new SyntaxError("empty function not allowed in CSSs");
-    if (a === "," || a === ")") {         //empty
-      res.push(undefined);
-      if (a === ")")
-        return res;
+    let a = tokens.shift();
+    if (a == undefined)
+      throw new SyntaxError("Missing end parenthesis");
+    else if (a.text == ")")
+      return res;
+    else if (a.text == ",") {
+      res.push(undefined);  // throw "empty argument not allowed";
       continue;
+    } else if (a.kind === "COLOR") { //color grab
+      const colors = [a];
+      while (tokens[0]?.kind === "COLOR")
+        colors.push(tokens.shift());
+      a = new Expression("_hash", colors); //ColorExpression??
+    } else if (a.kind === "NUMBER" || a.kind === "VAR" || a.kind === "PLUSMINUS" || a.kind === "MULTIDIVIDE" || a.kind === "COALESCE" || a.kind === "ARROW") {
+      const math = [a];
+      while (true) {
+        if (tokens[0]?.kind === "NUMBER" || tokens[0]?.kind === "VAR" || tokens[0]?.kind === "PLUSMINUS" || tokens[0]?.kind === "MULTIDIVIDE" || tokens[0]?.kind === "COALESCE" || tokens[0]?.kind === "ARROW") {
+          math.push(tokens.shift());
+        } else if (tokens[0]?.text === "(") {
+          tokens.shift();
+          const x = new MathExpression(diveDeep(tokens)); //todo recursive
+          if (x.args.length != 1 && !(x.args[0] instanceof Expression && x.args[0].name === "_math"))
+            throw new SyntaxError("Parenthesis in math must return exactly one math expression.");
+          math.push(x);
+        } else
+          break;
+      }
+      a = new MathExpression(math);
     }
+
     let b = tokens.shift();
-    if (top && b === ",") throw "top level can't list using ','";
-    if (top && b === ")") throw "top level can't use ')'";
-    if (b === "(" && !a.match(WORD)) throw "invalid function name";
-    if (b === "(") {
-      a = new Expression(a, diveDeep(tokens));
+    if (a.kind === "WORD" && b.text === "(") {
+      a = new Expression(a.text, diveDeep(tokens));
       b = tokens.shift();
     }
-    // if (a.match?.(WORD)) 
-    //   a = a.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase());
-    if (b === ")" && top && tokens.length)
-      throw "too many ')'";
-    if (b === ")" || (top && b === undefined))
-      return res.push(a), res;
-    if (b == ",")
-      res.push(a);
-    else
+    if (b.text != ")" && b.text != ",")
       throw "syntax error";
+    res.push((a instanceof Expression || typeof a === "string") ? a : a.text);
+    if (b.text === ")")
+      return res;
   }
   throw "missing ')'";
 }
@@ -284,40 +404,20 @@ function diveDeep(tokens, top) {
 //todo this is the function we are working on
 function parseNestedExpression(short) {
   const newTokens = tokenize(short);
+  if (newTokens[0].kind !== "WORD")
+    throw new SyntaxError("Short must start with a name of a short function: " + newTokens[0].text);
   if (newTokens.length === 1)
-    return new Expression(newTokens[0].text, []); //todo no calc top level
-
-  const news = [];
-  let last;
-  for (let t of newTokens) {
-    const { kind, text } = t;
-    if (kind == "QUOTE" || kind == "CPP" || kind == "COLOR") {
-      if (last) {
-        news.push(last);
-        last = null;
-      }
-      news.push(
-        kind == "COLOR" ? t :
-          t.text
-      );
-    } else {
-      last = (last || "") + text;
-    }
-  }
-  if (last)
-    news.push(last);
-  // const tokens = news.slice();
-
-  try {
-    return diveDeep(news, true)[0];
-  } catch (e) {
-    debugger
-    //todo add the error string to the e.message
-    // const i = tokensOG.length - tokens.length;
-    // tokensOG.splice(i, 0, `{{{${e}}}}`);
-    // const msg = tokensOG.join("");
-    // throw new SyntaxError("Invalid short: " + msg);
-  }
+    return new Expression(newTokens[0].text, []);
+  if (newTokens[1].text !== "(")
+    throw new SyntaxError("missing start parenthesis: " + short);
+  if (newTokens.at(-1).text !== ")")
+    throw new SyntaxError("missing end parenthesis: " + short);
+  const name = newTokens[0].text;
+  const tokens = newTokens.slice(2);
+  const args = diveDeep(tokens);
+  if (tokens.length)
+    throw new SyntaxError("too many tokens after end parenthesis: " + tokens.map(t => t.text).join(""));
+  return new Expression(name, args);
 }
 
 //todo we don't support nested :not(:has(...))
@@ -500,19 +600,21 @@ const tokenize = (_ => {
 
   const QUOTE = /([`'"])(\\.|(?!\2).)*?\2/.source;
 
-  const LENGTHS = "px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%";
+  const LENGTHS = "px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|fr|%";
   const ANGLES = "deg|grad|rad|turn";
   const TIMES = "s|ms";
-  const NUMBER = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${LENGTHS})|(${ANGLES})|(${TIMES}))?`;
+  const FREQUENCIES = "Hz|kHz";
+  const RESOLUTIONS = "dpi|dpcm|dppx";
+  const NUMBER = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${LENGTHS})|(${ANGLES})|(${TIMES})|(${FREQUENCIES})|(${RESOLUTIONS}))?`;
 
   const VAR = /--[a-zA-Z][a-zA-Z0-9_]*/.source;
-  const WORD = /[._a-zA-Z][._%a-zA-Z0-9+-]*/.source;
+  const WORD = /[._a-zA-Z][._%a-zA-Z0-9+<-]*/.source;
   const COLOR_WORD = /#(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch)/.source;
   const COLOR = `#(?:(a)(\\d\\d)|([0-9a-fA-F]{6})([0-9a-fA-F]{2})?|([0-9a-fA-F]{3})([0-9a-fA-F])?|(${WEB_COLORS}|([a-zA-Z_]+|))(\\d\\d)?)`;
   const COALESCE = /\?\?/.source;
   const MULTIDIVIDE = /[*/]/.source;
   const PLUSMINUS = /[+-]/.source;
-  const ARROW = /[<>]/.source;
+  // const ARROW = /[<>]/.source;
   const CPP = /[,()]/.source;
 
   const TOKENS = new RegExp([
@@ -526,7 +628,7 @@ const tokenize = (_ => {
     COALESCE,
     MULTIDIVIDE,
     PLUSMINUS,
-    ARROW,
+    // ARROW,
     CPP,
     ".+"
   ].map(x => `(${x})`)
@@ -536,9 +638,13 @@ const tokenize = (_ => {
   return function tokenize(input) {
     const out = [];
     for (let m; (m = TOKENS.exec(input));) {
-      const [text, _, q, quote, ws, n, num, length, angle, time, vari, word, colorWord, c, c0, p0, c1, p1, c2, p2, c3, c4, p3, coalesce, multdiv, plusminus, arrow, cpp] = m;
+      const [text, _, q, quote, ws, n, num, length, angle, time, frequency, resolution, vari, word, colorWord, c, c0, p0, c1, p1, c2, p2, c3, c4, p3, coalesce, multdiv, plusminus, /*arrow,*/ cpp] = m;
       if (ws) continue;
-      else if (num) out.push({ text, kind: "NUMBER", pri: 0, num, length, angle, time });
+      else if (num) {
+        const type = length ? "length" : angle ? "angle" : time ? "time" : frequency ? "frequency" : resolution ? "resolution" : undefined;
+        const unit = length ?? angle ?? time ?? frequency ?? resolution ?? undefined;
+        out.push({ text, kind: "NUMBER", pri: 0, num: Number(num), unit, type });
+      }
       else if (c) {
         const percent =
           p0 ? 100 - Number(p0) :
@@ -556,7 +662,7 @@ const tokenize = (_ => {
       else if (coalesce) out.push({ text, kind: "COALESCE", pri: 1 });
       else if (multdiv) out.push({ text, kind: "MULTIDIVIDE", pri: 2 });
       else if (plusminus) out.push({ text, kind: "PLUSMINUS", pri: 3 });
-      else if (arrow) out.push({ text, kind: "ARROW", pri: 4 });
+      // else if (arrow) out.push({ text, kind: "ARROW", pri: 4 });
       else if (cpp) out.push({ text, kind: "CPP", pri: 6 });
       else throw new SyntaxError(`Unknown token: ${text} in ${input}`);
     }
