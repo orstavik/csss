@@ -28,7 +28,7 @@
     --color-neutral-pop1: oklch(0.600, 0.000, 263);
     --color-neutral-accent1: oklch(0.600, 0.000, 263);
     --color-neutral-bland1: oklch(0.600, 0.000, 263);
-  } 
+  }
 }
 ```
 

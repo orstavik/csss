@@ -24,11 +24,11 @@
 ```css
 @layer containerDefault {
   .\$flex\(rowReverse\,gap\(0\.5rem\)\,padding\(1rem\)\) {
-        display: flex;
-        word-spacing: unset;
-        line-height: unset;
-        white-space: unset;
-        hyphens: unset;
+    display: flex;
+    word-spacing: unset;
+    line-height: unset;
+    white-space: unset;
+    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     align-items: unset;
@@ -83,7 +83,6 @@
 ```
 
 
-
 **csss:** $flex(contentStartEnd,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
@@ -122,7 +121,7 @@
     gap: 1rem;
     padding: 1rem;
     flex-wrap: wrap;
-    }
+  }
 }
 ```
 
@@ -185,7 +184,7 @@
     gap: 1rem;
     padding: 1rem;
     flex-wrap: wrap;
-}
+  }
 }
 ```
 
@@ -226,7 +225,7 @@
     place-content: unset;
     gap: 2rem;
     padding: 1rem;
-    }
+  }
 }
 ```
 
@@ -246,6 +245,6 @@
     place-content: unset;
     overflow: scroll;
     padding: 1rem;
-    }
+  }
 }
 ```

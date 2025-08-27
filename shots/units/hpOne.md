@@ -96,7 +96,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.new\$border\(solid\,4px\,radius\(1rem\)\)> :where(.new) {
+  .\|\.new\$border\(solid\,4px\,radius\(1rem\)\)>:where(.new) {
     border-style: solid;
     border-width: 4px;
     border-radius: 1rem;
@@ -108,7 +108,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.sale\$border\(dashed\,3px\,radius\(0\.5rem\)\)> :where(.sale) {
+  .\|\.sale\$border\(dashed\,3px\,radius\(0\.5rem\)\)>:where(.sale) {
     border-style: dashed;
     border-width: 3px;
     border-radius: 0.5rem;

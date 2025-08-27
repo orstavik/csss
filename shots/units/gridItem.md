@@ -23,7 +23,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(1\)\$_grid\(column\(1\,span\(3\)\)\)> :where(:nth-child(1)) {
+  .\|\:nth-child\(1\)\$_grid\(column\(1\,span\(3\)\)\)>:where(:nth-child(1)) {
     grid-column: 1 / span 3;
   }
 }
@@ -33,7 +33,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(2\)\$_grid\(row\(4\,4\)\)> :where(:nth-child(2)) {
+  .\|\:nth-child\(2\)\$_grid\(row\(4\,4\)\)>:where(:nth-child(2)) {
     grid-row: 4 / 4;
   }
 }
@@ -43,7 +43,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(3\)\$_grid\(column\(1\,1\)\)> :where(:nth-child(3)) {
+  .\|\:nth-child\(3\)\$_grid\(column\(1\,1\)\)>:where(:nth-child(3)) {
     grid-column: 1 / 1;
   }
 }
@@ -53,7 +53,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(4\)\$_grid\(row\(1\,2\)\,column\(2\,3\)\)> :where(:nth-child(4)) {
+  .\|\:nth-child\(4\)\$_grid\(row\(1\,2\)\,column\(2\,3\)\)>:where(:nth-child(4)) {
     grid-row: 1 / 2;
     grid-column: 2 / 3;
   }
@@ -64,7 +64,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(1\)\$_grid\(selfCenter\)> :where(:nth-child(1)) {
+  .\|\:nth-child\(1\)\$_grid\(selfCenter\)>:where(:nth-child(1)) {
     place-self: center;
   }
 }
@@ -74,7 +74,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(2\)\$_grid\(selfCenterStretch\)> :where(:nth-child(2)) {
+  .\|\:nth-child\(2\)\$_grid\(selfCenterStretch\)>:where(:nth-child(2)) {
     place-self: center stretch;
   }
 }
@@ -84,7 +84,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(3\)\$_grid\(selfStartEnd\)> :where(:nth-child(3)) {
+  .\|\:nth-child\(3\)\$_grid\(selfStartEnd\)>:where(:nth-child(3)) {
     place-self: start end;
   }
 }

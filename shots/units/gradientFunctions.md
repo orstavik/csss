@@ -189,16 +189,16 @@
 **css:**
 ```css
 @layer containerDefault {
-   .\$conic\(at50\%50\%\,\#red\,\#blue\) {
-     background-image: conic-gradient(at 50% 50%, red, blue);
-     background-position: 0% 0%;
-     background-repeat: repeat;
-     background-size: auto auto;
-     background-origin: padding-box;
-     background-clip: border-box;
-     background-blend-mode: normal;
-     background-attachment: scroll;
-   }
+  .\$conic\(at50\%50\%\,\#red\,\#blue\) {
+    background-image: conic-gradient(at 50% 50%, red, blue);
+    background-position: 0% 0%;
+    background-repeat: repeat;
+    background-size: auto auto;
+    background-origin: padding-box;
+    background-clip: border-box;
+    background-blend-mode: normal;
+    background-attachment: scroll;
+  }
 }
 ```
 
@@ -206,16 +206,16 @@
 **css:**
 ```css
 @layer containerDefault {
-   .\$conic\(90deg\,at30\%80\%\,\#red\,\#blue\) {
-     background-image: conic-gradient(from 90deg at 30% 80%, red, blue);
-     background-position: 0% 0%;
-     background-repeat: repeat;
-     background-size: auto auto;
-     background-origin: padding-box;
-     background-clip: border-box;
-     background-blend-mode: normal;
-     background-attachment: scroll;
-   }
+  .\$conic\(90deg\,at30\%80\%\,\#red\,\#blue\) {
+    background-image: conic-gradient(from 90deg at 30% 80%, red, blue);
+    background-position: 0% 0%;
+    background-repeat: repeat;
+    background-size: auto auto;
+    background-origin: padding-box;
+    background-clip: border-box;
+    background-blend-mode: normal;
+    background-attachment: scroll;
+  }
 }
 ```
 
@@ -223,16 +223,16 @@
 **css:**
 ```css
 @layer containerDefault {
-   .\$repeatingLinear\(45deg\,\#red\,10\%\,\#blue\,20\%\) {
-     background-image: repeating-linear-gradient(45deg, red 10%, blue 20%);
-     background-position: 0% 0%;
-     background-repeat: repeat;
-     background-size: auto auto;
-     background-origin: padding-box;
-     background-clip: border-box;
-     background-blend-mode: normal;
-     background-attachment: scroll;
-   }
+  .\$repeatingLinear\(45deg\,\#red\,10\%\,\#blue\,20\%\) {
+    background-image: repeating-linear-gradient(45deg, red 10%, blue 20%);
+    background-position: 0% 0%;
+    background-repeat: repeat;
+    background-size: auto auto;
+    background-origin: padding-box;
+    background-clip: border-box;
+    background-blend-mode: normal;
+    background-attachment: scroll;
+  }
 }
 ```
 
@@ -240,16 +240,16 @@
 **css:**
 ```css
 @layer containerDefault {
-   .\$repeatingRadial\(circle\,\#green\,5\%\,\#yellow\,15\%\) {
-     background-image: repeating-radial-gradient(circle, green 5%, yellow 15%);
-     background-position: 0% 0%;
-     background-repeat: repeat;
-     background-size: auto auto;
-     background-origin: padding-box;
-     background-clip: border-box;
-     background-blend-mode: normal;
-     background-attachment: scroll;
-   }
+  .\$repeatingRadial\(circle\,\#green\,5\%\,\#yellow\,15\%\) {
+    background-image: repeating-radial-gradient(circle, green 5%, yellow 15%);
+    background-position: 0% 0%;
+    background-repeat: repeat;
+    background-size: auto auto;
+    background-origin: padding-box;
+    background-clip: border-box;
+    background-blend-mode: normal;
+    background-attachment: scroll;
+  }
 }
 ```
 
@@ -257,15 +257,15 @@
 **css:**
 ```css
 @layer containerDefault {
-   .\$repeatingConic\(\#purple\,0deg\,\#orange\,45deg\) { 
-    background-image: repeating-conic-gradient(purple 0deg, orange 45deg); 
-    background-position: 0% 0%; 
-    background-repeat: repeat; 
-    background-size: auto auto; 
-    background-origin: padding-box; 
-    background-clip: border-box; 
-    background-blend-mode: normal; 
-    background-attachment: scroll; 
+  .\$repeatingConic\(\#purple\,0deg\,\#orange\,45deg\) {
+    background-image: repeating-conic-gradient(purple 0deg, orange 45deg);
+    background-position: 0% 0%;
+    background-repeat: repeat;
+    background-size: auto auto;
+    background-origin: padding-box;
+    background-clip: border-box;
+    background-blend-mode: normal;
+    background-attachment: scroll;
   }
 }
 ```
@@ -291,7 +291,16 @@
 **css:**
 ```css
 @layer containerDefault {
-  .\$radial\(circle\,\#transparent\,\#000000\) { background-image: radial-gradient(circle, transparent, #000000); background-position: 0% 0%; background-repeat: repeat; background-size: auto auto; background-origin: padding-box; background-clip: border-box; background-blend-mode: normal; background-attachment: scroll; }
+  .\$radial\(circle\,\#transparent\,\#000000\) {
+    background-image: radial-gradient(circle, transparent, #000000);
+    background-position: 0% 0%;
+    background-repeat: repeat;
+    background-size: auto auto;
+    background-origin: padding-box;
+    background-clip: border-box;
+    background-blend-mode: normal;
+    background-attachment: scroll;
+  }
 }
 ```
 
@@ -299,7 +308,16 @@
 **css:**
 ```css
 @layer containerDefault {
-.\$conic\(45deg\,atTopLeft\,\#red\,\#blue\) { background-image: conic-gradient(from 45deg at top left, red, blue); background-position: 0% 0%; background-repeat: repeat; background-size: auto auto; background-origin: padding-box; background-clip: border-box; background-blend-mode: normal; background-attachment: scroll; }
+  .\$conic\(45deg\,atTopLeft\,\#red\,\#blue\) {
+    background-image: conic-gradient(from 45deg at top left, red, blue);
+    background-position: 0% 0%;
+    background-repeat: repeat;
+    background-size: auto auto;
+    background-origin: padding-box;
+    background-clip: border-box;
+    background-blend-mode: normal;
+    background-attachment: scroll;
+  }
 }
 ```
 
@@ -376,7 +394,7 @@
 ```css
 @layer containerDefault {
   .\$conic\(0\.2turn\,at30\%80\%\,yellow\,10\%\,20\%\,pink\,50\%\,95\%\) {
-     background-image: conic-gradient(from 0.2turn at 30% 80%, yellow 10% 20%, pink 50% 95%);
+    background-image: conic-gradient(from 0.2turn at 30% 80%, yellow 10% 20%, pink 50% 95%);
     background-position: 0% 0%;
     background-repeat: repeat;
     background-size: auto auto;

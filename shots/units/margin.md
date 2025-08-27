@@ -23,7 +23,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.a\$_flex\(margin\(0\,0\,2rem\)\)> :where(.a) {
+  .\|\.a\$_flex\(margin\(0\,0\,2rem\)\)>:where(.a) {
     margin-block: 0 2rem;
     margin-inline: 0;
   }

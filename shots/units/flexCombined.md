@@ -33,7 +33,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.item1\$_flex\(grow\(1\)\)> :where(.item1) {
+  .\|\.item1\$_flex\(grow\(1\)\)>:where(.item1) {
     flex-grow: 1;
   }
 }
@@ -62,7 +62,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.one\$_flex\(order\(3\)\,selfStart\,margin\(1rem\)\)> :where(.one) {
+  .\|\.one\$_flex\(order\(3\)\,selfStart\,margin\(1rem\)\)>:where(.one) {
     order: 3;
     align-self: start;
     margin: 1rem;
@@ -74,7 +74,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.two\$_flex\(order\(1\)\,selfCenter\)> :where(.two) {
+  .\|\.two\$_flex\(order\(1\)\,selfCenter\)>:where(.two) {
     order: 1;
     align-self: center;
   }
@@ -85,7 +85,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.three\$_flex\(order\(2\)\,selfEnd\)> :where(.three) {
+  .\|\.three\$_flex\(order\(2\)\,selfEnd\)>:where(.three) {
     order: 2;
     align-self: end;
   }
@@ -96,7 +96,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.four\$_flex\(selfStretch\)> :where(.four) {
+  .\|\.four\$_flex\(selfStretch\)>:where(.four) {
     align-self: stretch;
   }
 }

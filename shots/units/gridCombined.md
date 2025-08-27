@@ -24,7 +24,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.a\$_grid\(column\(1\,span\(2\)\)\,margin\(1rem\)\)> :where(.a) {
+  .\|\.a\$_grid\(column\(1\,span\(2\)\)\,margin\(1rem\)\)>:where(.a) {
     grid-column: 1 / span 2;
     margin: 1rem;
   }
@@ -35,7 +35,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.b\$_grid\(row\(1\,span\(2\)\)\,column\(3\)\)> :where(.b) {
+  .\|\.b\$_grid\(row\(1\,span\(2\)\)\,column\(3\)\)>:where(.b) {
     grid-row: 1 / span 2;
     grid-column: 3;
   }
@@ -46,7 +46,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.c\$_grid\(selfStretchStart\,column\(1\)\,row\(2\,span\(2\)\)\)> :where(.c) {
+  .\|\.c\$_grid\(selfStretchStart\,column\(1\)\,row\(2\,span\(2\)\)\)>:where(.c) {
     place-self: stretch start;
     grid-column: 1;
     grid-row: 2 / span 2;
@@ -58,7 +58,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.d\$_grid\(selfCenter\,column\(2\)\,row\(3\)\)> :where(.d) {
+  .\|\.d\$_grid\(selfCenter\,column\(2\)\,row\(3\)\)>:where(.d) {
     place-self: center;
     grid-column: 2;
     grid-row: 3;

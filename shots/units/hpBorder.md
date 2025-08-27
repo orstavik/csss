@@ -740,7 +740,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.special\$border\(dashed\,3px\,r\(3rem\)\)> :where(.special) {
+  .\|\.special\$border\(dashed\,3px\,r\(3rem\)\)>:where(.special) {
     border-style: dashed;
     border-width: 3px;
     border-radius: 3rem;
@@ -752,7 +752,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.super\$border\(double\,4px\,r\(4rem\)\)> :where(.super) {
+  .\|\.super\$border\(double\,4px\,r\(4rem\)\)>:where(.super) {
     border-style: double;
     border-width: 4px;
     border-radius: 4rem;

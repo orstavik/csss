@@ -61,7 +61,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.negative\$_block\(indent\(-1em\)\)> :where(.negative) {
+  .\|\.negative\$_block\(indent\(-1em\)\)>:where(.negative) {
     text-indent: -1em;
   }
 }
@@ -71,7 +71,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.start\$_block\(floatStart\,margin\(0\.5rem\,0\,0\,0\)\)> :where(.start) {
+  .\|\.start\$_block\(floatStart\,margin\(0\.5rem\,0\,0\,0\)\)>:where(.start) {
     float: inline-start;
     margin-block: 0.5rem 0;
     margin-inline: 0;
@@ -83,7 +83,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.end\$_block\(floatEnd\,margin\(0\.5rem\,0\,0\,0\)\)> :where(.end) {
+  .\|\.end\$_block\(floatEnd\,margin\(0\.5rem\,0\,0\,0\)\)>:where(.end) {
     float: inline-end;
     margin-block: 0.5rem 0;
     margin-inline: 0;

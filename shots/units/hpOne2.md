@@ -130,7 +130,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.head\$_block\(indent\(-5\%\)\)> :where(.head) {
+  .\|\.head\$_block\(indent\(-5\%\)\)>:where(.head) {
     text-indent: -5%;
   }
 }
@@ -140,7 +140,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\.subheading\$_block\(indent\(0\)\)> :where(.subheading) {
+  .\|\.subheading\$_block\(indent\(0\)\)>:where(.subheading) {
     text-indent: 0px;
   }
 }
@@ -166,7 +166,7 @@
 @layer items {
   @media print,
   screen {
-    .\@\(print\,screen\)\:hover\|\:valid\$border\(dotted\,2px\):where(:hover)> :where(:valid) {
+    .\@\(print\,screen\)\:hover\|\:valid\$border\(dotted\,2px\):where(:hover)>:where(:valid) {
       border-style: dotted;
       border-width: 2px;
     }
@@ -180,7 +180,7 @@
 @layer items {
   @media print,
   screen {
-    .\@\(print\,screen\)\:hover\|\.first\$border\(dashed\,2px\):where(:hover)> :where(.first) {
+    .\@\(print\,screen\)\:hover\|\.first\$border\(dashed\,2px\):where(:hover)>:where(.first) {
       border-style: dashed;
       border-width: 2px;
     }
