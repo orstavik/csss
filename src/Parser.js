@@ -539,9 +539,8 @@ const tokenize = (_ => {
   const LENGTHS = "px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|fr|%";
   const ANGLES = "deg|grad|rad|turn";
   const TIMES = "s|ms";
-  const FREQUENCIES = "Hz|kHz";
   const RESOLUTIONS = "dpi|dpcm|dppx";
-  const NUMBER = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${LENGTHS})|(${ANGLES})|(${TIMES})|(${FREQUENCIES})|(${RESOLUTIONS}))?`;
+  const NUMBER = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${LENGTHS})|(${ANGLES})|(${TIMES})|(${RESOLUTIONS}))?`;
 
   const VAR = /--[a-zA-Z][a-zA-Z0-9_]*/.source;
   const WORD = /[._a-zA-Z][._%a-zA-Z0-9+<-]*/.source;
@@ -572,11 +571,11 @@ const tokenize = (_ => {
   return function tokenize(input) {
     const out = [];
     for (let m; (m = TOKENS.exec(input));) {
-      const [text, _, q, quote, ws, n, num, length, angle, time, frequency, resolution, vari, word, colorWord, c, c0, p0, c1, p1, c2, p2, c3, c4, p3, coalesce, multdiv, plusminus, /*arrow,*/ cpp] = m;
+      const [text, _, q, quote, ws, n, num, length, angle, time, resolution, vari, word, colorWord, c, c0, p0, c1, p1, c2, p2, c3, c4, p3, coalesce, multdiv, plusminus, /*arrow,*/ cpp] = m;
       if (ws) continue;
       else if (num) {
-        const type = length ? "length" : angle ? "angle" : time ? "time" : frequency ? "frequency" : resolution ? "resolution" : undefined;
-        const unit = length ?? angle ?? time ?? frequency ?? resolution ?? undefined;
+        const type = length ? "length" : angle ? "angle" : time ? "time" : resolution ? "resolution" : undefined;
+        const unit = length ?? angle ?? time ?? resolution ?? undefined;
         out.push({ text, kind: "NUMBER", pri: 0, num: Number(num), unit, type });
       }
       else if (c) {
