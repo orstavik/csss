@@ -1,25 +1,7 @@
 //https://developer.mozilla.org/en-US/docs/Web/CSS/length#browser_compatibility
 //mdn specifies more lengths, but we don't support them yet.
-export const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%/.source;
-export const ANGLES = /deg|grad|rad|turn/.source;
-export const TIMES = /s|ms/.source;
-export const N = /-?[0-9]*\.?[0-9]+(?:e[+-]?[0-9]+)?/.source;
-export const NUM = `(${N})(?:\\/(${N}))?`; //num frac allows for -.5e+0/-122.5e-12
-
-function isNumberUnit(UNIT) {
-  return function (x) {
-    if (!x || x === "0") return x;
-    const m = x.match?.(new RegExp(`^(${NUM})(${UNIT})$`));
-    if (!m) return;
-    let [, , n, frac, unit] = m;
-    return frac ? (Number(n) / Number(frac)) + unit :
-      x;
-  }
-}
-export const isLength = isNumberUnit(LENGTHS_PER);
-export const isAngle = isNumberUnit(ANGLES);
-const innerTime = isNumberUnit(TIMES);
-export const isTime = x => x == "0" ? "0s" : innerTime(x);
+import { TYPES, isLength, isAngle, isTime } from "./Parser.js";
+export { TYPES, isLength, isAngle, isTime };
 
 export function toRadiusFour(NAME, ...ar) {
   if (!(ar instanceof Array))
@@ -173,7 +155,7 @@ Did you mean to use or define a color vector such as #Primary or #Accent?`);
 })();
 
 const ColorNames = /^(aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen)$/i.source;
-const ColorFunctionStart = /^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color|color-mix|colorMix)\(/.source;
+const ColorFunctionStart = /^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color|color-mix)\(/.source;
 const ColorVar = /^var\(--color-/.source;
 const ColorHash = /^#[a-fA-F0-9]{3,8}$/.source;
 const ColorString = new RegExp(`${ColorNames}|${ColorFunctionStart}|${ColorVar}|${ColorHash}`);
@@ -191,27 +173,29 @@ export function isColor(x) {
 // };
 
 //no shorts before this point
-const NativeCssProperties = (function () {
-  const style = document.createElement('div').style;
-  const res = {};
-  for (const camel of Object.getOwnPropertyNames(style)) {
-    res[camel] = (...args) => ({ [camel]: args.join(" ") });
-    Object.defineProperty(res[camel], "name", { value: camel });
-    res[camel].scope = {};
+const NativeCssProperties = Object.fromEntries(
+  Object.getOwnPropertyNames(document.createElement('div').style).map(camel => {
+    const res = (...args) => ({ [camel]: args.join(" ") });
+    Object.defineProperty(res, "name", { value: camel });
+    res.scope = {};
     const name = camel.replace(/([A-Z])/g, "-$1").toLowerCase();
+    //todo this is wrong, because we are not fixing the 
     if (CSS.supports(name, "min(0,1)") || CSS.supports(name, "min(0px,1px)"))
-      Object.assign(res[camel].scope, NativeCssScopeMath);
+      Object.assign(res.scope, NativeCssScopeMath);
     if (CSS.supports(name, "url(http://example.com)"))
-      res[camel].scope.url = NativeCssScopeUrl;
+      res.scope.url = NativeCssScopeUrl;
     if (CSS.supports(name, "#123456") || CSS.supports(name, "#123 1px 1px"))
-      Object.assign(res[camel].scope, NativeColorsFunctions);
-    if (camel.match(/^(gridTemplateColumns|gridTemplateRows|gridTemplateAreas|gridTemplate|grid)$/))
-      res[camel].scope.repeat = NativeCssScopeRepeat;
-  }
-  //if name == "content"
-  res.content.scope = Object.assign(res.content.scope ?? {}, NativeCssScopeAttrCounter);
-  return res;
-})();
+      Object.assign(res.scope, NativeColorsFunctions);
+    if (CSS.supports(name, "repeat(2, 60px)"))//camel.match(/^(gridTemplateColumns|gridTemplateRows|gridTemplateAreas|gridTemplate|grid)$/))
+      res.scope.repeat = NativeCssScopeRepeat;
+    if (CSS.supports(name, "attr(data-foo)"))
+      res.scope.attr = NativeCssScopeAttrCounter.attr;
+    if (CSS.supports(name, "counter(my-counter)"))
+      res.scope.counter = NativeCssScopeAttrCounter.counter;
+    if (CSS.supports(name, "counters(my-counter, '.')"))
+      res.scope.counters = NativeCssScopeAttrCounter.counters;
+    return [camel, res];
+  }));
 
 //UNPACKED $filter scope functions
 const NativeCssFilterFunctions = {

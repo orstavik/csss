@@ -543,6 +543,28 @@ export const TYPES = {
   // OTHER_FUNCTIONS: "url|attr|var|env|counter|counters|rect|repeat|minmax",
 };
 
+const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%/.source;
+const ANGLES = /deg|grad|rad|turn/.source;
+const TIMES = /s|ms/.source;
+const N = /-?[0-9]*\.?[0-9]+(?:e[+-]?[0-9]+)?/.source;
+const NUM = `(${N})(?:\\/(${N}))?`; //num frac allows for -.5e+0/-122.5e-12
+
+function isNumberUnit(UNIT) {
+  return function (x) {
+    if (!x || x === "0") return x;
+    const m = x.match?.(new RegExp(`^(${NUM})(${UNIT})$`));
+    if (!m) return;
+    let [, , n, frac, unit] = m;
+    return frac ? (Number(n) / Number(frac)) + unit :
+      x;
+  }
+}
+export const isLength = isNumberUnit(LENGTHS_PER);
+export const isAngle = isNumberUnit(ANGLES);
+const innerTime = isNumberUnit(TIMES);
+export const isTime = x => x == "0" ? "0s" : innerTime(x);
+
+
 const tokenize = (_ => {
   const QUOTE = /([`'"])(\\.|(?!\2).)*?\2/.source;
   const NUMBER = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${TYPES.LENGTHS})|(${TYPES.ANGLES})|(${TYPES.TIMES})|(${TYPES.PERCENT})|(${TYPES.FR}))?`;
