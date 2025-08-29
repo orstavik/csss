@@ -325,7 +325,7 @@ function diveDeep(tokens) {
 
     let b = tokens.shift();
     if (a.kind === "WORD" && b.text === "(") {
-      a = new Expression(a.text, diveDeep(tokens));
+        a = new Expression(a.text, diveDeep(tokens));
       b = tokens.shift();
     }
     if (b.text != ")" && b.text != ",")
@@ -532,42 +532,54 @@ function parseMediaQuery(str, register) {
 }
 
 export const TYPES = {
+  LENGTHS: "px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex",
+  PERCENT: "%",
+  ANGLES: "deg|grad|rad|turn",
+  TIMES: "s|ms",
+  FR: "fr",
+
   COLOR_NAMES: "aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen",
   COLOR_FUNCTIONS: "rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch",
   MATH: "min|max|clamp|round|ceil|floor|abs|sin|cos|tan|asin|acos|atan|atan2|sqrt|log2|log10|exp|pow",
-  FR: "fr",
-  PERCENT: "%",
-  LENGTHS: "px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex",
-  ANGLES: "deg|grad|rad|turn",
-  TIMES: "s|ms",
   // OTHER_FUNCTIONS: "url|attr|var|env|counter|counters|rect|repeat|minmax",
 };
 
-const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%/.source;
-const ANGLES = /deg|grad|rad|turn/.source;
-const TIMES = /s|ms/.source;
-const N = /-?[0-9]*\.?[0-9]+(?:e[+-]?[0-9]+)?/.source;
-const NUM = `(${N})(?:\\/(${N}))?`; //num frac allows for -.5e+0/-122.5e-12
+const NUMBER = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${TYPES.LENGTHS})|(${TYPES.ANGLES})|(${TYPES.TIMES})|(${TYPES.PERCENT})|(${TYPES.FR}))?`;
 
-function isNumberUnit(UNIT) {
+//TODO this will not be much needed when we run the function with the content first.
+function isNumberUnit(UNITS) {
+  const RX = new RegExp(`^${NUMBER}$`);
+  const integer = UNITS.includes("i");
+  const positive = UNITS.includes("+");
+  const length = UNITS.includes("l");
+  const angle = UNITS.includes("a");
+  const time = UNITS.includes("t");
+  const percent = UNITS.includes("%");
+  const frame = UNITS.includes("f");
+  const empty = UNITS.includes("e");
+  const z = UNITS.includes("0");
+
   return function (x) {
-    if (!x || x === "0") return x;
-    const m = x.match?.(new RegExp(`^(${NUM})(${UNIT})$`));
+    if (positive && n.startsWith("-")) return;
+    const m = x.match(RX);
     if (!m) return;
-    let [, , n, frac, unit] = m;
-    return frac ? (Number(n) / Number(frac)) + unit :
-      x;
+    let [, n, l, a, t, p, f] = m;
+    if (integer && !n.isInteger()) return;
+    if (angle && a) return x;
+    if (length && l) return x;
+    if (time && t) return x;
+    if (percent && p) return x;
+    if (frame && f) return x;
+    if (empty && !l && !a && !t && !p && !f) return x;
   }
 }
-export const isLength = isNumberUnit(LENGTHS_PER);
-export const isAngle = isNumberUnit(ANGLES);
-const innerTime = isNumberUnit(TIMES);
-export const isTime = x => x == "0" ? "0s" : innerTime(x);
 
+export const isLength = isNumberUnit("l%0"); //todo rename to lengthPercent
+export const isAngle = isNumberUnit("a0");
+export const isTime = isNumberUnit("t");
 
 const tokenize = (_ => {
   const QUOTE = /([`'"])(\\.|(?!\2).)*?\2/.source;
-  const NUMBER = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${TYPES.LENGTHS})|(${TYPES.ANGLES})|(${TYPES.TIMES})|(${TYPES.PERCENT})|(${TYPES.FR}))?`;
   const VAR = /--[a-zA-Z][a-zA-Z0-9_]*/.source;
   const WORD = /[._a-zA-Z][._%a-zA-Z0-9+<-]*/.source;
   const COLOR_WORD = /#(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch)/.source;

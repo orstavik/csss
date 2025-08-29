@@ -1,7 +1,7 @@
 import { isTime } from "./func.js";
 
 function transition(timing, dur, ...props) {
-  const delay = isTime(props[0]);
+  const delay = (props.length && isTime(props[0]) || props[0] == "0" && "0s");
   if (delay) props.shift();
   const tail = dur + (delay ? ` ${delay} ` : " ") + timing;
   if (!props.length) props = ["all"];
