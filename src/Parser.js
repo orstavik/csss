@@ -219,24 +219,24 @@ class MathExpression extends Expression {
 
     //4. --var and ??, in reverse
     args = reduceTriplets(args, (a, b, c) => {
-      if (b.kind == "COALESCE" && a.kind == "VAR")
+      if (b.text == "??" && a.kind == "VAR")
         return `var(${a.text}, ${c?.text || c})`;
-      if (b.kind == "COALESCE")
+      if (b.text == "??")
         throw new SyntaxError("?? must have a variable on the left hand side.");
       if (b.kind === "VAR")
         return `var(${b.text})`;
     });
 
     //5. implied default first argument
-    if (args[0].kind == "PLUSMINUS" || args[0].kind == "MULTIDIVIDE")
+    if (args[0].kind == "OPERATOR")
       args.unshift(defaultType);
 
     //5. */
     args = reduceTriplets(args, (a, b, c) =>
-      b.kind === "MULTIDIVIDE" && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
+      (b.text == "*" || b.text == "/") && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
     //6. +-
     args = reduceTriplets(args, (a, b, c) =>
-      b.kind === "PLUSMINUS" && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
+      (b.text == "+" || b.text == "-") && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
     //7. toString
     if (args.length === 1)
       return args[0]?.text ?? args[0];
@@ -306,10 +306,10 @@ function diveDeep(tokens) {
       while (tokens[0]?.kind === "COLOR")
         colors.push(tokens.shift());
       a = new Expression("_hash", colors); //ColorExpression??
-    } else if (a.kind === "NUMBER" || a.kind === "VAR" || a.kind === "PLUSMINUS" || a.kind === "MULTIDIVIDE" || a.kind === "COALESCE") {
+    } else if (a.kind === "NUMBER" || a.kind === "VAR" || a.kind === "OPERATOR") {
       const math = [a];
       while (true) {
-        if (tokens[0]?.kind === "NUMBER" || tokens[0]?.kind === "VAR" || tokens[0]?.kind === "PLUSMINUS" || tokens[0]?.kind === "MULTIDIVIDE" || tokens[0]?.kind === "COALESCE") {
+        if (tokens[0]?.kind === "NUMBER" || tokens[0]?.kind === "VAR" || tokens[0]?.kind === "OPERATOR") {
           math.push(tokens.shift());
         } else if (tokens[0]?.text === "(") {
           tokens.shift();
@@ -584,9 +584,7 @@ const tokenize = (_ => {
   const WORD = /[._a-zA-Z][._%a-zA-Z0-9+<-]*/.source;
   const COLOR_WORD = /#(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch)/.source;
   const COLOR = `#(?:(a)(\\d\\d)|([0-9a-fA-F]{6})([0-9a-fA-F]{2})?|([0-9a-fA-F]{3})([0-9a-fA-F])?|(${TYPES.COLOR_NAMES}|([a-zA-Z_]+|))(\\d\\d)?)`;
-  const COALESCE = /\?\?/.source;
-  const MULTIDIVIDE = /[*/]/.source;
-  const PLUSMINUS = /[+-]/.source;
+  const OPERATOR = /\?\?|\*\*|[*/+-]/.source;
   const CPP = /[,()]/.source;
 
   const TOKENS = new RegExp([
@@ -597,9 +595,7 @@ const tokenize = (_ => {
     WORD,
     COLOR_WORD,
     COLOR,
-    COALESCE,
-    MULTIDIVIDE,
-    PLUSMINUS,
+    OPERATOR,
     CPP,
     ".+"
   ].map(x => `(${x})`)
@@ -609,7 +605,7 @@ const tokenize = (_ => {
   return function tokenize(input) {
     const out = [];
     for (let m; (m = TOKENS.exec(input));) {
-      const [text, _, q, quote, ws, n, num, length, angle, time, percent, fr, vari, word, colorWord, c, c0, p0, c1, p1, c2, p2, c3, c4, p3, coalesce, multdiv, plusminus, cpp] = m;
+      const [text, _, q, quote, ws, n, num, length, angle, time, percent, fr, vari, word, colorWord, c, c0, p0, c1, p1, c2, p2, c3, c4, p3, op, cpp] = m;
       if (ws) continue;
       else if (num) {
         const type = length ? "length" : angle ? "angle" : time ? "time" : percent ? "percent" : fr ? "fr" : undefined;
@@ -630,9 +626,7 @@ const tokenize = (_ => {
       else if (vari) out.push({ text, kind: "VAR" });
       else if (word) out.push({ text, kind: "WORD" });
       else if (colorWord) out.push({ text, kind: "COLORWORD" });
-      else if (coalesce) out.push({ text, kind: "COALESCE" });
-      else if (multdiv) out.push({ text, kind: "MULTIDIVIDE" });
-      else if (plusminus) out.push({ text, kind: "PLUSMINUS" });
+      else if (op) out.push({ text, kind: "OPERATOR" });
       else if (cpp) out.push({ text, kind: "CPP" });
       else throw new SyntaxError(`Unknown token: ${text} in ${input}`);
     }
