@@ -81,7 +81,7 @@ export function parse(short) {
   const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
   short = short.match(/(.*?)\!*$/)[1];
   const { exp, media } = parseMediaQuery(short, MEDIA_WORDS);
-  let [sel, ...exprList] = exp?.split("$");
+  let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
   exprList = exprList.map(parseNestedExpression);
   exprList = exprList.map(s => s.interpret(SHORTS));
   exprList &&= clashOrStack(exprList);
