@@ -172,7 +172,6 @@ block.scope = {
   ...LAYOUT,
   ...OVERFLOWS,
   lineClamp,
-  clamp: lineClamp,
   gap: blockGap,
   g: blockGap,
 };

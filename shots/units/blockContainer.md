@@ -261,11 +261,11 @@
 }
 ```
 
-**csss:** $block(clamp(3))
+**csss:** $block(lineClamp(3))
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(clamp\(3\)\) {
+  .\$block\(lineClamp\(3\)\) {
     display: -webkit-box;
     word-spacing: unset;
     line-height: unset;
