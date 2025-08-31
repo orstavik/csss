@@ -306,10 +306,10 @@ function diveDeep(tokens) {
       while (tokens[0]?.kind === "COLOR")
         colors.push(tokens.shift());
       a = new Expression("_hash", colors); //ColorExpression??
-    } else if (a.kind === "NUMBER" || a.kind === "VAR" || a.kind === "PLUSMINUS" || a.kind === "MULTIDIVIDE" || a.kind === "COALESCE" || a.kind === "ARROW") {
+    } else if (a.kind === "NUMBER" || a.kind === "VAR" || a.kind === "PLUSMINUS" || a.kind === "MULTIDIVIDE" || a.kind === "COALESCE") {
       const math = [a];
       while (true) {
-        if (tokens[0]?.kind === "NUMBER" || tokens[0]?.kind === "VAR" || tokens[0]?.kind === "PLUSMINUS" || tokens[0]?.kind === "MULTIDIVIDE" || tokens[0]?.kind === "COALESCE" || tokens[0]?.kind === "ARROW") {
+        if (tokens[0]?.kind === "NUMBER" || tokens[0]?.kind === "VAR" || tokens[0]?.kind === "PLUSMINUS" || tokens[0]?.kind === "MULTIDIVIDE" || tokens[0]?.kind === "COALESCE") {
           math.push(tokens.shift());
         } else if (tokens[0]?.text === "(") {
           tokens.shift();
@@ -325,7 +325,7 @@ function diveDeep(tokens) {
 
     let b = tokens.shift();
     if (a.kind === "WORD" && b.text === "(") {
-        a = new Expression(a.text, diveDeep(tokens));
+      a = new Expression(a.text, diveDeep(tokens));
       b = tokens.shift();
     }
     if (b.text != ")" && b.text != ",")
@@ -609,12 +609,12 @@ const tokenize = (_ => {
   return function tokenize(input) {
     const out = [];
     for (let m; (m = TOKENS.exec(input));) {
-      const [text, _, q, quote, ws, n, num, length, angle, time, percent, fr, vari, word, colorWord, c, c0, p0, c1, p1, c2, p2, c3, c4, p3, coalesce, multdiv, plusminus, /*arrow,*/ cpp] = m;
+      const [text, _, q, quote, ws, n, num, length, angle, time, percent, fr, vari, word, colorWord, c, c0, p0, c1, p1, c2, p2, c3, c4, p3, coalesce, multdiv, plusminus, cpp] = m;
       if (ws) continue;
       else if (num) {
         const type = length ? "length" : angle ? "angle" : time ? "time" : percent ? "percent" : fr ? "fr" : undefined;
         const unit = length ?? angle ?? time ?? percent ?? undefined;
-        out.push({ text, kind: "NUMBER", pri: 0, num: Number(num), unit, type });
+        out.push({ text, kind: "NUMBER", num: Number(num), unit, type });
       }
       else if (c) {
         const percent =
@@ -624,16 +624,16 @@ const tokenize = (_ => {
                 p3 ? Number(p3) :
                   undefined;
         const c = c0 ? "transparent" : c1 ?? c2 ?? c3;
-        out.push({ text, kind: "COLOR", pri: 0, c, percent, primitive: c4 == null, hex: (c1 || c2) && text });
+        out.push({ text, kind: "COLOR", c, percent, primitive: c4 == null, hex: (c1 || c2) && text });
       }
-      else if (quote) out.push({ text, kind: "QUOTE", quote, pri: 0 });
-      else if (vari) out.push({ text, kind: "VAR", pri: 0 });
-      else if (word) out.push({ text, kind: "WORD", pri: 0 });
-      else if (colorWord) out.push({ text, kind: "COLORWORD", pri: 0 });
-      else if (coalesce) out.push({ text, kind: "COALESCE", pri: 1 });
-      else if (multdiv) out.push({ text, kind: "MULTIDIVIDE", pri: 2 });
-      else if (plusminus) out.push({ text, kind: "PLUSMINUS", pri: 3 });
-      else if (cpp) out.push({ text, kind: "CPP", pri: 6 });
+      else if (quote) out.push({ text, kind: "QUOTE", quote });
+      else if (vari) out.push({ text, kind: "VAR" });
+      else if (word) out.push({ text, kind: "WORD" });
+      else if (colorWord) out.push({ text, kind: "COLORWORD" });
+      else if (coalesce) out.push({ text, kind: "COALESCE" });
+      else if (multdiv) out.push({ text, kind: "MULTIDIVIDE" });
+      else if (plusminus) out.push({ text, kind: "PLUSMINUS" });
+      else if (cpp) out.push({ text, kind: "CPP" });
       else throw new SyntaxError(`Unknown token: ${text} in ${input}`);
     }
     return out;
