@@ -16,6 +16,7 @@ export function toRadiusFour(NAME, ...ar) {
   };
 }
 export function toLogicalFour(NAME, ...ar) {
+  ar = ar.map(a => a.text ?? a);
   return ar.length === 1 ? { [NAME]: ar[0] } :
     {
       [NAME + "Block"]: ar[2] != null && ar[2] != ar[0] ? ar[0] + " " + ar[2] : ar[0],
@@ -175,7 +176,9 @@ export function isColor(x) {
 //no shorts before this point
 const NativeCssProperties = Object.fromEntries(
   Object.getOwnPropertyNames(document.createElement('div').style).map(camel => {
-    const res = (...args) => ({ [camel]: args.join(" ") });
+    //todo Here we need to get the inner scope to work for different functions.
+    //todo but we can separate on different categories such as length and % and degree etc.
+    const res = (...args) => ({ [camel]: args.map(a => a.text ?? a).join(" ") });
     Object.defineProperty(res, "name", { value: camel });
     res.scope = {};
     const name = camel.replace(/([A-Z])/g, "-$1").toLowerCase();

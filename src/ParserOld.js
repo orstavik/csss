@@ -81,14 +81,9 @@ export function parse(short) {
   const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
   short = short.match(/(.*?)\!*$/)[1];
   const { exp, media } = parseMediaQuery(short, MEDIA_WORDS);
-  let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
+  let [sel, ...exprList] = exp?.split("$");
   exprList = exprList.map(parseNestedExpression);
-  exprList = exprList.map(exp => {
-    const cb = SHORTS[exp.name];
-    if (!cb) throw new ReferenceError(exp.name);
-    return !(cb instanceof Function) ? cb :
-      cb({ todo: "here we need math and var and calc and env" }, exp.args);
-  });
+  exprList = exprList.map(s => s.interpret(SHORTS));
   exprList &&= clashOrStack(exprList);
   let { selector, item } = parseSelectorPipe(sel, clazz);
   const layer = (item ? "items" : "container") + (short.match(/^(\$|\|\$)/) ? "Default" : "");
@@ -107,31 +102,32 @@ export function parse(short) {
 }
 
 class Expression {
+
   constructor(name, args) {
-    this.name = name;
     this.args = args;
+    this.name = name;
   }
-  // interpret(scope) {
-  //   // const cb = scope?.[this.name];
-  //   if (this.name in scope)
-  //     return scope[this.name]?.(scope, ...args);
-  //   throw new ReferenceError(this.name);
-  //   // if (!(cb instanceof Function))
-  //   //   return cb;
-  //   // try {
-  //   //   const args = this.args.map(x =>
-  //   //     x instanceof Expression ? x.interpret(cb.scope) :
-  //   //       x === "." ? "unset" : //todo move this into the parser??
-  //   //         cb.scope?.[x] instanceof Function ? cb.scope[x].call(cb.scope) :
-  //   //           cb.scope?.[x] ? cb.scope[x] :
-  //   //             x);
-  //   //   return cb.call(scope, ...args);
-  //   // } catch (e) {
-  //   //   if (e instanceof ReferenceError)
-  //   //     e.message = this.name + "." + e.message;
-  //   //   throw e;
-  //   // }
-  // }
+
+  interpret(scope) {
+    const cb = scope?.[this.name];
+    if (!cb)
+      throw new ReferenceError(this.name);
+    if (!(cb instanceof Function))
+      return cb;
+    try {
+      const args = this.args.map(x =>
+        x instanceof Expression ? x.interpret(cb.scope) :
+          x === "." ? "unset" : //todo move this into the parser??
+            cb.scope?.[x] instanceof Function ? cb.scope[x].call(cb.scope) :
+              cb.scope?.[x] ? cb.scope[x] :
+                x);
+      return cb.call(scope, ...args);
+    } catch (e) {
+      if (e instanceof ReferenceError)
+        e.message = this.name + "." + e.message;
+      throw e;
+    }
+  }
 }
 
 function reduceTriplets(arr, cb) {
@@ -223,24 +219,24 @@ class MathExpression extends Expression {
 
     //4. --var and ??, in reverse
     args = reduceTriplets(args, (a, b, c) => {
-      if (b.text == "??" && a.kind == "VAR")
+      if (b.kind == "COALESCE" && a.kind == "VAR")
         return `var(${a.text}, ${c?.text || c})`;
-      if (b.text == "??")
+      if (b.kind == "COALESCE")
         throw new SyntaxError("?? must have a variable on the left hand side.");
       if (b.kind === "VAR")
         return `var(${b.text})`;
     });
 
     //5. implied default first argument
-    if (args[0].kind == "OPERATOR")
+    if (args[0].kind == "PLUSMINUS" || args[0].kind == "MULTIDIVIDE")
       args.unshift(defaultType);
 
     //5. */
     args = reduceTriplets(args, (a, b, c) =>
-      (b.text == "*" || b.text == "/") && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
+      b.kind === "MULTIDIVIDE" && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
     //6. +-
     args = reduceTriplets(args, (a, b, c) =>
-      (b.text == "+" || b.text == "-") && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
+      b.kind === "PLUSMINUS" && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
     //7. toString
     if (args.length === 1)
       return args[0]?.text ?? args[0];
@@ -310,14 +306,14 @@ function diveDeep(tokens) {
       while (tokens[0]?.kind === "COLOR")
         colors.push(tokens.shift());
       a = new Expression("_hash", colors); //ColorExpression??
-    } else if (a.kind === "NUMBER" || a.kind === "VAR" || a.kind === "OPERATOR") {
+    } else if (a.kind === "NUMBER" || a.kind === "VAR" || a.kind === "PLUSMINUS" || a.kind === "MULTIDIVIDE" || a.kind === "COALESCE" || a.kind === "ARROW") {
       const math = [a];
       while (true) {
-        if (tokens[0]?.kind === "NUMBER" || tokens[0]?.kind === "VAR" || tokens[0]?.kind === "OPERATOR") {
+        if (tokens[0]?.kind === "NUMBER" || tokens[0]?.kind === "VAR" || tokens[0]?.kind === "PLUSMINUS" || tokens[0]?.kind === "MULTIDIVIDE" || tokens[0]?.kind === "COALESCE" || tokens[0]?.kind === "ARROW") {
           math.push(tokens.shift());
         } else if (tokens[0]?.text === "(") {
           tokens.shift();
-          const x = new MathExpression(goDeep(tokens)); //todo recursive
+          const x = new MathExpression(diveDeep(tokens)); //todo recursive
           if (x.args.length != 1 && !(x.args[0] instanceof Expression && x.args[0].name === "_math"))
             throw new SyntaxError("Parenthesis in math must return exactly one math expression.");
           math.push(x);
@@ -329,7 +325,7 @@ function diveDeep(tokens) {
 
     let b = tokens.shift();
     if (a.kind === "WORD" && b.text === "(") {
-      a = new Expression(a.text, goDeep(tokens));
+        a = new Expression(a.text, diveDeep(tokens));
       b = tokens.shift();
     }
     if (b.text != ")" && b.text != ",")
@@ -341,84 +337,23 @@ function diveDeep(tokens) {
   throw "missing ')'";
 }
 
-function goRightComma(tokens, divider) {
-  const args = [];
-  if (tokens[0] == ")" && tokens.shift())
-    return args;
-  while (tokens.length) {
-    const a = goRightOperator(tokens)
-    args.push(a);
-    if (tokens[0].text === ")" && tokens.shift())
-      return args;
-    if (tokens[0].text === divider && tokens.shift())
-      continue;
-    throw new SyntaxError(`Expected ${[divider, ")"].filter(Boolean).join(" or ")}, got: ${b.text}`);
-  }
-  throw new SyntaxError("missing ')'");
-}
-
-function goRightOperator(tokens) {
-  let a = goDeep(tokens);
-  while (tokens.length && tokens[0].kind !== "SYN") {
-    if (!(a instanceof Expression || a.kind === "NUMBER" || a.kind === "VAR"))
-      throw new SyntaxError(`can't do ${a}-><-${tokens[0].text}`);
-    let b = goDeep(tokens);
-    if (b.kind === "NUMBER" && (b.text[0] == "-" || b.text[0] == "+")) {
-      const sign = b.text[0];
-      const right = { ...b, text: b.text.slice(1) };
-      if (sign == "-") right.num *= -1;
-      b = new Expression(sign, [undefined, right]);
-    }
-    if (b instanceof Expression && b.left === undefined)
-      a = b.prepend(a);
-    else
-      throw new SyntaxError("Expected , or ) or math operator expr, got: " + b);
-  }
-  return a;
-}
-
-
-function goDeep(tokens) {
-  if (tokens[0].text === "(")
-    tokens.unshift({ kind: "WORD", text: "", math: true });
-  if (tokens[0].kind === "SYN")
-    throw new SyntaxError(`Expected expression, got: ${tokens[0].text}`);
-
-  if (tokens[0].kind === "OP")
-    tokens.unshift({ kind: "NUMBER", text: "" })
-  if (tokens[1].kind === "OP")
-    return new Expression(tokens.shift().text, [tokens.shift(), goRightOperator(tokens)]);
-
-  const colors = [];
-  while (tokens[0].kind === "COLOR")
-    colors.push(tokens.shift());
-  if (colors.length)
-    return new Expression("_hash", colors);
-
-  if (tokens[1].text === "(" && (tokens[0].kind === "NUMBER" || tokens[0].kind === "VAR"))
-    return new Expression("*", [tokens.shift(), ...goRightComma(tokens, "")]);
-  if (tokens[1].text === "(" && tokens[0].kind === "WORD")
-    return new Expression(tokens.shift().text, (tokens.shift(), goRightComma(tokens, ",")));
-
-  return tokens.shift();
-}
-
-function parseNestedExpression(shortExp) {
-  const newTokens = tokenize(shortExp);
-  try {
-    debugger
-    const short = goDeep(newTokens);
-    if (newTokens.length)
-      throw new SyntaxError("too many tokens.");
-    if (!(short instanceof Expression))
-      throw new SyntaxError("Short is not a valid expression.");
-    return short;
-  } catch (e) {
-    e.message += `\n${shortExp}\n${" ".repeat(shortExp.length - newTokens.reduce(((acc, { text }) => acc + text.length), 0))}^`;
-    console.error(e);
-    debugger
-    throw e;
-  }
+//todo this is the function we are working on
+function parseNestedExpression(short) {
+  const newTokens = tokenize(short);
+  if (newTokens[0].kind !== "WORD")
+    throw new SyntaxError("Short must start with a name of a short function: " + newTokens[0].text);
+  if (newTokens.length === 1)
+    return new Expression(newTokens[0].text, []);
+  if (newTokens[1].text !== "(")
+    throw new SyntaxError("missing start parenthesis: " + short);
+  if (newTokens.at(-1).text !== ")")
+    throw new SyntaxError("missing end parenthesis: " + short);
+  const name = newTokens[0].text;
+  const tokens = newTokens.slice(2);
+  const args = diveDeep(tokens);
+  if (tokens.length)
+    throw new SyntaxError("too many tokens after end parenthesis: " + tokens.map(t => t.text).join(""));
+  return new Expression(name, args);
 }
 
 //todo we don't support nested :not(:has(...))
@@ -649,7 +584,9 @@ const tokenize = (_ => {
   const WORD = /[._a-zA-Z][._%a-zA-Z0-9+<-]*/.source;
   const COLOR_WORD = /#(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch)/.source;
   const COLOR = `#(?:(a)(\\d\\d)|([0-9a-fA-F]{6})([0-9a-fA-F]{2})?|([0-9a-fA-F]{3})([0-9a-fA-F])?|(${TYPES.COLOR_NAMES}|([a-zA-Z_]+|))(\\d\\d)?)`;
-  const OPERATOR = /\?\?|\*\*|[*/+-]/.source;
+  const COALESCE = /\?\?/.source;
+  const MULTIDIVIDE = /[*/]/.source;
+  const PLUSMINUS = /[+-]/.source;
   const CPP = /[,()]/.source;
 
   const TOKENS = new RegExp([
@@ -660,7 +597,9 @@ const tokenize = (_ => {
     WORD,
     COLOR_WORD,
     COLOR,
-    OPERATOR,
+    COALESCE,
+    MULTIDIVIDE,
+    PLUSMINUS,
     CPP,
     ".+"
   ].map(x => `(${x})`)
@@ -670,12 +609,12 @@ const tokenize = (_ => {
   return function tokenize(input) {
     const out = [];
     for (let m; (m = TOKENS.exec(input));) {
-      const [text, _, q, quote, ws, n, num, length, angle, time, percent, fr, vari, word, colorWord, c, c0, p0, c1, p1, c2, p2, c3, c4, p3, op, cpp] = m;
+      const [text, _, q, quote, ws, n, num, length, angle, time, percent, fr, vari, word, colorWord, c, c0, p0, c1, p1, c2, p2, c3, c4, p3, coalesce, multdiv, plusminus, /*arrow,*/ cpp] = m;
       if (ws) continue;
       else if (num) {
         const type = length ? "length" : angle ? "angle" : time ? "time" : percent ? "percent" : fr ? "fr" : undefined;
         const unit = length ?? angle ?? time ?? percent ?? undefined;
-        out.push({ text, kind: "NUMBER", num: Number(num), unit, type });
+        out.push({ text, kind: "NUMBER", pri: 0, num: Number(num), unit, type });
       }
       else if (c) {
         const percent =
@@ -685,14 +624,16 @@ const tokenize = (_ => {
                 p3 ? Number(p3) :
                   undefined;
         const c = c0 ? "transparent" : c1 ?? c2 ?? c3;
-        out.push({ text, kind: "COLOR", c, percent, primitive: c4 == null, hex: (c1 || c2) && text });
+        out.push({ text, kind: "COLOR", pri: 0, c, percent, primitive: c4 == null, hex: (c1 || c2) && text });
       }
-      else if (quote) out.push({ text, kind: "QUOTE", quote });
-      else if (vari) out.push({ text, kind: "VAR" });
-      else if (word) out.push({ text, kind: "WORD" });
-      else if (colorWord) out.push({ text, kind: "COLORWORD" });
-      else if (op) out.push({ text, kind: "OPERATOR" });
-      else if (cpp) out.push({ text, kind: "SYN" });
+      else if (quote) out.push({ text, kind: "QUOTE", quote, pri: 0 });
+      else if (vari) out.push({ text, kind: "VAR", pri: 0 });
+      else if (word) out.push({ text, kind: "WORD", pri: 0 });
+      else if (colorWord) out.push({ text, kind: "COLORWORD", pri: 0 });
+      else if (coalesce) out.push({ text, kind: "COALESCE", pri: 1 });
+      else if (multdiv) out.push({ text, kind: "MULTIDIVIDE", pri: 2 });
+      else if (plusminus) out.push({ text, kind: "PLUSMINUS", pri: 3 });
+      else if (cpp) out.push({ text, kind: "CPP", pri: 6 });
       else throw new SyntaxError(`Unknown token: ${text} in ${input}`);
     }
     return out;

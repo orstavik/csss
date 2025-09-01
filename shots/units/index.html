@@ -6,6 +6,12 @@
   // const tester = document.head.lastElementChild.sheet;
   // function normalizeCss(ruleTxt) { return tester.cssRules[tester.insertRule(ruleTxt, 0)].cssText; }
 
+  // debugger
+  // // CSSS.parse("$w(2)"); //ok
+  // CSSS.parse("$w(2-4vw)");
+  // debugger
+  // CSSS.parse("$w((2)-4vw)");
+  // CSSS.parse("$w(2px+(3px*2)-4vw)");
   function test({ csss, css }) {
     const key = csss.value, b = css.value;
     const actual = CSSS.parse(key);

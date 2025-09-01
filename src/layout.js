@@ -160,29 +160,48 @@ function toGap(...args) {
 }
 const GAP = { gap: toGap, g: toGap };
 
+//todo rename this to space() and then do block, inline as the two options.
+//todo the question is if this will be recognized by the llm..
+//they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
+//so it should be with layout.
 function blockGap(wordSpacing, lineHeight) {
-  return { wordSpacing, lineHeight };
+  return { wordSpacing: wordSpacing.text, lineHeight: lineHeight.text };
 }
-
-function block(...args) {
+function block(innerScope, args) {
+  const scope = {
+    ...LAYOUT,
+    ...OVERFLOWS,
+    // lineClamp,
+    gap: blockGap,
+    // g: blockGap,
+  };
+  args = args.map(a =>
+    scope[a.name]?.(...a.args) ??
+    scope[a.text] ??
+    innerScope[a.name]?.(...a.args) ??
+    innerScope[a.text] ??
+    a);
   checkReferenceError(args);
   return defaultLayout("block", ...args);
 }
-block.scope = {
-  ...LAYOUT,
-  ...OVERFLOWS,
-  lineClamp,
-  gap: blockGap,
-  g: blockGap,
-};
-function _block(...args) {
+
+function _block(innerScope, args) {
+  const scope = {
+    ..._LAYOUT,
+    floatStart: { float: "inline-start" },
+    floatEnd: { float: "inline-end" },
+  };
+  debugger
+  args = args.map(a =>
+    scope[a.name]?.(...a.args) ??
+    scope[a.text] ??
+    innerScope[a.name]?.(...a.args) ??
+    innerScope[a.text] ??
+    a);
   checkReferenceError(args);
   return Object.assign({}, ...args);
 }
 _block.scope = {
-  ..._LAYOUT,
-  floatStart: { float: "inline-start" },
-  floatEnd: { float: "inline-end" },
 };
 
 function grid(...args) {
