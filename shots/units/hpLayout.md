@@ -827,21 +827,21 @@
 }
 ```
 
-**csss:** |$_block(snap-end)
+**csss:** |$blockItem(snap-end)
 **css:**
 ```css
 @layer itemsDefault {
-  .\|\$_block\(snap-end\) > * {
+  .\|\$blockItem\(snap-end\) > * {
     scroll-snap-align: end;
   }
 }
 ```
 
-**csss:** |$_block(snap-center-start)
+**csss:** |$blockItem(snap-center-start)
 **css:**
 ```css
 @layer itemsDefault {
-  .\|\$_block\(snap-center-start\) > * {
+  .\|\$blockItem\(snap-center-start\) > * {
     scroll-snap-align: center start;
   }
 }
@@ -1223,81 +1223,81 @@
 }
 ```
 
-**csss:** |:nth-child(1)$_flex(grow(1))
+**csss:** |:nth-child(1)$flexItem(grow(1))
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(1\)\$_flex\(grow\(1\)\)>:where(:nth-child(1)) {
+  .\|\:nth-child\(1\)\$flexItem\(grow\(1\)\)>:where(:nth-child(1)) {
     flex-grow: 1;
   }
 }
 ```
 
-**csss:** |:nth-child(2)$_flex(grow(2))
+**csss:** |:nth-child(2)$flexItem(grow(2))
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(2\)\$_flex\(grow\(2\)\)>:where(:nth-child(2)) {
+  .\|\:nth-child\(2\)\$flexItem\(grow\(2\)\)>:where(:nth-child(2)) {
     flex-grow: 2;
   }
 }
 ```
 
-**csss:** |:nth-child(3)$_flex(shrink(0.5))
+**csss:** |:nth-child(3)$flexItem(shrink(0.5))
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(3\)\$_flex\(shrink\(0\.5\)\)>:where(:nth-child(3)) {
+  .\|\:nth-child\(3\)\$flexItem\(shrink\(0\.5\)\)>:where(:nth-child(3)) {
     flex-shrink: 0.5;
   }
 }
 ```
 
-**csss:** |:nth-child(4)$_flex(basis(100px))
+**csss:** |:nth-child(4)$flexItem(basis(100px))
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(4\)\$_flex\(basis\(100px\)\)>:where(:nth-child(4)) {
+  .\|\:nth-child\(4\)\$flexItem\(basis\(100px\)\)>:where(:nth-child(4)) {
     flex-basis: 100px;
   }
 }
 ```
 
-**csss:** |:nth-child(1)$_grid(column(1,3))
+**csss:** |:nth-child(1)$gridItem(column(1,3))
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(1\)\$_grid\(column\(1\,3\)\)>:where(:nth-child(1)) {
+  .\|\:nth-child\(1\)\$gridItem\(column\(1\,3\)\)>:where(:nth-child(1)) {
     grid-column: 1 / 3;
   }
 }
 ```
 
-**csss:** |:nth-child(2)$_grid(row(4,4))
+**csss:** |:nth-child(2)$gridItem(row(4,4))
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(2\)\$_grid\(row\(4\,4\)\)>:where(:nth-child(2)) {
+  .\|\:nth-child\(2\)\$gridItem\(row\(4\,4\)\)>:where(:nth-child(2)) {
     grid-row: 4 / 4;
   }
 }
 ```
 
-**csss:** |:nth-child(3)$_grid(column(1,1))
+**csss:** |:nth-child(3)$gridItem(column(1,1))
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(3\)\$_grid\(column\(1\,1\)\)>:where(:nth-child(3)) {
+  .\|\:nth-child\(3\)\$gridItem\(column\(1\,1\)\)>:where(:nth-child(3)) {
     grid-column: 1 / 1;
   }
 }
 ```
 
-**csss:** |:nth-child(4)$_grid(row(1,2),column(2,3))
+**csss:** |:nth-child(4)$gridItem(row(1,2),column(2,3))
 **css:**
 ```css
 @layer items {
-  .\|\:nth-child\(4\)\$_grid\(row\(1\,2\)\,column\(2\,3\)\)>:where(:nth-child(4)) {
+  .\|\:nth-child\(4\)\$gridItem\(row\(1\,2\)\,column\(2\,3\)\)>:where(:nth-child(4)) {
     grid-area: 1 / 2 / 2 / 3;
   }
 }

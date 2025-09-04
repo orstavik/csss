@@ -296,11 +296,11 @@
   }
 }
 ```
-**csss:** |$_flex(margin(,0.1px,,20%))
+**csss:** |$flexItem(margin(,0.1px,,20%))
 **css:**
 ```css
 @layer itemsDefault {
-  .\|\$_flex\(margin\(\,0\.1px\,\,20\%\)\)>* {
+  .\|\$flexItem\(margin\(\,0\.1px\,\,20\%\)\)>* {
     margin-inline: 0.1px 20%;
   }
 }
@@ -323,11 +323,11 @@
   }
 }
 ```
-**csss:** |*$_flex(margin(10px))
+**csss:** |*$flexItem(margin(10px))
 **css:**
 ```css
 @layer items {
-  .\|\*\$_flex\(margin\(10px\)\)>* {
+  .\|\*\$flexItem\(margin\(10px\)\)>* {
     margin: 10px;
   }
 }

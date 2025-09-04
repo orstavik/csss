@@ -1,4 +1,37 @@
-import { toLogicalFour, default as AllFunctions } from "./func.js";
+import { interpretRepeat, interpretSpan, interpretBasic, toLogicalFour, default as AllFunctions } from "./func.js";
+
+function toSize(NAME, args) {
+  if (args.length != 1 && args.length != 3)
+    throw new SyntaxError(`$${NAME}() accepts only 1 or 3 arguments, got ${args.length}.`);
+  args = args.map(a =>
+    a.text == "_" ? "unset" :
+      interpretBasic(a).text
+  );
+  if (args.length === 1)
+    return { [NAME]: args[0] };
+  const NAME2 = NAME[0].toUpperCase() + NAME.slice(1);
+  return {
+    ["min" + NAME2]: args[0],
+    [NAME]: args[1],
+    ["max" + NAME2]: args[2]
+  };
+}
+
+function size(args) {
+  if (args.length == 1)
+    return toSize("inlineSize", args);
+  if (args.length == 2)
+    return {
+      ...toSize("inlineSize", [args[0]]),
+      ...toSize("blockSize", [args[1]])
+    };
+  if (args.length == 6)
+    return {
+      ...toSize("inlineSize", args.slice(0, 3)),
+      ...toSize("blockSize", args.slice(3))
+    };
+  throw new SyntaxError(`$size() accepts only 1, 2 or 4 arguments, got ${args.length}.`);
+}
 
 //todo turn this into memory thing. same with O2
 const ALIGNMENTS = (_ => {
@@ -81,8 +114,18 @@ const OVERFLOWS = (_ => {
   return res;
 })();
 
+function checkUndefined(funcName, argsIn, argsOut) {
+  for (let i = 0; i < argsIn.length; i++)
+    if (argsOut[i] === undefined)
+      throw new ReferenceError(`$${funcName}() cannot process ${argsIn[i].name}.`);
+}
+
+//todo rename this to container() and then do block, grid, flex as the two options.
+//todo the question is if this will be recognized by the llm..
+//they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
+//so it should be with layout.
 //todo rename the text block layout unit to $page
-function defaultLayout(display, ...args) {
+function defaultContainer(obj, argsIn, argsOut) {
   const containerDefaults = {
     wordSpacing: "unset",
     lineHeight: "unset",
@@ -91,27 +134,19 @@ function defaultLayout(display, ...args) {
     textAlign: "unset",
     textIndent: "unset",
   };
-  return Object.assign({ display }, containerDefaults, ...args);
-}
-function checkReferenceError(args) {
-  for (let a of args)
-    if (!(a instanceof Object))
-      throw new ReferenceError(a);
+  checkUndefined(obj.display, argsIn, argsOut);
+  return Object.assign(obj, containerDefaults, ...argsOut);
 }
 
-function lineClamp(lines, ...args) {
-  return Object.assign(block(...args), {
-    display: "-webkit-box",
-    WebkitLineClamp: lines,
-    WebkitBoxOrient: "vertical",
-    overflowBlock: "hidden"
-  });
+function defaultItem(name, argsIn, argsOut) {
+  checkUndefined(name, argsIn, argsOut);
+  return Object.assign({}, ...argsOut);
 }
 
 const LAYOUT = {
   padding: toLogicalFour.bind(null, "padding"),
   scrollPadding: toLogicalFour.bind(null, "scroll-padding"),
-  textAlign: AllFunctions.textAlign,
+  ...ALIGNMENTS.textAlign,
   shy: { hyphens: "manual" },
   hyphens: { hyphens: "auto" },
   breakWord: { overflowWrap: "break-word" },
@@ -125,7 +160,6 @@ const LAYOUT = {
   breakAll: { wordBreak: "break-all" },
   keepAll: { wordBreak: "keep-all" },
   snapStop: { scrollSnapStop: "always" },
-  ...ALIGNMENTS.textAlign,
 };
 
 const _LAYOUT = {
@@ -133,10 +167,13 @@ const _LAYOUT = {
   scrollMargin: toLogicalFour.bind(null, "scroll-margin"),
   textIndent: AllFunctions.textIndent,
   indent: AllFunctions.textIndent,
-  w: AllFunctions.width,
-  h: AllFunctions.height,
-  width: AllFunctions.width,
-  height: AllFunctions.height,
+  inlineSize: toSize.bind(null, "inlineSize"),
+  blockSize: toSize.bind(null, "blockSize"),
+  size,
+  // w: AllFunctions.width,
+  // h: AllFunctions.height,
+  // width: AllFunctions.width,
+  // height: AllFunctions.height,
   snapStart: { scrollSnapAlign: "start" },
   snapStartCenter: { scrollSnapAlign: "start center" },
   snapStartEnd: { scrollSnapAlign: "start end" },
@@ -150,81 +187,77 @@ const _LAYOUT = {
   // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
 
-function toGap(...args) {
+function gap(args) {
   if (!args.length || args.length > 2)
     throw new SyntaxError("gap only accepts 1 or 2 arguments");
-  if (args.length == 1 || args.length == 2 && args[0] == args[1])
+  args = args.map(interpretBasic).map(a => a.text);
+  if (args.length == 1 || args[0] == args[1])
     return { gap: args[0] };
   args = args.map(a => a == "unset" ? "normal" : a);
   return { gap: args[0] + " " + args[1] };
 }
-const GAP = { gap: toGap, g: toGap };
 
 //todo rename this to space() and then do block, inline as the two options.
 //todo the question is if this will be recognized by the llm..
 //they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
 //so it should be with layout.
-function blockGap(wordSpacing, lineHeight) {
-  return { wordSpacing: wordSpacing.text, lineHeight: lineHeight.text };
+function blockGap(args) {
+  const [wordSpacing, lineHeight] = args.map(interpretBasic).map(a => a.text);
+  return { wordSpacing, lineHeight };
 }
-function block(innerScope, args) {
-  const scope = {
-    ...LAYOUT,
-    ...OVERFLOWS,
-    // lineClamp,
-    gap: blockGap,
-    // g: blockGap,
-  };
-  args = args.map(a =>
-    scope[a.name]?.(...a.args) ??
-    scope[a.text] ??
-    innerScope[a.name]?.(...a.args) ??
-    innerScope[a.text] ??
-    a);
-  checkReferenceError(args);
-  return defaultLayout("block", ...args);
-}
-
-function _block(innerScope, args) {
-  const scope = {
-    ..._LAYOUT,
-    floatStart: { float: "inline-start" },
-    floatEnd: { float: "inline-end" },
-  };
-  debugger
-  args = args.map(a =>
-    scope[a.name]?.(...a.args) ??
-    scope[a.text] ??
-    innerScope[a.name]?.(...a.args) ??
-    innerScope[a.text] ??
-    a);
-  checkReferenceError(args);
-  return Object.assign({}, ...args);
-}
-_block.scope = {
+const BLOCK = {
+  ...LAYOUT,
+  ...OVERFLOWS,
+  gap: blockGap,
+};
+const BlockItem = {
+  ..._LAYOUT,
+  floatStart: { float: "inline-start" },
+  floatEnd: { float: "inline-end" },
 };
 
-function grid(...args) {
-  checkReferenceError(args);
-  return defaultLayout("grid", { placeItems: "unset", placeContent: "unset" }, ...args);
+function block(args) {
+  const args2 = args.map(a => BLOCK[a.name]?.(a.args) ?? BLOCK[a.text]);
+  return defaultContainer({ display: "block" }, args, args2);
 }
-const nativeGrid = Object.fromEntries(Object.entries(AllFunctions).filter(([k]) => k.match(/^grid[A-Z]/)));
-grid.scope = {
+
+function blockItem(argsIn) {
+  const argsOut = argsIn.map(a => BlockItem[a.name]?.(a.args) ?? BlockItem[a.text]);
+  return defaultItem("blockItem", argsIn, argsOut);
+}
+
+function lineClamp([lines, ...args]) {
+  lines = interpretBasic(lines);
+  if (lines.type != "number")
+    throw new SyntaxError(`$lineClamp() first argument must be a simple number, got ${lines}.`);
+  return Object.assign(block(args), {
+    display: "-webkit-box",
+    WebkitLineClamp: lines.num,
+    WebkitBoxOrient: "vertical",
+    overflowBlock: "hidden"
+  });
+}
+
+const GRID = {
   ...OVERFLOWS,
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.placeItems,
-  ...nativeGrid,
-  cols: nativeGrid.gridTemplateColumns,
-  columns: nativeGrid.gridTemplateColumns,
-  rows: nativeGrid.gridTemplateRows,
-  areas: nativeGrid.gridTemplateAreas,
+  cols: args => ({ gridTemplateColumns: args.map(a => interpretRepeat(a) ?? interpretBasic(a)).map(a => a.text).join(" ") }),
+  columns: args => ({ gridTemplateColumns: args.map(a => interpretRepeat(a) ?? interpretBasic(a)).map(a => a.text).join(" ") }),
+  rows: args => ({ gridTemplateRows: args.map(a => interpretRepeat(a) ?? interpretBasic(a)).map(a => a.text).join(" ") }),
+  areas: args => ({ gridTemplateAreas: args.map(a => interpretRepeat(a) ?? interpretBasic(a)).map(a => a.text).join(" ") }),
   ...LAYOUT,
-  ...GAP,
+  gap,
   //todo test this!!
   column: { gridAutoFlow: "column" },
   dense: { gridAutoFlow: "dense row" },
   denseColumn: { gridAutoFlow: "dense column" },
   denseRow: { gridAutoFlow: "dense row" },
+};
+
+function grid(argsIn) {
+  const argsOut = argsIn.map(a => GRID[a.name]?.(a.args) ?? GRID[a.text]);
+  return defaultContainer({ display: "grid", placeItems: "unset", placeContent: "unset" }, argsIn, argsOut);
 }
 
 //       1  2345   6789
@@ -239,31 +272,27 @@ grid.scope = {
 
 // $grid(col(1,4))
 // $grid(col_1_4)
-const column = (start, end) => ({ gridColumn: end ? `${start} / ${end}` : start });
-const row = (start, end) => ({ gridRow: end ? `${start} / ${end}` : start });
-const span = arg => `span ${arg}`;
-column.scope = { span };
-row.scope = { span };
+const column = args => {
+  const [start, end] = args.map(a => interpretSpan(a) ?? interpretBasic(a)).map(a => a.text);
+  return { gridColumn: end ? `${start} / ${end}` : start };
+};
+const row = args => {
+  const [start, end] = args.map(a => interpretSpan(a) ?? interpretBasic(a)).map(a => a.text);
+  return { gridRow: end ? `${start} / ${end}` : start };
+};
 
-function _grid(...args) {
-  checkReferenceError(args);
-  return Object.assign({}, ...args);
-}
-_grid.scope = {
+const GridItem = {
   ...ALIGNMENTS.placeSelf,
   ..._LAYOUT,
   column,
   row,
 };
-
-
-
-
-function flex(...args) {
-  checkReferenceError(args);
-  return defaultLayout("flex", { alignItems: "unset", placeContent: "unset" }, ...args);
+function gridItem(argsIn) {
+  const argsOut = argsIn.map(a => GridItem[a.name]?.(a.args) ?? GridItem[a.text]);
+  return defaultItem("gridItem", argsIn, argsOut);
 }
-flex.scope = {
+
+const FLEX = {
   column: { flexDirection: "column" },
   columnReverse: { flexDirection: "column-reverse" },
   rowReverse: { flexDirection: "row-reverse" },
@@ -275,43 +304,56 @@ flex.scope = {
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.alignItems,
   ...LAYOUT,
-  ...GAP
+  gap,
 };
-function _flex(...args) {
-  checkReferenceError(args);
-  return Object.assign({}, ...args);
-}
 
-_flex.scope = {
+function flex(argsIn) {
+  const argsOut = argsIn.map(a => FLEX[a.name]?.(a.args) ?? FLEX[a.text]);
+  return defaultContainer({ display: "flex", alignItems: "unset", placeContent: "unset" }, argsIn, argsOut);
+}
+const FlexItem = {
   ..._LAYOUT,
   ...ALIGNMENTS.alignSelf,
-  basis: a => ({ flexBasis: a }),
-  grow: a => ({ flexGrow: a }),
-  // g: a => ({ flexGrow: a }),
-  shrink: a => ({ flexShrink: a }),
-  // s: a => ({ flexShrink: a }),
-  order: a => ({ order: a }),
-  // o: a => ({ order: a }),
+  basis: args => ({ flexBasis: args.map(interpretBasic).map(a => a.text).join(" ") }),
+  grow: args => ({ flexGrow: args.map(interpretBasic).map(a => a.text).join(" ") }),
+  shrink: args => ({ flexShrink: args.map(interpretBasic).map(a => a.text).join(" ") }),
+  order: args => ({ order: args.map(interpretBasic).map(a => a.text).join(" ") }),
   //todo safe
 };
 
-const startsWithGridUndefined = Object.fromEntries(Object.entries(AllFunctions).filter(([k]) => k.match(/^grid[A-Z]/)).map(([k]) => [k]));
-const startsWithFlexUndefined = Object.fromEntries(Object.entries(AllFunctions).filter(([k]) => k.match(/^flex[A-Z]/)).map(([k]) => [k]));
-
-//todo undefining!!
-//todo just run through all the functions inside the scope of the layout functions, get their keys, and then add a second entry with `flex` and `grid` as prefix
-//todo and then make a new object with those values set to undefined. and then remove those from the default below.
-//todo will not work, i think we must do it manually.
+function flexItem(argsIn) {
+  const argsOut = argsIn.map(a => FlexItem[a.name]?.(a.args) ?? FlexItem[a.text]);
+  return defaultItem("flexItem", argsIn, argsOut);
+}
 
 export default {
-  ...startsWithFlexUndefined,
-  ...startsWithGridUndefined,
   order: undefined,
   float: undefined,
   gap: undefined,
-  //are there other layout functions that we really want to block? yes.. All the ones that has to do with grid and flex and float.  
-  margin: _LAYOUT.margin, //undefined,
-  padding: LAYOUT.padding,//undefined,
+  margin: undefined, //_LAYOUT.margin, 
+  padding: undefined,// LAYOUT.padding,
+  width: undefined,
+  minWidth: undefined,
+  maxWidth: undefined,
+  height: undefined,
+  minHeight: undefined,
+  maxHeight: undefined,
+  inlinseSize: undefined,
+  minInlineSize: undefined,
+  maxInlineSize: undefined,
+  blockSize: undefined,
+  minBlockSize: undefined,
+  maxBlockSize: undefined,
+  overflow: undefined,
+  overflowX: undefined,
+  overflowY: undefined,
+  overflowBlock: undefined,
+  overflowInline: undefined,
+  scrollSnapType: undefined,
+  scrollSnapAlign: undefined,
+  scrollSnapStop: undefined,
+  scrollPadding: undefined,
+  scrollMargin: undefined,
 
   placeContent: undefined,
   justifyContent: undefined,
@@ -323,12 +365,13 @@ export default {
   justifySelf: undefined,
   alignSelf: undefined,
   textAlign: undefined,
+  //we want to block *all* that are used here!
 
   block,
-  _block,
+  blockItem,
   grid,
-  _grid,
+  gridItem,
   flex,
-  _flex,
+  flexItem,
   lineClamp,
 };

@@ -35,7 +35,7 @@ Write CSS properties directly in HTML using simple function-like syntax:
 Target child elements without writing separate CSS rules:
 
 ```html
-<div class="$block(s,gap(0.3em,1em)) |*$_block(indent(15%))">
+<div class="$block(s,gap(0.3em,1em)) |*$blockItem(indent(15%))">
   <p>This paragraph will have 15% text indentation</p>
 </div>
 ```

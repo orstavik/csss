@@ -4,14 +4,14 @@
 @layer containerDefault {
   .\$grid\(cols\(1fr\,2fr\)\,rows\(auto\)\,gap\(1rem\)\,padding\(1rem\)\) {
     display: grid;
+    place-items: unset;
+    place-content: unset;
     word-spacing: unset;
     line-height: unset;
     white-space: unset;
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    place-items: unset;
-    place-content: unset;
     grid-template-columns: 1fr 2fr;
     grid-template-rows: auto;
     gap: 1rem;
@@ -26,14 +26,14 @@
 @layer containerDefault {
   .\$grid\(contentCenter\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
     display: grid;
+    place-items: unset;
+    place-content: center;
     word-spacing: unset;
     line-height: unset;
     white-space: unset;
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    place-items: unset;
-    place-content: center;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     padding: 1rem;
@@ -47,14 +47,14 @@
 @layer containerDefault {
   .\$grid\(contentStartBetween\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
     display: grid;
+    place-items: unset;
+    place-content: start space-between;
     word-spacing: unset;
     line-height: unset;
     white-space: unset;
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    place-items: unset;
-    place-content: start space-between;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     padding: 1rem;
@@ -68,14 +68,14 @@
 @layer containerDefault {
   .\$grid\(contentCenter\,itemsStretch\,textJustify\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
     display: grid;
+    place-items: stretch;
+    place-content: center;
     word-spacing: unset;
     line-height: unset;
     white-space: unset;
     hyphens: unset;
     text-align: justify;
     text-indent: unset;
-    place-items: stretch;
-    place-content: center;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     padding: 1rem;
@@ -89,14 +89,14 @@
 @layer containerDefault {
   .\$grid\(contentStartEnd\,itemsStretchStart\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
     display: grid;
+    place-items: stretch start;
+    place-content: start end;
     word-spacing: unset;
     line-height: unset;
     white-space: unset;
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    place-items: stretch start;
-    place-content: start end;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     padding: 1rem;
@@ -110,14 +110,14 @@
 @layer containerDefault {
   .\$grid\(itemsStretchStart\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
     display: grid;
+    place-items: stretch start;
+    place-content: unset;
     word-spacing: unset;
     line-height: unset;
     white-space: unset;
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    place-items: stretch start;
-    place-content: unset;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     padding: 1rem;
@@ -131,14 +131,14 @@
 @layer containerDefault {
   .\$grid\(rows\(repeat\(3\,1fr\)\)\,column\,gap\(0\.5rem\)\,padding\(1rem\)\) {
     display: grid;
+    place-items: unset;
+    place-content: unset;
     word-spacing: unset;
     line-height: unset;
     white-space: unset;
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    place-items: unset;
-    place-content: unset;
     grid-template-rows: repeat(3, 1fr);
     grid-auto-flow: column;
     gap: 0.5rem;
@@ -153,14 +153,14 @@
 @layer containerDefault {
   .\$grid\(cols\(repeat\(4\,1fr\)\)\,overflowScrollHidden\,gap\(1rem\)\) {
     display: grid;
+    place-items: unset;
+    place-content: unset;
     word-spacing: unset;
     line-height: unset;
     white-space: unset;
     hyphens: unset;
     text-align: unset;
     text-indent: unset;
-    place-items: unset;
-    place-content: unset;
     grid-template-columns: repeat(4, 1fr);
     overflow-block: scroll;
     overflow-inline: hidden;

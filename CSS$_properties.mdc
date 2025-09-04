@@ -28,12 +28,12 @@ This document serves as a comprehensive reference for all implemented properties
 - `$flex(cc)` - Sets align/justify content (center, center)
 - `$flex(gap(1rem))` - Sets flex gap
 
-### $_flex() - Flex item properties
+### $flexItem() - Flex item properties
 
-- `$_flex(1grow)` - Sets flex-grow: 1
-- `$_flex(2shrink)` - Sets flex-shrink: 2
-- `$_flex(basis(200px))` - Sets flex-basis
-- `$_flex(1order)` - Sets order
+- `$flexItem(1grow)` - Sets flex-grow: 1
+- `$flexItem(2shrink)` - Sets flex-shrink: 2
+- `$flexItem(basis(200px))` - Sets flex-basis
+- `$flexItem(1order)` - Sets order
 
 ### $grid() - Grid container
 
@@ -42,7 +42,7 @@ This document serves as a comprehensive reference for all implemented properties
 - `$grid(gap(1rem))` - Sets grid gap
 - `$grid(dense-column)` - Sets grid-auto-flow
 
-### $_grid() - Grid item properties
+### $gridItem() - Grid item properties
 
 - Extends item properties for grid context
 

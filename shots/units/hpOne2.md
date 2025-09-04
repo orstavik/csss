@@ -36,11 +36,11 @@
 }
 ```
 
-**csss:** |*$_flex(shrink(0),center,w(7rem),h(3rem))
+**csss:** |*$flexItem(shrink(0),center,w(7rem),h(3rem))
 **css:**
 ```css
 @layer items {
-  .\|\*\$_flex\(shrink\(0\)\,center\,w\(7rem\)\,h\(3rem\)\)>* {
+  .\|\*\$flexItem\(shrink\(0\)\,center\,w\(7rem\)\,h\(3rem\)\)>* {
     flex-shrink: 0;
     align-self: center;
     text-align: center;
@@ -116,31 +116,31 @@
 }
 ```
 
-**csss:** |$_block(indent(15%))
+**csss:** |$blockItem(indent(15%))
 **css:**
 ```css
 @layer itemsDefault {
-  .\|\$_block\(indent\(15\%\)\)>* {
+  .\|\$blockItem\(indent\(15\%\)\)>* {
     text-indent: 15%;
   }
 }
 ```
 
-**csss:** |.head$_block(indent(-5%))
+**csss:** |.head$blockItem(indent(-5%))
 **css:**
 ```css
 @layer items {
-  .\|\.head\$_block\(indent\(-5\%\)\)>:where(.head) {
+  .\|\.head\$blockItem\(indent\(-5\%\)\)>:where(.head) {
     text-indent: -5%;
   }
 }
 ```
 
-**csss:** |.subheading$_block(indent(0))
+**csss:** |.subheading$blockItem(indent(0))
 **css:**
 ```css
 @layer items {
-  .\|\.subheading\$_block\(indent\(0\)\)>:where(.subheading) {
+  .\|\.subheading\$blockItem\(indent\(0\)\)>:where(.subheading) {
     text-indent: 0px;
   }
 }

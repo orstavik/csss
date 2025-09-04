@@ -1,24 +1,17 @@
 //https://developer.mozilla.org/en-US/docs/Web/CSS/length#browser_compatibility
 //mdn specifies more lengths, but we don't support them yet.
-const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%/.source;
-const ANGLES = /deg|grad|rad|turn/.source;
-const N = /-?[0-9]*\.?[0-9]+(?:e[+-]?[0-9]+)?/.source;
-const NUM = `(${N})(?:\\/(${N}))?`; //num frac allows for -.5e+0/-122.5e-12
 
-function isNumberUnit(UNIT) {
-  return function (x) {
-    if (x === "0") return x;
-    const m = x.match?.(new RegExp(`^(${NUM})(${UNIT})$`));
-    if (!m) return;
-    let [, , n, frac, unit] = m;
-    return frac ? (Number(n) / Number(frac)) + unit :
-      x;
-  }
+function interpret(scope, args) {
+  return args.map(a =>
+    scope[a.name]?.(scope, a.args) ??
+    scope[a.text] ??
+    scope[a.type?.toUpperCase()]?.(a.text) ?? //todo type based
+    a.text ??
+    a);
 }
-const isLength = isNumberUnit(LENGTHS_PER);
-const isAngle = isNumberUnit(ANGLES);
 
-function toRadiusFour(NAME, ...ar) {
+function toRadiusFour(NAME, scope, ar) {
+  ar = interpret(scope, ar);
   if (!(ar instanceof Array))
     return { [NAME]: ar };
   if (ar.length === 1)
@@ -30,7 +23,9 @@ function toRadiusFour(NAME, ...ar) {
     [NAME + "EndStart"]: ar[3] ?? ar[1],
   };
 }
-function toLogicalFour(NAME, ...ar) {
+
+function toLogicalFour(NAME, scope, ar) {
+  ar = interpret(scope, ar);
   return ar.length === 1 ? { [NAME]: ar[0] } :
     {
       [NAME + "Block"]: ar[2] != null && ar[2] != ar[0] ? ar[0] + " " + ar[2] : ar[0],
@@ -41,7 +36,8 @@ function toLogicalFour(NAME, ...ar) {
 //todo length == 2, I think that we could have top/bottom too
 //todo length == 3, then the third becomes all the inline ones
 //todo length === 4, then forth is the inline on the end side
-function toLogicalEight(NAME, DEFAULT, ...args) {
+function toLogicalEight(NAME, DEFAULT, scope, args) {
+  args = interpret(scope, args);
   if (!(args instanceof Array))
     return { [NAME]: args };
   if (args.length === 1)
@@ -123,43 +119,22 @@ const NativeColorsFunctions = (function () {
   //#primary#30 => hash(primary,30)
   //#primary#30#a80 => hash(primary,30,a80)
 
-  const ColorNames = new Set(["aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black", "blanchedalmond", "blue", "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk", "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgreen", "darkgrey", "darkkhaki", "darkmagenta", "darkolivegreen", "darkorange", "darkorchid", "darkred", "darksalmon", "darkseagreen", "darkslateblue", "darkslategray", "darkslategrey", "darkturquoise", "darkviolet", "deeppink", "deepskyblue", "dimgray", "dimgrey", "dodgerblue", "firebrick", "floralwhite", "forestgreen", "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod", "gray", "green", "greenyellow", "grey", "honeydew", "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender", "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrodyellow", "lightgray", "lightgreen", "lightgrey", "lightpink", "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray", "lightslategrey", "lightsteelblue", "lightyellow", "lime", "limegreen", "linen", "magenta", "maroon", "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue", "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin", "navajowhite", "navy", "oldlace", "olive", "olivedrab", "orange", "orangered", "orchid", "palegoldenrod", "palegreen", "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "purple", "rebeccapurple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna", "silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "springgreen", "steelblue", "tan", "teal", "thistle", "tomato", "transparent", "turquoise", "violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen"]);
-
-  //To get the transparent last number in hex colors to work, it is simply turned into a mix percentage. Works as if transparent)
-  function parseSecondColor(c, i, vectorName, first) {
-    const [, h3, p3, h6, p6] = c.match(/^(?:([0-9a-f]{3}([0-9a-e]))|([0-9a-f]{6}([0-9a-e]{2})))/i) ?? [];
-    if (h3)
-      return `#${h3} ${Math.round(parseInt(p3, 16) / 15) * 100}%`;
-    if (h6)
-      return `#${h6} ${Math.round(parseInt(p6, 16) / 255) * 100}%`;
-    let [, name, percent] = c.match(/(.*?)(100|\d\d?)$/);  //#blue100  //#primary399
-    if (!percent)
-      throw new SyntaxError(
-        `Illegal #colormix#${c}: Missing percent postfix.
-Did you mean to mix half'n'half, ie. #${c}5 or #${c}50?`
-      );
-    if (!name && !vectorName)
-      throw new SyntaxError(
-        `Illegal #colormix#${c}. "#${first}" is not a color vector. Did you forget to use or define a color vector such as #primary or #accent?`);
-    if (percent.length === 1)
-      percent = percent + "0";
-    return !name ? `var(${vectorName + ++i}) ${percent}%` :
-      name == "a" ? `transparent ${100 - parseInt(percent)}%` :
-        ColorNames.has(name.toLowerCase()) ? `${name} ${percent}%` :
-          `var(--color-${name}) ${percent}%`;
-  }
-
-  function _hash(first, ...colors) {
-    let vector, res;
-    res = ColorNames.has(first.toLowerCase()) ? first :
-      first.match(/^([a-f0-9]{3,4}|[a-f0-9]{6}|[a-f0-9]{8})$/i) ? "#" + first :
-        undefined;
-    if (!res && first.match(/^[a-z][a-z0-9_-]*/i))
-      res = `var(${vector = `--color-${first}`})`;
-    else if (!res)
-      throw new SyntaxError(`Invalid #color name: ${first}`);
-    return colors.reduce((res, c, i) =>
-      `color-mix(in oklab, ${res}, ${parseSecondColor(c, i, vector, first)})`, res);
+  function _hash(...colors) {
+    const colorVector = !colors[0].primitive && colors[0].c;
+    if (!colors[0].hex && colors[0].percent)
+      colors.unshift({ c: "transparent" });  //implied transparent
+    for (let i = 0; i < colors.length; i++) {
+      const c = colors[i];
+      if (c.primitive);
+      else if (!c.c && !colorVector)
+        throw new SyntaxError(`Illegal #colormix#${c.c}: Missing color vector name.
+Did you mean to use or define a color vector such as #Primary or #Accent?`);
+      else
+        c.c = `var(--color-${c.c || (colorVector + i)})`;
+    }
+    const first = colors.shift();
+    return colors.reduce((res, { c, percent }) =>
+      `color-mix(in oklab, ${res}, ${c} ${percent ?? 50}%)`, first.hex ?? first.c);
   }
 
   const res = {
@@ -191,7 +166,7 @@ Did you mean to mix half'n'half, ie. #${c}5 or #${c}50?`
 })();
 
 const ColorNames = /^(aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen)$/i.source;
-const ColorFunctionStart = /^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color|color-mix|colorMix)\(/.source;
+const ColorFunctionStart = /^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color|color-mix)\(/.source;
 const ColorVar = /^var\(--color-/.source;
 const ColorHash = /^#[a-fA-F0-9]{3,8}$/.source;
 const ColorString = new RegExp(`${ColorNames}|${ColorFunctionStart}|${ColorVar}|${ColorHash}`);
@@ -208,55 +183,60 @@ function isColor(x) {
 //    imageSet: (...args) => `image-set(${args.join(",")})`,
 // };
 
-const transitionFunctionSet = (function () {
-
-  function transition(props, dur, type, delay = "") {
-    return { transition: `${props} ${dur} ${type} ${delay}` };
-  }
-
-  return function transitionFunctionSet(...props) {
-    props = props.join(" ");
-    return {
-      ease: (dur, delay) => transition(props, dur, "ease", delay),
-      easeIn: (dur, delay) => transition(props, dur, "ease-in", delay),
-      easeOut: (dur, delay) => transition(props, dur, "ease-out", delay),
-      easeInOut: (dur, delay) => transition(props, dur, "ease-in-out", delay),
-      linear: (dur, delay) => transition(props, dur, "linear", delay),
-      jumpStart: (dur, steps = 1, delay) => transition(props, dur, `jump-start(${steps})`, delay),
-      jumpEnd: (dur, steps = 1, delay) => transition(props, dur, `jump-end(${steps})`, delay),
-      jumpNone: (dur, steps = 1, delay) => transition(props, dur, `jump-none(${steps})`, delay),
-      jumpBoth: (dur, steps = 1, delay) => transition(props, dur, `jump-both(${steps})`, delay),
-      cubicBezier: (dur, x1, y1, x2, y2, delay) => transition(props, dur, `cubic-bezier(${x1},${y1},${x2},${y2})`, delay),
-    };
-  }
-})();
-//scope functions end
-
-
 //no shorts before this point
-const NativeCssProperties = (function () {
-  const style = document.createElement('div').style;
-  const res = {};
-  for (const camel of Object.getOwnPropertyNames(style)) {
-    res[camel] = (...args) => ({ [camel]: args.join(" ") });
-    Object.defineProperty(res[camel], "name", { value: camel });
-    res[camel].scope = {};
-    const name = camel.replace(/([A-Z])/g, "-$1").toLowerCase();
-    if (CSS.supports(name, "min(0,1)") || CSS.supports(name, "min(0px,1px)"))
-      Object.assign(res[camel].scope, NativeCssScopeMath);
-    if (CSS.supports(name, "url(http://example.com)"))
-      res[camel].scope.url = NativeCssScopeUrl;
-    if (CSS.supports(name, "#123456") || CSS.supports(name, "#123 1px 1px"))
-      Object.assign(res[camel].scope, NativeColorsFunctions);
-    if (CSS.supports("transition", name + " 1s linear"))
-      Object.assign(res[camel].scope, transitionFunctionSet(name));
-    if (camel.match(/^(gridTemplateColumns|gridTemplateRows|gridTemplateAreas|gridTemplate|grid)$/))
-      res[camel].scope.repeat = NativeCssScopeRepeat;
+const NativeCssProperties = Object.fromEntries(
+  Object.getOwnPropertyNames(document.createElement('div').style).map(camel => {
+    //todo Here we need to get the inner scope to work for different functions.
+    //todo but we can separate on different categories such as length and % and degree etc.
+    const res = (scope, args) => ({ [camel]: interpret(scope, args).join(" ") });
+    Object.defineProperty(res, "name", { value: camel });
+    res.scope = {};
+    const kebab = camel.replace(/([A-Z])/g, "-$1").toLowerCase();
+    //todo this is wrong, because we are not fixing the 
+    if (CSS.supports(kebab, "1px"))
+      res.scope.length = true;
+    if (CSS.supports(kebab, "1deg"))
+      res.scope.angle = true;
+    if (CSS.supports(kebab, "1%"))
+      res.scope.percent = true;
+    if (CSS.supports(kebab, "1s"))
+      res.scope.time = true;
+    if (CSS.supports(kebab, "1") || CSS.supports(kebab, "0"))
+      res.scope.number = true;
+    if (CSS.supports(kebab, "#123456"))
+      res.scope.color = true;
+    // if (CSS.supports(name, "min(0,1)") || CSS.supports(name, "min(0px,1px)"))
+    //   Object.assign(res.scope, NativeCssScopeMath);
+    // if (CSS.supports(name, "url(http://example.com)"))
+    //   res.scope.url = NativeCssScopeUrl;
+    // if (CSS.supports(name, "#123456") || CSS.supports(name, "#123 1px 1px"))
+    //   Object.assign(res.scope, NativeColorsFunctions);
+    // if (CSS.supports(name, "repeat(2, 60px)"))//camel.match(/^(gridTemplateColumns|gridTemplateRows|gridTemplateAreas|gridTemplate|grid)$/))
+    //   res.scope.repeat = NativeCssScopeRepeat;
+    // if (CSS.supports(name, "attr(data-foo)"))
+    //   res.scope.attr = NativeCssScopeAttrCounter.attr;
+    // if (CSS.supports(name, "counter(my-counter)"))
+    //   res.scope.counter = NativeCssScopeAttrCounter.counter;
+    // if (CSS.supports(name, "counters(my-counter, '.')"))
+    //   res.scope.counters = NativeCssScopeAttrCounter.counters;
+    function fixBorderNames(originalCamel) {
+      const m = originalCamel.match(/^border(.+)(Style|Width|Color|Radius)$/);
+      return m ? "border" + m[2] + m[1] : originalCamel;
+    }
+    camel = fixBorderNames(camel);
+    return [camel, res];
+  }));
+
+//subdue scopes (font,fontStyle,fontWeight,... -> font { style,weight,... })
+//longest name first;
+const keys = Object.keys(NativeCssProperties).sort((a, b) => b.length - a.length);
+for (let k of keys)
+  for (let s of keys.filter(x => x.startsWith(k) && x != k)) {
+    // if (s.startsWith("border"))
+    //   debugger
+    NativeCssProperties[k].scope[s.slice(k.length)] = NativeCssProperties[s];
+    delete NativeCssProperties[s];
   }
-  //if name == "content"
-  res.content.scope = Object.assign(res.content.scope ?? {}, NativeCssScopeAttrCounter);
-  return res;
-})();
 
 //UNPACKED $filter scope functions
 const NativeCssFilterFunctions = {
@@ -484,83 +464,49 @@ for (const k in BackgroundFunctions)
 //border: 2px 4px solid red blue;
 //$border(w(2px,4px),solid,c(red,blue))
 //$border(2px,solid,red)
-function border(...args) {
-  args = args.map(a => {
-    if (!(typeof a === "string")) return a;
-    if (isColor(a))
-      return { Color: a };
-    if (isLength(a) || a.match(/(^(min|max|clamp)\()/))
-      return { Width: a };
-    return a; //todo this throws, right?
-  });
-  return borderSwitch(Object.assign({ Style: "solid" }, ...args));
+function border(ar) {
+  //todo here we want to extract the color first.
+  //todo then we would like to extract the length? but maybe that is easier later..
+  const borderColor = toLogicalFour.bind(null, "borderColor");
+  const borderWidth = toLogicalFour.bind(null, "borderWidth");
+  const borderRadius = toRadiusFour.bind(null, "borderRadius");
+  const borderRadius8 = toLogicalEight.bind(null, "borderRadius", 0);
+  const borderStyle = toLogicalFour.bind(null, "borderStyle");
+
+  const natives = NativeCssProperties.border;
+  const scope = {
+    //word => property
+    solid: { borderStyle: "solid" },
+    dotted: { borderStyle: "dotted" },
+    dashed: { borderStyle: "dashed" },
+    double: { borderStyle: "double" },
+    groove: { borderStyle: "groove" },
+    ridge: { borderStyle: "ridge" },
+    inset: { borderStyle: "inset" },
+    outset: { borderStyle: "outset" },
+    hidden: { borderStyle: "hidden" },
+    none: { borderStyle: "none" },
+    thin: { borderWidth: "thin" },
+    medium: { borderWidth: "medium" },
+    thick: { borderWidth: "thick" },
+    //expression => interpret function
+    width: borderWidth,
+    w: borderWidth,
+    style: borderStyle,
+    s: borderStyle,
+    radius: borderRadius,
+    r: borderRadius,
+    r4: borderRadius,
+    r8: borderRadius8,
+    color: borderColor,
+    c: borderColor,
+    //todo the shorthand structure. Type => property.
+    LENGTH: a => ({ borderWidth: a }),
+    COLOR: a => ({ borderColor: a }),
+  };
+  ar = interpret(scope, ar);
+  return Object.assign({ borderStyle: "solid" }, ...ar);
 }
-
-const borderColor = toLogicalFour.bind(null, "Color");
-borderColor.scope = NativeCssProperties.borderColor.scope;
-const borderWidth = toLogicalFour.bind(null, "Width");
-borderWidth.scope = NativeCssProperties.borderWidth.scope;
-const borderRadius = toRadiusFour.bind(null, "Radius");
-borderRadius.scope = NativeCssProperties.borderRadius.scope;
-const borderRadius8 = toLogicalEight.bind(null, "Radius", 0);
-borderRadius8.scope = NativeCssProperties.borderRadius.scope;
-const borderStyle = toLogicalFour.bind(null, "Style");
-borderStyle.scope = NativeCssProperties.borderStyle.scope;
-
-border.scope = {
-  width: borderWidth,
-  w: borderWidth,
-  style: borderStyle,
-  s: borderStyle,
-  radius: borderRadius,
-  r: borderRadius,
-  r4: borderRadius,
-  r8: borderRadius8,
-  color: borderColor,
-  c: borderColor,
-  ...transitionFunctionSet("border-width"),
-  solid: { Style: "solid" },
-  dotted: { Style: "dotted" },
-  dashed: { Style: "dashed" },
-  double: { Style: "double" },
-  groove: { Style: "groove" },
-  ridge: { Style: "ridge" },
-  inset: { Style: "inset" },
-  outset: { Style: "outset" },
-  hidden: { Style: "hidden" },
-  none: { Style: "none" },
-  thin: { Width: "thin" },
-  medium: { Width: "medium" },
-  thick: { Width: "thick" },
-};
-
-// NativeCssProperties.borderColor = (...args) => borderSwitch(toLogicalFour("Color", ...args));
-// NativeCssProperties.borderColor.scope = NativeCssProperties.color.scope;
-
-//$w(12px<.<.)
-//$w(.<.<12rem)
-//$w(12px<.<12rem)
-//$w(12%<20px<22%)
-//$w(12px)
-//$w(12px<.<max)
-//$w(min<.<12rem)
-function toSize(NAME, a, ...args) {
-  if (args.length)
-    throw new SyntaxError(`${NAME} accepts only 1 argument: ${JSON.stringify([a, ...args])}`);
-  if (!a.includes("<"))
-    return { [NAME]: a };
-  const [min = ".", normal = ".", max = "."] = a.split("<");
-  const res = {};
-  if (min !== ".") res["min" + NAME[0].toUpperCase() + NAME.slice(1)] = min;
-  if (normal !== ".") res[NAME] = normal;
-  if (max !== ".") res["max" + NAME[0].toUpperCase() + NAME.slice(1)] = max;
-  return res;
-}
-const width = (...args) => toSize("inlineSize", ...args);
-const height = (...args) => toSize("blockSize", ...args);
-width.scope = NativeCssProperties.width.scope;
-height.scope = NativeCssProperties.height.scope;
-
 
 //text decorations
 //sequence based
@@ -573,10 +519,10 @@ function textDecoration(
   textDecorationColor = "var(--color-textdecorationcolor, currentcolor)") {
   return { textDecorationLine, textDecorationThickness, textDecorationStyle, textDecorationColor };
 }
-textDecoration.scope = {
-  ...NativeCssProperties.textDecorationThickness.scope,
-  ...NativeCssProperties.textDecorationColor.scope,
-};
+// textDecoration.scope = {
+//   ...NativeCssProperties.textDecorationThickness.scope,
+//   ...NativeCssProperties.textDecorationColor.scope,
+// }
 const textDecorations = {
   dashedOverLine: function (...args) { return textDecoration.call(this, "overline", "dashed", ...args); },
   dashedOverLineThrough: function (...args) { return textDecoration.call(this, "overline line-through", "dashed", ...args); },
@@ -705,16 +651,26 @@ const KEYWORDS = {
   xxxl: { fontSize: "xxx-large" },
 };
 
-function noSynthesis(a) {
-  const args = a.match(/^no((Weight|Style|SmallCaps|Position)*)Synthesis$/)?.[1];
-  if (args == null) return;
-  if (!args) return "none";
-  return ["Style", "Weight", "SmallCaps", "Position"]
-    .filter(a => args.includes(a))
-    .join(" ")
-    .replace("Caps", "-caps")
-    .toLowerCase();
-}
+const SYNTHESIS = (function () {
+  function* permutations(arr, remainder) {
+    for (let i = 0; i < arr.length; i++) {
+      const x = arr[i];
+      const rest = arr.slice(0, i).concat(arr.slice(i + 1));
+      if (remainder == 1)
+        yield [x];
+      else
+        for (let p of permutations(rest, remainder - 1))
+          yield [x, ...p];
+    }
+  }
+  const res = {};
+  const synths = ["Style", "Weight", "SmallCaps", "Position"];
+  for (let k = 1; k <= synths.length - 1; k++)
+    for (const combo of permutations(synths, k))
+      res["no" + combo.join("") + "Synthesis"] = synths.filter(k => !combo.includes(k)).join(" ").replace("Caps", "-caps").toLowerCase();
+  res.noSynthesis = { fontSynthesis: "none" };
+  return res;
+})();
 
 function fontNumbers(a) {
   const aNum = parseFloat(a);
@@ -742,8 +698,8 @@ function fontImpl(fontFaceName, ...args) {
       Object.assign(res, a);
     else if (isLength(a))
       res.fontSize = a;
-    else if (b = noSynthesis(a))
-      res.fontSynthesis = b;
+    // else if (b = noSynthesis(a))
+    //   res.fontSynthesis = b;
     else if (b = fontNumbers(a))
       Object.assign(res, b);
     else if (a == "emoji")
@@ -796,6 +752,7 @@ function font(...args) {
 font.scope = {
   // ...NativeCssProperties.font.scope,
   ...KEYWORDS,
+  ...SYNTHESIS,
   face,
 
   size: a => ({ fontSize: a }),
@@ -983,6 +940,20 @@ const BUILTIN_TYPES2 = {
   },
 };
 
+function toSize(NAME, args) {
+  args = args.map(a => (a.text == "_" ? "unset" : interpret(a)));
+  if (args.length === 1)
+    return { [NAME]: args[0] };
+  const NAME2 = NAME[0].toUpperCase() + NAME.slice(1);
+  if (args.length === 3)
+    return {
+      ["min" + NAME2]: args[0],
+      [NAME]: args[1],
+      ["max" + NAME2]: args[2]
+    };
+  throw new SyntaxError(`$${NAME}() accepts only 1 or 3 arguments, got ${args.length}.`);
+}
+
 //todo turn this into memory thing. same with O2
 const ALIGNMENTS = (_ => {
   const POSITIONS = "|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd";
@@ -993,7 +964,7 @@ const ALIGNMENTS = (_ => {
   const LEGACY = "|Legacy|LegacyLeft|LegacyRight|LegacyCenter";
 
   const AlignContent = "Normal|Stretch" + POSITIONS + SPACE + BASELINE;
-  const JustifyContent = "Normal" + POSITIONS + SPACE + LEFTRIGHT;
+  const JustifyContent = "Normal|Stretch" + POSITIONS + SPACE + LEFTRIGHT;
   const AlignItems = "Normal|Stretch|AnchorCenter" + POSITIONS + BASELINE + SELFSTARTEND;
   const JustifyItems = "Normal|Stretch|AnchorCenter" + POSITIONS + BASELINE + SELFSTARTEND + LEFTRIGHT + LEGACY;
   const AlignSelf = "Auto|Normal|Stretch|AnchorCenter" + POSITIONS + BASELINE + SELFSTARTEND;
@@ -1031,36 +1002,38 @@ const ALIGNMENTS = (_ => {
   }
 })();
 
-// const PLACECONTENT = /^content(Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|Stretch|Around|Between|Evenly|Baseline|First|Last)(Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|Stretch|Around|Between|Evenly|Left|Right|SafeLeft|SafeRight|UnsafeLeft|UnsafeRight)?$/;
-// const PLACEITEMS = /^items(Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Baseline|First|Last|Stretch|AnchorCenter)(Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Left|Right|SafeLeft|SafeRight|UnsafeLeft|UnsafeRight|Baseline|First|Last|Stretch|AnchorCenter|Legacy|LegacyLeft|LegacyRight|LegacyCenter)?$/;
-// const PLACESELF = /^self(Auto|Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Baseline|First|Last|Stretch|AnchorCenter)(Auto|Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Left|Right|SafeLeft|SafeRight|UnsafeLeft|UnsafeRight|Baseline|First|Last|Stretch|AnchorCenter)?$/;
-// const ALIGNITEMS = /^items(Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Baseline|First|Last|Stretch|AnchorCenter)$/;
-// const ALIGNSELF = /^self(Auto|Normal|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd|Baseline|First|Last|Stretch|AnchorCenter)$/;
-// const TEXTALIGN = /^text(Normal|Start|End|Center|Justify|Left|Right)$/;
-
-// function placeAlign(prop, regex, str) {
-//   const m = str.match(regex);
-//   if (!m) return;
-//   let [_, a, b] = m;
-//   if (b && b != a) a += " " + b;
-//   return { [prop]: lowSpaceKebab(a) };
-// }
-
-// function lowSpaceKebab(str) {
-//   return str
-//     .replace(/Around|Between|Evenly/g, "space-$&")
-//     .replace(/(Unsafe|Safe|Legacy)(?!$)/g, "$& ")
-//     .replace(/(Self|Flex|Anchor)(?!$)/g, "$&-")
-//     .replaceAll(/First|Last/g, "$& baseline")
-//     .toLowerCase();
-// }
-
-// const placeContent = str => placeAlign("placeContent", PLACECONTENT, str);
-// const placeItems = str => placeAlign("placeItems", PLACEITEMS, str);
-// const placeSelf = str => placeAlign("placeSelf", PLACESELF, str);
-// const alignItems = str => placeAlign("alignItems", ALIGNITEMS, str);
-// const alignSelf = str => placeAlign("alignSelf", ALIGNSELF, str);
-// const textAlign = str => placeAlign("textAlign", TEXTALIGN, str);
+//todo overflows
+const OVERFLOWS = (_ => {
+  const SETTINGS = {
+    Visible: { overflow: "visible" },
+    Hidden: { overflow: "hidden" },
+    Clip: { overflow: "clip" },
+    Auto: { overflow: "auto" },
+    Scroll: { overflow: "scroll" },
+    Snap: { overflow: "auto", scrollSnapType: "both" },
+    SnapMandatory: { overflow: "auto", scrollSnapType: "both mandatory" },
+    ScrollSnap: { overflow: "scroll", scrollSnapType: "both" },
+    ScrollSnapMandatory: { overflow: "scroll", scrollSnapType: "both mandatory" },
+  };
+  const res = {};
+  for (let [A, a] of Object.entries(SETTINGS)) {
+    res["overflow" + A] = a;
+    for (let [B, b] of Object.entries(SETTINGS)) {
+      if (A == B) continue;
+      res["overflow" + A + B] = {
+        overflowBlock: a.overflow,
+        overflowInline: b.overflow,
+      };
+      if (a.scrollSnapType && b.scrollSnapType)
+        res["overflow" + A + B].scrollSnapType = "both" + (A.endsWith("Mandatory") || B.endsWith("Mandatory") ? " mandatory" : "");
+      else if (a.scrollSnapType)
+        res["overflow" + A + B].scrollSnapType = a.scrollSnapType.replace("both", "block");
+      else if (B.scrollSnapType)
+        res["overflow" + A + B].scrollSnapType = a.scrollSnapType.replace("both", "inline");
+    }
+  }
+  return res;
+})();
 
 //todo rename the text block layout unit to $page
 function defaultLayout(display, ...args) {
@@ -1078,39 +1051,6 @@ function checkReferenceError(args) {
   for (let a of args)
     if (!(a instanceof Object))
       throw new ReferenceError(a);
-}
-// const O2 = /^(|inline|block)(visible|hidden|clip)|(auto|scroll)(-snap(-mandatory)?)?$/
-
-//overflowClipScroll
-//overflowClipAuto
-//overflowClip
-//overflow
-const O2 = /^(visible|hidden|clip)|(auto|scroll)(-snap(-mandatory)?)?$/;
-function overflow(a) {
-  let [inline, block] = a.split(":");
-  const mI = inline.match(O2);
-  if (!mI) return;
-  const [, vhcI, overflowInline = vhcI, snapI, manI] = mI;
-  const mB = block?.match(O2);
-  let vhcB, overflowBlock, snapB, manB;
-  if (mB)
-    ([, vhcB, overflowBlock = vhcB, snapB, manB] = mB);
-  const res = (!overflowBlock || overflowBlock == overflowInline) ?
-    { overflow: overflowInline } :
-    { overflowInline, overflowBlock };
-  if (!snapI && !snapB) return res;
-  res.scrollSnapType = snapI && snapB ? "both" : snapI ? "inline" : "block";
-  if (manI || manB) res.scrollSnapType += " mandatory";
-  return res;
-}
-
-function lineClamp(lines, ...args) {
-  return Object.assign(block(...args), {
-    display: "-webkit-box",
-    WebkitLineClamp: lines,
-    WebkitBoxOrient: "vertical",
-    overflowBlock: "hidden"
-  });
 }
 
 const LAYOUT = {
@@ -1130,6 +1070,7 @@ const LAYOUT = {
   breakAll: { wordBreak: "break-all" },
   keepAll: { wordBreak: "keep-all" },
   snapStop: { scrollSnapStop: "always" },
+  ...ALIGNMENTS.textAlign,
 };
 
 const _LAYOUT = {
@@ -1137,10 +1078,12 @@ const _LAYOUT = {
   scrollMargin: toLogicalFour.bind(null, "scroll-margin"),
   textIndent: nativeAndMore.textIndent,
   indent: nativeAndMore.textIndent,
-  w: nativeAndMore.width,
-  h: nativeAndMore.height,
-  width: nativeAndMore.width,
-  height: nativeAndMore.height,
+  inlineSize: toSize.bind(null, "inlineSize"),
+  blockSize: toSize.bind(null, "blockSize"),
+  // w: AllFunctions.width,
+  // h: AllFunctions.height,
+  // width: AllFunctions.width,
+  // height: AllFunctions.height,
   snapStart: { scrollSnapAlign: "start" },
   snapStartCenter: { scrollSnapAlign: "start center" },
   snapStartEnd: { scrollSnapAlign: "start end" },
@@ -1154,68 +1097,79 @@ const _LAYOUT = {
   // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
 
-function toGap(...args) {
+function gap(innerScope, args) {
   if (!args.length || args.length > 2)
     throw new SyntaxError("gap only accepts 1 or 2 arguments");
-  if (args.length == 1 || args.length == 2 && args[0] == args[1])
+  args = interpret(innerScope, args);
+  if (args.length == 1 || args[0] == args[1])
     return { gap: args[0] };
   args = args.map(a => a == "unset" ? "normal" : a);
   return { gap: args[0] + " " + args[1] };
 }
-const GAP = { gap: toGap, g: toGap };
 
-function blockGap(wordSpacing, lineHeight) {
+//todo rename this to space() and then do block, inline as the two options.
+//todo the question is if this will be recognized by the llm..
+//they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
+//so it should be with layout.
+function blockGap(innerScope, args) {
+  const [wordSpacing, lineHeight] = interpret(innerScope, args);
   return { wordSpacing, lineHeight };
 }
-
-function block(...args) {
-  args = args.map(a => typeof a !== "string" ? a : textAlign(a) ?? overflow(a) ?? a);
+function block(args) {
+  const scope = {
+    ...LAYOUT,
+    ...OVERFLOWS,
+    gap: blockGap,
+  };
+  args = interpret(scope, args);
   checkReferenceError(args);
   return defaultLayout("block", ...args);
 }
-block.scope = {
-  ...LAYOUT,
-  lineClamp,
-  clamp: lineClamp,
-  gap: blockGap,
-  g: blockGap,
-};
-function _block(...args) {
-  checkReferenceError(args);
-  return Object.assign(...args);
-}
-_block.scope = {
-  ..._LAYOUT,
-  floatStart: { float: "inline-start" },
-  floatEnd: { float: "inline-end" },
-};
 
-function grid(...args) {
-  args = args.map(a =>
-    typeof a != "string" ? a :
-      textAlign(a) ??
-      placeContent(a) ??
-      placeItems(a) ??
-      overflow(a) ??
-      a);
+function blockItem(args) {
+  const scope = {
+    ..._LAYOUT,
+    floatStart: { float: "inline-start" },
+    floatEnd: { float: "inline-end" },
+  };
+  args = interpret(scope, args);
+  checkReferenceError(args);
+  return Object.assign({}, ...args);
+}
+
+function lineClamp([lines, ...args]) {
+  [lines] = interpret({}, [lines]);  //todo lines should only be a number. How do we enforce this in interpret?
+  return Object.assign(block(scope, args), {
+    display: "-webkit-box",
+    WebkitLineClamp: lines,
+    WebkitBoxOrient: "vertical",
+    overflowBlock: "hidden"
+  });
+}
+
+function grid(args) {
+  const nativeGrid = Object.fromEntries(Object.entries(nativeAndMore).filter(([k]) => k.match(/^grid[A-Z]/)));
+  const scope = {
+    ...OVERFLOWS,
+    ...ALIGNMENTS.placeContent,
+    ...ALIGNMENTS.placeItems,
+    ...nativeGrid,
+    cols: nativeGrid.gridTemplateColumns,
+    columns: nativeGrid.gridTemplateColumns,
+    rows: nativeGrid.gridTemplateRows,
+    areas: nativeGrid.gridTemplateAreas,
+    ...LAYOUT,
+    gap,
+    //todo test this!!
+    column: { gridAutoFlow: "column" },
+    dense: { gridAutoFlow: "dense row" },
+    denseColumn: { gridAutoFlow: "dense column" },
+    denseRow: { gridAutoFlow: "dense row" },
+  };
+  args = interpret(scope, args);
   checkReferenceError(args);
   return defaultLayout("grid", { placeItems: "unset", placeContent: "unset" }, ...args);
 }
-const nativeGrid = Object.fromEntries(Object.entries(nativeAndMore).filter(([k]) => k.match(/^grid[A-Z]/)));
-grid.scope = {
-  ...nativeGrid,
-  cols: nativeGrid.gridTemplateColumns,
-  columns: nativeGrid.gridTemplateColumns,
-  rows: nativeGrid.gridTemplateRows,
-  areas: nativeGrid.gridTemplateAreas,
-  ...LAYOUT,
-  ...GAP,
-  //todo test this!!
-  column: { gridAutoFlow: "column" },
-  dense: { gridAutoFlow: "dense row" },
-  denseColumn: { gridAutoFlow: "dense column" },
-  denseRow: { gridAutoFlow: "dense row" },
-};
 
 //       1  2345   6789
 // $grid(col(1,span(3))) => "{ gridColumn: 1 / span 3 }"
@@ -1235,71 +1189,80 @@ const span = arg => `span ${arg}`;
 column.scope = { span };
 row.scope = { span };
 
-function _grid(...args) {
-  args = args.map(a => typeof a == "string" ? placeSelf(a) ?? a : a);
+function gridItem(...args) {
   checkReferenceError(args);
-  return Object.assign(...args);
+  return Object.assign({}, ...args);
 }
-_grid.scope = {
+gridItem.scope = {
+  ...ALIGNMENTS.placeSelf,
   ..._LAYOUT,
   column,
   row,
 };
 
 
-
-
-function flex(...args) {
-  args = args.map(a => typeof a != "string" ? a : overflow(a) ?? placeContent(a) ?? alignItems(a) ?? textAlign(a) ?? a);
+function flex(args) {
+  const scope = {
+    column: { flexDirection: "column" },
+    columnReverse: { flexDirection: "column-reverse" },
+    rowReverse: { flexDirection: "row-reverse" },
+    row: { flexDirection: "row" },
+    wrap: { flexWrap: "wrap" },
+    wrapReverse: { flexWrap: "wrap-reverse" },
+    noWrap: { flexWrap: "nowrap" },
+    ...OVERFLOWS,
+    ...ALIGNMENTS.placeContent,
+    ...ALIGNMENTS.alignItems,
+    ...LAYOUT,
+    gap,
+  };
+  args = interpret(scope, args);
   checkReferenceError(args);
   return defaultLayout("flex", { alignItems: "unset", placeContent: "unset" }, ...args);
 }
-flex.scope = {
-  column: { flexDirection: "column" },
-  columnReverse: { flexDirection: "column-reverse" },
-  rowReverse: { flexDirection: "row-reverse" },
-  row: { flexDirection: "row" },
-  wrap: { flexWrap: "wrap" },
-  wrapReverse: { flexWrap: "wrap-reverse" },
-  noWrap: { flexWrap: "nowrap" },
-  ...LAYOUT,
-  ...GAP
-};
-function _flex(...args) {
-  args = args.map(a => typeof a == "string" ? alignSelf(a) ?? a : a);
+function _flex(args) {
+  const scope = {
+    ..._LAYOUT,
+    ...ALIGNMENTS.alignSelf,
+    basis: (scope, a) => ({ flexBasis: interpret(scope, a)[0] }),
+    grow: (scope, a) => ({ flexGrow: interpret(scope, a)[0] }),
+    shrink: (scope, a) => ({ flexShrink: interpret(scope, a)[0] }),
+    order: (scope, a) => ({ order: interpret(scope, a)[0] }),
+    //todo safe
+  };
+  args = interpret(scope, args);
   checkReferenceError(args);
-  return Object.assign(...args);
+  return Object.assign({}, ...args);
 }
 
-_flex.scope = {
-  ..._LAYOUT,
-  basis: a => ({ flexBasis: a }),
-  grow: a => ({ flexGrow: a }),
-  // g: a => ({ flexGrow: a }),
-  shrink: a => ({ flexShrink: a }),
-  // s: a => ({ flexShrink: a }),
-  order: a => ({ order: a }),
-  // o: a => ({ order: a }),
-  //todo safe
-};
-
-const startsWithGridUndefined = Object.fromEntries(Object.entries(nativeAndMore).filter(([k]) => k.match(/^grid[A-Z]/)).map(([k]) => [k]));
-const startsWithFlexUndefined = Object.fromEntries(Object.entries(nativeAndMore).filter(([k]) => k.match(/^flex[A-Z]/)).map(([k]) => [k]));
-
-//todo undefining!!
-//todo just run through all the functions inside the scope of the layout functions, get their keys, and then add a second entry with `flex` and `grid` as prefix
-//todo and then make a new object with those values set to undefined. and then remove those from the default below.
-//todo will not work, i think we must do it manually.
-
 var layouts = {
-  ...startsWithFlexUndefined,
-  ...startsWithGridUndefined,
   order: undefined,
   float: undefined,
   gap: undefined,
-  //are there other layout functions that we really want to block? yes.. All the ones that has to do with grid and flex and float.  
-  margin: _LAYOUT.margin, //undefined,
-  padding: LAYOUT.padding,//undefined,
+  margin: undefined, //_LAYOUT.margin, 
+  padding: undefined,// LAYOUT.padding,
+  width: undefined,
+  minWidth: undefined,
+  maxWidth: undefined,
+  height: undefined,
+  minHeight: undefined,
+  maxHeight: undefined,
+  inlinseSize: undefined,
+  minInlineSize: undefined,
+  maxInlineSize: undefined,
+  blockSize: undefined,
+  minBlockSize: undefined,
+  maxBlockSize: undefined,
+  overflow: undefined,
+  overflowX: undefined,
+  overflowY: undefined,
+  overflowBlock: undefined,
+  overflowInline: undefined,
+  scrollSnapType: undefined,
+  scrollSnapAlign: undefined,
+  scrollSnapStop: undefined,
+  scrollPadding: undefined,
+  scrollMargin: undefined,
 
   placeContent: undefined,
   justifyContent: undefined,
@@ -1311,11 +1274,12 @@ var layouts = {
   justifySelf: undefined,
   alignSelf: undefined,
   textAlign: undefined,
+  //we want to block *all* that are used here!
 
   block,
-  _block,
+  blockItem,
   grid,
-  _grid,
+  gridItem,
   flex,
   _flex,
   lineClamp,
@@ -1421,11 +1385,74 @@ var palette$1 = {
   palette
 };
 
+function transition(timing, dur, ...props) {
+  const delay = (props.length && isTime(props[0]) || props[0] == "0" && "0s");
+  if (delay) props.shift();
+  const tail = dur + (delay ? ` ${delay} ` : " ") + timing;
+  if (!props.length) props = ["all"];
+  return { transition: props.map(p => `${p} ${tail}`).join(", ") };
+}
+
+var transitions = {
+  transition: (x1, y1, x2, y2, dur, delay, ...props) => transition(`cubic-bezier(${x1},${y1},${x2},${y2})`, dur, delay, ...props),
+
+  ease: (...args) => transition("ease", ...args),
+  slide: (...args) => transition("linear", ...args),
+  easeIn: (...args) => transition("ease-in", ...args),
+  easeOut: (...args) => transition("ease-out", ...args),
+  easeInOut: (...args) => transition("ease-in-out", ...args),
+
+  crispIn: (...args) => transition("cubic-bezier(0,.55,.2,1)", ...args),
+  crispOut: (...args) => transition("cubic-bezier(.8,0,1,.45)", ...args),
+  crispInOut: (...args) => transition("cubic-bezier(.8,0,.2,1)", ...args),
+  harshOut: (...args) => transition("cubic-bezier(.95,0,1,.2)", ...args),
+  harshIn: (...args) => transition("cubic-bezier(0,.8,.15,1)", ...args),
+  harshInOut: (...args) => transition("cubic-bezier(.9,0,.1,1)", ...args),
+  playfulIn: (...args) => transition("cubic-bezier(.6,0,1,.2)", ...args),
+  playfulOut: (...args) => transition("cubic-bezier(0,.35,.1,1)", ...args),
+  playfulInOut: (...args) => transition("cubic-bezier(.65,0,.35,1)", ...args),
+  bounceIn: (...args) => transition("cubic-bezier(.36,0,.66,-.56)", ...args),
+  bounceOut: (...args) => transition("cubic-bezier(.34,1.56,.64,1)", ...args),
+  bounceInOut: (...args) => transition("cubic-bezier(.68,-.6,.32,1.6)", ...args),
+  easeInCrispOut: (...args) => transition("cubic-bezier(.42,0,.2,1)", ...args),
+  easeInHarshOut: (...args) => transition("cubic-bezier(.42,0,.15,1)", ...args),
+  easeInPlayfulOut: (...args) => transition("cubic-bezier(.42,0,.1,1)", ...args),
+  easeInBounceOut: (...args) => transition("cubic-bezier(.42,0,.64,1)", ...args),
+  crispInEaseOut: (...args) => transition("cubic-bezier(.8,0,.58,1)", ...args),
+  crispInHarshOut: (...args) => transition("cubic-bezier(.8,0,.15,1)", ...args),
+  crispInPlayfulOut: (...args) => transition("cubic-bezier(.8,0,.1,1)", ...args),
+  crispInBounceOut: (...args) => transition("cubic-bezier(.8,0,.64,1)", ...args),
+  harshInEaseOut: (...args) => transition("cubic-bezier(.95,0,.58,1)", ...args),
+  harshInCrispOut: (...args) => transition("cubic-bezier(.95,0,.2,1)", ...args),
+  harshInPlayfulOut: (...args) => transition("cubic-bezier(.95,0,.1,1)", ...args),
+  harshInBounceOut: (...args) => transition("cubic-bezier(.95,0,.64,1)", ...args),
+  playfulInEaseOut: (...args) => transition("cubic-bezier(.6,0,.58,1)", ...args),
+  playfulInCrispOut: (...args) => transition("cubic-bezier(.6,0,.2,1)", ...args),
+  playfulInHarshOut: (...args) => transition("cubic-bezier(.6,0,.15,1)", ...args),
+  playfulInBounceOut: (...args) => transition("cubic-bezier(.6,0,.64,1)", ...args),
+  bounceInEaseOut: (...args) => transition("cubic-bezier(.36,0,.58,1)", ...args),
+  bounceInCrispOut: (...args) => transition("cubic-bezier(.36,0,.2,1)", ...args),
+  bounceInHarshOut: (...args) => transition("cubic-bezier(.36,0,.15,1)", ...args),
+  bounceInPlayfulOut: (...args) => transition("cubic-bezier(.36,0,.1,1)", ...args),
+
+  //hesitate: (dur, delay, ...props) => native(`cubic-bezier(.5,0,.5,1)`, dur, delay, ...props),
+  //wobble: (dur, delay, ...props) => native(`cubic-bezier(.5,-.5,.5,1.5)`, dur, delay, ...props),
+  //0.29, 1.01, 1, -0.68
+
+  // steps: (steps, dur, delay, ...props) => native(`steps(${steps})`, dur, delay, ...props),
+  jump: (steps, dur, delay, ...props) => transition(`steps(${steps})`, dur, delay, ...props), //jumpEnd is default for steps().
+  // jumpEnd: (steps, dur, delay, ...props) => native(`steps(${steps},jump-end)`, dur, delay, ...props),
+  jumpStart: (steps, dur, delay, ...props) => transition(`steps(${steps},jump-start)`, dur, delay, ...props),
+  jumpNone: (steps, dur, delay, ...props) => transition(`steps(${steps},jump-none)`, dur, delay, ...props),
+  jumpBoth: (steps, dur, delay, ...props) => transition(`steps(${steps},jump-both)`, dur, delay, ...props),
+};
+
 const SHORTS = {
   ...nativeAndMore,
   ...fonts,
   ...palette$1,
   ...layouts,
+  ...transitions,
 };
 
 const MEDIA_WORDS = {
@@ -1593,23 +1620,28 @@ function bodyToTxt(rule, props) {
   return `${rule} {\n${body}\n}`;
 }
 
+const MAGICWORD = `$"'$`;
 function parse(short) {
   const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
   short = short.match(/(.*?)\!*$/)[1];
   const { exp, media } = parseMediaQuery(short, MEDIA_WORDS);
-  let [sel, ...exprList] = exp?.split("$");
+  let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
   exprList = exprList.map(parseNestedExpression);
-  exprList = exprList.map(s => s.interpret(SHORTS));
+  exprList = exprList.map(exp => {
+    const cb = SHORTS[exp.name];
+    if (!cb) throw new ReferenceError(exp.name);
+    return !(cb instanceof Function) ? cb : cb(exp.args);
+      // cb({ todo: "here we need math and var and calc and env" }, exp.args);
+  });
   exprList &&= clashOrStack(exprList);
-  let { selector, item } = parseSelectorPipe(sel);
+  let { selector, item } = parseSelectorPipe(sel, clazz);
   const layer = (item ? "items" : "container") + (short.match(/^(\$|\|\$)/) ? "Default" : "");
-  selector = clazz + selector; //todo, we always start with the class in the selector..
   exprList = kebabcaseKeys(exprList);
   const { atRules, mainRule } = extractAtRules(exprList);
   checkProperty(mainRule);
   let cssText = bodyToTxt(selector, mainRule);
-  if (media) cssText = `@media ${media} {\n${cssText}\n}`;
-  cssText = `@layer ${layer} {\n${cssText}\n}`;
+  if (media) cssText = `@media ${media} {\n${cssText.replaceAll(/^|\n/g, "$&  ")}\n}`;
+  cssText = `@layer ${layer} {\n${cssText.replaceAll(/^|\n/g, "$&  ")}\n}`;
 
   for (let atRule in atRules)
     atRules[atRule] = kebabcaseKeys(atRules[atRule]);
@@ -1619,33 +1651,147 @@ function parse(short) {
 }
 
 class Expression {
-
   constructor(name, args) {
-    this.args = args;
     this.name = name;
+    this.args = args;
   }
-
-  interpret(scope) {
-    const cb = scope?.[this.name];
-    if (!cb)
-      throw new ReferenceError(this.name);
-    if (!(cb instanceof Function))
-      return cb;
-    try {
-      const args = this.args.map(x =>
-        x instanceof Expression ? x.interpret(cb.scope) :
-          x === "." ? "unset" : //todo move this into the parser??
-            cb.scope?.[x] instanceof Function ? cb.scope[x].call(cb.scope) :
-              cb.scope?.[x] ? cb.scope[x] :
-                x);
-      return cb.call(scope, ...args);
-    } catch (e) {
-      if (e instanceof ReferenceError)
-        e.message = this.name + "." + e.message;
-      throw e;
-    }
-  }
+  // interpret(scope) {
+  //   // const cb = scope?.[this.name];
+  //   if (this.name in scope)
+  //     return scope[this.name]?.(scope, ...args);
+  //   throw new ReferenceError(this.name);
+  //   // if (!(cb instanceof Function))
+  //   //   return cb;
+  //   // try {
+  //   //   const args = this.args.map(x =>
+  //   //     x instanceof Expression ? x.interpret(cb.scope) :
+  //   //       x === "." ? "unset" : //todo move this into the parser??
+  //   //         cb.scope?.[x] instanceof Function ? cb.scope[x].call(cb.scope) :
+  //   //           cb.scope?.[x] ? cb.scope[x] :
+  //   //             x);
+  //   //   return cb.call(scope, ...args);
+  //   // } catch (e) {
+  //   //   if (e instanceof ReferenceError)
+  //   //     e.message = this.name + "." + e.message;
+  //   //   throw e;
+  //   // }
+  // }
 }
+
+// function reduceTriplets(arr, cb) {
+//   const res = arr.slice(0, 1);
+//   for (let i = 1; i < arr.length - 1; i++) {
+//     const a = res.at(-1);
+//     const b = arr[i];
+//     const c = arr[i + 1];
+//     const r = cb(a, b, c);
+//     if (r === undefined) res.push(b, c);
+//     else res[res.length - 1] = r;
+//   }
+//   return res;
+// }
+const OPS = {
+  "+": (a, b) => a + b,
+  "-": (a, b) => a - b,
+  "*": (a, b) => a * b,
+  "/": (a, b) => { if (!b) throw new SyntaxError("Division by zero"); return a / b },
+};
+const FACTORS = {
+  // Times
+  s_ms: 1000,
+  // Length
+  in_cm: 2.54,
+  in_mm: 25.4,
+  in_pt: 72,
+  in_pc: 6,
+  cm_mm: 10,
+  pc_mm: 25.4 / 6,
+  pc_pt: 12,
+  cm_Q: 40,
+  mm_Q: 4,
+  in_Q: 25.4 / 0.25,
+  pt_Q: (25.4 / 72) / 0.25,
+  // Frequency
+  kHz_Hz: 1000,
+  // Angles
+  turn_deg: 360,
+  turn_rad: 2 * Math.PI,
+  turn_grad: 400,
+  rad_deg: 180 / Math.PI,
+  rad_grad: 200 / Math.PI,
+  deg_grad: 400 / 360,
+  // Resolution
+  dppx_dpi: 96,
+  dppx_dpcm: 96 / 2.54,
+  dpcm_dpi: 2.54,
+};
+
+function computeNumbers(a, b, c) {
+  if (a.type && c.type && a.type != c.type)
+    throw new SyntaxError(`Incompatible types: ${a.text}<${a.type}> ${b.text} ${c.text}<${c.type}>`);
+  const calc = OPS[b.text];
+  if (!calc)
+    throw new SyntaxError("Unknown operator: " + b.text);
+  const factor = !a.type || !c.type || a.unit == c.unit ? 1 : FACTORS[a.type + "_" + c.type] ?? (1 / FACTORS[c.type + "_" + a.type]);
+  if (factor == undefined) //different types of lengths
+    return;
+  const num = calc(a.num, c.num * factor);
+  const base = a.type ? a : c;
+  const text = num + (base.unit || "");
+  return { ...base, text, num };
+}
+
+// class MathExpression extends Expression {
+//   constructor(args) {
+//     super("$math", args);
+//   }
+
+//   interpret(scope) {
+//     //1. default type and nested parens ()
+//     const defaultType = scope?.$math ?? 0;
+//     let args = this.args.map(x =>
+//       x instanceof Expression ? x.interpret(scope) :
+//         x.text == "." ? defaultType :
+//           x);
+//     //2. check the last argument and convert it to text
+//     const lastI = args.length - 1;
+//     const last = args[lastI];
+//     if (last.kind == "VAR")
+//       `var(${last.text})`;
+//     else if (last.kind != "NUMBER")
+//       throw new SyntaxError("math expressions must end with either a number or a variable, not with +-/* or similar operators.");
+
+//     //3. if we only have one argument, return it
+//     if (args.length === 1)
+//       return args[0].text ?? args[0]; //number or var
+
+//     //4. --var and ??, in reverse
+//     args = reduceTriplets(args, (a, b, c) => {
+//       if (b.text == "??" && a.kind == "VAR")
+//         return `var(${a.text}, ${c?.text || c})`;
+//       if (b.text == "??")
+//         throw new SyntaxError("?? must have a variable on the left hand side.");
+//       if (b.kind === "VAR")
+//         return `var(${b.text})`;
+//     });
+
+//     //5. implied default first argument
+//     if (args[0].kind == "OPERATOR")
+//       args.unshift(defaultType);
+
+//     //5. */
+//     args = reduceTriplets(args, (a, b, c) =>
+//       (b.text == "*" || b.text == "/") && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
+//     //6. +-
+//     args = reduceTriplets(args, (a, b, c) =>
+//       (b.text == "+" || b.text == "-") && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
+//     //7. toString
+//     if (args.length === 1)
+//       return args[0]?.text ?? args[0];
+//     args = reduceTriplets(args, (a, b, c) => (a?.text ?? a) + " " + b.text + " " + (c?.text ?? c));
+//     return `calc(${args[0]})`;
+//   }
+// }
 
 const clashOrStack = (function () {
   const STACKABLE_PROPERTIES = {
@@ -1692,122 +1838,129 @@ const clashOrStack = (function () {
   }
 })();
 
-function varAndSpaceOperators(tokens) {
-  const res = tokens.join("").split(/(---?[a-z][a-z0-9_-]*)/g);
-  for (let i = res.length - 1; i >= 0; i--) {
-    const env = res[i].startsWith("---");
-    const comma = res[i + 1] == ",";
-    const afterComma = res[i + 2];
-    if (!res[i])
-      res.splice(i, 1);
-    else if (env && i % 2 && comma && afterComma)
-      res.splice(i, 3, `env(${res[i].slice(3)}, ${res[i + 2]})`);
-    else if (env && i % 2)
-      res[i] = `env(${res[i].slice(3)})`;
-    else if (i % 2 && comma && afterComma)
-      res.splice(i, 3, `var(${res[i]}, ${res[i + 2]})`);
-    else if (i % 2)
-      res[i] = `var(${res[i]})`;
-    else
-      res[i] = res[i].replaceAll(/(?<!^|[+*/-])-|[+*/]/g, " $& ");
-  }
-  return res;
-}
+// function diveDeep(tokens) {
+//   const res = [];
+//   while (tokens.length) {
+//     let a = tokens.shift();
+//     if (a == undefined)
+//       throw new SyntaxError("Missing end parenthesis");
+//     else if (a.text == ")")
+//       return res;
+//     else if (a.text == ",") {
+//       res.push(undefined);  // throw "empty argument not allowed";
+//       continue;
+//     } else if (a.kind === "COLOR") { //color grab
+//       const colors = [a];
+//       while (tokens[0]?.kind === "COLOR")
+//         colors.push(tokens.shift());
+//       a = new Expression("_hash", colors); //ColorExpression??
+//     } else if (a.kind === "NUMBER" || a.kind === "VAR" || a.kind === "OPERATOR") {
+//       const math = [a];
+//       while (true) {
+//         if (tokens[0]?.kind === "NUMBER" || tokens[0]?.kind === "VAR" || tokens[0]?.kind === "OPERATOR") {
+//           math.push(tokens.shift());
+//         } else if (tokens[0]?.text === "(") {
+//           tokens.shift();
+//           const x = new MathExpression(goDeep(tokens)); //todo recursive
+//           if (x.args.length != 1 && !(x.args[0] instanceof Expression && x.args[0].name === "_math"))
+//             throw new SyntaxError("Parenthesis in math must return exactly one math expression.");
+//           math.push(x);
+//         } else
+//           break;
+//       }
+//       a = new MathExpression(math);
+//     }
 
-function impliedMultiplication(tokens) {
-  for (let i = tokens.length - 2; i >= 1; i--) {
-    if (tokens[i] === "(" && !tokens[i - 1].match(/(min|max|clamp|[+*/-])$/))
-      tokens.splice(i, 0, "*");
-    else if (tokens[i] === ")" && !tokens[i + 1].match(/^[+*/-]/))
-      tokens.splice(i + 1, 0, "*");
-  }
-  return tokens;
-}
+//     let b = tokens.shift();
+//     if (a.kind === "WORD" && b.text === "(") {
+//       a = new Expression(a.text, goDeep(tokens));
+//       b = tokens.shift();
+//     }
+//     if (b.text != ")" && b.text != ",")
+//       throw "syntax error";
+//     res.push((a instanceof Expression || typeof a === "string") ? a : a.text);
+//     if (b.text === ")")
+//       return res;
+//   }
+//   throw "missing ')'";
+// }
 
-function parseVarCalc(tokens) {
-  const t2 = impliedMultiplication(tokens);
-  const t3 = varAndSpaceOperators(t2);
-  if (t3.length === 3 && t3[0] === "(" && t3[2] === ")")
-    t3.shift(), t3.pop();
-  if (t3.length === 1 && t3[0].startsWith("var(--"))
-    return t3[0];
-  const str = t3.join("");
-  return str.includes(" ") ? `calc(${str})` : str;
-}
-
-const WORD = /^\$?[a-zA-Z_][a-zA-Z0-9_]*$/;
-const CPP = /[,()$=;{}]/.source;
-const nCPP = /[^,()$=;{}]+/.source;
-const QUOTE = /([`'"])(?:\\.|(?!\2).)*?\2/.source;
-const TOKENS = new RegExp(`(${QUOTE})|(\\s+)|(${CPP})|(${nCPP})`, "g");
-
-function processToken([m, , , space]) {
-  return space ? undefined : m;
-}
-
-function eatTokens(tokens) {
-  for (let res = [], depth = 0; tokens.length;) {
-    if (!depth && (tokens[0] === "," || tokens[0] === ")"))
-      return res;
-    if (tokens[0] === "(") depth++;
-    if (tokens[0] === ")") depth--;
-    res.push(tokens.shift());
-  }
-  throw "missing ')'";
-}
-
-function diveDeep(tokens, top) {
-  const res = [];
-  while (tokens.length) {                       //<
-    let a = tokens[0].match(/^(?!["'])(?:\($|.*[+/*]|(?<![a-z])-|-(?![a-z]))/i) ?
-      parseVarCalc(eatTokens(tokens)) :
-      tokens.shift();
-    if (a[0] === "#")
-      a = new Expression("_hash", a.slice(1).split("#"));
-    if (top && a === ",") throw "can't start with ','";
-    if (top && a === ")") throw "can't start with ')'";
-    if (a === ")" && !res.length) throw new SyntaxError("empty function not allowed in CSSs");
-    if (a === "," || a === ")") {         //empty
-      res.push(undefined);
-      if (a === ")")
-        return res;
+function goRightComma(tokens, divider) {
+  const args = [];
+  if (tokens[0] == ")" && tokens.shift())
+    return args;
+  while (tokens.length) {
+    const a = goRightOperator(tokens);
+    args.push(a);
+    if (tokens[0].text === ")" && tokens.shift())
+      return args;
+    if (tokens[0].text === divider && tokens.shift())
       continue;
-    }
-    let b = tokens.shift();
-    if (top && b === ",") throw "top level can't list using ','";
-    if (top && b === ")") throw "top level can't use ')'";
-    if (b === "(" && !a.match(WORD)) throw "invalid function name";
-    if (b === "(") {
-      a = new Expression(a, diveDeep(tokens));
-      b = tokens.shift();
-    }
-    // if (a.match?.(WORD)) 
-    //   a = a.replaceAll(/[A-Z]/g, c => '-' + c.toLowerCase());
-    if (b === ")" && top && tokens.length)
-      throw "too many ')'";
-    if (b === ")" || (top && b === undefined))
-      return res.push(a), res;
-    if (b == ",")
-      res.push(a);
-    else
-      throw "syntax error";
+    throw new SyntaxError(`Expected ${[divider, ")"].filter(Boolean).join(" or ")}, got: ${b.text}`);
   }
-  throw "missing ')'";
+  throw new SyntaxError("missing ')'");
 }
 
-function parseNestedExpression(short) {
-  const tokensOG = [...short.matchAll(TOKENS)].map(processToken).filter(Boolean);
-  if (tokensOG.length === 1)
-    return new Expression(tokensOG[0], []); //todo no calc top level
-  const tokens = tokensOG.slice();
+function goRightOperator(tokens) {
+  let a = goDeep(tokens);
+  while (tokens.length && tokens[0].kind !== "SYN") {
+    if (!(a instanceof Expression || a.kind === "NUMBER" || a.kind === "VAR"))
+      throw new SyntaxError(`can't do ${a}-><-${tokens[0].text}`);
+    let b = goDeep(tokens);
+    if (b.kind === "NUMBER" && (b.text[0] == "-" || b.text[0] == "+")) {
+      const sign = b.text[0];
+      const right = { ...b, text: b.text.slice(1) };
+      if (sign == "-") right.num *= -1;
+      b = new Expression(sign, [undefined, right]);
+    }
+    if (b instanceof Expression && b.left === undefined)
+      a = b.prepend(a);
+    else
+      throw new SyntaxError("Expected , or ) or math operator expr, got: " + b);
+  }
+  return a;
+}
+
+
+function goDeep(tokens) {
+  if (tokens[0].text === "(")
+    tokens.unshift({ kind: "WORD", text: "", math: true });
+  if (tokens[0].kind === "SYN")
+    throw new SyntaxError(`Expected expression, got: ${tokens[0].text}`);
+
+  if (tokens[0].kind === "OP")
+    tokens.unshift({ kind: "NUMBER", text: "" });
+  if (tokens[1].kind === "OP")
+    return new Expression(tokens.shift().text, [tokens.shift(), goRightOperator(tokens)]);
+
+  const colors = [];
+  while (tokens[0].kind === "COLOR")
+    colors.push(tokens.shift());
+  if (colors.length)
+    return new Expression("_hash", colors);
+
+  if (tokens[1].text === "(" && (tokens[0].kind === "NUMBER" || tokens[0].kind === "VAR"))
+    return new Expression("*", [tokens.shift(), ...goRightComma(tokens, "")]);
+  if (tokens[1].text === "(" && tokens[0].kind === "WORD")
+    return new Expression(tokens.shift().text, (tokens.shift(), goRightComma(tokens, ",")));
+
+  return tokens.shift();
+}
+
+function parseNestedExpression(shortExp) {
+  const newTokens = tokenize(shortExp);
   try {
-    return diveDeep(tokens, true)[0];
+    const short = goDeep(newTokens);
+    if (newTokens.length)
+      throw new SyntaxError("too many tokens.");
+    if (!(short instanceof Expression))
+      throw new SyntaxError("Short is not a valid expression.");
+    return short;
   } catch (e) {
-    //todo add the error string to the e.message
-    const i = tokensOG.length - tokens.length;
-    tokensOG.splice(i, 0, `{{{${e}}}}`);
-    const msg = tokensOG.join("");
-    throw new SyntaxError("Invalid short: " + msg);
+    e.message += `\n${shortExp}\n${" ".repeat(shortExp.length - newTokens.reduce(((acc, { text }) => acc + text.length), 0))}^`;
+    console.error(e);
+    debugger
+    throw e;
   }
 }
 
@@ -1819,17 +1972,26 @@ const clazz = /\.[a-zA-Z][a-zA-Z0-9_-]*/.source; //class
 const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
-function parseSelectorPipe(str) {
-  //todo body1 must have star at the end. body2 must have star at the start. The where is star doesn't work with this.
-  //todo also. I think that we should always have a star, and not end with empty. It is less confusing with ".something>*" than ".something>".
-  //todo this will make the selector far more readable! also, it will make the parsing of body1 and body2 easier.
-
+function parseSelectorPipe(str, clazz) {
   let [body1, body2] = str.split("|").map(parseSelectorComma);
-  body1 = body1?.join(", ");
+  for (let i = 0; i < body1.length; i++)
+    body1[i] = body1[i].replace(MAGICWORD, clazz);;
+
   if (!body2)
-    return { selector: body1 };
-  body2 = body2?.join(", ");
-  return { selector: body1 + ">" + (body2 || "*"), item: true };
+    return { selector: body1.join(", "), item: false };
+
+  for (let i = 0; i < body2.length; i++) {
+    const expr = body2[i];
+    if (!expr.startsWith(MAGICWORD))
+      throw new SyntaxError("Item selector can't have ancestor expression: " + expr);
+    body2[i] = expr === MAGICWORD ? "*" : expr.slice(MAGICWORD.length);
+  }
+
+  let res = [];
+  for (let con of body1)
+    for (let item of body2)
+      res.push(con + ">" + item);
+  return { selector: res.join(","), item: true };
 }
 
 function parseSelectorComma(str) {
@@ -1846,47 +2008,55 @@ function parseSelectorComma(str) {
 
 class Selector {
 
-  static findTail(body) {
-    const j = body.findIndex(s => s === ">" || s === "+" || s === "~" || s === " ");
-    if (j < 0)
-      return [body];
-    if (j === 0)
-      return [null, body];
-    const tail = body.slice(j);
-    body = body.slice(0, j);
-    return [body, tail];
-  }
-
-  static whereIsStar(select) {
-    let i = select.indexOf("*");
-    if (i === select.length - 1)
-      return [select];
-    if (i === 0)
-      return [null, ...Selector.findTail(select)];
-    if (i > 0)
-      return [select.slice(0, i), ...Selector.findTail(select.slice(i + 1))];
-    const first = select[0].match(/^[>+~]$/);
-    const last = select.at(-1).match(/^[>+~]$/);
-    if (first && last)
-      throw `Relationship selector both front and back: ${select.join("")}`;
-    return last ? [select] : [null, ...Selector.findTail(select)];
-  }
-
-  static superAndNots(select) {
-    return select?.map((el, i, ar) => ar[i - 1] === "!" ? `:not(${el})` : el)
-      .filter(el => el !== "!")
-      .join("");
+  static replaceNot(select) {
+    const res = [];
+    for (let i = 0; i < select.length; i++) {
+      if (select[i] == "!" && select[i + 1]?.match(/^[^!>+~*\s]$/))
+        res.push(`:not(${select[++i]})`);
+      else if (select[i] == "!")
+        throw new SyntaxError(`! can't come before ${select[i + 1] || "<endof selector>"}`);
+      else
+        res.push(select[i]);
+    }
+    return res;
   }
 
   static interpret(select) {
-    if (!select.length || select.length === 1 && select[0] === "*")
-      return;
+    if (!select.length)
+      return MAGICWORD;
     select = select.map(s => s == ">>" ? " " : s);
-    let [head, body, tail] = Selector.whereIsStar(select).map(Selector.superAndNots);
+    if (select[0].match(/^[>+~\s]$/))
+      select.unshift("*");
+    if (select.at(-1).match(/^[>+~\s]$/))
+      select.push("*");
+    let star = select.indexOf("*");
+    if (star == -1) {
+      select.unshift("*");
+      star = 0;
+    }
+    if (star !== select.lastIndexOf("*"))
+      throw `Only one '*' allowed per selector expression: ${select.join("")} `;
+    select = Selector.replaceNot(select);
+
+    let head = "";
+    while (select.length) {
+      let first = select.shift();
+      if (first === "*") break;
+      if (!first.match(/^[>+~\s]$/))
+        first = `:where(${first})`;
+      head += first;
+    }
+    let body = "";
+    while (select.length) {
+      if (select[0].match(/^[>+~\s]$/))
+        break;
+      body += select.shift();
+    }
+    let tail = select.join("");
     tail &&= `:has(${tail})`;
-    head &&= `:where(${head})`;
-    const selector = [head, body, tail].filter(Boolean).join("");
-    return selector ? `:where(${selector})` : selector;
+    body += tail;
+    body &&= `:where(${body})`;
+    return head + MAGICWORD + body;
   }
 }
 
@@ -1913,17 +2083,17 @@ function mediaComparator(str) {
     (name == "resolution" && !res) ||
     (name.match(/color|monochrome|colorIndex/) && type)
   )
-    throw new SyntaxError(`Invalid ${name}: ${num}${type}`);
+    throw new SyntaxError(`Invalid ${name}: ${num}${type} `);
   let snake = name.replace(/[A-Z]/g, "-$&").toLowerCase();
   if (op == "<")
     num = parseFloat(num) - 0.01;
   else if (op == ">")
     num = parseFloat(num) + 0.01;
   if (op.includes("<"))
-    snake = `max-${snake}`;
+    snake = `max - ${snake} `;
   else if (op.includes(">"))
-    snake = `min-${snake}`;
-  return `${snake}: ${num}${type}`;
+    snake = `min - ${snake} `;
+  return `${snake}: ${num}${type} `;
 }
 
 function parseMediaQuery(str, register) {
@@ -1966,8 +2136,111 @@ function parseMediaQuery(str, register) {
       );
     }
   }
-  return { exp: str.slice(i), media: `${tokens.join(" ")}` };
+  return { exp: str.slice(i), media: `${tokens.join(" ")} ` };
 }
+
+const TYPES = {
+  LENGTHS: "px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex",
+  PERCENT: "%",
+  ANGLES: "deg|grad|rad|turn",
+  TIMES: "s|ms",
+  FR: "fr",
+
+  COLOR_NAMES: "aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen",
+  COLOR_FUNCTIONS: "rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch",
+  MATH: "min|max|clamp|round|ceil|floor|abs|sin|cos|tan|asin|acos|atan|atan2|sqrt|log2|log10|exp|pow",
+  // OTHER_FUNCTIONS: "url|attr|var|env|counter|counters|rect|repeat|minmax",
+};
+
+const NUMBER = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${TYPES.LENGTHS})|(${TYPES.ANGLES})|(${TYPES.TIMES})|(${TYPES.PERCENT})|(${TYPES.FR}))?`;
+
+//TODO this will not be much needed when we run the function with the content first.
+function isNumberUnit(UNITS) {
+  const RX = new RegExp(`^${NUMBER}$`);
+  const integer = UNITS.includes("i");
+  const positive = UNITS.includes("+");
+  const length = UNITS.includes("l");
+  const angle = UNITS.includes("a");
+  const time = UNITS.includes("t");
+  const percent = UNITS.includes("%");
+  const frame = UNITS.includes("f");
+  const empty = UNITS.includes("e");
+  const z = UNITS.includes("0");
+
+  return function (x) {
+    if (positive && n.startsWith("-")) return;
+    const m = x.match(RX);
+    if (!m) return;
+    let [, n, l, a, t, p, f] = m;
+    if (integer && !n.isInteger()) return;
+    if (angle && a) return x;
+    if (length && l) return x;
+    if (time && t) return x;
+    if (percent && p) return x;
+    if (frame && f) return x;
+    if (empty && !l && !a && !t && !p && !f) return x;
+  }
+}
+
+const isLength = isNumberUnit("l%0"); //todo rename to lengthPercent
+const isAngle = isNumberUnit("a0");
+const isTime = isNumberUnit("t");
+
+const tokenize = (_ => {
+  const QUOTE = /([`'"])(\\.|(?!\2).)*?\2/.source;
+  const VAR = /--[a-zA-Z][a-zA-Z0-9_]*/.source;
+  const WORD = /[._a-zA-Z][._%a-zA-Z0-9+<-]*/.source;
+  const COLOR_WORD = /#(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch)/.source;
+  const COLOR = `#(?:(a)(\\d\\d)|([0-9a-fA-F]{6})([0-9a-fA-F]{2})?|([0-9a-fA-F]{3})([0-9a-fA-F])?|(${TYPES.COLOR_NAMES}|([a-zA-Z_]+|))(\\d\\d)?)`;
+  const OPERATOR = /\?\?|\*\*|[*/+-]/.source;
+  const CPP = /[,()]/.source;
+
+  const TOKENS = new RegExp([
+    QUOTE,
+    "\\s+",
+    NUMBER,
+    VAR,
+    WORD,
+    COLOR_WORD,
+    COLOR,
+    OPERATOR,
+    CPP,
+    ".+"
+  ].map(x => `(${x})`)
+    .join("|"),
+    "gi");
+
+  return function tokenize(input) {
+    const out = [];
+    for (let m; (m = TOKENS.exec(input));) {
+      const [text, _, q, quote, ws, n, num, length, angle, time, percent, fr, vari, word, colorWord, c, c0, p0, c1, p1, c2, p2, c3, c4, p3, op, cpp] = m;
+      if (ws) continue;
+      else if (num) {
+        const unit = length ?? angle ?? time ?? percent ?? undefined;
+        const type = length ? "length" : angle ? "angle" : time ? "time" : percent ? "percent" : fr ? "fr" : undefined;
+        out.push({ text, kind: "NUMBER", num: Number(num), unit, type });
+      }
+      else if (c) {
+        const percent =
+          p0 ? 100 - Number(p0) :
+            p1 ? (parseInt(p1, 16) / 15) * 100 :
+              p2 ? (parseInt(p2, 16) / 255) * 100 :
+                p3 ? Number(p3) :
+                  undefined;
+        const c = c0 ? "transparent" : c1 ?? c2 ?? c3;
+        out.push({ text, kind: "COLOR", c, percent, primitive: c4 == null, hex: (c1 || c2) && text });
+      }
+      else if (quote) out.push({ text, kind: "QUOTE", quote });
+      else if (vari) out.push({ text, kind: "VAR" });
+      else if (word) out.push({ text, kind: "WORD" });
+      else if (colorWord) out.push({ text, kind: "COLORWORD" });
+      else if (op) out.push({ text, kind: "OPERATOR" });
+      else if (cpp) out.push({ text, kind: "SYN" });
+      else throw new SyntaxError(`Unknown token: ${text} in ${input}`);
+    }
+    return out;
+  }
+})();
 
 /**
  * Use memoize to cache the results of this function.
@@ -2061,5 +2334,5 @@ function updateStyleText(styleEl) {
 //   }
 // });
 
-export { extractShort, extractShortSelector, memoize, parse, removeUnusedShorts, sequence, updateClassList, updateStyleText };
+export { TYPES, extractShort, extractShortSelector, isAngle, isLength, isTime, memoize, parse, removeUnusedShorts, sequence, updateClassList, updateStyleText };
 //# sourceMappingURL=csss.js.map

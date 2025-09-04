@@ -62,11 +62,11 @@
 }
 ```
 
-**csss:** $margin(10px+5px*2)
+**csss:** $blockItem(margin(10px+5px*2))
 **css:**
 ```css
 @layer containerDefault {
-  .\$margin\(10px\+5px\*2\) {
+  .\$blockItem\(margin\(10px\+5px\*2\)\) {
     margin: calc(20px);
   }
 }
@@ -122,11 +122,11 @@
 }
 ```
 
-**csss:** $margin(-10px+20px)
+**csss:** $blockItem(margin(-10px+20px))
 **css:**
 ```css
 @layer containerDefault {
-  .\$margin\(-10px\+20px\) {
+  .\$blockItem\(margin\(-10px\+20px\)\) {
     margin: calc(10px);
   }
 }
@@ -216,11 +216,11 @@
 }
 ```
 
-**csss:** $margin(2px+5px*(--var/3.5))
+**csss:** $blockItem(margin(2px+5px*(--var/3.5)))
 **css:**
 ```css
 @layer containerDefault {
-  .\$margin\(2px\+5px\*\(--var\/3\.5\)\) {
+  .\$blockItem\(margin\(2px\+5px\*\(--var\/3\.5\)\)\) {
     margin: calc(2px + 5px * (var(--var) / 3.5));
   }
 }

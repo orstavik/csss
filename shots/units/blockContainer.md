@@ -62,11 +62,11 @@
 }
 ```
 
-**csss:** $block(g(0.5rem,1.8))
+**csss:** $block(gap(0.5rem,1.8))
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(g\(0\.5rem\,1\.8\)\) {
+  .\$block\(gap\(0\.5rem\,1\.8\)\) {
     display: block;
     word-spacing: 0.5rem;
     line-height: 1.8;
@@ -78,11 +78,11 @@
 }
 ```
 
-**csss:** $block(g(0,1.2))
+**csss:** $block(gap(0,1.2))
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(g\(0\,1\.2\)\) {
+  .\$block\(gap\(0\,1\.2\)\) {
     display: block;
     word-spacing: 0;
     line-height: 1.2;
@@ -111,21 +111,21 @@
 }
 ```
 
-**csss:** $w(200px)
+**csss:** $blockItem(inlineSize(200px))
 **css:**
 ```css
 @layer containerDefault {
-  .\$w\(200px\) {
+  .\$blockItem\(inlineSize\(200px\)\) {
     inline-size: 200px;
   }
 }
 ```
 
-**csss:** $h(50px)
+**csss:** $blockItem(blockSize(50px))
 **css:**
 ```css
 @layer containerDefault {
-  .\$h\(50px\) {
+  .\$blockItem\(blockSize\(50px\)\) {
     block-size: 50px;
   }
 }
@@ -261,11 +261,11 @@
 }
 ```
 
-**csss:** $block(lineClamp(3))
+**csss:** $lineClamp(3)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(lineClamp\(3\)\) {
+  .\$lineClamp\(3\) {
     display: -webkit-box;
     word-spacing: unset;
     line-height: unset;
