@@ -1,9 +1,49 @@
+**csss:** $color(#orange)
+**css:**
+```css
+@layer containerDefault {
+  .\$color\(\#orange\) {
+    color: orange;
+  }
+}
+```
+
+**csss:** $color(#orange#purple75)
+**css:**
+```css
+@layer containerDefault {
+  .\$color\(\#orange\#purple75\) {
+    color: color-mix(in oklab, orange, purple 75%);
+  }
+}
+```
+
+**csss:** $color(#orange#purple75#3338)
+**css:**
+```css
+@layer containerDefault {
+  .\$color\(\#orange\#purple75\#3338\) {
+    color: color-mix(in oklab, color-mix(in oklab, orange, purple 75%), #333333 53.33%);
+  }
+}
+```
+
 **csss:** $color(#rgb(255,0,0))
 **css:**
 ```css
 @layer containerDefault {
   .\$color\(\#rgb\(255\,0\,0\)\) {
     color: #ff0000;
+  }
+}
+```
+
+**csss:** $color(#rgb(255,0,0)#orange33)
+**css:**
+```css
+@layer containerDefault {
+  .\$color\(\#rgb\(255\,0\,0\)\#orange33\) {
+    color: color-mix(in oklab, #ff0000, orange 33%);
   }
 }
 ```

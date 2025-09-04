@@ -106,33 +106,33 @@ export function parse(short) {
   // const miniCssRule = {cssText, name: layer, cssRules: [{ media, cssRules: [{ selectorText: selector, style: { cssText: body }, props }] }]};
 }
 
-class Expression {
-  constructor(name, args) {
-    this.name = name;
-    this.args = args;
-  }
-  // interpret(scope) {
-  //   // const cb = scope?.[this.name];
-  //   if (this.name in scope)
-  //     return scope[this.name]?.(scope, ...args);
-  //   throw new ReferenceError(this.name);
-  //   // if (!(cb instanceof Function))
-  //   //   return cb;
-  //   // try {
-  //   //   const args = this.args.map(x =>
-  //   //     x instanceof Expression ? x.interpret(cb.scope) :
-  //   //       x === "." ? "unset" : //todo move this into the parser??
-  //   //         cb.scope?.[x] instanceof Function ? cb.scope[x].call(cb.scope) :
-  //   //           cb.scope?.[x] ? cb.scope[x] :
-  //   //             x);
-  //   //   return cb.call(scope, ...args);
-  //   // } catch (e) {
-  //   //   if (e instanceof ReferenceError)
-  //   //     e.message = this.name + "." + e.message;
-  //   //   throw e;
-  //   // }
-  // }
-}
+// class Expression {
+//   constructor(name, args) {
+//     this.name = name;
+//     this.args = args;
+//   }
+//   // interpret(scope) {
+//   //   // const cb = scope?.[this.name];
+//   //   if (this.name in scope)
+//   //     return scope[this.name]?.(scope, ...args);
+//   //   throw new ReferenceError(this.name);
+//   //   // if (!(cb instanceof Function))
+//   //   //   return cb;
+//   //   // try {
+//   //   //   const args = this.args.map(x =>
+//   //   //     x instanceof Expression ? x.interpret(cb.scope) :
+//   //   //       x === "." ? "unset" : //todo move this into the parser??
+//   //   //         cb.scope?.[x] instanceof Function ? cb.scope[x].call(cb.scope) :
+//   //   //           cb.scope?.[x] ? cb.scope[x] :
+//   //   //             x);
+//   //   //   return cb.call(scope, ...args);
+//   //   // } catch (e) {
+//   //   //   if (e instanceof ReferenceError)
+//   //   //     e.message = this.name + "." + e.message;
+//   //   //   throw e;
+//   //   // }
+//   // }
+// }
 
 // function reduceTriplets(arr, cb) {
 //   const res = arr.slice(0, 1);
@@ -146,56 +146,56 @@ class Expression {
 //   }
 //   return res;
 // }
-const OPS = {
-  "+": (a, b) => a + b,
-  "-": (a, b) => a - b,
-  "*": (a, b) => a * b,
-  "/": (a, b) => { if (!b) throw new SyntaxError("Division by zero"); return a / b },
-}
-const FACTORS = {
-  // Times
-  s_ms: 1000,
-  // Length
-  in_cm: 2.54,
-  in_mm: 25.4,
-  in_pt: 72,
-  in_pc: 6,
-  cm_mm: 10,
-  pc_mm: 25.4 / 6,
-  pc_pt: 12,
-  cm_Q: 40,
-  mm_Q: 4,
-  in_Q: 25.4 / 0.25,
-  pt_Q: (25.4 / 72) / 0.25,
-  // Frequency
-  kHz_Hz: 1000,
-  // Angles
-  turn_deg: 360,
-  turn_rad: 2 * Math.PI,
-  turn_grad: 400,
-  rad_deg: 180 / Math.PI,
-  rad_grad: 200 / Math.PI,
-  deg_grad: 400 / 360,
-  // Resolution
-  dppx_dpi: 96,
-  dppx_dpcm: 96 / 2.54,
-  dpcm_dpi: 2.54,
-};
+// const OPS = {
+//   "+": (a, b) => a + b,
+//   "-": (a, b) => a - b,
+//   "*": (a, b) => a * b,
+//   "/": (a, b) => { if (!b) throw new SyntaxError("Division by zero"); return a / b },
+// }
+// const FACTORS = {
+//   // Times
+//   s_ms: 1000,
+//   // Length
+//   in_cm: 2.54,
+//   in_mm: 25.4,
+//   in_pt: 72,
+//   in_pc: 6,
+//   cm_mm: 10,
+//   pc_mm: 25.4 / 6,
+//   pc_pt: 12,
+//   cm_Q: 40,
+//   mm_Q: 4,
+//   in_Q: 25.4 / 0.25,
+//   pt_Q: (25.4 / 72) / 0.25,
+//   // Frequency
+//   kHz_Hz: 1000,
+//   // Angles
+//   turn_deg: 360,
+//   turn_rad: 2 * Math.PI,
+//   turn_grad: 400,
+//   rad_deg: 180 / Math.PI,
+//   rad_grad: 200 / Math.PI,
+//   deg_grad: 400 / 360,
+//   // Resolution
+//   dppx_dpi: 96,
+//   dppx_dpcm: 96 / 2.54,
+//   dpcm_dpi: 2.54,
+// };
 
-function computeNumbers(a, b, c) {
-  if (a.type && c.type && a.type != c.type)
-    throw new SyntaxError(`Incompatible types: ${a.text}<${a.type}> ${b.text} ${c.text}<${c.type}>`);
-  const calc = OPS[b.text];
-  if (!calc)
-    throw new SyntaxError("Unknown operator: " + b.text);
-  const factor = !a.type || !c.type || a.unit == c.unit ? 1 : FACTORS[a.type + "_" + c.type] ?? (1 / FACTORS[c.type + "_" + a.type]);
-  if (factor == undefined) //different types of lengths
-    return;
-  const num = calc(a.num, c.num * factor);
-  const base = a.type ? a : c;
-  const text = num + (base.unit || "");
-  return { ...base, text, num };
-}
+// function computeNumbers(a, b, c) {
+//   if (a.type && c.type && a.type != c.type)
+//     throw new SyntaxError(`Incompatible types: ${a.text}<${a.type}> ${b.text} ${c.text}<${c.type}>`);
+//   const calc = OPS[b.text];
+//   if (!calc)
+//     throw new SyntaxError("Unknown operator: " + b.text);
+//   const factor = !a.type || !c.type || a.unit == c.unit ? 1 : FACTORS[a.type + "_" + c.type] ?? (1 / FACTORS[c.type + "_" + a.type]);
+//   if (factor == undefined) //different types of lengths
+//     return;
+//   const num = calc(a.num, c.num * factor);
+//   const base = a.type ? a : c;
+//   const text = num + (base.unit || "");
+//   return { ...base, text, num };
+// }
 
 // class MathExpression extends Expression {
 //   constructor(args) {
@@ -352,7 +352,7 @@ function goRightComma(tokens, divider) {
       return args;
     if (tokens[0].text === divider && tokens.shift())
       continue;
-    throw new SyntaxError(`Expected ${[divider, ")"].filter(Boolean).join(" or ")}, got: ${b.text}`);
+    throw new SyntaxError(`Expected ${[divider, ")"].filter(Boolean).join(" or ")}, got: ${tokens[0].text}`);
   }
   throw new SyntaxError("missing ')'");
 }
@@ -365,10 +365,8 @@ function goRightOperator(tokens) {
       a = { kind: "EXP", name: tokens.shift().text, args: [a, goDeep(tokens)] };
     else if (kind === "NUMBER" && (text[0] == "-" || text[0] == "+"))
       a = { kind: "EXP", name: "+", args: [a, goDeep(tokens)] };
-    else if (kind == "COLOR") {
-      debugger
-      a = { kind: "EXP", name: "_hash", args: [a, goDeep(tokens)] };
-    }
+    else if (kind == "COLOR" && (a.type == "color" || a.kind == "COLOR"))
+      a = { kind: "EXP", name: "#hash", type: "color", args: [a, goDeep(tokens)] };
     else
       break;
   }
@@ -383,9 +381,11 @@ function goDeep(tokens) {
     throw new SyntaxError(`Expected expression, got: ${tokens[0].text}`);
 
   if (tokens[1].text === "(") {
-    const { text: name } = tokens.shift();
+    const { text: name, kind } = tokens.shift();
     tokens.shift();
-    return { kind: "EXP", name, args: goRightComma(tokens, ",") };
+    return kind == "COLOR" ?
+      { kind: "EXP", type: "color", name, args: goRightComma(tokens, ",") } :
+      { kind: "EXP", name, args: goRightComma(tokens, ",") };
   }
   //todo we must check here that the .kind is valid.
   return tokens.shift();

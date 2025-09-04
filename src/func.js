@@ -360,24 +360,9 @@ function cssColorMix([space, one, two, percent]) {
 //#123 => hash(123) => #123
 //#primary#30 => hash(primary,30)
 //#primary#30#a80 => hash(primary,30,a80)
-
-function hash(colors) {
-  debugger
-  const colorVector = !colors[0].primitive && colors[0].c;
-  if (!colors[0].hex && colors[0].percent)
-    colors.unshift({ c: "transparent" });  //implied transparent
-  for (let i = 0; i < colors.length; i++) {
-    const c = colors[i];
-    if (c.primitive);
-    else if (!c.c && !colorVector)
-      throw new SyntaxError(`Illegal #colormix#${c.c}: Missing color vector name.
-Did you mean to use or define a color vector such as #Primary or #Accent?`);
-    else
-      c.c = `var(--color-${c.c || (colorVector + i)})`;
-  }
-  const first = colors.shift();
-  return colors.reduce((res, { c, percent }) =>
-    `color-mix(in oklab, ${res}, ${c} ${percent ?? 50}%)`, first.hex ?? first.c);
+function hash(oneTwo) {
+  const [one, two] = oneTwo.map(interpretColor);
+  return `color-mix(in oklab, ${one.text}, ${two.hue ?? two.text} ${two.percent}%)`;
 }
 
 function rgb(rgb) { return rgbaImpl("rgb", rgb); }
@@ -465,7 +450,7 @@ const scope = {
 };
 
 const colorHex = /^#([0-9a-fA-F]{6})([0-9a-fA-F]{2})?|([0-9a-fA-F]{3})([0-9a-fA-F])$/
-const colorName = new RegExp(`^#(${Object.keys(WEBCOLORS).join("|")})(\d\d)?$`);
+const colorName = new RegExp(`^#(${Object.keys(WEBCOLORS).join("|")})(\\d\\d)?$`);
 const colorAlpha = /^a(\d\d)$/;
 function parseColor(txt) {
   let m = txt.match(colorAlpha);
@@ -487,9 +472,9 @@ function parseColor(txt) {
     return {
       type: "color",
       text: "#" + c6 + c8,
-      hue: c6,
+      hue: "#" + c6,
       hex: c6,
-      percent: c8 ? parseInt(c8, 16) / 255 * 100 : 100,
+      percent: c8 ? (parseInt(c8, 16) / 255 * 100).toFixed(2) : 100,
     };
   }
   m = txt.match(colorName);
