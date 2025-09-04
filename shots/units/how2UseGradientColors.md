@@ -123,21 +123,23 @@
 }
 ```
 
-**csss:** $borderColor(#neutral#40)
+**csss:** $border(#neutral#40)
 **css:**
 ```css
 @layer containerDefault {
-  .\$borderColor\(\#neutral\#40\) {
+  .\$border\(\#neutral\#40\) {
+    border-style: solid;
     border-color: color-mix(in oklab, var(--color-neutral), var(--color-neutral1) 40%);
   }
 }
 ```
 
-**csss:** $borderColor(#neutral#60)
+**csss:** $border(#neutral#60)
 **css:**
 ```css
 @layer containerDefault {
-  .\$borderColor\(\#neutral\#60\) {
+  .\$border\(\#neutral\#60\) {
+    border-style: solid;
     border-color: color-mix(in oklab, var(--color-neutral), var(--color-neutral1) 60%);
   }
 }

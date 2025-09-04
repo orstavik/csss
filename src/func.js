@@ -372,8 +372,12 @@ function hash(oneTwo) {
     const vector = left.kind == "COLOR" && interpretColor(left).vector;
     if (!vector)
       throw new SyntaxError(`First color ${left.text} is not a color vector, while ${two.text} is a relative color vector.`);
+    if (two.percent >= 100)
+      return `var(--color-${vector})`;
     return `color-mix(in oklab, ${one.text}, var(--color-${vector + i}) ${two.percent}%)`;
   }
+  if (two.percent >= 100)
+    return two.hue ?? two.text;
   return `color-mix(in oklab, ${one.text}, ${two.hue ?? two.text} ${two.percent}%)`;
 }
 
@@ -461,23 +465,30 @@ const scope = {
   // colorMix: nativeCssColorMixFunction,
 };
 
-const colorHex = /^#(?:a(\d\d)|([0-9a-fA-F]{6})([0-9a-fA-F]{2})?|([0-9a-fA-F]{3})([0-9a-fA-F]))$/
-const colorName = new RegExp(`^#(${Object.keys(WEBCOLORS).join("|")})(\\d\\d)?$`);
-function parseColor(txt) {
-  let m = txt.match(colorHex);
-  if (m) {
-    let [, alpha, c6, c8 = "", c3, c4 = ""] = m;
-    if (alpha)
-      return {
-        type: "color",
-        text: "transparent",
-        hue: "transparent",
-        percent: 100 - parseInt(alpha)
-      };
-    if (c3) {
-      c6 = c3.split("").map(c => c + c).join('');
-      c8 = c4 + c4;
-    }
+const CRX = new RegExp("^#(?:" +
+  [
+    "a(\\d\\d)",
+    "([0-9a-f]{6})([0-9a-f]{2})?",
+    "([0-9a-fA-F]{3})([0-9a-fA-F])",
+    "(" + Object.keys(WEBCOLORS).join("|") + ")(\\d\\d)?",
+    "(.*?)(\\d\\d)?",
+  ].join("|") +
+  ")$", "i");
+
+export function parseColor(txt) {
+  let [, alpha, c6, c8 = "", c3, c4 = "", name, p = 100, vector, vp = 100] = txt.match(CRX);
+  if (c3) {
+    c6 = c3.split("").map(c => c + c).join('');
+    c8 = c4 + c4;
+  }
+  if (alpha)
+    return {
+      type: "color",
+      text: "transparent",
+      hue: "transparent",
+      percent: 100 - parseInt(alpha)
+    };
+  if (c6)
     return {
       type: "color",
       text: "#" + c6 + c8,
@@ -485,33 +496,33 @@ function parseColor(txt) {
       hex: c6,
       percent: c8 ? (parseInt(c8, 16) / 255 * 100).toFixed(2) : 100,
     };
-  }
-  m = txt.match(colorName);
-  if (m) {
-    let [, name, percent = "100"] = m;
-    percent = parseInt(percent);
+  if (name) {
+    const percent = parseInt(p);
     const hex = WEBCOLORS[name];
-    const c8 = percent == 100 ? "" : Math.round(percent / 100 * 255).toString(16).padStart(2, '0');
     return {
       type: "color",
-      text: c8 ? "#" + hex + c8 : name,
+      text: percent == 100 ? name :
+        "#" + hex + Math.round(percent / 100 * 255).toString(16).padStart(2, '0'),
       hue: name,
       hex,
       percent
     };
   }
-  let [, vector, percent] = txt.match(/^#(.*?)(\d\d)?$/);
-  let text = `var(--color-${vector})`;
-  if (percent == null)
+  if (vector && vp == 100)
     return {
       type: "color",
-      text,
+      text: `var(--color-${vector})`,
       vector,
       percent: 100
     };
-  percent = parseInt(percent);
-  text = `color-mix(in oklab, transparent, ${text} ${percent}%)`;
-  return { type: "color", text, vector, percent };
+
+  const percent = parseInt(vp);
+  return {
+    type: "color",
+    text: `color-mix(in oklab, transparent, var(--color-${vector}) ${percent}%)`,
+    vector,
+    percent
+  };
 }
 
 export function interpretColor(a) {
@@ -893,13 +904,11 @@ for (const k in BackgroundFunctions)
 function border(ar) {
   //todo here we want to extract the color first.
   //todo then we would like to extract the length? but maybe that is easier later..
-  const borderColor = toLogicalFour.bind(null, "borderColor");
-  const borderWidth = toLogicalFour.bind(null, "borderWidth");
-  const borderRadius = toRadiusFour.bind(null, "borderRadius");
-  const borderRadius8 = toLogicalEight.bind(null, "borderRadius", 0);
-  const borderStyle = toLogicalFour.bind(null, "borderStyle");
-  const Border = {
-    //word => property
+  const color = toLogicalFour.bind(null, "borderColor");
+  const width = toLogicalFour.bind(null, "borderWidth");
+  const radius = toRadiusFour.bind(null, "borderRadius");
+  const radius8 = toLogicalEight.bind(null, "borderRadius", 0);
+  const BORDER = {
     solid: { borderStyle: "solid" },
     dotted: { borderStyle: "dotted" },
     dashed: { borderStyle: "dashed" },
@@ -913,26 +922,28 @@ function border(ar) {
     thin: { borderWidth: "thin" },
     medium: { borderWidth: "medium" },
     thick: { borderWidth: "thick" },
-    //expression => interpret function
-    width: borderWidth,
-    w: borderWidth,
-    style: borderStyle,
-    s: borderStyle,
-    radius: borderRadius,
-    r: borderRadius,
-    r4: borderRadius,
-    r8: borderRadius8,
-    color: borderColor,
-    c: borderColor,
+    width,
+    w: width,
+    radius,
+    r: radius,
+    radius8,
+    r8: radius8,
+    color,
+    c: color,
   };
-  ar = ar.map(a =>
-    Border[a.name]?.(a.args) ??
-    Border[a.text] ??
-    //todo we need this to be implemented in the interpret function so that interpret returns the calculated ones.
-    //todo the shorthand structure. Type => property.
-    (a.type == "length" && { borderWidth: a.text }) ??
-    // a.type == "color" ?? {borderColor: a.text} ??  //todo the shorthand structure. Type => property.
-    interpret(a));
+  ar = ar.map(a => {
+    a = BORDER[a.name]?.(a.args) ??
+      BORDER[a.text] ??
+      interpretColor(a) ??
+      interpretBasic(a);
+    if (!a)
+      throw new SyntaxError(`Could not interpret $border argument: ${a.text}.`);
+    if (a.type == "color")
+      return { borderColor: a.text };
+    if (a.type == "length")
+      return { borderWidth: a.text };
+    return a;
+  });
   return Object.assign({ borderStyle: "solid" }, ...ar);
 }
 
