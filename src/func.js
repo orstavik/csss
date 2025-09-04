@@ -360,8 +360,20 @@ function cssColorMix([space, one, two, percent]) {
 //#123 => hash(123) => #123
 //#primary#30 => hash(primary,30)
 //#primary#30#a80 => hash(primary,30,a80)
+//#primary#brown33#50
 function hash(oneTwo) {
-  const [one, two] = oneTwo.map(interpretColor);
+  let [one, two] = oneTwo.map(interpretColor);
+  if (two.vector == "") {
+    let left = oneTwo[0], i = 1;
+    while (left.name === "#hash") {
+      left = left.args[0];
+      i++;
+    }
+    const vector = left.kind == "COLOR" && interpretColor(left).vector;
+    if (!vector)
+      throw new SyntaxError(`First color ${left.text} is not a color vector, while ${two.text} is a relative color vector.`);
+    return `color-mix(in oklab, ${one.text}, var(--color-${vector + i}) ${two.percent}%)`;
+  }
   return `color-mix(in oklab, ${one.text}, ${two.hue ?? two.text} ${two.percent}%)`;
 }
 
@@ -449,22 +461,19 @@ const scope = {
   // colorMix: nativeCssColorMixFunction,
 };
 
-const colorHex = /^#([0-9a-fA-F]{6})([0-9a-fA-F]{2})?|([0-9a-fA-F]{3})([0-9a-fA-F])$/
+const colorHex = /^#(?:a(\d\d)|([0-9a-fA-F]{6})([0-9a-fA-F]{2})?|([0-9a-fA-F]{3})([0-9a-fA-F]))$/
 const colorName = new RegExp(`^#(${Object.keys(WEBCOLORS).join("|")})(\\d\\d)?$`);
-const colorAlpha = /^a(\d\d)$/;
 function parseColor(txt) {
-  let m = txt.match(colorAlpha);
-  if (m)
-    return {
-      type: "color",
-      text: "transparent",
-      hue: "transparent",
-      percent: 100 - parseInt(m[1])
-    };
-
-  m = txt.match(colorHex);
+  let m = txt.match(colorHex);
   if (m) {
-    let [, c6, c8 = "", c3, c4 = ""] = m;
+    let [, alpha, c6, c8 = "", c3, c4 = ""] = m;
+    if (alpha)
+      return {
+        type: "color",
+        text: "transparent",
+        hue: "transparent",
+        percent: 100 - parseInt(alpha)
+      };
     if (c3) {
       c6 = c3.split("").map(c => c + c).join('');
       c8 = c4 + c4;
@@ -491,7 +500,7 @@ function parseColor(txt) {
       percent
     };
   }
-  let [, vector, percent] = txt.match(/^(.*)(\d\d)?$/);
+  let [, vector, percent] = txt.match(/^#(.*?)(\d\d)?$/);
   let text = `var(--color-${vector})`;
   if (percent == null)
     return {
@@ -725,6 +734,8 @@ function bgImpl(...args) {
 
 //process arguments sequentially, separating geometry from color stops.
 function doGradient(name, ...args) {
+  debugger
+
   const { res } = bgImpl(); // Get default background properties
   const geometry = [];
   const colorStops = [];
@@ -821,30 +832,23 @@ const BG_SCOPE = {
 };
 
 function bg(args) {
-  const res = {
-    backgroundImage: undefined,
-    backgroundPosition: "0% 0%",
-    backgroundRepeat: "repeat",
-    backgroundSize: "auto auto",
-    backgroundOrigin: "padding-box",
-    backgroundClip: "border-box",
-    backgroundBlendMode: "normal",
-    backgroundAttachment: "scroll",
-  };
-  for (let a of args) {
+  const res = args.map(a => {
     a =
       BG_SCOPE[a.text] ??
       BG_SCOPE[a.name]?.(a.args) ??
       interpretColor(a) ??
       interpretUrl(a);
+    if (!a)
+      throw new SyntaxError(`Could not interpret $bg argument: ${a.text}.`);
     if (a.type == "color")
       a = { backgroundImage: `linear-gradient(${a.text})` };
     if (a.type == "url")
       a = { backgroundImage: a.text }; //todo the text should include url(...)
     if (a.text)
       debugger;      // throw new SyntaxError(`Could not interpret $bg(${args.map(a => a.text).join(",")}).`);
-    Object.assign(res, a);
-  }
+    return a;
+  });
+
   // if (!colors.length && !args2.length)
   //   throw new SyntaxError(`$bg(${args.join(",")}) is missing a color or url argument.`);
   // if (colors.length > 1)
@@ -853,7 +857,16 @@ function bg(args) {
   //   throw new SyntaxError(`use $bg(url1)$bg(url2) for layered backgrounds, not $bg(${args2.join(",")}).`);
   // if (colors.length && args2.length)
   //   throw new SyntaxError(`use $bg(color)$bg(url) for layered backgrounds, not $bg(${colors.join(",")},${args2.join(",")}).`);
-  return res;
+  return Object.assign({
+    backgroundImage: undefined,
+    backgroundPosition: "0% 0%",
+    backgroundRepeat: "repeat",
+    backgroundSize: "auto auto",
+    backgroundOrigin: "padding-box",
+    backgroundClip: "border-box",
+    backgroundBlendMode: "normal",
+    backgroundAttachment: "scroll",
+  }, ...res);
 }
 
 const BackgroundFunctions = {

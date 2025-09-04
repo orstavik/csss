@@ -1,36 +1,37 @@
-**csss:** $palette(primary,#royalblue,#white)
-**css:**
-```css
-@layer containerDefault {
-  .\$palette\(primary\,\#royalblue\,\#white\) {
-    --color-primary: royalblue;
-    --color-primary-pop: oklch(0.560, 0.144, 266);
-    --color-primary-accent: oklch(0.560, 0.164, 266);
-    --color-primary-bland: oklch(0.560, 0.094, 266);
-    --color-primary1: white;
-    --color-primary-pop1: oklch(0.560, 0.144, 266);
-    --color-primary-accent1: oklch(0.560, 0.164, 266);
-    --color-primary-bland1: oklch(0.560, 0.094, 266);
-  }
-}
-```
-
 **csss:** $palette(neutral,#gray,#black)
 **css:**
 ```css
 @layer containerDefault {
   .\$palette\(neutral\,\#gray\,\#black\) {
     --color-neutral: gray;
-    --color-neutral-pop: oklch(0.600, 0.000, 263);
-    --color-neutral-accent: oklch(0.600, 0.000, 263);
-    --color-neutral-bland: oklch(0.600, 0.000, 263);
+    --color-neutralPop: #cbcbcb;
+    --color-neutralAccent: #cbcbcb;
+    --color-neutralBland: #cbcbcb;
     --color-neutral1: black;
-    --color-neutral-pop1: oklch(0.600, 0.000, 263);
-    --color-neutral-accent1: oklch(0.600, 0.000, 263);
-    --color-neutral-bland1: oklch(0.600, 0.000, 263);
+    --color-neutralPop1: #000000;
+    --color-neutralAccent1: #000000;
+    --color-neutralBland1: #000000;
   }
 }
 ```
+
+**csss:** $palette(primary,#royalblue,#white)
+**css:**
+```css
+@layer containerDefault {
+  .\$palette\(primary\,\#royalblue\,\#white\) {
+    --color-primary: royalblue;
+    --color-primaryPop: #afc6f0;
+    --color-primaryAccent: #abc7f5;
+    --color-primaryBland: #b7c6e2;
+    --color-primary1: white;
+    --color-primaryPop1: #ffffff;
+    --color-primaryAccent1: #ffffff;
+    --color-primaryBland1: #ffffff;
+  }
+}
+```
+
 
 **csss:** $bg(#primary)
 **css:**
