@@ -175,6 +175,25 @@ const extractColor = makeExtractor(interpretColor);
 const extractColorSpace = makeExtractor(interpretColorSpace);
 
 function extractAt(args) {
+  const WORDS = {
+    atTop: "top",
+    atBottom: "bottom",
+    atLeft: "left",
+    atRight: "right",
+    atCenter: "center",
+    atTopLeft: "top left",
+    atTopRight: "top right",
+    atTopCenter: "top center",
+    atBottomLeft: "bottom left",
+    atBottomRight: "bottom right",
+    atBottomCenter: "bottom center",
+    atCenterLeft: "center left",
+    atCenterRight: "center right",
+  };
+  if (args[0]?.text in WORDS) {
+    args.shift();
+    return WORDS[args[0].text];
+  }
   if (args[0]?.name != "at")
     return "";
   const at = args.shift();
@@ -243,8 +262,8 @@ function conic(type, args) {
   return `${type}-gradient(${[angle, ...colorStops].join(", ")})`;
 }
 
-function linear(type, direction, args) {
-  const angle = direction || extractAngle(args);
+function linear(type, angle, args) {
+  angle ||= extractAngle(args);
   let colorSpace = extractColorSpace(args);
   colorSpace &&= "in " + colorSpace;
   let first = [angle, colorSpace].filter(Boolean).join(" ");
@@ -254,11 +273,11 @@ function linear(type, direction, args) {
 }
 
 function bg(args) {
-  const {res, args: rest} = initiateBackground(args);
+  const { res, args: rest } = initiateBackground(args);
   res.backgroundImage = interpretImage(a);
   if (!backgroundImage) {
     let color = interpretColor(a);
-    if(color)
+    if (color)
       res.backgroundImage = `linear-gradient(${color.text},${color.text})`;
   }
   if (!res.backgroundImage)
