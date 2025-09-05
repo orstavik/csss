@@ -189,16 +189,30 @@ const FACTORS = {
   dppx_dpcm: 96 / 2.54,
   dpcm_dpi: 2.54,
 };
+for (let [k, v] of Object.entries(FACTORS))
+  FACTORS[k.split("_").reverse().join("_")] = 1 / v;
+
+//if calculable && computable, returns array of numbers adjusted to the first unit.
+//if calculable && !computable, returns undefined
+//if !calculable, throws SyntaxError
+function computableNumbers(args) {
+  const res = [];
+  for (let a of args) {
+    if (a.type != args[0].type)
+      throw new SyntaxError(`Incalculable units: ${args[0].text} & ${a.text}.`);
+    const factor = a.unit == args[0].unit || FACTORS[unit + "_" + a.unit];
+    if (!factor)
+      return;
+    res.push(a.num * factor);
+  }
+  return res;
+}
 
 function plus(args) {
   args = args.map(interpretBasic);
-  if (args[0].type !== args[1].type)
-    throw new SyntaxError(`+ can only be used with same types, got ${args.map(a => a.type).join("+")}`);
-  const factor = args[0].unit === args[1].unit ? 1 :
-    FACTORS[args[0].unit + "_" + args[1].unit] ??
-    (1 / FACTORS[args[1].unit + "_" + args[0].unit]);
-  if (factor) {
-    const num = args[0].num + args[1].num * factor;
+  const computables = computableNumbers(args);
+  if (computables) {
+    const num = computables[0] + computables[1];
     const text = num + args[0].unit;
     return { ...args[0], text, num };
   }
@@ -229,6 +243,14 @@ function multi(args) {
 const CORE = {
   "+": plus,
   "*": multi,
+  min: args => {
+    args = args.map(interpretBasic);
+    if (args.every(a => a.type === "number" && "num" in a)) {
+
+    }
+    return { type: args[0].type, text: `min(${args.map(a => a.text).join(", ")})` };
+  },
+
 }
 
 export function interpretBasic(arg) {
@@ -295,14 +317,6 @@ function toLogicalEight(NAME, DEFAULT, ar) {
   if (bes || ise) res[NAME + "BottomLeft"] = `${bes ?? DEFAULT} ${ise ?? DEFAULT}`;
   if (bee || iee) res[NAME + "BottomRight"] = `${bee ?? DEFAULT} ${iee ?? DEFAULT}`;
   return res;
-}
-
-export function borderSwitch(obj) {
-  return Object.fromEntries(Object.entries(obj).map(([k, v]) => {
-    if (k === "transition") return [k, v];
-    const [wsr, ...dirs] = k.split(/(?=[A-Z])/);
-    return [["border", ...dirs, wsr].join(""), v];
-  }));
 }
 
 //scope functions start
@@ -401,7 +415,6 @@ function rgbaImpl(name, rgba) {
   }
   return hex.length === rgba.length * 2 ? "#" + hex :
     name + "(" + rgba.map(c => c.text).join(", ") + ")";
-  // return { kind: "color", text, type: "color" };
 }
 const COLORS = {
   hash,
@@ -632,16 +645,6 @@ export function interpretResolution(a) {
     return { type: "resolution", text: "0x", unit: "x", num: 0 };
   if (a?.type === "resolution")
     return a;
-}
-
-const ColorNames = /^(aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen)$/i.source;
-const ColorFunctionStart = /^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color|color-mix)\(/.source;
-const ColorVar = /^var\(--color-/.source;
-const ColorHash = /^#[a-fA-F0-9]{3,8}$/.source;
-const ColorString = new RegExp(`${ColorNames}|${ColorFunctionStart}|${ColorVar}|${ColorHash}`);
-
-export function isColor(x) {
-  return ColorString.test(x) && x;
 }
 
 // const SpecializedNativeCssFunctions = {
