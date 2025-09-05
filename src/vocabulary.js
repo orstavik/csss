@@ -1,4 +1,5 @@
 import nativeAndMore from "./func.js";
+import backgrounds from "./bg.js";
 import fonts from "./fontX.js";
 import layouts from "./layout.js";
 import palette from "./color.js";
@@ -6,6 +7,7 @@ import transitions from "./transitions.js";
 
 const SHORTS = {
   ...nativeAndMore,
+  ...backgrounds,
   ...fonts,
   ...palette,
   ...layouts,

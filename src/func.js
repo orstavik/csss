@@ -236,8 +236,6 @@ export function interpretBasic(arg) {
     return arg;
   if (arg.name in CORE)
     return CORE[arg.name](arg.args);
-  debugger
-  throw new SyntaxError(arg.name + "() is not a basic function.")
 }
 
 export function interpret(arg, type) {
@@ -467,6 +465,7 @@ const scope = {
 
 const CRX = new RegExp("^#(?:" +
   [
+    "(transparent)",
     "a(\\d\\d)",
     "([0-9a-f]{6})([0-9a-f]{2})?",
     "([0-9a-fA-F]{3})([0-9a-fA-F])",
@@ -476,11 +475,14 @@ const CRX = new RegExp("^#(?:" +
   ")$", "i");
 
 export function parseColor(txt) {
-  let [, alpha, c6, c8 = "", c3, c4 = "", name, p = 100, vector, vp = 100] = txt.match(CRX);
-  if (c3) {
-    c6 = c3.split("").map(c => c + c).join('');
-    c8 = c4 + c4;
-  }
+  let [, transparent, alpha, c6, c8 = "", c3, c4 = "", name, p = 100, vector, vp = 100] = txt.match(CRX);
+  if (transparent)
+    return {
+      type: "color",
+      text: "transparent",
+      hue: "transparent",
+      percent: 0
+    };
   if (alpha)
     return {
       type: "color",
@@ -488,6 +490,10 @@ export function parseColor(txt) {
       hue: "transparent",
       percent: 100 - parseInt(alpha)
     };
+  if (c3) {
+    c6 = c3.split("").map(c => c + c).join('');
+    c8 = c4 + c4;
+  }
   if (c6)
     return {
       type: "color",
@@ -546,8 +552,86 @@ export function interpretSpan(a) {
     return { type: a.type, text: "span " + interpretBasic(a.args[0]).text };
 }
 export function interpretUrl(a) {
-  if (a.name === "url")
-    return { type: "url", text: `url(${a.args.map(interpretBasic).map(t => t.text).join(" ")})` };
+  if (a.kind === "QUOTE")
+    return { type: "url", text: `url(${a.text})` };
+  if (a.name === "url") {
+    if (args.length != 1) throw new SyntaxError("url() requires exactly one argument.");
+    return { type: "url", text: `url(${interpretBasic(a.args[0]).text})` };
+  }
+}
+export function interpretMimeType(a) {
+  const MIME = {
+    image: "image/*",
+    imageJpeg: "image/jpeg",
+    imagePng: "image/png",
+    imageGif: "image/gif",
+    imageWebp: "image/webp",
+    imageAvif: "image/avif",
+    imageSvgXml: "image/svg+xml",
+  };
+  if (a.text in MIME)
+    return `type(${MIME[a.text]})`;
+}
+
+export function interpretImage(arg) {
+  const url = interpretUrl(arg);
+  if (url) return url;
+  if (arg.name == "imageSet") {
+    const set = [];
+    const args = arg.args.slice();
+    while (args.length) {
+      const url = interpretUrl(a);
+      if (!url)
+        throw new SyntaxError("imageSet() sequences must start with a url.");
+      args.shift();
+      let type = args.length && interpretMimeType(args[0]);
+      let resolution = args.length && interpretResolution(args[0]);
+      type ||= args.length && interpretMimeType(args[0]);
+      type && args.shift();
+      resolution && args.shift();
+      set.push([url.text, type, resolution].filter(Boolean).join(" "));
+    }
+    return `image-set(${set.join(", ")})`;
+  }
+}
+
+export function interpretAngle(a) {
+  a = interpretBasic(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "angle", text: "0deg", unit: "deg", num: 0 };
+  if (a?.type === "angle")
+    return a;
+}
+export function interpretAnglePercent(a) {
+  a = interpretBasic(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "angle", text: "0deg", unit: "deg", num: 0 };
+  if (a?.type === "angle" || a?.type === "percent")
+    return a;
+}
+export function interpretLengthPercent(a) {
+  a = interpretBasic(a);
+  if (a?.type === "length" || a?.type === "percent" || (a?.num == 0 && a?.type === "number"))
+    return a;
+}
+export function interpretLength(a) {
+  a = interpretBasic(a);
+  if (a?.type === "length" || (a?.num == 0 && a?.type === "number"))
+    return a;
+}
+export function interpretTime(a) {
+  a = interpretBasic(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "time", text: "0s", unit: "s", num: 0 };
+  if (a?.type === "time")
+    return a;
+}
+export function interpretResolution(a) {
+  a = interpretBasic(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "resolution", text: "0x", unit: "x", num: 0 };
+  if (a?.type === "resolution")
+    return a;
 }
 
 const ColorNames = /^(aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen)$/i.source;
@@ -712,198 +796,10 @@ const UnpackedNativeCssProperties = {
 //todo and radius toLogicalEight.. maybe
 
 
-//$bg
-function formatCssString(str) {
-  const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%|deg|grad|rad|turn/.source;
-  return str
-    .replaceAll(new RegExp(`(${LENGTHS_PER})([a-zA-Z])`, 'g'), '$1 $2')
-    .replaceAll(/([a-zA-Z])(\d)/g, '$1 $2')
-    .replaceAll(/([a-z])([A-Z])/g, '$1 $2')
-    .replaceAll(new RegExp(`(${LENGTHS_PER})(-?\\d)`, 'g'), '$1 $2')
-    .replaceAll(/\b(closest|farthest) (side|corner)\b/gi, '$1-$2')
-    .toLowerCase();
-}
-
-function bgImpl(...args) {
-  const res = {
-    backgroundImage: undefined,
-    backgroundPosition: "0% 0%",
-    backgroundRepeat: "repeat",
-    backgroundSize: "auto auto",
-    backgroundOrigin: "padding-box",
-    backgroundClip: "border-box",
-    backgroundBlendMode: "normal",
-    backgroundAttachment: "scroll",
-  };
-  const colors = [], args2 = [];
-  for (const a of args)
-    (a && typeof a === 'object') ? Object.assign(res, a) :
-      isColor(a) ? colors.push(a) :
-        args2.push(formatCssString(a));
-  return { res, colors, args2 };
-}
-
-//process arguments sequentially, separating geometry from color stops.
-function doGradient(name, ...args) {
-  debugger
-
-  const { res } = bgImpl(); // Get default background properties
-  const geometry = [];
-  const colorStops = [];
-  let inColorStops = false;
-
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
-
-    if (arg && typeof arg === 'object') {
-      Object.assign(res, arg);
-      continue;
-    }
-
-    if (isColor(arg)) {
-      inColorStops = true;
-      let colorStop = arg;
-
-      let positionsCollected = 0;
-      while (i + 1 < args.length && positionsCollected < 2) {
-        const nextArg = args[i + 1];
-        if (isLength(nextArg) || (name.includes('conic') && isAngle(nextArg))) {
-          colorStop += ` ${nextArg}`;
-          i++;
-          positionsCollected++;
-        } else break;
-      }
-
-      colorStops.push(colorStop);
-    } else if (!inColorStops) {
-      const processed = formatCssString(arg);
-
-      if (name === 'conic' && isAngle(processed))
-        geometry.push(`from ${processed}`);
-      else
-        geometry.push(processed);
-    }
-  }
-
-  const geometryString = geometry.filter(Boolean).join(" ");
-  const allParams = [geometryString, ...colorStops].filter(Boolean).join(", ");
-  res.backgroundImage = `${name}-gradient(${allParams})`;
-  return res;
-}
-
-const BG_SCOPE = {
-  pos: (block = "0", inline = "0") => ({ backgroundPosition: `${block[0] === "-" ? `bottom ${block.slice(1)}` : block} ${inline[0] === "-" ? `right ${inline.slice(1)}` : inline}` }),
-  position: (block = "0", inline = "0") => ({ backgroundPosition: `${block[0] === "-" ? `bottom ${block.slice(1)}` : block} ${inline[0] === "-" ? `right ${inline.slice(1)}` : inline}` }),
-  size: (inline, block = "auto") => ({ backgroundSize: `${inline} ${block}` }),
-
-  top: { backgroundPosition: "top" },
-  bottom: { backgroundPosition: "bottom" },
-  left: { backgroundPosition: "left" },
-  right: { backgroundPosition: "right" },
-  center: { backgroundPosition: "center" },
-  topLeft: { backgroundPosition: "top left" },
-  topRight: { backgroundPosition: "top right" },
-  bottomLeft: { backgroundPosition: "bottom left" },
-  bottomRight: { backgroundPosition: "bottom right" },
-  topCenter: { backgroundPosition: "top center" },
-  bottomCenter: { backgroundPosition: "bottom center" },
-  leftCenter: { backgroundPosition: "left center" },
-  rightCenter: { backgroundPosition: "right center" },
-  repeatX: { backgroundRepeat: "repeat-x" },
-  repeatY: { backgroundRepeat: "repeat-y" },
-  space: { backgroundRepeat: "space" },
-  round: { backgroundRepeat: "round" },
-  noRepeat: { backgroundRepeat: "no-repeat" },
-  cover: { backgroundSize: "cover" },
-  contain: { backgroundSize: "contain" },
-  contentBox: { backgroundOrigin: "content-box" },
-  borderBox: { backgroundOrigin: "border-box" },
-  clipPaddingBox: { backgroundClip: "padding-box" },
-  clipContentBox: { backgroundClip: "content-box" },
-  clipText: { backgroundClip: "text" },
-  clipBorderArea: { backgroundClip: "border-area" },
-  multiply: { backgroundBlendMode: "multiply" },
-  screen: { backgroundBlendMode: "screen" },
-  overlay: { backgroundBlendMode: "overlay" },
-  darken: { backgroundBlendMode: "darken" },
-  lighten: { backgroundBlendMode: "lighten" },
-  colorDodge: { backgroundBlendMode: "color-dodge" },
-  colorBurn: { backgroundBlendMode: "color-burn" },
-  hardLight: { backgroundBlendMode: "hard-light" },
-  softLight: { backgroundBlendMode: "soft-light" },
-  difference: { backgroundBlendMode: "difference" },
-  exclusion: { backgroundBlendMode: "exclusion" },
-  hue: { backgroundBlendMode: "hue" },
-  saturation: { backgroundBlendMode: "saturation" },
-  color: { backgroundBlendMode: "color" },
-  luminosity: { backgroundBlendMode: "luminosity" },
-  scroll: { backgroundAttachment: "scroll" },
-  fixed: { backgroundAttachment: "fixed" },
-  local: { backgroundAttachment: "local" },
-};
-
-function bg(args) {
-  const res = args.map(a => {
-    a =
-      BG_SCOPE[a.text] ??
-      BG_SCOPE[a.name]?.(a.args) ??
-      interpretColor(a) ??
-      interpretUrl(a);
-    if (!a)
-      throw new SyntaxError(`Could not interpret $bg argument: ${a.text}.`);
-    if (a.type == "color")
-      a = { backgroundImage: `linear-gradient(${a.text})` };
-    if (a.type == "url")
-      a = { backgroundImage: a.text }; //todo the text should include url(...)
-    if (a.text)
-      debugger;      // throw new SyntaxError(`Could not interpret $bg(${args.map(a => a.text).join(",")}).`);
-    return a;
-  });
-
-  // if (!colors.length && !args2.length)
-  //   throw new SyntaxError(`$bg(${args.join(",")}) is missing a color or url argument.`);
-  // if (colors.length > 1)
-  //   throw new SyntaxError(`use $bg(color1,left)$bg(color2,right) for layered backgrounds, not $bg(${colors.join(",")}).`);
-  // if (args2.length > 1)
-  //   throw new SyntaxError(`use $bg(url1)$bg(url2) for layered backgrounds, not $bg(${args2.join(",")}).`);
-  // if (colors.length && args2.length)
-  //   throw new SyntaxError(`use $bg(color)$bg(url) for layered backgrounds, not $bg(${colors.join(",")},${args2.join(",")}).`);
-  return Object.assign({
-    backgroundImage: undefined,
-    backgroundPosition: "0% 0%",
-    backgroundRepeat: "repeat",
-    backgroundSize: "auto auto",
-    backgroundOrigin: "padding-box",
-    backgroundClip: "border-box",
-    backgroundBlendMode: "normal",
-    backgroundAttachment: "scroll",
-  }, ...res);
-}
-
-const BackgroundFunctions = {
-  linear: (...args) => doGradient("linear", ...args),
-  radial: (...args) => doGradient("radial", ...args),
-  conic: (...args) => doGradient("conic", ...args),
-  repeatingLinear: (...args) => doGradient("repeating-linear", ...args),
-  repeatingRadial: (...args) => doGradient("repeating-radial", ...args),
-  repeatingConic: (...args) => doGradient("repeating-conic", ...args),
-  bg,
-  background: bg,
-};
-
-for (const k in BackgroundFunctions)
-  BackgroundFunctions[k].scope = {
-    // stops: (...args) => ({ stops: args }),
-    ...NativeCssProperties.background.scope,
-    ...NativeCssScopeMath, //todo do we need this, or is it covered by background above?
-  };
-
 //border: 2px 4px solid red blue;
 //$border(w(2px,4px),solid,c(red,blue))
 //$border(2px,solid,red)
 function border(ar) {
-  //todo here we want to extract the color first.
-  //todo then we would like to extract the length? but maybe that is easier later..
   const color = toLogicalFour.bind(null, "borderColor");
   const width = toLogicalFour.bind(null, "borderWidth");
   const radius = toRadiusFour.bind(null, "borderRadius");
@@ -1010,7 +906,6 @@ export default {
 
   border,
   em: NativeCssProperties.fontSize,
-  ...BackgroundFunctions,
   textDecoration,
   ...textDecorations,
 };

@@ -41,7 +41,7 @@
     background-image: linear-gradient(var(--color-primary));
     background-position: 0% 0%;
     background-repeat: repeat;
-    background-size: auto auto;
+    background-size: auto;
     background-origin: padding-box;
     background-clip: border-box;
     background-blend-mode: normal;
@@ -77,7 +77,7 @@
     background-image: linear-gradient(color-mix(in oklab, var(--color-primary), var(--color-primary1) 50%));
     background-position: 0% 0%;
     background-repeat: repeat;
-    background-size: auto auto;
+    background-size: auto;
     background-origin: padding-box;
     background-clip: border-box;
     background-blend-mode: normal;
@@ -104,7 +104,7 @@
     background-image: linear-gradient(color-mix(in oklab, color-mix(in oklab, var(--color-primary), var(--color-primary1) 20%), transparent 50%));
     background-position: 0% 0%;
     background-repeat: repeat;
-    background-size: auto auto;
+    background-size: auto;
     background-origin: padding-box;
     background-clip: border-box;
     background-blend-mode: normal;

@@ -226,7 +226,7 @@
     background-image: linear-gradient(oklch(70% 0.15 210));
     background-position: 0% 0%;
     background-repeat: repeat;
-    background-size: auto auto;
+    background-size: auto;
     background-origin: padding-box;
     background-clip: border-box;
     background-blend-mode: normal;
@@ -243,7 +243,7 @@
     background-image: linear-gradient(lab(75% 10 -20));
     background-position: 0% 0%;
     background-repeat: repeat;
-    background-size: auto auto;
+    background-size: auto;
     background-origin: padding-box;
     background-clip: border-box;
     background-blend-mode: normal;

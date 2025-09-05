@@ -24,12 +24,11 @@ function printDiff({ key, actual, expected, type }) {
   const noMatch = d.find(({ type, a, b }) => type != "match" && (a.trim() || b.trim()))
   if (!noMatch)
     return console.log(`🟦 ${key}`);
-  // console.log(`**csss:** ${key}\n\n**css:**\n\`\`\`css\n${actual}\n\`\`\`\n\n`);
   console.log(`❌ ${key}`);
-  console.log("expected:", expected);
-  console.log("actual:", actual);
-  console.log(`noMatch:`, noMatch);
-  console.log("diff:", d);
+  for (let { a, b, type } of d)
+    type == "ins" ? console.log("%c%s", "background-color:green", b) :
+      type == "del" ? console.log("%c%s", "background-color:red", a) :
+        console.log("%c%s", "color:grey", a);
 }
 
 export default async function runTests(paths, test) {

@@ -2,24 +2,10 @@ import {
   interpretColor,
   interpretLengthPercent,
   interpretAngle,
+  interpretAnglePercent,
   interpretImage
 } from "./func.js";
 
-function pos(name, dims, args) {
-  if (args.length < 1 || args.length > 2)
-    throw new SyntaxError("background position() requires one or two arguments.");
-  if (dims && dims.length > args.length)
-    throw new SyntaxError(`background (${name} require ${dims.length} arguments, got ${args.length}.`);
-  args = args.map(a => {
-    a = ["top", "bottom", "left", "right", "center"].find(a.text) ??
-      interpretLengthPercent(a);
-    if (!a)
-      throw new SyntaxError(`background position argument not LengthPercent: ${a.text}`);
-    return a.text;
-  });
-  return dims?.map((d, i) => `${d} ${args[i]}`).join(" ") ??
-    args.join(" ");
-}
 function size(args) {
   if (args.length < 1 || args.length > 2)
     throw new SyntaxError("background size() requires one or two arguments.");
@@ -32,38 +18,45 @@ function size(args) {
   return { backgroundSize: args.join(" ") };
 }
 
-const BACKGROUND_FUNCS = {
-  position: pos.bind(null, "position", null),
-  top: pos.bind(null, "top", ["top"]),
-  bottom: pos.bind(null, "bottom", ["bottom"]),
-  left: pos.bind(null, "left", ["left"]),
-  right: pos.bind(null, "right", ["right"]),
-  center: pos.bind(null, "center", ["center", "center"]),
-  topLeft: pos.bind(null, "topLeft", ["top", "left"]),
-  topRight: pos.bind(null, "topRight", ["top", "right"]),
-  bottomLeft: pos.bind(null, "bottomLeft", ["bottom", "left"]),
-  bottomRight: pos.bind(null, "bottomRight", ["bottom", "right"]),
-  topCenter: pos.bind(null, "topCenter", ["top", "center"]),
-  bottomCenter: pos.bind(null, "bottomCenter", ["bottom", "center"]),
-  leftCenter: pos.bind(null, "leftCenter", ["center", "left"]),
-  rightCenter: pos.bind(null, "rightCenter", ["center", "right"]),
-  size
-};
+function pos(name, dims, args) {
+  if (args.length < 1 || args.length > 2)
+    throw new SyntaxError("background position() requires one or two arguments.");
+  if (dims && dims.length > args.length)
+    throw new SyntaxError(`background (${name} require ${dims.length} arguments, got ${args.length}.`);
+  return args.map((a, i) => {
+    if (["left", "right", "center", "top", "bottom"].includes(a.text))
+      return a.text;
+    a = interpretLengthPercent(a);
+    if (a)
+      return dims ? dims[i] + " " + a.text : a.text;
+    throw new SyntaxError(`background position argument not LengthPercent: ${a.text}`);
+  }).join(" ");
+}
+
+const POSITION_WORDS = {};
+const AT_POSITION_WORDS = {};
+const POSITIONS_FUNCS = { position: args => pos("position", null, args) };
+const AT_POSITION_FUNCS = { at: args => ("at " + pos("position", null, args)) };
+
+for (let Inline of ["Left", "Right", "Center", ""]) {
+  const inline = Inline.toLowerCase();
+  for (let Block of ["Top", "Bottom", "Center", ""]) {
+    const block = Block.toLowerCase();
+    if (block === inline) continue;
+    const name = inline + Block;
+    if (name in POSITION_WORDS) continue;
+    const atName = "at" + Inline + Block;
+    const dims = [inline, block].filter(Boolean);
+    POSITION_WORDS[name] = `${inline} ${block}`.trim();
+    AT_POSITION_WORDS[atName] = `at ${inline} ${block}`.trim();
+    POSITIONS_FUNCS[name] = args => ({ backgroundPosition: pos(name, dims, args) });
+    AT_POSITION_FUNCS[atName] = args => ("at " + pos(name, dims, args));
+  }
+}
 
 const BACKGROUND_WORDS = {
-  top: { backgroundPosition: "top" },
-  bottom: { backgroundPosition: "bottom" },
-  left: { backgroundPosition: "left" },
-  right: { backgroundPosition: "right" },
-  center: { backgroundPosition: "center" },
-  topLeft: { backgroundPosition: "top left" },
-  topRight: { backgroundPosition: "top right" },
-  bottomLeft: { backgroundPosition: "bottom left" },
-  bottomRight: { backgroundPosition: "bottom right" },
-  topCenter: { backgroundPosition: "top center" },
-  bottomCenter: { backgroundPosition: "bottom center" },
-  leftCenter: { backgroundPosition: "left center" },
-  rightCenter: { backgroundPosition: "right center" },
+  ...POSITION_WORDS,
+  repeat: { backgroundRepeat: "repeat" },
   repeatX: { backgroundRepeat: "repeat-x" },
   repeatY: { backgroundRepeat: "repeat-y" },
   space: { backgroundRepeat: "space" },
@@ -108,6 +101,12 @@ const BACKGROUND_WORDS = {
   localFixed: { backgroundAttachment: "local fixed" },
 };
 
+const BACKGROUND_FUNCS = {
+  size,
+  position: pos.bind(null, "position", null),
+  ...POSITIONS_FUNCS,
+};
+
 function initiateBackground(argsIn) {
   const res = {
     backgroundImage: undefined,
@@ -121,14 +120,15 @@ function initiateBackground(argsIn) {
   };
   const args = [];
   for (let a of argsIn) {
-    a = BACKGROUND_WORDS[a.text] ?? BACKGROUND_FUNCS[a.name]?.(a.args);
-    a ? Object.assign(res, a) : args.push(a);
+    const a2 = BACKGROUND_WORDS[a.text] ??
+      BACKGROUND_FUNCS[a.name]?.(a.args);
+    a2 ? Object.assign(res, a2) : args.push(a);
   }
   return { res, args };
 }
 
 function interpretColorSpace(a) {
-  return {
+  const res = {
     hslLonger: "hsl longer hue",
     hslShorter: "hsl shorter hue",
     hslIncreasing: "hsl increasing hue",
@@ -158,6 +158,7 @@ function interpretColorSpace(a) {
     xyzD50: "xyz-d50",
     xyzD65: "xyz-d65",
   }[a.text];
+  if (res) return { text: "in " + res };
 }
 
 function makeExtractor(cb) {
@@ -167,53 +168,26 @@ function makeExtractor(cb) {
   };
 }
 
-const extractLength = makeExtractor(interpretLengthPercent);
+const extractLengthPercent = makeExtractor(interpretLengthPercent);
+const extractAnglePercent = makeExtractor(interpretAnglePercent);
 const extractAngle = makeExtractor(interpretAngle);
 const extractColor = makeExtractor(interpretColor);
 const extractColorSpace = makeExtractor(interpretColorSpace);
 
-function extractAt(args) {
-  const WORDS = {
-    atTop: "top",
-    atBottom: "bottom",
-    atLeft: "left",
-    atRight: "right",
-    atCenter: "center",
-    atTopLeft: "top left",
-    atTopRight: "top right",
-    atTopCenter: "top center",
-    atBottomLeft: "bottom left",
-    atBottomRight: "bottom right",
-    atBottomCenter: "bottom center",
-    atCenterLeft: "center left",
-    atCenterRight: "center right",
-  };
-  if (args[0]?.text in WORDS) {
-    args.shift();
-    return WORDS[args[0].text];
-  }
-  if (args[0]?.name != "at")
-    return "";
-  const at = args.shift();
-  if (at.args.length < 1 || at.args.length > 2)
-    throw new SyntaxError(`Gradient at() function must have one or two arguments, got ${at.args.length}`);
-  const res = at.args.map(a => {
-    a = interpretLengthPercent(a);
-    if (!a)
-      throw new SyntaxError(`Could not interpret gradient() "at"-position argument : ${a}`);
-    return a.text;
-  });
-  return res.join(" ");
-}
+const extractAt = makeExtractor(a => {
+  const a2 = AT_POSITION_WORDS[a.text] ??
+    AT_POSITION_FUNCS[a.name]?.(a.args);
+  return a2 && { text: a2 };
+});
 
 function extractColorStop(args, lengthOrAngleExtractor) {
   const color = extractColor(args);
   if (!color) return;
-  const len1 = lengthOrAngleExtractor(args);
-  if (!len1) return color.text;
-  const len2 = lengthOrAngleExtractor(args);
-  if (!len2) return color.text + " " + len2.text;
-  return color.text + " " + len1.text + " " + len2.text;
+  const len1 = args.length && lengthOrAngleExtractor(args);
+  if (!len1) return color;
+  const len2 = args.length && lengthOrAngleExtractor(args);
+  if (!len2) return color + " " + len1;
+  return color + " " + len1 + " " + len2;
 }
 
 function extractColorStops(args, lengthOrAngleExtractor) {
@@ -224,64 +198,61 @@ function extractColorStops(args, lengthOrAngleExtractor) {
       throw new SyntaxError(`invalid color stop argument: ${args[0]}`);
     colorStops.push(cs);
   }
-  return colorStops;
+  if (colorStops.length > 1)
+    return colorStops;
+  throw new SyntaxError(`gradient() functions requires at least two colors, got ${colorStops.length}.`);
 }
 
 function radial(type, first, args) {
-  let len = extractLength(args);
-  let len2 = extractLength(args);
+  const len = extractLengthPercent(args);
+  const len2 = extractLengthPercent(args);
   if (first === "circle" && len2)
     throw new SyntaxError(`radial(circle) can only have one length argument (radius), got two: ${len.text} and ${len2.text}`);
-  let at = extractAt(args);
-  at &&= "at " + at;
-  let colorSpace = extractColorSpace(args);
-  colorSpace &&= "in " + colorSpace;
-  first == [first, len, len2, at, colorSpace].filter(Boolean).join(" ");
-  first &&= first + ",";
-  const colorStops = extractColorStops(args, extractLength);
-  if (colorStops.length < 2)
-    throw new SyntaxError(`radial-gradient() requires at least two color stops, got ${colorStops.length}`);
-  return `${type}-gradient(${[first, ...colorStops].join(", ")})`;
+  const at = extractAt(args);
+  const colorSpace = extractColorSpace(args);
+  const colorStops = extractColorStops(args, extractLengthPercent);
+  first = [first, len, len2, at, colorSpace].filter(Boolean).join(" ");
+  return `${type}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})`;
 }
 
 function conic(type, args) {
   let angle = extractAngle(args);
-  angle &&= "from " + angle.text;
-  let at = extractAt(args);
-  at &&= "at " + at;
-  let colorSpace = extractColorSpace(args);
-  colorSpace &&= "in " + colorSpace;
-  let first = [angle, at, colorSpace].filter(Boolean).join(" ");
-  first &&= first + ",";
-  const colorStops = extractColorStops(args, extractAngle);
-  if (colorStops.length < 2)
-    throw new SyntaxError(`conic-gradient() requires at least two color stops, got ${colorStops.length}`);
-  return `${type}-gradient(${[angle, ...colorStops].join(", ")})`;
+  angle &&= "from " + angle;
+  const at = extractAt(args);
+  const colorSpace = extractColorSpace(args);
+  const colorStops = extractColorStops(args, extractAnglePercent);
+  const first = [angle, at, colorSpace].filter(Boolean).join(" ");
+  return `${type}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})`;
 }
 
 function linear(type, angle, args) {
   angle ||= extractAngle(args);
-  let colorSpace = extractColorSpace(args);
-  colorSpace &&= "in " + colorSpace;
-  let first = [angle, colorSpace].filter(Boolean).join(" ");
-  first &&= first + ",";
-  const colorStops = extractColorStops(args, extractLength);
-  return `${type}-gradient(${[first, ...colorStops].join(", ")})`;
+  const colorSpace = extractColorSpace(args);
+  const colorStops = extractColorStops(args, extractLengthPercent);
+  const first = [angle, colorSpace].filter(Boolean).join(" ");
+  return `${type}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})`;
 }
 
-function bg(args) {
-  const { res, args: rest } = initiateBackground(args);
-  res.backgroundImage = interpretImage(a);
-  if (!backgroundImage) {
-    let color = interpretColor(a);
-    if (color)
-      res.backgroundImage = `linear-gradient(${color.text},${color.text})`;
-  }
-  if (!res.backgroundImage)
-    throw new SyntaxError(`$bg must include either a color or url: ${a.text}.`);
-  if (rest.length)
-    throw new SyntaxError(`Could not interpret $bg() argument: ${rest[0].text}.`);
-  return res;
+function bgColorOrImage(args) {
+  const img = interpretImage(args[0]);
+  if (img)
+    return args.shift(), img.text;
+  const color = interpretColor(args[0]);
+  if (color)
+    return args.shift(), `linear-gradient(${color.text})`;
+  throw new SyntaxError(`$bg must include either a color or url: ${color.text}.`);
+}
+
+function makeBg(cb) {
+  return function (argsIn) {
+    const { res, args } = initiateBackground(argsIn);
+    if (!args.length)
+      throw new SyntaxError(`Missing background main argument: color, image, or gradient.`);
+    res.backgroundImage = cb(args);
+    if (args.length)
+      throw new SyntaxError(`Could not interpret $bg() argument: ${args[0].text}.`);
+    return res;
+  };
 }
 
 export default {
@@ -296,43 +267,51 @@ export default {
   backgroundBlendMode: undefined,
   backgroundAttachment: undefined,
 
-  linear: linear.bind(null, "linear", ""),
-  linearLeft: linear.bind(null, "linear", "to left"),
-  linearRight: linear.bind(null, "linear", "to right"),
-  linearUp: linear.bind(null, "linear", "to top"),
-  linearDown: linear.bind(null, "linear", "to bottom"),
-  linearUpLeft: linear.bind(null, "linear", "to top left"),
-  linearUpRight: linear.bind(null, "linear", "to top right"),
-  linearDownLeft: linear.bind(null, "linear", "to bottom left"),
-  linearDownRight: linear.bind(null, "linear", "to bottom right"),
-  repeatingLinear: linear.bind(null, "repeating-linear", ""),
-  repeatingLinearLeft: linear.bind(null, "repeating-linear", "to left"),
-  repeatingLinearRight: linear.bind(null, "repeating-linear", "to right"),
-  repeatingLinearUp: linear.bind(null, "repeating-linear", "to top"),
-  repeatingLinearDown: linear.bind(null, "repeating-linear", "to bottom"),
-  repeatingLinearUpLeft: linear.bind(null, "repeating-linear", "to top left"),
-  repeatingLinearUpRight: linear.bind(null, "repeating-linear", "to top right"),
-  repeatingLinearDownLeft: linear.bind(null, "repeating-linear", "to bottom left"),
-  repeatingLinearDownRight: linear.bind(null, "repeating-linear", "to bottom right"),
+  linear: makeBg(linear.bind(null, "linear", "")),
+  linearLeft: makeBg(linear.bind(null, "linear", "to left")),
+  linearRight: makeBg(linear.bind(null, "linear", "to right")),
+  linearUp: makeBg(linear.bind(null, "linear", "to top")),
+  linearDown: makeBg(linear.bind(null, "linear", "to bottom")),
+  linearUpLeft: makeBg(linear.bind(null, "linear", "to top left")),
+  linearUpRight: makeBg(linear.bind(null, "linear", "to top right")),
+  linearDownLeft: makeBg(linear.bind(null, "linear", "to bottom left")),
+  linearDownRight: makeBg(linear.bind(null, "linear", "to bottom right")),
+  repeatingLinear: makeBg(linear.bind(null, "repeating-linear", "")),
+  repeatingLinearLeft: makeBg(linear.bind(null, "repeating-linear", "to left")),
+  repeatingLinearRight: makeBg(linear.bind(null, "repeating-linear", "to right")),
+  repeatingLinearUp: makeBg(linear.bind(null, "repeating-linear", "to top")),
+  repeatingLinearDown: makeBg(linear.bind(null, "repeating-linear", "to bottom")),
+  repeatingLinearUpLeft: makeBg(linear.bind(null, "repeating-linear", "to top left")),
+  repeatingLinearUpRight: makeBg(linear.bind(null, "repeating-linear", "to top right")),
+  repeatingLinearDownLeft: makeBg(linear.bind(null, "repeating-linear", "to bottom left")),
+  repeatingLinearDownRight: makeBg(linear.bind(null, "repeating-linear", "to bottom right")),
 
-  radial: radial.bind(null, "radial", ""),
-  circle: radial.bind(null, "radial", "circle"),
-  ellipse: radial.bind(null, "radial", "ellipse"),
-  ellipseFarthestCorner: radial.bind(null, "radial", "farthest-corner"),
-  ellipseFarthestSide: radial.bind(null, "radial", "farthest-side"),
-  ellipseClosestCorner: radial.bind(null, "radial", "closest-corner"),
-  ellipseClosestSide: radial.bind(null, "radial", "closest-side"),
+  radial: makeBg(radial.bind(null, "radial", "")),
+  ellipse: makeBg(radial.bind(null, "radial", "")),
+  ellipseFarthestCorner: makeBg(radial.bind(null, "radial", "")),
+  ellipseFarthestSide: makeBg(radial.bind(null, "radial", "farthest-side")),
+  ellipseClosestCorner: makeBg(radial.bind(null, "radial", "closest-corner")),
+  ellipseClosestSide: makeBg(radial.bind(null, "radial", "closest-side")),
+  circle: makeBg(radial.bind(null, "radial", "circle")),
+  circleFarthestCorner: makeBg(radial.bind(null, "radial", "circle")),
+  circleFarthestSide: makeBg(radial.bind(null, "radial", "circle farthest-side")),
+  circleClosestCorner: makeBg(radial.bind(null, "radial", "circle closest-corner")),
+  circleClosestSide: makeBg(radial.bind(null, "radial", "circle closest-side")),
 
-  repeatingRadial: radial.bind(null, "repeating-radial", ""),
-  repeatingCircle: radial.bind(null, "repeating-radial", "circle"),
-  repeatingEllipse: radial.bind(null, "repeating-radial", "ellipse"),
-  repeatingEllipseFarthestCorner: radial.bind(null, "repeating-radial", "farthest-corner"),
-  repeatingEllipseFarthestSide: radial.bind(null, "repeating-radial", "farthest-side"),
-  repeatingEllipseClosestCorner: radial.bind(null, "repeating-radial", "closest-corner"),
-  repeatingEllipseClosestSide: radial.bind(null, "repeating-radial", "closest-side"),
+  repeatingRadial: makeBg(radial.bind(null, "repeating-radial", "")),
+  repeatingEllipse: makeBg(radial.bind(null, "repeating-radial", "ellipse")),
+  repeatingEllipseFarthestCorner: makeBg(radial.bind(null, "repeating-radial", "")),
+  repeatingEllipseFarthestSide: makeBg(radial.bind(null, "repeating-radial", "farthest-side")),
+  repeatingEllipseClosestCorner: makeBg(radial.bind(null, "repeating-radial", "closest-corner")),
+  repeatingEllipseClosestSide: makeBg(radial.bind(null, "repeating-radial", "closest-side")),
+  repeatingCircle: makeBg(radial.bind(null, "repeating-radial", "circle")),
+  repeatingCircleFarthestCorner: makeBg(radial.bind(null, "repeating-radial", "circle")),
+  repeatingCircleFarthestSide: makeBg(radial.bind(null, "repeating-radial", "circle farthest-side")),
+  repeatingCircleClosestCorner: makeBg(radial.bind(null, "repeating-radial", "circle closest-corner")),
+  repeatingCircleClosestSide: makeBg(radial.bind(null, "repeating-radial", "circle closest-side")),
 
-  conic: conic.bind(null, "conic"),
-  repeatingConic: conic.bind(null, "repeating-conic"),
+  conic: makeBg(conic.bind(null, "conic")),
+  repeatingConic: makeBg(conic.bind(null, "repeating-conic")),
 
-  bg,
+  bg: makeBg(bgColorOrImage),
 };
