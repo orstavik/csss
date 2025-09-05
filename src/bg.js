@@ -1,8 +1,6 @@
 import {
   interpretColor,
-  interpretLength,
   interpretLengthPercent,
-  interpretPercent,
   interpretAngle,
   interpretImage
 } from "./func.js";
@@ -200,8 +198,7 @@ function extractAt(args) {
   if (at.args.length < 1 || at.args.length > 2)
     throw new SyntaxError(`Gradient at() function must have one or two arguments, got ${at.args.length}`);
   const res = at.args.map(a => {
-    a = interpretLength(a) ??
-      interpretPercent(a);
+    a = interpretLengthPercent(a);
     if (!a)
       throw new SyntaxError(`Could not interpret gradient() "at"-position argument : ${a}`);
     return a.text;
@@ -287,7 +284,18 @@ function bg(args) {
   return res;
 }
 
-const BackgroundFunctions = {
+export default {
+  background: undefined,
+  backgroundColor: undefined,
+  backgroundImage: undefined,
+  backgroundPosition: undefined,
+  backgroundRepeat: undefined,
+  backgroundSize: undefined,
+  backgroundOrigin: undefined,
+  backgroundClip: undefined,
+  backgroundBlendMode: undefined,
+  backgroundAttachment: undefined,
+
   linear: linear.bind(null, "linear", ""),
   linearLeft: linear.bind(null, "linear", "to left"),
   linearRight: linear.bind(null, "linear", "to right"),
@@ -328,13 +336,3 @@ const BackgroundFunctions = {
 
   bg,
 };
-
-//conic from 45deg at center, red, blue 90deg, green 180deg, red
-//linear to bottom right, red, blue 50%, green
-//radial circle at center, red, blue 50%, green
-//radial ellipse farthest-corner at center, red, blue 50%, green
-//conic at center, red, blue 90deg, green 180deg, red
-//conic from 45deg, red, blue 90deg, green 180deg, red
-//conic red, blue 90deg, green 180deg, red
-//linear red, blue 50%, green
-//radial red, blue 50%, green
