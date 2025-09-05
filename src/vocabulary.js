@@ -4,6 +4,7 @@ import fonts from "./fontX.js";
 import layouts from "./layout.js";
 import palette from "./color.js";
 import transitions from "./transitions.js";
+import textDecorations from "./textDecorations.js";
 
 const SHORTS = {
   ...nativeAndMore,
@@ -12,6 +13,7 @@ const SHORTS = {
   ...palette,
   ...layouts,
   ...transitions,
+  ...textDecorations,
 };
 
 const MEDIA_WORDS = {
