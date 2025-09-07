@@ -3,8 +3,8 @@
 ```css
 @font-face /*comic normal*/ {
   font-family: comic;
-  src: local('comic'), url(https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2);
   font-style: normal;
+  src: local(comic), url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2");
 }
 
 @layer containerDefault {
