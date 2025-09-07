@@ -1,6 +1,7 @@
 //https://developer.mozilla.org/en-US/docs/Web/CSS/length#browser_compatibility
 //mdn specifies more lengths, but we don't support them yet.
 import { TYPES, isLength, isAngle, isTime } from "./Parser.js";
+import Maths from "./funcMath.js";
 export { TYPES, isLength, isAngle, isTime };
 
 //todo here we need + - * / ?? var calc max min clamp log exp etc.
@@ -160,104 +161,11 @@ export const WEBCOLORS = {
   yellowgreen: "9acd32",
 };
 
-const FACTORS = {
-  // Times
-  s_ms: 1000,
-  // Length
-  in_cm: 2.54,
-  in_mm: 25.4,
-  in_pt: 72,
-  in_pc: 6,
-  cm_mm: 10,
-  pc_mm: 25.4 / 6,
-  pc_pt: 12,
-  cm_Q: 40,
-  mm_Q: 4,
-  in_Q: 25.4 / 0.25,
-  pt_Q: (25.4 / 72) / 0.25,
-  // Frequency
-  kHz_Hz: 1000,
-  // Angles
-  turn_deg: 360,
-  turn_rad: 2 * Math.PI,
-  turn_grad: 400,
-  rad_deg: 180 / Math.PI,
-  rad_grad: 200 / Math.PI,
-  deg_grad: 400 / 360,
-  // Resolution
-  dppx_dpi: 96,
-  dppx_dpcm: 96 / 2.54,
-  dpcm_dpi: 2.54,
-};
-for (let [k, v] of Object.entries(FACTORS))
-  FACTORS[k.split("_").reverse().join("_")] = 1 / v;
-
-//if calculable && computable, returns array of numbers adjusted to the first unit.
-//if calculable && !computable, returns undefined
-//if !calculable, throws SyntaxError
-function computableNumbers(args) {
-  const res = [];
-  for (let a of args) {
-    if (a.type != args[0].type)
-      throw new SyntaxError(`Incalculable units: ${args[0].text} & ${a.text}.`);
-    const factor = a.unit == args[0].unit || FACTORS[unit + "_" + a.unit];
-    if (!factor)
-      return;
-    res.push(a.num * factor);
-  }
-  return res;
-}
-
-function plus(args) {
-  args = args.map(interpretBasic);
-  const computables = computableNumbers(args);
-  if (computables) {
-    const num = computables[0] + computables[1];
-    const text = num + args[0].unit;
-    return { ...args[0], text, num };
-  }
-  return { type: args[0].type, text: `calc(${args.map(a => a.text).join(" + ")})` };
-}
-function multi(args) {
-  args = args.map(interpretBasic);
-  if (args[0].type !== "number" && args[1].type !== "number")
-    throw new SyntaxError(`* can only be used when one of the factors is a pure number, got ${args.map(a => a.type).join("*")}`);
-  if (("num" in args[0] && "num" in args[1])) {
-    const base = args[1].type === "number" ? args[0] : args[1];
-    const num = args[0].num * args[1].num;
-    const text = num + base.unit;
-    return { ...base, text, num };
-  }
-  return { type: args[0].type, text: `calc(${args.map(a => a.text).join(" * ")})` };
-}
-// function divide(args) {
-//   debugger
-//   args = args.map(interpretBasic);
-//   if (args[1].type !== "number" || args[0].type === "number")
-//     throw new SyntaxError(`/ can only be used with one number, got ${args.map(a => a.type).join("/")}`);
-//   const num = args[0].num / args[1].num;
-//   const text = num + (args[0].unit ?? "") + (args[1].unit ? "/" + args[1].unit : "");
-//   return { ...args[0], text, num };
-// }  
-
-const CORE = {
-  "+": plus,
-  "*": multi,
-  min: args => {
-    args = args.map(interpretBasic);
-    if (args.every(a => a.type === "number" && "num" in a)) {
-
-    }
-    return { type: args[0].type, text: `min(${args.map(a => a.text).join(", ")})` };
-  },
-
-}
-
 export function interpretBasic(arg) {
   if (arg.kind !== "EXP")
     return arg;
-  if (arg.name in CORE)
-    return CORE[arg.name](arg.args);
+  if (arg.name in Maths)
+    return Maths[arg.name](arg.name, arg.args.map(interpretBasic));
 }
 
 export function interpret(arg, type) {
@@ -460,7 +368,6 @@ const COLORS = {
 
 const scope = {
   // Generic
-  ...CORE,
   // Lengths
   minmax: interpretMinmax,
   span: interpretSpan,
