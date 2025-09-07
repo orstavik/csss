@@ -168,18 +168,6 @@ export function interpretBasic(arg) {
     return Maths[arg.name](arg.name, arg.args.map(interpretBasic));
 }
 
-export function interpret(arg, type) {
-  if (arg.kind === "EXP") {
-    const func = scope[arg.name];
-    if (!func)
-      throw new SyntaxError(arg.name + "() is not a base function.")
-    arg = func(arg.args);
-  }
-  if (type && arg.type && !type.includes(arg.type))
-    throw new SyntaxError(`Type mismatch: expected ${type}, got ${arg.type}`);
-  return arg;
-}
-
 export function toRadiusFour(NAME, ar) {
   ar = ar.map(interpretBasic).map(a => a.text);
   if (!(ar instanceof Array))
@@ -227,20 +215,7 @@ function toLogicalEight(NAME, DEFAULT, ar) {
   return res;
 }
 
-//scope functions start
-const NativeCssScopeMath = {
-  min: (...args) => `min(${args.join(",")})`,
-  max: (...args) => `max(${args.join(",")})`,
-  clamp: (...args) => `clamp(${args.join(",")})`,
-  minmax: (...args) => `minmax(${args.join(",")})`,  //only used in grid, but native valid property+value check captures wrong use
-};
-for (const v of Object.values(NativeCssScopeMath))
-  v.scope = NativeCssScopeMath;
-
-const NativeCssScopeRepeat = (i, ...args) => `repeat(${i}, ${args.join(" ")})`;
-NativeCssScopeRepeat.scope = NativeCssScopeMath;
 const NativeCssScopeUrl = (...args) => `url(${args.join(" ")})`;
-
 const NativeCssScopeAttrCounter = {
   counter: (...args) => `counter(${args.join(",")})`,
   counters: (...args) => `counters(${args.join(",")})`,
@@ -364,23 +339,6 @@ const COLORS = {
   mixOklchShorter: args => cssColorMix([{ kind: "WORD", text: "oklch shorter hue" }, ...args]),
   mixOklchIncreasing: args => cssColorMix([{ kind: "WORD", text: "oklch increasing hue" }, ...args]),
   mixOklchDecreasing: args => cssColorMix([{ kind: "WORD", text: "oklch decreasing hue" }, ...args]),
-};
-
-const scope = {
-  // Generic
-  // Lengths
-  minmax: interpretMinmax,
-  span: interpretSpan,
-  // Colors
-  color: interpretColor,
-
-
-  // SpecializedNativeCssFunctions,
-  ...NativeCssScopeMath,
-  repeat: NativeCssScopeRepeat,
-  url: NativeCssScopeUrl,
-  ...NativeCssScopeAttrCounter,
-  // colorMix: nativeCssColorMixFunction,
 };
 
 const CRX = new RegExp("^#(?:" +
@@ -652,8 +610,6 @@ const NativeCssFilterFunctions = {
   dropShadow: (...args) => ({ filter: `drop-shadow(${args.join(" ")})` }),
   hueRotate: (...args) => ({ filter: `hue-rotate(${args.join(" ")})` }),
 };
-for (const cb of Object.values(NativeCssFilterFunctions))
-  cb.scope = { ...NativeCssScopeMath };
 NativeCssFilterFunctions.filterUrl = (...args) => ({ filter: `url(${args.join(" ")})` });
 
 //UNPACKED $transform scope functions
@@ -679,8 +635,6 @@ const NativeCssTransformFunctions = {
   skewX: (...args) => ({ transform: `skewX(${args.join(",")})` }),
   skewY: (...args) => ({ transform: `skewY(${args.join(",")})` }),
 };
-for (const cb of Object.values(NativeCssTransformFunctions))
-  cb.scope = { ...NativeCssScopeMath };
 
 const ANIMATION_FUNCTIONS = {
   linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,

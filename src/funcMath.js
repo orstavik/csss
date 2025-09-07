@@ -162,7 +162,6 @@ function updateFirst(num, a) { return { ...a, num, text: num + a.unit }; }
 function texter(name, args) { return `${name}(${args.map(a => a.text).join(", ")})`; }
 
 function doMath(check, func, post, texter, name, args) {
-  debugger
   check(args);
   const nums = computableNumbers(args);
   return nums ?
