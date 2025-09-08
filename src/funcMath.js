@@ -3,7 +3,7 @@ const FACTORS = {
   s_ms: 1000,
   ms_s: 1 / 1000,
   // Length
-  in_cm: 2.54, //in
+  in_cm: 2.54,       // in
   in_mm: 25.4,
   in_pt: 72,
   in_pc: 6,
@@ -13,7 +13,7 @@ const FACTORS = {
   pt_in: 1 / 72,
   pc_in: 1 / 6,
   Q_in: 1 / 101.6,
-  cm_mm: 10,      //cm
+  cm_mm: 10,         // cm
   cm_pt: 72 / 2.54,
   cm_pc: 6 / 2.54,
   cm_Q: 40,
@@ -21,37 +21,37 @@ const FACTORS = {
   pt_cm: 2.54 / 72,
   pc_cm: 2.54 / 6,
   Q_cm: 1 / 40,
-  mm_pt: 72 / 25.4,//mm
+  mm_pt: 72 / 25.4,  // mm
   mm_pc: 6 / 25.4,
   mm_Q: 4,
   pt_mm: 25.4 / 72,
   pc_mm: 25.4 / 6,
   Q_mm: 1 / 4,
-  pt_pc: 12,       //pt
+  pt_pc: 1 / 12,     // pt
   pt_Q: 101.6 / 72,
-  pc_pt: 1 / 12,
+  pc_pt: 12,         // pc
   Q_pt: 72 / 101.6,
-  pc_Q: 101.6 / 6, //pc Q
+  pc_Q: 101.6 / 6,   // pc,Q
   Q_pc: 6 / 101.6,
   // Angles
-  turn_deg: 360,          //turn
+  turn_deg: 360,         // turn
   turn_rad: 2 * Math.PI,
   turn_grad: 400,
   deg_turn: 1 / 360,
   rad_turn: 1 / (2 * Math.PI),
   grad_turn: 1 / 400,
-  rad_deg: 180 / Math.PI, //rad
+  rad_deg: 180 / Math.PI, // rad
   rad_grad: 200 / Math.PI,
   grad_rad: Math.PI / 200,
   deg_rad: Math.PI / 180,
-  deg_grad: 400 / 360,    //deg grad
+  deg_grad: 400 / 360,    // deg,grad
   grad_deg: 360 / 400,
-  // Resolution
-  dppx_dpi: 96,     //dppx
+  // Resolution (CSS)
+  dppx_dpi: 96,       // dppx
   dppx_dpcm: 96 / 2.54,
   dpcm_dppx: 2.54 / 96,
   dpi_dppx: 1 / 96,
-  dpcm_dpi: 2.54,   //dpcm dpi
+  dpcm_dpi: 2.54,     // dpcm,dpi
   dpi_dpcm: 1 / 2.54,
 };
 
