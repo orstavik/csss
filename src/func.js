@@ -408,13 +408,6 @@ export function toLogicalEight(NAME, DEFAULT, ar) {
 //   attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
 // };
 
-export function makeExtractor(cb) {
-  return function (args) {
-    const res = cb(args[0]);
-    return res != null && args.shift() && res.text;
-  };
-}
-
 export function interpretBasic(arg) {
   if (arg.kind !== "EXP")
     return arg;
@@ -422,7 +415,7 @@ export function interpretBasic(arg) {
     return Maths[arg.name](arg.name, arg.args.map(interpretBasic));
 }
 export function interpretName(arg) {
-  if (arg.kind === "WORD" && arg.text[0].match(/[a-zA-Z]/))
+  if (arg.kind === "WORD" && arg.text[0].match(/[a-zA-Z0-9-]/))
     return arg;
 }
 export function interpretColor(a) {
@@ -536,6 +529,23 @@ export function interpretQuote(a) {
   if (a.kind === "QUOTE")
     return a;
 }
+export function makeExtractor(cb) {
+  return function (args) {
+    const res = cb(args[0]);
+    return res != null && args.shift() && res.text;
+  };
+}
+export const extractTime = makeExtractor(interpretTime);
+export const extractLength = makeExtractor(interpretLength);
+export const extractLengthPercent = makeExtractor(interpretLengthPercent);
+export const extractAngle = makeExtractor(interpretAngle);
+export const extractAnglePercent = makeExtractor(interpretAnglePercent);
+export const extractNumber = makeExtractor(interpretNumber);
+export const extractUrl = makeExtractor(interpretUrl);
+export const extractImage = makeExtractor(interpretImage);
+export const extractMimeType = makeExtractor(interpretMimeType);
+export const extractColor = makeExtractor(interpretColor);
+
 
 // const SpecializedNativeCssFunctions = {
 //    element: (...args) => `element(${args.join(",")})`,
