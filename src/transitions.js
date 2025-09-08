@@ -3,6 +3,8 @@ import { extractNumber, extractTime, interpretName } from "./func.js";
 function transition(timing, args) {
   const dur = args.length && extractTime(args);
   const delay = args.length && extractTime(args);
+  if(args.text == "allowDiscrete")
+    timing += " allow-discrete";
   const tail = [dur, delay, timing].filter(Boolean).join(" ");
   args = !args.length ? ["all"] :
     args.map(a => {
