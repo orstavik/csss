@@ -525,6 +525,11 @@ export function interpretNumber(a) {
   if (a?.type === "number" && a.unit == "")
     return a;
 }
+export function interpretNumberPercent(a) {
+  a = interpretBasic(a);
+  if (a?.type === "number" && a.unit == "" || a?.type === "percent")
+    return a;
+}
 export function interpretQuote(a) {
   if (a.kind === "QUOTE")
     return a;
@@ -541,6 +546,7 @@ export const extractLengthPercent = makeExtractor(interpretLengthPercent);
 export const extractAngle = makeExtractor(interpretAngle);
 export const extractAnglePercent = makeExtractor(interpretAnglePercent);
 export const extractNumber = makeExtractor(interpretNumber);
+export const extractNumberPercent = makeExtractor(interpretNumberPercent);
 export const extractUrl = makeExtractor(interpretUrl);
 export const extractImage = makeExtractor(interpretImage);
 export const extractMimeType = makeExtractor(interpretMimeType);
@@ -632,21 +638,6 @@ for (let k of keys)
     delete NativeCssProperties[s];
   }
 
-//UNPACKED $filter scope functions
-const NativeCssFilterFunctions = {
-  blur: (...args) => ({ filter: `blur(${args.join(" ")})` }),
-  brightness: (...args) => ({ filter: `brightness(${args.join(" ")})` }),
-  contrast: (...args) => ({ filter: `contrast(${args.join(" ")})` }),
-  grayscale: (...args) => ({ filter: `grayscale(${args.join(" ")})` }),
-  invert: (...args) => ({ filter: `invert(${args.join(" ")})` }),
-  opacity: (...args) => ({ filter: `opacity(${args.join(" ")})` }),
-  saturate: (...args) => ({ filter: `saturate(${args.join(" ")})` }),
-  sepia: (...args) => ({ filter: `sepia(${args.join(" ")})` }),
-  dropShadow: (...args) => ({ filter: `drop-shadow(${args.join(" ")})` }),
-  hueRotate: (...args) => ({ filter: `hue-rotate(${args.join(" ")})` }),
-};
-NativeCssFilterFunctions.filterUrl = (...args) => ({ filter: `url(${args.join(" ")})` });
-
 //UNPACKED $transform scope functions
 const NativeCssTransformFunctions = {
   matrix: (...args) => ({ transform: `matrix(${args.join(",")})` }),
@@ -684,8 +675,6 @@ const UnpackedNativeCssProperties = {
   ...NativeCssProperties,
   transform: undefined,
   ...NativeCssTransformFunctions,
-  filter: undefined,
-  ...NativeCssFilterFunctions,
 };
 
 export default {
