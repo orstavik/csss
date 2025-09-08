@@ -6,7 +6,7 @@ import layouts from "./layout.js";
 import palette from "./color.js";
 import transitions from "./transitions.js";
 import textDecorations from "./textDecorations.js";
-import filters from "./filter.js";
+import filters from "./filterTransform.js";
 
 const SHORTS = {
   ...nativeAndMore,

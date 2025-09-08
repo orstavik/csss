@@ -627,30 +627,6 @@ for (let k of keys)
     delete NativeCssProperties[s];
   }
 
-//UNPACKED $transform scope functions
-const NativeCssTransformFunctions = {
-  matrix: (...args) => ({ transform: `matrix(${args.join(",")})` }),
-  matrix3d: (...args) => ({ transform: `matrix3d(${args.join(",")})` }),
-  translate: (...args) => ({ transform: `translate(${args.join(",")})` }),
-  translate3d: (...args) => ({ transform: `translate3d(${args.join(",")})` }),
-  scale: (...args) => ({ transform: `scale(${args.join(",")})` }),
-  scale3d: (...args) => ({ transform: `scale3d(${args.join(",")})` }),
-  rotate: (...args) => ({ transform: `rotate(${args.join(",")})` }),
-  rotate3d: (...args) => ({ transform: `rotate3d(${args.join(",")})` }),
-  skew: (...args) => ({ transform: `skew(${args.join(",")})` }),
-  translateX: (...args) => ({ transform: `translateX(${args.join(",")})` }),
-  translateY: (...args) => ({ transform: `translateY(${args.join(",")})` }),
-  translateZ: (...args) => ({ transform: `translateZ(${args.join(",")})` }),
-  scaleX: (...args) => ({ transform: `scaleX(${args.join(",")})` }),
-  scaleY: (...args) => ({ transform: `scaleY(${args.join(",")})` }),
-  scaleZ: (...args) => ({ transform: `scaleZ(${args.join(",")})` }),
-  rotateX: (...args) => ({ transform: `rotateX(${args.join(",")})` }),
-  rotateY: (...args) => ({ transform: `rotateY(${args.join(",")})` }),
-  rotateZ: (...args) => ({ transform: `rotateZ(${args.join(",")})` }),
-  skewX: (...args) => ({ transform: `skewX(${args.join(",")})` }),
-  skewY: (...args) => ({ transform: `skewY(${args.join(",")})` }),
-};
-
 const ANIMATION_FUNCTIONS = {
   linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,
   ease: (...args) => `ease(${args.join(",")})`,
@@ -662,12 +638,9 @@ NativeCssProperties.animation.scope = ANIMATION_FUNCTIONS;
 
 const UnpackedNativeCssProperties = {
   ...NativeCssProperties,
-  transform: undefined,
-  ...NativeCssTransformFunctions,
 };
 
 export default {
   ...UnpackedNativeCssProperties,
-
   em: NativeCssProperties.fontSize,
 };
