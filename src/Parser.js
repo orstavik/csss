@@ -106,149 +106,6 @@ export function parse(short) {
   // const miniCssRule = {cssText, name: layer, cssRules: [{ media, cssRules: [{ selectorText: selector, style: { cssText: body }, props }] }]};
 }
 
-// class Expression {
-//   constructor(name, args) {
-//     this.name = name;
-//     this.args = args;
-//   }
-//   // interpret(scope) {
-//   //   // const cb = scope?.[this.name];
-//   //   if (this.name in scope)
-//   //     return scope[this.name]?.(scope, ...args);
-//   //   throw new ReferenceError(this.name);
-//   //   // if (!(cb instanceof Function))
-//   //   //   return cb;
-//   //   // try {
-//   //   //   const args = this.args.map(x =>
-//   //   //     x instanceof Expression ? x.interpret(cb.scope) :
-//   //   //       x === "." ? "unset" : //todo move this into the parser??
-//   //   //         cb.scope?.[x] instanceof Function ? cb.scope[x].call(cb.scope) :
-//   //   //           cb.scope?.[x] ? cb.scope[x] :
-//   //   //             x);
-//   //   //   return cb.call(scope, ...args);
-//   //   // } catch (e) {
-//   //   //   if (e instanceof ReferenceError)
-//   //   //     e.message = this.name + "." + e.message;
-//   //   //   throw e;
-//   //   // }
-//   // }
-// }
-
-// function reduceTriplets(arr, cb) {
-//   const res = arr.slice(0, 1);
-//   for (let i = 1; i < arr.length - 1; i++) {
-//     const a = res.at(-1);
-//     const b = arr[i];
-//     const c = arr[i + 1];
-//     const r = cb(a, b, c);
-//     if (r === undefined) res.push(b, c);
-//     else res[res.length - 1] = r;
-//   }
-//   return res;
-// }
-// const OPS = {
-//   "+": (a, b) => a + b,
-//   "-": (a, b) => a - b,
-//   "*": (a, b) => a * b,
-//   "/": (a, b) => { if (!b) throw new SyntaxError("Division by zero"); return a / b },
-// }
-// const FACTORS = {
-//   // Times
-//   s_ms: 1000,
-//   // Length
-//   in_cm: 2.54,
-//   in_mm: 25.4,
-//   in_pt: 72,
-//   in_pc: 6,
-//   cm_mm: 10,
-//   pc_mm: 25.4 / 6,
-//   pc_pt: 12,
-//   cm_Q: 40,
-//   mm_Q: 4,
-//   in_Q: 25.4 / 0.25,
-//   pt_Q: (25.4 / 72) / 0.25,
-//   // Frequency
-//   kHz_Hz: 1000,
-//   // Angles
-//   turn_deg: 360,
-//   turn_rad: 2 * Math.PI,
-//   turn_grad: 400,
-//   rad_deg: 180 / Math.PI,
-//   rad_grad: 200 / Math.PI,
-//   deg_grad: 400 / 360,
-//   // Resolution
-//   dppx_dpi: 96,
-//   dppx_dpcm: 96 / 2.54,
-//   dpcm_dpi: 2.54,
-// };
-
-// function computeNumbers(a, b, c) {
-//   if (a.type && c.type && a.type != c.type)
-//     throw new SyntaxError(`Incompatible types: ${a.text}<${a.type}> ${b.text} ${c.text}<${c.type}>`);
-//   const calc = OPS[b.text];
-//   if (!calc)
-//     throw new SyntaxError("Unknown operator: " + b.text);
-//   const factor = !a.type || !c.type || a.unit == c.unit ? 1 : FACTORS[a.type + "_" + c.type] ?? (1 / FACTORS[c.type + "_" + a.type]);
-//   if (factor == undefined) //different types of lengths
-//     return;
-//   const num = calc(a.num, c.num * factor);
-//   const base = a.type ? a : c;
-//   const text = num + (base.unit || "");
-//   return { ...base, text, num };
-// }
-
-// class MathExpression extends Expression {
-//   constructor(args) {
-//     super("$math", args);
-//   }
-
-//   interpret(scope) {
-//     //1. default type and nested parens ()
-//     const defaultType = scope?.$math ?? 0;
-//     let args = this.args.map(x =>
-//       x instanceof Expression ? x.interpret(scope) :
-//         x.text == "." ? defaultType :
-//           x);
-//     //2. check the last argument and convert it to text
-//     const lastI = args.length - 1;
-//     const last = args[lastI];
-//     if (last.kind == "VAR")
-//       `var(${last.text})`;
-//     else if (last.kind != "NUMBER")
-//       throw new SyntaxError("math expressions must end with either a number or a variable, not with +-/* or similar operators.");
-
-//     //3. if we only have one argument, return it
-//     if (args.length === 1)
-//       return args[0].text ?? args[0]; //number or var
-
-//     //4. --var and ??, in reverse
-//     args = reduceTriplets(args, (a, b, c) => {
-//       if (b.text == "??" && a.kind == "VAR")
-//         return `var(${a.text}, ${c?.text || c})`;
-//       if (b.text == "??")
-//         throw new SyntaxError("?? must have a variable on the left hand side.");
-//       if (b.kind === "VAR")
-//         return `var(${b.text})`;
-//     });
-
-//     //5. implied default first argument
-//     if (args[0].kind == "OPERATOR")
-//       args.unshift(defaultType);
-
-//     //5. */
-//     args = reduceTriplets(args, (a, b, c) =>
-//       (b.text == "*" || b.text == "/") && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
-//     //6. +-
-//     args = reduceTriplets(args, (a, b, c) =>
-//       (b.text == "+" || b.text == "-") && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
-//     //7. toString
-//     if (args.length === 1)
-//       return args[0]?.text ?? args[0];
-//     args = reduceTriplets(args, (a, b, c) => (a?.text ?? a) + " " + b.text + " " + (c?.text ?? c));
-//     return `calc(${args[0]})`;
-//   }
-// }
-
 const clashOrStack = (function () {
   const STACKABLE_PROPERTIES = {
     background: ", ",
@@ -293,53 +150,6 @@ const clashOrStack = (function () {
     return res;
   }
 })();
-
-// function diveDeep(tokens) {
-//   const res = [];
-//   while (tokens.length) {
-//     let a = tokens.shift();
-//     if (a == undefined)
-//       throw new SyntaxError("Missing end parenthesis");
-//     else if (a.text == ")")
-//       return res;
-//     else if (a.text == ",") {
-//       res.push(undefined);  // throw "empty argument not allowed";
-//       continue;
-//     } else if (a.kind === "COLOR") { //color grab
-//       const colors = [a];
-//       while (tokens[0]?.kind === "COLOR")
-//         colors.push(tokens.shift());
-//       a = new Expression("_hash", colors); //ColorExpression??
-//     } else if (a.kind === "NUMBER" || a.kind === "VAR" || a.kind === "OPERATOR") {
-//       const math = [a];
-//       while (true) {
-//         if (tokens[0]?.kind === "NUMBER" || tokens[0]?.kind === "VAR" || tokens[0]?.kind === "OPERATOR") {
-//           math.push(tokens.shift());
-//         } else if (tokens[0]?.text === "(") {
-//           tokens.shift();
-//           const x = new MathExpression(goDeep(tokens)); //todo recursive
-//           if (x.args.length != 1 && !(x.args[0] instanceof Expression && x.args[0].name === "_math"))
-//             throw new SyntaxError("Parenthesis in math must return exactly one math expression.");
-//           math.push(x);
-//         } else
-//           break;
-//       }
-//       a = new MathExpression(math);
-//     }
-
-//     let b = tokens.shift();
-//     if (a.kind === "WORD" && b.text === "(") {
-//       a = new Expression(a.text, goDeep(tokens));
-//       b = tokens.shift();
-//     }
-//     if (b.text != ")" && b.text != ",")
-//       throw "syntax error";
-//     res.push((a instanceof Expression || typeof a === "string") ? a : a.text);
-//     if (b.text === ")")
-//       return res;
-//   }
-//   throw "missing ')'";
-// }
 
 function goRightComma(tokens, divider) {
   const args = [];
@@ -581,6 +391,8 @@ function parseMediaQuery(str, register) {
   return { exp: str.slice(i), media: `${tokens.join(" ")} ` };
 }
 
+//https://developer.mozilla.org/en-US/docs/Web/CSS/length#browser_compatibility
+//check if we support all lengths.
 export const TYPES = {
   LENGTHS: "px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex",
   PERCENT: "%",
@@ -597,48 +409,6 @@ export const TYPES = {
 const NUMBER = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${TYPES.LENGTHS})|(${TYPES.ANGLES})|(${TYPES.TIMES})|(${TYPES.PERCENT})|(${TYPES.FR}))?`;
 const MATH = new RegExp(`^(${TYPES.MATH})$`);
 
-//UNITS is a string with the following characters:
-// i - integer only
-// + - positive only
-// l - length (px, em, rem, vw, vh, vmin, vmax, cm, mm, Q, in, pt, pc, ch, ex)
-// a - angle (deg, grad, rad, turn)
-// t - time (s, ms)
-// % - percent (%)
-// f - fr (fr)
-// e - empty unit allowed
-// 0 - zero without unit allowed
-
-//TODO this will not be much needed when we run the function with the content first.
-function isNumberUnit(UNITS) {
-  const RX = new RegExp(`^${NUMBER}$`);
-  const integer = UNITS.includes("i");
-  const positive = UNITS.includes("+");
-  const length = UNITS.includes("l");
-  const angle = UNITS.includes("a");
-  const time = UNITS.includes("t");
-  const percent = UNITS.includes("%");
-  const frame = UNITS.includes("f");
-  const empty = UNITS.includes("e");
-  const z = UNITS.includes("0");
-
-  return function (x) {
-    if (positive && n.startsWith("-")) return;
-    const m = x.match(RX);
-    if (!m) return;
-    let [, n, l, a, t, p, f] = m;
-    if (integer && !n.isInteger()) return;
-    if (angle && a) return x;
-    if (length && l) return x;
-    if (time && t) return x;
-    if (percent && p) return x;
-    if (frame && f) return x;
-    if (empty && !l && !a && !t && !p && !f) return x;
-  }
-}
-
-export const isLength = isNumberUnit("l%0"); //todo rename to lengthPercent
-export const isAngle = isNumberUnit("a0");//todo these are gone i think
-export const isTime = isNumberUnit("t");//todo these are gone i think
 
 const tokenize = (_ => {
   const QUOTE = /([`'"])(\\.|(?!\2).)*?\2/.source;

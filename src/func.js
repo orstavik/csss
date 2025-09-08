@@ -1,15 +1,4 @@
-//https://developer.mozilla.org/en-US/docs/Web/CSS/length#browser_compatibility
-//mdn specifies more lengths, but we don't support them yet.
-import { TYPES, isLength, isAngle, isTime } from "./Parser.js";
 import Maths from "./funcMath.js";
-export { TYPES, isLength, isAngle, isTime };
-
-//todo here we need + - * / ?? var calc max min clamp log exp etc.
-//they should return the type if it can be deduced by the number.
-//we need 3 types of outcome
-//Number
-//Var
-//String //if we have a string or var below, we must go with string. But the string can contain a type.
 
 //colors
 export const WEBCOLORS = {
