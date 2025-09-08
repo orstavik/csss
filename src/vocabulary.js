@@ -1,5 +1,6 @@
 import nativeAndMore from "./func.js";
 import backgrounds from "./bg.js";
+import border from "./border.js";
 import fonts from "./fontX.js";
 import layouts from "./layout.js";
 import palette from "./color.js";
@@ -14,6 +15,7 @@ const SHORTS = {
   ...layouts,
   ...transitions,
   ...textDecorations,
+  ...border,
 };
 
 const MEDIA_WORDS = {

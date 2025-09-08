@@ -13,16 +13,7 @@
     --comicFontSize: xx-small;
     --comicFontStyle: italic;
     --comicFontWeight: bolder;
-    --comicFontSizeAdjust: unset;
-    --comicLetterSpacing: unset;
     --comicFontStretch: semi-expanded;
-    --comicFontVariantCaps: unset;
-    --comicFontSynthesis: unset;
-    --comicFontFeatureSettings: unset;
-    --comicFontVariationSettings: unset;
-    --comicWebkitFontSmoothing: unset;
-    --comicMozOsxFontSmoothing: unset;
-    --comicFontKerning: unset;
   }
 }
 ```
@@ -38,15 +29,7 @@
     --bodyFontStyle: italic;
     --bodyFontWeight: bold;
     --bodyFontSizeAdjust: 0.5;
-    --bodyLetterSpacing: unset;
     --bodyFontStretch: condensed;
-    --bodyFontVariantCaps: unset;
-    --bodyFontSynthesis: unset;
-    --bodyFontFeatureSettings: unset;
-    --bodyFontVariationSettings: unset;
-    --bodyWebkitFontSmoothing: unset;
-    --bodyMozOsxFontSmoothing: unset;
-    --bodyFontKerning: unset;
   }
 }
 ```
@@ -61,29 +44,29 @@
     font-style: italic;
     font-weight: bold;
     font-size-adjust: 0.5;
-    letter-spacing: var(--systemUiLetterSpacing, unset);
+    letter-spacing: var(--system-uiLetterSpacing, unset);
     font-stretch: condensed;
-    font-variant-caps: var(--systemUiFontVariantCaps, unset);
-    font-synthesis: var(--systemUiFontSynthesis, unset);
-    font-feature-settings: var(--systemUiFontFeatureSettings, unset);
-    font-variation-settings: var(--systemUiFontVariationSettings, unset);
-    -webkit-font-smoothing: var(--systemUiWebkitFontSmoothing, unset);
-    -moz-osx-font-smoothing: var(--systemUiMozOsxFontSmoothing, unset);
-    font-kerning: var(--systemUiFontKerning, unset);
+    font-variant-caps: var(--system-uiFontVariantCaps, unset);
+    font-synthesis: var(--system-uiFontSynthesis, unset);
+    font-feature-settings: var(--system-uiFontFeatureSettings, unset);
+    font-variation-settings: var(--system-uiFontVariationSettings, unset);
+    -webkit-font-smoothing: var(--system-uiWebkitFontSmoothing, unset);
+    -moz-osx-font-smoothing: var(--system-uiMozOsxFontSmoothing, unset);
+    font-kerning: var(--system-uiFontKerning, unset);
     --fontFontFamily: system-ui, sans-serif;
     --fontFontSize: 12px;
     --fontFontStyle: italic;
     --fontFontWeight: bold;
     --fontFontSizeAdjust: 0.5;
-    --fontLetterSpacing: var(--systemUiLetterSpacing, unset);
+    --fontLetterSpacing: var(--system-uiLetterSpacing, unset);
     --fontFontStretch: condensed;
-    --fontFontVariantCaps: var(--systemUiFontVariantCaps, unset);
-    --fontFontSynthesis: var(--systemUiFontSynthesis, unset);
-    --fontFontFeatureSettings: var(--systemUiFontFeatureSettings, unset);
-    --fontFontVariationSettings: var(--systemUiFontVariationSettings, unset);
-    --fontWebkitFontSmoothing: var(--systemUiWebkitFontSmoothing, unset);
-    --fontMozOsxFontSmoothing: var(--systemUiMozOsxFontSmoothing, unset);
-    --fontFontKerning: var(--systemUiFontKerning, unset);
+    --fontFontVariantCaps: var(--system-uiFontVariantCaps, unset);
+    --fontFontSynthesis: var(--system-uiFontSynthesis, unset);
+    --fontFontFeatureSettings: var(--system-uiFontFeatureSettings, unset);
+    --fontFontVariationSettings: var(--system-uiFontVariationSettings, unset);
+    --fontWebkitFontSmoothing: var(--system-uiWebkitFontSmoothing, unset);
+    --fontMozOsxFontSmoothing: var(--system-uiMozOsxFontSmoothing, unset);
+    --fontFontKerning: var(--system-uiFontKerning, unset);
   }
 }
 ```

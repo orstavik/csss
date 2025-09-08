@@ -3,7 +3,8 @@ import {
   interpretLengthPercent,
   interpretAngle,
   interpretAnglePercent,
-  interpretImage
+  interpretImage,
+  makeExtractor,
 } from "./func.js";
 
 function size(args) {
@@ -159,13 +160,6 @@ function interpretColorSpace(a) {
     xyzD65: "xyz-d65",
   }[a.text];
   if (res) return { text: "in " + res };
-}
-
-function makeExtractor(cb) {
-  return function (args) {
-    const res = cb(args[0]);
-    return res != null && args.shift() && res.text;
-  };
 }
 
 const extractLengthPercent = makeExtractor(interpretLengthPercent);

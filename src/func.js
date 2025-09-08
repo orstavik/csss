@@ -11,6 +11,7 @@ export { TYPES, isLength, isAngle, isTime };
 //Var
 //String //if we have a string or var below, we must go with string. But the string can contain a type.
 
+//colors
 export const WEBCOLORS = {
   aliceblue: "f0f8ff",
   antiquewhite: "faebd7",
@@ -161,67 +162,6 @@ export const WEBCOLORS = {
   yellowgreen: "9acd32",
 };
 
-export function interpretBasic(arg) {
-  if (arg.kind !== "EXP")
-    return arg;
-  if (arg.name in Maths)
-    return Maths[arg.name](arg.name, arg.args.map(interpretBasic));
-}
-
-export function toRadiusFour(NAME, ar) {
-  ar = ar.map(interpretBasic).map(a => a.text);
-  if (!(ar instanceof Array))
-    return { [NAME]: ar };
-  if (ar.length === 1)
-    return { [NAME]: ar[0] };
-  return {
-    [NAME + "StartStart"]: ar[0],
-    [NAME + "EndEnd"]: ar[2] ?? ar[0],
-    [NAME + "StartEnd"]: ar[1],
-    [NAME + "EndStart"]: ar[3] ?? ar[1],
-  };
-}
-
-export function toLogicalFour(NAME, ar) {
-  ar = ar.map(interpretBasic).map(a => a.text);
-  return ar.length === 1 ? { [NAME]: ar[0] } :
-    {
-      [NAME + "Block"]: ar[2] != null && ar[2] != ar[0] ? ar[0] + " " + ar[2] : ar[0],
-      [NAME + "Inline"]: ar[3] != null && ar[3] != ar[1] ? (ar[1] ?? ar[0]) + " " + ar[3] : ar[1] ?? ar[0],
-    };
-}
-//todo there are different ways to do the logic here..
-//todo length == 2, I think that we could have top/bottom too
-//todo length == 3, then the third becomes all the inline ones
-//todo length === 4, then forth is the inline on the end side
-function toLogicalEight(NAME, DEFAULT, ar) {
-  ar = ar.map(interpretBasic).map(a => a.text);
-  if (!(ar instanceof Array))
-    return { [NAME]: ar };
-  if (ar.length === 1)
-    return { [NAME]: ar[0] };
-  let [bss, iss, bes, ies, bse, ise, bee, iee] = ar;
-  if (ar.length === 2) ise = ies = iee = iss, bse = bes = bee = bss;
-  if (ar.length === 3) ise = ies = iee = iss, bse = bss, bee = bes;
-  if (ar.length === 4) ise = iss, iee = ies, bse = bss, bee = bes;
-  if (ar.length === 5) ise = iss, iee = ies, bee = bes;
-  if (ar.length === 6) iee = ies, bee = bes;
-  if (ar.length === 7) iee = ies;
-  const res = {};
-  if (bss || iss) res[NAME + "TopLeft"] = `${bss ?? DEFAULT} ${iss ?? DEFAULT}`;
-  if (bse || ies) res[NAME + "TopRight"] = `${bse ?? DEFAULT} ${ies ?? DEFAULT}`;
-  if (bes || ise) res[NAME + "BottomLeft"] = `${bes ?? DEFAULT} ${ise ?? DEFAULT}`;
-  if (bee || iee) res[NAME + "BottomRight"] = `${bee ?? DEFAULT} ${iee ?? DEFAULT}`;
-  return res;
-}
-
-const NativeCssScopeUrl = (...args) => `url(${args.join(" ")})`;
-const NativeCssScopeAttrCounter = {
-  counter: (...args) => `counter(${args.join(",")})`,
-  counters: (...args) => `counters(${args.join(",")})`,
-  attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
-};
-
 function nativeCssColorFunction(name, args) {
   if (args.length < 3 || args.length > 5)
     throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
@@ -232,7 +172,7 @@ function nativeCssColorFunction(name, args) {
   if (from) txts.unshift("from");
   return `${name}(${txts.join(" ")})`;
 }
-//todo untested!!
+
 function nativeCssColorSpaceFunction(space, args) {
   if (args.length < 3 || args.length > 5)
     throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
@@ -244,6 +184,7 @@ function nativeCssColorSpaceFunction(space, args) {
   txts.unshift(space);
   return `color(${txts.join(" ")})`;
 }
+
 function cssColorMix([space, one, two, percent]) {
   space = space == "_" ? "oklab" : interpretBasic(space).text;
   one = interpretColor(one).text;
@@ -299,47 +240,6 @@ function rgbaImpl(name, rgba) {
   return hex.length === rgba.length * 2 ? "#" + hex :
     name + "(" + rgba.map(c => c.text).join(", ") + ")";
 }
-const COLORS = {
-  hash,
-  rgb: rgb,
-  rgba: rgba,
-  hsl: nativeCssColorFunction.bind(null, "hsl"),
-  hsla: nativeCssColorFunction.bind(null, "hsla"),
-  hwb: nativeCssColorFunction.bind(null, "hwb"),
-  lab: nativeCssColorFunction.bind(null, "lab"),
-  lch: nativeCssColorFunction.bind(null, "lch"),
-  oklab: nativeCssColorFunction.bind(null, "oklab"),
-  oklch: nativeCssColorFunction.bind(null, "oklch"),
-
-  srgb: nativeCssColorSpaceFunction.bind(null, "srgb"),
-  srgbLinear: nativeCssColorSpaceFunction.bind(null, "srgb-linear"),
-  displayP3: nativeCssColorSpaceFunction.bind(null, "display-p3"),
-  a98Rgb: nativeCssColorSpaceFunction.bind(null, "a98-rgb"),
-  prophotoRgb: nativeCssColorSpaceFunction.bind(null, "prophoto-rgb"),
-  rec2020: nativeCssColorSpaceFunction.bind(null, "rec2020"),
-  xyz: nativeCssColorSpaceFunction.bind(null, "xyz"),
-  xyzD50: nativeCssColorSpaceFunction.bind(null, "xyz-d50"),
-  xyzD65: nativeCssColorSpaceFunction.bind(null, "xyz-d65"),
-  color: nativeCssColorSpaceFunction.bind(null, "srgb"),
-
-  mix: cssColorMix.bind(null),
-  mixHslLonger: args => cssColorMix([{ kind: "WORD", text: "hsl longer hue" }, ...args]),
-  mixHslShorter: args => cssColorMix([{ kind: "WORD", text: "hsl shorter hue" }, ...args]),
-  mixHslIncreasing: args => cssColorMix([{ kind: "WORD", text: "hsl increasing hue" }, ...args]),
-  mixHslDecreasing: args => cssColorMix([{ kind: "WORD", text: "hsl decreasing hue" }, ...args]),
-  mixHwbLonger: args => cssColorMix([{ kind: "WORD", text: "hwb longer hue" }, ...args]),
-  mixHwbShorter: args => cssColorMix([{ kind: "WORD", text: "hwb shorter hue" }, ...args]),
-  mixHwbIncreasing: args => cssColorMix([{ kind: "WORD", text: "hwb increasing hue" }, ...args]),
-  mixHwbDecreasing: args => cssColorMix([{ kind: "WORD", text: "hwb decreasing hue" }, ...args]),
-  mixLchLonger: args => cssColorMix([{ kind: "WORD", text: "lch longer hue" }, ...args]),
-  mixLchShorter: args => cssColorMix([{ kind: "WORD", text: "lch shorter hue" }, ...args]),
-  mixLchIncreasing: args => cssColorMix([{ kind: "WORD", text: "lch increasing hue" }, ...args]),
-  mixLchDecreasing: args => cssColorMix([{ kind: "WORD", text: "lch decreasing hue" }, ...args]),
-  mixOklchLonger: args => cssColorMix([{ kind: "WORD", text: "oklch longer hue" }, ...args]),
-  mixOklchShorter: args => cssColorMix([{ kind: "WORD", text: "oklch shorter hue" }, ...args]),
-  mixOklchIncreasing: args => cssColorMix([{ kind: "WORD", text: "oklch increasing hue" }, ...args]),
-  mixOklchDecreasing: args => cssColorMix([{ kind: "WORD", text: "oklch decreasing hue" }, ...args]),
-};
 
 const CRX = new RegExp("^#(?:" +
   [
@@ -352,7 +252,7 @@ const CRX = new RegExp("^#(?:" +
   ].join("|") +
   ")$", "i");
 
-export function parseColor(txt) {
+function parseColor(txt) {
   let [, transparent, alpha, c6, c8 = "", c3, c4 = "", name, p = 100, vector, vp = 100] = txt.match(CRX);
   if (transparent)
     return {
@@ -409,6 +309,122 @@ export function parseColor(txt) {
   };
 }
 
+const COLORS = {
+  hash,
+  rgb: rgb,
+  rgba: rgba,
+  hsl: nativeCssColorFunction.bind(null, "hsl"),
+  hsla: nativeCssColorFunction.bind(null, "hsla"),
+  hwb: nativeCssColorFunction.bind(null, "hwb"),
+  lab: nativeCssColorFunction.bind(null, "lab"),
+  lch: nativeCssColorFunction.bind(null, "lch"),
+  oklab: nativeCssColorFunction.bind(null, "oklab"),
+  oklch: nativeCssColorFunction.bind(null, "oklch"),
+
+  srgb: nativeCssColorSpaceFunction.bind(null, "srgb"),
+  srgbLinear: nativeCssColorSpaceFunction.bind(null, "srgb-linear"),
+  displayP3: nativeCssColorSpaceFunction.bind(null, "display-p3"),
+  a98Rgb: nativeCssColorSpaceFunction.bind(null, "a98-rgb"),
+  prophotoRgb: nativeCssColorSpaceFunction.bind(null, "prophoto-rgb"),
+  rec2020: nativeCssColorSpaceFunction.bind(null, "rec2020"),
+  xyz: nativeCssColorSpaceFunction.bind(null, "xyz"),
+  xyzD50: nativeCssColorSpaceFunction.bind(null, "xyz-d50"),
+  xyzD65: nativeCssColorSpaceFunction.bind(null, "xyz-d65"),
+  color: nativeCssColorSpaceFunction.bind(null, "srgb"),
+
+  mix: cssColorMix.bind(null),
+  mixHslLonger: args => cssColorMix([{ kind: "WORD", text: "hsl longer hue" }, ...args]),
+  mixHslShorter: args => cssColorMix([{ kind: "WORD", text: "hsl shorter hue" }, ...args]),
+  mixHslIncreasing: args => cssColorMix([{ kind: "WORD", text: "hsl increasing hue" }, ...args]),
+  mixHslDecreasing: args => cssColorMix([{ kind: "WORD", text: "hsl decreasing hue" }, ...args]),
+  mixHwbLonger: args => cssColorMix([{ kind: "WORD", text: "hwb longer hue" }, ...args]),
+  mixHwbShorter: args => cssColorMix([{ kind: "WORD", text: "hwb shorter hue" }, ...args]),
+  mixHwbIncreasing: args => cssColorMix([{ kind: "WORD", text: "hwb increasing hue" }, ...args]),
+  mixHwbDecreasing: args => cssColorMix([{ kind: "WORD", text: "hwb decreasing hue" }, ...args]),
+  mixLchLonger: args => cssColorMix([{ kind: "WORD", text: "lch longer hue" }, ...args]),
+  mixLchShorter: args => cssColorMix([{ kind: "WORD", text: "lch shorter hue" }, ...args]),
+  mixLchIncreasing: args => cssColorMix([{ kind: "WORD", text: "lch increasing hue" }, ...args]),
+  mixLchDecreasing: args => cssColorMix([{ kind: "WORD", text: "lch decreasing hue" }, ...args]),
+  mixOklchLonger: args => cssColorMix([{ kind: "WORD", text: "oklch longer hue" }, ...args]),
+  mixOklchShorter: args => cssColorMix([{ kind: "WORD", text: "oklch shorter hue" }, ...args]),
+  mixOklchIncreasing: args => cssColorMix([{ kind: "WORD", text: "oklch increasing hue" }, ...args]),
+  mixOklchDecreasing: args => cssColorMix([{ kind: "WORD", text: "oklch decreasing hue" }, ...args]),
+};
+
+
+
+
+export function toRadiusFour(NAME, ar) {
+  ar = ar.map(interpretBasic).map(a => a.text);
+  if (!(ar instanceof Array))
+    return { [NAME]: ar };
+  if (ar.length === 1)
+    return { [NAME]: ar[0] };
+  return {
+    [NAME + "StartStart"]: ar[0],
+    [NAME + "EndEnd"]: ar[2] ?? ar[0],
+    [NAME + "StartEnd"]: ar[1],
+    [NAME + "EndStart"]: ar[3] ?? ar[1],
+  };
+}
+
+export function toLogicalFour(NAME, ar) {
+  ar = ar.map(interpretBasic).map(a => a.text);
+  return ar.length === 1 ? { [NAME]: ar[0] } :
+    {
+      [NAME + "Block"]: ar[2] != null && ar[2] != ar[0] ? ar[0] + " " + ar[2] : ar[0],
+      [NAME + "Inline"]: ar[3] != null && ar[3] != ar[1] ? (ar[1] ?? ar[0]) + " " + ar[3] : ar[1] ?? ar[0],
+    };
+}
+//todo there are different ways to do the logic here..
+//todo length == 2, I think that we could have top/bottom too
+//todo length == 3, then the third becomes all the inline ones
+//todo length === 4, then forth is the inline on the end side
+export function toLogicalEight(NAME, DEFAULT, ar) {
+  ar = ar.map(interpretBasic).map(a => a.text);
+  if (!(ar instanceof Array))
+    return { [NAME]: ar };
+  if (ar.length === 1)
+    return { [NAME]: ar[0] };
+  let [bss, iss, bes, ies, bse, ise, bee, iee] = ar;
+  if (ar.length === 2) ise = ies = iee = iss, bse = bes = bee = bss;
+  if (ar.length === 3) ise = ies = iee = iss, bse = bss, bee = bes;
+  if (ar.length === 4) ise = iss, iee = ies, bse = bss, bee = bes;
+  if (ar.length === 5) ise = iss, iee = ies, bee = bes;
+  if (ar.length === 6) iee = ies, bee = bes;
+  if (ar.length === 7) iee = ies;
+  const res = {};
+  if (bss || iss) res[NAME + "TopLeft"] = `${bss ?? DEFAULT} ${iss ?? DEFAULT}`;
+  if (bse || ies) res[NAME + "TopRight"] = `${bse ?? DEFAULT} ${ies ?? DEFAULT}`;
+  if (bes || ise) res[NAME + "BottomLeft"] = `${bes ?? DEFAULT} ${ise ?? DEFAULT}`;
+  if (bee || iee) res[NAME + "BottomRight"] = `${bee ?? DEFAULT} ${iee ?? DEFAULT}`;
+  return res;
+}
+
+// const NativeCssScopeUrl = (...args) => `url(${args.join(" ")})`;
+// const NativeCssScopeAttrCounter = {
+//   counter: (...args) => `counter(${args.join(",")})`,
+//   counters: (...args) => `counters(${args.join(",")})`,
+//   attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
+// };
+
+export function makeExtractor(cb) {
+  return function (args) {
+    const res = cb(args[0]);
+    return res != null && args.shift() && res.text;
+  };
+}
+
+export function interpretBasic(arg) {
+  if (arg.kind !== "EXP")
+    return arg;
+  if (arg.name in Maths)
+    return Maths[arg.name](arg.name, arg.args.map(interpretBasic));
+}
+export function interpretName(arg) {
+  if (arg.kind === "WORD" && arg.text[0].match(/[a-zA-Z]/))
+    return arg;
+}
 export function interpretColor(a) {
   if (a.kind === "COLOR")
     return parseColor(a.text);
@@ -509,6 +525,15 @@ export function interpretResolution(a) {
   if (a?.num == 0 && a.type === "number")
     return { type: "resolution", text: "0x", unit: "x", num: 0 };
   if (a?.type === "resolution")
+    return a;
+}
+export function interpretNumber(a) {
+  a = interpretBasic(a);
+  if (a?.type === "number" && a.unit == "")
+    return a;
+}
+export function interpretQuote(a) {
+  if (a.kind === "QUOTE")
     return a;
 }
 
@@ -652,65 +677,9 @@ const UnpackedNativeCssProperties = {
   filter: undefined,
   ...NativeCssFilterFunctions,
 };
-// margin: toLogicalFour.bind(null, "margin"),
-// scrollMargin: toLogicalFour.bind(null, "scroll-margin"),
-// padding: toLogicalFour.bind(null, "padding"),
-// scrollPadding: toLogicalFour.bind(null, "scroll-padding"),
-
-//todo and radius toLogicalEight.. maybe
-
-
-//border: 2px 4px solid red blue;
-//$border(w(2px,4px),solid,c(red,blue))
-//$border(2px,solid,red)
-function border(ar) {
-  const color = toLogicalFour.bind(null, "borderColor");
-  const width = toLogicalFour.bind(null, "borderWidth");
-  const radius = toRadiusFour.bind(null, "borderRadius");
-  const radius8 = toLogicalEight.bind(null, "borderRadius", 0);
-  const BORDER = {
-    solid: { borderStyle: "solid" },
-    dotted: { borderStyle: "dotted" },
-    dashed: { borderStyle: "dashed" },
-    double: { borderStyle: "double" },
-    groove: { borderStyle: "groove" },
-    ridge: { borderStyle: "ridge" },
-    inset: { borderStyle: "inset" },
-    outset: { borderStyle: "outset" },
-    hidden: { borderStyle: "hidden" },
-    none: { borderStyle: "none" },
-    thin: { borderWidth: "thin" },
-    medium: { borderWidth: "medium" },
-    thick: { borderWidth: "thick" },
-    width,
-    w: width,
-    radius,
-    r: radius,
-    radius8,
-    r8: radius8,
-    color,
-    c: color,
-  };
-  ar = ar.map(a => {
-    a = BORDER[a.name]?.(a.args) ??
-      BORDER[a.text] ??
-      interpretColor(a) ??
-      interpretBasic(a);
-    if (!a)
-      throw new SyntaxError(`Could not interpret $border argument: ${a.text}.`);
-    if (a.type == "color")
-      return { borderColor: a.text };
-    if (a.type == "length")
-      return { borderWidth: a.text };
-    return a;
-  });
-  return Object.assign({ borderStyle: "solid" }, ...ar);
-}
-
 
 export default {
   ...UnpackedNativeCssProperties,
 
-  border,
   em: NativeCssProperties.fontSize,
 };

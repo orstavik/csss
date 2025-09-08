@@ -637,13 +637,14 @@ function isNumberUnit(UNITS) {
 }
 
 export const isLength = isNumberUnit("l%0"); //todo rename to lengthPercent
-export const isAngle = isNumberUnit("a0");
-export const isTime = isNumberUnit("t");
+export const isAngle = isNumberUnit("a0");//todo these are gone i think
+export const isTime = isNumberUnit("t");//todo these are gone i think
 
 const tokenize = (_ => {
   const QUOTE = /([`'"])(\\.|(?!\2).)*?\2/.source;
   const VAR = /--[a-zA-Z][a-zA-Z0-9_]*/.source;
   const WORD = /[._a-zA-Z][._%a-zA-Z0-9+<-]*/.source;
+  const NUMBER_WORDS = /e|pi|infinity|NaN/.source; //todo not added yet.
   const COLOR = `#[a-zA-Z0-9_]+`;
   const OPERATOR = /\?\?|\*\*|[*/+-]/.source;
   const CPP = /[,()]/.source;
@@ -674,7 +675,7 @@ const tokenize = (_ => {
         out.push({ text, kind: "NUMBER", num: n, unit, type });
       }
       else if (c) out.push({ text, kind: "COLOR" });
-      else if (quote) out.push({ text, kind: "QUOTE", quote });
+      else if (quote) out.push({ text, kind: "QUOTE" });
       else if (vari) out.push({ text, kind: "VAR" });
       else if (word && text.match(MATH)) out.push({ text, kind: "MATH" });
       else if (word) out.push({ text, kind: "WORD" });
