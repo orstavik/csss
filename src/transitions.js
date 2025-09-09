@@ -27,7 +27,7 @@ export default {
   transitionDuration: undefined,
   transitionTimingFunction: undefined,
   transitionDelay: undefined,
-  
+
   ease: args => transition("ease", args),
   slide: args => transition("linear", args),
   easeIn: args => transition("ease-in", args),
