@@ -48,8 +48,8 @@ for (let Inline of ["Left", "Right", "Center", ""]) {
     if (name in POSITION_WORDS) continue;
     const atName = "at" + Inline + Block;
     const dims = [inline, block].filter(Boolean);
-    POSITION_WORDS[name] = `${inline} ${block}`.trim();
-    AT_POSITION_WORDS[atName] = `at ${inline} ${block}`.trim();
+    POSITION_WORDS[name] = dims.join(" ");
+    AT_POSITION_WORDS[atName] = "at " + POSITION_WORDS[name];
     POSITIONS_FUNCS[name] = args => ({ backgroundPosition: pos(name, dims, args) });
     AT_POSITION_FUNCS[atName] = args => ("at " + pos(name, dims, args));
   }
