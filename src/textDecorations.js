@@ -1,11 +1,25 @@
+import { interpretColor, interpretLength } from "./func.js";
+
 //sequence based
-function textDecoration(
-  textDecorationLine = "underline",
-  textDecorationStyle = "unset",
-  textDecorationThickness = "unset",
-  textDecorationColor = "unset") {
-  return { textDecorationLine, textDecorationThickness, textDecorationStyle, textDecorationColor };
+function textDecoration(line, style, args) {
+  let thick, color, textDecorationSkipInk;
+  for (let a of args) {
+    let a2;
+    if (a2 = interpretColor(a))
+      color = a2.text;
+    else if (a2 = interpretLength(a))
+      thick = a2.text;
+    else if (a.text = "noSkipInk")
+      textDecorationSkipInk = "none";
+    else
+      throw new SyntaxError(`Invalid $textDecoration argument: ${a.text}.`);
+  }
+  return {
+    textDecoration: [line, style, color, thick].filter(Boolean).join(" "),
+    textDecorationSkipInk,
+  };
 }
+
 export default {
   textDecoration: undefined,
   textDecorationColor: undefined,
@@ -14,42 +28,42 @@ export default {
   textDecorationSkipInk: undefined,
   textDecorationStyle: undefined,
   textDecorationThickness: undefined,
-  dashedOverLine: function (args) { return textDecoration.call(this, "overline", "dashed", ...args); },
-  dashedOverLineThrough: function (args) { return textDecoration.call(this, "overline line-through", "dashed", ...args); },
-  dashedOverUnderLine: function (args) { return textDecoration.call(this, "overline underline", "dashed", ...args); },
-  dashedOverUnderLineThrough: function (args) { return textDecoration.call(this, "overline underline line-through", "dashed", ...args); },
-  dashedLineThrough: function (args) { return textDecoration.call(this, "line-through", "dashed", ...args); },
-  dashedUnderLine: function (args) { return textDecoration.call(this, "underline", "dashed", ...args); },
-  dashedUnderLineThrough: function (args) { return textDecoration.call(this, "underline line-through", "dashed", ...args); },
-  dottedOverLine: function (args) { return textDecoration.call(this, "overline", "dotted", ...args); },
-  dottedOverLineThrough: function (args) { return textDecoration.call(this, "overline line-through", "dotted", ...args); },
-  dottedOverUnderLine: function (args) { return textDecoration.call(this, "overline underline", "dotted", ...args); },
-  dottedOverUnderLineThrough: function (args) { return textDecoration.call(this, "overline underline line-through", "dotted", ...args); },
-  dottedLineThrough: function (args) { return textDecoration.call(this, "line-through", "dotted", ...args); },
-  dottedUnderLine: function (args) { return textDecoration.call(this, "underline", "dotted", ...args); },
-  dottedUnderLineThrough: function (args) { return textDecoration.call(this, "underline line-through", "dotted", ...args); },
-  doubleOverLine: function (args) { return textDecoration.call(this, "overline", "double", ...args); },
-  doubleOverLineThrough: function (args) { return textDecoration.call(this, "overline line-through", "double", ...args); },
-  doubleOverUnderLine: function (args) { return textDecoration.call(this, "overline underline", "double", ...args); },
-  doubleOverUnderLineThrough: function (args) { return textDecoration.call(this, "overline underline line-through", "double", ...args); },
-  doubleLineThrough: function (args) { return textDecoration.call(this, "line-through", "double", ...args); },
-  doubleUnderLine: function (args) { return textDecoration.call(this, "underline", "double", ...args); },
-  doubleUnderLineThrough: function (args) { return textDecoration.call(this, "underline line-through", "double", ...args); },
-  wavyOverLine: function (args) { return textDecoration.call(this, "overline", "wavy", ...args); },
-  wavyOverLineThrough: function (args) { return textDecoration.call(this, "overline line-through", "wavy", ...args); },
-  wavyOverUnderLine: function (args) { return textDecoration.call(this, "overline underline", "wavy", ...args); },
-  wavyOverUnderLineThrough: function (args) { return textDecoration.call(this, "overline underline line-through", "wavy", ...args); },
-  wavyLineThrough: function (args) { return textDecoration.call(this, "line-through", "wavy", ...args); },
-  wavyUnderLine: function (args) { return textDecoration.call(this, "underline", "wavy", ...args); },
-  wavyUnderLineThrough: function (args) { return textDecoration.call(this, "underline line-through", "wavy", ...args); },
-  overLine: function (args) { return textDecoration.call(this, "overline", "solid", ...args); },
-  overLineThrough: function (args) { return textDecoration.call(this, "overline line-through", "solid", ...args); },
-  overUnderLine: function (args) { return textDecoration.call(this, "overline underline", "solid", ...args); },
-  overUnderLineThrough: function (args) { return textDecoration.call(this, "overline underline line-through", "solid", ...args); },
-  lineThrough: function (args) { return textDecoration.call(this, "line-through", "solid", ...args); },
-  underLine: function (args) { return textDecoration.call(this, "underline", "solid", ...args); },
-  underLineThrough: function (args) { return textDecoration.call(this, "underline line-through", "solid", ...args); },
-  blink: function (args) { return textDecoration.call(this, "blink", null, ...args); },
-  grammarError: function (args) { return textDecoration.call(this, "grammar-error", null, ...args); },
-  spellingError: function (args) { return textDecoration.call(this, "spelling-error", null, ...args); },
+  dashedOverLine: args => textDecoration("overline", "dashed", args),
+  dashedOverLineThrough: args => textDecoration("overline line-through", "dashed", args),
+  dashedOverUnderLine: args => textDecoration("overline underline", "dashed", args),
+  dashedOverUnderLineThrough: args => textDecoration("overline underline line-through", "dashed", args),
+  dashedLineThrough: args => textDecoration("line-through", "dashed", args),
+  dashedUnderLine: args => textDecoration("underline", "dashed", args),
+  dashedUnderLineThrough: args => textDecoration("underline line-through", "dashed", args),
+  dottedOverLine: args => textDecoration("overline", "dotted", args),
+  dottedOverLineThrough: args => textDecoration("overline line-through", "dotted", args),
+  dottedOverUnderLine: args => textDecoration("overline underline", "dotted", args),
+  dottedOverUnderLineThrough: args => textDecoration("overline underline line-through", "dotted", args),
+  dottedLineThrough: args => textDecoration("line-through", "dotted", args),
+  dottedUnderLine: args => textDecoration("underline", "dotted", args),
+  dottedUnderLineThrough: args => textDecoration("underline line-through", "dotted", args),
+  doubleOverLine: args => textDecoration("overline", "double", args),
+  doubleOverLineThrough: args => textDecoration("overline line-through", "double", args),
+  doubleOverUnderLine: args => textDecoration("overline underline", "double", args),
+  doubleOverUnderLineThrough: args => textDecoration("overline underline line-through", "double", args),
+  doubleLineThrough: args => textDecoration("line-through", "double", args),
+  doubleUnderLine: args => textDecoration("underline", "double", args),
+  doubleUnderLineThrough: args => textDecoration("underline line-through", "double", args),
+  wavyOverLine: args => textDecoration("overline", "wavy", args),
+  wavyOverLineThrough: args => textDecoration("overline line-through", "wavy", args),
+  wavyOverUnderLine: args => textDecoration("overline underline", "wavy", args),
+  wavyOverUnderLineThrough: args => textDecoration("overline underline line-through", "wavy", args),
+  wavyLineThrough: args => textDecoration("line-through", "wavy", args),
+  wavyUnderLine: args => textDecoration("underline", "wavy", args),
+  wavyUnderLineThrough: args => textDecoration("underline line-through", "wavy", args),
+  overLine: args => textDecoration("overline", null, args),
+  overLineThrough: args => textDecoration("overline line-through", null, args),
+  overUnderLine: args => textDecoration("overline underline", null, args),
+  overUnderLineThrough: args => textDecoration("overline underline line-through", null, args),
+  lineThrough: args => textDecoration("line-through", null, args),
+  underLine: args => textDecoration("underline", null, args),
+  underLineThrough: args => textDecoration("underline line-through", null, args),
+  blink: args => textDecoration("blink", null, args),
+  grammarError: args => textDecoration("grammar-error", null, args),
+  spellingError: args => textDecoration("spelling-error", null, args),
 }

@@ -13,7 +13,7 @@
 ```css
 @layer containerDefault {
   .\$easeInBounceOut\(2s\,0\,margin\,color\) {
-    transition: margin 2s 0s cubic-bezier(.42,0,.64,1), color 2s 0s cubic-bezier(.42,0,.64,1);
+    transition: margin 2s 0s cubic-bezier(0.42,0,0.70,1.30), color 2s 0s cubic-bezier(0.42,0,0.70,1.30);
   }
 }
 ```
