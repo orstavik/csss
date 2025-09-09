@@ -167,8 +167,8 @@ const _LAYOUT = {
   scrollMargin: toLogicalFour.bind(null, "scroll-margin"),
   textIndent: AllFunctions.textIndent,
   indent: AllFunctions.textIndent,
-  inlineSize: toSize.bind(null, "inlineSize"),
-  blockSize: toSize.bind(null, "blockSize"),
+  inlineSize: toSize.bind(null, "inlineSize"), //todo should we block this?
+  blockSize: toSize.bind(null, "blockSize"),   //todo should we block this?
   size,
   // w: AllFunctions.width,
   // h: AllFunctions.height,

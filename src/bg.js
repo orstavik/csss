@@ -174,6 +174,7 @@ const extractAt = makeExtractor(a => {
   return a2 && { text: a2 };
 });
 
+//"Mdn: Including two stop positions is equivalent to declaring two color stops with the same color at the two positions."
 function extractColorStop(args, lengthOrAngleExtractor) {
   const color = extractColor(args);
   if (!color) return;
