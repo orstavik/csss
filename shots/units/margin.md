@@ -2,7 +2,7 @@
 **css:**
 ```css
 @layer items {
-  .\|\*\$blockItem\(margin\(1rem\,0\)>*\) {
+  .\|\*\$blockItem\(margin\(1rem\,0\)\)>* {
     margin-block: 1rem;
     margin-inline: 0;
   }

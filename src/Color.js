@@ -16,14 +16,12 @@ function rgbToRGB({ r, g, b }) {
   const linearize = c => (c /= 255) <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
   return { R: linearize(r), G: linearize(g), B: linearize(b) };
 }
-
 function RGBToXyz({ R, G, B }) {
   const x = 0.4124564 * R + 0.3575761 * G + 0.1804375 * B;
   const y = 0.2126729 * R + 0.7151522 * G + 0.0721750 * B;
   const z = 0.0193339 * R + 0.1191920 * G + 0.9503041 * B;
   return { x, y, z };
 }
-
 function xyzToLab({ x, y, z }) {
   const l = 0.8189330101 * x + 0.3618667424 * y - 0.1288597137 * z;
   const m = 0.0329845436 * x + 0.9293118715 * y + 0.0361456387 * z;
@@ -39,7 +37,6 @@ function xyzToLab({ x, y, z }) {
 
   return { L, a, b };
 }
-
 function labToLch({ L, a, b }) {
   const C = Math.sqrt(a * a + b * b);
   let H = Math.atan2(b, a) * (180 / Math.PI);
@@ -54,7 +51,6 @@ function lchToLab({ L, C, H }) {
   const b = Math.sin(hRad) * C;
   return { L, a, b };
 }
-
 function labToXyz({ L, a, b }) {
   const lCube = Math.cbrt((L + 0.3963377774 * a + 0.2158037573 * b) ** 3);
   const mCube = Math.cbrt((L - 0.1055613458 * a - 0.0638541728 * b) ** 3);
@@ -66,14 +62,12 @@ function labToXyz({ L, a, b }) {
 
   return { x, y, z };
 }
-
 function xyzToRGB({ x, y, z }) {
   const R = +3.2404541621 * x - 1.5371385120 * y - 0.4985314096 * z;
   const G = -0.9692660304 * x + 1.8760108452 * y + 0.0415560175 * z;
   const B = +0.0556434309 * x - 0.2040259134 * y + 1.0572251880 * z;
   return { R, G, B };
 }
-
 function RGBToRgb({ R, G, B }) {
   const delinearize = c => c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
   return {
@@ -88,14 +82,12 @@ function rgbToHex6({ r, g, b }) {
 function hex6AToHex8(hex6, alpha) {
   return hex6 + Math.round(alpha * 255).toString(16).padStart(2, "0");
 }
-
 function xyzToRGB({ x, y, z }) {
   const R = +3.2404541621 * x - 1.5371385120 * y - 0.4985314096 * z;
   const G = -0.9692660304 * x + 1.8760108452 * y + 0.0415560175 * z;
   const B = +0.0556434309 * x - 0.2040259134 * y + 1.0572251880 * z;
   return { R, G, B };
 }
-
 function RGBToRgb({ R, G, B }) {
   const delinearize = c => c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
   return {
@@ -108,11 +100,11 @@ function rgbToHex6({ r, g, b }) {
   return [r, g, b].map(c => Math.round(c).toString(16).padStart(2, "0")).join("");
 }
 
+//main functions
 function makeColor(transforms, all) {
   return transforms.reduce((acc, fn) => ({ ...acc, ...fn(acc) }), all);
 }
-
-function fromHex8(hex8){
+function fromHex8(hex8) {
   return makeColor([hex8ToHex6A, hex6ToRgb, rgbToRGB, RGBToXyz, xyzToLab, labToLch], { hex8 });
 }
 function fromHex6(hex6, alpha = 1) {
