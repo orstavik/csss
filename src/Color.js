@@ -1,15 +1,15 @@
 //from hex => lch
-function hex8ToHex6A(hex8) {
+function hex8ToHex6A({ hex8 }) {
   return {
     hex6: hex8.slice(0, 6),
     alpha: parseInt(hex8.slice(6, 8), 16) / 255,
   };
 }
-function hex6ToRgb(hex) {
+function hex6ToRgb({ hex6 }) {
   return {
-    r: parseInt(hex.slice(0, 2), 16),
-    g: parseInt(hex.slice(2, 4), 16),
-    b: parseInt(hex.slice(4, 6), 16),
+    r: parseInt(hex6.slice(0, 2), 16),
+    g: parseInt(hex6.slice(2, 4), 16),
+    b: parseInt(hex6.slice(4, 6), 16),
   };
 }
 function rgbToRGB({ r, g, b }) {
@@ -79,59 +79,32 @@ function RGBToRgb({ R, G, B }) {
 function rgbToHex6({ r, g, b }) {
   return [r, g, b].map(c => Math.round(c).toString(16).padStart(2, "0")).join("");
 }
-function hex6AToHex8(hex6, alpha) {
+function hex6AToHex8({ hex6, alpha }) {
   return hex6 + Math.round(alpha * 255).toString(16).padStart(2, "0");
-}
-function xyzToRGB({ x, y, z }) {
-  const R = +3.2404541621 * x - 1.5371385120 * y - 0.4985314096 * z;
-  const G = -0.9692660304 * x + 1.8760108452 * y + 0.0415560175 * z;
-  const B = +0.0556434309 * x - 0.2040259134 * y + 1.0572251880 * z;
-  return { R, G, B };
-}
-function RGBToRgb({ R, G, B }) {
-  const delinearize = c => c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
-  return {
-    r: Math.min(255, Math.max(0, delinearize(R) * 255)),
-    g: Math.min(255, Math.max(0, delinearize(G) * 255)),
-    b: Math.min(255, Math.max(0, delinearize(B) * 255)),
-  };
-}
-function rgbToHex6({ r, g, b }) {
-  return [r, g, b].map(c => Math.round(c).toString(16).padStart(2, "0")).join("");
 }
 
 //main functions
 function makeColor(transforms, all) {
   return transforms.reduce((acc, fn) => ({ ...acc, ...fn(acc) }), all);
 }
-function fromHex8(hex8) {
+export function fromHex8(hex8) {
   return makeColor([hex8ToHex6A, hex6ToRgb, rgbToRGB, RGBToXyz, xyzToLab, labToLch], { hex8 });
 }
-function fromHex6(hex6, alpha = 1) {
+export function fromHex6(hex6, alpha = 1) {
   return makeColor([hex6ToRgb, rgbToRGB, RGBToXyz, xyzToLab, labToLch, hex6AToHex8], { hex6, alpha });
 }
-function fromRgb(r, g, b, alpha = 1) {
+export function fromRgb(r, g, b, alpha = 1) {
   return makeColor([rgbToRGB, RGBToXyz, xyzToLab, labToLch, rgbToHex6, hex6AToHex8], { r, g, b, alpha });
 }
-function fromLinearRgb(R, G, B, alpha = 1) {
+export function fromLinearRgb(R, G, B, alpha = 1) {
   return makeColor([RGBToXyz, xyzToLab, labToLch, RGBToRgb, rgbToHex6, hex6AToHex8], { R, G, B, alpha });
 }
-function fromXyz(x, y, z, alpha = 1) {
+export function fromXyz(x, y, z, alpha = 1) {
   return makeColor([xyzToLab, labToLch, xyzToRGB, RGBToRgb, rgbToHex6, hex6AToHex8], { x, y, z, alpha });
 }
-function fromLab(L, a, b, alpha = 1) {
+export function fromLab(L, a, b, alpha = 1) {
   return makeColor([labToLch, labToXyz, xyzToRGB, RGBToRgb, rgbToHex6, hex6AToHex8], { L, a, b, alpha });
 }
-function fromLCH(L, C, H, alpha = 1) {
+export function fromLCH(L, C, H, alpha = 1) {
   return makeColor([lchToLab, labToXyz, xyzToRGB, RGBToRgb, rgbToHex6, hex6AToHex8], { L, C, H, alpha });
-}
-
-export default {
-  fromHex8,
-  fromHex6,
-  fromRgb,
-  fromLinearRgb,
-  fromXyz,
-  fromLab,
-  fromLCH,
 }
