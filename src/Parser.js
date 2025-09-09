@@ -84,7 +84,7 @@ export function parse(short) {
   let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
   exprList = exprList.map(parseNestedExpression);
   exprList = exprList.map(exp => {
-    const cb = SHORTS[exp.name];
+    const cb = SHORTS[exp.name] ?? SHORTS[exp.text];
     if (!cb) throw new ReferenceError(exp.name);
     return !(cb instanceof Function) ? cb : cb(exp.args);
     // cb({ todo: "here we need math and var and calc and env" }, exp.args);
@@ -204,6 +204,7 @@ function goDeep(tokens) {
 function parseNestedExpression(shortExp) {
   const newTokens = tokenize(shortExp);
   try {
+    if (newTokens.length == 1) return newTokens[0];
     const short = goDeep(newTokens);
     if (newTokens.length) throw new SyntaxError("too many tokens.");
     if (short.kind !== "EXP") throw new SyntaxError("Short is not a valid expression.");

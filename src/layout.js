@@ -374,4 +374,5 @@ export default {
   flex,
   flexItem,
   lineClamp,
+  hide: _ => ({ display: "none" }),
 };

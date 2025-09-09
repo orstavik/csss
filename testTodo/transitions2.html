@@ -1,0 +1,80 @@
+<input type="text" id="input" />
+<main class="
+  $font(body,20px)
+  $block(padding(0,10vw))
+">
+      <section class=":hover|div$color(#blue)$blockItem(margin(0,70vw,0,0))">
+            <h2>slide and steps</h2>
+            <div class="$slide(3s,color,margin)">slide</div>
+
+      </section>
+      <section class=":hover|div$color(#blue)$blockItem(margin(0,70vw,0,0))">
+            <h2>normal in</h2>
+            <div class="$easeOut(3s,color,margin)">normalInEaseOut</div>
+            <div class="$crispOut(3s,color,margin)">normalInCrispOut</div>
+            <div class="$harshOut(3s,color,margin)">normalInHarshOut</div>
+            <div class="$playfulOut(3s,color,margin)">normalInPlayfulOut</div>
+            <div class="$bounceOut(3s,color,margin)">normalInBounceOut</div>
+      </section>
+      <section class=":hover|div$color(#blue)$blockItem(margin(0,70vw,0,0))">
+            <h2>ease</h2>
+            <div class="$ease(3s,color,margin)">ease</div>
+            <div class="$easeIn(3s,color,margin)">easeInNormalOut</div>
+            <div class="$easeInOut(3s,color,margin)">easeInOut</div>
+            <div class="$easeInCrispOut(3s,color,margin)">easeInCrispOut</div>
+            <div class="$easeInHarshOut(3s,color,margin)">easeInHarshOut </div>
+            <div class="$easeInPlayfulOut(3s,color,margin)">easeInPlayfulOut </div>
+            <div class="$easeInBounceOut(3s,color,margin)">easeInBounceOut </div>
+      </section>
+      <section class=":hover|div$color(#blue)$blockItem(margin(0,70vw,0,0))">
+            <h2>crisp</h2>
+            <div class="$crispIn(3s,color,margin)">crispInNormalOut</div>
+            <div class="$crispInOut(3s,color,margin)">crispInOut</div>
+            <div class="$crispInEaseOut(3s,color,margin)">crispInEaseOut </div>
+            <div class="$crispInHarshOut(3s,color,margin)">crispInHarshOut </div>
+            <div class="$crispInPlayfulOut(3s,color,margin)">crispInPlayfulOut</div>
+            <div class="$crispInBounceOut(3s,color,margin)">crispInBounceOut </div>
+      </section>
+      <section class=":hover|div$color(#blue)$blockItem(margin(0,70vw,0,0))">
+            <h2>harsh</h2>
+            <div class="$harshIn(3s,color,margin)">harshInNormalOut</div>
+            <div class="$harshInOut(3s,color,margin)">harshInOut</div>
+            <div class="$harshInEaseOut(3s,color,margin)">harshInEaseOut </div>
+            <div class="$harshInCrispOut(3s,color,margin)">harshInCrispOut </div>
+            <div class="$harshInPlayfulOut(3s,color,margin)">harshInPlayfulOut</div>
+            <div class="$harshInBounceOut(3s,color,margin)">harshInBounceOut </div>
+      </section>
+      <section class=":hover|div$color(#blue)$blockItem(margin(0,70vw,0,0))">
+            <h2>playful</h2>
+            <div class="$playfulIn(3s,color,margin)">playfulInNormalOut</div>
+            <div class="$playfulInOut(3s,color,margin)">playfulInOut</div>
+            <div class="$playfulInEaseOut(3s,color,margin)">playfulInEaseOut </div>
+            <div class="$playfulInCrispOut(3s,color,margin)">playfulInCrispOut</div>
+            <div class="$playfulInHarshOut(3s,color,margin)">playfulInHarshOut</div>
+            <div class="$playfulInBounceOut(3s,color,margin)">playfulInBounceOut</div>
+      </section>
+      <section class=":hover|div$color(#blue)$blockItem(margin(0,70vw,0,0))">
+            <h2>bounce</h2>
+            <div class="$bounceIn(3s,color,margin)">bounceInNormalOut</div>
+            <div class="$bounceInOut(3s,color,margin)">bounceInOut</div>
+            <div class="$bounceInEaseOut(3s,color,margin)">bounceInEaseOut </div>
+            <div class="$bounceInCrispOut(3s,color,margin)">bounceInCrispOut </div>
+            <div class="$bounceInHarshOut(3s,color,margin)">bounceInHarshOut </div>
+            <div class="$bounceInPlayfulOut(3s,color,margin)">bounceInPlayfulOut</div>
+      </section>
+</main>
+
+<script type="module" src="../src/auto.js?style=style&interval=400" type="module"></script>
+<script>
+      document.addEventListener("keydown", e => {
+            if (e.key != "Enter")
+                  return;
+            for (let el of document.querySelectorAll("[class*='$']"))
+                  el.classList.remove("$hide");
+            const inp = document.getElementById("input").value;
+            if (!inp) return;
+            const not = inp.split(" ").map(v => `:not([class*='${v}' i])`).join("");
+            for (let el of document.querySelectorAll("div[class*='$']" + not))
+                  el.classList.add("$hide");
+      });
+</script>
