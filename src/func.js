@@ -1,4 +1,5 @@
 import Maths from "./funcMath.js";
+import NativeCss from "./nativeCss.js";
 
 //colors
 export const WEBCOLORS = {
@@ -490,6 +491,16 @@ export function interpretLengthPercent(a) {
   if (a?.type === "length" || a?.type === "percent" || (a?.num == 0 && a?.type === "number"))
     return a;
 }
+export function interpretPercent(a) {
+  a = interpretBasic(a);
+  if (a?.type === "percent")
+    return a;
+}
+export function interpretZero(a) {
+  a = interpretBasic(a);
+  if (a?.text === "0")
+    return a;
+}
 export function interpretLength(a) {
   a = interpretBasic(a);
   if (a?.type === "length" || (a?.num == 0 && a?.type === "number"))
@@ -550,82 +561,59 @@ export const extractColor = makeExtractor(interpretColor);
 //    imageSet: (...args) => `image-set(${args.join(",")})`,
 // };
 
-//no shorts before this point
-const NativeCssProperties = Object.fromEntries(
-  Object.getOwnPropertyNames(document.createElement('div').style).map(camel => {
-    //todo Here we need to get the inner scope to work for different functions.
-    //todo but we can separate on different categories such as length and % and degree etc.
-    const kebab = camel.replace(/([A-Z])/g, "-$1").toLowerCase();
-    const functions = [interpretBasic];
-    if (CSS.supports(kebab, "#123456"))
-      functions.unshift(interpretColor);
-    if (CSS.supports(kebab, "repeat(2, 6px)"))
-      functions.unshift(interpretRepeat);
-    if (CSS.supports(kebab, "minmax(2px, 6px)"))
-      functions.unshift(interpretMinmax);
-    if (CSS.supports(kebab, "span 2"))
-      functions.unshift(interpretSpan)
-    if (CSS.supports(kebab, "url('link')"))
-      functions.unshift(interpretUrl)
+const INTERPRETERS = {
+  number: interpretNumber,
+  zero: interpretZero,
+  length: interpretLength,
+  percent: interpretPercent,
+  angle: interpretAngle,
+  time: interpretTime,
+  resolution: interpretResolution,
+  color: interpretColor,
+  url: interpretUrl,
+  repeat: interpretRepeat,
+  minmax: interpretMinmax,
+  span: interpretSpan,
+  image: interpretImage,
+  quote: interpretQuote,
+  basic: interpretBasic,
+};
 
-    // res.scope = {};
-    // //todo this is wrong, because we are not fixing the 
-    // if (CSS.supports(kebab, "1px"))
-    //   res.scope.length = true;
-    // if (CSS.supports(kebab, "1deg"))
-    //   res.scope.angle = true;
-    // if (CSS.supports(kebab, "1%"))
-    //   res.scope.percent = true;
-    // if (CSS.supports(kebab, "1s"))
-    //   res.scope.time = true;
-    // if (CSS.supports(kebab, "1") || CSS.supports(kebab, "0"))
-    //   res.scope.number = true;
-    // if (CSS.supports(name, "min(0,1)") || CSS.supports(name, "min(0px,1px)"))
-    //   Object.assign(res.scope, NativeCssScopeMath);
-    // if (CSS.supports(name, "url(http://example.com)"))
-    //   res.scope.url = NativeCssScopeUrl;
-    // if (CSS.supports(name, "#123456") || CSS.supports(name, "#123 1px 1px"))
-    //   Object.assign(res.scope, NativeColorsFunctions);
-    // if (CSS.supports(name, "repeat(2, 60px)"))//camel.match(/^(gridTemplateColumns|gridTemplateRows|gridTemplateAreas|gridTemplate|grid)$/))
-    //   res.scope.repeat = NativeCssScopeRepeat;
-    // if (CSS.supports(name, "attr(data-foo)"))
-    //   res.scope.attr = NativeCssScopeAttrCounter.attr;
-    // if (CSS.supports(name, "counter(my-counter)"))
-    //   res.scope.counter = NativeCssScopeAttrCounter.counter;
-    // if (CSS.supports(name, "counters(my-counter, '.')"))
-    //   res.scope.counters = NativeCssScopeAttrCounter.counters;
-    function fixBorderNames(originalCamel) {
-      const m = originalCamel.match(/^border(.+)(Style|Width|Color|Radius)$/);
-      return m ? "border" + m[2] + m[1] : originalCamel;
-    }
-    camel = fixBorderNames(camel);
-    function interpretNativeValue(args) {
-      const argsOut = args.map(a => {
-        let result;
-        for (const cb of functions)
-          if (result = cb(a))
-            return result;
-        if (a.name)
-          throw new SyntaxError(`Could not interpret to ${camel}(${a.name}(...)).`);
-        return a;
-      });
-      return { [camel]: argsOut.map(t => t.text).join(" ") };
-    }
-    interpretNativeValue.scope = {}; // todo remove this one
-    Object.defineProperty(interpretNativeValue, 'name', { value: camel });
-    return [camel, interpretNativeValue];
-  }));
+const NativeCssProperties = Object.fromEntries(Object.entries(NativeCss.supported).map(([kebab, types]) => {
+  let camel = kebab.replace(/-([a-z])/g, g => g[1].toUpperCase());
+  function fixBorderNames(originalCamel) {
+    const m = originalCamel.match(/^(border)(.+)(Style|Width|Color|Radius)$/);
+    return m ? m[1] + m[3] + m[2] : originalCamel;
+  }
+  camel = fixBorderNames(camel);
+  const functions = [interpretBasic, ...types.map(t => INTERPRETERS[t]).filter(Boolean)].reverse();
+
+  function interpretNativeValue(args) {
+    const argsOut = args.map(a => {
+      let result;
+      for (const cb of functions)
+        if (result = cb(a))
+          return result;
+      if (a.name)
+        throw new SyntaxError(`Could not interpret to ${camel}(${a.name}(...)).`);
+      return a;
+    });
+    return { [camel]: argsOut.map(t => t.text).join(" ") };
+  }
+  Object.defineProperty(interpretNativeValue, 'name', { value: camel });
+  return [camel, interpretNativeValue];
+}));
 
 //subdue scopes (font,fontStyle,fontWeight,... -> font { style,weight,... })
 //longest name first;
-const keys = Object.keys(NativeCssProperties).sort((a, b) => b.length - a.length);
-for (let k of keys)
-  for (let s of keys.filter(x => x.startsWith(k) && x != k)) {
-    // if (s.startsWith("border"))
-    //   debugger
-    NativeCssProperties[k].scope[s.slice(k.length)] = NativeCssProperties[s];
-    delete NativeCssProperties[s];
-  }
+// const keys = Object.keys(NativeCssProperties).sort((a, b) => b.length - a.length);
+// for (let k of keys)
+//   for (let s of keys.filter(x => x.startsWith(k) && x != k)) {
+//     // if (s.startsWith("border"))
+//     //   debugger
+//     NativeCssProperties[k].scope[s.slice(k.length)] = NativeCssProperties[s];
+//     delete NativeCssProperties[s];
+//   }
 
 const ANIMATION_FUNCTIONS = {
   linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,
@@ -634,7 +622,8 @@ const ANIMATION_FUNCTIONS = {
   cubicBezier: (...args) => `cubic-bezier(${args.join(",")})`,
 };
 
-NativeCssProperties.animation.scope = ANIMATION_FUNCTIONS;
+//todo ANIMATION!!!
+// NativeCssProperties.animation.scope = ANIMATION_FUNCTIONS;
 
 const UnpackedNativeCssProperties = {
   ...NativeCssProperties,

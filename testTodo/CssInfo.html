@@ -1,6 +1,6 @@
 <body>
   <script type="module">
-    import { NativeCssProps, NativeCssPropsUnsupported } from "/src/nativeCss.js";
+    import NativeCss from "/src/nativeCss.js";
 
     function printToScreen(obj) {
       let str = "<pre>export {\n";
@@ -10,7 +10,7 @@
       document.body.insertAdjacentHTML("beforeend", str);
     }
 
-    printToScreen(NativeCssProps);
-    printToScreen(NativeCssPropsUnsupported);
+    printToScreen(NativeCss.supported);
+    printToScreen(NativeCss.unsupported);
   </script>
 </body>
