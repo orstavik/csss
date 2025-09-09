@@ -1,17 +1,594 @@
-//https://developer.mozilla.org/en-US/docs/Web/CSS/length#browser_compatibility
-//mdn specifies more lengths, but we don't support them yet.
+const FACTORS = {
+  // Times
+  s_ms: 1000,
+  ms_s: 1 / 1000,
+  // Length
+  in_cm: 2.54,       // in
+  in_mm: 25.4,
+  in_pt: 72,
+  in_pc: 6,
+  in_Q: 101.6,
+  cm_in: 1 / 2.54,
+  mm_in: 1 / 25.4,
+  pt_in: 1 / 72,
+  pc_in: 1 / 6,
+  Q_in: 1 / 101.6,
+  cm_mm: 10,         // cm
+  cm_pt: 72 / 2.54,
+  cm_pc: 6 / 2.54,
+  cm_Q: 40,
+  mm_cm: 1 / 10,
+  pt_cm: 2.54 / 72,
+  pc_cm: 2.54 / 6,
+  Q_cm: 1 / 40,
+  mm_pt: 72 / 25.4,  // mm
+  mm_pc: 6 / 25.4,
+  mm_Q: 4,
+  pt_mm: 25.4 / 72,
+  pc_mm: 25.4 / 6,
+  Q_mm: 1 / 4,
+  pt_pc: 1 / 12,     // pt
+  pt_Q: 101.6 / 72,
+  pc_pt: 12,         // pc
+  Q_pt: 72 / 101.6,
+  pc_Q: 101.6 / 6,   // pc,Q
+  Q_pc: 6 / 101.6,
+  // Angles
+  turn_deg: 360,         // turn
+  turn_rad: 2 * Math.PI,
+  turn_grad: 400,
+  deg_turn: 1 / 360,
+  rad_turn: 1 / (2 * Math.PI),
+  grad_turn: 1 / 400,
+  rad_deg: 180 / Math.PI, // rad
+  rad_grad: 200 / Math.PI,
+  grad_rad: Math.PI / 200,
+  deg_rad: Math.PI / 180,
+  deg_grad: 400 / 360,    // deg,grad
+  grad_deg: 360 / 400,
+  // Resolution (CSS)
+  dppx_dpi: 96,       // dppx
+  dppx_dpcm: 96 / 2.54,
+  dpcm_dppx: 2.54 / 96,
+  dpi_dppx: 1 / 96,
+  dpcm_dpi: 2.54,     // dpcm,dpi
+  dpi_dpcm: 1 / 2.54,
+};
 
-function interpret(scope, args) {
-  return args.map(a =>
-    scope[a.name]?.(scope, a.args) ??
-    scope[a.text] ??
-    scope[a.type?.toUpperCase()]?.(a.text) ?? //todo type based
-    a.text ??
-    a);
+//computable: number is number or of a single type that can be factorized
+//incalculable: if missing .num or units cannot be converted to first common unit
+function computableNumbers(args) {
+  let nums = [], firstUnit;
+  for (let a of args) {
+    if (a.num == null)
+      return; //incomputable
+    else if (a.type == "number")
+      nums.push(a.num);
+    else if (a.unit == (firstUnit ??= a.unit))
+      nums.push(a.num);
+    else if (FACTORS[firstUnit + "_ " + a.type])
+      nums.push(a.num * FACTORS[firstUnit + "_ " + a.type]);
+    else
+      return; //incomputable
+  }
+  return nums;
 }
 
-function toRadiusFour(NAME, scope, ar) {
-  ar = interpret(scope, ar);
+function angleToRad({ unit, num }) {
+  return unit == "deg" ? num * Math.PI / 180 :
+    unit == "grad" ? num * Math.PI / 200 :
+      unit == "turn" ? num * 2 * Math.PI :
+        num;
+}
+
+function plus(a, b) { return a + b; }
+function minus(a, b) { return a - b; }
+function multi(a, b) { return a * b; }
+function divide(a, b) { return a / b; }
+
+function mod(a, b) { return a - b * Math.floor(a / b); }
+function rem(a, b) { return a - b * Math.trunc(a / b); }
+function clamp(a, b, c) { return Math.min(Math.max(a, b), c); }
+
+function sin(a) { return Math.sin(angleToRad(a)); }
+function cos(a) { return Math.cos(angleToRad(a)); }
+function tan(a) { return Math.tan(angleToRad(a)); }
+
+function log(a, b = Math.E) { return Math.log(a) / Math.log(b); }
+
+const pow = Math.pow;
+const min = Math.min;
+const max = Math.max;
+const round$1 = Math.round;
+const asin = Math.asin;
+const acos = Math.acos;
+const atan = Math.atan;
+const atan2 = Math.atan2;
+const sqrt = Math.sqrt;
+const hypot = Math.hypot;
+const exp = Math.exp;
+const abs = Math.abs;
+const sign = Math.sign;
+
+//CHECKS
+//returns [inputUnit, outputUnit].
+//if undefined, [arg[0].unit, arg[0].unit]
+//if incompatible units, throws SyntaxError
+function sameType(args) {
+  for (let a of args)
+    if (a.type != args[0].type)
+      throw `Incompatible type differences: ${first.text} vs ${a.text}`;
+}
+function illegalDividend(a, b) {
+  if (b.type != "number") throw "Dividend must be a plain number.";
+  if (b.num == 0) throw "Divide by zero.";
+}
+function singleArgumentOnly(args) {
+  if (args.length != 1) throw "This function only takes a single argument.";
+}
+function singlePositiveArgumentOnly(args) {
+  singleArgumentOnly(args);
+  if (args[0].num <= 0) throw "Argument must be positive.";
+}
+function singleAngleOnly(args) {
+  singleArgumentOnly(args);
+  if (args[0].type != "angle") throw "Argument must be angle.";
+}
+function singleNumberOnly(args) {
+  singleArgumentOnly(args);
+  if (args[0].type != "number") throw "Argument must be number.";
+}
+function twoSameType(args) {
+  if (args.length != 2) throw "requires two arguments.";
+  sameType(args);
+}
+function secondArgumentIsNumber(args) {
+  if (args.length != 2) throw "requires two arguments.";
+  if (args[1].type != "number") throw "second argument must be a plain number.";
+}
+function optionalSecondNumber(args) {
+  if (args.length == 1) return;
+  secondArgumentIsNumber(args);
+  if (args[1] <= 0) throw "second argument must be positive.";
+}
+function onlyOneArgWithUnit(args) {
+  if (args.filter(a => a.unit).length > 1) throw "Only one argument can have a unit.";
+}
+//POSTS
+function toNumber(num, a) { return { type: "number", unit: "", num, text: num }; }
+function toAngle(num, a) { return { type: "angle", unit: "rad", num, text: num }; }
+function updateFirst(num, a) { return { ...a, num, text: num + a.unit }; }
+//TEXTERS
+function texter(name, args) { return `${name}(${args.map(a => a.text).join(", ")})`; }
+
+function doMath(check, func, post, texter, name, args) {
+  check(args);
+  const nums = computableNumbers(args);
+  return nums ?
+    post(func(...nums), args[0]) :
+    { type: args[0].type, text: texter(args[0].map(a => a.text), name) };
+}
+
+var Maths = {
+  "-": doMath.bind(null, sameType, minus, updateFirst, txts => `calc(${txts.join(" - ")})`),
+  "+": doMath.bind(null, sameType, plus, updateFirst, txts => `calc(${txts.join(" + ")})`),
+  "*": doMath.bind(null, onlyOneArgWithUnit, multi, updateFirst, txts => `calc(${txts.join(" * ")})`),
+  "/": doMath.bind(null, illegalDividend, divide, updateFirst, txts => `calc(${txts.join(" / ")})`),
+  "**": doMath.bind(null, secondArgumentIsNumber, pow, updateFirst, texter.bind(null, "pow")),
+  mod: doMath.bind(null, illegalDividend, mod, updateFirst, texter.bind(null, "mod")),
+  rem: doMath.bind(null, illegalDividend, rem, updateFirst, texter.bind(null, "rem")),
+  clamp: doMath.bind(null, sameType, clamp, updateFirst, texter.bind(null, "clamp")),
+  min: doMath.bind(null, sameType, min, updateFirst, texter.bind(null, "min")),
+  max: doMath.bind(null, sameType, max, updateFirst, texter.bind(null, "max")),
+  round: doMath.bind(null, singleArgumentOnly, round$1, updateFirst, texter.bind(null, "round")),
+  sin: doMath.bind(null, singleAngleOnly, sin, toNumber, texter.bind(null, "sin")),
+  cos: doMath.bind(null, singleAngleOnly, cos, toNumber, texter.bind(null, "cos")),
+  tan: doMath.bind(null, singleAngleOnly, tan, toNumber, texter.bind(null, "tan")),
+  asin: doMath.bind(null, singleNumberOnly, asin, toAngle, texter.bind(null, "asin")),
+  acos: doMath.bind(null, singleNumberOnly, acos, toAngle, texter.bind(null, "acos")),
+  atan: doMath.bind(null, singleNumberOnly, atan, toAngle, texter.bind(null, "atan")),
+  atan2: doMath.bind(null, twoSameType, atan2, toAngle, texter.bind(null, "atan2")),
+  sqrt: doMath.bind(null, singlePositiveArgumentOnly, sqrt, updateFirst, texter.bind(null, "sqrt")),
+  hypot: doMath.bind(null, sameType, hypot, updateFirst, texter.bind(null, "hypot")),
+  log: doMath.bind(null, optionalSecondNumber, log, updateFirst, texter.bind(null, "log")),
+  exp: doMath.bind(null, singleArgumentOnly, exp, updateFirst, texter.bind(null, "exp")),
+  abs: doMath.bind(null, singleArgumentOnly, abs, updateFirst, texter.bind(null, "abs")),
+  sign: doMath.bind(null, singleArgumentOnly, sign, toNumber, texter.bind(null, "sign")),
+};
+
+const TYPES$1 = {
+  number: "1",
+  zero: "0",
+  length: "1px",
+  percent: "1%",
+  angle: "1deg",
+  time: "1s",
+  resolution: "1dppx",
+  frequency: "1Hz",
+  color: "#123",
+  fr: "1fr",  // always correlate with minmax
+  repeat: "repeat(2, 1fr)",
+  url: "url('link')",
+  counter: "counter(my-counter)",
+  counters: "counters(my-counter, '.')",
+  span: "span 2",
+  filter: "blur()",
+  transform: "translateX(0)",
+  gradient: "linear-gradient(white, black)",
+  // attr: "attr(data-foo)", //this is for some reason always valid, so it makes no sense to test it.
+};
+
+function isSupported(k) {
+  return CSS.supports(k, "unset") &&
+    Object.entries(TYPES$1).map(([type, tst]) => CSS.supports(k, tst) && type).filter(Boolean);
+}
+
+function longhands(obj) {
+  const keys = Object.keys(obj).sort((a, b) => b.length - a.length);
+  const longs = keys.filter((k, i) => keys.findIndex(x => x.startsWith(k)) === i);
+  longs.push("color");//todo this doesn't work with this filter.
+  return longs.sort();
+}
+
+async function analyzeNativeCssProps() {
+  const SPEC = await (await fetch("https://cdn.jsdelivr.net/npm/@mdn/browser-compat-data")).json();
+  const supported = {};
+  const unsupported = {};
+  for (let k of longhands(SPEC.css.properties)) {
+    const types = isSupported(k);
+    types ?
+      supported[k] = types : //mergeTypes(types)
+      unsupported[k] = SPEC.css.properties[k];
+  }
+  return { supported, unsupported };
+}
+const NativeCss = await analyzeNativeCssProps();
+
+//colors
+const WEBCOLORS = {
+  aliceblue: "f0f8ff",
+  antiquewhite: "faebd7",
+  aqua: "00ffff",
+  aquamarine: "7fffd4",
+  azure: "f0ffff",
+  beige: "f5f5dc",
+  bisque: "ffe4c4",
+  black: "000000",
+  blanchedalmond: "ffebcd",
+  blue: "0000ff",
+  blueviolet: "8a2be2",
+  brown: "a52a2a",
+  burlywood: "deb887",
+  cadetblue: "5f9ea0",
+  chartreuse: "7fff00",
+  chocolate: "d2691e",
+  coral: "ff7f50",
+  cornflowerblue: "6495ed",
+  cornsilk: "fff8dc",
+  crimson: "dc143c",
+  cyan: "00ffff",
+  darkblue: "00008b",
+  darkcyan: "008b8b",
+  darkgoldenrod: "b8860b",
+  darkgray: "a9a9a9",
+  darkgreen: "006400",
+  darkgrey: "a9a9a9",
+  darkkhaki: "bdb76b",
+  darkmagenta: "8b008b",
+  darkolivegreen: "556b2f",
+  darkorange: "ff8c00",
+  darkorchid: "9932cc",
+  darkred: "8b0000",
+  darksalmon: "e9967a",
+  darkseagreen: "8fbc8f",
+  darkslateblue: "483d8b",
+  darkslategray: "2f4f4f",
+  darkslategrey: "2f4f4f",
+  darkturquoise: "00ced1",
+  darkviolet: "9400d3",
+  deeppink: "ff1493",
+  deepskyblue: "00bfff",
+  dimgray: "696969",
+  dimgrey: "696969",
+  dodgerblue: "1e90ff",
+  firebrick: "b22222",
+  floralwhite: "fffaf0",
+  forestgreen: "228b22",
+  fuchsia: "ff00ff",
+  gainsboro: "dcdcdc",
+  ghostwhite: "f8f8ff",
+  gold: "ffd700",
+  goldenrod: "daa520",
+  gray: "808080",
+  green: "008000",
+  greenyellow: "adff2f",
+  grey: "808080",
+  honeydew: "f0fff0",
+  hotpink: "ff69b4",
+  indianred: "cd5c5c",
+  indigo: "4b0082",
+  ivory: "fffff0",
+  khaki: "f0e68c",
+  lavender: "e6e6fa",
+  lavenderblush: "fff0f5",
+  lawngreen: "7cfc00",
+  lemonchiffon: "fffacd",
+  lightblue: "add8e6",
+  lightcoral: "f08080",
+  lightcyan: "e0ffff",
+  lightgoldenrodyellow: "fafad2",
+  lightgray: "d3d3d3",
+  lightgreen: "90ee90",
+  lightgrey: "d3d3d3",
+  lightpink: "ffb6c1",
+  lightsalmon: "ffa07a",
+  lightseagreen: "20b2aa",
+  lightskyblue: "87cefa",
+  lightslategray: "778899",
+  lightslategrey: "778899",
+  lightsteelblue: "b0c4de",
+  lightyellow: "ffffe0",
+  lime: "00ff00",
+  limegreen: "32cd32",
+  linen: "faf0e6",
+  magenta: "ff00ff",
+  maroon: "800000",
+  mediumaquamarine: "66cdaa",
+  mediumblue: "0000cd",
+  mediumorchid: "ba55d3",
+  mediumpurple: "9370db",
+  mediumseagreen: "3cb371",
+  mediumslateblue: "7b68ee",
+  mediumspringgreen: "00fa9a",
+  mediumturquoise: "48d1cc",
+  mediumvioletred: "c71585",
+  midnightblue: "191970",
+  mintcream: "f5fffa",
+  mistyrose: "ffe4e1",
+  moccasin: "ffe4b5",
+  navajowhite: "ffdead",
+  navy: "000080",
+  oldlace: "fdf5e6",
+  olive: "808000",
+  olivedrab: "6b8e23",
+  orange: "ffa500",
+  orangered: "ff4500",
+  orchid: "da70d6",
+  palegoldenrod: "eee8aa",
+  palegreen: "98fb98",
+  paleturquoise: "afeeee",
+  palevioletred: "db7093",
+  papayawhip: "ffefd5",
+  peachpuff: "ffdab9",
+  peru: "cd853f",
+  pink: "ffc0cb",
+  plum: "dda0dd",
+  powderblue: "b0e0e6",
+  purple: "800080",
+  red: "ff0000",
+  rosybrown: "bc8f8f",
+  royalblue: "4169e1",
+  saddlebrown: "8b4513",
+  salmon: "fa8072",
+  sandybrown: "f4a460",
+  seagreen: "2e8b57",
+  seashell: "fff5ee",
+  sienna: "a0522d",
+  silver: "c0c0c0",
+  skyblue: "87ceeb",
+  slateblue: "6a5acd",
+  slategray: "708090",
+  slategrey: "708090",
+  snow: "fffafa",
+  springgreen: "00ff7f",
+  steelblue: "4682b4",
+  tan: "d2b48c",
+  teal: "008080",
+  thistle: "d8bfd8",
+  tomato: "ff6347",
+  turquoise: "40e0d0",
+  violet: "ee82ee",
+  wheat: "f5deb3",
+  white: "ffffff",
+  whitesmoke: "f5f5f5",
+  yellow: "ffff00",
+  yellowgreen: "9acd32",
+};
+
+function nativeCssColorFunction(name, args) {
+  if (args.length < 3 || args.length > 5)
+    throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
+  args = args.map(a => interpretColor(a) ?? interpretBasic$1(a));
+  const from = args[0].type === "color";
+  const txts = args.map(a => a.text);
+  if (args.length - from === 4) txts.splice(-1, 0, "/");
+  if (from) txts.unshift("from");
+  return `${name}(${txts.join(" ")})`;
+}
+
+function nativeCssColorSpaceFunction(space, args) {
+  if (args.length < 3 || args.length > 5)
+    throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
+  args = args.map(a => interpretColor(a) ?? interpretBasic$1(a));
+  const from = args[0].type === "color";
+  const txts = args.map(a => a.text);
+  if (args.length - from === 4) txts.splice(-1, 0, "/");
+  if (from) txts.unshift("from");
+  txts.unshift(space);
+  return `color(${txts.join(" ")})`;
+}
+
+function cssColorMix([space, one, two, percent]) {
+  space = space == "_" ? "oklab" : interpretBasic$1(space).text;
+  one = interpretColor(one).text;
+  two = interpretColor(two).text;
+  two += " " + (percent ? interpretBasic$1(percent).text : "50%");
+  return `color-mix(in ${[space, one, two].join(", ")})`;
+}
+
+//#123 => hash(123) => #123
+//#primary#30 => hash(primary,30)
+//#primary#30#a80 => hash(primary,30,a80)
+//#primary#brown33#50
+function hash(oneTwo) {
+  let [one, two] = oneTwo.map(interpretColor);
+  if (two.vector == "") {
+    let left = oneTwo[0], i = 1;
+    while (left.name === "#hash") {
+      left = left.args[0];
+      i++;
+    }
+    const vector = left.kind == "COLOR" && interpretColor(left).vector;
+    if (!vector)
+      throw new SyntaxError(`First color ${left.text} is not a color vector, while ${two.text} is a relative color vector.`);
+    if (two.percent >= 100)
+      return `var(--color-${vector})`;
+    return `color-mix(in oklab, ${one.text}, var(--color-${vector + i}) ${two.percent}%)`;
+  }
+  if (two.percent >= 100)
+    return two.hue ?? two.text;
+  return `color-mix(in oklab, ${one.text}, ${two.hue ?? two.text} ${two.percent}%)`;
+}
+
+function rgb(rgb) { return rgbaImpl("rgb", rgb); }
+function rgba(rgba) { return rgbaImpl("rgba", rgba); }
+function rgbaImpl(name, rgba) {
+  if (name.length != rgba.length)
+    throw new SyntaxError(`${name}() requires exactly ${name.length} arguments.`);
+  rgba = rgba.map(interpretBasic$1);
+  let hex = "";
+  for (let i = 0; i < rgba.length; i++) {
+    const c = rgba[i];
+    let num = c.num;
+    if (num == null)
+      break;
+    if (c.type == "percent")
+      num *= 2.55;
+    else if (c.type == "number" && i == 3)
+      num *= 255;
+    else if (c.type != "number")
+      throw new SyntaxError(`Expected number or percent, got ${c.type}: ${c.text}`);
+    hex += Math.min(Math.max(0, Math.round(num)), 255).toString(16).padStart(2, '0');
+  }
+  return hex.length === rgba.length * 2 ? "#" + hex :
+    name + "(" + rgba.map(c => c.text).join(", ") + ")";
+}
+
+const CRX = new RegExp("^#(?:" +
+  [
+    "(transparent)",
+    "a(\\d\\d)",
+    "([0-9a-f]{6})([0-9a-f]{2})?",
+    "([0-9a-fA-F]{3})([0-9a-fA-F])",
+    "(" + Object.keys(WEBCOLORS).join("|") + ")(\\d\\d)?",
+    "(.*?)(\\d\\d)?",
+  ].join("|") +
+  ")$", "i");
+
+function parseColor(txt) {
+  let [, transparent, alpha, c6, c8 = "", c3, c4 = "", name, p = 100, vector, vp = 100] = txt.match(CRX);
+  if (transparent)
+    return {
+      type: "color",
+      text: "transparent",
+      hue: "transparent",
+      percent: 0
+    };
+  if (alpha)
+    return {
+      type: "color",
+      text: "transparent",
+      hue: "transparent",
+      percent: 100 - parseInt(alpha)
+    };
+  if (c3) {
+    c6 = c3.split("").map(c => c + c).join('');
+    c8 = c4 + c4;
+  }
+  if (c6)
+    return {
+      type: "color",
+      text: "#" + c6 + c8,
+      hue: "#" + c6,
+      hex: c6,
+      percent: c8 ? (parseInt(c8, 16) / 255 * 100).toFixed(2) : 100,
+    };
+  if (name) {
+    const percent = parseInt(p);
+    const hex = WEBCOLORS[name];
+    return {
+      type: "color",
+      text: percent == 100 ? name :
+        "#" + hex + Math.round(percent / 100 * 255).toString(16).padStart(2, '0'),
+      hue: name,
+      hex,
+      percent
+    };
+  }
+  if (vector && vp == 100)
+    return {
+      type: "color",
+      text: `var(--color-${vector})`,
+      vector,
+      percent: 100
+    };
+
+  const percent = parseInt(vp);
+  return {
+    type: "color",
+    text: `color-mix(in oklab, transparent, var(--color-${vector}) ${percent}%)`,
+    vector,
+    percent
+  };
+}
+
+const COLORS = {
+  hash,
+  rgb: rgb,
+  rgba: rgba,
+  hsl: nativeCssColorFunction.bind(null, "hsl"),
+  hsla: nativeCssColorFunction.bind(null, "hsla"),
+  hwb: nativeCssColorFunction.bind(null, "hwb"),
+  lab: nativeCssColorFunction.bind(null, "lab"),
+  lch: nativeCssColorFunction.bind(null, "lch"),
+  oklab: nativeCssColorFunction.bind(null, "oklab"),
+  oklch: nativeCssColorFunction.bind(null, "oklch"),
+
+  srgb: nativeCssColorSpaceFunction.bind(null, "srgb"),
+  srgbLinear: nativeCssColorSpaceFunction.bind(null, "srgb-linear"),
+  displayP3: nativeCssColorSpaceFunction.bind(null, "display-p3"),
+  a98Rgb: nativeCssColorSpaceFunction.bind(null, "a98-rgb"),
+  prophotoRgb: nativeCssColorSpaceFunction.bind(null, "prophoto-rgb"),
+  rec2020: nativeCssColorSpaceFunction.bind(null, "rec2020"),
+  xyz: nativeCssColorSpaceFunction.bind(null, "xyz"),
+  xyzD50: nativeCssColorSpaceFunction.bind(null, "xyz-d50"),
+  xyzD65: nativeCssColorSpaceFunction.bind(null, "xyz-d65"),
+  color: nativeCssColorSpaceFunction.bind(null, "srgb"),
+
+  mix: cssColorMix.bind(null),
+  mixHslLonger: args => cssColorMix([{ kind: "WORD", text: "hsl longer hue" }, ...args]),
+  mixHslShorter: args => cssColorMix([{ kind: "WORD", text: "hsl shorter hue" }, ...args]),
+  mixHslIncreasing: args => cssColorMix([{ kind: "WORD", text: "hsl increasing hue" }, ...args]),
+  mixHslDecreasing: args => cssColorMix([{ kind: "WORD", text: "hsl decreasing hue" }, ...args]),
+  mixHwbLonger: args => cssColorMix([{ kind: "WORD", text: "hwb longer hue" }, ...args]),
+  mixHwbShorter: args => cssColorMix([{ kind: "WORD", text: "hwb shorter hue" }, ...args]),
+  mixHwbIncreasing: args => cssColorMix([{ kind: "WORD", text: "hwb increasing hue" }, ...args]),
+  mixHwbDecreasing: args => cssColorMix([{ kind: "WORD", text: "hwb decreasing hue" }, ...args]),
+  mixLchLonger: args => cssColorMix([{ kind: "WORD", text: "lch longer hue" }, ...args]),
+  mixLchShorter: args => cssColorMix([{ kind: "WORD", text: "lch shorter hue" }, ...args]),
+  mixLchIncreasing: args => cssColorMix([{ kind: "WORD", text: "lch increasing hue" }, ...args]),
+  mixLchDecreasing: args => cssColorMix([{ kind: "WORD", text: "lch decreasing hue" }, ...args]),
+  mixOklchLonger: args => cssColorMix([{ kind: "WORD", text: "oklch longer hue" }, ...args]),
+  mixOklchShorter: args => cssColorMix([{ kind: "WORD", text: "oklch shorter hue" }, ...args]),
+  mixOklchIncreasing: args => cssColorMix([{ kind: "WORD", text: "oklch increasing hue" }, ...args]),
+  mixOklchDecreasing: args => cssColorMix([{ kind: "WORD", text: "oklch decreasing hue" }, ...args]),
+};
+
+
+
+
+function toRadiusFour(NAME, ar) {
+  ar = ar.map(interpretBasic$1).map(a => a.text);
   if (!(ar instanceof Array))
     return { [NAME]: ar };
   if (ar.length === 1)
@@ -24,8 +601,8 @@ function toRadiusFour(NAME, scope, ar) {
   };
 }
 
-function toLogicalFour(NAME, scope, ar) {
-  ar = interpret(scope, ar);
+function toLogicalFour(NAME, ar) {
+  ar = ar.map(interpretBasic$1).map(a => a.text);
   return ar.length === 1 ? { [NAME]: ar[0] } :
     {
       [NAME + "Block"]: ar[2] != null && ar[2] != ar[0] ? ar[0] + " " + ar[2] : ar[0],
@@ -36,19 +613,19 @@ function toLogicalFour(NAME, scope, ar) {
 //todo length == 2, I think that we could have top/bottom too
 //todo length == 3, then the third becomes all the inline ones
 //todo length === 4, then forth is the inline on the end side
-function toLogicalEight(NAME, DEFAULT, scope, args) {
-  args = interpret(scope, args);
-  if (!(args instanceof Array))
-    return { [NAME]: args };
-  if (args.length === 1)
-    return { [NAME]: args[0] };
-  let [bss, iss, bes, ies, bse, ise, bee, iee] = args;
-  if (args.length === 2) ise = ies = iee = iss, bse = bes = bee = bss;
-  if (args.length === 3) ise = ies = iee = iss, bse = bss, bee = bes;
-  if (args.length === 4) ise = iss, iee = ies, bse = bss, bee = bes;
-  if (args.length === 5) ise = iss, iee = ies, bee = bes;
-  if (args.length === 6) iee = ies, bee = bes;
-  if (args.length === 7) iee = ies;
+function toLogicalEight(NAME, DEFAULT, ar) {
+  ar = ar.map(interpretBasic$1).map(a => a.text);
+  if (!(ar instanceof Array))
+    return { [NAME]: ar };
+  if (ar.length === 1)
+    return { [NAME]: ar[0] };
+  let [bss, iss, bes, ies, bse, ise, bee, iee] = ar;
+  if (ar.length === 2) ise = ies = iee = iss, bse = bes = bee = bss;
+  if (ar.length === 3) ise = ies = iee = iss, bse = bss, bee = bes;
+  if (ar.length === 4) ise = iss, iee = ies, bse = bss, bee = bes;
+  if (ar.length === 5) ise = iss, iee = ies, bee = bes;
+  if (ar.length === 6) iee = ies, bee = bes;
+  if (ar.length === 7) iee = ies;
   const res = {};
   if (bss || iss) res[NAME + "TopLeft"] = `${bss ?? DEFAULT} ${iss ?? DEFAULT}`;
   if (bse || ies) res[NAME + "TopRight"] = `${bse ?? DEFAULT} ${ies ?? DEFAULT}`;
@@ -57,123 +634,167 @@ function toLogicalEight(NAME, DEFAULT, scope, args) {
   return res;
 }
 
-function borderSwitch(obj) {
-  return Object.fromEntries(Object.entries(obj).map(([k, v]) => {
-    if (k === "transition") return [k, v];
-    const [wsr, ...dirs] = k.split(/(?=[A-Z])/);
-    return [["border", ...dirs, wsr].join(""), v];
-  }));
+// const NativeCssScopeUrl = (...args) => `url(${args.join(" ")})`;
+// const NativeCssScopeAttrCounter = {
+//   counter: (...args) => `counter(${args.join(",")})`,
+//   counters: (...args) => `counters(${args.join(",")})`,
+//   attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
+// };
+
+function interpretBasic$1(arg) {
+  if (arg.kind !== "EXP")
+    return arg;
+  if (arg.name in Maths)
+    return Maths[arg.name](arg.name, arg.args.map(interpretBasic$1));
 }
-
-//scope functions start
-const NativeCssScopeMath = {
-  min: (...args) => `min(${args.join(",")})`,
-  max: (...args) => `max(${args.join(",")})`,
-  clamp: (...args) => `clamp(${args.join(",")})`,
-  minmax: (...args) => `minmax(${args.join(",")})`,  //only used in grid, but native valid property+value check captures wrong use
-};
-for (const v of Object.values(NativeCssScopeMath))
-  v.scope = NativeCssScopeMath;
-
-const NativeCssScopeRepeat = (i, ...args) => `repeat(${i}, ${args.join(" ")})`;
-NativeCssScopeRepeat.scope = NativeCssScopeMath;
-const NativeCssScopeUrl = (...args) => `url(${args.join(" ")})`;
-
-const NativeCssScopeAttrCounter = {
-  counter: (...args) => `counter(${args.join(",")})`,
-  counters: (...args) => `counters(${args.join(",")})`,
-  attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
-};
-
-const NativeColorsFunctions = (function () {
-  function nativeCssColorFunction(name, ...args) {
-    if (args.length < 3 || args.length > 5)
-      throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
-    if (args.length === 3)
-      return `${name}(${args.join(" ")})`;
-    if (args.length === 5)
-      return `${name}(from ${args.slice(0, 4).join(" ")} / ${args[4]})`;
-    if (CSS.supports("color", args[0]))
-      return `${name}(from ${args.join(" ")})`;
-    const a = name.match(/^(rgb|hsl)$/) ? "a" : "";
-    return `${name}${a}(${args.slice(0, 3).join(" ")} / ${args[3]})`;
+function interpretName(arg) {
+  if (arg.kind === "WORD" && arg.text[0].match(/[a-zA-Z0-9-]/))
+    return arg;
+}
+function interpretColor(a) {
+  if (a.kind === "COLOR")
+    return parseColor(a.text);
+  //todo the color must be a color or a variable.
+  const key = a.name?.slice(1);
+  if (key in COLORS)
+    return { type: "color", text: COLORS[a.name?.slice(1)]?.(a.args) };
+}
+function interpretMinmax(a) {
+  if (a.name === "minmax")
+    return { type: "length", text: `minmax(${a.args.map(interpretBasic$1).map(t => t.text).join(", ")})` };
+}
+function interpretRepeat(a) {
+  if (a.name === "repeat")
+    return { type: "length", text: `repeat(${a.args.map(a => interpretMinmax(a) ?? interpretBasic$1(a)).map(t => t.text).join(", ")})` };
+}
+function interpretSpan(a) {
+  if (a.name === "span")
+    return { type: a.type, text: "span " + interpretBasic$1(a.args[0]).text };
+}
+function interpretUrl(a) {
+  if (a.kind === "QUOTE")
+    return { type: "url", text: `url(${a.text})` };
+  if (a.name === "url") {
+    if (args.length != 1) throw new SyntaxError("url() requires exactly one argument.");
+    return { type: "url", text: `url(${interpretBasic$1(a.args[0]).text})` };
   }
-  //todo untested!!
-  function nativeCssColorSpaceFunction(space, ...args) {
-    if (args.length < 3 || args.length > 5)
-      throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
-    const from = CSS.supports("color", args[0]) && args.shift();
-    if (args.length == 4) args.splice(-1, 0, "/");
-    args.unshift(space);
-    if (from) args.unshift("from", from);
-    return `color(${args.join(" ")})`;
-  }
-  function nativeCssColorMixFunction(cSpace, ...args) {
-    cSpace = "in " + cSpace.replaceAll("_", " "); //we don't support '_' in --var-names
-    if (args[0]?.match(/^(shorter|longer|increasing|decreasing)$/))
-      cSpace += ` ${args.shift()} hue`;
-    args = args.map(a => (a.match(/^\d?\d%$/i) ? " " : ", ") + a);
-    return `color-mix(${cSpace}${args.join("")})`;
-  }
-  //#123 => hash(123) => #123
-  //#primary#30 => hash(primary,30)
-  //#primary#30#a80 => hash(primary,30,a80)
-
-  function _hash(...colors) {
-    const colorVector = !colors[0].primitive && colors[0].c;
-    if (!colors[0].hex && colors[0].percent)
-      colors.unshift({ c: "transparent" });  //implied transparent
-    for (let i = 0; i < colors.length; i++) {
-      const c = colors[i];
-      if (c.primitive);
-      else if (!c.c && !colorVector)
-        throw new SyntaxError(`Illegal #colormix#${c.c}: Missing color vector name.
-Did you mean to use or define a color vector such as #Primary or #Accent?`);
-      else
-        c.c = `var(--color-${c.c || (colorVector + i)})`;
-    }
-    const first = colors.shift();
-    return colors.reduce((res, { c, percent }) =>
-      `color-mix(in oklab, ${res}, ${c} ${percent ?? 50}%)`, first.hex ?? first.c);
-  }
-
-  const res = {
-    _hash,
-    rgb: (...rgb) => "#" + rgb.map(c => Number(c).toString(16).padStart(2, '0')).join(''),
-    rgba: (r, g, b, a = 1) => "#" + [r, g, b, Math.round(a * 255)].map(c => Number(c).toString(16).padStart(2, '0')).join(''),
-    hsl: (...args) => nativeCssColorFunction("hsl", ...args),
-    hsla: (...args) => nativeCssColorFunction("hsla", ...args),
-    hwb: (...args) => nativeCssColorFunction("hwb", ...args),
-    lab: (...args) => nativeCssColorFunction("lab", ...args),
-    lch: (...args) => nativeCssColorFunction("lch", ...args),
-    oklab: (...args) => nativeCssColorFunction("oklab", ...args),
-    oklch: (...args) => nativeCssColorFunction("oklch", ...args),
-    srgb: (...args) => nativeCssColorSpaceFunction("srgb", ...args),
-    srgbLinear: (...args) => nativeCssColorSpaceFunction("srgb-linear", ...args),
-    displayP3: (...args) => nativeCssColorSpaceFunction("display-p3", ...args),
-    a98Rgb: (...args) => nativeCssColorSpaceFunction("a98-rgb", ...args),
-    prophotoRgb: (...args) => nativeCssColorSpaceFunction("prophoto-rgb", ...args),
-    rec2020: (...args) => nativeCssColorSpaceFunction("rec2020", ...args),
-    xyz: (...args) => nativeCssColorSpaceFunction("xyz", ...args),
-    xyzD50: (...args) => nativeCssColorSpaceFunction("xyz-d50", ...args),
-    xyzD65: (...args) => nativeCssColorSpaceFunction("xyz-d65", ...args),
-    color: (...args) => nativeCssColorSpaceFunction("srgb", ...args),
-    colorMix: nativeCssColorMixFunction,
+}
+function interpretMimeType(a) {
+  const MIME = {
+    image: "image/*",
+    imageJpeg: "image/jpeg",
+    imagePng: "image/png",
+    imageGif: "image/gif",
+    imageWebp: "image/webp",
+    imageAvif: "image/avif",
+    imageSvgXml: "image/svg+xml",
   };
-  for (const cb of Object.values(res))
-    cb.scope = { ...NativeCssScopeMath };
-  return res;
-})();
-
-const ColorNames = /^(aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen)$/i.source;
-const ColorFunctionStart = /^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color|color-mix)\(/.source;
-const ColorVar = /^var\(--color-/.source;
-const ColorHash = /^#[a-fA-F0-9]{3,8}$/.source;
-const ColorString = new RegExp(`${ColorNames}|${ColorFunctionStart}|${ColorVar}|${ColorHash}`);
-
-function isColor(x) {
-  return ColorString.test(x) && x;
+  if (a.text in MIME)
+    return `type(${MIME[a.text]})`;
 }
+
+function interpretImage(arg) {
+  const url = interpretUrl(arg);
+  if (url) return url;
+  if (arg.name == "imageSet") {
+    const set = [];
+    const args = arg.args.slice();
+    while (args.length) {
+      const url = interpretUrl(a);
+      if (!url)
+        throw new SyntaxError("imageSet() sequences must start with a url.");
+      args.shift();
+      let type = args.length && interpretMimeType(args[0]);
+      let resolution = args.length && interpretResolution(args[0]);
+      type ||= args.length && interpretMimeType(args[0]);
+      type && args.shift();
+      resolution && args.shift();
+      set.push([url.text, type, resolution].filter(Boolean).join(" "));
+    }
+    return `image-set(${set.join(", ")})`;
+  }
+}
+
+function interpretAngle(a) {
+  a = interpretBasic$1(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "angle", text: "0deg", unit: "deg", num: 0 };
+  if (a?.type === "angle")
+    return a;
+}
+function interpretAnglePercent(a) {
+  a = interpretBasic$1(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "angle", text: "0deg", unit: "deg", num: 0 };
+  if (a?.type === "angle" || a?.type === "percent")
+    return a;
+}
+function interpretLengthPercent(a) {
+  a = interpretBasic$1(a);
+  if (a?.type === "length" || a?.type === "percent" || (a?.num == 0 && a?.type === "number"))
+    return a;
+}
+function interpretPercent(a) {
+  a = interpretBasic$1(a);
+  if (a?.type === "percent")
+    return a;
+}
+function interpretZero(a) {
+  a = interpretBasic$1(a);
+  if (a?.text === "0")
+    return a;
+}
+function interpretLength(a) {
+  a = interpretBasic$1(a);
+  if (a?.type === "length" || (a?.num == 0 && a?.type === "number"))
+    return a;
+}
+function interpretTime(a) {
+  a = interpretBasic$1(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "time", text: "0s", unit: "s", num: 0 };
+  if (a?.type === "time")
+    return a;
+}
+function interpretResolution(a) {
+  a = interpretBasic$1(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "resolution", text: "0x", unit: "x", num: 0 };
+  if (a?.type === "resolution")
+    return a;
+}
+function interpretNumber(a) {
+  a = interpretBasic$1(a);
+  if (a?.type === "number" && a.unit == "")
+    return a;
+}
+function interpretNumberPercent(a) {
+  a = interpretBasic$1(a);
+  if (a?.type === "number" && a.unit == "" || a?.type === "percent")
+    return a;
+}
+function interpretQuote(a) {
+  if (a.kind === "QUOTE")
+    return a;
+}
+function makeExtractor(cb) {
+  return function (args) {
+    const res = cb(args[0]);
+    return res != null && args.shift() && res.text;
+  };
+}
+const extractTime = makeExtractor(interpretTime);
+const extractLength = makeExtractor(interpretLength);
+const extractLengthPercent$1 = makeExtractor(interpretLengthPercent);
+const extractAngle$1 = makeExtractor(interpretAngle);
+const extractAnglePercent$1 = makeExtractor(interpretAnglePercent);
+const extractNumber = makeExtractor(interpretNumber);
+const extractNumberPercent = makeExtractor(interpretNumberPercent);
+const extractUrl$1 = makeExtractor(interpretUrl);
+const extractImage = makeExtractor(interpretImage);
+const extractMimeType = makeExtractor(interpretMimeType);
+const extractColor$1 = makeExtractor(interpretColor);
+
 
 // const SpecializedNativeCssFunctions = {
 //    element: (...args) => `element(${args.join(",")})`,
@@ -183,103 +804,59 @@ function isColor(x) {
 //    imageSet: (...args) => `image-set(${args.join(",")})`,
 // };
 
-//no shorts before this point
-const NativeCssProperties = Object.fromEntries(
-  Object.getOwnPropertyNames(document.createElement('div').style).map(camel => {
-    //todo Here we need to get the inner scope to work for different functions.
-    //todo but we can separate on different categories such as length and % and degree etc.
-    const res = (scope, args) => ({ [camel]: interpret(scope, args).join(" ") });
-    Object.defineProperty(res, "name", { value: camel });
-    res.scope = {};
-    const kebab = camel.replace(/([A-Z])/g, "-$1").toLowerCase();
-    //todo this is wrong, because we are not fixing the 
-    if (CSS.supports(kebab, "1px"))
-      res.scope.length = true;
-    if (CSS.supports(kebab, "1deg"))
-      res.scope.angle = true;
-    if (CSS.supports(kebab, "1%"))
-      res.scope.percent = true;
-    if (CSS.supports(kebab, "1s"))
-      res.scope.time = true;
-    if (CSS.supports(kebab, "1") || CSS.supports(kebab, "0"))
-      res.scope.number = true;
-    if (CSS.supports(kebab, "#123456"))
-      res.scope.color = true;
-    // if (CSS.supports(name, "min(0,1)") || CSS.supports(name, "min(0px,1px)"))
-    //   Object.assign(res.scope, NativeCssScopeMath);
-    // if (CSS.supports(name, "url(http://example.com)"))
-    //   res.scope.url = NativeCssScopeUrl;
-    // if (CSS.supports(name, "#123456") || CSS.supports(name, "#123 1px 1px"))
-    //   Object.assign(res.scope, NativeColorsFunctions);
-    // if (CSS.supports(name, "repeat(2, 60px)"))//camel.match(/^(gridTemplateColumns|gridTemplateRows|gridTemplateAreas|gridTemplate|grid)$/))
-    //   res.scope.repeat = NativeCssScopeRepeat;
-    // if (CSS.supports(name, "attr(data-foo)"))
-    //   res.scope.attr = NativeCssScopeAttrCounter.attr;
-    // if (CSS.supports(name, "counter(my-counter)"))
-    //   res.scope.counter = NativeCssScopeAttrCounter.counter;
-    // if (CSS.supports(name, "counters(my-counter, '.')"))
-    //   res.scope.counters = NativeCssScopeAttrCounter.counters;
-    function fixBorderNames(originalCamel) {
-      const m = originalCamel.match(/^border(.+)(Style|Width|Color|Radius)$/);
-      return m ? "border" + m[2] + m[1] : originalCamel;
-    }
-    camel = fixBorderNames(camel);
-    return [camel, res];
-  }));
+const INTERPRETERS = {
+  number: interpretNumber,
+  zero: interpretZero,
+  length: interpretLength,
+  percent: interpretPercent,
+  angle: interpretAngle,
+  time: interpretTime,
+  resolution: interpretResolution,
+  color: interpretColor,
+  url: interpretUrl,
+  repeat: interpretRepeat,
+  minmax: interpretMinmax,
+  span: interpretSpan,
+  image: interpretImage,
+  quote: interpretQuote,
+  basic: interpretBasic$1,
+};
+
+const NativeCssProperties = Object.fromEntries(Object.entries(NativeCss.supported).map(([kebab, types]) => {
+  let camel = kebab.replace(/-([a-z])/g, g => g[1].toUpperCase());
+  function fixBorderNames(originalCamel) {
+    const m = originalCamel.match(/^(border)(.+)(Style|Width|Color|Radius)$/);
+    return m ? m[1] + m[3] + m[2] : originalCamel;
+  }
+  camel = fixBorderNames(camel);
+  const functions = [interpretBasic$1, ...types.map(t => INTERPRETERS[t]).filter(Boolean)].reverse();
+
+  function interpretNativeValue(args) {
+    const argsOut = args.map(a => {
+      let result;
+      for (const cb of functions)
+        if (result = cb(a))
+          return result;
+      if (a.name)
+        throw new SyntaxError(`Could not interpret to ${camel}(${a.name}(...)).`);
+      return a;
+    });
+    return { [camel]: argsOut.map(t => t.text).join(" ") };
+  }
+  Object.defineProperty(interpretNativeValue, 'name', { value: camel });
+  return [camel, interpretNativeValue];
+}));
 
 //subdue scopes (font,fontStyle,fontWeight,... -> font { style,weight,... })
 //longest name first;
-const keys = Object.keys(NativeCssProperties).sort((a, b) => b.length - a.length);
-for (let k of keys)
-  for (let s of keys.filter(x => x.startsWith(k) && x != k)) {
-    // if (s.startsWith("border"))
-    //   debugger
-    NativeCssProperties[k].scope[s.slice(k.length)] = NativeCssProperties[s];
-    delete NativeCssProperties[s];
-  }
-
-//UNPACKED $filter scope functions
-const NativeCssFilterFunctions = {
-  blur: (...args) => ({ filter: `blur(${args.join(" ")})` }),
-  brightness: (...args) => ({ filter: `brightness(${args.join(" ")})` }),
-  contrast: (...args) => ({ filter: `contrast(${args.join(" ")})` }),
-  grayscale: (...args) => ({ filter: `grayscale(${args.join(" ")})` }),
-  invert: (...args) => ({ filter: `invert(${args.join(" ")})` }),
-  opacity: (...args) => ({ filter: `opacity(${args.join(" ")})` }),
-  saturate: (...args) => ({ filter: `saturate(${args.join(" ")})` }),
-  sepia: (...args) => ({ filter: `sepia(${args.join(" ")})` }),
-  dropShadow: (...args) => ({ filter: `drop-shadow(${args.join(" ")})` }),
-  hueRotate: (...args) => ({ filter: `hue-rotate(${args.join(" ")})` }),
-};
-for (const cb of Object.values(NativeCssFilterFunctions))
-  cb.scope = { ...NativeCssScopeMath };
-NativeCssFilterFunctions.filterUrl = (...args) => ({ filter: `url(${args.join(" ")})` });
-
-//UNPACKED $transform scope functions
-const NativeCssTransformFunctions = {
-  matrix: (...args) => ({ transform: `matrix(${args.join(",")})` }),
-  matrix3d: (...args) => ({ transform: `matrix3d(${args.join(",")})` }),
-  translate: (...args) => ({ transform: `translate(${args.join(",")})` }),
-  translate3d: (...args) => ({ transform: `translate3d(${args.join(",")})` }),
-  scale: (...args) => ({ transform: `scale(${args.join(",")})` }),
-  scale3d: (...args) => ({ transform: `scale3d(${args.join(",")})` }),
-  rotate: (...args) => ({ transform: `rotate(${args.join(",")})` }),
-  rotate3d: (...args) => ({ transform: `rotate3d(${args.join(",")})` }),
-  skew: (...args) => ({ transform: `skew(${args.join(",")})` }),
-  translateX: (...args) => ({ transform: `translateX(${args.join(",")})` }),
-  translateY: (...args) => ({ transform: `translateY(${args.join(",")})` }),
-  translateZ: (...args) => ({ transform: `translateZ(${args.join(",")})` }),
-  scaleX: (...args) => ({ transform: `scaleX(${args.join(",")})` }),
-  scaleY: (...args) => ({ transform: `scaleY(${args.join(",")})` }),
-  scaleZ: (...args) => ({ transform: `scaleZ(${args.join(",")})` }),
-  rotateX: (...args) => ({ transform: `rotateX(${args.join(",")})` }),
-  rotateY: (...args) => ({ transform: `rotateY(${args.join(",")})` }),
-  rotateZ: (...args) => ({ transform: `rotateZ(${args.join(",")})` }),
-  skewX: (...args) => ({ transform: `skewX(${args.join(",")})` }),
-  skewY: (...args) => ({ transform: `skewY(${args.join(",")})` }),
-};
-for (const cb of Object.values(NativeCssTransformFunctions))
-  cb.scope = { ...NativeCssScopeMath };
+// const keys = Object.keys(NativeCssProperties).sort((a, b) => b.length - a.length);
+// for (let k of keys)
+//   for (let s of keys.filter(x => x.startsWith(k) && x != k)) {
+//     // if (s.startsWith("border"))
+//     //   debugger
+//     NativeCssProperties[k].scope[s.slice(k.length)] = NativeCssProperties[s];
+//     delete NativeCssProperties[s];
+//   }
 
 const ANIMATION_FUNCTIONS = {
   linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,
@@ -288,322 +865,377 @@ const ANIMATION_FUNCTIONS = {
   cubicBezier: (...args) => `cubic-bezier(${args.join(",")})`,
 };
 
-NativeCssProperties.animation.scope = ANIMATION_FUNCTIONS;
+//todo ANIMATION!!!
+// NativeCssProperties.animation.scope = ANIMATION_FUNCTIONS;
 
 const UnpackedNativeCssProperties = {
   ...NativeCssProperties,
-  transform: undefined,
-  ...NativeCssTransformFunctions,
-  filter: undefined,
-  ...NativeCssFilterFunctions,
 };
-// margin: toLogicalFour.bind(null, "margin"),
-// scrollMargin: toLogicalFour.bind(null, "scroll-margin"),
-// padding: toLogicalFour.bind(null, "padding"),
-// scrollPadding: toLogicalFour.bind(null, "scroll-padding"),
 
-//todo and radius toLogicalEight.. maybe
+var nativeAndMore = {
+  ...UnpackedNativeCssProperties,
+  em: NativeCssProperties.fontSize,
+};
 
-
-//$bg
-function formatCssString(str) {
-  const LENGTHS_PER = /px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex|%|deg|grad|rad|turn/.source;
-  return str
-    .replaceAll(new RegExp(`(${LENGTHS_PER})([a-zA-Z])`, 'g'), '$1 $2')
-    .replaceAll(/([a-zA-Z])(\d)/g, '$1 $2')
-    .replaceAll(/([a-z])([A-Z])/g, '$1 $2')
-    .replaceAll(new RegExp(`(${LENGTHS_PER})(-?\\d)`, 'g'), '$1 $2')
-    .replaceAll(/\b(closest|farthest) (side|corner)\b/gi, '$1-$2')
-    .toLowerCase();
+function size$1(args) {
+  if (args.length < 1 || args.length > 2)
+    throw new SyntaxError("background size() requires one or two arguments.");
+  args = args.map(a => {
+    a = a.text == "auto" ? a.text : interpretLengthPercent(a);
+    if (!a)
+      throw new SyntaxError(`background size argument not LengthPercent: ${a.text}`);
+    return a.text;
+  });
+  return { backgroundSize: args.join(" ") };
 }
 
-function bgImpl(...args) {
+function pos(name, dims, args) {
+  if (args.length < 1 || args.length > 2)
+    throw new SyntaxError("background position() requires one or two arguments.");
+  if (dims && dims.length > args.length)
+    throw new SyntaxError(`background (${name} require ${dims.length} arguments, got ${args.length}.`);
+  return args.map((a, i) => {
+    if (["left", "right", "center", "top", "bottom"].includes(a.text))
+      return a.text;
+    a = interpretLengthPercent(a);
+    if (a)
+      return dims ? dims[i] + " " + a.text : a.text;
+    throw new SyntaxError(`background position argument not LengthPercent: ${a.text}`);
+  }).join(" ");
+}
+
+const POSITION_WORDS = {};
+const AT_POSITION_WORDS = {};
+const POSITIONS_FUNCS = { position: args => pos("position", null, args) };
+const AT_POSITION_FUNCS = { at: args => ("at " + pos("position", null, args)) };
+
+for (let Inline of ["Left", "Right", "Center", ""]) {
+  const inline = Inline.toLowerCase();
+  for (let Block of ["Top", "Bottom", "Center", ""]) {
+    const block = Block.toLowerCase();
+    if (block === inline) continue;
+    const name = inline + Block;
+    if (name in POSITION_WORDS) continue;
+    const atName = "at" + Inline + Block;
+    const dims = [inline, block].filter(Boolean);
+    POSITION_WORDS[name] = dims.join(" ");
+    AT_POSITION_WORDS[atName] = "at " + POSITION_WORDS[name];
+    POSITIONS_FUNCS[name] = args => ({ backgroundPosition: pos(name, dims, args) });
+    AT_POSITION_FUNCS[atName] = args => ("at " + pos(name, dims, args));
+  }
+}
+
+const BACKGROUND_WORDS = {
+  ...POSITION_WORDS,
+  repeat: { backgroundRepeat: "repeat" },
+  repeatX: { backgroundRepeat: "repeat-x" },
+  repeatY: { backgroundRepeat: "repeat-y" },
+  space: { backgroundRepeat: "space" },
+  round: { backgroundRepeat: "round" },
+  noRepeat: { backgroundRepeat: "no-repeat" },
+
+  cover: { backgroundSize: "cover" },
+  contain: { backgroundSize: "contain" },
+
+  contentBox: { backgroundOrigin: "content-box" },
+  borderBox: { backgroundOrigin: "border-box" },
+
+  clipPaddingBox: { backgroundClip: "padding-box" },
+  clipContentBox: { backgroundClip: "content-box" },
+  clipText: { backgroundClip: "text" },
+  clipBorderArea: { backgroundClip: "border-area" },
+
+  multiply: { backgroundBlendMode: "multiply" },
+  screen: { backgroundBlendMode: "screen" },
+  overlay: { backgroundBlendMode: "overlay" },
+  darken: { backgroundBlendMode: "darken" },
+  lighten: { backgroundBlendMode: "lighten" },
+  colorDodge: { backgroundBlendMode: "color-dodge" },
+  colorBurn: { backgroundBlendMode: "color-burn" },
+  hardLight: { backgroundBlendMode: "hard-light" },
+  softLight: { backgroundBlendMode: "soft-light" },
+  difference: { backgroundBlendMode: "difference" },
+  exclusion: { backgroundBlendMode: "exclusion" },
+  hue: { backgroundBlendMode: "hue" },
+  saturation: { backgroundBlendMode: "saturation" },
+  color: { backgroundBlendMode: "color" },
+  luminosity: { backgroundBlendMode: "luminosity" },
+
+  fixed: { backgroundAttachment: "fixed" },
+  scroll: { backgroundAttachment: "scroll" },
+  local: { backgroundAttachment: "local" },
+  scrollLocal: { backgroundAttachment: "scroll local" },
+  localScroll: { backgroundAttachment: "local scroll" },
+  fixedLocal: { backgroundAttachment: "fixed local" },
+  scrollFixed: { backgroundAttachment: "scroll fixed" },
+  fixedScroll: { backgroundAttachment: "fixed scroll" },
+  localFixed: { backgroundAttachment: "local fixed" },
+};
+
+const BACKGROUND_FUNCS = {
+  size: size$1,
+  position: pos.bind(null, "position", null),
+  ...POSITIONS_FUNCS,
+};
+
+function initiateBackground(argsIn) {
   const res = {
     backgroundImage: undefined,
     backgroundPosition: "0% 0%",
     backgroundRepeat: "repeat",
-    backgroundSize: "auto auto",
+    backgroundSize: "auto",
     backgroundOrigin: "padding-box",
     backgroundClip: "border-box",
     backgroundBlendMode: "normal",
     backgroundAttachment: "scroll",
   };
-  const colors = [], args2 = [];
-  for (const a of args)
-    (a && typeof a === 'object') ? Object.assign(res, a) :
-      isColor(a) ? colors.push(a) :
-        args2.push(formatCssString(a));
-  return { res, colors, args2 };
-}
-
-//process arguments sequentially, separating geometry from color stops.
-function doGradient(name, ...args) {
-  const { res } = bgImpl(); // Get default background properties
-  const geometry = [];
-  const colorStops = [];
-  let inColorStops = false;
-
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
-
-    if (arg && typeof arg === 'object') {
-      Object.assign(res, arg);
-      continue;
-    }
-
-    if (isColor(arg)) {
-      inColorStops = true;
-      let colorStop = arg;
-
-      let positionsCollected = 0;
-      while (i + 1 < args.length && positionsCollected < 2) {
-        const nextArg = args[i + 1];
-        if (isLength(nextArg) || (name.includes('conic') && isAngle(nextArg))) {
-          colorStop += ` ${nextArg}`;
-          i++;
-          positionsCollected++;
-        } else break;
-      }
-
-      colorStops.push(colorStop);
-    } else if (!inColorStops) {
-      const processed = formatCssString(arg);
-
-      if (name === 'conic' && isAngle(processed))
-        geometry.push(`from ${processed}`);
-      else
-        geometry.push(processed);
-    }
+  const args = [];
+  for (let a of argsIn) {
+    const a2 = BACKGROUND_WORDS[a.text] ??
+      BACKGROUND_FUNCS[a.name]?.(a.args);
+    a2 ? Object.assign(res, a2) : args.push(a);
   }
-
-  const geometryString = geometry.filter(Boolean).join(" ");
-  const allParams = [geometryString, ...colorStops].filter(Boolean).join(", ");
-  res.backgroundImage = `${name}-gradient(${allParams})`;
-  return res;
+  return { res, args };
 }
 
-function bg(...args) {
-  const { res, colors, args2 } = bgImpl(...args);
-  if (!colors.length && !args2.length)
-    throw new SyntaxError(`$bg(${args.join(",")}) is missing a color or url argument.`);
-  if (colors.length > 1)
-    throw new SyntaxError(`use $bg(color1,left)$bg(color2,right) for layered backgrounds, not $bg(${colors.join(",")}).`);
-  if (args2.length > 1)
-    throw new SyntaxError(`use $bg(url1)$bg(url2) for layered backgrounds, not $bg(${args2.join(",")}).`);
-  if (colors.length && args2.length)
-    throw new SyntaxError(`use $bg(color)$bg(url) for layered backgrounds, not $bg(${colors.join(",")},${args2.join(",")}).`);
-  res.backgroundImage = colors.length ? `linear-gradient(${colors[0]})` : args2[0];
-  return res;
+function interpretColorSpace(a) {
+  const res = {
+    hslLonger: "hsl longer hue",
+    hslShorter: "hsl shorter hue",
+    hslIncreasing: "hsl increasing hue",
+    hslDecreasing: "hsl decreasing hue",
+    hwbLonger: "hwb longer hue",
+    hwbShorter: "hwb shorter hue",
+    hwbIncreasing: "hwb increasing hue",
+    hwbDecreasing: "hwb decreasing hue",
+    lchLonger: "lch longer hue",
+    lchShorter: "lch shorter hue",
+    lchIncreasing: "lch increasing hue",
+    lchDecreasing: "lch decreasing hue",
+    oklchLonger: "oklch longer hue",
+    oklchShorter: "oklch shorter hue",
+    oklchIncreasing: "oklch increasing hue",
+    oklchDecreasing: "oklch decreasing hue",
+    oklab: "oklab",
+    lab: "lab",
+    lch: "lch",
+    srgb: "srgb",
+    srgbLinear: "srgb-linear",
+    displayP3: "display-p3",
+    a98Rgb: "a98-rgb",
+    prophotoRgb: "prophoto-rgb",
+    rec2020: "rec2020",
+    xyz: "xyz",
+    xyzD50: "xyz-d50",
+    xyzD65: "xyz-d65",
+  }[a.text];
+  if (res) return { text: "in " + res };
 }
 
-const BackgroundFunctions = {
-  linear: (...args) => doGradient("linear", ...args),
-  radial: (...args) => doGradient("radial", ...args),
-  conic: (...args) => doGradient("conic", ...args),
-  repeatingLinear: (...args) => doGradient("repeating-linear", ...args),
-  repeatingRadial: (...args) => doGradient("repeating-radial", ...args),
-  repeatingConic: (...args) => doGradient("repeating-conic", ...args),
-  bg,
-  background: bg,
+const extractLengthPercent = makeExtractor(interpretLengthPercent);
+const extractAnglePercent = makeExtractor(interpretAnglePercent);
+const extractAngle = makeExtractor(interpretAngle);
+const extractColor = makeExtractor(interpretColor);
+const extractColorSpace = makeExtractor(interpretColorSpace);
+
+const extractAt = makeExtractor(a => {
+  const a2 = AT_POSITION_WORDS[a.text] ??
+    AT_POSITION_FUNCS[a.name]?.(a.args);
+  return a2 && { text: a2 };
+});
+
+function extractColorStop(args, lengthOrAngleExtractor) {
+  const color = extractColor(args);
+  if (!color) return;
+  const len1 = args.length && lengthOrAngleExtractor(args);
+  if (!len1) return color;
+  const len2 = args.length && lengthOrAngleExtractor(args);
+  if (!len2) return color + " " + len1;
+  return color + " " + len1 + " " + len2;
+}
+
+function extractColorStops(args, lengthOrAngleExtractor) {
+  const colorStops = [];
+  while (args.length) {
+    const cs = extractColorStop(args, lengthOrAngleExtractor);
+    if (!cs)
+      throw new SyntaxError(`invalid color stop argument: ${args[0]}`);
+    colorStops.push(cs);
+  }
+  if (colorStops.length > 1)
+    return colorStops;
+  throw new SyntaxError(`gradient() functions requires at least two colors, got ${colorStops.length}.`);
+}
+
+function radial(type, first, args) {
+  const len = extractLengthPercent(args);
+  const len2 = extractLengthPercent(args);
+  if (first === "circle" && len2)
+    throw new SyntaxError(`radial(circle) can only have one length argument (radius), got two: ${len.text} and ${len2.text}`);
+  const at = extractAt(args);
+  const colorSpace = extractColorSpace(args);
+  const colorStops = extractColorStops(args, extractLengthPercent);
+  first = [first, len, len2, at, colorSpace].filter(Boolean).join(" ");
+  return `${type}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})`;
+}
+
+function conic(type, args) {
+  let angle = extractAngle(args);
+  angle &&= "from " + angle;
+  const at = extractAt(args);
+  const colorSpace = extractColorSpace(args);
+  const colorStops = extractColorStops(args, extractAnglePercent);
+  const first = [angle, at, colorSpace].filter(Boolean).join(" ");
+  return `${type}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})`;
+}
+
+function linear(type, angle, args) {
+  angle ||= extractAngle(args);
+  const colorSpace = extractColorSpace(args);
+  const colorStops = extractColorStops(args, extractLengthPercent);
+  const first = [angle, colorSpace].filter(Boolean).join(" ");
+  return `${type}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})`;
+}
+
+function bgColorOrImage(args) {
+  const img = interpretImage(args[0]);
+  if (img)
+    return args.shift(), img.text;
+  const color = interpretColor(args[0]);
+  if (color)
+    return args.shift(), `linear-gradient(${color.text})`;
+  throw new SyntaxError(`$bg must include either a color or url: ${color.text}.`);
+}
+
+function makeBg(cb) {
+  return function (argsIn) {
+    const { res, args } = initiateBackground(argsIn);
+    if (!args.length)
+      throw new SyntaxError(`Missing background main argument: color, image, or gradient.`);
+    res.backgroundImage = cb(args);
+    if (args.length)
+      throw new SyntaxError(`Could not interpret $bg() argument: ${args[0].text}.`);
+    return res;
+  };
+}
+
+var backgrounds = {
+  background: undefined,
+  backgroundColor: undefined,
+  backgroundImage: undefined,
+  backgroundPosition: undefined,
+  backgroundRepeat: undefined,
+  backgroundSize: undefined,
+  backgroundOrigin: undefined,
+  backgroundClip: undefined,
+  backgroundBlendMode: undefined,
+  backgroundAttachment: undefined,
+
+  linear: makeBg(linear.bind(null, "linear", "")),
+  linearLeft: makeBg(linear.bind(null, "linear", "to left")),
+  linearRight: makeBg(linear.bind(null, "linear", "to right")),
+  linearUp: makeBg(linear.bind(null, "linear", "to top")),
+  linearDown: makeBg(linear.bind(null, "linear", "to bottom")),
+  linearUpLeft: makeBg(linear.bind(null, "linear", "to top left")),
+  linearUpRight: makeBg(linear.bind(null, "linear", "to top right")),
+  linearDownLeft: makeBg(linear.bind(null, "linear", "to bottom left")),
+  linearDownRight: makeBg(linear.bind(null, "linear", "to bottom right")),
+  repeatingLinear: makeBg(linear.bind(null, "repeating-linear", "")),
+  repeatingLinearLeft: makeBg(linear.bind(null, "repeating-linear", "to left")),
+  repeatingLinearRight: makeBg(linear.bind(null, "repeating-linear", "to right")),
+  repeatingLinearUp: makeBg(linear.bind(null, "repeating-linear", "to top")),
+  repeatingLinearDown: makeBg(linear.bind(null, "repeating-linear", "to bottom")),
+  repeatingLinearUpLeft: makeBg(linear.bind(null, "repeating-linear", "to top left")),
+  repeatingLinearUpRight: makeBg(linear.bind(null, "repeating-linear", "to top right")),
+  repeatingLinearDownLeft: makeBg(linear.bind(null, "repeating-linear", "to bottom left")),
+  repeatingLinearDownRight: makeBg(linear.bind(null, "repeating-linear", "to bottom right")),
+
+  radial: makeBg(radial.bind(null, "radial", "")),
+  ellipse: makeBg(radial.bind(null, "radial", "")),
+  ellipseFarthestCorner: makeBg(radial.bind(null, "radial", "")),
+  ellipseFarthestSide: makeBg(radial.bind(null, "radial", "farthest-side")),
+  ellipseClosestCorner: makeBg(radial.bind(null, "radial", "closest-corner")),
+  ellipseClosestSide: makeBg(radial.bind(null, "radial", "closest-side")),
+  circle: makeBg(radial.bind(null, "radial", "circle")),
+  circleFarthestCorner: makeBg(radial.bind(null, "radial", "circle")),
+  circleFarthestSide: makeBg(radial.bind(null, "radial", "circle farthest-side")),
+  circleClosestCorner: makeBg(radial.bind(null, "radial", "circle closest-corner")),
+  circleClosestSide: makeBg(radial.bind(null, "radial", "circle closest-side")),
+
+  repeatingRadial: makeBg(radial.bind(null, "repeating-radial", "")),
+  repeatingEllipse: makeBg(radial.bind(null, "repeating-radial", "ellipse")),
+  repeatingEllipseFarthestCorner: makeBg(radial.bind(null, "repeating-radial", "")),
+  repeatingEllipseFarthestSide: makeBg(radial.bind(null, "repeating-radial", "farthest-side")),
+  repeatingEllipseClosestCorner: makeBg(radial.bind(null, "repeating-radial", "closest-corner")),
+  repeatingEllipseClosestSide: makeBg(radial.bind(null, "repeating-radial", "closest-side")),
+  repeatingCircle: makeBg(radial.bind(null, "repeating-radial", "circle")),
+  repeatingCircleFarthestCorner: makeBg(radial.bind(null, "repeating-radial", "circle")),
+  repeatingCircleFarthestSide: makeBg(radial.bind(null, "repeating-radial", "circle farthest-side")),
+  repeatingCircleClosestCorner: makeBg(radial.bind(null, "repeating-radial", "circle closest-corner")),
+  repeatingCircleClosestSide: makeBg(radial.bind(null, "repeating-radial", "circle closest-side")),
+
+  conic: makeBg(conic.bind(null, "conic")),
+  repeatingConic: makeBg(conic.bind(null, "repeating-conic")),
+
+  bg: makeBg(bgColorOrImage),
 };
 
-for (const k in BackgroundFunctions)
-  BackgroundFunctions[k].scope = {
-    // stops: (...args) => ({ stops: args }),
-    ...NativeCssProperties.background.scope,
-    ...NativeCssScopeMath, //todo do we need this, or is it covered by background above?
-    pos: (block = "0", inline = "0") => ({ backgroundPosition: `${block[0] === "-" ? `bottom ${block.slice(1)}` : block} ${inline[0] === "-" ? `right ${inline.slice(1)}` : inline}` }),
-    position: (block = "0", inline = "0") => ({ backgroundPosition: `${block[0] === "-" ? `bottom ${block.slice(1)}` : block} ${inline[0] === "-" ? `right ${inline.slice(1)}` : inline}` }),
-    size: (inline, block = "auto") => ({ backgroundSize: `${inline} ${block}` }),
-    top: { backgroundPosition: "top" },
-    bottom: { backgroundPosition: "bottom" },
-    left: { backgroundPosition: "left" },
-    right: { backgroundPosition: "right" },
-    center: { backgroundPosition: "center" },
-    topLeft: { backgroundPosition: "top left" },
-    topRight: { backgroundPosition: "top right" },
-    bottomLeft: { backgroundPosition: "bottom left" },
-    bottomRight: { backgroundPosition: "bottom right" },
-    topCenter: { backgroundPosition: "top center" },
-    bottomCenter: { backgroundPosition: "bottom center" },
-    leftCenter: { backgroundPosition: "left center" },
-    rightCenter: { backgroundPosition: "right center" },
-    repeatX: { backgroundRepeat: "repeat-x" },
-    repeatY: { backgroundRepeat: "repeat-y" },
-    space: { backgroundRepeat: "space" },
-    round: { backgroundRepeat: "round" },
-    noRepeat: { backgroundRepeat: "no-repeat" },
-    cover: { backgroundSize: "cover" },
-    contain: { backgroundSize: "contain" },
-    contentBox: { backgroundOrigin: "content-box" },
-    borderBox: { backgroundOrigin: "border-box" },
-    clipPaddingBox: { backgroundClip: "padding-box" },
-    clipContentBox: { backgroundClip: "content-box" },
-    clipText: { backgroundClip: "text" },
-    clipBorderArea: { backgroundClip: "border-area" },
-    multiply: { backgroundBlendMode: "multiply" },
-    screen: { backgroundBlendMode: "screen" },
-    overlay: { backgroundBlendMode: "overlay" },
-    darken: { backgroundBlendMode: "darken" },
-    lighten: { backgroundBlendMode: "lighten" },
-    colorDodge: { backgroundBlendMode: "color-dodge" },
-    colorBurn: { backgroundBlendMode: "color-burn" },
-    hardLight: { backgroundBlendMode: "hard-light" },
-    softLight: { backgroundBlendMode: "soft-light" },
-    difference: { backgroundBlendMode: "difference" },
-    exclusion: { backgroundBlendMode: "exclusion" },
-    hue: { backgroundBlendMode: "hue" },
-    saturation: { backgroundBlendMode: "saturation" },
-    color: { backgroundBlendMode: "color" },
-    luminosity: { backgroundBlendMode: "luminosity" },
-    scroll: { backgroundAttachment: "scroll" },
-    fixed: { backgroundAttachment: "fixed" },
-    local: { backgroundAttachment: "local" },
-  };
+const color = toLogicalFour.bind(null, "borderColor");
+const width = toLogicalFour.bind(null, "borderWidth");
+const radius = toRadiusFour.bind(null, "borderRadius");
+const radius8 = toLogicalEight.bind(null, "borderRadius", 0);
+const BORDER = {
+  solid: { borderStyle: "solid" },
+  dotted: { borderStyle: "dotted" },
+  dashed: { borderStyle: "dashed" },
+  double: { borderStyle: "double" },
+  groove: { borderStyle: "groove" },
+  ridge: { borderStyle: "ridge" },
+  inset: { borderStyle: "inset" },
+  outset: { borderStyle: "outset" },
+  hidden: { borderStyle: "hidden" },
+  none: { borderStyle: "none" },
+  thin: { borderWidth: "thin" },
+  medium: { borderWidth: "medium" },
+  thick: { borderWidth: "thick" },
+  width,
+  w: width,
+  radius,
+  r: radius,
+  radius8,
+  r8: radius8,
+  color,
+  c: color,
+};
 
 //border: 2px 4px solid red blue;
 //$border(w(2px,4px),solid,c(red,blue))
 //$border(2px,solid,red)
 function border(ar) {
-  //todo here we want to extract the color first.
-  //todo then we would like to extract the length? but maybe that is easier later..
-  const borderColor = toLogicalFour.bind(null, "borderColor");
-  const borderWidth = toLogicalFour.bind(null, "borderWidth");
-  const borderRadius = toRadiusFour.bind(null, "borderRadius");
-  const borderRadius8 = toLogicalEight.bind(null, "borderRadius", 0);
-  const borderStyle = toLogicalFour.bind(null, "borderStyle");
-
-  const natives = NativeCssProperties.border;
-  const scope = {
-    //word => property
-    solid: { borderStyle: "solid" },
-    dotted: { borderStyle: "dotted" },
-    dashed: { borderStyle: "dashed" },
-    double: { borderStyle: "double" },
-    groove: { borderStyle: "groove" },
-    ridge: { borderStyle: "ridge" },
-    inset: { borderStyle: "inset" },
-    outset: { borderStyle: "outset" },
-    hidden: { borderStyle: "hidden" },
-    none: { borderStyle: "none" },
-    thin: { borderWidth: "thin" },
-    medium: { borderWidth: "medium" },
-    thick: { borderWidth: "thick" },
-    //expression => interpret function
-    width: borderWidth,
-    w: borderWidth,
-    style: borderStyle,
-    s: borderStyle,
-    radius: borderRadius,
-    r: borderRadius,
-    r4: borderRadius,
-    r8: borderRadius8,
-    color: borderColor,
-    c: borderColor,
-    //todo the shorthand structure. Type => property.
-    LENGTH: a => ({ borderWidth: a }),
-    COLOR: a => ({ borderColor: a }),
-  };
-  ar = interpret(scope, ar);
+  ar = ar.map(a => {
+    a = BORDER[a.name]?.(a.args) ??
+      BORDER[a.text] ??
+      interpretColor(a) ??
+      interpretBasic$1(a);
+    if (!a)
+      throw new SyntaxError(`Could not interpret $border argument: ${a.text}.`);
+    if (a.type == "color")
+      return { borderColor: a.text };
+    if (a.type == "length")
+      return { borderWidth: a.text };
+    return a;
+  });
   return Object.assign({ borderStyle: "solid" }, ...ar);
 }
 
-//text decorations
-//sequence based
-//color defaults to --color_textdecorationcolor, then currentcolor
-//todo work with color inheritance happening here..
-function textDecoration(
-  textDecorationLine = "underline",
-  textDecorationStyle = "unset",
-  textDecorationThickness = "unset",
-  textDecorationColor = "var(--color-textdecorationcolor, currentcolor)") {
-  return { textDecorationLine, textDecorationThickness, textDecorationStyle, textDecorationColor };
-}
-// textDecoration.scope = {
-//   ...NativeCssProperties.textDecorationThickness.scope,
-//   ...NativeCssProperties.textDecorationColor.scope,
-// }
-const textDecorations = {
-  dashedOverLine: function (...args) { return textDecoration.call(this, "overline", "dashed", ...args); },
-  dashedOverLineThrough: function (...args) { return textDecoration.call(this, "overline line-through", "dashed", ...args); },
-  dashedOverUnderLine: function (...args) { return textDecoration.call(this, "overline underline", "dashed", ...args); },
-  dashedOverUnderLineThrough: function (...args) { return textDecoration.call(this, "overline underline line-through", "dashed", ...args); },
-  dashedLineThrough: function (...args) { return textDecoration.call(this, "line-through", "dashed", ...args); },
-  dashedUnderLine: function (...args) { return textDecoration.call(this, "underline", "dashed", ...args); },
-  dashedUnderLineThrough: function (...args) { return textDecoration.call(this, "underline line-through", "dashed", ...args); },
-  dottedOverLine: function (...args) { return textDecoration.call(this, "overline", "dotted", ...args); },
-  dottedOverLineThrough: function (...args) { return textDecoration.call(this, "overline line-through", "dotted", ...args); },
-  dottedOverUnderLine: function (...args) { return textDecoration.call(this, "overline underline", "dotted", ...args); },
-  dottedOverUnderLineThrough: function (...args) { return textDecoration.call(this, "overline underline line-through", "dotted", ...args); },
-  dottedLineThrough: function (...args) { return textDecoration.call(this, "line-through", "dotted", ...args); },
-  dottedUnderLine: function (...args) { return textDecoration.call(this, "underline", "dotted", ...args); },
-  dottedUnderLineThrough: function (...args) { return textDecoration.call(this, "underline line-through", "dotted", ...args); },
-  doubleOverLine: function (...args) { return textDecoration.call(this, "overline", "double", ...args); },
-  doubleOverLineThrough: function (...args) { return textDecoration.call(this, "overline line-through", "double", ...args); },
-  doubleOverUnderLine: function (...args) { return textDecoration.call(this, "overline underline", "double", ...args); },
-  doubleOverUnderLineThrough: function (...args) { return textDecoration.call(this, "overline underline line-through", "double", ...args); },
-  doubleLineThrough: function (...args) { return textDecoration.call(this, "line-through", "double", ...args); },
-  doubleUnderLine: function (...args) { return textDecoration.call(this, "underline", "double", ...args); },
-  doubleUnderLineThrough: function (...args) { return textDecoration.call(this, "underline line-through", "double", ...args); },
-  wavyOverLine: function (...args) { return textDecoration.call(this, "overline", "wavy", ...args); },
-  wavyOverLineThrough: function (...args) { return textDecoration.call(this, "overline line-through", "wavy", ...args); },
-  wavyOverUnderLine: function (...args) { return textDecoration.call(this, "overline underline", "wavy", ...args); },
-  wavyOverUnderLineThrough: function (...args) { return textDecoration.call(this, "overline underline line-through", "wavy", ...args); },
-  wavyLineThrough: function (...args) { return textDecoration.call(this, "line-through", "wavy", ...args); },
-  wavyUnderLine: function (...args) { return textDecoration.call(this, "underline", "wavy", ...args); },
-  wavyUnderLineThrough: function (...args) { return textDecoration.call(this, "underline line-through", "wavy", ...args); },
-  overLine: function (...args) { return textDecoration.call(this, "overline", "solid", ...args); },
-  overLineThrough: function (...args) { return textDecoration.call(this, "overline line-through", "solid", ...args); },
-  overUnderLine: function (...args) { return textDecoration.call(this, "overline underline", "solid", ...args); },
-  overUnderLineThrough: function (...args) { return textDecoration.call(this, "overline underline line-through", "solid", ...args); },
-  lineThrough: function (...args) { return textDecoration.call(this, "line-through", "solid", ...args); },
-  underLine: function (...args) { return textDecoration.call(this, "underline", "solid", ...args); },
-  underLineThrough: function (...args) { return textDecoration.call(this, "underline line-through", "solid", ...args); },
-  blink: function (...args) { return textDecoration.call(this, "blink", null, ...args); },
-  grammarError: function (...args) { return textDecoration.call(this, "grammar-error", null, ...args); },
-  spellingError: function (...args) { return textDecoration.call(this, "spelling-error", null, ...args); },
-};
-for (let func of Object.values(textDecorations))
-  func.scope = textDecoration.scope;
-
-var nativeAndMore = {
-  ...UnpackedNativeCssProperties,
-
+var border$1 = {
   border,
-  borderWidth: undefined,
-  borderStyle: undefined,
-  borderRadius: undefined,
-  // borderColor: undefined,
-
-  em: NativeCssProperties.fontSize,
-  ...BackgroundFunctions,
-  w: width,
-  h: height,
-  width,
-  height,
-
-  textDecoration,
-  ...textDecorations,
 };
 
-const FONT_DEFAULTS = Object.entries({
-  fontFamily: "FontFamily",
-  fontSize: "FontSize",
-  fontStyle: "FontStyle",
-  fontWeight: "FontWeight",
-  fontSizeAdjust: "FontSizeAdjust",
-  letterSpacing: "LetterSpacing",
-  fontStretch: "FontStretch",
-  fontVariantCaps: "FontVariantCaps",
-  fontSynthesis: "FontSynthesis",
-  fontFeatureSettings: "FontFeatureSettings",
-  fontVariationSettings: "FontVariationSettings",
-  WebkitFontSmoothing: "WebkitFontSmoothing",
-  MozOsxFontSmoothing: "MozOsxFontSmoothing",
-  fontKerning: "FontKerning",
-});
+const extractUrl = makeExtractor(interpretUrl);
+const extractName = makeExtractor(interpretName);
 
-const KEYWORDS = {
+const FONT_WORDS = {
   bold: { fontWeight: "bold" },
   b: { fontWeight: "bold" },
   bolder: { fontWeight: "bolder" },
@@ -651,7 +1283,7 @@ const KEYWORDS = {
   xxxl: { fontSize: "xxx-large" },
 };
 
-const SYNTHESIS = (function () {
+const SYNTHESIS_WORDS = (function () {
   function* permutations(arr, remainder) {
     for (let i = 0; i < arr.length; i++) {
       const x = arr[i];
@@ -672,50 +1304,94 @@ const SYNTHESIS = (function () {
   return res;
 })();
 
-function fontNumbers(a) {
-  const aNum = parseFloat(a);
-  if (a == aNum && Number.isInteger(aNum) && 1 <= aNum && aNum <= 1000)
-    return { fontWeight: a };
-  if (aNum == a && !Number.isInteger(aNum) && 1 > aNum && aNum > 0)
-    return { fontSizeAdjust: aNum };
-  if (aNum + "deg" == a)
-    return { fontStyle: "oblique " + a };
+function featureAndVariation(args) {
+  return args.map(a => a.split("=")).map(([k, v = 1]) => `"${k}" ${v}`).join(", ");
 }
 
-//first have a function that extracts all the nonFamily 
-function fontImpl(fontFaceName, ...args) {
-  const res = {};
-  let family = [];
-  let b, emoji, faces = [];
+//$typeface(comic,"MS+Comic+Sans",face("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2"),xxs,semiExpanded,italic,bolder)
+const FACE = {
+  feature: args => ({ fontFeatureSettings: featureAndVariation(args) }),
+  variation: args => ({ fontVariationSettings: featureAndVariation(args) }),
+  i: { fontStyle: "italic" },
+  italic: { fontStyle: "italic" },
+  ital: { fontStyle: "italic" },
+};
+
+function face(args, fontFamily) {
+  let src = extractUrl(args);
+  if (!src)
+    throw new SyntaxError(`The first argument of face(...) must be a quote or a URL, but got: ${args[0]}`);
+  const res = {
+    fontFamily: fontFamily ??= src.slice(4, -1),
+    fontStyle: "normal",
+    src: `local(${fontFamily}), ${src}`,
+  };
   for (let a of args) {
-    if (a == undefined)
-      throw new SyntaxError(`Empty arguments in $font: ${a}`);
-    else if (faces.length && a.face)
-      faces.push(a.face);
-    else if (a.face)
-      family.push(fontFaceName ??= a.face.src), faces.push(a.face);
-    else if (a instanceof Object)
-      Object.assign(res, a);
-    else if (isLength(a))
-      res.fontSize = a;
-    // else if (b = noSynthesis(a))
-    //   res.fontSynthesis = b;
-    else if (b = fontNumbers(a))
-      Object.assign(res, b);
-    else if (a == "emoji")
-      emoji = ['Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'];
-    else if (typeof a == "string")
-      family.push(a.replaceAll(/^['"]|['"]$/g, "").replaceAll("+", " "));
-    else
-      throw new SyntaxError(`Unrecognized $font argument: ${a}`);
+    const a2 = FACE[a.name] ?? FACE[a.text];
+    if (a2) Object.assign(res, a2);
+    throw new SyntaxError(`Unrecognized font face argument: ${a}`);
   }
-  for (let i = 0; i < faces.length; i++) {
-    const face = faces[i];
-    res[`@fontFace /*${fontFaceName} ${face.fontStyle}*/`] = {
-      fontFamily: fontFaceName,
-      ...face,
-      src: `local('${fontFaceName}'), url(${face.src})`,
-    };
+  return { [`@fontFace /*${res.fontFamily} ${res.fontStyle}*/`]: res };
+}
+
+const FONT_FUNCTIONS = {
+  size: a => ({ fontSize: interpretLength(a) }),
+  // weight: a => ({ fontWeight: interpretNumber(a) }), //todo this should be primitive
+  // style: a => ({ fontStyle: interpretWord(a) }), //todo this should not be allowed to be wrapped??
+  variant: a => ({ fontVariant: interpretBasic(a) }),
+  stretch: a => ({ fontStretch: interpretBasic(a) }),
+  spacing: a => ({ letterSpacing: interpretBasic(a) }),
+  adjust: a => ({ fontSizeAdjust: interpretBasic(a) }),
+};
+
+
+const FONT_DEFAULTS = Object.entries({
+  fontFamily: "FontFamily",
+  fontSize: "FontSize",
+  fontStyle: "FontStyle",
+  fontWeight: "FontWeight",
+  fontSizeAdjust: "FontSizeAdjust",
+  letterSpacing: "LetterSpacing",
+  fontStretch: "FontStretch",
+  fontVariantCaps: "FontVariantCaps",
+  fontSynthesis: "FontSynthesis",
+  fontFeatureSettings: "FontFeatureSettings",
+  fontVariationSettings: "FontVariationSettings",
+  WebkitFontSmoothing: "WebkitFontSmoothing",
+  MozOsxFontSmoothing: "MozOsxFontSmoothing",
+  fontKerning: "FontKerning",
+});
+
+
+//first have a function that extracts all the nonFamily 
+function fontImpl(fontFaceName, args) {
+  let res = {}, family = [], emoji;
+  for (let a of args) {
+    let a2;
+    if (a.text == "emoji")
+      emoji = ['Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'];
+    else if (a2 = interpretQuote(a))
+      family.push(a2.text.slice(1, -1).replaceAll("+", " "));
+    else if (a2 = interpretLength(a))
+      res.fontSize = a2.text;
+    else if (a2 = interpretAngle(a))
+      res.fontStyle = "oblique " + a2.text;
+    else if (a2 = FONT_WORDS[a.text] ?? FONT_FUNCTIONS[a.name]?.(a.args) ?? SYNTHESIS_WORDS[a.text])
+      Object.assign(res, a2);
+    else if (a.kind == "WORD")
+      family.push(a.text);
+    else if (a.name == "face" && (a2 = face(a.args, fontFaceName))) {
+      Object.assign(res, a2);
+      family.push(Object.values(a2)[0].fontFamily);
+    } else if (a2 = interpretNumber(a)?.num) {
+      if (a2 && 1 <= a2 && a2 <= 1000)
+        res.fontWeight = a2;
+      else if (0 < a2 && a2 < 1)
+        res.fontSizeAdjust = a2;
+      else
+        throw new SyntaxError(`Unrecognized $font number (0.01-0.99 ): ${a2}`);
+    } else
+      throw new SyntaxError(`Unrecognized $font argument: ${a}`);
   }
   if (emoji)
     family.push(...emoji);
@@ -724,46 +1400,6 @@ function fontImpl(fontFaceName, ...args) {
   res.fontFamily = family.map(s => s.match(/[^a-z0-9_-]/gi) ? `"${s}"` : s).join(", ");
   return res;
 }
-
-function face(src, ...args) {
-  args = args.map(a => {
-    if (a instanceof Object)
-      return a;
-    if (a === "i" || a === "italic" || a === "ital")
-      return { fontStyle: "italic" };
-    throw new SyntaxError(`Unrecognized font face argument: ${a}`);
-  });
-  return { face: { src: src.slice(1, -1), fontStyle: "normal", ...args } };
-}
-face.feature = (...args) => args.map(a => a.split("=")).map(([k, v = 1]) => `"${k}" ${v}`).join(", ");
-face.variation = (...args) => args.map(a => a.split("=")).map(([k, v = 1]) => `"${k}" ${v}`).join(", ");
-
-
-function font(...args) {
-  if (typeof args[0] != "string")
-    throw new SyntaxError(`The first argument of $font must be a string type name, but got: ${JSON.stringify(args[0])}`);
-  const typeName = args[0].replaceAll(/[^a-z0-9-]/g, "_").replaceAll(/-[a-z]/g, m => m[1].toUpperCase());
-  const tmp = fontImpl(undefined, ...args);
-  const vars = {}, res = {};
-  for (let [k, varKey] of FONT_DEFAULTS)
-    vars["--font" + varKey] = (res[k] = tmp[k] ?? `var(--${typeName + varKey}, unset)`);
-  return { ...res, ...vars };
-}
-font.scope = {
-  // ...NativeCssProperties.font.scope,
-  ...KEYWORDS,
-  ...SYNTHESIS,
-  face,
-
-  size: a => ({ fontSize: a }),
-  weight: a => ({ fontWeight: a }),
-  style: a => ({ fontStyle: a }),
-  variant: a => ({ fontVariant: a }),
-  stretch: a => ({ fontStretch: a }),
-  spacing: a => ({ letterSpacing: a }),
-  adjust: a => ({ fontSizeAdjust: a }),
-};
-
 
 //100%lob
 //$font("company orange",grotesque)
@@ -801,27 +1437,36 @@ const BUILTIN_TYPES = {
   handwritten: { fontFamily: "'Segoe Print','Bradley Hand',Chilanka,TSCu_Comic,casual,cursive" },
 };
 
-function type(name, ...args) {
-  // if (typeof name != "string")
-  //   throw new SyntaxError(`The typename in $type(typename,...args) is not interpreted as a string: "${JSON.stringify(name)}"`);
-  // if (!name.match(/^[a-z][a-z0-9-]*$/))
-  //   throw new SyntaxError(`The typename in $type(typename,...args) must be lowercase and match(/^[a-z][a-z0-9-]*$/): "${name}"`);
-  if (!name || typeof name != "string")
-    throw new SyntaxError("The $typeface(name) function must always include a string name as first argument.");
-  const tmp = fontImpl(name, ...args);
+// todo should we add extra requirements for the typeName? say it can only be of specific characters?
+// typeName.match(/^[a-z][a-z0-9-]*$/))
+function font(args) {
+  const typeName = interpretName(args[0])?.text;
+  if (!typeName)
+    throw new SyntaxError(`first argument is not a name: "${args[0].text}"`);
+  const tmp = fontImpl(undefined, args);
+  const vars = {}, res = {};
+  for (let [k, varKey] of FONT_DEFAULTS)
+    vars["--font" + varKey] = (res[k] = tmp[k] ?? `var(--${typeName + varKey}, unset)`);
+  return { ...res, ...vars };
+}
+
+function typeFace(args) {
+  const typeName = extractName(args);
+  if (!typeName)
+    throw new SyntaxError(`first argument is not a name: "${args[0].text}"`);
+  const tmp = fontImpl(typeName, args);
   const res = {};
   for (let [k, varKey] of FONT_DEFAULTS)
-    res[`--${name + varKey}`] = tmp[k] ?? "unset";
+    res[`--${typeName + varKey}`] = tmp[k] ?? undefined;
   for (let k in tmp)
     if (k.startsWith("@"))
       res[k] = tmp[k];
   return res;
 }
-type.scope = { ...font.scope };
 
 var fonts = {
   font,
-  typeface: type,
+  typeface: typeFace,
 
   //droplets
   fontFamily: a => ({ [p]: a == "unset" ? `var(--fontFamily, unset)` : a }),
@@ -834,26 +1479,26 @@ var fonts = {
   letterSpacing: a => ({ [p]: a == "unset" ? `var(--letterSpacing, unset)` : a }),
 
   //global font words
-  bold: { fontWeight: "bold" },
-  bolder: { fontWeight: "bolder" },
-  lighter: { fontWeight: "lighter" },
-  italic: { fontStyle: "italic" },
-  smallCaps: { fontVariantCaps: "small-caps" },
-  allSmallCaps: { fontVariantCaps: "all-small-caps" },
-  petiteCaps: { fontVariantCaps: "petite-caps" },
-  allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
-  unicase: { fontVariantCaps: "unicase" },
-  titlingCaps: { fontVariantCaps: "titling-caps" },
-  condensed: { Stretch: "condensed" },
-  expanded: { Stretch: "expanded" },
-  semiCondensed: { Stretch: "semi-condensed" },
-  semiExpanded: { Stretch: "semi-expanded" },
-  extraCondensed: { Stretch: "extra-condensed" },
-  extraExpanded: { Stretch: "extra-expanded" },
-  ultraCondensed: { Stretch: "ultra-condensed" },
-  ultraExpanded: { Stretch: "ultra-expanded" },
-  kerning: { fontKerning: "normal" },
-  noKerning: { fontKerning: "none" },
+  // bold: { fontWeight: "bold" },
+  // bolder: { fontWeight: "bolder" },
+  // lighter: { fontWeight: "lighter" },
+  // italic: { fontStyle: "italic" },
+  // smallCaps: { fontVariantCaps: "small-caps" },
+  // allSmallCaps: { fontVariantCaps: "all-small-caps" },
+  // petiteCaps: { fontVariantCaps: "petite-caps" },
+  // allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
+  // unicase: { fontVariantCaps: "unicase" },
+  // titlingCaps: { fontVariantCaps: "titling-caps" },
+  // condensed: { Stretch: "condensed" },
+  // expanded: { Stretch: "expanded" },
+  // semiCondensed: { Stretch: "semi-condensed" },
+  // semiExpanded: { Stretch: "semi-expanded" },
+  // extraCondensed: { Stretch: "extra-condensed" },
+  // extraExpanded: { Stretch: "extra-expanded" },
+  // ultraCondensed: { Stretch: "ultra-condensed" },
+  // ultraExpanded: { Stretch: "ultra-expanded" },
+  // kerning: { fontKerning: "normal" },
+  // noKerning: { fontKerning: "none" },
 };
 
 
@@ -941,17 +1586,36 @@ const BUILTIN_TYPES2 = {
 };
 
 function toSize(NAME, args) {
-  args = args.map(a => (a.text == "_" ? "unset" : interpret(a)));
+  if (args.length != 1 && args.length != 3)
+    throw new SyntaxError(`$${NAME}() accepts only 1 or 3 arguments, got ${args.length}.`);
+  args = args.map(a =>
+    a.text == "_" ? "unset" :
+      interpretBasic$1(a).text
+  );
   if (args.length === 1)
     return { [NAME]: args[0] };
   const NAME2 = NAME[0].toUpperCase() + NAME.slice(1);
-  if (args.length === 3)
+  return {
+    ["min" + NAME2]: args[0],
+    [NAME]: args[1],
+    ["max" + NAME2]: args[2]
+  };
+}
+
+function size(args) {
+  if (args.length == 1)
+    return toSize("inlineSize", args);
+  if (args.length == 2)
     return {
-      ["min" + NAME2]: args[0],
-      [NAME]: args[1],
-      ["max" + NAME2]: args[2]
+      ...toSize("inlineSize", [args[0]]),
+      ...toSize("blockSize", [args[1]])
     };
-  throw new SyntaxError(`$${NAME}() accepts only 1 or 3 arguments, got ${args.length}.`);
+  if (args.length == 6)
+    return {
+      ...toSize("inlineSize", args.slice(0, 3)),
+      ...toSize("blockSize", args.slice(3))
+    };
+  throw new SyntaxError(`$size() accepts only 1, 2 or 4 arguments, got ${args.length}.`);
 }
 
 //todo turn this into memory thing. same with O2
@@ -1035,8 +1699,18 @@ const OVERFLOWS = (_ => {
   return res;
 })();
 
+function checkUndefined(funcName, argsIn, argsOut) {
+  for (let i = 0; i < argsIn.length; i++)
+    if (argsOut[i] === undefined)
+      throw new ReferenceError(`$${funcName}() cannot process ${argsIn[i].name}.`);
+}
+
+//todo rename this to container() and then do block, grid, flex as the two options.
+//todo the question is if this will be recognized by the llm..
+//they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
+//so it should be with layout.
 //todo rename the text block layout unit to $page
-function defaultLayout(display, ...args) {
+function defaultContainer(obj, argsIn, argsOut) {
   const containerDefaults = {
     wordSpacing: "unset",
     lineHeight: "unset",
@@ -1045,18 +1719,19 @@ function defaultLayout(display, ...args) {
     textAlign: "unset",
     textIndent: "unset",
   };
-  return Object.assign({ display }, containerDefaults, ...args);
+  checkUndefined(obj.display, argsIn, argsOut);
+  return Object.assign(obj, containerDefaults, ...argsOut);
 }
-function checkReferenceError(args) {
-  for (let a of args)
-    if (!(a instanceof Object))
-      throw new ReferenceError(a);
+
+function defaultItem(name, argsIn, argsOut) {
+  checkUndefined(name, argsIn, argsOut);
+  return Object.assign({}, ...argsOut);
 }
 
 const LAYOUT = {
   padding: toLogicalFour.bind(null, "padding"),
   scrollPadding: toLogicalFour.bind(null, "scroll-padding"),
-  textAlign: nativeAndMore.textAlign,
+  ...ALIGNMENTS.textAlign,
   shy: { hyphens: "manual" },
   hyphens: { hyphens: "auto" },
   breakWord: { overflowWrap: "break-word" },
@@ -1070,7 +1745,6 @@ const LAYOUT = {
   breakAll: { wordBreak: "break-all" },
   keepAll: { wordBreak: "keep-all" },
   snapStop: { scrollSnapStop: "always" },
-  ...ALIGNMENTS.textAlign,
 };
 
 const _LAYOUT = {
@@ -1080,6 +1754,7 @@ const _LAYOUT = {
   indent: nativeAndMore.textIndent,
   inlineSize: toSize.bind(null, "inlineSize"),
   blockSize: toSize.bind(null, "blockSize"),
+  size,
   // w: AllFunctions.width,
   // h: AllFunctions.height,
   // width: AllFunctions.width,
@@ -1097,10 +1772,10 @@ const _LAYOUT = {
   // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
 
-function gap(innerScope, args) {
+function gap(args) {
   if (!args.length || args.length > 2)
     throw new SyntaxError("gap only accepts 1 or 2 arguments");
-  args = interpret(innerScope, args);
+  args = args.map(interpretBasic$1).map(a => a.text);
   if (args.length == 1 || args[0] == args[1])
     return { gap: args[0] };
   args = args.map(a => a == "unset" ? "normal" : a);
@@ -1111,64 +1786,63 @@ function gap(innerScope, args) {
 //todo the question is if this will be recognized by the llm..
 //they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
 //so it should be with layout.
-function blockGap(innerScope, args) {
-  const [wordSpacing, lineHeight] = interpret(innerScope, args);
+function blockGap(args) {
+  const [wordSpacing, lineHeight] = args.map(interpretBasic$1).map(a => a.text);
   return { wordSpacing, lineHeight };
 }
+const BLOCK = {
+  ...LAYOUT,
+  ...OVERFLOWS,
+  gap: blockGap,
+};
+const BlockItem = {
+  ..._LAYOUT,
+  floatStart: { float: "inline-start" },
+  floatEnd: { float: "inline-end" },
+};
+
 function block(args) {
-  const scope = {
-    ...LAYOUT,
-    ...OVERFLOWS,
-    gap: blockGap,
-  };
-  args = interpret(scope, args);
-  checkReferenceError(args);
-  return defaultLayout("block", ...args);
+  const args2 = args.map(a => BLOCK[a.name]?.(a.args) ?? BLOCK[a.text]);
+  return defaultContainer({ display: "block" }, args, args2);
 }
 
-function blockItem(args) {
-  const scope = {
-    ..._LAYOUT,
-    floatStart: { float: "inline-start" },
-    floatEnd: { float: "inline-end" },
-  };
-  args = interpret(scope, args);
-  checkReferenceError(args);
-  return Object.assign({}, ...args);
+function blockItem(argsIn) {
+  const argsOut = argsIn.map(a => BlockItem[a.name]?.(a.args) ?? BlockItem[a.text]);
+  return defaultItem("blockItem", argsIn, argsOut);
 }
 
 function lineClamp([lines, ...args]) {
-  [lines] = interpret({}, [lines]);  //todo lines should only be a number. How do we enforce this in interpret?
-  return Object.assign(block(scope, args), {
+  lines = interpretBasic$1(lines);
+  if (lines.type != "number")
+    throw new SyntaxError(`$lineClamp() first argument must be a simple number, got ${lines}.`);
+  return Object.assign(block(args), {
     display: "-webkit-box",
-    WebkitLineClamp: lines,
+    WebkitLineClamp: lines.num,
     WebkitBoxOrient: "vertical",
     overflowBlock: "hidden"
   });
 }
 
-function grid(args) {
-  const nativeGrid = Object.fromEntries(Object.entries(nativeAndMore).filter(([k]) => k.match(/^grid[A-Z]/)));
-  const scope = {
-    ...OVERFLOWS,
-    ...ALIGNMENTS.placeContent,
-    ...ALIGNMENTS.placeItems,
-    ...nativeGrid,
-    cols: nativeGrid.gridTemplateColumns,
-    columns: nativeGrid.gridTemplateColumns,
-    rows: nativeGrid.gridTemplateRows,
-    areas: nativeGrid.gridTemplateAreas,
-    ...LAYOUT,
-    gap,
-    //todo test this!!
-    column: { gridAutoFlow: "column" },
-    dense: { gridAutoFlow: "dense row" },
-    denseColumn: { gridAutoFlow: "dense column" },
-    denseRow: { gridAutoFlow: "dense row" },
-  };
-  args = interpret(scope, args);
-  checkReferenceError(args);
-  return defaultLayout("grid", { placeItems: "unset", placeContent: "unset" }, ...args);
+const GRID = {
+  ...OVERFLOWS,
+  ...ALIGNMENTS.placeContent,
+  ...ALIGNMENTS.placeItems,
+  cols: args => ({ gridTemplateColumns: args.map(a => interpretRepeat(a) ?? interpretBasic$1(a)).map(a => a.text).join(" ") }),
+  columns: args => ({ gridTemplateColumns: args.map(a => interpretRepeat(a) ?? interpretBasic$1(a)).map(a => a.text).join(" ") }),
+  rows: args => ({ gridTemplateRows: args.map(a => interpretRepeat(a) ?? interpretBasic$1(a)).map(a => a.text).join(" ") }),
+  areas: args => ({ gridTemplateAreas: args.map(a => interpretRepeat(a) ?? interpretBasic$1(a)).map(a => a.text).join(" ") }),
+  ...LAYOUT,
+  gap,
+  //todo test this!!
+  column: { gridAutoFlow: "column" },
+  dense: { gridAutoFlow: "dense row" },
+  denseColumn: { gridAutoFlow: "dense column" },
+  denseRow: { gridAutoFlow: "dense row" },
+};
+
+function grid(argsIn) {
+  const argsOut = argsIn.map(a => GRID[a.name]?.(a.args) ?? GRID[a.text]);
+  return defaultContainer({ display: "grid", placeItems: "unset", placeContent: "unset" }, argsIn, argsOut);
 }
 
 //       1  2345   6789
@@ -1183,56 +1857,58 @@ function grid(args) {
 
 // $grid(col(1,4))
 // $grid(col_1_4)
-const column = (start, end) => ({ gridColumn: end ? `${start} / ${end}` : start });
-const row = (start, end) => ({ gridRow: end ? `${start} / ${end}` : start });
-const span = arg => `span ${arg}`;
-column.scope = { span };
-row.scope = { span };
+const column = args => {
+  const [start, end] = args.map(a => interpretSpan(a) ?? interpretBasic$1(a)).map(a => a.text);
+  return { gridColumn: end ? `${start} / ${end}` : start };
+};
+const row = args => {
+  const [start, end] = args.map(a => interpretSpan(a) ?? interpretBasic$1(a)).map(a => a.text);
+  return { gridRow: end ? `${start} / ${end}` : start };
+};
 
-function gridItem(...args) {
-  checkReferenceError(args);
-  return Object.assign({}, ...args);
-}
-gridItem.scope = {
+const GridItem = {
   ...ALIGNMENTS.placeSelf,
   ..._LAYOUT,
   column,
   row,
 };
-
-
-function flex(args) {
-  const scope = {
-    column: { flexDirection: "column" },
-    columnReverse: { flexDirection: "column-reverse" },
-    rowReverse: { flexDirection: "row-reverse" },
-    row: { flexDirection: "row" },
-    wrap: { flexWrap: "wrap" },
-    wrapReverse: { flexWrap: "wrap-reverse" },
-    noWrap: { flexWrap: "nowrap" },
-    ...OVERFLOWS,
-    ...ALIGNMENTS.placeContent,
-    ...ALIGNMENTS.alignItems,
-    ...LAYOUT,
-    gap,
-  };
-  args = interpret(scope, args);
-  checkReferenceError(args);
-  return defaultLayout("flex", { alignItems: "unset", placeContent: "unset" }, ...args);
+function gridItem(argsIn) {
+  const argsOut = argsIn.map(a => GridItem[a.name]?.(a.args) ?? GridItem[a.text]);
+  return defaultItem("gridItem", argsIn, argsOut);
 }
-function _flex(args) {
-  const scope = {
-    ..._LAYOUT,
-    ...ALIGNMENTS.alignSelf,
-    basis: (scope, a) => ({ flexBasis: interpret(scope, a)[0] }),
-    grow: (scope, a) => ({ flexGrow: interpret(scope, a)[0] }),
-    shrink: (scope, a) => ({ flexShrink: interpret(scope, a)[0] }),
-    order: (scope, a) => ({ order: interpret(scope, a)[0] }),
-    //todo safe
-  };
-  args = interpret(scope, args);
-  checkReferenceError(args);
-  return Object.assign({}, ...args);
+
+const FLEX = {
+  column: { flexDirection: "column" },
+  columnReverse: { flexDirection: "column-reverse" },
+  rowReverse: { flexDirection: "row-reverse" },
+  row: { flexDirection: "row" },
+  wrap: { flexWrap: "wrap" },
+  wrapReverse: { flexWrap: "wrap-reverse" },
+  noWrap: { flexWrap: "nowrap" },
+  ...OVERFLOWS,
+  ...ALIGNMENTS.placeContent,
+  ...ALIGNMENTS.alignItems,
+  ...LAYOUT,
+  gap,
+};
+
+function flex(argsIn) {
+  const argsOut = argsIn.map(a => FLEX[a.name]?.(a.args) ?? FLEX[a.text]);
+  return defaultContainer({ display: "flex", alignItems: "unset", placeContent: "unset" }, argsIn, argsOut);
+}
+const FlexItem = {
+  ..._LAYOUT,
+  ...ALIGNMENTS.alignSelf,
+  basis: args => ({ flexBasis: args.map(interpretBasic$1).map(a => a.text).join(" ") }),
+  grow: args => ({ flexGrow: args.map(interpretBasic$1).map(a => a.text).join(" ") }),
+  shrink: args => ({ flexShrink: args.map(interpretBasic$1).map(a => a.text).join(" ") }),
+  order: args => ({ order: args.map(interpretBasic$1).map(a => a.text).join(" ") }),
+  //todo safe
+};
+
+function flexItem(argsIn) {
+  const argsOut = argsIn.map(a => FlexItem[a.name]?.(a.args) ?? FlexItem[a.text]);
+  return defaultItem("flexItem", argsIn, argsOut);
 }
 
 var layouts = {
@@ -1281,178 +1957,408 @@ var layouts = {
   grid,
   gridItem,
   flex,
-  _flex,
+  flexItem,
   lineClamp,
 };
 
-class Color {
-
-  constructor(colorStr) {
-    const [R, G, B, A] = Color.cssomColor(colorStr);
-    this.alpha = A;
-    this.hex = Color.rgbToHex(R, G, B);
-    const rgb = Color.linearizeRgb(R, G, B);
-    const xyz = Color.linearRgbToXyz(rgb);
-    const lab = Color.xyzToOKLab(xyz);
-    const lch = Color.oklabToOklch(lab);
-    Object.assign(this, rgb, xyz, lab, lch);
-  }
-
-  static #canvas = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
-  static cssomColor(colorStr) {
-    this.#canvas.fillStyle = colorStr;
-    this.#canvas.fillRect(0, 0, 1, 1);
-    return this.#canvas.getImageData(0, 0, 1, 1).data;
-  }
-
-  static linearizeRgb(R, G, B) {
-    const linearize = c => (c /= 255) <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-    return { R: linearize(R), G: linearize(G), B: linearize(B) };
-  }
-
-  static linearRgbToXyz({ R, G, B }) {
-    const X = 0.4124564 * R + 0.3575761 * G + 0.1804375 * B;
-    const Y = 0.2126729 * R + 0.7151522 * G + 0.0721750 * B;
-    const Z = 0.0193339 * R + 0.1191920 * G + 0.9503041 * B;
-    return { X, Y, Z };
-  }
-
-  static xyzToOKLab({ X, Y, Z }) {
-    const l = 0.8189330101 * X + 0.3618667424 * Y - 0.1288597137 * Z;
-    const m = 0.0329845436 * X + 0.9293118715 * Y + 0.0361456387 * Z;
-    const s = 0.0482003018 * X + 0.2643662691 * Y + 0.6338517070 * Z;
-
-    const lCube = Math.cbrt(l);
-    const mCube = Math.cbrt(m);
-    const sCube = Math.cbrt(s);
-
-    const L = 0.2104542553 * lCube + 0.7936177850 * mCube - 0.0040720468 * sCube;
-    const a = 1.9779984951 * lCube - 2.4285922050 * mCube + 0.4505937099 * sCube;
-    const b = 0.0259040371 * lCube + 0.7827717662 * mCube - 0.8086757660 * sCube;
-
-    return { L, a, b };
-  }
-
-  static oklabToOklch({ L, a, b }) {
-    const C = Math.sqrt(a * a + b * b);
-    let H = Math.atan2(b, a) * (180 / Math.PI);
-    if (H < 0) H += 360;
-    return { L, C, H };
-  }
-
-  static rgbToHex(R, G, B) {
-    const toHex = (value) => value.toString(16).padStart(2, "0").toLowerCase();
-    return `#${toHex(R)}${toHex(G)}${toHex(B)}`;
+//from hex => lch
+function hex8ToHex6A({ hex8 }) {
+  return {
+    hex6: hex8.slice(0, 6),
+    alpha: parseInt(hex8.slice(6, 8), 16) / 255,
   };
 }
-
-function palette(role, color, onColor) {
-  if (!role || !color || !onColor)
-    throw "Missing parameters";
-
-  const c = new Color(color);
-  c.L = c.L.toFixed(3);
-  c.H = Math.round(c.H);
-  const C = c.C;
-  const pop = ((.5 - C) * 50 % + C).toFixed(3);
-  const accent = ((.5 - C) * 70 % + C).toFixed(3);
-  const bland = (C * .5).toFixed(3);
-  const onc = new Color(color);
-  onc.L = onc.L.toFixed(3);
-  onc.H = Math.round(onc.H);
-  const onC = onc.C;
-  const onPop = ((.5 - onC) * 50 % + onC).toFixed(3);
-  const onAccent = ((.5 - onC) * 70 % + onC).toFixed(3);
-  const onBland = (onC * .5).toFixed(3);
-
+function hex6ToRgb({ hex6 }) {
   return {
-    [`--color-${role}`]: color,
-    [`--color-${role}-pop`]: `oklch(${c.L}, ${pop}, ${c.H})`,
-    [`--color-${role}-accent`]: `oklch(${c.L}, ${accent}, ${c.H})`,
-    [`--color-${role}-bland`]: `oklch(${c.L}, ${bland}, ${c.H})`,
-
-    [`--color-${role}1`]: onColor,
-    [`--color-${role}-pop1`]: `oklch(${onc.L}, ${onPop}, ${onc.H})`,
-    [`--color-${role}-accent1`]: `oklch(${onc.L}, ${onAccent}, ${onc.H})`,
-    [`--color-${role}-bland1`]: `oklch(${onc.L}, ${onBland}, ${onc.H})`,
-  }
+    r: parseInt(hex6.slice(0, 2), 16),
+    g: parseInt(hex6.slice(2, 4), 16),
+    b: parseInt(hex6.slice(4, 6), 16),
+  };
 }
-palette.scope = {
-  ...nativeAndMore.color.scope
-};
+function rgbToRGB({ r, g, b }) {
+  const linearize = c => (c /= 255) <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  return { R: linearize(r), G: linearize(g), B: linearize(b) };
+}
+function RGBToXyz({ R, G, B }) {
+  const x = 0.4124564 * R + 0.3575761 * G + 0.1804375 * B;
+  const y = 0.2126729 * R + 0.7151522 * G + 0.0721750 * B;
+  const z = 0.0193339 * R + 0.1191920 * G + 0.9503041 * B;
+  return { x, y, z };
+}
+function xyzToLab({ x, y, z }) {
+  const l = 0.8189330101 * x + 0.3618667424 * y - 0.1288597137 * z;
+  const m = 0.0329845436 * x + 0.9293118715 * y + 0.0361456387 * z;
+  const s = 0.0482003018 * x + 0.2643662691 * y + 0.6338517070 * z;
+
+  const lCube = Math.cbrt(l);
+  const mCube = Math.cbrt(m);
+  const sCube = Math.cbrt(s);
+
+  const L = 0.2104542553 * lCube + 0.7936177850 * mCube - 0.0040720468 * sCube;
+  const a = 1.9779984951 * lCube - 2.4285922050 * mCube + 0.4505937099 * sCube;
+  const b = 0.0259040371 * lCube + 0.7827717662 * mCube - 0.8086757660 * sCube;
+
+  return { L, a, b };
+}
+function labToLch({ L, a, b }) {
+  const C = Math.sqrt(a * a + b * b);
+  let H = Math.atan2(b, a) * (180 / Math.PI);
+  if (H < 0) H += 360;
+  return { L, C, H };
+}
+
+//from lch => hex
+function lchToLab({ L, C, H }) {
+  const hRad = H * (Math.PI / 180);
+  const a = Math.cos(hRad) * C;
+  const b = Math.sin(hRad) * C;
+  return { L, a, b };
+}
+function labToXyz({ L, a, b }) {
+  const lCube = Math.cbrt((L + 0.3963377774 * a + 0.2158037573 * b) ** 3);
+  const mCube = Math.cbrt((L - 0.1055613458 * a - 0.0638541728 * b) ** 3);
+  const sCube = Math.cbrt((L - 0.0894841775 * a - 1.2914855480 * b) ** 3);
+
+  const x = +1.2270138511 * lCube - 0.5577999807 * mCube + 0.2812561490 * sCube;
+  const y = -0.0405801784 * lCube + 1.1122568696 * mCube - 0.0716766787 * sCube;
+  const z = -0.0763812845 * lCube - 0.4214819784 * mCube + 1.5861632204 * sCube;
+
+  return { x, y, z };
+}
+function xyzToRGB({ x, y, z }) {
+  const R = +3.2404541621 * x - 1.5371385120 * y - 0.4985314096 * z;
+  const G = -0.9692660304 * x + 1.8760108452 * y + 0.0415560175 * z;
+  const B = +0.0556434309 * x - 0.2040259134 * y + 1.0572251880 * z;
+  return { R, G, B };
+}
+function RGBToRgb({ R, G, B }) {
+  const delinearize = c => c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
+  return {
+    r: Math.min(255, Math.max(0, delinearize(R) * 255)),
+    g: Math.min(255, Math.max(0, delinearize(G) * 255)),
+    b: Math.min(255, Math.max(0, delinearize(B) * 255)),
+  };
+}
+function rgbToHex6({ r, g, b }) {
+  return { hex6: [r, g, b].map(c => Math.round(c).toString(16).padStart(2, "0")).join("") };
+}
+function hex6AToHex8({ hex6, alpha }) {
+  return { hex8: hex6 + Math.round(alpha * 255).toString(16).padStart(2, "0") };
+}
+
+//main functions
+function makeColor(transforms, all) {
+  return transforms.reduce((acc, fn) => ({ ...acc, ...fn(acc) }), all);
+}
+function fromHex8(hex8) {
+  return makeColor([hex8ToHex6A, hex6ToRgb, rgbToRGB, RGBToXyz, xyzToLab, labToLch], { hex8 });
+}
+function fromHex6(hex6, alpha = 1) {
+  return makeColor([hex6ToRgb, rgbToRGB, RGBToXyz, xyzToLab, labToLch, hex6AToHex8], { hex6, alpha });
+}
+function fromRgb(r, g, b, alpha = 1) {
+  return makeColor([rgbToRGB, RGBToXyz, xyzToLab, labToLch, rgbToHex6, hex6AToHex8], { r, g, b, alpha });
+}
+function fromLinearRgb(R, G, B, alpha = 1) {
+  return makeColor([RGBToXyz, xyzToLab, labToLch, RGBToRgb, rgbToHex6, hex6AToHex8], { R, G, B, alpha });
+}
+function fromXyz(x, y, z, alpha = 1) {
+  return makeColor([xyzToLab, labToLch, xyzToRGB, RGBToRgb, rgbToHex6, hex6AToHex8], { x, y, z, alpha });
+}
+function fromLab(L, a, b, alpha = 1) {
+  return makeColor([labToLch, labToXyz, xyzToRGB, RGBToRgb, rgbToHex6, hex6AToHex8], { L, a, b, alpha });
+}
+function fromLCH(L, C, H, alpha = 1) {
+  return makeColor([lchToLab, labToXyz, xyzToRGB, RGBToRgb, rgbToHex6, hex6AToHex8], { L, C, H, alpha });
+}
+
+function round(num, places = 2) {
+  const m = 10 ** places;
+  return Math.round(num * m) / m;
+}
+
+function palette([role, ...colors]) {
+  if (!role || colors.length < 2)
+    throw "palette() requires role and at least two colors as parameters";
+  if (role.kind !== "WORD")
+    throw "First parameter must be a simple word";
+  role = `--color-${role.text}`;
+
+  colors = colors.map((color, i) => {
+    color = interpretColor(color);
+    if (!color) throw `Parameter ${i + 2} is not a valid color`;
+    if (!color.hex) throw `Parameter ${i + 2} is not a primitive color`;
+    i ||= "";
+    let { L, C, H } = fromHex6(color.hex, color.percent);
+    if (C == 0)
+      throw new SyntaxError(`Cannot create palette from achromatic color: ${color.text}`);
+    L = round(L, 3);
+    H = Math.round(H);
+    const pop = fromLCH(L, round((.5 - C) * .5 + C, 3), H);
+    const accent = fromLCH(L, round((.5 - C) * .7 + C, 3), H);
+    const bland = fromLCH(L, round(C * .5, 3), H);
+    const neutral = fromLCH(L, 0, H);
+    return {
+      [role + i]: color.text,
+      [role + "Pop" + i]: "#" + pop.hex6,
+      [role + "Accent" + i]: "#" + accent.hex6,
+      [role + "Bland" + i]: "#" + bland.hex6,
+      [role + "Neutral" + i]: "#" + neutral.hex6,
+    };
+  });
+  return Object.assign({}, ...colors);
+}
 
 var palette$1 = {
   palette
 };
 
-function transition(timing, dur, ...props) {
-  const delay = (props.length && isTime(props[0]) || props[0] == "0" && "0s");
-  if (delay) props.shift();
-  const tail = dur + (delay ? ` ${delay} ` : " ") + timing;
-  if (!props.length) props = ["all"];
-  return { transition: props.map(p => `${p} ${tail}`).join(", ") };
+function transition(timing, args) {
+  const dur = args.length && extractTime(args);
+  const delay = args.length && extractTime(args);
+  if (args.text == "allowDiscrete")
+    timing += " allow-discrete";
+  const tail = [dur, delay, timing].filter(Boolean).join(" ");
+  args = !args.length ? ["all"] :
+    args.map(a => {
+      a = interpretName(a);
+      if (a) return a.text;
+      throw new SyntaxError(`Not a valid $transition property: ${a.text}.`);
+    });
+  return { transition: args.map(p => `${p} ${tail}`).join(", ") };
+}
+
+function jump(type, args) {
+  const steps = extractNumber(args);
+  if (!steps || steps.num <= 0 || steps.unit != "")
+    throw new SyntaxError(`$jump requires a positive integer argument first.`);
+  return transition(`steps(${steps.num}${type})`, args)
 }
 
 var transitions = {
-  transition: (x1, y1, x2, y2, dur, delay, ...props) => transition(`cubic-bezier(${x1},${y1},${x2},${y2})`, dur, delay, ...props),
+  transitionProperty: undefined,
+  transitionDuration: undefined,
+  transitionTimingFunction: undefined,
+  transitionDelay: undefined,
 
-  ease: (...args) => transition("ease", ...args),
-  slide: (...args) => transition("linear", ...args),
-  easeIn: (...args) => transition("ease-in", ...args),
-  easeOut: (...args) => transition("ease-out", ...args),
-  easeInOut: (...args) => transition("ease-in-out", ...args),
+  ease: args => transition("ease", args),
+  slide: args => transition("linear", args),
+  easeIn: args => transition("ease-in", args),
+  easeOut: args => transition("ease-out", args),
+  easeInOut: args => transition("ease-in-out", args),
+  crispIn: args => transition("cubic-bezier(0,.55,.2,1)", args),
+  crispOut: args => transition("cubic-bezier(.8,0,1,.45)", args),
+  crispInOut: args => transition("cubic-bezier(.8,0,.2,1)", args),
+  harshOut: args => transition("cubic-bezier(.95,0,1,.2)", args),
+  harshIn: args => transition("cubic-bezier(0,.8,.15,1)", args),
+  harshInOut: args => transition("cubic-bezier(.9,0,.1,1)", args),
+  playfulIn: args => transition("cubic-bezier(.6,0,1,.2)", args),
+  playfulOut: args => transition("cubic-bezier(0,.35,.1,1)", args),
+  playfulInOut: args => transition("cubic-bezier(.65,0,.35,1)", args),
+  bounceIn: args => transition("cubic-bezier(.36,0,.66,-.56)", args),
+  bounceOut: args => transition("cubic-bezier(.34,1.56,.64,1)", args),
+  bounceInOut: args => transition("cubic-bezier(.68,-.6,.32,1.6)", args),
+  easeInCrispOut: args => transition("cubic-bezier(.42,0,.2,1)", args),
+  easeInHarshOut: args => transition("cubic-bezier(.42,0,.15,1)", args),
+  easeInPlayfulOut: args => transition("cubic-bezier(.42,0,.1,1)", args),
+  easeInBounceOut: args => transition("cubic-bezier(.42,0,.64,1)", args),
+  crispInEaseOut: args => transition("cubic-bezier(.8,0,.58,1)", args),
+  crispInHarshOut: args => transition("cubic-bezier(.8,0,.15,1)", args),
+  crispInPlayfulOut: args => transition("cubic-bezier(.8,0,.1,1)", args),
+  crispInBounceOut: args => transition("cubic-bezier(.8,0,.64,1)", args),
+  harshInEaseOut: args => transition("cubic-bezier(.95,0,.58,1)", args),
+  harshInCrispOut: args => transition("cubic-bezier(.95,0,.2,1)", args),
+  harshInPlayfulOut: args => transition("cubic-bezier(.95,0,.1,1)", args),
+  harshInBounceOut: args => transition("cubic-bezier(.95,0,.64,1)", args),
+  playfulInEaseOut: args => transition("cubic-bezier(.6,0,.58,1)", args),
+  playfulInCrispOut: args => transition("cubic-bezier(.6,0,.2,1)", args),
+  playfulInHarshOut: args => transition("cubic-bezier(.6,0,.15,1)", args),
+  playfulInBounceOut: args => transition("cubic-bezier(.6,0,.64,1)", args),
+  bounceInEaseOut: args => transition("cubic-bezier(.36,0,.58,1)", args),
+  bounceInCrispOut: args => transition("cubic-bezier(.36,0,.2,1)", args),
+  bounceInHarshOut: args => transition("cubic-bezier(.36,0,.15,1)", args),
+  bounceInPlayfulOut: args => transition("cubic-bezier(.36,0,.1,1)", args),
 
-  crispIn: (...args) => transition("cubic-bezier(0,.55,.2,1)", ...args),
-  crispOut: (...args) => transition("cubic-bezier(.8,0,1,.45)", ...args),
-  crispInOut: (...args) => transition("cubic-bezier(.8,0,.2,1)", ...args),
-  harshOut: (...args) => transition("cubic-bezier(.95,0,1,.2)", ...args),
-  harshIn: (...args) => transition("cubic-bezier(0,.8,.15,1)", ...args),
-  harshInOut: (...args) => transition("cubic-bezier(.9,0,.1,1)", ...args),
-  playfulIn: (...args) => transition("cubic-bezier(.6,0,1,.2)", ...args),
-  playfulOut: (...args) => transition("cubic-bezier(0,.35,.1,1)", ...args),
-  playfulInOut: (...args) => transition("cubic-bezier(.65,0,.35,1)", ...args),
-  bounceIn: (...args) => transition("cubic-bezier(.36,0,.66,-.56)", ...args),
-  bounceOut: (...args) => transition("cubic-bezier(.34,1.56,.64,1)", ...args),
-  bounceInOut: (...args) => transition("cubic-bezier(.68,-.6,.32,1.6)", ...args),
-  easeInCrispOut: (...args) => transition("cubic-bezier(.42,0,.2,1)", ...args),
-  easeInHarshOut: (...args) => transition("cubic-bezier(.42,0,.15,1)", ...args),
-  easeInPlayfulOut: (...args) => transition("cubic-bezier(.42,0,.1,1)", ...args),
-  easeInBounceOut: (...args) => transition("cubic-bezier(.42,0,.64,1)", ...args),
-  crispInEaseOut: (...args) => transition("cubic-bezier(.8,0,.58,1)", ...args),
-  crispInHarshOut: (...args) => transition("cubic-bezier(.8,0,.15,1)", ...args),
-  crispInPlayfulOut: (...args) => transition("cubic-bezier(.8,0,.1,1)", ...args),
-  crispInBounceOut: (...args) => transition("cubic-bezier(.8,0,.64,1)", ...args),
-  harshInEaseOut: (...args) => transition("cubic-bezier(.95,0,.58,1)", ...args),
-  harshInCrispOut: (...args) => transition("cubic-bezier(.95,0,.2,1)", ...args),
-  harshInPlayfulOut: (...args) => transition("cubic-bezier(.95,0,.1,1)", ...args),
-  harshInBounceOut: (...args) => transition("cubic-bezier(.95,0,.64,1)", ...args),
-  playfulInEaseOut: (...args) => transition("cubic-bezier(.6,0,.58,1)", ...args),
-  playfulInCrispOut: (...args) => transition("cubic-bezier(.6,0,.2,1)", ...args),
-  playfulInHarshOut: (...args) => transition("cubic-bezier(.6,0,.15,1)", ...args),
-  playfulInBounceOut: (...args) => transition("cubic-bezier(.6,0,.64,1)", ...args),
-  bounceInEaseOut: (...args) => transition("cubic-bezier(.36,0,.58,1)", ...args),
-  bounceInCrispOut: (...args) => transition("cubic-bezier(.36,0,.2,1)", ...args),
-  bounceInHarshOut: (...args) => transition("cubic-bezier(.36,0,.15,1)", ...args),
-  bounceInPlayfulOut: (...args) => transition("cubic-bezier(.36,0,.1,1)", ...args),
-
-  //hesitate: (dur, delay, ...props) => native(`cubic-bezier(.5,0,.5,1)`, dur, delay, ...props),
-  //wobble: (dur, delay, ...props) => native(`cubic-bezier(.5,-.5,.5,1.5)`, dur, delay, ...props),
+  //hesitate: (args) => native(`cubic-bezier(.5,0,.5,1)`, args),
+  //wobble: (args) => native(`cubic-bezier(.5,-.5,.5,1.5)`, args),
   //0.29, 1.01, 1, -0.68
 
-  // steps: (steps, dur, delay, ...props) => native(`steps(${steps})`, dur, delay, ...props),
-  jump: (steps, dur, delay, ...props) => transition(`steps(${steps})`, dur, delay, ...props), //jumpEnd is default for steps().
-  // jumpEnd: (steps, dur, delay, ...props) => native(`steps(${steps},jump-end)`, dur, delay, ...props),
-  jumpStart: (steps, dur, delay, ...props) => transition(`steps(${steps},jump-start)`, dur, delay, ...props),
-  jumpNone: (steps, dur, delay, ...props) => transition(`steps(${steps},jump-none)`, dur, delay, ...props),
-  jumpBoth: (steps, dur, delay, ...props) => transition(`steps(${steps},jump-both)`, dur, delay, ...props),
+  transition: args => {
+    const x1 = extractNumber(x1);
+    const y1 = extractNumber(y1);
+    const x2 = extractNumber(x2);
+    const y2 = extractNumber(y2);
+    if (!x1 || !y1 || !x2 || !y2)
+      throw new SyntaxError(`$transition (cubic-bezier) requires four number arguments first.`);
+    return transition(`cubic-bezier(${x1},${y1},${x2},${y2})`, args)
+  },
+  jump: args => jump("", args), //jumpEnd is default.
+  jumpEnd: args => jump("jump-end", args),
+  jumpStart: args => jump("jump-start", args),
+  jumpNone: args => jump("jump-none", args),
+  jumpBoth: args => jump("jump-both", args),
+};
+
+//sequence based
+function textDecoration(
+  textDecorationLine = "underline",
+  textDecorationStyle = "unset",
+  textDecorationThickness = "unset",
+  textDecorationColor = "unset") {
+  return { textDecorationLine, textDecorationThickness, textDecorationStyle, textDecorationColor };
+}
+var textDecorations = {
+  textDecoration: undefined,
+  textDecorationColor: undefined,
+  textDecorationLine: undefined,
+  textDecorationSkip: undefined,
+  textDecorationSkipInk: undefined,
+  textDecorationStyle: undefined,
+  textDecorationThickness: undefined,
+  dashedOverLine: function (args) { return textDecoration.call(this, "overline", "dashed", ...args); },
+  dashedOverLineThrough: function (args) { return textDecoration.call(this, "overline line-through", "dashed", ...args); },
+  dashedOverUnderLine: function (args) { return textDecoration.call(this, "overline underline", "dashed", ...args); },
+  dashedOverUnderLineThrough: function (args) { return textDecoration.call(this, "overline underline line-through", "dashed", ...args); },
+  dashedLineThrough: function (args) { return textDecoration.call(this, "line-through", "dashed", ...args); },
+  dashedUnderLine: function (args) { return textDecoration.call(this, "underline", "dashed", ...args); },
+  dashedUnderLineThrough: function (args) { return textDecoration.call(this, "underline line-through", "dashed", ...args); },
+  dottedOverLine: function (args) { return textDecoration.call(this, "overline", "dotted", ...args); },
+  dottedOverLineThrough: function (args) { return textDecoration.call(this, "overline line-through", "dotted", ...args); },
+  dottedOverUnderLine: function (args) { return textDecoration.call(this, "overline underline", "dotted", ...args); },
+  dottedOverUnderLineThrough: function (args) { return textDecoration.call(this, "overline underline line-through", "dotted", ...args); },
+  dottedLineThrough: function (args) { return textDecoration.call(this, "line-through", "dotted", ...args); },
+  dottedUnderLine: function (args) { return textDecoration.call(this, "underline", "dotted", ...args); },
+  dottedUnderLineThrough: function (args) { return textDecoration.call(this, "underline line-through", "dotted", ...args); },
+  doubleOverLine: function (args) { return textDecoration.call(this, "overline", "double", ...args); },
+  doubleOverLineThrough: function (args) { return textDecoration.call(this, "overline line-through", "double", ...args); },
+  doubleOverUnderLine: function (args) { return textDecoration.call(this, "overline underline", "double", ...args); },
+  doubleOverUnderLineThrough: function (args) { return textDecoration.call(this, "overline underline line-through", "double", ...args); },
+  doubleLineThrough: function (args) { return textDecoration.call(this, "line-through", "double", ...args); },
+  doubleUnderLine: function (args) { return textDecoration.call(this, "underline", "double", ...args); },
+  doubleUnderLineThrough: function (args) { return textDecoration.call(this, "underline line-through", "double", ...args); },
+  wavyOverLine: function (args) { return textDecoration.call(this, "overline", "wavy", ...args); },
+  wavyOverLineThrough: function (args) { return textDecoration.call(this, "overline line-through", "wavy", ...args); },
+  wavyOverUnderLine: function (args) { return textDecoration.call(this, "overline underline", "wavy", ...args); },
+  wavyOverUnderLineThrough: function (args) { return textDecoration.call(this, "overline underline line-through", "wavy", ...args); },
+  wavyLineThrough: function (args) { return textDecoration.call(this, "line-through", "wavy", ...args); },
+  wavyUnderLine: function (args) { return textDecoration.call(this, "underline", "wavy", ...args); },
+  wavyUnderLineThrough: function (args) { return textDecoration.call(this, "underline line-through", "wavy", ...args); },
+  overLine: function (args) { return textDecoration.call(this, "overline", "solid", ...args); },
+  overLineThrough: function (args) { return textDecoration.call(this, "overline line-through", "solid", ...args); },
+  overUnderLine: function (args) { return textDecoration.call(this, "overline underline", "solid", ...args); },
+  overUnderLineThrough: function (args) { return textDecoration.call(this, "overline underline line-through", "solid", ...args); },
+  lineThrough: function (args) { return textDecoration.call(this, "line-through", "solid", ...args); },
+  underLine: function (args) { return textDecoration.call(this, "underline", "solid", ...args); },
+  underLineThrough: function (args) { return textDecoration.call(this, "underline line-through", "solid", ...args); },
+  blink: function (args) { return textDecoration.call(this, "blink", null, ...args); },
+  grammarError: function (args) { return textDecoration.call(this, "grammar-error", null, ...args); },
+  spellingError: function (args) { return textDecoration.call(this, "spelling-error", null, ...args); },
+};
+
+function filterFunc(prop, name, extractors, args) {
+  args = extractors.map(ex => ex(args));
+  if (args.length)
+    throw new SyntaxError(`unknown argument filter ${args[0]}`);
+  const str = name ? `${name}(${args.filter(Boolean).map(" ")})` :
+    args.filter(Boolean).map(" ");
+  return { [prop]: str };
+}
+const FILTERS = {
+  blur: filterFunc.bind(null, "filter", "blur", [extractLength]),
+  brightness: filterFunc.bind(null, "filter", "brightness", [extractNumberPercent]),
+  contrast: filterFunc.bind(null, "filter", "contrast", [extractNumberPercent]),
+  grayscale: filterFunc.bind(null, "filter", "grayscale", [extractNumberPercent]),
+  invert: filterFunc.bind(null, "filter", "invert", [extractNumberPercent]),
+  opacity: filterFunc.bind(null, "filter", "opacity", [extractNumberPercent]),
+  saturate: filterFunc.bind(null, "filter", "saturate", [extractNumberPercent]),
+  sepia: filterFunc.bind(null, "filter", "sepia", [extractNumberPercent]),
+  dropShadow: filterFunc.bind(null, "filter", "drop-shadow", [extractColor$1, extractLength, extractLength, extractLengthPercent$1]),
+  hueRotate: filterFunc.bind(null, "filter", "hue-rotate", [extractAngle$1]),
+  filter: filterFunc.bind(null, "filter", null, [extractUrl$1]),
+
+  backdropBlur: filterFunc.bind(null, "filter", "blur", [extractLength]),
+  backdropBrightness: filterFunc.bind(null, "filter", "brightness", [extractNumberPercent]),
+  backdropContrast: filterFunc.bind(null, "filter", "contrast", [extractNumberPercent]),
+  backdropGrayscale: filterFunc.bind(null, "filter", "grayscale", [extractNumberPercent]),
+  backdropInvert: filterFunc.bind(null, "filter", "invert", [extractNumberPercent]),
+  backdropOpacity: filterFunc.bind(null, "filter", "opacity", [extractNumberPercent]),
+  backdropSaturate: filterFunc.bind(null, "filter", "saturate", [extractNumberPercent]),
+  backdropSepia: filterFunc.bind(null, "filter", "sepia", [extractNumberPercent]),
+  backdropDropShadow: filterFunc.bind(null, "filter", "drop-shadow", [extractColor$1, extractLength, extractLength, extractLengthPercent$1]),
+  backdropHueRotate: filterFunc.bind(null, "filter", "hue-rotate", [extractAngle$1]),
+  backdropFilter: filterFunc.bind(null, "filter", null, [extractUrl$1]),
+};
+
+
+function transform(name, extractor, args) {
+  const res = [];
+  for (let i = 0; i < count; i++) {
+    const a = extractor(args);
+    if (a == null)
+      throw new SyntaxError(`invalid argument ${i + 1} for ${name}(): ${a}`);
+    res.push(a.text);
+  }
+  return { transform: `${name}(${res.join(", ")})` };
+}
+function transform1(name, extractor, count, args) {
+  if (args.count != count)
+    throw new SyntaxError(`${name} requires exactly ${count} arguments, got ${args.length} arguments.`);
+  return transform(name, extractor, args);
+}
+function transform2(name, extractor, args) {
+  if (args.length < 1 || args.length > 2)
+    throw new SyntaxError(`${name} requires between 1 and 2 arguments, got ${args.length} arguments.`);
+  return transform(name, extractor, args);
+}
+function rotate3d(args) {
+  const one = extractNumber(args);
+  const two = extractNumber(args);
+  const three = extractNumber(args);
+  const four = extractAngle$1(args);
+  if (one == null || two == null || three == null || four == null)
+    throw new SyntaxError(`rotate3d(num, num, num, angle), got rotate3d(${args.map(a => a.text).join(", ")})`);
+  return { transform: `rotate3d(${[one, two, three, four].join(", ")})` };
+}
+const TRANSFORM = {
+  transform: undefined,
+  matrix: transform1.bind(null, "matrix", extractNumber, 6),
+  matrix3d: transform1.bind(null, "matrix3d", extractNumber, 16),
+  perspective: transform1.bind(null, "perspective", extractLength, 1),
+  rotate: transform1.bind(null, "rotate", extractAngle$1, 1),
+  rotateZ: transform1.bind(null, "rotateZ", extractAngle$1, 1),
+  rotateY: transform1.bind(null, "rotateY", extractAngle$1, 1),
+  rotateX: transform1.bind(null, "rotateX", extractAngle$1, 1),
+  translateX: transform1.bind(null, "translateX", extractLengthPercent$1, 1),
+  translateY: transform1.bind(null, "translateY", extractLengthPercent$1, 1),
+  translateZ: transform1.bind(null, "translateZ", extractLengthPercent$1, 1),
+  translate3d: transform1.bind(null, "translate3d", extractLengthPercent$1, 3),
+  scaleX: transform1.bind(null, "scaleX", extractNumber, 1),
+  scaleY: transform1.bind(null, "scaleY", extractNumber, 1),
+  scaleZ: transform1.bind(null, "scaleZ", extractNumber, 1),
+  scale3d: transform1.bind(null, "scale3d", extractNumber, 3),
+  skewX: transform1.bind(null, "skewX", extractAnglePercent$1, 1),
+  skewY: transform1.bind(null, "skewY", extractAnglePercent$1, 1),
+  translate: transform2.bind(null, "translate", extractLengthPercent$1),
+  scale: transform2.bind(null, "scale", extractNumber),
+  skew: transform2.bind(null, "skew", extractAnglePercent$1),
+  rotate3d,
+};
+
+var filters = {
+  ...FILTERS,
+  ...TRANSFORM,
 };
 
 const SHORTS = {
   ...nativeAndMore,
+  ...backgrounds,
   ...fonts,
   ...palette$1,
   ...layouts,
   ...transitions,
+  ...textDecorations,
+  ...border$1,
+  ...filters,
 };
 
 const MEDIA_WORDS = {
@@ -1631,7 +2537,7 @@ function parse(short) {
     const cb = SHORTS[exp.name];
     if (!cb) throw new ReferenceError(exp.name);
     return !(cb instanceof Function) ? cb : cb(exp.args);
-      // cb({ todo: "here we need math and var and calc and env" }, exp.args);
+    // cb({ todo: "here we need math and var and calc and env" }, exp.args);
   });
   exprList &&= clashOrStack(exprList);
   let { selector, item } = parseSelectorPipe(sel, clazz);
@@ -1649,149 +2555,6 @@ function parse(short) {
   return { short, layer, media, selector, mainRule, cssText, atRules, atRuleText };
   // const miniCssRule = {cssText, name: layer, cssRules: [{ media, cssRules: [{ selectorText: selector, style: { cssText: body }, props }] }]};
 }
-
-class Expression {
-  constructor(name, args) {
-    this.name = name;
-    this.args = args;
-  }
-  // interpret(scope) {
-  //   // const cb = scope?.[this.name];
-  //   if (this.name in scope)
-  //     return scope[this.name]?.(scope, ...args);
-  //   throw new ReferenceError(this.name);
-  //   // if (!(cb instanceof Function))
-  //   //   return cb;
-  //   // try {
-  //   //   const args = this.args.map(x =>
-  //   //     x instanceof Expression ? x.interpret(cb.scope) :
-  //   //       x === "." ? "unset" : //todo move this into the parser??
-  //   //         cb.scope?.[x] instanceof Function ? cb.scope[x].call(cb.scope) :
-  //   //           cb.scope?.[x] ? cb.scope[x] :
-  //   //             x);
-  //   //   return cb.call(scope, ...args);
-  //   // } catch (e) {
-  //   //   if (e instanceof ReferenceError)
-  //   //     e.message = this.name + "." + e.message;
-  //   //   throw e;
-  //   // }
-  // }
-}
-
-// function reduceTriplets(arr, cb) {
-//   const res = arr.slice(0, 1);
-//   for (let i = 1; i < arr.length - 1; i++) {
-//     const a = res.at(-1);
-//     const b = arr[i];
-//     const c = arr[i + 1];
-//     const r = cb(a, b, c);
-//     if (r === undefined) res.push(b, c);
-//     else res[res.length - 1] = r;
-//   }
-//   return res;
-// }
-const OPS = {
-  "+": (a, b) => a + b,
-  "-": (a, b) => a - b,
-  "*": (a, b) => a * b,
-  "/": (a, b) => { if (!b) throw new SyntaxError("Division by zero"); return a / b },
-};
-const FACTORS = {
-  // Times
-  s_ms: 1000,
-  // Length
-  in_cm: 2.54,
-  in_mm: 25.4,
-  in_pt: 72,
-  in_pc: 6,
-  cm_mm: 10,
-  pc_mm: 25.4 / 6,
-  pc_pt: 12,
-  cm_Q: 40,
-  mm_Q: 4,
-  in_Q: 25.4 / 0.25,
-  pt_Q: (25.4 / 72) / 0.25,
-  // Frequency
-  kHz_Hz: 1000,
-  // Angles
-  turn_deg: 360,
-  turn_rad: 2 * Math.PI,
-  turn_grad: 400,
-  rad_deg: 180 / Math.PI,
-  rad_grad: 200 / Math.PI,
-  deg_grad: 400 / 360,
-  // Resolution
-  dppx_dpi: 96,
-  dppx_dpcm: 96 / 2.54,
-  dpcm_dpi: 2.54,
-};
-
-function computeNumbers(a, b, c) {
-  if (a.type && c.type && a.type != c.type)
-    throw new SyntaxError(`Incompatible types: ${a.text}<${a.type}> ${b.text} ${c.text}<${c.type}>`);
-  const calc = OPS[b.text];
-  if (!calc)
-    throw new SyntaxError("Unknown operator: " + b.text);
-  const factor = !a.type || !c.type || a.unit == c.unit ? 1 : FACTORS[a.type + "_" + c.type] ?? (1 / FACTORS[c.type + "_" + a.type]);
-  if (factor == undefined) //different types of lengths
-    return;
-  const num = calc(a.num, c.num * factor);
-  const base = a.type ? a : c;
-  const text = num + (base.unit || "");
-  return { ...base, text, num };
-}
-
-// class MathExpression extends Expression {
-//   constructor(args) {
-//     super("$math", args);
-//   }
-
-//   interpret(scope) {
-//     //1. default type and nested parens ()
-//     const defaultType = scope?.$math ?? 0;
-//     let args = this.args.map(x =>
-//       x instanceof Expression ? x.interpret(scope) :
-//         x.text == "." ? defaultType :
-//           x);
-//     //2. check the last argument and convert it to text
-//     const lastI = args.length - 1;
-//     const last = args[lastI];
-//     if (last.kind == "VAR")
-//       `var(${last.text})`;
-//     else if (last.kind != "NUMBER")
-//       throw new SyntaxError("math expressions must end with either a number or a variable, not with +-/* or similar operators.");
-
-//     //3. if we only have one argument, return it
-//     if (args.length === 1)
-//       return args[0].text ?? args[0]; //number or var
-
-//     //4. --var and ??, in reverse
-//     args = reduceTriplets(args, (a, b, c) => {
-//       if (b.text == "??" && a.kind == "VAR")
-//         return `var(${a.text}, ${c?.text || c})`;
-//       if (b.text == "??")
-//         throw new SyntaxError("?? must have a variable on the left hand side.");
-//       if (b.kind === "VAR")
-//         return `var(${b.text})`;
-//     });
-
-//     //5. implied default first argument
-//     if (args[0].kind == "OPERATOR")
-//       args.unshift(defaultType);
-
-//     //5. */
-//     args = reduceTriplets(args, (a, b, c) =>
-//       (b.text == "*" || b.text == "/") && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
-//     //6. +-
-//     args = reduceTriplets(args, (a, b, c) =>
-//       (b.text == "+" || b.text == "-") && a.kind === "NUMBER" && c.kind === "NUMBER" ? computeNumbers(a, b, c) : undefined);
-//     //7. toString
-//     if (args.length === 1)
-//       return args[0]?.text ?? args[0];
-//     args = reduceTriplets(args, (a, b, c) => (a?.text ?? a) + " " + b.text + " " + (c?.text ?? c));
-//     return `calc(${args[0]})`;
-//   }
-// }
 
 const clashOrStack = (function () {
   const STACKABLE_PROPERTIES = {
@@ -1838,53 +2601,6 @@ const clashOrStack = (function () {
   }
 })();
 
-// function diveDeep(tokens) {
-//   const res = [];
-//   while (tokens.length) {
-//     let a = tokens.shift();
-//     if (a == undefined)
-//       throw new SyntaxError("Missing end parenthesis");
-//     else if (a.text == ")")
-//       return res;
-//     else if (a.text == ",") {
-//       res.push(undefined);  // throw "empty argument not allowed";
-//       continue;
-//     } else if (a.kind === "COLOR") { //color grab
-//       const colors = [a];
-//       while (tokens[0]?.kind === "COLOR")
-//         colors.push(tokens.shift());
-//       a = new Expression("_hash", colors); //ColorExpression??
-//     } else if (a.kind === "NUMBER" || a.kind === "VAR" || a.kind === "OPERATOR") {
-//       const math = [a];
-//       while (true) {
-//         if (tokens[0]?.kind === "NUMBER" || tokens[0]?.kind === "VAR" || tokens[0]?.kind === "OPERATOR") {
-//           math.push(tokens.shift());
-//         } else if (tokens[0]?.text === "(") {
-//           tokens.shift();
-//           const x = new MathExpression(goDeep(tokens)); //todo recursive
-//           if (x.args.length != 1 && !(x.args[0] instanceof Expression && x.args[0].name === "_math"))
-//             throw new SyntaxError("Parenthesis in math must return exactly one math expression.");
-//           math.push(x);
-//         } else
-//           break;
-//       }
-//       a = new MathExpression(math);
-//     }
-
-//     let b = tokens.shift();
-//     if (a.kind === "WORD" && b.text === "(") {
-//       a = new Expression(a.text, goDeep(tokens));
-//       b = tokens.shift();
-//     }
-//     if (b.text != ")" && b.text != ",")
-//       throw "syntax error";
-//     res.push((a instanceof Expression || typeof a === "string") ? a : a.text);
-//     if (b.text === ")")
-//       return res;
-//   }
-//   throw "missing ')'";
-// }
-
 function goRightComma(tokens, divider) {
   const args = [];
   if (tokens[0] == ")" && tokens.shift())
@@ -1896,27 +2612,23 @@ function goRightComma(tokens, divider) {
       return args;
     if (tokens[0].text === divider && tokens.shift())
       continue;
-    throw new SyntaxError(`Expected ${[divider, ")"].filter(Boolean).join(" or ")}, got: ${b.text}`);
+    throw new SyntaxError(`Expected ${[divider, ")"].filter(Boolean).join(" or ")}, got: ${tokens[0].text}`);
   }
   throw new SyntaxError("missing ')'");
 }
 
 function goRightOperator(tokens) {
   let a = goDeep(tokens);
-  while (tokens.length && tokens[0].kind !== "SYN") {
-    if (!(a instanceof Expression || a.kind === "NUMBER" || a.kind === "VAR"))
-      throw new SyntaxError(`can't do ${a}-><-${tokens[0].text}`);
-    let b = goDeep(tokens);
-    if (b.kind === "NUMBER" && (b.text[0] == "-" || b.text[0] == "+")) {
-      const sign = b.text[0];
-      const right = { ...b, text: b.text.slice(1) };
-      if (sign == "-") right.num *= -1;
-      b = new Expression(sign, [undefined, right]);
-    }
-    if (b instanceof Expression && b.left === undefined)
-      a = b.prepend(a);
+  while (tokens.length) {
+    const { kind, text } = tokens[0];
+    if (kind === "OPERATOR")
+      a = { kind: "EXP", name: tokens.shift().text, args: [a, goDeep(tokens)] };
+    else if (kind === "NUMBER" && (text[0] == "-" || text[0] == "+"))
+      a = { kind: "EXP", name: "+", args: [a, goDeep(tokens)] };
+    else if (kind == "COLOR" && (a.type == "color" || a.kind == "COLOR"))
+      a = { kind: "EXP", name: "#hash", type: "color", args: [a, goDeep(tokens)] };
     else
-      throw new SyntaxError("Expected , or ) or math operator expr, got: " + b);
+      break;
   }
   return a;
 }
@@ -1924,26 +2636,18 @@ function goRightOperator(tokens) {
 
 function goDeep(tokens) {
   if (tokens[0].text === "(")
-    tokens.unshift({ kind: "WORD", text: "", math: true });
+    return { kind: "EXP", name: tokens.shift().text, args: goRightComma(tokens, ",") };
   if (tokens[0].kind === "SYN")
     throw new SyntaxError(`Expected expression, got: ${tokens[0].text}`);
 
-  if (tokens[0].kind === "OP")
-    tokens.unshift({ kind: "NUMBER", text: "" });
-  if (tokens[1].kind === "OP")
-    return new Expression(tokens.shift().text, [tokens.shift(), goRightOperator(tokens)]);
-
-  const colors = [];
-  while (tokens[0].kind === "COLOR")
-    colors.push(tokens.shift());
-  if (colors.length)
-    return new Expression("_hash", colors);
-
-  if (tokens[1].text === "(" && (tokens[0].kind === "NUMBER" || tokens[0].kind === "VAR"))
-    return new Expression("*", [tokens.shift(), ...goRightComma(tokens, "")]);
-  if (tokens[1].text === "(" && tokens[0].kind === "WORD")
-    return new Expression(tokens.shift().text, (tokens.shift(), goRightComma(tokens, ",")));
-
+  if (tokens[1].text === "(") {
+    const { text: name, kind } = tokens.shift();
+    tokens.shift();
+    return kind == "COLOR" ?
+      { kind: "EXP", type: "color", name, args: goRightComma(tokens, ",") } :
+      { kind: "EXP", name, args: goRightComma(tokens, ",") };
+  }
+  //todo we must check here that the .kind is valid.
   return tokens.shift();
 }
 
@@ -1951,10 +2655,8 @@ function parseNestedExpression(shortExp) {
   const newTokens = tokenize(shortExp);
   try {
     const short = goDeep(newTokens);
-    if (newTokens.length)
-      throw new SyntaxError("too many tokens.");
-    if (!(short instanceof Expression))
-      throw new SyntaxError("Short is not a valid expression.");
+    if (newTokens.length) throw new SyntaxError("too many tokens.");
+    if (short.kind !== "EXP") throw new SyntaxError("Short is not a valid expression.");
     return short;
   } catch (e) {
     e.message += `\n${shortExp}\n${" ".repeat(shortExp.length - newTokens.reduce(((acc, { text }) => acc + text.length), 0))}^`;
@@ -2139,6 +2841,8 @@ function parseMediaQuery(str, register) {
   return { exp: str.slice(i), media: `${tokens.join(" ")} ` };
 }
 
+//https://developer.mozilla.org/en-US/docs/Web/CSS/length#browser_compatibility
+//check if we support all lengths.
 const TYPES = {
   LENGTHS: "px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex",
   PERCENT: "%",
@@ -2153,45 +2857,15 @@ const TYPES = {
 };
 
 const NUMBER = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${TYPES.LENGTHS})|(${TYPES.ANGLES})|(${TYPES.TIMES})|(${TYPES.PERCENT})|(${TYPES.FR}))?`;
+const MATH = new RegExp(`^(${TYPES.MATH})$`);
 
-//TODO this will not be much needed when we run the function with the content first.
-function isNumberUnit(UNITS) {
-  const RX = new RegExp(`^${NUMBER}$`);
-  const integer = UNITS.includes("i");
-  const positive = UNITS.includes("+");
-  const length = UNITS.includes("l");
-  const angle = UNITS.includes("a");
-  const time = UNITS.includes("t");
-  const percent = UNITS.includes("%");
-  const frame = UNITS.includes("f");
-  const empty = UNITS.includes("e");
-  const z = UNITS.includes("0");
-
-  return function (x) {
-    if (positive && n.startsWith("-")) return;
-    const m = x.match(RX);
-    if (!m) return;
-    let [, n, l, a, t, p, f] = m;
-    if (integer && !n.isInteger()) return;
-    if (angle && a) return x;
-    if (length && l) return x;
-    if (time && t) return x;
-    if (percent && p) return x;
-    if (frame && f) return x;
-    if (empty && !l && !a && !t && !p && !f) return x;
-  }
-}
-
-const isLength = isNumberUnit("l%0"); //todo rename to lengthPercent
-const isAngle = isNumberUnit("a0");
-const isTime = isNumberUnit("t");
 
 const tokenize = (_ => {
   const QUOTE = /([`'"])(\\.|(?!\2).)*?\2/.source;
   const VAR = /--[a-zA-Z][a-zA-Z0-9_]*/.source;
   const WORD = /[._a-zA-Z][._%a-zA-Z0-9+<-]*/.source;
-  const COLOR_WORD = /#(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch)/.source;
-  const COLOR = `#(?:(a)(\\d\\d)|([0-9a-fA-F]{6})([0-9a-fA-F]{2})?|([0-9a-fA-F]{3})([0-9a-fA-F])?|(${TYPES.COLOR_NAMES}|([a-zA-Z_]+|))(\\d\\d)?)`;
+  const NUMBER_WORDS = /e|pi|infinity|NaN/.source; //todo not added yet.
+  const COLOR = `#[a-zA-Z0-9_]+`;
   const OPERATOR = /\?\?|\*\*|[*/+-]/.source;
   const CPP = /[,()]/.source;
 
@@ -2201,7 +2875,6 @@ const tokenize = (_ => {
     NUMBER,
     VAR,
     WORD,
-    COLOR_WORD,
     COLOR,
     OPERATOR,
     CPP,
@@ -2213,27 +2886,19 @@ const tokenize = (_ => {
   return function tokenize(input) {
     const out = [];
     for (let m; (m = TOKENS.exec(input));) {
-      const [text, _, q, quote, ws, n, num, length, angle, time, percent, fr, vari, word, colorWord, c, c0, p0, c1, p1, c2, p2, c3, c4, p3, op, cpp] = m;
+      const [text, _, q, quote, ws, n, num, length, angle, time, percent, fr, vari, word, c, op, cpp] = m;
       if (ws) continue;
       else if (num) {
-        const unit = length ?? angle ?? time ?? percent ?? undefined;
-        const type = length ? "length" : angle ? "angle" : time ? "time" : percent ? "percent" : fr ? "fr" : undefined;
-        out.push({ text, kind: "NUMBER", num: Number(num), unit, type });
+        const n = Number(num);
+        const type = length ? "length" : angle ? "angle" : time ? "time" : percent ? "percent" : fr ? "fr" : "number";
+        const unit = length ?? angle ?? time ?? percent ?? fr ?? "";
+        out.push({ text, kind: "NUMBER", num: n, unit, type });
       }
-      else if (c) {
-        const percent =
-          p0 ? 100 - Number(p0) :
-            p1 ? (parseInt(p1, 16) / 15) * 100 :
-              p2 ? (parseInt(p2, 16) / 255) * 100 :
-                p3 ? Number(p3) :
-                  undefined;
-        const c = c0 ? "transparent" : c1 ?? c2 ?? c3;
-        out.push({ text, kind: "COLOR", c, percent, primitive: c4 == null, hex: (c1 || c2) && text });
-      }
-      else if (quote) out.push({ text, kind: "QUOTE", quote });
+      else if (c) out.push({ text, kind: "COLOR" });
+      else if (quote) out.push({ text, kind: "QUOTE" });
       else if (vari) out.push({ text, kind: "VAR" });
+      else if (word && text.match(MATH)) out.push({ text, kind: "MATH" });
       else if (word) out.push({ text, kind: "WORD" });
-      else if (colorWord) out.push({ text, kind: "COLORWORD" });
       else if (op) out.push({ text, kind: "OPERATOR" });
       else if (cpp) out.push({ text, kind: "SYN" });
       else throw new SyntaxError(`Unknown token: ${text} in ${input}`);
@@ -2334,5 +2999,5 @@ function updateStyleText(styleEl) {
 //   }
 // });
 
-export { TYPES, extractShort, extractShortSelector, isAngle, isLength, isTime, memoize, parse, removeUnusedShorts, sequence, updateClassList, updateStyleText };
+export { TYPES, extractShort, extractShortSelector, memoize, parse, removeUnusedShorts, sequence, updateClassList, updateStyleText };
 //# sourceMappingURL=csss.js.map
