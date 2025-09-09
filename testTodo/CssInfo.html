@@ -1,61 +1,16 @@
 <body>
-  <script>
+  <script type="module">
+    import { NativeCssProps, NativeCssPropsUnsupported } from "/src/nativeCss.js";
 
-    function remove__compat(obj) {
-      return Object.fromEntries(
-        Object.entries(obj)
-          .filter(([k, v]) => k != "__compat")
-          .map(([k, v]) => [k, v && typeof v == "object" ? remove__compat(v) : v])
-      );
+    function printToScreen(obj) {
+      let str = "<pre>export {\n";
+      for (let [k, v] of Object.entries(obj))
+        str += `  ${k}: ${JSON.stringify(v)},\n`;
+      str += "}\n</pre>";
+      document.body.insertAdjacentHTML("beforeend", str);
     }
 
-    (async () => {
-      const CssSpec = (await (await fetch("https://cdn.jsdelivr.net/npm/@mdn/browser-compat-data")).json()).css;
-      const cssp = CssSpec.properties;
-
-      const cssat = CssSpec.atRules;
-      const cssSelect = CssSpec.selectors;
-      makeTypeTable(CssSpec.types);
-      debugger
-    })();
-
-    function checkSupportType(kebab) {
-      let type = [];
-      CSS.supports(kebab, "min(0,1)") || CSS.supports(kebab, "min(0px,1px)") && type.push("min");
-      CSS.supports(kebab, "url(http://example.com)") && type.push("url");
-      CSS.supports(kebab, "#123456") || CSS.supports(kebab, "#123 1px 1px") && type.push("color");
-      CSS.supports(kebab, "repeat(2, 60px)") && type.push("repeat");
-      CSS.supports(kebab, "attr(data-foo)") && type.push("attr");
-      CSS.supports(kebab, "counter(my-counter)") && type.push("counter");
-      CSS.supports(kebab, "counters(my-counter, '.')") && type.push("counters");
-      return type.join(",");
-    }
-
-    function fixBorderStyleEtc(originalCamel) {
-      const m = originalCamel.match(/^border(.+)(Style|Width|Color)$/);
-      return m ? "border" + m[2] + m[1] : originalCamel;
-    }
-
-    const propsCamel = Object.getOwnPropertyNames(document.createElement('div').style);
-    const CssProps = Object.fromEntries(
-      Object.getOwnPropertyNames(document.createElement('div').style).map(camel => {
-        if (camel.startsWith("webkit") || camel.startsWith("moz"))
-          camel = camel[0].toUpperCase() + camel.slice(1);
-        const kebab = camel.replace(/([A-Z])/g, "-$1").toLowerCase();
-        camel = fixBorderStyleEtc(camel);
-        return [camel, { kebab, type: checkSupportType(kebab) }];
-      }));
-
-    //subdue scopes (font,fontStyle,fontWeight,... -> font { style,weight,... })
-    //longest name first;
-    const keys = Object.keys(CssProps).sort((a, b) => b.length - a.length);
-    for (let k of keys)
-      for (let s of keys.filter(x => x.startsWith(k) && x != k))
-        (CssProps[k][s.slice(k.length)] = CssProps[s]), delete CssProps[s];
-
-    document.body.insertAdjacentHTML("beforeend",
-      `<pre>export {
-${Object.entries(CssProps).map(([k, v]) => `  ${k}: ${JSON.stringify(v)},`).join("\n")}
-}</pre>`);
+    printToScreen(NativeCssProps);
+    printToScreen(NativeCssPropsUnsupported);
   </script>
 </body>
