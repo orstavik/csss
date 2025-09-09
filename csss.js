@@ -1959,6 +1959,7 @@ var layouts = {
   flex,
   flexItem,
   lineClamp,
+  hide: _ => ({ display: "none" }),
 };
 
 //from hex => lch
@@ -2135,49 +2136,56 @@ function jump(type, args) {
   return transition(`steps(${steps.num}${type})`, args)
 }
 
+function cube(cube, args) { return transition(`cubic-bezier(${cube})`, args); }
+
 var transitions = {
   transitionProperty: undefined,
   transitionDuration: undefined,
   transitionTimingFunction: undefined,
   transitionDelay: undefined,
 
-  ease: args => transition("ease", args),
-  slide: args => transition("linear", args),
-  easeIn: args => transition("ease-in", args),
-  easeOut: args => transition("ease-out", args),
-  easeInOut: args => transition("ease-in-out", args),
-  crispIn: args => transition("cubic-bezier(0,.55,.2,1)", args),
-  crispOut: args => transition("cubic-bezier(.8,0,1,.45)", args),
-  crispInOut: args => transition("cubic-bezier(.8,0,.2,1)", args),
-  harshOut: args => transition("cubic-bezier(.95,0,1,.2)", args),
-  harshIn: args => transition("cubic-bezier(0,.8,.15,1)", args),
-  harshInOut: args => transition("cubic-bezier(.9,0,.1,1)", args),
-  playfulIn: args => transition("cubic-bezier(.6,0,1,.2)", args),
-  playfulOut: args => transition("cubic-bezier(0,.35,.1,1)", args),
-  playfulInOut: args => transition("cubic-bezier(.65,0,.35,1)", args),
-  bounceIn: args => transition("cubic-bezier(.36,0,.66,-.56)", args),
-  bounceOut: args => transition("cubic-bezier(.34,1.56,.64,1)", args),
-  bounceInOut: args => transition("cubic-bezier(.68,-.6,.32,1.6)", args),
-  easeInCrispOut: args => transition("cubic-bezier(.42,0,.2,1)", args),
-  easeInHarshOut: args => transition("cubic-bezier(.42,0,.15,1)", args),
-  easeInPlayfulOut: args => transition("cubic-bezier(.42,0,.1,1)", args),
-  easeInBounceOut: args => transition("cubic-bezier(.42,0,.64,1)", args),
-  crispInEaseOut: args => transition("cubic-bezier(.8,0,.58,1)", args),
-  crispInHarshOut: args => transition("cubic-bezier(.8,0,.15,1)", args),
-  crispInPlayfulOut: args => transition("cubic-bezier(.8,0,.1,1)", args),
-  crispInBounceOut: args => transition("cubic-bezier(.8,0,.64,1)", args),
-  harshInEaseOut: args => transition("cubic-bezier(.95,0,.58,1)", args),
-  harshInCrispOut: args => transition("cubic-bezier(.95,0,.2,1)", args),
-  harshInPlayfulOut: args => transition("cubic-bezier(.95,0,.1,1)", args),
-  harshInBounceOut: args => transition("cubic-bezier(.95,0,.64,1)", args),
-  playfulInEaseOut: args => transition("cubic-bezier(.6,0,.58,1)", args),
-  playfulInCrispOut: args => transition("cubic-bezier(.6,0,.2,1)", args),
-  playfulInHarshOut: args => transition("cubic-bezier(.6,0,.15,1)", args),
-  playfulInBounceOut: args => transition("cubic-bezier(.6,0,.64,1)", args),
-  bounceInEaseOut: args => transition("cubic-bezier(.36,0,.58,1)", args),
-  bounceInCrispOut: args => transition("cubic-bezier(.36,0,.2,1)", args),
-  bounceInHarshOut: args => transition("cubic-bezier(.36,0,.15,1)", args),
-  bounceInPlayfulOut: args => transition("cubic-bezier(.36,0,.1,1)", args),
+  ease: transition.bind(null, "ease"),
+  slide: transition.bind(null, "linear"),
+  easeIn: transition.bind(null, "ease-in"),
+  easeOut: transition.bind(null, "ease-out"),
+  easeInOut: transition.bind(null, "ease-in-out"),
+
+  easeInCrispOut: cube.bind(null, "0.42,0,0.80,1"),
+  easeInHarshOut: cube.bind(null, "0.42,0,0.90,1"),
+  easeInPlayfulOut: cube.bind(null, "0.42,0,0.75,1.40"),
+  easeInBounceOut: cube.bind(null, "0.42,0,0.70,1.30"),
+  crisp: cube.bind(null, "0.20,0,0.80,1"),
+  crispIn: cube.bind(null, "0.20,0,0.66,1"),
+  crispOut: cube.bind(null, "0.35,0,0.80,1"),
+  crispInOut: cube.bind(null, "0.20,0,0.80,1"),
+  crispInEaseOut: cube.bind(null, "0.20,0,0.58,1"),
+  crispInHarshOut: cube.bind(null, "0.20,0,0.90,1"),
+  crispInPlayfulOut: cube.bind(null, "0.20,0,0.75,1.40"),
+  crispInBounceOut: cube.bind(null, "0.20,0,0.70,1.30"),
+  harsh: cube.bind(null, "0.05,0,0.90,1"),
+  harshIn: cube.bind(null, "0.05,0,0.66,1"),
+  harshOut: cube.bind(null, "0.35,0,0.90,1"),
+  harshInOut: cube.bind(null, "0.05,0,0.90,1"),
+  harshInEaseOut: cube.bind(null, "0.05,0,0.58,1"),
+  harshInCrispOut: cube.bind(null, "0.05,0,0.80,1"),
+  harshInPlayfulOut: cube.bind(null, "0.05,0,0.75,1.40"),
+  harshInBounceOut: cube.bind(null, "0.05,0,0.70,1.30"),
+  playful: cube.bind(null, "0.20,-0.40,0.75,1.40"),
+  playfulIn: cube.bind(null, "0.20,-0.40,0.66,1"),
+  playfulOut: cube.bind(null, "0.35,0,0.75,1.40"),
+  playfulInOut: cube.bind(null, "0.20,-0.40,0.75,1.40"),
+  playfulInEaseOut: cube.bind(null, "0.20,-0.40,0.58,1"),
+  playfulInCrispOut: cube.bind(null, "0.20,-0.40,0.80,1"),
+  playfulInHarshOut: cube.bind(null, "0.20,-0.40,0.90,1"),
+  playfulInBounceOut: cube.bind(null, "0.20,-0.40,0.70,1.30"),
+  bounce: cube.bind(null, "0.25,-0.30,0.70,1.30"),
+  bounceIn: cube.bind(null, "0.25,-0.30,0.66,1"),
+  bounceOut: cube.bind(null, "0.35,0,0.70,1.30"),
+  bounceInOut: cube.bind(null, "0.25,-0.30,0.70,1.30"),
+  bounceInEaseOut: cube.bind(null, "0.25,-0.30,0.58,1"),
+  bounceInCrispOut: cube.bind(null, "0.25,-0.30,0.80,1"),
+  bounceInHarshOut: cube.bind(null, "0.25,-0.30,0.90,1"),
+  bounceInPlayfulOut: cube.bind(null, "0.25,-0.30,0.75,1.2"),
 
   //hesitate: (args) => native(`cubic-bezier(.5,0,.5,1)`, args),
   //wobble: (args) => native(`cubic-bezier(.5,-.5,.5,1.5)`, args),
@@ -2534,7 +2542,7 @@ function parse(short) {
   let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
   exprList = exprList.map(parseNestedExpression);
   exprList = exprList.map(exp => {
-    const cb = SHORTS[exp.name];
+    const cb = SHORTS[exp.name] ?? SHORTS[exp.text];
     if (!cb) throw new ReferenceError(exp.name);
     return !(cb instanceof Function) ? cb : cb(exp.args);
     // cb({ todo: "here we need math and var and calc and env" }, exp.args);
@@ -2654,6 +2662,7 @@ function goDeep(tokens) {
 function parseNestedExpression(shortExp) {
   const newTokens = tokenize(shortExp);
   try {
+    if (newTokens.length == 1) return newTokens[0];
     const short = goDeep(newTokens);
     if (newTokens.length) throw new SyntaxError("too many tokens.");
     if (short.kind !== "EXP") throw new SyntaxError("Short is not a valid expression.");
