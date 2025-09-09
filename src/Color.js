@@ -77,10 +77,10 @@ function RGBToRgb({ R, G, B }) {
   };
 }
 function rgbToHex6({ r, g, b }) {
-  return [r, g, b].map(c => Math.round(c).toString(16).padStart(2, "0")).join("");
+  return { hex6: [r, g, b].map(c => Math.round(c).toString(16).padStart(2, "0")).join("") };
 }
 function hex6AToHex8({ hex6, alpha }) {
-  return hex6 + Math.round(alpha * 255).toString(16).padStart(2, "0");
+  return { hex8: hex6 + Math.round(alpha * 255).toString(16).padStart(2, "0") };
 }
 
 //main functions
