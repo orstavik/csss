@@ -29,6 +29,7 @@ function printDiff({ key, actual, expected, type }) {
     type == "ins" ? console.log("%c%s", "background-color:green", b) :
       type == "del" ? console.log("%c%s", "background-color:red", a) :
         console.log("%c%s", "color:grey", a);
+  console.info(actual);
 }
 
 export default async function runTests(paths, test) {
