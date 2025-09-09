@@ -2187,7 +2187,8 @@ var transitions = {
   bounceInHarshOut: cube.bind(null, "0.25,-0.30,0.90,1"),
   bounceInPlayfulOut: cube.bind(null, "0.25,-0.30,0.75,1.2"),
 
-  //hesitate: (args) => native(`cubic-bezier(.5,0,.5,1)`, args),
+  hesitate: cube.bind(null, ".38,1.55,.62,-0.55"),
+
   //wobble: (args) => native(`cubic-bezier(.5,-.5,.5,1.5)`, args),
   //0.29, 1.01, 1, -0.68
 
