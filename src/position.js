@@ -25,9 +25,10 @@ const origin = {
 
 function position(position, ar) {
   const res = { position };
-  const [pl1, pl2] = origin[extractName(ar)] || ["left", "top"];
+  if (!ar?.length) return res;
+  const [pl1, pl2] = origin[extractName(ar)] ?? ["left", "top"];
   res[pl1] = extractLengthPercent(ar);
-  res[pl2] = extractLengthPercent(ar);
+  if (ar.length) res[pl2] = extractLengthPercent(ar);
   if (ar.length)
     throw new SyntaxError(`unknown argument: $position(${ar[0].text}).`);
   return res;

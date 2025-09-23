@@ -1,3 +1,25 @@
+
+**csss:** $relative
+**css:**
+```css
+@layer containerDefault {
+  .\$relative {
+    position: relative;
+  }
+}
+```
+
+**csss:** $absolute(top,40%)
+**css:**
+```css
+@layer containerDefault {
+  .\$absolute\(top\,40\%\) {
+    position: absolute;
+    top: 40%;
+  }
+}
+```
+
 **csss:** $absolute(0,0)
 **css:**
 ```css
