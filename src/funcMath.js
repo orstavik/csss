@@ -166,7 +166,7 @@ function doMath(check, func, post, texter, name, args) {
   const nums = computableNumbers(args);
   return nums ?
     post(func(...nums), args[0]) :
-    { type: args[0].type, text: texter(args[0].map(a => a.text), name) };
+    { type: args[0].type, text: texter(args.map(a => a.text), name) };
 }
 
 export default {
