@@ -8,6 +8,7 @@ import transitions from "./transitions.js";
 import textDecorations from "./textDecorations.js";
 import filters from "./filterTransform.js";
 import boxShadow from "./boxShadow.js";
+import position from "./position.js";
 
 const SHORTS = {
   ...nativeAndMore,
@@ -20,6 +21,7 @@ const SHORTS = {
   ...border,
   ...filters,
   ...boxShadow,
+  ...position,
 };
 
 const MEDIA_WORDS = {
