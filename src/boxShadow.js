@@ -1,13 +1,18 @@
-import { extractColor, extractLength } from "./func.js";
+import { interpretColor, interpretLength } from "./func.js";
 
 function _boxShadow(ar) {
-  const color = extractColor(args);
-  const res = ar.map(a => {
-    const l = extractLength(a) ?? a.text == "none" ? "none" : null;
-    if (l)
-      return l;
-    throw new SyntaxError(`Could not interpret $boxShadow argument: ${a.text}.`);
-  });
+  let color, a2;
+  const res = [];
+  for (let a of ar) {
+    if (a.text == "none")
+      res.push("none");
+    else if (a2 = interpretColor(a))
+      color = a2.text;
+    else if (a2 = interpretLength(a))
+      res.push(a2.text);
+    else
+      throw new SyntaxError(`Could not interpret $boxShadow argument: ${a.text}.`);
+  }
   if (res.length < 2 || res.length > 4)
     throw new SyntaxError(`$boxShadow requires two, three, or four length arguments.`);
   color && res.push(color);
