@@ -1,20 +1,5 @@
 import { extractName, extractLengthPercent } from "./func.js";
 
-function position(position, ar) {
-  const res = { position };
-  const [pl1, pl2] = origin[extractName(ar)] || ["left", "top"];
-  res[pl1] = extractLengthPercent(ar);
-  res[pl2] = extractLengthPercent(ar);
-  if (ar.length)
-    throw new SyntaxError(`unknown argument: $position(${ar[0].text}).`);
-  return res;
-}
-
-const absolute = position.bind(null, "absolute");
-const relative = position.bind(null, "relative");
-const fixed = position.bind(null, "fixed");
-const sticky = position.bind(null, "sticky");
-
 const origin = {
   left: ["left"],
   right: ["right"],
@@ -38,6 +23,22 @@ const origin = {
   rightEnd: ["right", "insetBlockEnd"],
 };
 
+function position(position, ar) {
+  const res = { position };
+  const [pl1, pl2] = origin[extractName(ar)] || ["left", "top"];
+  res[pl1] = extractLengthPercent(ar);
+  res[pl2] = extractLengthPercent(ar);
+  if (ar.length)
+    throw new SyntaxError(`unknown argument: $position(${ar[0].text}).`);
+  return res;
+}
+
+const absolute = position.bind(null, "absolute");
+const relative = position.bind(null, "relative");
+const fixed = position.bind(null, "fixed");
+const sticky = position.bind(null, "sticky");
+
+
 // container {
 //   anchor-name: --some-name-never-declared;
 // }
@@ -59,8 +60,8 @@ function positionAnchor(ar) {
   if (!name) throw new SyntaxError(`$positionAnchor argument must always begin with a valid identifier name.`);
   if (!ar.length) //sideways umbrella 
     return { "position-anchor": `--${name}` };
+  //i think that we need special rules to tackle "0" and turn into top/bottom or left/right
 }
-
 
 
 export default {
