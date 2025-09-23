@@ -1,6 +1,4 @@
-import { makeExtractor, interpretName, interpretNumber, interpretLength, interpretAngle, interpretQuote, interpretUrl } from "./func.js";
-const extractUrl = makeExtractor(interpretUrl);
-const extractName = makeExtractor(interpretName);
+import { extractName, extractUrl, interpretName, interpretNumber, interpretLength, interpretAngle, interpretQuote } from "./func.js";
 
 const FONT_WORDS = {
   bold: { fontWeight: "bold" },

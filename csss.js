@@ -790,10 +790,11 @@ const extractAngle$1 = makeExtractor(interpretAngle);
 const extractAnglePercent$1 = makeExtractor(interpretAnglePercent);
 const extractNumber = makeExtractor(interpretNumber);
 const extractNumberPercent = makeExtractor(interpretNumberPercent);
-const extractUrl$1 = makeExtractor(interpretUrl);
+const extractUrl = makeExtractor(interpretUrl);
 const extractImage = makeExtractor(interpretImage);
 const extractMimeType = makeExtractor(interpretMimeType);
 const extractColor$1 = makeExtractor(interpretColor);
+const extractName = makeExtractor(interpretName);
 
 
 // const SpecializedNativeCssFunctions = {
@@ -1044,6 +1045,7 @@ const extractAt = makeExtractor(a => {
   return a2 && { text: a2 };
 });
 
+//"Mdn: Including two stop positions is equivalent to declaring two color stops with the same color at the two positions."
 function extractColorStop(args, lengthOrAngleExtractor) {
   const color = extractColor(args);
   if (!color) return;
@@ -1231,9 +1233,6 @@ function border(ar) {
 var border$1 = {
   border,
 };
-
-const extractUrl = makeExtractor(interpretUrl);
-const extractName = makeExtractor(interpretName);
 
 const FONT_WORDS = {
   bold: { fontWeight: "bold" },
@@ -1752,8 +1751,8 @@ const _LAYOUT = {
   scrollMargin: toLogicalFour.bind(null, "scroll-margin"),
   textIndent: nativeAndMore.textIndent,
   indent: nativeAndMore.textIndent,
-  inlineSize: toSize.bind(null, "inlineSize"),
-  blockSize: toSize.bind(null, "blockSize"),
+  inlineSize: toSize.bind(null, "inlineSize"), //todo should we block this?
+  blockSize: toSize.bind(null, "blockSize"),   //todo should we block this?
   size,
   // w: AllFunctions.width,
   // h: AllFunctions.height,
@@ -2144,53 +2143,35 @@ var transitions = {
   transitionTimingFunction: undefined,
   transitionDelay: undefined,
 
-  ease: transition.bind(null, "ease"),
   slide: transition.bind(null, "linear"),
+  ease: transition.bind(null, "ease"),
   easeIn: transition.bind(null, "ease-in"),
   easeOut: transition.bind(null, "ease-out"),
   easeInOut: transition.bind(null, "ease-in-out"),
-
-  easeInCrispOut: cube.bind(null, "0.42,0,0.80,1"),
-  easeInHarshOut: cube.bind(null, "0.42,0,0.90,1"),
-  easeInPlayfulOut: cube.bind(null, "0.42,0,0.75,1.40"),
-  easeInBounceOut: cube.bind(null, "0.42,0,0.70,1.30"),
   crisp: cube.bind(null, "0.20,0,0.80,1"),
   crispIn: cube.bind(null, "0.20,0,0.66,1"),
   crispOut: cube.bind(null, "0.35,0,0.80,1"),
   crispInOut: cube.bind(null, "0.20,0,0.80,1"),
-  crispInEaseOut: cube.bind(null, "0.20,0,0.58,1"),
-  crispInHarshOut: cube.bind(null, "0.20,0,0.90,1"),
-  crispInPlayfulOut: cube.bind(null, "0.20,0,0.75,1.40"),
-  crispInBounceOut: cube.bind(null, "0.20,0,0.70,1.30"),
   harsh: cube.bind(null, "0.05,0,0.90,1"),
   harshIn: cube.bind(null, "0.05,0,0.66,1"),
   harshOut: cube.bind(null, "0.35,0,0.90,1"),
   harshInOut: cube.bind(null, "0.05,0,0.90,1"),
-  harshInEaseOut: cube.bind(null, "0.05,0,0.58,1"),
-  harshInCrispOut: cube.bind(null, "0.05,0,0.80,1"),
-  harshInPlayfulOut: cube.bind(null, "0.05,0,0.75,1.40"),
-  harshInBounceOut: cube.bind(null, "0.05,0,0.70,1.30"),
   playful: cube.bind(null, "0.20,-0.40,0.75,1.40"),
   playfulIn: cube.bind(null, "0.20,-0.40,0.66,1"),
   playfulOut: cube.bind(null, "0.35,0,0.75,1.40"),
   playfulInOut: cube.bind(null, "0.20,-0.40,0.75,1.40"),
-  playfulInEaseOut: cube.bind(null, "0.20,-0.40,0.58,1"),
-  playfulInCrispOut: cube.bind(null, "0.20,-0.40,0.80,1"),
-  playfulInHarshOut: cube.bind(null, "0.20,-0.40,0.90,1"),
-  playfulInBounceOut: cube.bind(null, "0.20,-0.40,0.70,1.30"),
   bounce: cube.bind(null, "0.25,-0.30,0.70,1.30"),
   bounceIn: cube.bind(null, "0.25,-0.30,0.66,1"),
   bounceOut: cube.bind(null, "0.35,0,0.70,1.30"),
   bounceInOut: cube.bind(null, "0.25,-0.30,0.70,1.30"),
-  bounceInEaseOut: cube.bind(null, "0.25,-0.30,0.58,1"),
-  bounceInCrispOut: cube.bind(null, "0.25,-0.30,0.80,1"),
-  bounceInHarshOut: cube.bind(null, "0.25,-0.30,0.90,1"),
-  bounceInPlayfulOut: cube.bind(null, "0.25,-0.30,0.75,1.2"),
 
   hesitate: cube.bind(null, ".38,1.55,.62,-0.55"),
+  hesitateIn: cube.bind(null, ".45,.64,.12,-0.55"),
+  hesitateOut: cube.bind(null, ".38,0,.62,-0.55"),
+  hesitateInOut: cube.bind(null, ".38,1.55,.62,-0.55"),
 
   //wobble: (args) => native(`cubic-bezier(.5,-.5,.5,1.5)`, args),
-  //0.29, 1.01, 1, -0.68
+  wobbleOut: cube.bind(null, "1,2.06,.52,.5"),
 
   transition: args => {
     const x1 = extractNumber(x1);
@@ -2295,7 +2276,7 @@ const FILTERS = {
   sepia: filterFunc.bind(null, "filter", "sepia", [extractNumberPercent]),
   dropShadow: filterFunc.bind(null, "filter", "drop-shadow", [extractColor$1, extractLength, extractLength, extractLengthPercent$1]),
   hueRotate: filterFunc.bind(null, "filter", "hue-rotate", [extractAngle$1]),
-  filter: filterFunc.bind(null, "filter", null, [extractUrl$1]),
+  filter: filterFunc.bind(null, "filter", null, [extractUrl]),
 
   backdropBlur: filterFunc.bind(null, "filter", "blur", [extractLength]),
   backdropBrightness: filterFunc.bind(null, "filter", "brightness", [extractNumberPercent]),
@@ -2307,7 +2288,7 @@ const FILTERS = {
   backdropSepia: filterFunc.bind(null, "filter", "sepia", [extractNumberPercent]),
   backdropDropShadow: filterFunc.bind(null, "filter", "drop-shadow", [extractColor$1, extractLength, extractLength, extractLengthPercent$1]),
   backdropHueRotate: filterFunc.bind(null, "filter", "hue-rotate", [extractAngle$1]),
-  backdropFilter: filterFunc.bind(null, "filter", null, [extractUrl$1]),
+  backdropFilter: filterFunc.bind(null, "filter", null, [extractUrl]),
 };
 
 

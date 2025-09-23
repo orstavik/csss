@@ -551,6 +551,7 @@ export const extractUrl = makeExtractor(interpretUrl);
 export const extractImage = makeExtractor(interpretImage);
 export const extractMimeType = makeExtractor(interpretMimeType);
 export const extractColor = makeExtractor(interpretColor);
+export const extractName = makeExtractor(interpretName);
 
 
 // const SpecializedNativeCssFunctions = {
