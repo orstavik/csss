@@ -554,6 +554,26 @@ export const extractMimeType = makeExtractor(interpretMimeType);
 export const extractColor = makeExtractor(interpretColor);
 export const extractName = makeExtractor(interpretName);
 
+function makeEvaluator(interpret) {
+  return function (a, i) {
+    const a2 = interpret(a);
+    if (a2)
+      return a2.text;
+    throw new SyntaxError(`invalid argument ${i + 1}: ${a.text}`);
+  }
+}
+export const evaluateTime = makeEvaluator(interpretTime);
+export const evaluateLength = makeEvaluator(interpretLength);
+export const evaluateLengthPercent = makeEvaluator(interpretLengthPercent);
+export const evaluateAngle = makeEvaluator(interpretAngle);
+export const evaluateAnglePercent = makeEvaluator(interpretAnglePercent);
+export const evaluateNumber = makeEvaluator(interpretNumber);
+export const evaluateNumberPercent = makeEvaluator(interpretNumberPercent);
+export const evaluateUrl = makeEvaluator(interpretUrl);
+export const evaluateImage = makeEvaluator(interpretImage);
+export const evaluateMimeType = makeEvaluator(interpretMimeType);
+export const evaluateColor = makeEvaluator(interpretColor);
+export const evaluateName = makeEvaluator(interpretName);
 
 // const SpecializedNativeCssFunctions = {
 //    element: (...args) => `element(${args.join(",")})`,
