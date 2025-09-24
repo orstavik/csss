@@ -4,50 +4,52 @@ import {
   interpretLength,
   interpretLengthPercent,
   interpretNumber,
+  interpretColor,
+  interpretUrl,
+  interpretNumberPercent,
 
-  extractLength,
-  extractLengthPercent,
   extractAngle,
-  extractColor,
-  extractNumber,
-  extractNumberPercent,
-  extractUrl,
-  interpretNumberPercent
+  extractNumber
 } from "./func.js";
 
 
-function filterFunc(prop, name, extractors, argsIn) {
-  const args = extractors.map(ex => ex(argsIn)); //todo
-  if (argsIn.length)
-    throw new SyntaxError(`unknown argument filter ${args[0]}`);
-  const str = name ? `${name}(${args.filter(Boolean).join(" ")})` :
-    args.filter(Boolean).join(" ");
+function filterFunc(prop, name, interpretors, args) {
+  if (args.length != interpretors.length)
+    throw new SyntaxError(`${name} requires exactly ${interpretors.length} arguments, got ${args.length} arguments.`);
+  const res = args.map((a, i) => {
+    const interpret = interpretors[i];
+    const a2 = interpret(a);
+    if (a2 == null)
+      throw new SyntaxError(`invalid argument ${i + 1} for ${name}(): ${a}`);
+    return a2.text;
+  });
+  const str = name ? `${name}(${res.join(" ")})` : res.join(" ");
   return { [prop]: str };
 }
 const FILTERS = {
-  blur: filterFunc.bind(null, "filter", "blur", [extractLength]),
-  brightness: filterFunc.bind(null, "filter", "brightness", [extractNumberPercent]),
-  contrast: filterFunc.bind(null, "filter", "contrast", [extractNumberPercent]),
-  grayscale: filterFunc.bind(null, "filter", "grayscale", [extractNumberPercent]),
-  invert: filterFunc.bind(null, "filter", "invert", [extractNumberPercent]),
-  opacity: filterFunc.bind(null, "filter", "opacity", [extractNumberPercent]),
-  saturate: filterFunc.bind(null, "filter", "saturate", [extractNumberPercent]),
-  sepia: filterFunc.bind(null, "filter", "sepia", [extractNumberPercent]),
-  dropShadow: filterFunc.bind(null, "filter", "drop-shadow", [extractColor, extractLength, extractLength, extractLengthPercent]),
-  hueRotate: filterFunc.bind(null, "filter", "hue-rotate", [extractAngle]),
-  filter: filterFunc.bind(null, "filter", null, [extractUrl]),
+  blur: filterFunc.bind(null, "filter", "blur", [interpretLength]),
+  brightness: filterFunc.bind(null, "filter", "brightness", [interpretNumberPercent]),
+  contrast: filterFunc.bind(null, "filter", "contrast", [interpretNumberPercent]),
+  grayscale: filterFunc.bind(null, "filter", "grayscale", [interpretNumberPercent]),
+  invert: filterFunc.bind(null, "filter", "invert", [interpretNumberPercent]),
+  opacity: filterFunc.bind(null, "filter", "opacity", [interpretNumberPercent]),
+  saturate: filterFunc.bind(null, "filter", "saturate", [interpretNumberPercent]),
+  sepia: filterFunc.bind(null, "filter", "sepia", [interpretNumberPercent]),
+  dropShadow: filterFunc.bind(null, "filter", "drop-shadow", [interpretColor, interpretLength, interpretLength, interpretLengthPercent]),
+  hueRotate: filterFunc.bind(null, "filter", "hue-rotate", [interpretAngle]),
+  filter: filterFunc.bind(null, "filter", null, [interpretUrl]),
 
-  backdropBlur: filterFunc.bind(null, "backdropFilter", "blur", [extractLength]),
-  backdropBrightness: filterFunc.bind(null, "backdropFilter", "brightness", [extractNumberPercent]),
-  backdropContrast: filterFunc.bind(null, "backdropFilter", "contrast", [extractNumberPercent]),
-  backdropGrayscale: filterFunc.bind(null, "backdropFilter", "grayscale", [extractNumberPercent]),
-  backdropInvert: filterFunc.bind(null, "backdropFilter", "invert", [extractNumberPercent]),
-  backdropOpacity: filterFunc.bind(null, "backdropFilter", "opacity", [extractNumberPercent]),
-  backdropSaturate: filterFunc.bind(null, "backdropFilter", "saturate", [extractNumberPercent]),
-  backdropSepia: filterFunc.bind(null, "backdropFilter", "sepia", [extractNumberPercent]),
-  backdropDropShadow: filterFunc.bind(null, "backdropFilter", "drop-shadow", [extractColor, extractLength, extractLength, extractLengthPercent]),
-  backdropHueRotate: filterFunc.bind(null, "backdropFilter", "hue-rotate", [extractAngle]),
-  backdropFilter: filterFunc.bind(null, "backdropFilter", null, [extractUrl]),
+  backdropBlur: filterFunc.bind(null, "backdropFilter", "blur", [interpretLength]),
+  backdropBrightness: filterFunc.bind(null, "backdropFilter", "brightness", [interpretNumberPercent]),
+  backdropContrast: filterFunc.bind(null, "backdropFilter", "contrast", [interpretNumberPercent]),
+  backdropGrayscale: filterFunc.bind(null, "backdropFilter", "grayscale", [interpretNumberPercent]),
+  backdropInvert: filterFunc.bind(null, "backdropFilter", "invert", [interpretNumberPercent]),
+  backdropOpacity: filterFunc.bind(null, "backdropFilter", "opacity", [interpretNumberPercent]),
+  backdropSaturate: filterFunc.bind(null, "backdropFilter", "saturate", [interpretNumberPercent]),
+  backdropSepia: filterFunc.bind(null, "backdropFilter", "sepia", [interpretNumberPercent]),
+  backdropDropShadow: filterFunc.bind(null, "backdropFilter", "drop-shadow", [interpretColor, interpretLength, interpretLength, interpretLengthPercent]),
+  backdropHueRotate: filterFunc.bind(null, "backdropFilter", "hue-rotate", [interpretAngle]),
+  backdropFilter: filterFunc.bind(null, "backdropFilter", null, [interpretUrl]),
   noBackdropFilter: { backdropFilter: "none" },
 };
 
