@@ -13,7 +13,7 @@
 ```css
 @layer containerDefault {
   .\$scale\(30\%\,15\%\) {
-    transform: scale(0.3, 0.15);
+    transform: scale(30%, 15%);
   }
 }
 ```
@@ -23,7 +23,7 @@
 ```css
 @layer containerDefault {
   .\$scale\(30\%\) {
-    transform: scale(0.3);
+    transform: scale(30%);
   }
 }
 ```

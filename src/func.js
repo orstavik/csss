@@ -617,15 +617,14 @@ const NativeCssProperties = Object.fromEntries(Object.entries(NativeCss.supporte
 //     delete NativeCssProperties[s];
 //   }
 
-const ANIMATION_FUNCTIONS = {
-  linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,
-  ease: (...args) => `ease(${args.join(",")})`,
-  steps: (...args) => `steps(${args.join(",")})`,
-  cubicBezier: (...args) => `cubic-bezier(${args.join(",")})`,
-};
-
 //todo ANIMATION!!!
 // NativeCssProperties.animation.scope = ANIMATION_FUNCTIONS;
+// const ANIMATION_FUNCTIONS = {
+//   linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,
+//   ease: (...args) => `ease(${args.join(",")})`,
+//   steps: (...args) => `steps(${args.join(",")})`,
+//   cubicBezier: (...args) => `cubic-bezier(${args.join(",")})`,
+// };
 
 const UnpackedNativeCssProperties = {
   ...NativeCssProperties,

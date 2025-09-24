@@ -1,17 +1,23 @@
 import {
-  extractAngle,
-  extractAnglePercent,
-  extractColor,
+  interpretAngle,
+  interpretAnglePercent,
+  interpretLength,
+  interpretLengthPercent,
+  interpretNumber,
+
   extractLength,
   extractLengthPercent,
+  extractAngle,
+  extractColor,
   extractNumber,
   extractNumberPercent,
-  extractUrl
+  extractUrl,
+  interpretNumberPercent
 } from "./func.js";
 
 
 function filterFunc(prop, name, extractors, args) {
-  args = extractors.map(ex => ex(args));
+  args = extractors.map(ex => ex(args)); //todo
   if (args.length)
     throw new SyntaxError(`unknown argument filter ${args[0]}`);
   const str = name ? `${name}(${args.filter(Boolean).map(" ")})` :
@@ -45,18 +51,17 @@ const FILTERS = {
 };
 
 
-function transform(name, extractor, args) {
-  const res = [];
-  for (let i = 0; i < count; i++) {
-    const a = extractor(args);
-    if (a == null)
+function transform(name, interpret, args) {
+  const res = args.map((a, i) => {
+    const a2 = interpret(a);
+    if (a2 == null)
       throw new SyntaxError(`invalid argument ${i + 1} for ${name}(): ${a}`);
-    res.push(a.text);
-  }
+    return a2.text;
+  });
   return { transform: `${name}(${res.join(", ")})` };
 }
 function transform1(name, extractor, count, args) {
-  if (args.count != count)
+  if (args.length != count)
     throw new SyntaxError(`${name} requires exactly ${count} arguments, got ${args.length} arguments.`);
   return transform(name, extractor, args);
 }
@@ -76,26 +81,26 @@ function rotate3d(args) {
 }
 const TRANSFORM = {
   transform: undefined,
-  matrix: transform1.bind(null, "matrix", extractNumber, 6),
-  matrix3d: transform1.bind(null, "matrix3d", extractNumber, 16),
-  perspective: transform1.bind(null, "perspective", extractLength, 1),
-  rotate: transform1.bind(null, "rotate", extractAngle, 1),
-  rotateZ: transform1.bind(null, "rotateZ", extractAngle, 1),
-  rotateY: transform1.bind(null, "rotateY", extractAngle, 1),
-  rotateX: transform1.bind(null, "rotateX", extractAngle, 1),
-  translateX: transform1.bind(null, "translateX", extractLengthPercent, 1),
-  translateY: transform1.bind(null, "translateY", extractLengthPercent, 1),
-  translateZ: transform1.bind(null, "translateZ", extractLengthPercent, 1),
-  translate3d: transform1.bind(null, "translate3d", extractLengthPercent, 3),
-  scaleX: transform1.bind(null, "scaleX", extractNumber, 1),
-  scaleY: transform1.bind(null, "scaleY", extractNumber, 1),
-  scaleZ: transform1.bind(null, "scaleZ", extractNumber, 1),
-  scale3d: transform1.bind(null, "scale3d", extractNumber, 3),
-  skewX: transform1.bind(null, "skewX", extractAnglePercent, 1),
-  skewY: transform1.bind(null, "skewY", extractAnglePercent, 1),
-  translate: transform2.bind(null, "translate", extractLengthPercent),
-  scale: transform2.bind(null, "scale", extractNumber),
-  skew: transform2.bind(null, "skew", extractAnglePercent),
+  matrix: transform1.bind(null, "matrix", interpretNumber, 6),
+  matrix3d: transform1.bind(null, "matrix3d", interpretNumber, 16),
+  perspective: transform1.bind(null, "perspective", interpretLength, 1),
+  rotate: transform1.bind(null, "rotate", interpretAngle, 1),
+  rotateZ: transform1.bind(null, "rotateZ", interpretAngle, 1),
+  rotateY: transform1.bind(null, "rotateY", interpretAngle, 1),
+  rotateX: transform1.bind(null, "rotateX", interpretAngle, 1),
+  translateX: transform1.bind(null, "translateX", interpretLengthPercent, 1),
+  translateY: transform1.bind(null, "translateY", interpretLengthPercent, 1),
+  translateZ: transform1.bind(null, "translateZ", interpretLengthPercent, 1),
+  translate3d: transform1.bind(null, "translate3d", interpretLengthPercent, 3),
+  scaleX: transform1.bind(null, "scaleX", interpretNumber, 1),
+  scaleY: transform1.bind(null, "scaleY", interpretNumber, 1),
+  scaleZ: transform1.bind(null, "scaleZ", interpretNumber, 1),
+  scale3d: transform1.bind(null, "scale3d", interpretNumber, 3),
+  skewX: transform1.bind(null, "skewX", interpretAnglePercent, 1),
+  skewY: transform1.bind(null, "skewY", interpretAnglePercent, 1),
+  translate: transform2.bind(null, "translate", interpretLengthPercent),
+  scale: transform2.bind(null, "scale", interpretNumberPercent),
+  skew: transform2.bind(null, "skew", interpretAnglePercent),
   rotate3d,
 };
 

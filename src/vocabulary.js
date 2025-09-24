@@ -10,6 +10,15 @@ import filterTransforms from "./filterTransform.js";
 import boxShadow from "./boxShadow.js";
 import position from "./position.js";
 
+const ObjectFit = {
+  objectFit: undefined,
+  fitFill: { objectFit: "fill" },
+  fitContain: { objectFit: "contain" },
+  fitCover: { objectFit: "cover" },
+  fitScaleDown: { objectFit: "scale-down" },
+  noObjectFit: { objectFit: "none" },
+};
+
 const SHORTS = {
   ...nativeAndMore,
   ...backgrounds,
@@ -22,6 +31,7 @@ const SHORTS = {
   ...filterTransforms,
   ...boxShadow,
   ...position,
+  ...ObjectFit,
 };
 
 const MEDIA_WORDS = {
