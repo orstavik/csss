@@ -8,22 +8,12 @@
 }
 ```
 
-**csss:** $easeInBounceOut(2s,0,margin,color)
+**csss:** $bounceInOut(2s,0,margin,color)
 **css:**
 ```css
 @layer containerDefault {
-  .\$easeInBounceOut\(2s\,0\,margin\,color\) {
-    transition: margin 2s 0s cubic-bezier(0.42,0,0.70,1.30), color 2s 0s cubic-bezier(0.42,0,0.70,1.30);
-  }
-}
-```
-
-**xcsss:** $block((--transitionDuration,2s+0.3s))
-**xcss:**
-```css
-@layer containerDefault {
-  .\$block\(\(--transitionDuration\,2s\+0\.3s\)\) {
-    --transition-duration: calc(2s + 0.3s);
+  .\$bounceInOut\(2s\,0\,margin\,color\) {
+    transition: margin 2s 0s cubic-bezier(0.25,-0.30,0.70,1.30), color 2s 0s cubic-bezier(0.25,-0.30,0.70,1.30);
   }
 }
 ```
