@@ -2291,12 +2291,12 @@ var textDecorations = {
   spellingError: textDecoration.bind(null, "spelling-error", null),
 };
 
-function filterFunc(prop, name, extractors, args) {
-  args = extractors.map(ex => ex(args)); //todo
-  if (args.length)
+function filterFunc(prop, name, extractors, argsIn) {
+  const args = extractors.map(ex => ex(argsIn)); //todo
+  if (argsIn.length)
     throw new SyntaxError(`unknown argument filter ${args[0]}`);
-  const str = name ? `${name}(${args.filter(Boolean).map(" ")})` :
-    args.filter(Boolean).map(" ");
+  const str = name ? `${name}(${args.filter(Boolean).join(" ")})` :
+    args.filter(Boolean).join(" ");
   return { [prop]: str };
 }
 const FILTERS = {
@@ -2312,17 +2312,18 @@ const FILTERS = {
   hueRotate: filterFunc.bind(null, "filter", "hue-rotate", [extractAngle$1]),
   filter: filterFunc.bind(null, "filter", null, [extractUrl]),
 
-  backdropBlur: filterFunc.bind(null, "filter", "blur", [extractLength]),
-  backdropBrightness: filterFunc.bind(null, "filter", "brightness", [extractNumberPercent]),
-  backdropContrast: filterFunc.bind(null, "filter", "contrast", [extractNumberPercent]),
-  backdropGrayscale: filterFunc.bind(null, "filter", "grayscale", [extractNumberPercent]),
-  backdropInvert: filterFunc.bind(null, "filter", "invert", [extractNumberPercent]),
-  backdropOpacity: filterFunc.bind(null, "filter", "opacity", [extractNumberPercent]),
-  backdropSaturate: filterFunc.bind(null, "filter", "saturate", [extractNumberPercent]),
-  backdropSepia: filterFunc.bind(null, "filter", "sepia", [extractNumberPercent]),
-  backdropDropShadow: filterFunc.bind(null, "filter", "drop-shadow", [extractColor$1, extractLength, extractLength, extractLengthPercent$1]),
-  backdropHueRotate: filterFunc.bind(null, "filter", "hue-rotate", [extractAngle$1]),
-  backdropFilter: filterFunc.bind(null, "filter", null, [extractUrl]),
+  backdropBlur: filterFunc.bind(null, "backdropFilter", "blur", [extractLength]),
+  backdropBrightness: filterFunc.bind(null, "backdropFilter", "brightness", [extractNumberPercent]),
+  backdropContrast: filterFunc.bind(null, "backdropFilter", "contrast", [extractNumberPercent]),
+  backdropGrayscale: filterFunc.bind(null, "backdropFilter", "grayscale", [extractNumberPercent]),
+  backdropInvert: filterFunc.bind(null, "backdropFilter", "invert", [extractNumberPercent]),
+  backdropOpacity: filterFunc.bind(null, "backdropFilter", "opacity", [extractNumberPercent]),
+  backdropSaturate: filterFunc.bind(null, "backdropFilter", "saturate", [extractNumberPercent]),
+  backdropSepia: filterFunc.bind(null, "backdropFilter", "sepia", [extractNumberPercent]),
+  backdropDropShadow: filterFunc.bind(null, "backdropFilter", "drop-shadow", [extractColor$1, extractLength, extractLength, extractLengthPercent$1]),
+  backdropHueRotate: filterFunc.bind(null, "backdropFilter", "hue-rotate", [extractAngle$1]),
+  backdropFilter: filterFunc.bind(null, "backdropFilter", null, [extractUrl]),
+  noBackdropFilter: { backdropFilter: "none" },
 };
 
 
@@ -2730,6 +2731,7 @@ const clashOrStack = (function () {
     fontFeatureSettings: ", ",
     willChange: ", ",
 
+    backdropFilter: " ",
     transform: " ",
     filter: " ",
     counterReset: " ",
