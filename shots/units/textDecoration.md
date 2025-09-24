@@ -8,3 +8,24 @@
   }
 }
 ```
+
+**csss:** $dashedOverLine(#red)
+**css:**
+```css
+@layer containerDefault {
+  .\$dashedOverLine\(\#red\) {
+    text-decoration: overline dashed red;
+  }
+}
+```
+
+**csss:** $noTextDecoration
+**css:**
+```css
+@layer containerDefault {
+  .\$noTextDecoration {
+    text-decoration: none;
+    text-decoration-skip-ink: none;
+  }
+}
+```
