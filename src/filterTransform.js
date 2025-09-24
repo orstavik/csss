@@ -9,53 +9,26 @@ import {
   evaluateNumberPercent,
 } from "./func.js";
 
-
-function filterFunc(prop, name, interpretors, args) {
-  if (args.length != interpretors.length)
-    throw new SyntaxError(`${name} requires exactly ${interpretors.length} arguments, got ${args.length} arguments.`);
-  const res = args.map((a, i) => interpretors[i](a, i));
-  const str = name ? `${name}(${res.join(" ")})` : res.join(" ");
-  return { [prop]: str };
+function filter1(prop, name, evaluators, args) {
+  if (args.length != evaluators.length)
+    throw new SyntaxError(`${name} requires exactly ${evaluators.length} arguments, got ${args.length} arguments.`);
+  return { [prop]: `${name}(${args.map((a, i) => evaluators[i](a, i)).join(" ")})` };
 }
-const FILTERS = {
-  blur: filterFunc.bind(null, "filter", "blur", [evaluateLength]),
-  brightness: filterFunc.bind(null, "filter", "brightness", [evaluateNumberPercent]),
-  contrast: filterFunc.bind(null, "filter", "contrast", [evaluateNumberPercent]),
-  grayscale: filterFunc.bind(null, "filter", "grayscale", [evaluateNumberPercent]),
-  invert: filterFunc.bind(null, "filter", "invert", [evaluateNumberPercent]),
-  opacity: filterFunc.bind(null, "filter", "opacity", [evaluateNumberPercent]),
-  saturate: filterFunc.bind(null, "filter", "saturate", [evaluateNumberPercent]),
-  sepia: filterFunc.bind(null, "filter", "sepia", [evaluateNumberPercent]),
-  dropShadow: filterFunc.bind(null, "filter", "drop-shadow", [evaluateColor, evaluateLength, evaluateLength, evaluateLengthPercent]),
-  hueRotate: filterFunc.bind(null, "filter", "hue-rotate", [evaluateAngle]),
-  filter: filterFunc.bind(null, "filter", null, [evaluateUrl]),
-
-  backdropBlur: filterFunc.bind(null, "backdropFilter", "blur", [evaluateLength]),
-  backdropBrightness: filterFunc.bind(null, "backdropFilter", "brightness", [evaluateNumberPercent]),
-  backdropContrast: filterFunc.bind(null, "backdropFilter", "contrast", [evaluateNumberPercent]),
-  backdropGrayscale: filterFunc.bind(null, "backdropFilter", "grayscale", [evaluateNumberPercent]),
-  backdropInvert: filterFunc.bind(null, "backdropFilter", "invert", [evaluateNumberPercent]),
-  backdropOpacity: filterFunc.bind(null, "backdropFilter", "opacity", [evaluateNumberPercent]),
-  backdropSaturate: filterFunc.bind(null, "backdropFilter", "saturate", [evaluateNumberPercent]),
-  backdropSepia: filterFunc.bind(null, "backdropFilter", "sepia", [evaluateNumberPercent]),
-  backdropDropShadow: filterFunc.bind(null, "backdropFilter", "drop-shadow", [evaluateColor, evaluateLength, evaluateLength, evaluateLengthPercent]),
-  backdropHueRotate: filterFunc.bind(null, "backdropFilter", "hue-rotate", [evaluateAngle]),
-  backdropFilter: filterFunc.bind(null, "backdropFilter", null, [evaluateUrl]),
-  noBackdropFilter: { backdropFilter: "none" },
-};
-
-function transform(name, interpret, args) {
-  return { transform: `${name}(${args.map(interpret).join(", ")})` };
+function filter2(prop, evaluator, args) {
+  if (args.length != 1)
+    throw new SyntaxError(`${prop} requires exactly 1 argument, got ${args.length} arguments.`);
+  return { [prop]: evaluator(args[0]) };
 }
-function transform1(name, extractor, count, args) {
+
+function transform1(name, evaluator, count, args) {
   if (args.length != count)
     throw new SyntaxError(`${name} requires exactly ${count} arguments, got ${args.length} arguments.`);
-  return transform(name, extractor, args);
+  return { transform: `${name}(${args.map(evaluator).join(", ")})` };
 }
-function transform2(name, extractor, args) {
+function transform2(name, evaluator, args) {
   if (args.length < 1 || args.length > 2)
     throw new SyntaxError(`${name} requires between 1 and 2 arguments, got ${args.length} arguments.`);
-  return transform(name, extractor, args);
+  return { transform: `${name}(${args.map(evaluator).join(", ")})` };
 }
 function rotate3d([one, two, three, four]) {
   one = evaluateNumber(one, 0);
@@ -64,8 +37,37 @@ function rotate3d([one, two, three, four]) {
   four = evaluateAngle(four, 3);
   return { transform: `rotate3d(${[one, two, three, four].join(", ")})` };
 }
-const TRANSFORM = {
+
+export default {
   transform: undefined,
+
+  noBackdropFilter: { backdropFilter: "none" },
+  noFilter: { filter: "none" },
+
+  blur: filter1.bind(null, "filter", "blur", [evaluateLength]),
+  brightness: filter1.bind(null, "filter", "brightness", [evaluateNumberPercent]),
+  contrast: filter1.bind(null, "filter", "contrast", [evaluateNumberPercent]),
+  grayscale: filter1.bind(null, "filter", "grayscale", [evaluateNumberPercent]),
+  invert: filter1.bind(null, "filter", "invert", [evaluateNumberPercent]),
+  opacity: filter1.bind(null, "filter", "opacity", [evaluateNumberPercent]),
+  saturate: filter1.bind(null, "filter", "saturate", [evaluateNumberPercent]),
+  sepia: filter1.bind(null, "filter", "sepia", [evaluateNumberPercent]),
+  dropShadow: filter1.bind(null, "filter", "drop-shadow", [evaluateColor, evaluateLength, evaluateLength, evaluateLengthPercent]),
+  hueRotate: filter1.bind(null, "filter", "hue-rotate", [evaluateAngle]),
+  filter: filter2.bind(null, "filter", evaluateUrl),
+
+  backdropBlur: filter1.bind(null, "backdropFilter", "blur", [evaluateLength]),
+  backdropBrightness: filter1.bind(null, "backdropFilter", "brightness", [evaluateNumberPercent]),
+  backdropContrast: filter1.bind(null, "backdropFilter", "contrast", [evaluateNumberPercent]),
+  backdropGrayscale: filter1.bind(null, "backdropFilter", "grayscale", [evaluateNumberPercent]),
+  backdropInvert: filter1.bind(null, "backdropFilter", "invert", [evaluateNumberPercent]),
+  backdropOpacity: filter1.bind(null, "backdropFilter", "opacity", [evaluateNumberPercent]),
+  backdropSaturate: filter1.bind(null, "backdropFilter", "saturate", [evaluateNumberPercent]),
+  backdropSepia: filter1.bind(null, "backdropFilter", "sepia", [evaluateNumberPercent]),
+  backdropDropShadow: filter1.bind(null, "backdropFilter", "drop-shadow", [evaluateColor, evaluateLength, evaluateLength, evaluateLengthPercent]),
+  backdropHueRotate: filter1.bind(null, "backdropFilter", "hue-rotate", [evaluateAngle]),
+  backdropFilter: filter2.bind(null, "backdropFilter", evaluateUrl),
+
   matrix: transform1.bind(null, "matrix", evaluateNumber, 6),
   matrix3d: transform1.bind(null, "matrix3d", evaluateNumber, 16),
   perspective: transform1.bind(null, "perspective", evaluateLength, 1),
@@ -88,8 +90,3 @@ const TRANSFORM = {
   skew: transform2.bind(null, "skew", evaluateAnglePercent),
   rotate3d,
 };
-
-export default {
-  ...FILTERS,
-  ...TRANSFORM,
-}
