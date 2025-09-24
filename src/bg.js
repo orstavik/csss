@@ -1,9 +1,11 @@
 import {
   interpretColor,
   interpretLengthPercent,
-  interpretAngle,
-  interpretAnglePercent,
   interpretImage,
+  extractLengthPercent,
+  extractAnglePercent,
+  extractAngle,
+  extractColor,
   makeExtractor,
 } from "./func.js";
 
@@ -162,10 +164,6 @@ function interpretColorSpace(a) {
   if (res) return { text: "in " + res };
 }
 
-const extractLengthPercent = makeExtractor(interpretLengthPercent);
-const extractAnglePercent = makeExtractor(interpretAnglePercent);
-const extractAngle = makeExtractor(interpretAngle);
-const extractColor = makeExtractor(interpretColor);
 const extractColorSpace = makeExtractor(interpretColorSpace);
 
 const extractAt = makeExtractor(a => {
