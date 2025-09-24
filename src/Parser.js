@@ -127,6 +127,7 @@ const clashOrStack = (function () {
     fontFeatureSettings: ", ",
     willChange: ", ",
 
+    backdropFilter: " ",
     transform: " ",
     filter: " ",
     counterReset: " ",
