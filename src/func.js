@@ -559,7 +559,7 @@ function makeEvaluator(interpret) {
     const a2 = interpret(a);
     if (a2)
       return a2.text;
-    throw new SyntaxError(`invalid argument ${i + 1}: ${a.text}`);
+    throw new SyntaxError(`invalid argument ${i + 1}: "${a.text}" cannot be interpreted as ${interpret.name.slice(9)}.`);
   }
 }
 export const evaluateTime = makeEvaluator(interpretTime);
