@@ -6,7 +6,7 @@ import layouts from "./layout.js";
 import palette from "./palette.js";
 import transitions from "./transitions.js";
 import textDecorations from "./textDecorations.js";
-import filters from "./filterTransform.js";
+import filterTransforms from "./filterTransform.js";
 import boxShadow from "./boxShadow.js";
 import position from "./position.js";
 
@@ -19,7 +19,7 @@ const SHORTS = {
   ...transitions,
   ...textDecorations,
   ...border,
-  ...filters,
+  ...filterTransforms,
   ...boxShadow,
   ...position,
 };

@@ -779,6 +779,7 @@ function interpretQuote(a) {
 }
 function makeExtractor(cb) {
   return function (args) {
+    if (!args?.length) return;
     const res = cb(args[0]);
     return res != null && args.shift() && res.text;
   };
@@ -788,7 +789,7 @@ const extractLength = makeExtractor(interpretLength);
 const extractLengthPercent$1 = makeExtractor(interpretLengthPercent);
 const extractAngle$1 = makeExtractor(interpretAngle);
 const extractAnglePercent$1 = makeExtractor(interpretAnglePercent);
-const extractNumber = makeExtractor(interpretNumber);
+const extractNumber$1 = makeExtractor(interpretNumber);
 const extractNumberPercent = makeExtractor(interpretNumberPercent);
 const extractUrl = makeExtractor(interpretUrl);
 const extractImage = makeExtractor(interpretImage);
@@ -2113,26 +2114,37 @@ var palette$1 = {
   palette
 };
 
+//ease is defined in native css as accelerating and decelerating.
+//crisp means that it starts or ends quickly, but not both.
+//harsh means that it starts or ends very quickly, but not both.
+//playful means that it overshoots either coming in, going out, or both.
+//bounce means that it overshoots more than playful, either coming in, going out, or both.
+//hesitate means that it goes forward, then pauses, then forward again. 
+//wiggle means that it goes forward, then backtracks a little, then forward again.
+//wobble means that it goes forward, then backtracks a fully, then forward again, then backtracks a little, then forward again.
+
+
 function transition(timing, args) {
-  const dur = args.length && extractTime(args);
-  const delay = args.length && extractTime(args);
-  if (args.text == "allowDiscrete")
-    timing += " allow-discrete";
-  const tail = [dur, delay, timing].filter(Boolean).join(" ");
-  args = !args.length ? ["all"] :
-    args.map(a => {
-      a = interpretName(a);
-      if (a) return a.text;
-      throw new SyntaxError(`Not a valid $transition property: ${a.text}.`);
-    });
-  return { transition: args.map(p => `${p} ${tail}`).join(", ") };
+  const dur = extractTime(args);
+  const delay = extractTime(args);
+  const settings = [dur, delay, timing].filter(Boolean);
+  const props = [];
+  let a2;
+  for (let a of args)
+    if (a.text == "allowDiscrete") settings.push("allow-discrete");
+    else if (a2 = interpretName(a)) props.push(a.text);
+    else throw new SyntaxError(`Not a valid $transition property: ${a.text}.`);
+  let transition = settings.join(" ");
+  if (props.length)
+    transition = props.map(p => `${p} ${transition}`).join(", ");
+  return { transition };
 }
 
 function jump(type, args) {
-  const steps = extractNumber(args);
-  if (!steps || steps.num <= 0 || steps.unit != "")
-    throw new SyntaxError(`$jump requires a positive integer argument first.`);
-  return transition(`steps(${steps.num}${type})`, args)
+  const steps = interpretNumber(args[0])?.num;
+  if (steps > 0)
+    return transition(`steps(${steps}, ${type})`, args.slice(1));
+  throw new SyntaxError(`$jump requires a positive integer argument first.`);
 }
 
 function cube(cube, args) { return transition(`cubic-bezier(${cube})`, args); }
@@ -2148,6 +2160,7 @@ var transitions = {
   easeIn: transition.bind(null, "ease-in"),
   easeOut: transition.bind(null, "ease-out"),
   easeInOut: transition.bind(null, "ease-in-out"),
+
   crisp: cube.bind(null, "0.20,0,0.80,1"),
   crispIn: cube.bind(null, "0.20,0,0.66,1"),
   crispOut: cube.bind(null, "0.35,0,0.80,1"),
@@ -2164,14 +2177,35 @@ var transitions = {
   bounceIn: cube.bind(null, "0.25,-0.30,0.66,1"),
   bounceOut: cube.bind(null, "0.35,0,0.70,1.30"),
   bounceInOut: cube.bind(null, "0.25,-0.30,0.70,1.30"),
-
   hesitate: cube.bind(null, ".38,1.55,.62,-0.55"),
   hesitateIn: cube.bind(null, ".45,.64,.12,-0.55"),
   hesitateOut: cube.bind(null, ".38,0,.62,-0.55"),
   hesitateInOut: cube.bind(null, ".38,1.55,.62,-0.55"),
+  wiggle: cube.bind(null, ".5,1.25,.5,-.25"),//wiggle is the same as hesitate, only that it backtracks too. 
+  wiggleIn: cube.bind(null, ".30,1.30,.40,-.35"),
+  wiggleOut: cube.bind(null, ".65,1.25,.85,-.35"),
+  wiggleInOut: cube.bind(null, ".5,1.25,.5,-.25"),
 
-  //wobble: (args) => native(`cubic-bezier(.5,-.5,.5,1.5)`, args),
-  wobbleOut: cube.bind(null, "1,2.06,.52,.5"),
+  xbounce: cube.bind(null, ".34,1.56,.64,1"),   //overshoots either coming in, going out, or both.
+  xbounceIn: cube.bind(null, ".36,0,.66,-.56"),
+  xbounceOut: cube.bind(null, ".34,1.56,.64,1"),
+  xbounceInOut: cube.bind(null, ".68,-.6,.32,1.6"),
+  xplayful: cube.bind(null, "0,.35,.1,1"),//overshoots same as bounce, but slightly more
+  xplayfulIn: cube.bind(null, ".6,0,1,.2"),
+  xplayfulOut: cube.bind(null, "0,.35,.1,1"),
+  xplayfulInOut: cube.bind(null, ".65,0,.35,1"),
+  xcrisp: cube.bind(null, "0,.55,.2,1"),//starts or ends crisply
+  xcrispIn: cube.bind(null, ".8,0,1,.45"),
+  xcrispOut: cube.bind(null, "0,.55,.2,1"),
+  xcrispInOut: cube.bind(null, ".8,0,.2,1"),
+  xharsh: cube.bind(null, "0,.8,.15,1"),//starts or ends harshly
+  xharshIn: cube.bind(null, ".95,0,1,.2"),
+  xharshOut: cube.bind(null, "0,.8,.15,1"),
+  xharshInOut: cube.bind(null, ".9,0,.1,1"),
+  xhesitate: cube.bind(null, ".5,1.05,.5,-.10"),   //hesitate is to go forward, then pauses, then forward again. 
+  xhesitateIn: cube.bind(null, ".25,1.10,.35,-.15"),   //hesitateIn does so at the beginning of the transition.
+  xhesitateOut: cube.bind(null, ".65,1.10,.85,-.15"),   //hesitateOut does so at the end of the transition.
+  xhesitateInOut: cube.bind(null, ".5,1.15,.5,-.15"),   //hesitateInOut and hesitate does so in the middle.
 
   transition: args => {
     const x1 = extractNumber(x1);
@@ -2182,11 +2216,11 @@ var transitions = {
       throw new SyntaxError(`$transition (cubic-bezier) requires four number arguments first.`);
     return transition(`cubic-bezier(${x1},${y1},${x2},${y2})`, args)
   },
-  jump: args => jump("", args), //jumpEnd is default.
-  jumpEnd: args => jump("jump-end", args),
-  jumpStart: args => jump("jump-start", args),
-  jumpNone: args => jump("jump-none", args),
-  jumpBoth: args => jump("jump-both", args),
+  jump: jump.bind(null, ""), //jumpEnd is default.
+  jumpEnd: jump.bind(null, "jump-end"),
+  jumpStart: jump.bind(null, "jump-start"),
+  jumpNone: jump.bind(null, "jump-none"),
+  jumpBoth: jump.bind(null, "jump-both"),
 };
 
 //sequence based
@@ -2313,9 +2347,9 @@ function transform2(name, extractor, args) {
   return transform(name, extractor, args);
 }
 function rotate3d(args) {
-  const one = extractNumber(args);
-  const two = extractNumber(args);
-  const three = extractNumber(args);
+  const one = extractNumber$1(args);
+  const two = extractNumber$1(args);
+  const three = extractNumber$1(args);
   const four = extractAngle$1(args);
   if (one == null || two == null || three == null || four == null)
     throw new SyntaxError(`rotate3d(num, num, num, angle), got rotate3d(${args.map(a => a.text).join(", ")})`);
@@ -2323,8 +2357,8 @@ function rotate3d(args) {
 }
 const TRANSFORM = {
   transform: undefined,
-  matrix: transform1.bind(null, "matrix", extractNumber, 6),
-  matrix3d: transform1.bind(null, "matrix3d", extractNumber, 16),
+  matrix: transform1.bind(null, "matrix", extractNumber$1, 6),
+  matrix3d: transform1.bind(null, "matrix3d", extractNumber$1, 16),
   perspective: transform1.bind(null, "perspective", extractLength, 1),
   rotate: transform1.bind(null, "rotate", extractAngle$1, 1),
   rotateZ: transform1.bind(null, "rotateZ", extractAngle$1, 1),
@@ -2334,19 +2368,19 @@ const TRANSFORM = {
   translateY: transform1.bind(null, "translateY", extractLengthPercent$1, 1),
   translateZ: transform1.bind(null, "translateZ", extractLengthPercent$1, 1),
   translate3d: transform1.bind(null, "translate3d", extractLengthPercent$1, 3),
-  scaleX: transform1.bind(null, "scaleX", extractNumber, 1),
-  scaleY: transform1.bind(null, "scaleY", extractNumber, 1),
-  scaleZ: transform1.bind(null, "scaleZ", extractNumber, 1),
-  scale3d: transform1.bind(null, "scale3d", extractNumber, 3),
+  scaleX: transform1.bind(null, "scaleX", extractNumber$1, 1),
+  scaleY: transform1.bind(null, "scaleY", extractNumber$1, 1),
+  scaleZ: transform1.bind(null, "scaleZ", extractNumber$1, 1),
+  scale3d: transform1.bind(null, "scale3d", extractNumber$1, 3),
   skewX: transform1.bind(null, "skewX", extractAnglePercent$1, 1),
   skewY: transform1.bind(null, "skewY", extractAnglePercent$1, 1),
   translate: transform2.bind(null, "translate", extractLengthPercent$1),
-  scale: transform2.bind(null, "scale", extractNumber),
+  scale: transform2.bind(null, "scale", extractNumber$1),
   skew: transform2.bind(null, "skew", extractAnglePercent$1),
   rotate3d,
 };
 
-var filters = {
+var filterTransforms = {
   ...FILTERS,
   ...TRANSFORM,
 };
@@ -2466,7 +2500,7 @@ const SHORTS = {
   ...transitions,
   ...textDecorations,
   ...border$1,
-  ...filters,
+  ...filterTransforms,
   ...boxShadow$1,
   ...position$1,
 };
