@@ -536,6 +536,7 @@ export function interpretQuote(a) {
 }
 export function makeExtractor(cb) {
   return function (args) {
+    if (!args?.length) return;
     const res = cb(args[0]);
     return res != null && args.shift() && res.text;
   };

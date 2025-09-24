@@ -8,28 +8,29 @@
 //wobble means that it goes forward, then backtracks a fully, then forward again, then backtracks a little, then forward again.
 
 
-import { extractNumber, extractTime, interpretName } from "./func.js";
+import { interpretNumber, extractTime, interpretName } from "./func.js";
 
 function transition(timing, args) {
-  const dur = args.length && extractTime(args);
-  const delay = args.length && extractTime(args);
-  if (args.text == "allowDiscrete")
-    timing += " allow-discrete";
-  const tail = [dur, delay, timing].filter(Boolean).join(" ");
-  args = !args.length ? ["all"] :
-    args.map(a => {   //todo this could be an extractAll() method!
-      a = interpretName(a);
-      if (a) return a.text;
-      throw new SyntaxError(`Not a valid $transition property: ${a.text}.`);
-    });
-  return { transition: args.map(p => `${p} ${tail}`).join(", ") };
+  const dur = extractTime(args);
+  const delay = extractTime(args);
+  const settings = [dur, delay, timing].filter(Boolean);
+  const props = [];
+  let a2;
+  for (let a of args)
+    if (a.text == "allowDiscrete") settings.push("allow-discrete");
+    else if (a2 = interpretName(a)) props.push(a.text);
+    else throw new SyntaxError(`Not a valid $transition property: ${a.text}.`);
+  let transition = settings.join(" ");
+  if (props.length)
+    transition = props.map(p => `${p} ${transition}`).join(", ");
+  return { transition };
 }
 
 function jump(type, args) {
-  const steps = extractNumber(args);
-  if (!steps || steps.num <= 0 || steps.unit != "")
-    throw new SyntaxError(`$jump requires a positive integer argument first.`);
-  return transition(`steps(${steps.num}${type})`, args)
+  const steps = interpretNumber(args[0])?.num;
+  if (steps > 0)
+    return transition(`steps(${steps}, ${type})`, args.slice(1));
+  throw new SyntaxError(`$jump requires a positive integer argument first.`);
 }
 
 function cube(cube, args) { return transition(`cubic-bezier(${cube})`, args); }
