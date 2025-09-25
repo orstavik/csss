@@ -207,7 +207,7 @@ const TYPES$1 = {
   frequency: "1Hz",
   color: "#123",
   fr: "1fr",  // always correlate with minmax
-  repeat: "repeat(2, 1fr)",
+  repeat: "repeat(2,1fr)",
   url: "url('link')",
   counter: "counter(my-counter)",
   counters: "counters(my-counter, '.')",
@@ -215,7 +215,7 @@ const TYPES$1 = {
   filter: "blur()",
   transform: "translateX(0)",
   gradient: "linear-gradient(white, black)",
-  // attr: "attr(data-foo)", //this is for some reason always valid, so it makes no sense to test it.
+  //attr: "attr(data-my-attr)", //is supported for all props, for some reason, but only works in content.
 };
 
 function isSupported(k) {
@@ -226,7 +226,7 @@ function isSupported(k) {
 function longhands(obj) {
   const keys = Object.keys(obj).sort((a, b) => b.length - a.length);
   const longs = keys.filter((k, i) => keys.findIndex(x => x.startsWith(k)) === i);
-  longs.push("color");//todo this doesn't work with this filter.
+  longs.push("color", "content");//todo patches for the long hand filter
   return longs.sort();
 }
 
@@ -240,6 +240,7 @@ async function analyzeNativeCssProps() {
       supported[k] = types : //mergeTypes(types)
       unsupported[k] = SPEC.css.properties[k];
   }
+  supported.content.push("attr");
   return { supported, unsupported };
 }
 const NativeCss = await analyzeNativeCssProps();
@@ -786,17 +787,37 @@ function makeExtractor(cb) {
 }
 const extractTime = makeExtractor(interpretTime);
 const extractLength = makeExtractor(interpretLength);
-const extractLengthPercent$1 = makeExtractor(interpretLengthPercent);
-const extractAngle$1 = makeExtractor(interpretAngle);
-const extractAnglePercent$1 = makeExtractor(interpretAnglePercent);
+const extractLengthPercent = makeExtractor(interpretLengthPercent);
+const extractAngle = makeExtractor(interpretAngle);
+const extractAnglePercent = makeExtractor(interpretAnglePercent);
 const extractNumber$1 = makeExtractor(interpretNumber);
 const extractNumberPercent = makeExtractor(interpretNumberPercent);
 const extractUrl = makeExtractor(interpretUrl);
 const extractImage = makeExtractor(interpretImage);
 const extractMimeType = makeExtractor(interpretMimeType);
-const extractColor$1 = makeExtractor(interpretColor);
+const extractColor = makeExtractor(interpretColor);
 const extractName = makeExtractor(interpretName);
 
+function makeEvaluator(interpret) {
+  return function (a, i) {
+    const a2 = interpret(a);
+    if (a2)
+      return a2.text;
+    throw new SyntaxError(`invalid argument ${i + 1}: "${a.text}" cannot be interpreted as ${interpret.name.slice(9)}.`);
+  }
+}
+const evaluateTime = makeEvaluator(interpretTime);
+const evaluateLength = makeEvaluator(interpretLength);
+const evaluateLengthPercent = makeEvaluator(interpretLengthPercent);
+const evaluateAngle = makeEvaluator(interpretAngle);
+const evaluateAnglePercent = makeEvaluator(interpretAnglePercent);
+const evaluateNumber = makeEvaluator(interpretNumber);
+const evaluateNumberPercent = makeEvaluator(interpretNumberPercent);
+const evaluateUrl = makeEvaluator(interpretUrl);
+const evaluateImage = makeEvaluator(interpretImage);
+const evaluateMimeType = makeEvaluator(interpretMimeType);
+const evaluateColor = makeEvaluator(interpretColor);
+const evaluateName = makeEvaluator(interpretName);
 
 // const SpecializedNativeCssFunctions = {
 //    element: (...args) => `element(${args.join(",")})`,
@@ -981,6 +1002,7 @@ const BACKGROUND_FUNCS = {
 
 function initiateBackground(argsIn) {
   const res = {
+    background: "none",
     backgroundImage: undefined,
     backgroundPosition: "0% 0%",
     backgroundRepeat: "repeat",
@@ -1033,10 +1055,6 @@ function interpretColorSpace(a) {
   if (res) return { text: "in " + res };
 }
 
-const extractLengthPercent = makeExtractor(interpretLengthPercent);
-const extractAnglePercent = makeExtractor(interpretAnglePercent);
-const extractAngle = makeExtractor(interpretAngle);
-const extractColor = makeExtractor(interpretColor);
 const extractColorSpace = makeExtractor(interpretColorSpace);
 
 const extractAt = makeExtractor(a => {
@@ -1231,7 +1249,25 @@ function border(ar) {
 }
 
 var border$1 = {
+  borderStyle: undefined,
+  borderWidth: undefined,
+  borderColor: undefined,
+  borderRadius: undefined,
+  borderTopStyle: undefined,
+  borderTopWidth: undefined,
+  borderTopColor: undefined,
+  borderRightStyle: undefined,
+  borderRightWidth: undefined,
+  borderRightColor: undefined,
+  borderBottomStyle: undefined,
+  borderBottomWidth: undefined,
+  borderBottomColor: undefined,
+  borderLeftStyle: undefined,
+  borderLeftWidth: undefined,
+  borderLeftColor: undefined,
+  //todo so many, make more that we should block.
   border,
+  noBorder: { border: "none" },
 };
 
 const FONT_WORDS = {
@@ -2291,98 +2327,86 @@ var textDecorations = {
   spellingError: textDecoration.bind(null, "spelling-error", null),
 };
 
-function filterFunc(prop, name, extractors, argsIn) {
-  const args = extractors.map(ex => ex(argsIn)); //todo
-  if (argsIn.length)
-    throw new SyntaxError(`unknown argument filter ${args[0]}`);
-  const str = name ? `${name}(${args.filter(Boolean).join(" ")})` :
-    args.filter(Boolean).join(" ");
-  return { [prop]: str };
+function filter1(prop, name, evaluators, args) {
+  if (args.length != evaluators.length)
+    throw new SyntaxError(`${name} requires exactly ${evaluators.length} arguments, got ${args.length} arguments.`);
+  return { [prop]: `${name}(${args.map((a, i) => evaluators[i](a, i)).join(" ")})` };
 }
-const FILTERS = {
-  blur: filterFunc.bind(null, "filter", "blur", [extractLength]),
-  brightness: filterFunc.bind(null, "filter", "brightness", [extractNumberPercent]),
-  contrast: filterFunc.bind(null, "filter", "contrast", [extractNumberPercent]),
-  grayscale: filterFunc.bind(null, "filter", "grayscale", [extractNumberPercent]),
-  invert: filterFunc.bind(null, "filter", "invert", [extractNumberPercent]),
-  opacity: filterFunc.bind(null, "filter", "opacity", [extractNumberPercent]),
-  saturate: filterFunc.bind(null, "filter", "saturate", [extractNumberPercent]),
-  sepia: filterFunc.bind(null, "filter", "sepia", [extractNumberPercent]),
-  dropShadow: filterFunc.bind(null, "filter", "drop-shadow", [extractColor$1, extractLength, extractLength, extractLengthPercent$1]),
-  hueRotate: filterFunc.bind(null, "filter", "hue-rotate", [extractAngle$1]),
-  filter: filterFunc.bind(null, "filter", null, [extractUrl]),
-
-  backdropBlur: filterFunc.bind(null, "backdropFilter", "blur", [extractLength]),
-  backdropBrightness: filterFunc.bind(null, "backdropFilter", "brightness", [extractNumberPercent]),
-  backdropContrast: filterFunc.bind(null, "backdropFilter", "contrast", [extractNumberPercent]),
-  backdropGrayscale: filterFunc.bind(null, "backdropFilter", "grayscale", [extractNumberPercent]),
-  backdropInvert: filterFunc.bind(null, "backdropFilter", "invert", [extractNumberPercent]),
-  backdropOpacity: filterFunc.bind(null, "backdropFilter", "opacity", [extractNumberPercent]),
-  backdropSaturate: filterFunc.bind(null, "backdropFilter", "saturate", [extractNumberPercent]),
-  backdropSepia: filterFunc.bind(null, "backdropFilter", "sepia", [extractNumberPercent]),
-  backdropDropShadow: filterFunc.bind(null, "backdropFilter", "drop-shadow", [extractColor$1, extractLength, extractLength, extractLengthPercent$1]),
-  backdropHueRotate: filterFunc.bind(null, "backdropFilter", "hue-rotate", [extractAngle$1]),
-  backdropFilter: filterFunc.bind(null, "backdropFilter", null, [extractUrl]),
-  noBackdropFilter: { backdropFilter: "none" },
-};
-
-
-function transform(name, interpret, args) {
-  const res = args.map((a, i) => {
-    const a2 = interpret(a);
-    if (a2 == null)
-      throw new SyntaxError(`invalid argument ${i + 1} for ${name}(): ${a}`);
-    return a2.text;
-  });
-  return { transform: `${name}(${res.join(", ")})` };
+function filter2(prop, evaluator, args) {
+  if (args.length != 1)
+    throw new SyntaxError(`${prop} requires exactly 1 argument, got ${args.length} arguments.`);
+  return { [prop]: evaluator(args[0]) };
 }
-function transform1(name, extractor, count, args) {
+
+function transform1(name, evaluator, count, args) {
   if (args.length != count)
     throw new SyntaxError(`${name} requires exactly ${count} arguments, got ${args.length} arguments.`);
-  return transform(name, extractor, args);
+  return { transform: `${name}(${args.map(evaluator).join(", ")})` };
 }
-function transform2(name, extractor, args) {
+function transform2(name, evaluator, args) {
   if (args.length < 1 || args.length > 2)
     throw new SyntaxError(`${name} requires between 1 and 2 arguments, got ${args.length} arguments.`);
-  return transform(name, extractor, args);
+  return { transform: `${name}(${args.map(evaluator).join(", ")})` };
 }
-function rotate3d(args) {
-  const one = extractNumber$1(args);
-  const two = extractNumber$1(args);
-  const three = extractNumber$1(args);
-  const four = extractAngle$1(args);
-  if (one == null || two == null || three == null || four == null)
-    throw new SyntaxError(`rotate3d(num, num, num, angle), got rotate3d(${args.map(a => a.text).join(", ")})`);
+function rotate3d([one, two, three, four]) {
+  one = evaluateNumber(one, 0);
+  two = evaluateNumber(two, 1);
+  three = evaluateNumber(three, 2);
+  four = evaluateAngle(four, 3);
   return { transform: `rotate3d(${[one, two, three, four].join(", ")})` };
 }
-const TRANSFORM = {
-  transform: undefined,
-  matrix: transform1.bind(null, "matrix", interpretNumber, 6),
-  matrix3d: transform1.bind(null, "matrix3d", interpretNumber, 16),
-  perspective: transform1.bind(null, "perspective", interpretLength, 1),
-  rotate: transform1.bind(null, "rotate", interpretAngle, 1),
-  rotateZ: transform1.bind(null, "rotateZ", interpretAngle, 1),
-  rotateY: transform1.bind(null, "rotateY", interpretAngle, 1),
-  rotateX: transform1.bind(null, "rotateX", interpretAngle, 1),
-  translateX: transform1.bind(null, "translateX", interpretLengthPercent, 1),
-  translateY: transform1.bind(null, "translateY", interpretLengthPercent, 1),
-  translateZ: transform1.bind(null, "translateZ", interpretLengthPercent, 1),
-  translate3d: transform1.bind(null, "translate3d", interpretLengthPercent, 3),
-  scaleX: transform1.bind(null, "scaleX", interpretNumber, 1),
-  scaleY: transform1.bind(null, "scaleY", interpretNumber, 1),
-  scaleZ: transform1.bind(null, "scaleZ", interpretNumber, 1),
-  scale3d: transform1.bind(null, "scale3d", interpretNumber, 3),
-  skewX: transform1.bind(null, "skewX", interpretAnglePercent, 1),
-  skewY: transform1.bind(null, "skewY", interpretAnglePercent, 1),
-  translate: transform2.bind(null, "translate", interpretLengthPercent),
-  scale: transform2.bind(null, "scale", interpretNumberPercent),
-  skew: transform2.bind(null, "skew", interpretAnglePercent),
-  rotate3d,
-};
 
 var filterTransforms = {
-  ...FILTERS,
-  ...TRANSFORM,
+  transform: undefined,
+
+  noBackdropFilter: { backdropFilter: "none" },
+  noFilter: { filter: "none" },
+
+  blur: filter1.bind(null, "filter", "blur", [evaluateLength]),
+  brightness: filter1.bind(null, "filter", "brightness", [evaluateNumberPercent]),
+  contrast: filter1.bind(null, "filter", "contrast", [evaluateNumberPercent]),
+  grayscale: filter1.bind(null, "filter", "grayscale", [evaluateNumberPercent]),
+  invert: filter1.bind(null, "filter", "invert", [evaluateNumberPercent]),
+  opacity: filter1.bind(null, "filter", "opacity", [evaluateNumberPercent]),
+  saturate: filter1.bind(null, "filter", "saturate", [evaluateNumberPercent]),
+  sepia: filter1.bind(null, "filter", "sepia", [evaluateNumberPercent]),
+  dropShadow: filter1.bind(null, "filter", "drop-shadow", [evaluateColor, evaluateLength, evaluateLength, evaluateLengthPercent]),
+  hueRotate: filter1.bind(null, "filter", "hue-rotate", [evaluateAngle]),
+  filter: filter2.bind(null, "filter", evaluateUrl),
+
+  backdropBlur: filter1.bind(null, "backdropFilter", "blur", [evaluateLength]),
+  backdropBrightness: filter1.bind(null, "backdropFilter", "brightness", [evaluateNumberPercent]),
+  backdropContrast: filter1.bind(null, "backdropFilter", "contrast", [evaluateNumberPercent]),
+  backdropGrayscale: filter1.bind(null, "backdropFilter", "grayscale", [evaluateNumberPercent]),
+  backdropInvert: filter1.bind(null, "backdropFilter", "invert", [evaluateNumberPercent]),
+  backdropOpacity: filter1.bind(null, "backdropFilter", "opacity", [evaluateNumberPercent]),
+  backdropSaturate: filter1.bind(null, "backdropFilter", "saturate", [evaluateNumberPercent]),
+  backdropSepia: filter1.bind(null, "backdropFilter", "sepia", [evaluateNumberPercent]),
+  backdropDropShadow: filter1.bind(null, "backdropFilter", "drop-shadow", [evaluateColor, evaluateLength, evaluateLength, evaluateLengthPercent]),
+  backdropHueRotate: filter1.bind(null, "backdropFilter", "hue-rotate", [evaluateAngle]),
+  backdropFilter: filter2.bind(null, "backdropFilter", evaluateUrl),
+
+  matrix: transform1.bind(null, "matrix", evaluateNumber, 6),
+  matrix3d: transform1.bind(null, "matrix3d", evaluateNumber, 16),
+  perspective: transform1.bind(null, "perspective", evaluateLength, 1),
+  rotate: transform1.bind(null, "rotate", evaluateAngle, 1),
+  rotateZ: transform1.bind(null, "rotateZ", evaluateAngle, 1),
+  rotateY: transform1.bind(null, "rotateY", evaluateAngle, 1),
+  rotateX: transform1.bind(null, "rotateX", evaluateAngle, 1),
+  translateX: transform1.bind(null, "translateX", evaluateLengthPercent, 1),
+  translateY: transform1.bind(null, "translateY", evaluateLengthPercent, 1),
+  translateZ: transform1.bind(null, "translateZ", evaluateLengthPercent, 1),
+  translate3d: transform1.bind(null, "translate3d", evaluateLengthPercent, 3),
+  scaleX: transform1.bind(null, "scaleX", evaluateNumber, 1),
+  scaleY: transform1.bind(null, "scaleY", evaluateNumber, 1),
+  scaleZ: transform1.bind(null, "scaleZ", evaluateNumber, 1),
+  scale3d: transform1.bind(null, "scale3d", evaluateNumber, 3),
+  skewX: transform1.bind(null, "skewX", evaluateAnglePercent, 1),
+  skewY: transform1.bind(null, "skewY", evaluateAnglePercent, 1),
+  translate: transform2.bind(null, "translate", evaluateLengthPercent),
+  scale: transform2.bind(null, "scale", evaluateNumberPercent),
+  skew: transform2.bind(null, "skew", evaluateAnglePercent),
+  rotate3d,
 };
 
 function _boxShadow(ar) {
@@ -2444,8 +2468,8 @@ function position(position, ar) {
   const res = { position };
   if (!ar?.length) return res;
   const [pl1, pl2] = origin[extractName(ar)] ?? ["left", "top"];
-  res[pl1] = extractLengthPercent$1(ar);
-  if (ar.length) res[pl2] = extractLengthPercent$1(ar);
+  res[pl1] = extractLengthPercent(ar);
+  if (ar.length) res[pl2] = extractLengthPercent(ar);
   if (ar.length)
     throw new SyntaxError(`unknown argument: $position(${ar[0].text}).`);
   return res;
