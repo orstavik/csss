@@ -223,6 +223,7 @@
 ```css
 @layer containerDefault {
   .\$bg\(\#oklch\(70\%\,0\.15\,180\+30\)\) {
+    background: none;
     background-image: linear-gradient(oklch(70% 0.15 210));
     background-position: 0% 0%;
     background-repeat: repeat;
@@ -240,6 +241,7 @@
 ```css
 @layer containerDefault {
   .\$bg\(\#lab\(50\%\*1\.5\,10\,-20\)\) {
+    background: none;
     background-image: linear-gradient(lab(75% 10 -20));
     background-position: 0% 0%;
     background-repeat: repeat;

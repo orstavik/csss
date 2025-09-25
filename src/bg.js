@@ -112,6 +112,7 @@ const BACKGROUND_FUNCS = {
 
 function initiateBackground(argsIn) {
   const res = {
+    background: "none",
     backgroundImage: undefined,
     backgroundPosition: "0% 0%",
     backgroundRepeat: "repeat",
