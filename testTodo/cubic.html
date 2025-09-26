@@ -115,11 +115,11 @@
       const y = findMiddle(hIn, hOut);
       const acc = (accIn + accOut) / 2;
       // debugger
+      console.log(x, y, 1 - x, 1 - y);
       const pointsIn = cIn(x, y, acc - accIn);
       const pointsOut1 = cOut(1 - x, 1 - y, acc - accOut);
       const pointsOut = pointsOut1
         .reverse()
-        .slice(1) //we skip the overlapping middle point
         .map(({ x, y }) => ({ x: 1 - x, y: 1 - y }));
       const curve = spreadYValues([...pointsIn, ...pointsOut], 100);
       COMPOSITES[name] = { curve, width: x, height: y, acc, In, Out };
@@ -138,20 +138,20 @@
     }
   };
 
-  function drawFunction(points, i = 5) {
+  function drawFunction(points, i = 250) {
     const canvas = document.createElement("canvas");
-    const padding = 10 * i;
-    canvas.width = 2 * padding + 50 * i;
-    canvas.height = 2 * padding + 50 * i;
+    const padding = i / 5;
+    canvas.width = 2 * padding + i;
+    canvas.height = 2 * padding + i;
     const ctx = canvas.getContext("2d");
     ctx.lineWidth = 3;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = "black";
-    ctx.beginPath();
-    ctx.moveTo(padding, padding + 50 * i);
-    for (let p of points)
-      ctx.lineTo(padding + p.x * 50 * i, padding + (50 * i - p.y * 50 * i));
-    ctx.stroke();
+    ctx.fillStyle = "black";
+    for (let p of points) {
+      ctx.beginPath();
+      ctx.arc(padding + p.x * i, padding + (i - p.y * i), 2, 0, 2 * Math.PI);
+      ctx.fill();
+    }
     return canvas;
   }
 
