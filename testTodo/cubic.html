@@ -63,9 +63,9 @@
     return nums.reverse().map(y => Math.round((1 - y) * 1000) / 1000);
   }
 
-  function calcEndAcceleration(bezierPoints) {
+  function calcEndAccelerationAngle(bezierPoints) {
     const { x, y } = getTPoints([0, 0, ...bezierPoints, 1, 1]).at(-2);
-    return (1 - y) / (1 - x);
+    return Math.atan2(1 - y, 1 - x);
   }
 
   function rotateXY(x, y, angle) {
@@ -75,18 +75,15 @@
   }
 
   const makeBezierHalf = function (ar) {
-    return function bezierHalf(x, y, expectedAcc, actualAcc) {
-      const expectedAngle = Math.atan2(expectedAcc, 1);
-      const actualAngle = Math.atan2(actualAcc, 1);
-      const angleDiff = actualAngle - expectedAngle;
-      if (Math.abs(angleDiff) > Math.PI / 6) //30deg
+    return function bezierHalf(x, y, angleAdjust) {
+      if (Math.abs(angleAdjust) > Math.PI / 6) //30deg
         throw new SyntaxError("Angle difference too large for smoothing.");
 
-      if (Math.abs(angleDiff) > .1 ** 10) {
+      if (Math.abs(angleAdjust) > .1 ** 10) {
         //rotate the control points if necessary around (0,0) and (1,1) respectively
         //the first point is only rotate half way, the second point is rotated to match fully
-        const { x: x1, y: y1 } = rotateXY(ar[0], ar[1], angleDiff / 2);
-        const { x: x2, y: y2 } = rotateXY(1 - ar[2], 1 - ar[3], angleDiff);
+        const { x: x1, y: y1 } = rotateXY(ar[0], ar[1], angleAdjust / 2);
+        const { x: x2, y: y2 } = rotateXY(1 - ar[2], 1 - ar[3], angleAdjust);
         ar = [x1, y1, 1 - x2, 1 - y2];
       }
       //scale the points to fit the box
@@ -99,8 +96,8 @@
   }
 
   const HALVES = {
-    Fast: { curve: makeBezierHalf([0.85, 0.02, 0.96, 0.79]), width: .4, height: .5, acc: calcEndAcceleration([0.85, 0.02, 0.96, 0.79]) },
-    Back: { curve: makeBezierHalf([0.59, -0.26, 0.74, 0.05]), width: .5, height: .5, acc: calcEndAcceleration([0.59, -0.26, 0.74, 0.05]) },
+    Fast: { curve: makeBezierHalf([0.85, 0.02, 0.96, 0.79]), width: .4, height: .5, acc: calcEndAccelerationAngle([0.85, 0.02, 0.96, 0.79]) },
+    Back: { curve: makeBezierHalf([0.59, -0.26, 0.74, 0.05]), width: .5, height: .5, acc: calcEndAccelerationAngle([0.59, -0.26, 0.74, 0.05]) },
   };
 
   const findMiddle = (In, Out) =>
@@ -117,8 +114,8 @@
       const x = findMiddle(wIn, wOut);
       const y = findMiddle(hIn, hOut);
       const acc = (accIn + accOut) / 2;
-      const pointsIn = cIn(x, y, accIn, acc);
-      const pointsOut1 = cOut(1 - x, 1 - y, accOut, acc).slice(1); //we skip the overlapping middle point
+      const pointsIn = cIn(x, y, acc - accIn);
+      const pointsOut1 = cOut(1 - x, 1 - y, acc - accOut).slice(1); //we skip the overlapping middle point
       const pointsOut = pointsOut1
         .reverse()
         .map(({ x, y }) => ({ x: 1 - x, y: 1 - y }));
