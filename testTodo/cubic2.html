@@ -30,7 +30,7 @@
 
     const xInc = 1 / sampleSize;
     const tInc = xInc / precision;
-    const res = new Float64Array(sampleSize + 1);
+    const res = new Array(sampleSize + 1);
     res[0] = 0;
     for (let xStep = xInc, prevX = 0, prevY = 0, t = 0, n = 1; t < 1; t += tInc) {
       const u = 1 - t;
@@ -82,23 +82,29 @@
       let time = totalTime / sum_rT;
       const res = [];
       for (let i = 0; i < bounceCount; i++) {
-        res.unshift({ height, time: Math.floor(time / 2) });
+        res.unshift({ height, time: Math.floor(time / 2) }, { height, time: Math.floor(time / 2) });
         height *= heightDecay;
         time *= timeDecay;
       }
       return res;
     }
 
-    const bounces = computeBounceDurations(width, bounceCount, firstHeight, heightDecay);
-    return bounces.flatMap(({ time, height }, i) => {
-      const halfUp = sampleCubicBezierX([0, 0, .58, 1], time).map(y => y * height);
-      const halfDown = halfUp.slice(0, -1).reverse();
-      return [...halfUp, ...halfDown];
+    const fullBounceCount = Math.ceil(bounceCount);
+    const bounces = computeBounceDurations(width, fullBounceCount, firstHeight, heightDecay);
+
+    const points = bounces.flatMap(({ time, height }, i) => {
+      const half = sampleCubicBezierX([0, 0, .58, 1], time).map(y => y * height);
+      return i % 2 ?
+        half.reverse().slice(1) :
+        half;
     });
+    return fullBounceCount == bounceCount ?
+      points :
+      points.slice(0, -1 * Math.floor(bounces.at(-1).time * 2 - (bounceCount % 1) * 2 * bounces.at(-1).time));
   }
 
   const WAVES = {
-    bouncy2: bounce(3, 1, 0.5),
+    bouncy2: bounce(3.5, 1, 0.5),
     easeIn: sampleCubicBezierX([0.42, 0, 1, 1], 50),
     easeOut: sampleCubicBezierX([0, 0, 0.58, 1], 50),
 
