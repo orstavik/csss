@@ -89,24 +89,28 @@
       return res;
     }
 
-    const overshoot = 1 - bounceCount % 1;
-    const bounces = computeBounceDurations(width, Math.ceil(bounceCount), firstHeight, heightDecay);
-    const fractionOfRemoved = 1 + (bounces.at(-1).time * 2 * overshoot / width);
-    for (let b of bounces)
-      b.time = Math.round(b.time * fractionOfRemoved);
+    function stretchWidthToCompensateForOvershoot(bounces, width, overshoot) {
+      const overshootCompensationFraction = 1 + (bounces.at(-1).time * 2 * (1 - overshoot) / width);
+      return bounces.map(b => ({ ...b, time: b.time * overshootCompensationFraction })); //clone
+    }
+
+    const overshoot = bounceCount % 1;
+    const bouncesForFullBounces = computeBounceDurations(width, Math.ceil(bounceCount), firstHeight, heightDecay);
+    const bounces = stretchWidthToCompensateForOvershoot(bouncesForFullBounces, width, overshoot);
 
     const points = bounces.flatMap(({ time, height }, i) => {
-      const half = sampleCubicBezierX([0, 0, .58, 1], time).map(y => y * height);
+      const half = sampleCubicBezierX([0, 0, .58, 1], Math.round(time)).map(y => y * height);
       return i % 2 ?
         half.reverse().slice(1) :
         half;
     });
     return !overshoot ? points :
-      points.slice(0, -Math.round(bounces.at(-1).time * 2 * overshoot));
+      points.slice(0, -Math.round(bounces.at(-1).time * 2 * (1 - overshoot)));
   }
 
   const WAVES = {
     bouncy2: bounce(3.5, 1, 0.5),
+    bouncy: bounce(10, 1, 0.5),
     easeIn: sampleCubicBezierX([0.42, 0, 1, 1], 50),
     easeOut: sampleCubicBezierX([0, 0, 0.58, 1], 50),
 
