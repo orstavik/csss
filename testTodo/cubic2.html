@@ -82,15 +82,18 @@
       let time = totalTime / sum_rT;
       const res = [];
       for (let i = 0; i < bounceCount; i++) {
-        res.unshift({ height, time: Math.floor(time / 2) }, { height, time: Math.floor(time / 2) });
+        res.unshift({ height, time: time / 2 }, { height, time: time / 2 });
         height *= heightDecay;
         time *= timeDecay;
       }
       return res;
     }
 
-    const fullBounceCount = Math.ceil(bounceCount);
-    const bounces = computeBounceDurations(width, fullBounceCount, firstHeight, heightDecay);
+    const overshoot = 1 - bounceCount % 1;
+    const bounces = computeBounceDurations(width, Math.ceil(bounceCount), firstHeight, heightDecay);
+    const fractionOfRemoved = 1 + (bounces.at(-1).time * 2 * overshoot / width);
+    for (let b of bounces)
+      b.time = Math.round(b.time * fractionOfRemoved);
 
     const points = bounces.flatMap(({ time, height }, i) => {
       const half = sampleCubicBezierX([0, 0, .58, 1], time).map(y => y * height);
@@ -98,9 +101,8 @@
         half.reverse().slice(1) :
         half;
     });
-    return fullBounceCount == bounceCount ?
-      points :
-      points.slice(0, -1 * Math.floor(bounces.at(-1).time * 2 - (bounceCount % 1) * 2 * bounces.at(-1).time));
+    return !overshoot ? points :
+      points.slice(0, -Math.round(bounces.at(-1).time * 2 * overshoot));
   }
 
   const WAVES = {
