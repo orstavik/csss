@@ -82,11 +82,11 @@
 
     const overshoot = bounceCount % 1;
     const timeDecay = Math.sqrt(heightDecay);
-    let bounces = computeDecay(Math.ceil(bounceCount), firstHeight, heightDecay, timeDecay);
+    const bounces = computeDecay(Math.ceil(bounceCount), firstHeight, heightDecay, timeDecay);
     const xfactor = bounces.at(-1).time * 2 * (1 - overshoot);
     const compensateOvershoot = (1 + xfactor);
 
-    const points = bounces.flatMap(({ time, height }, i) => {
+    const points = bounces.flatMap(({ time, height }) => {
       const halfSize = Math.round(time * width * compensateOvershoot);
       const half = sampleCubicBezierX([0, 0, .58, 1], halfSize).map(y => y * height);
       return [...half, ...half.reverse().slice(1)];
