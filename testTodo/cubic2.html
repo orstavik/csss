@@ -83,18 +83,15 @@
     const overshoot = bounceCount % 1;
     const timeDecay = Math.sqrt(heightDecay);
     let bounces = computeDecay(Math.ceil(bounceCount), firstHeight, heightDecay, timeDecay);
-    const compensateOvershoot = 1 + (bounces.at(-1).time * 2 * (1 - overshoot) / width);
+    const xfactor = bounces.at(-1).time * 2 * (1 - overshoot);
+    const compensateOvershoot = (1 + xfactor);
 
-    bounces = bounces.map(b => ({ height: b.height, time: b.time * compensateOvershoot }));
-    bounces = bounces.flatMap(b => [b, b])
     const points = bounces.flatMap(({ time, height }, i) => {
-      const half = sampleCubicBezierX([0, 0, .58, 1], Math.round(time * width)).map(y => y * height);
-      return i % 2 ?
-        half.reverse().slice(1) :
-        half;
+      const halfSize = Math.round(time * width * compensateOvershoot);
+      const half = sampleCubicBezierX([0, 0, .58, 1], halfSize).map(y => y * height);
+      return [...half, ...half.reverse().slice(1)];
     });
-    return !overshoot ? points :
-      points.slice(0, -Math.round(bounces.at(-1).time * 2 * (1 - overshoot) * width));
+    return points.slice(0, width);
   }
 
   function sineWave(count, firstHeight, heightDecay, width = 500) {
