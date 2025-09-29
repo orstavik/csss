@@ -51,11 +51,11 @@
     return res;
   }
 
-  function sampleSineWave(pinch = 1, sampleSize = 240) {
-    return Array.from({ length: sampleSize + 1 }, (_, i) =>
-      (Math.sin((i / sampleSize) * Math.PI) + 1) * pinch / 2);
-    //  - Math.PI / 2
-  }
+  // function sampleSineWave(pinch = 1, sampleSize = 240) {
+  //   return Array.from({ length: sampleSize + 1 }, (_, i) =>
+  //     (Math.sin((i / sampleSize) * Math.PI) + 1) * pinch / 2);
+  //   //  - Math.PI / 2
+  // }
 
   //todo I think we do this in the functions manually. It is easy enough.
   // function scaleCurve(points, scaleY) { return points.map(y => y * scaleY); }
@@ -79,15 +79,14 @@
     return res;
   }
 
-  function bounce(bounceCount, firstHeight, heightDecay = 0.5, width = 120) {
-    if (bounceCount % .5 != 0)
-      throw new RangeError("bounceCount must be integers or multiple of halves.");
+  function bounce(count, firstHeight, decay = 0.7, width = 120) {
+    if (count % .5 != 0)
+      throw new RangeError("count must be integers or multiple of halves.");
+    const overshoot = count % 1;
+    const steps = computeDecay(Math.ceil(count), firstHeight, decay);
+    const overshootScale = 1 + (steps[steps.length - 1].time / 2);
 
-    const overshoot = bounceCount % 1;
-    const bounces = computeDecay(Math.ceil(bounceCount), firstHeight, heightDecay);
-    const overshootScale = 1 + (bounces[bounces.length - 1].time / 2);
-
-    const pointSet = bounces.flatMap(({ time, height }) => {
+    const pointSet = steps.flatMap(({ time, height }) => {
       const halfSize = Math.round(time * .5 * width * overshootScale);
       const half = sampleCubicBezierX([0, 0, .58, 1], halfSize).map(y => y * height);
       return [half, half.slice().reverse().slice(1)];
@@ -96,16 +95,18 @@
     return pointSet.flat();
   }
 
-  function sineWave(count, firstHeight, heightDecay, width = 500) {
-    return Array.from({ length: width + 1 }, (_, i) => {
-      const x = (i / width);
-      const y = -Math.sin(x * Math.PI * count * 2);
-      return y * firstHeight * (x ** heightDecay);
+  function sineWave(count, firstHeight, decay, width = 120) {
+    const steps = computeDecay(Math.ceil(count), firstHeight, decay);
+    return steps.flatMap(({ time, height }, i) => {
+      let points = Array.from({ length: width + 1 }, (_, i) => Math.sin((i / width) * Math.PI * 2));
+      points = points.map(y => y * height);
+      points.shift();
+      return points;
     });
   }
 
   const WAVES = {
-    sine: sineWave(3.25, 1, 1.2, 120),
+    sine: sineWave(3, .3, .5, 120),
     bouncy2: bounce(3.5, 1, 0.5),
     bouncy: bounce(10, 1, 0.5),
     easeIn: sampleCubicBezierX([0.42, 0, 1, 1], 50),
@@ -113,22 +114,23 @@
 
     one: sampleCubicBezierX([0.5, 0, 0.5, 1], 50),
     two: sampleCubicBezierX([0.6, 0.04, 0.82, 0.55], 50),
-    three: sampleSineWave(1, 50),
 
     easeInBounceOut: [
       ...sampleCubicBezierX([0.42, 0, 1, 1], 100),
-      ...bounce(3, .2, 0.6, 50).reverse().map(y => 1 - y)
+      ...bounce(3, .2, 0.7, 50).reverse().map(y => 1 - y)
+    ],
+    easeInSpringOut: [
+      ...sampleCubicBezierX([0.42, 0, 1, 1], 90),
+      ...sineWave(2, .1, 0.7, 50).reverse().map(y => 1 - y).slice(1)
+    ],
+    easeInBackOut: [
+      ...sampleCubicBezierX([0.42, 0, 1, 1], 90),
+      ...sineWave(1, .18, 0.7, 50).reverse().map(y => 1 - y).slice(1)
     ],
     fastInBumpOut: [
       ...sampleCubicBezierX([0.42, 0, 1, 1], 90),
       ...bounce(1, .3, 0.5, 50).reverse().map(y => 1 - y)
     ],
-    // bouncy: [
-    //   ...oneBounce(30, 0.5),
-    //   ...oneBounce(30, 0.25),
-    //   ...oneBounce(30, 0.1)
-    // ],
-    // bouncy3: bounce(3.5, 1, 0.5),
   }
 
 
