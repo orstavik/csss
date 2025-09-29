@@ -70,7 +70,8 @@
   // }
 
 
-  function computeDecay(count, height, hDecay, timeDecay) {
+  function computeDecay(count, height, hDecay) {
+    const timeDecay = Math.sqrt(hDecay);
     let time = 1 / ((1 - Math.pow(timeDecay, count)) / (1 - timeDecay));
     const res = [];
     for (let i = 0; i < count; i++, height *= hDecay, time *= timeDecay)
@@ -79,19 +80,20 @@
   }
 
   function bounce(bounceCount, firstHeight, heightDecay = 0.5, width = 120) {
+    if (bounceCount % .5 != 0)
+      throw new RangeError("bounceCount must be integers or multiple of halves.");
 
     const overshoot = bounceCount % 1;
-    const timeDecay = Math.sqrt(heightDecay);
-    const bounces = computeDecay(Math.ceil(bounceCount), firstHeight, heightDecay, timeDecay);
-    const xfactor = bounces.at(-1).time * (1 - overshoot);
-    const compensateOvershoot = (1 + xfactor);
+    const bounces = computeDecay(Math.ceil(bounceCount), firstHeight, heightDecay);
+    const overshootScale = 1 + (bounces[bounces.length - 1].time / 2);
 
-    const points = bounces.flatMap(({ time, height }) => {
-      const halfSize = Math.round(time / 2 * width * compensateOvershoot);
+    const pointSet = bounces.flatMap(({ time, height }) => {
+      const halfSize = Math.round(time * .5 * width * overshootScale);
       const half = sampleCubicBezierX([0, 0, .58, 1], halfSize).map(y => y * height);
-      return [...half, ...half.reverse().slice(1)];
+      return [half, half.slice().reverse().slice(1)];
     });
-    return points.slice(0, width);
+    overshoot && pointSet.pop();
+    return pointSet.flat();
   }
 
   function sineWave(count, firstHeight, heightDecay, width = 500) {
@@ -112,6 +114,15 @@
     one: sampleCubicBezierX([0.5, 0, 0.5, 1], 50),
     two: sampleCubicBezierX([0.6, 0.04, 0.82, 0.55], 50),
     three: sampleSineWave(1, 50),
+
+    easeInBounceOut: [
+      ...sampleCubicBezierX([0.42, 0, 1, 1], 100),
+      ...bounce(3, .2, 0.6, 50).reverse().map(y => 1 - y)
+    ],
+    fastInBumpOut: [
+      ...sampleCubicBezierX([0.42, 0, 1, 1], 90),
+      ...bounce(1, .3, 0.5, 50).reverse().map(y => 1 - y)
+    ],
     // bouncy: [
     //   ...oneBounce(30, 0.5),
     //   ...oneBounce(30, 0.25),
