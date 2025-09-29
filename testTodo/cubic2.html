@@ -70,24 +70,25 @@
   // }
 
 
-  function computeDecay(count, height, hDecay) {
-    const tDecay = Math.sqrt(hDecay);
-    let time = 1 / ((1 - Math.pow(tDecay, count)) / (1 - tDecay));
+  function computeDecay(count, height, hDecay, timeDecay) {
+    let time = 1 / ((1 - Math.pow(timeDecay, count)) / (1 - timeDecay));
     const res = [];
-    for (let i = 0; i < count; i++, height *= hDecay, time *= tDecay)
+    for (let i = 0; i < count; i++, height *= hDecay, time *= timeDecay)
       res.unshift({ height, time: time / 2 }, { height, time: time / 2 });
     return res;
   }
 
   function bounce(bounceCount, firstHeight, heightDecay = 0.5, width = 120) {
 
+    const overshoot = bounceCount % 1;
+    const timeDecay = Math.sqrt(heightDecay);
+
     function stretchWidthToCompensateForOvershoot(bounces, width, overshoot) {
       const overshootCompensationFraction = 1 + (bounces.at(-1).time * 2 * (1 - overshoot) / width);
       return bounces.map(b => ({ ...b, time: b.time * overshootCompensationFraction })); //clone
     }
 
-    const overshoot = bounceCount % 1;
-    const bouncesForFullBounces = computeDecay(Math.ceil(bounceCount), firstHeight, heightDecay, 1);
+    const bouncesForFullBounces = computeDecay(Math.ceil(bounceCount), firstHeight, heightDecay, timeDecay);
     const bounces = stretchWidthToCompensateForOvershoot(bouncesForFullBounces, width, overshoot);
 
     const points = bounces.flatMap(({ time, height }, i) => {
