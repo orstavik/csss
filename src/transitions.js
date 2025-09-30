@@ -7,6 +7,107 @@
 //wiggle means that it goes forward, then backtracks a little, then forward again.
 //wobble means that it goes forward, then backtracks a fully, then forward again, then backtracks a little, then forward again.
 
+class Transitions {
+
+  static cubicBezier([x1, y1, x2, y2], sampleSize = 240, precision = 5) {
+    if (![x1, y1, x2, y2].every(Number.isFinite))
+      throw new TypeError("Control points must be finite numbers.");
+    if (precision < 3)
+      throw new RangeError("precision must be ≥ 2 (recommend ≥ 3).");
+
+    const xInc = 1 / sampleSize;
+    const tInc = xInc / precision;
+    const res = new Array(sampleSize + 1);
+    res[0] = 0;
+    for (let xStep = xInc, prevX = 0, prevY = 0, t = 0, n = 1; t < 1; t += tInc) {
+      const u = 1 - t;
+      const tt = t * t;
+      const ttt = tt * t;
+      const uut3 = 3 * u * u * t, utt3 = 3 * u * tt;
+      const x = uut3 * x1 + utt3 * x2 + ttt;
+      const y = uut3 * y1 + utt3 * y2 + ttt;
+      if (x >= xStep) {
+        res[n++] = prevY + (y - prevY) * ((xStep - prevX) / (x - prevX));
+        xStep += xInc;
+      }
+      prevX = x, prevY = y;
+    }
+    if (res.length < sampleSize)
+      return this.cubicBezier([x1, y1, x2, y2], sampleSize, precision * 2);
+    res[res.length - 1] = 1; //x=1, y=1
+    return res;
+  }
+
+  static computeDecay(count, height, hDecay) {
+    const timeDecay = Math.sqrt(hDecay);
+    let time = 1 / ((1 - Math.pow(timeDecay, count)) / (1 - timeDecay));
+    const res = [];
+    for (let i = 0; i < count; i++, height *= hDecay, time *= timeDecay)
+      res.push({ height, time });
+    return res;
+  }
+
+  static bounce(count, firstHeight, decay = 0.7, width = 120) {
+    if (count % .5 != 0)
+      throw new RangeError("count must be whole or half numbers.");
+    const overshoot = count % 1;
+    const steps = this.computeDecay(Math.ceil(count), firstHeight, decay);
+    const overshootScale = 1 + (steps[0].time / 2);
+
+    const pointSet = steps.flatMap(({ time, height }) => {
+      const halfSize = Math.round(time * .5 * width * overshootScale);
+      const half = this.cubicBezier([0, 0, .58, 1], halfSize).map(y => y * height);
+      return [half, half.slice().reverse().slice(1)];
+    });
+    overshoot && pointSet.shift();
+    return pointSet.flat();
+  }
+
+  static sineWave(count, height, width = 120) {
+    return Array.from({ length: width + 1 }, (_, i) =>
+      -Math.sin((i / width) * Math.PI * 2 * count) * height *
+      Math.cos((Math.PI / 2) * (i / width))
+    );
+  }
+
+  static CURVE = {
+    slowIn: [.3, 0, 1, 1],   // gentle "ease-in"
+    easeIn: [.42, 0, 1, 1],
+    quickIn: [.55, 0, 1, 1], // stronger "ease-in"
+    slowOut: [0, 0, .7, 1],  // gentle "ease-out"
+    easeOut: [0, 0, .58, 1],
+    quickOut: [0, 0, .45, 1],// stronger "ease-out"
+  };
+
+  static get WAVES() {
+    return {
+      easeIn: this.cubicBezier(this.CURVE.easeIn, 50),
+      easeOut: this.cubicBezier(this.CURVE.easeOut, 50),
+      easeInOut: this.cubicBezier([.42, 0, .58, 1], 50),
+      easeInStrong: this.cubicBezier([.55, 0, 1, 1], 50),
+      easeOutStrong: this.cubicBezier([0, 0, .45, 1], 50),
+      easeInOutStrong: this.cubicBezier([.55, 0, .45, 1], 50),
+      easeInSpringOut: [
+        ...this.cubicBezier(this.CURVE.easeIn, 70),
+        ...this.sineWave(2, .1, 40).map(y => 1 - y).slice(1)
+      ],
+      bounce: this.bounce(3.5, 1, 0.4).map(y => 1 - y),
+      easeInBounceOut: [
+        ...this.cubicBezier(this.CURVE.easeIn, 100),
+        ...this.bounce(3, .2, 0.7, 50).map(y => 1 - y)
+      ],
+      easeInBackOut: [
+        ...this.cubicBezier(this.CURVE.easeIn, 70),
+        ...this.sineWave(1, .1, 40).map(y => y - 1).slice(1)
+      ],
+      fastInBumpOut: [
+        ...this.cubicBezier(this.CURVE.slowIn, 90),
+        ...this.bounce(1, .1, 0.5, 20).map(y => 1 - y)
+      ],
+    }
+  }
+}
+
 
 import { interpretNumber, extractTime, interpretName } from "./func.js";
 
@@ -36,12 +137,14 @@ function jump(type, args) {
 function cube(cube, args) { return transition(`cubic-bezier(${cube})`, args); }
 
 export default {
+  Transitions,
+
   transitionProperty: undefined,
   transitionDuration: undefined,
   transitionTimingFunction: undefined,
   transitionDelay: undefined,
 
-  slide: transition.bind(null, "linear"),
+  slide: transition.bind(null, "linear"), //this can be empty?
   ease: transition.bind(null, "ease"),
   easeIn: transition.bind(null, "ease-in"),
   easeOut: transition.bind(null, "ease-out"),
