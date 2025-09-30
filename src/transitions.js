@@ -79,33 +79,38 @@ export class Transitions {
     quickOut: [0, 0, .45, 1],// stronger "ease-out"
   };
 
-  static get WAVES() {
-    return {
-      easeIn: this.cubicBezier(this.CURVE.easeIn, 50),
-      easeOut: this.cubicBezier(this.CURVE.easeOut, 50),
-      easeInOut: this.cubicBezier([.42, 0, .58, 1], 50),
-      easeInStrong: this.cubicBezier([.55, 0, 1, 1], 50),
-      easeOutStrong: this.cubicBezier([0, 0, .45, 1], 50),
-      easeInOutStrong: this.cubicBezier([.55, 0, .45, 1], 50),
-      easeInSpringOut: [
-        ...this.cubicBezier(this.CURVE.easeIn, 70),
-        ...this.sineWave(2, .1, 40).map(y => 1 - y).slice(1)
-      ],
-      bounce: this.bounce(3.5, 1, 0.4).map(y => 1 - y),
-      easeInBounceOut: [
-        ...this.cubicBezier(this.CURVE.easeIn, 100),
-        ...this.bounce(3, .2, 0.7, 50).map(y => 1 - y)
-      ],
-      easeInBackOut: [
-        ...this.cubicBezier(this.CURVE.easeIn, 70),
-        ...this.sineWave(1, .1, 40).map(y => y - 1).slice(1)
-      ],
-      fastInBumpOut: [
-        ...this.cubicBezier(this.CURVE.slowIn, 90),
-        ...this.bounce(1, .1, 0.5, 20).map(y => 1 - y)
-      ],
-    }
+  static WAVES = {
+    easeIn: this.cubicBezier(this.CURVE.easeIn, 50),
+    easeOut: this.cubicBezier(this.CURVE.easeOut, 50),
+    easeInOut: this.cubicBezier([.42, 0, .58, 1], 50),
+    easeInStrong: this.cubicBezier([.55, 0, 1, 1], 50),
+    easeOutStrong: this.cubicBezier([0, 0, .45, 1], 50),
+    easeInOutStrong: this.cubicBezier([.55, 0, .45, 1], 50),
+    easeInSpringOut: [
+      ...this.cubicBezier(this.CURVE.easeIn, 70),
+      ...this.sineWave(2, .1, 40).map(y => 1 - y).slice(1)
+    ],
+    bounce: this.bounce(3.5, 1, 0.4).map(y => 1 - y),
+    easeInBounceOut: [
+      ...this.cubicBezier(this.CURVE.easeIn, 100),
+      ...this.bounce(3, .2, 0.7, 50).map(y => 1 - y)
+    ],
+    easeInBackOut: [
+      ...this.cubicBezier(this.CURVE.easeIn, 70),
+      ...this.sineWave(1, .1, 40).map(y => y - 1).slice(1)
+    ],
+    fastInBumpOut: [
+      ...this.cubicBezier(this.CURVE.slowIn, 90),
+      ...this.bounce(1, .1, 0.5, 20).map(y => 1 - y)
+    ],
   }
+  static cssLinear(nums) {
+    const str = nums.map(v => (Math.round(v * 1000) / 1000).toString().replace("0.", ".")).join(",");
+    return `linear(${str})`;
+  }
+
+  static WAVE_STRINGS = Object.fromEntries(Object.entries(this.WAVES).map(
+    ([k, v]) => [k, this.cssLinear(v)]));
 }
 
 
@@ -136,8 +141,12 @@ function jump(type, args) {
 
 function cube(cube, args) { return transition(`cubic-bezier(${cube})`, args); }
 
-export default {
+const WAVES = {};
 
+export default {
+  
+  ...Transitions.WAVE_STRINGS,
+  
   transitionProperty: undefined,
   transitionDuration: undefined,
   transitionTimingFunction: undefined,
@@ -157,52 +166,52 @@ export default {
   harshIn: cube.bind(null, "0.05,0,0.66,1"),
   harshOut: cube.bind(null, "0.35,0,0.90,1"),
   harshInOut: cube.bind(null, "0.05,0,0.90,1"),
-  playful: cube.bind(null, "0.20,-0.40,0.75,1.40"),
-  playfulIn: cube.bind(null, "0.20,-0.40,0.66,1"),
-  playfulOut: cube.bind(null, "0.35,0,0.75,1.40"),
-  playfulInOut: cube.bind(null, "0.20,-0.40,0.75,1.40"),
-  bounce: cube.bind(null, "0.25,-0.30,0.70,1.30"),
-  bounceIn: cube.bind(null, "0.25,-0.30,0.66,1"),
-  bounceOut: cube.bind(null, "0.35,0,0.70,1.30"),
-  bounceInOut: cube.bind(null, "0.25,-0.30,0.70,1.30"),
-  hesitate: cube.bind(null, ".38,1.55,.62,-0.55"),
-  hesitateIn: cube.bind(null, ".45,.64,.12,-0.55"),
-  hesitateOut: cube.bind(null, ".38,0,.62,-0.55"),
-  hesitateInOut: cube.bind(null, ".38,1.55,.62,-0.55"),
-  wiggle: cube.bind(null, ".5,1.25,.5,-.25"),//wiggle is the same as hesitate, only that it backtracks too. 
-  wiggleIn: cube.bind(null, ".30,1.30,.40,-.35"),
-  wiggleOut: cube.bind(null, ".65,1.25,.85,-.35"),
-  wiggleInOut: cube.bind(null, ".5,1.25,.5,-.25"),
+  // playful: cube.bind(null, "0.20,-0.40,0.75,1.40"),
+  // playfulIn: cube.bind(null, "0.20,-0.40,0.66,1"),
+  // playfulOut: cube.bind(null, "0.35,0,0.75,1.40"),
+  // playfulInOut: cube.bind(null, "0.20,-0.40,0.75,1.40"),
+  // bounce: cube.bind(null, "0.25,-0.30,0.70,1.30"),
+  // bounceIn: cube.bind(null, "0.25,-0.30,0.66,1"),
+  // bounceOut: cube.bind(null, "0.35,0,0.70,1.30"),
+  // bounceInOut: cube.bind(null, "0.25,-0.30,0.70,1.30"),
+  // hesitate: cube.bind(null, ".38,1.55,.62,-0.55"),
+  // hesitateIn: cube.bind(null, ".45,.64,.12,-0.55"),
+  // hesitateOut: cube.bind(null, ".38,0,.62,-0.55"),
+  // hesitateInOut: cube.bind(null, ".38,1.55,.62,-0.55"),
+  // wiggle: cube.bind(null, ".5,1.25,.5,-.25"),//wiggle is the same as hesitate, only that it backtracks too. 
+  // wiggleIn: cube.bind(null, ".30,1.30,.40,-.35"),
+  // wiggleOut: cube.bind(null, ".65,1.25,.85,-.35"),
+  // wiggleInOut: cube.bind(null, ".5,1.25,.5,-.25"),
 
-  xbounce: cube.bind(null, ".34,1.56,.64,1"),   //overshoots either coming in, going out, or both.
-  xbounceIn: cube.bind(null, ".36,0,.66,-.56"),
-  xbounceOut: cube.bind(null, ".34,1.56,.64,1"),
-  xbounceInOut: cube.bind(null, ".68,-.6,.32,1.6"),
-  xplayful: cube.bind(null, "0,.35,.1,1"),//overshoots same as bounce, but slightly more
-  xplayfulIn: cube.bind(null, ".6,0,1,.2"),
-  xplayfulOut: cube.bind(null, "0,.35,.1,1"),
-  xplayfulInOut: cube.bind(null, ".65,0,.35,1"),
-  xcrisp: cube.bind(null, "0,.55,.2,1"),//starts or ends crisply
-  xcrispIn: cube.bind(null, ".8,0,1,.45"),
-  xcrispOut: cube.bind(null, "0,.55,.2,1"),
-  xcrispInOut: cube.bind(null, ".8,0,.2,1"),
-  xharsh: cube.bind(null, "0,.8,.15,1"),//starts or ends harshly
-  xharshIn: cube.bind(null, ".95,0,1,.2"),
-  xharshOut: cube.bind(null, "0,.8,.15,1"),
-  xharshInOut: cube.bind(null, ".9,0,.1,1"),
-  xhesitate: cube.bind(null, ".5,1.05,.5,-.10"),   //hesitate is to go forward, then pauses, then forward again. 
-  xhesitateIn: cube.bind(null, ".25,1.10,.35,-.15"),   //hesitateIn does so at the beginning of the transition.
-  xhesitateOut: cube.bind(null, ".65,1.10,.85,-.15"),   //hesitateOut does so at the end of the transition.
-  xhesitateInOut: cube.bind(null, ".5,1.15,.5,-.15"),   //hesitateInOut and hesitate does so in the middle.
+  // xbounce: cube.bind(null, ".34,1.56,.64,1"),   //overshoots either coming in, going out, or both.
+  // xbounceIn: cube.bind(null, ".36,0,.66,-.56"),
+  // xbounceOut: cube.bind(null, ".34,1.56,.64,1"),
+  // xbounceInOut: cube.bind(null, ".68,-.6,.32,1.6"),
+  // xplayful: cube.bind(null, "0,.35,.1,1"),//overshoots same as bounce, but slightly more
+  // xplayfulIn: cube.bind(null, ".6,0,1,.2"),
+  // xplayfulOut: cube.bind(null, "0,.35,.1,1"),
+  // xplayfulInOut: cube.bind(null, ".65,0,.35,1"),
+  // xcrisp: cube.bind(null, "0,.55,.2,1"),//starts or ends crisply
+  // xcrispIn: cube.bind(null, ".8,0,1,.45"),
+  // xcrispOut: cube.bind(null, "0,.55,.2,1"),
+  // xcrispInOut: cube.bind(null, ".8,0,.2,1"),
+  // xharsh: cube.bind(null, "0,.8,.15,1"),//starts or ends harshly
+  // xharshIn: cube.bind(null, ".95,0,1,.2"),
+  // xharshOut: cube.bind(null, "0,.8,.15,1"),
+  // xharshInOut: cube.bind(null, ".9,0,.1,1"),
+  // xhesitate: cube.bind(null, ".5,1.05,.5,-.10"),   //hesitate is to go forward, then pauses, then forward again. 
+  // xhesitateIn: cube.bind(null, ".25,1.10,.35,-.15"),   //hesitateIn does so at the beginning of the transition.
+  // xhesitateOut: cube.bind(null, ".65,1.10,.85,-.15"),   //hesitateOut does so at the end of the transition.
+  // xhesitateInOut: cube.bind(null, ".5,1.15,.5,-.15"),   //hesitateInOut and hesitate does so in the middle.
 
-  transition: args => {
-    const x1 = extractNumber(x1);
-    const y1 = extractNumber(y1);
-    const x2 = extractNumber(x2);
-    const y2 = extractNumber(y2);
+  transition: ([x1, y1, x2, y2, ...args]) => {
+    x1 = extractNumber(x1);
+    y1 = extractNumber(y1);
+    x2 = extractNumber(x2);
+    y2 = extractNumber(y2);
     if (!x1 || !y1 || !x2 || !y2)
       throw new SyntaxError(`$transition (cubic-bezier) requires four number arguments first.`);
-    return transition(`cubic-bezier(${x1},${y1},${x2},${y2})`, args)
+    return transition(`cubic-bezier(${x1},${y1},${x2},${y2})`, args.slice(4))
   },
   jump: jump.bind(null, ""), //jumpEnd is default.
   jumpEnd: jump.bind(null, "jump-end"),

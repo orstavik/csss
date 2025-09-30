@@ -52,8 +52,8 @@
     decimals = 10 ** decimals;
     return Math.round(p * decimals) / decimals;
   }
-  function runTest(name, curve, expected) {
-    const resStr = curve.map(numFixed.bind(null, 3)).join(",");
+  function runTest(name, curve, resStr, expected) {
+    // const resStr = curve.map(numFixed.bind(null, 3)).join(",");
     const expectedStr = expected?.join(","); // use emoji
     const result = resStr === expectedStr ? "✅" : "❌";
     if (result === "❌") {
@@ -67,5 +67,5 @@
       `<div style="transition-timing-function: linear(${resStr})">${name + result}</div>`);
   }
   for (let [name, curve] of Object.entries(Transitions.WAVES))
-    runTest(name, curve);
+    runTest(name, curve, Transitions.WAVE_STRINGS[name]);
 </script>
