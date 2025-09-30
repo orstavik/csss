@@ -7,7 +7,7 @@
 //wiggle means that it goes forward, then backtracks a little, then forward again.
 //wobble means that it goes forward, then backtracks a fully, then forward again, then backtracks a little, then forward again.
 
-class Transitions {
+export class Transitions {
 
   static cubicBezier([x1, y1, x2, y2], sampleSize = 240, precision = 5) {
     if (![x1, y1, x2, y2].every(Number.isFinite))
@@ -137,7 +137,6 @@ function jump(type, args) {
 function cube(cube, args) { return transition(`cubic-bezier(${cube})`, args); }
 
 export default {
-  Transitions,
 
   transitionProperty: undefined,
   transitionDuration: undefined,
