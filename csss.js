@@ -2149,6 +2149,133 @@ var palette$1 = {
   palette
 };
 
+function cubicBezier([x1, y1, x2, y2], sampleSize = 240, precision = 5) {
+  if (![x1, y1, x2, y2].every(Number.isFinite))
+    throw new TypeError("Control points must be finite numbers.");
+  if (precision < 3)
+    throw new RangeError("precision must be ≥ 2 (recommend ≥ 3).");
+
+  const xInc = 1 / (sampleSize - 1);
+  const tInc = xInc / precision;
+  const res = new Array(sampleSize);
+  res[0] = 0;
+  res[sampleSize - 1] = 1; //x=1, y=1
+  for (let xStep = xInc, prevX = 0, prevY = 0, t = tInc, n = 1; xStep < 1; t += tInc) {
+    const u = 1 - t;
+    const tt = t * t;
+    const ttt = tt * t;
+    const uut3 = 3 * u * u * t, utt3 = 3 * u * tt;
+    const x = uut3 * x1 + utt3 * x2 + ttt;
+    const y = uut3 * y1 + utt3 * y2 + ttt;
+    if (x >= xStep) {
+      const ratio = (xStep - prevX) / (x - prevX);
+      res[n++] = prevY + (y - prevY) * ratio;
+      xStep += xInc;
+    }
+    prevX = x, prevY = y;
+  }
+  if (res[sampleSize - 2] == undefined) {
+    debugger
+    return cubicBezier([x1, y1, x2, y2], sampleSize, precision * 2);
+  }
+  return res;
+}
+
+function computeDecay(count, height, hDecay) {
+  const timeDecay = Math.sqrt(hDecay);
+  let time = 1 / ((1 - Math.pow(timeDecay, count)) / (1 - timeDecay));
+  const res = [];
+  for (let i = 0; i < count; i++, height *= hDecay, time *= timeDecay)
+    res.push({ height, time });
+  return res;
+}
+
+function bounce(count, firstHeight, decay = 0.7, width = 120) {
+  if (count % .5 != 0)
+    throw new RangeError("count must be whole or half numbers.");
+  const overshoot = count % 1;
+  const steps = computeDecay(Math.ceil(count), firstHeight, decay);
+  const overshootScale = 1 + (steps[0].time / 2);
+
+  const pointSet = steps.flatMap(({ time, height }) => {
+    const halfSize = Math.round(time * .5 * width * overshootScale);
+    const half = cubicBezier([0, 0, .58, 1], halfSize).map(y => y * height);
+    return [half, half.slice().reverse().slice(1)];
+  });
+  overshoot && pointSet.shift();
+  return pointSet.flat();
+}
+
+function sineWave(count, height, width = 120) {
+  const res = Array(width);
+  res[0] = res[width - 1] = 0;
+  for (let x = 1; x < (width - 1); x++) {
+    const t = x / (width - 1);
+    res[x] = -Math.sin(t * Math.PI * 2 * count) * height;// * ease(t);
+  }
+  return res;
+}
+
+function sineWaveEase(count, height, width = 120) {
+  return sineWave(count, height, width).map((y, i) => y * Math.cos((Math.PI / 2) * (i / width)));
+}
+
+function line(width) {
+  return Array.from({ length: width }, (_, i) => i / (width - 1));
+}
+
+function cssLinear(ys) {
+  return `linear(${ys.map(n => (Math.round(n * 1000) / 1000).toString().replace("0.", ".")).join(",")})`;
+}
+function join(...numSets) {
+  return numSets.map((s, i) => !i ? s : s.slice(1)).flat();
+}
+function inverse(ar) {
+  return ar.map(y => 1 - y).reverse();
+}
+
+const BEZIER = {
+  slowIn: [.3, 0, 1, 1],   // gentle "ease-in"
+  easeIn: [.42, 0, 1, 1],
+  quickIn: [.55, 0, 1, 1], // stronger "ease-in"
+};
+for (let [k, v] of Object.entries(BEZIER))
+  BEZIER[k.replace("In", "Out")] = v.map(n => 1 - n);
+
+
+const _easeBack = join(cubicBezier(BEZIER.easeIn, 28), sineWaveEase(1, .075, 10).map(y => 1 - y));
+const backInEaseOut$1 = cssLinear(inverse(_easeBack));
+const easeInBackOut$1 = cssLinear(_easeBack);
+const backInOut$1 = cssLinear(join(
+  sineWaveEase(1, .14, 20).reverse(),
+  line(20),
+  sineWaveEase(1, .14, 20).map(y => 1 - y)
+));
+
+const _easeInBounceOut = join(cubicBezier(BEZIER.easeIn, 70), bounce(3, .18, 0.33, 40).map(y => 1 - y));
+const easeInBounceOut$1 = cssLinear(_easeInBounceOut);
+const bounceInEaseOut$1 = cssLinear(inverse(_easeInBounceOut));
+const _bounceInOut = join(
+  bounce(3.5, .5, 0.6, 60).reverse(),
+  bounce(3.5, .5, 0.6, 60).map(y => 1 - y)
+);
+const bounceInOut$1 = cssLinear(_bounceInOut);
+const _easeInSpringOut = join(
+  cubicBezier(BEZIER.easeIn, 70),
+  sineWaveEase(2, .1, 40).map(y => 1 - y)
+);
+const easeInSpringOut$1 = cssLinear(_easeInSpringOut);
+const springInEaseOut$1 = cssLinear(inverse(_easeInSpringOut));
+const springInOut$1 = cssLinear(join(
+  sineWaveEase(2, .1, 40).reverse(),
+  line(40),
+  sineWaveEase(2, .1, 40).map(y => 1 - y)
+));
+const wobble$1 = cssLinear(join(
+  sineWave(2, .1, 60).reverse().map((y, i) => y + i / 120),
+  sineWave(2, .1, 60).map((y, i) => 1 - y - (60 - i) / 120)
+));
+
 //ease is defined in native css as accelerating and decelerating.
 //crisp means that it starts or ends quickly, but not both.
 //harsh means that it starts or ends very quickly, but not both.
@@ -2184,13 +2311,27 @@ function jump(type, args) {
 
 function cube(cube, args) { return transition(`cubic-bezier(${cube})`, args); }
 
+const backInEaseOut = transition.bind(null, backInEaseOut$1);
+const easeInBackOut = transition.bind(null, easeInBackOut$1);
+const backInOut = transition.bind(null, backInOut$1);
+const easeInBounceOut = transition.bind(null, easeInBounceOut$1);
+const bounceInEaseOut = transition.bind(null, bounceInEaseOut$1);
+const bounceInOut = transition.bind(null, bounceInOut$1);
+const easeInSpringOut = transition.bind(null, easeInSpringOut$1);
+const springInEaseOut = transition.bind(null, springInEaseOut$1);
+const springInOut = transition.bind(null, springInOut$1);
+const wobble = transition.bind(null, wobble$1);
+
 var transitions = {
+
+  ...undefined,
+
   transitionProperty: undefined,
   transitionDuration: undefined,
   transitionTimingFunction: undefined,
   transitionDelay: undefined,
 
-  slide: transition.bind(null, "linear"),
+  slide: transition.bind(null, "linear"), //this can be empty?
   ease: transition.bind(null, "ease"),
   easeIn: transition.bind(null, "ease-in"),
   easeOut: transition.bind(null, "ease-out"),
@@ -2204,52 +2345,26 @@ var transitions = {
   harshIn: cube.bind(null, "0.05,0,0.66,1"),
   harshOut: cube.bind(null, "0.35,0,0.90,1"),
   harshInOut: cube.bind(null, "0.05,0,0.90,1"),
-  playful: cube.bind(null, "0.20,-0.40,0.75,1.40"),
-  playfulIn: cube.bind(null, "0.20,-0.40,0.66,1"),
-  playfulOut: cube.bind(null, "0.35,0,0.75,1.40"),
-  playfulInOut: cube.bind(null, "0.20,-0.40,0.75,1.40"),
-  bounce: cube.bind(null, "0.25,-0.30,0.70,1.30"),
-  bounceIn: cube.bind(null, "0.25,-0.30,0.66,1"),
-  bounceOut: cube.bind(null, "0.35,0,0.70,1.30"),
-  bounceInOut: cube.bind(null, "0.25,-0.30,0.70,1.30"),
-  hesitate: cube.bind(null, ".38,1.55,.62,-0.55"),
-  hesitateIn: cube.bind(null, ".45,.64,.12,-0.55"),
-  hesitateOut: cube.bind(null, ".38,0,.62,-0.55"),
-  hesitateInOut: cube.bind(null, ".38,1.55,.62,-0.55"),
-  wiggle: cube.bind(null, ".5,1.25,.5,-.25"),//wiggle is the same as hesitate, only that it backtracks too. 
-  wiggleIn: cube.bind(null, ".30,1.30,.40,-.35"),
-  wiggleOut: cube.bind(null, ".65,1.25,.85,-.35"),
-  wiggleInOut: cube.bind(null, ".5,1.25,.5,-.25"),
+  
+  backInEaseOut,
+  easeInBackOut,
+  backInOut,
+  easeInBounceOut,
+  bounceInEaseOut,
+  bounceInOut,
+  easeInSpringOut,
+  springInEaseOut,
+  springInOut,
+  wobble,
 
-  xbounce: cube.bind(null, ".34,1.56,.64,1"),   //overshoots either coming in, going out, or both.
-  xbounceIn: cube.bind(null, ".36,0,.66,-.56"),
-  xbounceOut: cube.bind(null, ".34,1.56,.64,1"),
-  xbounceInOut: cube.bind(null, ".68,-.6,.32,1.6"),
-  xplayful: cube.bind(null, "0,.35,.1,1"),//overshoots same as bounce, but slightly more
-  xplayfulIn: cube.bind(null, ".6,0,1,.2"),
-  xplayfulOut: cube.bind(null, "0,.35,.1,1"),
-  xplayfulInOut: cube.bind(null, ".65,0,.35,1"),
-  xcrisp: cube.bind(null, "0,.55,.2,1"),//starts or ends crisply
-  xcrispIn: cube.bind(null, ".8,0,1,.45"),
-  xcrispOut: cube.bind(null, "0,.55,.2,1"),
-  xcrispInOut: cube.bind(null, ".8,0,.2,1"),
-  xharsh: cube.bind(null, "0,.8,.15,1"),//starts or ends harshly
-  xharshIn: cube.bind(null, ".95,0,1,.2"),
-  xharshOut: cube.bind(null, "0,.8,.15,1"),
-  xharshInOut: cube.bind(null, ".9,0,.1,1"),
-  xhesitate: cube.bind(null, ".5,1.05,.5,-.10"),   //hesitate is to go forward, then pauses, then forward again. 
-  xhesitateIn: cube.bind(null, ".25,1.10,.35,-.15"),   //hesitateIn does so at the beginning of the transition.
-  xhesitateOut: cube.bind(null, ".65,1.10,.85,-.15"),   //hesitateOut does so at the end of the transition.
-  xhesitateInOut: cube.bind(null, ".5,1.15,.5,-.15"),   //hesitateInOut and hesitate does so in the middle.
-
-  transition: args => {
-    const x1 = extractNumber(x1);
-    const y1 = extractNumber(y1);
-    const x2 = extractNumber(x2);
-    const y2 = extractNumber(y2);
+  transition: ([x1, y1, x2, y2, ...args]) => {
+    x1 = extractNumber(x1);
+    y1 = extractNumber(y1);
+    x2 = extractNumber(x2);
+    y2 = extractNumber(y2);
     if (!x1 || !y1 || !x2 || !y2)
       throw new SyntaxError(`$transition (cubic-bezier) requires four number arguments first.`);
-    return transition(`cubic-bezier(${x1},${y1},${x2},${y2})`, args)
+    return transition(`cubic-bezier(${x1},${y1},${x2},${y2})`, args.slice(4))
   },
   jump: jump.bind(null, ""), //jumpEnd is default.
   jumpEnd: jump.bind(null, "jump-end"),

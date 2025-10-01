@@ -1,0 +1,79 @@
+<script src="../src/auto.js?style=style&interval=400" type="module"></script>
+
+<style>
+  canvas {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    background: white;
+    border: 1px solid black;
+    width: 50px;
+    height: 50px;
+  }
+
+  section {
+    position: relative;
+    height: 50px;
+    border-bottom: 1px dashed black;
+    padding: 10px;
+  }
+
+  section:hover>canvas {
+    width: unset;
+    height: unset;
+    z-index: 10;
+    top: 100%;
+  }
+
+  section:hover>div {
+    transform: translateX(400px);
+  }
+
+  div {
+    transition-duration: 5s;
+    transition-property: all;
+    width: fit-content;
+    background: lightblue;
+    border: 1px solid blue;
+    display: block;
+  }
+</style>
+<h1>hello sunshine transitions</h1>
+
+<script type="module">
+  function drawFunction(points, i = 250) {
+    const canvas = document.createElement("canvas");
+    const padding = i / 5;
+    canvas.width = 2 * padding + i;
+    canvas.height = 2 * padding + i;
+    const ctx = canvas.getContext("2d");
+    ctx.lineWidth = 3;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "red";
+    ctx.beginPath();
+    ctx.arc(canvas.width / 2, canvas.height / 2, 6, 0, 2 * Math.PI);
+    ctx.fill();
+    let c = 0;
+    for (let p = 0; p < points.length; p++) {
+      const y = points[p];
+      const x = p / (points.length - 1);
+      ctx.fillStyle = c++ % 2 ? "green" : "black";
+      ctx.beginPath();
+      ctx.arc(padding + x * i, padding + (i - y * i), 2, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+    return canvas;
+  }
+
+  function runTest(name, curveStr) {
+    const curve = curveStr.slice(9, -1).split(",").map(Number);
+    document.body.insertAdjacentHTML("beforeend",
+      `<section><div class="$${name}(5s,transform)">$${name}</div></section>`);
+    document.body.lastElementChild.append(drawFunction(curve));
+  }
+
+  import * as Transitions from "../src/Curves.js";
+  for (let [name, curve] of Object.entries(Transitions))
+    runTest(name, curve);
+</script>
