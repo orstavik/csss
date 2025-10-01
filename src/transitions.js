@@ -12,17 +12,19 @@ import { interpretNumber, extractTime, interpretName } from "./func.js";
 function transition(timing, args) {
   const dur = extractTime(args);
   const delay = extractTime(args);
-  const settings = [dur, delay, timing].filter(Boolean);
+  const settings = [dur, delay].filter(Boolean);
   const props = [];
   let a2;
   for (let a of args)
     if (a.text == "allowDiscrete") settings.push("allow-discrete");
     else if (a2 = interpretName(a)) props.push(a.text);
     else throw new SyntaxError(`Not a valid $transition property: ${a.text}.`);
+  const _var = props.length > 1 ? timing : undefined;
+  settings.push(props.length > 1 ? "var(--t)" : timing);
   let transition = settings.join(" ");
   if (props.length)
     transition = props.map(p => `${p} ${transition}`).join(", ");
-  return { transition };
+  return { "--t": _var, transition };
 }
 
 function jump(type, args) {
@@ -70,7 +72,7 @@ export default {
   harshIn: cube.bind(null, "0.05,0,0.66,1"),
   harshOut: cube.bind(null, "0.35,0,0.90,1"),
   harshInOut: cube.bind(null, "0.05,0,0.90,1"),
-  
+
   backInEaseOut,
   easeInBackOut,
   backInOut,
