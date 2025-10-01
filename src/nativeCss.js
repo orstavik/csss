@@ -9,7 +9,7 @@ const TYPES = {
   frequency: "1Hz",
   color: "#123",
   fr: "1fr",  // always correlate with minmax
-  repeat: "repeat(2, 1fr)",
+  repeat: "repeat(2,1fr)",
   url: "url('link')",
   counter: "counter(my-counter)",
   counters: "counters(my-counter, '.')",
@@ -17,8 +17,8 @@ const TYPES = {
   filter: "blur()",
   transform: "translateX(0)",
   gradient: "linear-gradient(white, black)",
-  // attr: "attr(data-foo)", //this is for some reason always valid, so it makes no sense to test it.
-}
+  //attr: "attr(data-my-attr)", //is supported for all props, for some reason, but only works in content.
+};
 
 function isSupported(k) {
   return CSS.supports(k, "unset") &&
@@ -28,7 +28,7 @@ function isSupported(k) {
 function longhands(obj) {
   const keys = Object.keys(obj).sort((a, b) => b.length - a.length);
   const longs = keys.filter((k, i) => keys.findIndex(x => x.startsWith(k)) === i);
-  longs.push("color");//todo this doesn't work with this filter.
+  longs.push("color", "content");//todo patches for the long hand filter
   return longs.sort();
 }
 
@@ -42,6 +42,7 @@ async function analyzeNativeCssProps() {
       supported[k] = types : //mergeTypes(types)
       unsupported[k] = SPEC.css.properties[k];
   }
+  supported.content.push("attr");
   return { supported, unsupported };
 }
 const NativeCss = await analyzeNativeCssProps();
