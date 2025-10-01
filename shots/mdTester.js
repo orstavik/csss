@@ -23,7 +23,7 @@ function printDiff({ key, actual, expected, type }) {
     diff(expected, actual);
   const noMatch = d.find(({ type, a, b }) => type != "match" && (a.trim() || b.trim()))
   if (!noMatch)
-    return console.log(`🟦 ${key}`);
+    return console.log(`🟦 ${key}`, d);
   console.log(`❌ ${key}`);
   for (let { a, b, type } of d)
     type == "ins" ? console.log("%c%s", "background-color:green", b) :
