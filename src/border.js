@@ -49,5 +49,23 @@ function border(ar) {
 }
 
 export default {
+  borderStyle: undefined,
+  borderWidth: undefined,
+  borderColor: undefined,
+  borderRadius: undefined,
+  borderTopStyle: undefined,
+  borderTopWidth: undefined,
+  borderTopColor: undefined,
+  borderRightStyle: undefined,
+  borderRightWidth: undefined,
+  borderRightColor: undefined,
+  borderBottomStyle: undefined,
+  borderBottomWidth: undefined,
+  borderBottomColor: undefined,
+  borderLeftStyle: undefined,
+  borderLeftWidth: undefined,
+  borderLeftColor: undefined,
+  //todo so many, make more that we should block.
   border,
+  noBorder: { border: "none" },
 }
