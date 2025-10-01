@@ -12,31 +12,11 @@
     height: 50px;
   }
 
-  section {
-    position: relative;
-    height: 50px;
-    border-bottom: 1px dashed black;
-    padding: 10px;
-  }
-
   section:hover>canvas {
     width: unset;
     height: unset;
     z-index: 10;
     top: 100%;
-  }
-
-  section:hover>div {
-    transform: translateX(400px);
-  }
-
-  div {
-    transition-duration: 5s;
-    transition-property: all;
-    width: fit-content;
-    background: lightblue;
-    border: 1px solid blue;
-    display: block;
   }
 </style>
 <h1>hello sunshine transitions</h1>
@@ -69,7 +49,13 @@
   function runTest(name, curveStr) {
     const curve = curveStr.slice(9, -1).split(",").map(Number);
     document.body.insertAdjacentHTML("beforeend",
-      `<section><div class="$${name}(5s,transform)">$${name}</div></section>`);
+      `<section class="$relative $blockItem(blockSize(50px)) $border(0,0,1px,dashed,#000) $block(padding(10px))">
+        <div class="
+        $blockItem(size(fit-content)) $bg(#lightblue) $border(1px,solid,#blue)
+        :hover>*$translateX(400px) 
+        $${name}(5s,transform)
+        ">$${name}</div>
+        </section>`);
     document.body.lastElementChild.append(drawFunction(curve));
   }
 
