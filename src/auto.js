@@ -1,4 +1,4 @@
-import * as CSSS from "../csss.js";
+import * as CSSS from "./csss.js";
 
 const defaultStyleEl = `
 <style id="csss">
