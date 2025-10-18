@@ -1,4 +1,4 @@
-import { fromHex6, fromLCH } from "../src/Color.js";
+import { fromHex6, fromLCH } from "../../src/Color.js";
 
 function flipKeys(grandpa) {
   const res = {};
