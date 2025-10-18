@@ -13,7 +13,7 @@
     --comicFontSize: xx-small;
     --comicFontStyle: italic;
     --comicFontWeight: bolder;
-    --comicFontStretch: semi-expanded;
+    --comicFontWidth: semi-expanded;
   }
 }
 ```
@@ -29,7 +29,7 @@
     --bodyFontStyle: italic;
     --bodyFontWeight: bold;
     --bodyFontSizeAdjust: 0.5;
-    --bodyFontStretch: condensed;
+    --bodyFontWidth: condensed;
   }
 }
 ```
@@ -39,13 +39,13 @@
 ```css
 @layer containerDefault {
   .\$font\(system-ui\,sans-serif\,400\,0\.5\,bold\,i\,condensed\,12px\) {
-    font-family: system-ui, sans-serif;
+    font-family: system-ui, sans-serif, var(--system-uiFontFamily);
     font-size: 12px;
     font-style: italic;
     font-weight: bold;
     font-size-adjust: 0.5;
     letter-spacing: var(--system-uiLetterSpacing, unset);
-    font-stretch: condensed;
+    font-width: condensed;
     font-variant-caps: var(--system-uiFontVariantCaps, unset);
     font-synthesis: var(--system-uiFontSynthesis, unset);
     font-feature-settings: var(--system-uiFontFeatureSettings, unset);
@@ -53,13 +53,14 @@
     -webkit-font-smoothing: var(--system-uiWebkitFontSmoothing, unset);
     -moz-osx-font-smoothing: var(--system-uiMozOsxFontSmoothing, unset);
     font-kerning: var(--system-uiFontKerning, unset);
+    font-stretch: condensed;
     --fontFontFamily: system-ui, sans-serif;
     --fontFontSize: 12px;
     --fontFontStyle: italic;
     --fontFontWeight: bold;
     --fontFontSizeAdjust: 0.5;
     --fontLetterSpacing: var(--system-uiLetterSpacing, unset);
-    --fontFontStretch: condensed;
+    --fontFontWidth: condensed;
     --fontFontVariantCaps: var(--system-uiFontVariantCaps, unset);
     --fontFontSynthesis: var(--system-uiFontSynthesis, unset);
     --fontFontFeatureSettings: var(--system-uiFontFeatureSettings, unset);
@@ -76,13 +77,13 @@
 ```css
 @layer containerDefault {
   .\$font\(body\) {
-    font-family: body;
+    font-family: body, var(--bodyFontFamily);
     font-size: var(--bodyFontSize, unset);
     font-style: var(--bodyFontStyle, unset);
     font-weight: var(--bodyFontWeight, unset);
     font-size-adjust: var(--bodyFontSizeAdjust, unset);
     letter-spacing: var(--bodyLetterSpacing, unset);
-    font-stretch: var(--bodyFontStretch, unset);
+    font-width: var(--bodyFontWidth, unset);
     font-variant-caps: var(--bodyFontVariantCaps, unset);
     font-synthesis: var(--bodyFontSynthesis, unset);
     font-feature-settings: var(--bodyFontFeatureSettings, unset);
@@ -90,13 +91,14 @@
     -webkit-font-smoothing: var(--bodyWebkitFontSmoothing, unset);
     -moz-osx-font-smoothing: var(--bodyMozOsxFontSmoothing, unset);
     font-kerning: var(--bodyFontKerning, unset);
+    font-stretch: var(--bodyFontWidth, unset);
     --fontFontFamily: body;
     --fontFontSize: var(--bodyFontSize, unset);
     --fontFontStyle: var(--bodyFontStyle, unset);
     --fontFontWeight: var(--bodyFontWeight, unset);
     --fontFontSizeAdjust: var(--bodyFontSizeAdjust, unset);
     --fontLetterSpacing: var(--bodyLetterSpacing, unset);
-    --fontFontStretch: var(--bodyFontStretch, unset);
+    --fontFontWidth: var(--bodyFontWidth, unset);
     --fontFontVariantCaps: var(--bodyFontVariantCaps, unset);
     --fontFontSynthesis: var(--bodyFontSynthesis, unset);
     --fontFontFeatureSettings: var(--bodyFontFeatureSettings, unset);

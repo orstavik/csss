@@ -1,4 +1,4 @@
-import { extractName, extractUrl, interpretName, interpretNumber, interpretLength, interpretAngle, interpretQuote } from "./func.js";
+import { extractName, extractUrl, interpretName, interpretNumber, interpretLength, interpretAngle, interpretQuote, interpretPercent } from "./func.js";
 
 const FONT_WORDS = {
   bold: { fontWeight: "bold" },
@@ -20,15 +20,15 @@ const FONT_WORDS = {
   titlingCaps: { fontVariantCaps: "titling-caps" },
   noVariant: { fontVariantCaps: "normal" },
 
-  condensed: { fontStretch: "condensed" },
-  expanded: { fontStretch: "expanded" },
-  semiCondensed: { fontStretch: "semi-condensed" },
-  semiExpanded: { fontStretch: "semi-expanded" },
-  extraCondensed: { fontStretch: "extra-condensed" },
-  extraExpanded: { fontStretch: "extra-expanded" },
-  ultraCondensed: { fontStretch: "ultra-condensed" },
-  ultraExpanded: { fontStretch: "ultra-expanded" },
-  noStretch: { fontStretch: "normal" },
+  condensed: { fontWidth: "condensed" },
+  expanded: { fontWidth: "expanded" },
+  semiCondensed: { fontWidth: "semi-condensed" },
+  semiExpanded: { fontWidth: "semi-expanded" },
+  extraCondensed: { fontWidth: "extra-condensed" },
+  extraExpanded: { fontWidth: "extra-expanded" },
+  ultraCondensed: { fontWidth: "ultra-condensed" },
+  ultraExpanded: { fontWidth: "ultra-expanded" },
+  noStretch: { fontWidth: "normal" },
 
   kerning: { fontKerning: "normal" },
   noKerning: { fontKerning: "none" },
@@ -104,8 +104,8 @@ const FONT_FUNCTIONS = {
   // weight: a => ({ fontWeight: interpretNumber(a) }), //todo this should be primitive
   // style: a => ({ fontStyle: interpretWord(a) }), //todo this should not be allowed to be wrapped??
   variant: a => ({ fontVariant: interpretBasic(a) }),
-  stretch: a => ({ fontStretch: interpretBasic(a) }),
-  spacing: a => ({ letterSpacing: interpretBasic(a) }),
+  width: a => ({ fontWidth: interpretPercent(a) }),
+  spacing: a => (a.text == "normal" ? a.text : { letterSpacing: interpretLength(a) }),
   adjust: a => ({ fontSizeAdjust: interpretBasic(a) }),
 };
 
@@ -117,7 +117,7 @@ const FONT_DEFAULTS = Object.entries({
   fontWeight: "FontWeight",
   fontSizeAdjust: "FontSizeAdjust",
   letterSpacing: "LetterSpacing",
-  fontStretch: "FontStretch",
+  fontWidth: "FontWidth",
   fontVariantCaps: "FontVariantCaps",
   fontSynthesis: "FontSynthesis",
   fontFeatureSettings: "FontFeatureSettings",
@@ -211,7 +211,9 @@ function font(args) {
   const tmp = fontImpl(undefined, args);
   const vars = {}, res = {};
   for (let [k, varKey] of FONT_DEFAULTS)
-    vars["--font" + varKey] = (res[k] = tmp[k] ?? `var(--${typeName + varKey}, unset)`);
+    vars["--font" + varKey] = (res[k] = tmp[k] ?? `var(--${typeName + varKey}, unset)`); //clashing
+  res.fontFamily += `, var(--${typeName}FontFamily)`; //stacking
+  res.fontStretch = res.fontWidth;
   return { ...res, ...vars };
 }
 
@@ -238,7 +240,8 @@ export default {
   fontStyle: a => ({ [p]: a == "unset" ? `var(--fontStyle, unset)` : a }),
   fontWeight: a => ({ [p]: a == "unset" ? `var(--fontWeight, unset)` : a }),
   fontVariantCaps: a => ({ [p]: a == "unset" ? `var(--fontVariantCaps, unset)` : a }),
-  fontStretch: a => ({ [p]: a == "unset" ? `var(--fontStretch, unset)` : a }),
+  fontWidth: a => ({ [p]: a == "unset" ? `var(--fontWidth, unset)` : a }),
+  // fontStretch: a => ({ [p]: a == "unset" ? `var(--fontStretch, unset)` : a }), //renamed to fontWidth as per css spec
   fontSynthesis: a => ({ [p]: a == "unset" ? `var(--fontSynthesis, unset)` : a }),
   fontSizeAdjust: a => ({ [p]: a == "unset" ? `var(--fontSizeAdjust, unset)` : a }),
   letterSpacing: a => ({ [p]: a == "unset" ? `var(--letterSpacing, unset)` : a }),
