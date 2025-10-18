@@ -105,7 +105,7 @@ const FONT_FUNCTIONS = {
   // style: a => ({ fontStyle: interpretWord(a) }), //todo this should not be allowed to be wrapped??
   variant: a => ({ fontVariant: interpretBasic(a) }),
   stretch: a => ({ fontStretch: interpretBasic(a) }),
-  spacing: a => ({ letterSpacing: interpretBasic(a) }),
+  spacing: a => ({ letterSpacing: interpretBasic(args[0])?.text }),
   adjust: a => ({ fontSizeAdjust: interpretBasic(a) }),
 };
 
@@ -160,9 +160,10 @@ function fontImpl(fontFaceName, args) {
   }
   if (emoji)
     family.push(...emoji);
-  if (!family.length)
+  if (fontFaceName && !family.length)
     throw new SyntaxError(`No font family specified in $font: ${args}`);
-  res.fontFamily = family.map(s => s.match(/[^a-z0-9_-]/gi) ? `"${s}"` : s).join(", ");
+  if (family.length)
+    res.fontFamily = family.map(s => s.match(/[^a-z0-9_-]/gi) ? `"${s}"` : s).join(", ");
   return res;
 }
 
