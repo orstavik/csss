@@ -1,0 +1,112 @@
+<html lang="en">
+
+<head>
+  <title>Font Demo</title>
+  <script src="../src/auto.js?style=style&interval=400" type="module"></script>
+</head>
+<style csss></style>
+
+<body class="
+    $typeface(transitional,'Charter','Bitstream+Charter','Sitka+Text',Cambria,serif,18px,400)
+    $typeface(neoGrotesque,'Inter','Roboto','Helvetica+Neue',Arial,sans-serif,17px,400)
+    $typeface(monoCode,'ui-monospace','Cascadia+Code','Source+Code+Pro',monospace,16px,400)
+    $typeface(oldStyle,'Iowan+Old+Style','Palatino+Linotype','URW+Palladio+L',P052,serif,18px,400)
+    $typeface(industrial,Bahnschrift,'DIN+Alternate','Franklin+Gothic+Medium','Nimbus+Sans+Narrow','sans-serif-condensed',sans-serif,17px,400)
+    $block(padding(2rem,4rem))
+">
+
+  <header class="$blockItem(margin(0,0,2rem,0))">
+    <h1 class="$font(neoGrotesque,2.5rem,700)">Typography: Umbrella & Droplet Demo</h1>
+    <p class="$font(neoGrotesque,1.1rem)">This page demonstrates the CSSS font system. The `body` tag defines several
+      "umbrella" `$typeface()`s. Child elements then use `$font()` to apply an umbrella and can add
+      "droplets" such as `$fontStyle()` to override specific properties within the `$font()` scope.
+    </p>
+  </header>
+
+  <main class="$grid(cols(1fr),gap(2rem))">
+    <section
+      class="$border(1px,solid,#ddd,radius(8px)) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $block(padding(2rem))">
+      <h2 class="$font(transitional,1.75rem,700) $blockItem(margin(0,0,1rem,0))">Transitional</h2>
+      <div
+        class="$bg(#f7f7f7) $border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
+        'Charter', 'Bitstream Charter', 'Sitka Text', Cambria, serif;</div>
+      <div class="$blockItem(margin(1.5rem,0,0,0))">
+        <p class="$font(transitional)">This is the base transitional font. It's a classic, highly readable serif, great
+          for long-form text. It inherits all properties from the `transitional` umbrella.</p>
+        <p class="$font(transitional,600)">This paragraph uses a
+          <span class="$font(transitional,800)">droplet</span>
+          to increase the font weight to 600, making it bolder than
+          the base text, with an even bolder strong tag.
+        </p>
+        <p class="$font(transitional,italic)">This paragraph uses an <span class="$font(transitional,normal)">italic
+            droplet</span>, but the emphasized text inside is reset to normal style.</p>
+        <p class="$font(transitional,14px,spacing(0.1em),allSmallCaps)">This demonstrates multiple droplets: a smaller
+          font size, custom letter spacing, and the `all-small-caps` font variant.</p>
+      </div>
+    </section>
+
+    <section
+      class="$border(1px,solid,#ddd,radius(8px)) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $block(padding(2rem))">
+      <h2 class="$font(neoGrotesque,1.75rem,700) $blockItem(margin(0,0,1rem,0))">Neo-Grotesque</h2>
+      <div
+        class="$bg(#f7f7f7) $border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family: 'Inter',
+        'Roboto', 'Helvetica Neue', Arial, sans-serif;</div>
+      <div class="$blockItem(margin(1.5rem,0,0,0))">
+        <p class="$font(neoGrotesque)">This is the base neo-grotesque font. It's a modern, clean, and versatile
+          sans-serif, perfect for UI and general use.</p>
+        <p class="$font(neoGrotesque,300)">This paragraph uses a <span
+            class="$font(neoGrotesque,600)">droplet</span> to set a lighter font weight (300), while the span
+          tag inside it is made heavier (600).</p>
+        <p class="$font(neoGrotesque,lg,bolder)">This paragraph uses the `lg` size keyword and the `bolder` weight
+          keyword as droplets.</p>
+      </div>
+    </section>
+
+    <section
+      class="$border(1px,solid,#ddd,radius(8px)) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $block(padding(2rem))">
+      <h2 class="$font(monoCode,1.75rem,700) $blockItem(margin(0,0,1rem,0))">Monospace Code</h2>
+      <div
+        class="$bg(#f7f7f7) $border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
+        'ui-monospace', 'Cascadia Code', 'Source Code Pro', monospace;</div>
+      <div class="$blockItem(margin(1.5rem,0,0,0))">
+        <p class="$font(monoCode)">This is the base monospace font, ideal for div snippets and technical text, such as:
+        <div>const umbrella = "$typeface(monoCode, ...)";</div>
+        </p>
+        <p class="$font(monoCode,noKerning)">This paragraph has <span class="$font(monoCode,kerning)">`kerning
+            disabled`</span> via a droplet, except for the span tag where it is re-enabled.</p>
+      </div>
+    </section>
+
+    <section
+      class="$border(1px,solid,#ddd,radius(8px)) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $block(padding(2rem))">
+      <h2 class="$font(oldStyle,1.75rem,700) $blockItem(margin(0,0,1rem,0))">Old Style</h2>
+      <div
+        class="$bg(#f7f7f7) $border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family: 'Iowan
+        Old Style', 'Palatino Linotype', 'URW Palladio L', P052, serif;</div>
+      <div class="$blockItem(margin(1.5rem,0,0,0))">
+        <p class="$font(oldStyle)">This is an "Old Style" font. These typefaces have a classic, distinguished look,
+          often used in books and formal documents for their excellent readability.</p>
+        <p class="$font(oldStyle,smaller)">This paragraph uses the `smaller` keyword to reduce the font size, making it
+          suitable for captions or footnotes.</p>
+      </div>
+    </section>
+
+    <section
+      class="$border(1px,solid,#ddd,radius(8px)) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $block(padding(2rem))">
+      <h2 class="$font(industrial,1.75rem,700) $blockItem(margin(0,0,1rem,0))">Industrial</h2>
+      <div
+        class="$bg(#f7f7f7) $border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
+        Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif-condensed, sans-serif;
+      </div>
+      <div class="$blockItem(margin(1.5rem,0,0,0))">
+        <p class="$font(industrial)">This is an "Industrial" sans-serif font. It features a condensed and efficient
+          design, often seen in signage and user interfaces where space is limited.</p>
+        <p class="$font(industrial,expanded,800)">This paragraph uses droplets to apply an `expanded` font stretch and
+          a heavy `800` font weight, showing how a condensed font can be made wider and bolder.</p>
+      </div>
+    </section>
+
+  </main>
+</body>
+
+</html>
