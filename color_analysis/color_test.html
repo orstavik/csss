@@ -91,8 +91,8 @@
       let str = "";
       for (let [name, table] of Object.entries(colorMap)) {
         str += `<div style="white-space: pre; float: left; clear: left; width: 7vw; border-top: solid 2px grey;">${name}</div>`;
-        for (let [shade, { hex: HEX }] of Object.entries(table))
-          str += `<div style="float: left; background-color: ${HEX}; width: 7vw; height: 7vw; vertical-align: bottom; color: grey;">${shade}</div>`;
+        for (let [shade, { hex6 }] of Object.entries(table))
+          str += `<div style="float: left; background-color: #${hex6}; width: 7vw; height: 7vw; vertical-align: bottom; color: grey;">${shade}</div>`;
         str += `<div style="float: left; background-color: black; width:7vw; height: 7vw;">1000</div>`;
       }
       return str;
@@ -102,7 +102,7 @@
       const greyScale = ["#eee", "#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222", "#111", "#000"];
       const inverse = innerKeyToArray(res);
       for (let prop of props) {
-        const colorNames = Object.entries(res).map(([name, table]) => table[400].hex);
+        const colorNames = Object.entries(res).map(([name, table]) => "#" + table[400].hex6);
         printGraph(res, prop, colorNames);
         // printGraph(inverse, prop, greyScale);
       }
@@ -137,12 +137,12 @@
         formEl.nextElementSibling.remove();
       let table = {};
       for (let { value } of tablesEl.selectedOptions)
-        for (let [colorName, dict] of Object.entries(Palettes[value])){
-          let tail = value.slice(0,2);
-          if(dict[500].A){
-            tail+=`\n${dict[500].A}`// ${dict[500].mu} ${dict[500].sigma}`;
+        for (let [colorName, dict] of Object.entries(Palettes[value])) {
+          let tail = value.slice(0, 2);
+          if (dict[500].A) {
+            tail += `\n${dict[500].A}`// ${dict[500].mu} ${dict[500].sigma}`;
           }
-          table[colorName + "_" +  tail] = dict;
+          table[colorName + "_" + tail] = dict;
         }
       table = Object.fromEntries(Object.entries(table).sort(
         ([, { "500": { H: a } }], [, { "500": { H: b } }]) => b - a

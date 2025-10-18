@@ -1,4 +1,4 @@
-import { Color } from "../src/Color.js";
+import { fromHex6, fromLCH } from "../src/Color.js";
 
 function flipKeys(grandpa) {
   const res = {};
@@ -666,7 +666,7 @@ function analyzeColors(colorMap) {
   const res = { ...colorMap };
   for (let name in colorMap)
     for (let [shade, hex] of Object.entries(colorMap[name]))
-      res[name][shade] = new Color(hex);
+      res[name][shade] = fromHex6(hex.slice(1));
   return res;
 }
 
@@ -718,7 +718,7 @@ class ColorPaletteGeneratorLCH {
         const C = chromas[color][l1000];
         let L = 1.05 - (l1000 / 1350);
         L = lights[color][l1000];
-        (res[color] ??= {})[l1000] = new Color(`oklch(${L} ${C} ${H})`);
+        (res[color] ??= {})[l1000] = fromLCH(L, C, H);
       }
     return res;
   }
@@ -739,7 +739,7 @@ class ColorPaletteGeneratorLCH {
         // const C = chromas[color][l1000];
         let L = 1.05 - (l1000 / 1350);
         L = lights[color][l1000];
-        (res[color] ??= {})[l1000] = new Color(`oklch(${L} ${C} ${H})`);
+        (res[color] ??= {})[l1000] = fromLCH(L, C, H);
       }
     }
     return res;
@@ -764,7 +764,7 @@ class ColorPaletteGeneratorLCH {
         //   console.log(_.H, H);
         //   // debugger
         // }
-        (res[color] ??= {})[l1000] = { ...new Color(`oklch(${L} ${C} ${H})`), A, mu, sigma };
+        (res[color] ??= {})[l1000] = { ...fromLCH(L, C, H), A, mu, sigma };
       }
     }
     return res;
