@@ -81,9 +81,19 @@
       return res;
     }
 
+    function fixHueUpDown360(res) {
+      const x = { ...res };
+      for (const [k, list] of Object.entries(res))
+        if (list.some((e, i, ar) => Math.abs(e - ar[0]) > 300))
+          x[k] = list.map(i => i < 180 ? i + 360 : i);
+      return x;
+    }
+
     function printGraph(res, prop, colors) {
       const labels = Object.keys(Object.values(res)[0]);
       res = extractValue(res, color => color[prop]);
+      if (prop == "H")
+        res = fixHueUpDown360(res);
       createLineChart(prop, res, labels, prop, colors);
     }
 
