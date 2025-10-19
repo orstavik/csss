@@ -338,7 +338,7 @@ export default {
   height: undefined,
   minHeight: undefined,
   maxHeight: undefined,
-  inlinseSize: undefined,
+  inlineSize: undefined,
   minInlineSize: undefined,
   maxInlineSize: undefined,
   blockSize: undefined,
