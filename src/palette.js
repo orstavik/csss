@@ -1,7 +1,7 @@
 import { interpretColor } from "./func.js";
 import { fromLCH, fromHex6 } from "./Color.js";
 
-function round(num, places = 2) {
+function round(num, places = 3) {
   const m = 10 ** places;
   return Math.round(num * m) / m;
 }
@@ -21,13 +21,13 @@ function palette([role, ...colors]) {
     let { L, C, H } = fromHex6(color.hex, color.percent);
     if (C == 0)
       throw new SyntaxError(`Cannot create palette from achromatic color: ${color.text}`);
-    L = round(L, 3);
+    L = round(L);
     H = Math.round(H);
-    const pop = fromLCH(L, round((.5 - C) * .5 + C, 3), H);
-    const accent = fromLCH(L, round((.5 - C) * .7 + C, 3), H);
-    const bland = fromLCH(L, round(C * .5, 3), H);
+    const pop = fromLCH(L, round((.5 - C) * .5 + C), H);
+    const accent = fromLCH(L, round((.5 - C) * .7 + C), H);
+    const bland = fromLCH(L, round(C * .5), H);
     const neutral = fromLCH(L, 0, H);
-    return {
+    return {            //how to do the i here? 
       [role + i]: color.text,
       [role + "Pop" + i]: "#" + pop.hex6,
       [role + "Accent" + i]: "#" + accent.hex6,
