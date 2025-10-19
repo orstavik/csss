@@ -6,36 +6,39 @@ function round(num, places = 3) {
   return Math.round(num * m) / m;
 }
 
-function palette([role, ...colors]) {
-  if (!role || colors.length < 2)
-    throw "palette() requires role and at least two colors as parameters";
-  if (role.kind !== "WORD")
-    throw "First parameter must be a simple word";
-  role = `--color-${role.text}`;
+function makeColors(name, color) {
+  if (!color) throw `"${color.text}" is not a color.`;
+  if (!color.hex) throw `"${color.text}" is not a primitive color.`;
+  if (color.percent != 100) throw `"${color.text}" is not a primitive, fully opaque color.`;
+  let { L, C, H } = fromHex6(color.hex);
+  if (C == 0)
+    return { [name]: color.text };
+  L = round(L);
+  H = Math.round(H);
+  const pop = fromLCH(L, round((.5 - C) * .5 + C), H);
+  const accent = fromLCH(L, round((.5 - C) * .7 + C), H);
+  const bland = fromLCH(L, round(C * .5), H);
+  const neutral = fromLCH(L, 0, H);
+  return {
+    [name]: color.text,
+    [name + "Pop"]: "#" + pop.hex6,
+    [name + "Accent"]: "#" + accent.hex6,
+    [name + "Bland"]: "#" + bland.hex6,
+    [name + "Neutral"]: "#" + neutral.hex6,
+  };
+}
 
-  colors = colors.map((color, i) => {
-    color = interpretColor(color);
-    if (!color) throw `Parameter ${i + 2} is not a valid color`;
-    if (!color.hex) throw `Parameter ${i + 2} is not a primitive color`;
-    i ||= "";
-    let { L, C, H } = fromHex6(color.hex, color.percent);
-    if (C == 0)
-      throw new SyntaxError(`Cannot create palette from achromatic color: ${color.text}`);
-    L = round(L);
-    H = Math.round(H);
-    const pop = fromLCH(L, round((.5 - C) * .5 + C), H);
-    const accent = fromLCH(L, round((.5 - C) * .7 + C), H);
-    const bland = fromLCH(L, round(C * .5), H);
-    const neutral = fromLCH(L, 0, H);
-    return {            //how to do the i here? 
-      [role + i]: color.text,
-      [role + "Pop" + i]: "#" + pop.hex6,
-      [role + "Accent" + i]: "#" + accent.hex6,
-      [role + "Bland" + i]: "#" + bland.hex6,
-      [role + "Neutral" + i]: "#" + neutral.hex6,
-    };
-  });
-  return Object.assign({}, ...colors);
+function palette([name, main, on]) {
+  if (!name || !main || !on)
+    throw "$palette(name,bgColor,fgColor) requires three parameters";
+  if (name.kind !== "WORD")
+    throw "First parameter must be a simple word";
+  const mainName = `--color-${name.text}`;
+  const onName = `--color-on${name.text[0].toUpperCase() + name.text.slice(1)}`;
+  return {
+    ...makeColors(mainName, interpretColor(main)),
+    ...makeColors(onName, interpretColor(on))
+  };
 }
 
 export default {

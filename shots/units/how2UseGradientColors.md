@@ -8,11 +8,11 @@
     --color-warmAccent: #ff9f6c;
     --color-warmBland: #f3c3b9;
     --color-warmNeutral: #d0d0d0;
-    --color-warm1: brown;
-    --color-warmPop1: #ff8b6a;
-    --color-warmAccent1: #ff7f4d;
-    --color-warmBland1: #d3afa9;
-    --color-warmNeutral1: #b8b8b8;
+    --color-onWarm: brown;
+    --color-onWarmPop: #ff8b6a;
+    --color-onWarmAccent: #ff7f4d;
+    --color-onWarmBland: #d3afa9;
+    --color-onWarmNeutral: #b8b8b8;
   }
 }
 ```
@@ -27,11 +27,11 @@
     --color-primaryAccent: #77c9ff;
     --color-primaryBland: #b7c6e2;
     --color-primaryNeutral: #c5c5c5;
-    --color-primary1: skyblue;
-    --color-primaryPop1: #8bfbff;
-    --color-primaryAccent1: #57ffff;
-    --color-primaryBland1: #dfecf1;
-    --color-primaryNeutral1: #e9e9e9;
+    --color-onPrimary: skyblue;
+    --color-onPrimaryPop: #8bfbff;
+    --color-onPrimaryAccent: #57ffff;
+    --color-onPrimaryBland: #dfecf1;
+    --color-onPrimaryNeutral: #e9e9e9;
   }
 }
 ```
