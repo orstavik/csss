@@ -17,7 +17,7 @@ function transition(timing, args) {
   let a2;
   for (let a of args)
     if (a.text == "allowDiscrete") settings.push("allow-discrete");
-    else if (a2 = interpretName(a)) props.push(a.text);
+    else if (a2 = interpretName(a)) props.push(a2);
     else throw new SyntaxError(`Not a valid $transition property: ${a.text}.`);
   const _var = props.length > 1 ? timing : undefined;
   settings.push(props.length > 1 ? "var(--t)" : timing);

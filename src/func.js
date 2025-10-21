@@ -404,10 +404,6 @@ export function isBasic(arg) {
   if (arg.name in Maths)
     return Maths[arg.name](arg.name, arg.args.map(isBasic));
 }
-export function interpretName(arg) {
-  if (arg.kind === "WORD" && arg.text[0].match(/[a-zA-Z0-9-]/))
-    return arg;
-}
 export function isColor(a) {
   if (a.kind === "COLOR")
     return parseColor(a.text);
@@ -499,10 +495,10 @@ export function isQuote(a) {
     return a;
 }
 
-//returns STRINGS
-export function interpretName2(arg) {
+//interprets returns STRINGS
+export function interpretName(arg) {
   if (arg.kind === "WORD" && arg.text[0].match(/[a-zA-Z0-9-]/))
-    return arg;
+    return arg.text;
 }
 export function interpretMimeType(a) {
   const MIME = {
