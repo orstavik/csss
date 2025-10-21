@@ -436,42 +436,6 @@ export function interpretUrl(a) {
     return { type: "url", text: `url(${interpretBasic(a.args[0]).text})` };
   }
 }
-export function interpretMimeType(a) {
-  const MIME = {
-    image: "image/*",
-    imageJpeg: "image/jpeg",
-    imagePng: "image/png",
-    imageGif: "image/gif",
-    imageWebp: "image/webp",
-    imageAvif: "image/avif",
-    imageSvgXml: "image/svg+xml",
-  };
-  if (a.text in MIME)
-    return `type(${MIME[a.text]})`;
-}
-
-export function interpretImage(arg) {
-  const url = interpretUrl(arg);
-  if (url) return url;
-  if (arg.name == "imageSet") {
-    const set = [];
-    const args = arg.args.slice();
-    while (args.length) {
-      const url = interpretUrl(a);
-      if (!url)
-        throw new SyntaxError("imageSet() sequences must start with a url.");
-      args.shift();
-      let type = args.length && interpretMimeType(args[0]);
-      let resolution = args.length && interpretResolution(args[0]);
-      type ||= args.length && interpretMimeType(args[0]);
-      type && args.shift();
-      resolution && args.shift();
-      set.push([url.text, type, resolution].filter(Boolean).join(" "));
-    }
-    return `image-set(${set.join(", ")})`;
-  }
-}
-
 export function interpretAngle(a) {
   a = interpretBasic(a);
   if (a?.num == 0 && a.type === "number")
@@ -534,6 +498,48 @@ export function interpretQuote(a) {
   if (a.kind === "QUOTE")
     return a;
 }
+
+//returns STRINGS
+export function interpretName2(arg) {
+  if (arg.kind === "WORD" && arg.text[0].match(/[a-zA-Z0-9-]/))
+    return arg;
+}
+export function interpretMimeType(a) {
+  const MIME = {
+    image: "image/*",
+    imageJpeg: "image/jpeg",
+    imagePng: "image/png",
+    imageGif: "image/gif",
+    imageWebp: "image/webp",
+    imageAvif: "image/avif",
+    imageSvgXml: "image/svg+xml",
+  };
+  if (a.text in MIME)
+    return `type(${MIME[a.text]})`;
+}
+
+export function interpretImage(arg) {
+  const url = interpretUrl(arg);
+  if (url) return url;
+  if (arg.name == "imageSet") {
+    const set = [];
+    const args = arg.args.slice();
+    while (args.length) {
+      const url = interpretUrl(a);
+      if (!url)
+        throw new SyntaxError("imageSet() sequences must start with a url.");
+      args.shift();
+      let type = args.length && interpretMimeType(args[0]);
+      let resolution = args.length && interpretResolution(args[0]);
+      type ||= args.length && interpretMimeType(args[0]);
+      type && args.shift();
+      resolution && args.shift();
+      set.push([url.text, type, resolution].filter(Boolean).join(" "));
+    }
+    return `image-set(${set.join(", ")})`;
+  }
+}
+
 export function makeExtractor(cb) {
   return function (args) {
     if (!args?.length) return;
