@@ -236,7 +236,7 @@ const CRX = new RegExp("^#(?:" +
     "(transparent)",
     "a(\\d\\d)",
     "([0-9a-f]{6})([0-9a-f]{2})?",
-    "([0-9a-fA-F]{3})([0-9a-fA-F])",
+    "([0-9a-f]{3})([0-9a-f]{1})?",
     "(" + Object.keys(WEBCOLORS).join("|") + ")(\\d\\d)?",
     "(.*?)(\\d\\d)?",
   ].join("|") +
@@ -578,7 +578,7 @@ export function extractName(args) {
   return a ?? interpretName(a);
 }
 export function extractRadian(args) {
-  const a = extractAngle(args);
+  const a = extractAngle(args) || undefined;
   return a && interpretRadian(a);
 }
 

@@ -7,7 +7,7 @@ import palette from "./palette.js";
 import transitions from "./transitions.js";
 import textDecorations from "./textDecorations.js";
 import filterTransforms from "./filterTransform.js";
-import boxShadow from "./boxShadow.js";
+import shadows from "./shadows.js";
 import position from "./position.js";
 
 const ObjectFit = {
@@ -29,7 +29,7 @@ const SHORTS = {
   ...textDecorations,
   ...border,
   ...filterTransforms,
-  ...boxShadow,
+  ...shadows,
   ...position,
   ...ObjectFit,
 };

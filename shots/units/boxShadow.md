@@ -27,3 +27,13 @@
   }
 }
 ```
+
+**csss:** $boxShadow(ambient,10px,#efa4)
+**css:**
+```css
+@layer containerDefault {
+  .\$boxShadow\(ambient\,10px\,\#efa4\) {
+    box-shadow: -0.28px 0.28px 3px 2.4px #eeffaa44;
+  }
+}
+```
