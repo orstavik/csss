@@ -7,7 +7,7 @@
 //wiggle means that it goes forward, then backtracks a little, then forward again.
 //wobble means that it goes forward, then backtracks a fully, then forward again, then backtracks a little, then forward again.
 
-import { interpretNumber, extractTime, interpretName } from "./func.js";
+import { isNumber, extractTime, interpretName } from "./func.js";
 
 function transition(timing, args) {
   const dur = extractTime(args);
@@ -28,7 +28,7 @@ function transition(timing, args) {
 }
 
 function jump(type, args) {
-  const steps = interpretNumber(args[0])?.num;
+  const steps = isNumber(args[0])?.num;
   if (steps > 0)
     return transition(`steps(${steps}, ${type})`, args.slice(1));
   throw new SyntaxError(`$jump requires a positive integer argument first.`);

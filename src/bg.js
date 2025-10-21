@@ -1,6 +1,6 @@
 import {
-  interpretColor,
-  interpretLengthPercent,
+  isColor,
+  isLengthPercent,
   interpretImage,
   extractLengthPercent,
   extractAnglePercent,
@@ -13,7 +13,7 @@ function size(args) {
   if (args.length < 1 || args.length > 2)
     throw new SyntaxError("background size() requires one or two arguments.");
   args = args.map(a => {
-    a = a.text == "auto" ? a.text : interpretLengthPercent(a);
+    a = a.text == "auto" ? a.text : isLengthPercent(a);
     if (!a)
       throw new SyntaxError(`background size argument not LengthPercent: ${a.text}`);
     return a.text;
@@ -29,7 +29,7 @@ function pos(name, dims, args) {
   return args.map((a, i) => {
     if (["left", "right", "center", "top", "bottom"].includes(a.text))
       return a.text;
-    a = interpretLengthPercent(a);
+    a = isLengthPercent(a);
     if (a)
       return dims ? dims[i] + " " + a.text : a.text;
     throw new SyntaxError(`background position argument not LengthPercent: ${a.text}`);
@@ -231,7 +231,7 @@ function bgColorOrImage(args) {
   const img = interpretImage(args[0]);
   if (img)
     return args.shift(), img.text;
-  const color = interpretColor(args[0]);
+  const color = isColor(args[0]);
   if (color)
     return args.shift(), `linear-gradient(${color.text})`;
   throw new SyntaxError(`$bg must include either a color or url: ${color.text}.`);

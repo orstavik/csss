@@ -1,4 +1,4 @@
-import { extractName, extractUrl, interpretName, interpretNumber, interpretLength, interpretAngle, interpretQuote, interpretPercent } from "./func.js";
+import { extractName, extractUrl, interpretName, isNumber, isLength, isAngle, isQuote, isPercent } from "./func.js";
 
 const FONT_WORDS = {
   bold: { fontWeight: "bold" },
@@ -100,12 +100,12 @@ function face(args, fontFamily) {
 }
 
 const FONT_FUNCTIONS = {
-  size: a => ({ fontSize: interpretLength(a) }),
+  size: a => ({ fontSize: isLength(a) }),
   // weight: a => ({ fontWeight: interpretNumber(a) }), //todo this should be primitive
   // style: a => ({ fontStyle: interpretWord(a) }), //todo this should not be allowed to be wrapped??
   variant: a => ({ fontVariant: interpretBasic(a) }),
-  width: a => ({ fontWidth: interpretPercent(a) }),
-  spacing: a => (a.text == "normal" ? a.text : { letterSpacing: interpretLength(a) }),
+  width: a => ({ fontWidth: isPercent(a) }),
+  spacing: a => (a.text == "normal" ? a.text : { letterSpacing: isLength(a) }),
   adjust: a => ({ fontSizeAdjust: interpretBasic(a) }),
 };
 
@@ -135,11 +135,11 @@ function fontImpl(fontFaceName, args) {
     let a2;
     if (a.text == "emoji")
       emoji = ['Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'];
-    else if (a2 = interpretQuote(a))
+    else if (a2 = isQuote(a))
       family.push(a2.text.slice(1, -1).replaceAll("+", " "));
-    else if (a2 = interpretLength(a))
+    else if (a2 = isLength(a))
       res.fontSize = a2.text;
-    else if (a2 = interpretAngle(a))
+    else if (a2 = isAngle(a))
       res.fontStyle = "oblique " + a2.text;
     else if (a2 = FONT_WORDS[a.text] ?? FONT_FUNCTIONS[a.name]?.(a.args) ?? SYNTHESIS_WORDS[a.text])
       Object.assign(res, a2);
@@ -148,7 +148,7 @@ function fontImpl(fontFaceName, args) {
     else if (a.name == "face" && (a2 = face(a.args, fontFaceName))) {
       Object.assign(res, a2);
       family.push(Object.values(a2)[0].fontFamily);
-    } else if (a2 = interpretNumber(a)?.num) {
+    } else if (a2 = isNumber(a)?.num) {
       if (a2 && 1 <= a2 && a2 <= 1000)
         res.fontWeight = a2;
       else if (0 < a2 && a2 < 1)

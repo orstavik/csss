@@ -155,7 +155,7 @@ export const WEBCOLORS = {
 function nativeCssColorFunction(name, args) {
   if (args.length < 3 || args.length > 5)
     throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
-  args = args.map(a => interpretColor(a) ?? interpretBasic(a));
+  args = args.map(a => isColor(a) ?? isBasic(a));
   const from = args[0].type === "color";
   const txts = args.map(a => a.text);
   if (args.length - from === 4) txts.splice(-1, 0, "/");
@@ -166,7 +166,7 @@ function nativeCssColorFunction(name, args) {
 function nativeCssColorSpaceFunction(space, args) {
   if (args.length < 3 || args.length > 5)
     throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
-  args = args.map(a => interpretColor(a) ?? interpretBasic(a));
+  args = args.map(a => isColor(a) ?? isBasic(a));
   const from = args[0].type === "color";
   const txts = args.map(a => a.text);
   if (args.length - from === 4) txts.splice(-1, 0, "/");
@@ -176,10 +176,10 @@ function nativeCssColorSpaceFunction(space, args) {
 }
 
 function cssColorMix([space, one, two, percent]) {
-  space = space == "_" ? "oklab" : interpretBasic(space).text;
-  one = interpretColor(one).text;
-  two = interpretColor(two).text;
-  two += " " + (percent ? interpretBasic(percent).text : "50%");
+  space = space == "_" ? "oklab" : isBasic(space).text;
+  one = isColor(one).text;
+  two = isColor(two).text;
+  two += " " + (percent ? isBasic(percent).text : "50%");
   return `color-mix(in ${[space, one, two].join(", ")})`;
 }
 
@@ -188,14 +188,14 @@ function cssColorMix([space, one, two, percent]) {
 //#primary#30#a80 => hash(primary,30,a80)
 //#primary#brown33#50
 function hash(oneTwo) {
-  let [one, two] = oneTwo.map(interpretColor);
+  let [one, two] = oneTwo.map(isColor);
   if (two.vector == "") {
     let left = oneTwo[0], i = 1;
     while (left.name === "#hash") {
       left = left.args[0];
       i++;
     }
-    const vector = left.kind == "COLOR" && interpretColor(left).vector;
+    const vector = left.kind == "COLOR" && isColor(left).vector;
     if (!vector)
       throw new SyntaxError(`First color ${left.text} is not a color vector, while ${two.text} is a relative color vector.`);
     if (two.percent >= 100)
@@ -212,7 +212,7 @@ function rgba(rgba) { return rgbaImpl("rgba", rgba); }
 function rgbaImpl(name, rgba) {
   if (name.length != rgba.length)
     throw new SyntaxError(`${name}() requires exactly ${name.length} arguments.`);
-  rgba = rgba.map(interpretBasic);
+  rgba = rgba.map(isBasic);
   let hex = "";
   for (let i = 0; i < rgba.length; i++) {
     const c = rgba[i];
@@ -345,7 +345,7 @@ const COLORS = {
 
 
 export function toRadiusFour(NAME, ar) {
-  ar = ar.map(interpretBasic).map(a => a.text);
+  ar = ar.map(isBasic).map(a => a.text);
   if (!(ar instanceof Array))
     return { [NAME]: ar };
   if (ar.length === 1)
@@ -359,7 +359,7 @@ export function toRadiusFour(NAME, ar) {
 }
 
 export function toLogicalFour(NAME, ar) {
-  ar = ar.map(interpretBasic).map(a => a.text);
+  ar = ar.map(isBasic).map(a => a.text);
   return ar.length === 1 ? { [NAME]: ar[0] } :
     {
       [NAME + "Block"]: ar[2] != null && ar[2] != ar[0] ? ar[0] + " " + ar[2] : ar[0],
@@ -371,7 +371,7 @@ export function toLogicalFour(NAME, ar) {
 //todo length == 3, then the third becomes all the inline ones
 //todo length === 4, then forth is the inline on the end side
 export function toLogicalEight(NAME, DEFAULT, ar) {
-  ar = ar.map(interpretBasic).map(a => a.text);
+  ar = ar.map(isBasic).map(a => a.text);
   if (!(ar instanceof Array))
     return { [NAME]: ar };
   if (ar.length === 1)
@@ -398,17 +398,17 @@ export function toLogicalEight(NAME, DEFAULT, ar) {
 //   attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
 // };
 
-export function interpretBasic(arg) {
+export function isBasic(arg) {
   if (arg.kind !== "EXP")
     return arg;
   if (arg.name in Maths)
-    return Maths[arg.name](arg.name, arg.args.map(interpretBasic));
+    return Maths[arg.name](arg.name, arg.args.map(isBasic));
 }
 export function interpretName(arg) {
   if (arg.kind === "WORD" && arg.text[0].match(/[a-zA-Z0-9-]/))
     return arg;
 }
-export function interpretColor(a) {
+export function isColor(a) {
   if (a.kind === "COLOR")
     return parseColor(a.text);
   //todo the color must be a color or a variable.
@@ -416,85 +416,85 @@ export function interpretColor(a) {
   if (key in COLORS)
     return { type: "color", text: COLORS[a.name?.slice(1)]?.(a.args) };
 }
-export function interpretMinmax(a) {
+export function isMinmax(a) {
   if (a.name === "minmax")
-    return { type: "length", text: `minmax(${a.args.map(interpretBasic).map(t => t.text).join(", ")})` };
+    return { type: "length", text: `minmax(${a.args.map(isBasic).map(t => t.text).join(", ")})` };
 }
-export function interpretRepeat(a) {
+export function isRepeat(a) {
   if (a.name === "repeat")
-    return { type: "length", text: `repeat(${a.args.map(a => interpretMinmax(a) ?? interpretBasic(a)).map(t => t.text).join(", ")})` };
+    return { type: "length", text: `repeat(${a.args.map(a => isMinmax(a) ?? isBasic(a)).map(t => t.text).join(", ")})` };
 }
-export function interpretSpan(a) {
+export function isSpan(a) {
   if (a.name === "span")
-    return { type: a.type, text: "span " + interpretBasic(a.args[0]).text };
+    return { type: a.type, text: "span " + isBasic(a.args[0]).text };
 }
-export function interpretUrl(a) {
+export function isUrl(a) {
   if (a.kind === "QUOTE")
     return { type: "url", text: `url(${a.text})` };
   if (a.name === "url") {
     if (args.length != 1) throw new SyntaxError("url() requires exactly one argument.");
-    return { type: "url", text: `url(${interpretBasic(a.args[0]).text})` };
+    return { type: "url", text: `url(${isBasic(a.args[0]).text})` };
   }
 }
-export function interpretAngle(a) {
-  a = interpretBasic(a);
+export function isAngle(a) {
+  a = isBasic(a);
   if (a?.num == 0 && a.type === "number")
     return { type: "angle", text: "0deg", unit: "deg", num: 0 };
   if (a?.type === "angle")
     return a;
 }
-export function interpretAnglePercent(a) {
-  a = interpretBasic(a);
+export function isAnglePercent(a) {
+  a = isBasic(a);
   if (a?.num == 0 && a.type === "number")
     return { type: "angle", text: "0deg", unit: "deg", num: 0 };
   if (a?.type === "angle" || a?.type === "percent")
     return a;
 }
-export function interpretLengthPercent(a) {
-  a = interpretBasic(a);
+export function isLengthPercent(a) {
+  a = isBasic(a);
   if (a?.type === "length" || a?.type === "percent" || (a?.num == 0 && a?.type === "number"))
     return a;
 }
-export function interpretPercent(a) {
-  a = interpretBasic(a);
+export function isPercent(a) {
+  a = isBasic(a);
   if (a?.type === "percent")
     return a;
 }
-export function interpretZero(a) {
-  a = interpretBasic(a);
+export function isZero(a) {
+  a = isBasic(a);
   if (a?.text === "0")
     return a;
 }
-export function interpretLength(a) {
-  a = interpretBasic(a);
+export function isLength(a) {
+  a = isBasic(a);
   if (a?.type === "length" || (a?.num == 0 && a?.type === "number"))
     return a;
 }
-export function interpretTime(a) {
-  a = interpretBasic(a);
+export function isTime(a) {
+  a = isBasic(a);
   if (a?.num == 0 && a.type === "number")
     return { type: "time", text: "0s", unit: "s", num: 0 };
   if (a?.type === "time")
     return a;
 }
-export function interpretResolution(a) {
-  a = interpretBasic(a);
+export function isResolution(a) {
+  a = isBasic(a);
   if (a?.num == 0 && a.type === "number")
     return { type: "resolution", text: "0x", unit: "x", num: 0 };
   if (a?.type === "resolution")
     return a;
 }
-export function interpretNumber(a) {
-  a = interpretBasic(a);
+export function isNumber(a) {
+  a = isBasic(a);
   if (a?.type === "number" && a.unit == "")
     return a;
 }
-export function interpretNumberPercent(a) {
-  a = interpretBasic(a);
+export function isNumberPercent(a) {
+  a = isBasic(a);
   if (a?.type === "number" && a.unit == "" || a?.type === "percent")
     return a;
 }
-export function interpretQuote(a) {
+export function isQuote(a) {
   if (a.kind === "QUOTE")
     return a;
 }
@@ -519,18 +519,18 @@ export function interpretMimeType(a) {
 }
 
 export function interpretImage(arg) {
-  const url = interpretUrl(arg);
+  const url = isUrl(arg);
   if (url) return url;
   if (arg.name == "imageSet") {
     const set = [];
     const args = arg.args.slice();
     while (args.length) {
-      const url = interpretUrl(a);
+      const url = isUrl(a);
       if (!url)
         throw new SyntaxError("imageSet() sequences must start with a url.");
       args.shift();
       let type = args.length && interpretMimeType(args[0]);
-      let resolution = args.length && interpretResolution(args[0]);
+      let resolution = args.length && isResolution(args[0]);
       type ||= args.length && interpretMimeType(args[0]);
       type && args.shift();
       resolution && args.shift();
@@ -547,17 +547,17 @@ export function makeExtractor(cb) {
     return res != null && args.shift() && res.text;
   };
 }
-export const extractTime = makeExtractor(interpretTime);
-export const extractLength = makeExtractor(interpretLength);
-export const extractLengthPercent = makeExtractor(interpretLengthPercent);
-export const extractAngle = makeExtractor(interpretAngle);
-export const extractAnglePercent = makeExtractor(interpretAnglePercent);
-export const extractNumber = makeExtractor(interpretNumber);
-export const extractNumberPercent = makeExtractor(interpretNumberPercent);
-export const extractUrl = makeExtractor(interpretUrl);
+export const extractTime = makeExtractor(isTime);
+export const extractLength = makeExtractor(isLength);
+export const extractLengthPercent = makeExtractor(isLengthPercent);
+export const extractAngle = makeExtractor(isAngle);
+export const extractAnglePercent = makeExtractor(isAnglePercent);
+export const extractNumber = makeExtractor(isNumber);
+export const extractNumberPercent = makeExtractor(isNumberPercent);
+export const extractUrl = makeExtractor(isUrl);
 export const extractImage = makeExtractor(interpretImage);
 export const extractMimeType = makeExtractor(interpretMimeType);
-export const extractColor = makeExtractor(interpretColor);
+export const extractColor = makeExtractor(isColor);
 export const extractName = makeExtractor(interpretName);
 
 function makeEvaluator(interpret) {
@@ -568,17 +568,17 @@ function makeEvaluator(interpret) {
     throw new SyntaxError(`invalid argument ${i + 1}: "${a.text}" cannot be interpreted as ${interpret.name.slice(9)}.`);
   }
 }
-export const evaluateTime = makeEvaluator(interpretTime);
-export const evaluateLength = makeEvaluator(interpretLength);
-export const evaluateLengthPercent = makeEvaluator(interpretLengthPercent);
-export const evaluateAngle = makeEvaluator(interpretAngle);
-export const evaluateAnglePercent = makeEvaluator(interpretAnglePercent);
-export const evaluateNumber = makeEvaluator(interpretNumber);
-export const evaluateNumberPercent = makeEvaluator(interpretNumberPercent);
-export const evaluateUrl = makeEvaluator(interpretUrl);
+export const evaluateTime = makeEvaluator(isTime);
+export const evaluateLength = makeEvaluator(isLength);
+export const evaluateLengthPercent = makeEvaluator(isLengthPercent);
+export const evaluateAngle = makeEvaluator(isAngle);
+export const evaluateAnglePercent = makeEvaluator(isAnglePercent);
+export const evaluateNumber = makeEvaluator(isNumber);
+export const evaluateNumberPercent = makeEvaluator(isNumberPercent);
+export const evaluateUrl = makeEvaluator(isUrl);
 export const evaluateImage = makeEvaluator(interpretImage);
 export const evaluateMimeType = makeEvaluator(interpretMimeType);
-export const evaluateColor = makeEvaluator(interpretColor);
+export const evaluateColor = makeEvaluator(isColor);
 export const evaluateName = makeEvaluator(interpretName);
 
 // const SpecializedNativeCssFunctions = {
@@ -590,21 +590,21 @@ export const evaluateName = makeEvaluator(interpretName);
 // };
 
 const INTERPRETERS = {
-  number: interpretNumber,
-  zero: interpretZero,
-  length: interpretLength,
-  percent: interpretPercent,
-  angle: interpretAngle,
-  time: interpretTime,
-  resolution: interpretResolution,
-  color: interpretColor,
-  url: interpretUrl,
-  repeat: interpretRepeat,
-  minmax: interpretMinmax,
-  span: interpretSpan,
+  number: isNumber,
+  zero: isZero,
+  length: isLength,
+  percent: isPercent,
+  angle: isAngle,
+  time: isTime,
+  resolution: isResolution,
+  color: isColor,
+  url: isUrl,
+  repeat: isRepeat,
+  minmax: isMinmax,
+  span: isSpan,
   image: interpretImage,
-  quote: interpretQuote,
-  basic: interpretBasic,
+  quote: isQuote,
+  basic: isBasic,
 };
 
 const NativeCssProperties = Object.fromEntries(Object.entries(NativeCss.supported).map(([kebab, types]) => {
@@ -614,7 +614,7 @@ const NativeCssProperties = Object.fromEntries(Object.entries(NativeCss.supporte
     return m ? m[1] + m[3] + m[2] : originalCamel;
   }
   camel = fixBorderNames(camel);
-  const functions = [interpretBasic, ...types.map(t => INTERPRETERS[t]).filter(Boolean)].reverse();
+  const functions = [isBasic, ...types.map(t => INTERPRETERS[t]).filter(Boolean)].reverse();
 
   function interpretNativeValue(args) {
     const argsOut = args.map(a => {

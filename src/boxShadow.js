@@ -1,4 +1,4 @@
-import { interpretColor, interpretLength } from "./func.js";
+import { isColor, isLength } from "./func.js";
 
 function _boxShadow(ar) {
   let color, a2;
@@ -6,9 +6,9 @@ function _boxShadow(ar) {
   for (let a of ar) {
     if (a.text == "none")
       res.push("none");
-    else if (a2 = interpretColor(a))
+    else if (a2 = isColor(a))
       color = a2.text;
-    else if (a2 = interpretLength(a))
+    else if (a2 = isLength(a))
       res.push(a2.text);
     else
       throw new SyntaxError(`Could not interpret $boxShadow argument: ${a.text}.`);

@@ -1,4 +1,4 @@
-import { interpretBasic, interpretColor, toLogicalFour, toLogicalEight, toRadiusFour } from "./func.js";
+import { isBasic, isColor, toLogicalFour, toLogicalEight, toRadiusFour } from "./func.js";
 
 const color = toLogicalFour.bind(null, "borderColor");
 const width = toLogicalFour.bind(null, "borderWidth");
@@ -35,8 +35,8 @@ function border(ar) {
   ar = ar.map(a => {
     a = BORDER[a.name]?.(a.args) ??
       BORDER[a.text] ??
-      interpretColor(a) ??
-      interpretBasic(a);
+      isColor(a) ??
+      isBasic(a);
     if (!a)
       throw new SyntaxError(`Could not interpret $border argument: ${a.text}.`);
     if (a.type == "color")

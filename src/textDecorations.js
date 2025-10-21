@@ -1,13 +1,13 @@
-import { interpretColor, interpretLength } from "./func.js";
+import { isColor, isLength } from "./func.js";
 
 //sequence based
 function textDecoration(line, style, args) {
   let thick, color, textDecorationSkipInk;
   for (let a of args) {
     let a2;
-    if (a2 = interpretColor(a))
+    if (a2 = isColor(a))
       color = a2.text;
-    else if (a2 = interpretLength(a))
+    else if (a2 = isLength(a))
       thick = a2.text;
     else if (a.text = "noSkipInk")
       textDecorationSkipInk = "none";

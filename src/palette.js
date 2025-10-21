@@ -1,4 +1,4 @@
-import { interpretColor } from "./func.js";
+import { isColor } from "./func.js";
 import { fromLCH, fromHex6 } from "./Color.js";
 
 function round(num, places = 3) {
@@ -36,8 +36,8 @@ function palette([name, main, on]) {
   const mainName = `--color-${name.text}`;
   const onName = `--color-on${name.text[0].toUpperCase() + name.text.slice(1)}`;
   return {
-    ...makeColors(mainName, interpretColor(main)),
-    ...makeColors(onName, interpretColor(on))
+    ...makeColors(mainName, isColor(main)),
+    ...makeColors(onName, isColor(on))
   };
 }
 

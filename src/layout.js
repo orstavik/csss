@@ -1,11 +1,11 @@
-import { interpretRepeat, interpretSpan, interpretBasic, toLogicalFour, default as AllFunctions } from "./func.js";
+import { isRepeat, isSpan, isBasic, toLogicalFour, default as AllFunctions } from "./func.js";
 
 function toSize(NAME, args) {
   if (args.length != 1 && args.length != 3)
     throw new SyntaxError(`$${NAME}() accepts only 1 or 3 arguments, got ${args.length}.`);
   args = args.map(a =>
     a.text == "_" ? "unset" :
-      interpretBasic(a).text
+      isBasic(a).text
   );
   if (args.length === 1)
     return { [NAME]: args[0] };
@@ -190,7 +190,7 @@ const _LAYOUT = {
 function gap(args) {
   if (!args.length || args.length > 2)
     throw new SyntaxError("gap only accepts 1 or 2 arguments");
-  args = args.map(interpretBasic).map(a => a.text);
+  args = args.map(isBasic).map(a => a.text);
   if (args.length == 1 || args[0] == args[1])
     return { gap: args[0] };
   args = args.map(a => a == "unset" ? "normal" : a);
@@ -202,7 +202,7 @@ function gap(args) {
 //they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
 //so it should be with layout.
 function blockGap(args) {
-  const [wordSpacing, lineHeight] = args.map(interpretBasic).map(a => a.text);
+  const [wordSpacing, lineHeight] = args.map(isBasic).map(a => a.text);
   return { wordSpacing, lineHeight };
 }
 const BLOCK = {
@@ -227,7 +227,7 @@ function blockItem(argsIn) {
 }
 
 function lineClamp([lines, ...args]) {
-  lines = interpretBasic(lines);
+  lines = isBasic(lines);
   if (lines.type != "number")
     throw new SyntaxError(`$lineClamp() first argument must be a simple number, got ${lines}.`);
   return Object.assign(block(args), {
@@ -242,10 +242,10 @@ const GRID = {
   ...OVERFLOWS,
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.placeItems,
-  cols: args => ({ gridTemplateColumns: args.map(a => interpretRepeat(a) ?? interpretBasic(a)).map(a => a.text).join(" ") }),
-  columns: args => ({ gridTemplateColumns: args.map(a => interpretRepeat(a) ?? interpretBasic(a)).map(a => a.text).join(" ") }),
-  rows: args => ({ gridTemplateRows: args.map(a => interpretRepeat(a) ?? interpretBasic(a)).map(a => a.text).join(" ") }),
-  areas: args => ({ gridTemplateAreas: args.map(a => interpretRepeat(a) ?? interpretBasic(a)).map(a => a.text).join(" ") }),
+  cols: args => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
+  columns: args => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
+  rows: args => ({ gridTemplateRows: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
+  areas: args => ({ gridTemplateAreas: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
   ...LAYOUT,
   gap,
   //todo test this!!
@@ -273,11 +273,11 @@ function grid(argsIn) {
 // $grid(col(1,4))
 // $grid(col_1_4)
 const column = args => {
-  const [start, end] = args.map(a => interpretSpan(a) ?? interpretBasic(a)).map(a => a.text);
+  const [start, end] = args.map(a => isSpan(a) ?? isBasic(a)).map(a => a.text);
   return { gridColumn: end ? `${start} / ${end}` : start };
 };
 const row = args => {
-  const [start, end] = args.map(a => interpretSpan(a) ?? interpretBasic(a)).map(a => a.text);
+  const [start, end] = args.map(a => isSpan(a) ?? isBasic(a)).map(a => a.text);
   return { gridRow: end ? `${start} / ${end}` : start };
 };
 
@@ -314,10 +314,10 @@ function flex(argsIn) {
 const FlexItem = {
   ..._LAYOUT,
   ...ALIGNMENTS.alignSelf,
-  basis: args => ({ flexBasis: args.map(interpretBasic).map(a => a.text).join(" ") }),
-  grow: args => ({ flexGrow: args.map(interpretBasic).map(a => a.text).join(" ") }),
-  shrink: args => ({ flexShrink: args.map(interpretBasic).map(a => a.text).join(" ") }),
-  order: args => ({ order: args.map(interpretBasic).map(a => a.text).join(" ") }),
+  basis: args => ({ flexBasis: args.map(isBasic).map(a => a.text).join(" ") }),
+  grow: args => ({ flexGrow: args.map(isBasic).map(a => a.text).join(" ") }),
+  shrink: args => ({ flexShrink: args.map(isBasic).map(a => a.text).join(" ") }),
+  order: args => ({ order: args.map(isBasic).map(a => a.text).join(" ") }),
   //todo safe
 };
 
