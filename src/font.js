@@ -205,7 +205,7 @@ const BUILTIN_TYPES = {
 // todo should we add extra requirements for the typeName? say it can only be of specific characters?
 // typeName.match(/^[a-z][a-z0-9-]*$/))
 function font(args) {
-  const typeName = interpretName(args[0])?.text;
+  const typeName = interpretName(args[0]);
   if (!typeName)
     throw new SyntaxError(`first argument is not a name: "${args[0].text}"`);
   const tmp = fontImpl(undefined, args);

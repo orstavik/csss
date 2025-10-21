@@ -404,6 +404,10 @@ export function isBasic(arg) {
   if (arg.name in Maths)
     return Maths[arg.name](arg.name, arg.args.map(isBasic));
 }
+export function isWord(a) {
+  if (a.kind === "WORD")
+    return a;
+}
 export function isColor(a) {
   if (a.kind === "COLOR")
     return parseColor(a.text);
@@ -496,9 +500,23 @@ export function isQuote(a) {
 }
 
 //interprets returns STRINGS
-export function interpretName(arg) {
-  if (arg.kind === "WORD" && arg.text[0].match(/[a-zA-Z0-9-]/))
-    return arg.text;
+export function interpretName(a) {
+  if (a.kind === "WORD" && a.text[0].match(/[a-zA-Z0-9-]/))
+    return a.text;
+}
+export function interpretRadian(a) {
+  if (a?.num == 0 && a.type === "number")
+    return 0;
+  if (a?.type !== "angle")
+    return;
+  if (a.unit === "rad")
+    return a.num;
+  if (a.unit === "deg")
+    return a.num * (Math.PI / 180);
+  if (a.unit === "grad")
+    return a.num * (Math.PI / 200);
+  if (a.unit === "turn")
+    return a.num * (2 * Math.PI);
 }
 export function interpretMimeType(a) {
   const MIME = {
@@ -554,7 +572,15 @@ export const extractUrl = makeExtractor(isUrl);
 export const extractImage = makeExtractor(interpretImage);
 export const extractMimeType = makeExtractor(interpretMimeType);
 export const extractColor = makeExtractor(isColor);
-export const extractName = makeExtractor(interpretName);
+export const extractWord = makeExtractor(isWord);
+export function extractName(args) {
+  const a = extractWord(args);
+  return a ?? interpretName(a);
+}
+export function extractRadian(args) {
+  const a = extractAngle(args);
+  return a && interpretRadian(a);
+}
 
 function makeEvaluator(interpret) {
   return function (a, i) {
