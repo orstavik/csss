@@ -33,7 +33,7 @@
 ```css
 @layer containerDefault {
   .\$boxShadow\(ambient\,10px\,\#efa4\) {
-    box-shadow: -0.28px 0.28px 3px 2.4px #eeffaa44;
+    box-shadow: 1.41px 1.41px 15px 12.5px #eeffaa44;
   }
 }
 ```
