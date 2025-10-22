@@ -15,9 +15,9 @@ import { extractLength, extractColor, extractName, extractRadian, isLength, isNu
 // Ie. elements that have the same shadow in lightmode, might have different/no shadows in darkmode, and vice versa.
 
 const SHADES = {
-  ambient: { l: 0.2, b: 1.5, s: 1.25 },
-  soft: { l: 0.5, b: 1, s: 0.5 },
-  edgeGlow: { l: 0, b: .5, s: -.2 },
+  ambient: { l: 0, b: 1.5, s: 1.25 },
+  edgeGlow: { l: 0, b: 3, s: -.5 },
+  soft: { l: 1, b: 1, s: 0 },
   normal: { l: 1, b: 1.5, s: 0.75 },
   medium: { l: 1.5, b: 2, s: 1 },
   hard: { l: 2, b: 3, s: 1.5 },
