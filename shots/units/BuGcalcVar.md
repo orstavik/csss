@@ -1,20 +1,20 @@
-**csss:** $border(2px+2px)
+**csss:** $border(2px-2px)
 **css:**
 ```css
 @layer containerDefault {
-  .\$border\(2px\+2px\) {
+  .\$border\(2px-2px\) {
     border-style: solid;
-    border-width: 4px;
+    border-width: 0px;
   }
 }
 ```
-**csss:** $border(2px-2px*4)
+**csss:** $border(2px+2px*4)
 **css:**
 ```css
 @layer containerDefault {
-  .\$border\(2px-2px\*4\) {
+  .\$border\(2px\+2px\*4\) {
     border-style: solid;
-    border-width: -6px;
+    border-width: 10px;
   }
 }
 ```

@@ -80,8 +80,8 @@ function interpretShort(exp) {
   const cb = SHORTS[exp.name ?? exp.text];
   if (!cb) throw new ReferenceError(exp.name);
   if (!(cb instanceof Function)) return cb;
-  try{
-  return cb(exp.args);
+  try {
+    return cb(exp.args);
   } catch (e) {
     debugger;
     //todo improve error message
@@ -176,13 +176,22 @@ function goRightComma(tokens, divider) {
   throw new SyntaxError("missing ')'");
 }
 
+function operatorPriority(a, name, b) {
+  const PRI = { "??": 1, "**": 2, "*": 3, "/": 3, "+": 4, "-": 4, };
+  const leftPri = PRI[a.name] ?? 0;
+  const rightPri = PRI[name] ?? 10;
+  if (leftPri <= rightPri)
+    return { kind: "EXP", name, args: [a, b] };
+  a.args[1] = { kind: "EXP", name, args: [a.args[1], b] };
+  return a;
+}
+
 function goRightOperator(tokens) {
   let a = goDeep(tokens);
   while (tokens.length) {
     const { kind, text } = tokens[0];
     if (kind === "OPERATOR")
-      //operator priorities: (), ??, then **, then */ , then +- , left to right.
-      a = { kind: "EXP", name: tokens.shift().text, args: [a, goDeep(tokens)] };
+      a = operatorPriority(a, tokens.shift().text, goDeep(tokens));
     else if (kind === "NUMBER" && (text[0] == "-" || text[0] == "+"))
       a = { kind: "EXP", name: "+", args: [a, goDeep(tokens)] };
     else if (kind == "COLOR" && (a.type == "color" || a.kind == "COLOR"))
@@ -199,7 +208,6 @@ function goDeep(tokens) {
     return { kind: "EXP", name: tokens.shift().text, args: goRightComma(tokens, ",") };
   if (tokens[0].kind === "SYN")
     throw new SyntaxError(`Expected expression, got: ${tokens[0].text}`);
-
   if (tokens[1].text === "(") {
     const { text: name, kind } = tokens.shift();
     tokens.shift();
