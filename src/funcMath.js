@@ -116,8 +116,8 @@ const sign = Math.sign;
 //if incompatible units, throws SyntaxError
 function sameType(args) {
   for (let a of args)
-    if (a.type != args[0].type)
-      throw `Incompatible type differences: ${first.text} vs ${a.text}`;
+    if (a.type != null && a.type != args[0].type)
+      throw `Incompatible type differences: ${args[0].text} vs ${a.text}`;
 }
 function illegalDividend(a, b) {
   if (b.type != "number") throw "Dividend must be a plain number.";
