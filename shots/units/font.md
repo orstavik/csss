@@ -39,7 +39,7 @@
 ```css
 @layer containerDefault {
   .\$font\(system-ui\,sans-serif\,400\,0\.5\,bold\,i\,condensed\,12px\) {
-    font-family: system-ui, sans-serif, var(--system-uiFontFamily);
+    font-family: var(--system-uiFontFamily, system-ui, sans-serif);
     font-size: 12px;
     font-style: italic;
     font-weight: bold;
@@ -54,7 +54,7 @@
     -moz-osx-font-smoothing: var(--system-uiMozOsxFontSmoothing, unset);
     font-kerning: var(--system-uiFontKerning, unset);
     font-stretch: condensed;
-    --fontFontFamily: system-ui, sans-serif;
+    --fontFontFamily: var(--system-uiFontFamily, system-ui, sans-serif);
     --fontFontSize: 12px;
     --fontFontStyle: italic;
     --fontFontWeight: bold;
@@ -77,7 +77,7 @@
 ```css
 @layer containerDefault {
   .\$font\(body\) {
-    font-family: body, var(--bodyFontFamily);
+    font-family: var(--bodyFontFamily, body);
     font-size: var(--bodyFontSize, unset);
     font-style: var(--bodyFontStyle, unset);
     font-weight: var(--bodyFontWeight, unset);
@@ -92,7 +92,7 @@
     -moz-osx-font-smoothing: var(--bodyMozOsxFontSmoothing, unset);
     font-kerning: var(--bodyFontKerning, unset);
     font-stretch: var(--bodyFontWidth, unset);
-    --fontFontFamily: body;
+    --fontFontFamily: var(--bodyFontFamily, body);
     --fontFontSize: var(--bodyFontSize, unset);
     --fontFontStyle: var(--bodyFontStyle, unset);
     --fontFontWeight: var(--bodyFontWeight, unset);

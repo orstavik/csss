@@ -209,10 +209,10 @@ function font(args) {
   if (!typeName)
     throw new SyntaxError(`first argument is not a name: "${args[0].text}"`);
   const tmp = fontImpl(undefined, args);
+  tmp.fontFamily = `var(--${typeName}FontFamily, ${tmp.fontFamily})`; //stacking
   const vars = {}, res = {};
   for (let [k, varKey] of FONT_DEFAULTS)
     vars["--font" + varKey] = (res[k] = tmp[k] ?? `var(--${typeName + varKey}, unset)`); //clashing
-  res.fontFamily += `, var(--${typeName}FontFamily)`; //stacking
   res.fontStretch = res.fontWidth;
   return { ...res, ...vars };
 }
