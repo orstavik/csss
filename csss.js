@@ -99,7 +99,7 @@ function log(a, b = Math.E) { return Math.log(a) / Math.log(b); }
 const pow = Math.pow;
 const min = Math.min;
 const max = Math.max;
-const round$1 = Math.round;
+const round$2 = Math.round;
 const asin = Math.asin;
 const acos = Math.acos;
 const atan = Math.atan;
@@ -116,8 +116,8 @@ const sign = Math.sign;
 //if incompatible units, throws SyntaxError
 function sameType(args) {
   for (let a of args)
-    if (a.type != args[0].type)
-      throw `Incompatible type differences: ${first.text} vs ${a.text}`;
+    if (a.type != null && a.type != args[0].type)
+      throw `Incompatible type differences: ${args[0].text} vs ${a.text}`;
 }
 function illegalDividend(a, b) {
   if (b.type != "number") throw "Dividend must be a plain number.";
@@ -180,7 +180,7 @@ var Maths = {
   clamp: doMath.bind(null, sameType, clamp, updateFirst, texter.bind(null, "clamp")),
   min: doMath.bind(null, sameType, min, updateFirst, texter.bind(null, "min")),
   max: doMath.bind(null, sameType, max, updateFirst, texter.bind(null, "max")),
-  round: doMath.bind(null, singleArgumentOnly, round$1, updateFirst, texter.bind(null, "round")),
+  round: doMath.bind(null, singleArgumentOnly, round$2, updateFirst, texter.bind(null, "round")),
   sin: doMath.bind(null, singleAngleOnly, sin, toNumber, texter.bind(null, "sin")),
   cos: doMath.bind(null, singleAngleOnly, cos, toNumber, texter.bind(null, "cos")),
   tan: doMath.bind(null, singleAngleOnly, tan, toNumber, texter.bind(null, "tan")),
@@ -399,7 +399,7 @@ const WEBCOLORS = {
 function nativeCssColorFunction(name, args) {
   if (args.length < 3 || args.length > 5)
     throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
-  args = args.map(a => interpretColor(a) ?? interpretBasic$1(a));
+  args = args.map(a => isColor(a) ?? isBasic(a));
   const from = args[0].type === "color";
   const txts = args.map(a => a.text);
   if (args.length - from === 4) txts.splice(-1, 0, "/");
@@ -410,7 +410,7 @@ function nativeCssColorFunction(name, args) {
 function nativeCssColorSpaceFunction(space, args) {
   if (args.length < 3 || args.length > 5)
     throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
-  args = args.map(a => interpretColor(a) ?? interpretBasic$1(a));
+  args = args.map(a => isColor(a) ?? isBasic(a));
   const from = args[0].type === "color";
   const txts = args.map(a => a.text);
   if (args.length - from === 4) txts.splice(-1, 0, "/");
@@ -420,10 +420,10 @@ function nativeCssColorSpaceFunction(space, args) {
 }
 
 function cssColorMix([space, one, two, percent]) {
-  space = space == "_" ? "oklab" : interpretBasic$1(space).text;
-  one = interpretColor(one).text;
-  two = interpretColor(two).text;
-  two += " " + (percent ? interpretBasic$1(percent).text : "50%");
+  space = space == "_" ? "oklab" : isBasic(space).text;
+  one = isColor(one).text;
+  two = isColor(two).text;
+  two += " " + (percent ? isBasic(percent).text : "50%");
   return `color-mix(in ${[space, one, two].join(", ")})`;
 }
 
@@ -432,14 +432,14 @@ function cssColorMix([space, one, two, percent]) {
 //#primary#30#a80 => hash(primary,30,a80)
 //#primary#brown33#50
 function hash(oneTwo) {
-  let [one, two] = oneTwo.map(interpretColor);
+  let [one, two] = oneTwo.map(isColor);
   if (two.vector == "") {
     let left = oneTwo[0], i = 1;
     while (left.name === "#hash") {
       left = left.args[0];
       i++;
     }
-    const vector = left.kind == "COLOR" && interpretColor(left).vector;
+    const vector = left.kind == "COLOR" && isColor(left).vector;
     if (!vector)
       throw new SyntaxError(`First color ${left.text} is not a color vector, while ${two.text} is a relative color vector.`);
     if (two.percent >= 100)
@@ -456,7 +456,7 @@ function rgba(rgba) { return rgbaImpl("rgba", rgba); }
 function rgbaImpl(name, rgba) {
   if (name.length != rgba.length)
     throw new SyntaxError(`${name}() requires exactly ${name.length} arguments.`);
-  rgba = rgba.map(interpretBasic$1);
+  rgba = rgba.map(isBasic);
   let hex = "";
   for (let i = 0; i < rgba.length; i++) {
     const c = rgba[i];
@@ -480,7 +480,7 @@ const CRX = new RegExp("^#(?:" +
     "(transparent)",
     "a(\\d\\d)",
     "([0-9a-f]{6})([0-9a-f]{2})?",
-    "([0-9a-fA-F]{3})([0-9a-fA-F])",
+    "([0-9a-f]{3})([0-9a-f]{1})?",
     "(" + Object.keys(WEBCOLORS).join("|") + ")(\\d\\d)?",
     "(.*?)(\\d\\d)?",
   ].join("|") +
@@ -589,7 +589,7 @@ const COLORS = {
 
 
 function toRadiusFour(NAME, ar) {
-  ar = ar.map(interpretBasic$1).map(a => a.text);
+  ar = ar.map(isBasic).map(a => a.text);
   if (!(ar instanceof Array))
     return { [NAME]: ar };
   if (ar.length === 1)
@@ -603,7 +603,7 @@ function toRadiusFour(NAME, ar) {
 }
 
 function toLogicalFour(NAME, ar) {
-  ar = ar.map(interpretBasic$1).map(a => a.text);
+  ar = ar.map(isBasic).map(a => a.text);
   return ar.length === 1 ? { [NAME]: ar[0] } :
     {
       [NAME + "Block"]: ar[2] != null && ar[2] != ar[0] ? ar[0] + " " + ar[2] : ar[0],
@@ -615,7 +615,7 @@ function toLogicalFour(NAME, ar) {
 //todo length == 3, then the third becomes all the inline ones
 //todo length === 4, then forth is the inline on the end side
 function toLogicalEight(NAME, DEFAULT, ar) {
-  ar = ar.map(interpretBasic$1).map(a => a.text);
+  ar = ar.map(isBasic).map(a => a.text);
   if (!(ar instanceof Array))
     return { [NAME]: ar };
   if (ar.length === 1)
@@ -642,17 +642,17 @@ function toLogicalEight(NAME, DEFAULT, ar) {
 //   attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
 // };
 
-function interpretBasic$1(arg) {
+function isBasic(arg) {
   if (arg.kind !== "EXP")
     return arg;
   if (arg.name in Maths)
-    return Maths[arg.name](arg.name, arg.args.map(interpretBasic$1));
+    return Maths[arg.name](arg.name, arg.args.map(isBasic));
 }
-function interpretName(arg) {
-  if (arg.kind === "WORD" && arg.text[0].match(/[a-zA-Z0-9-]/))
-    return arg;
+function isWord(a) {
+  if (a.kind === "WORD")
+    return a;
 }
-function interpretColor(a) {
+function isColor(a) {
   if (a.kind === "COLOR")
     return parseColor(a.text);
   //todo the color must be a color or a variable.
@@ -660,25 +660,107 @@ function interpretColor(a) {
   if (key in COLORS)
     return { type: "color", text: COLORS[a.name?.slice(1)]?.(a.args) };
 }
-function interpretMinmax(a) {
+function isMinmax(a) {
   if (a.name === "minmax")
-    return { type: "length", text: `minmax(${a.args.map(interpretBasic$1).map(t => t.text).join(", ")})` };
+    return { type: "length", text: `minmax(${a.args.map(isBasic).map(t => t.text).join(", ")})` };
 }
-function interpretRepeat(a) {
+function isRepeat(a) {
   if (a.name === "repeat")
-    return { type: "length", text: `repeat(${a.args.map(a => interpretMinmax(a) ?? interpretBasic$1(a)).map(t => t.text).join(", ")})` };
+    return { type: "length", text: `repeat(${a.args.map(a => isMinmax(a) ?? isBasic(a)).map(t => t.text).join(", ")})` };
 }
-function interpretSpan(a) {
+function isSpan(a) {
   if (a.name === "span")
-    return { type: a.type, text: "span " + interpretBasic$1(a.args[0]).text };
+    return { type: a.type, text: "span " + isBasic(a.args[0]).text };
 }
-function interpretUrl(a) {
+function isUrl(a) {
   if (a.kind === "QUOTE")
     return { type: "url", text: `url(${a.text})` };
   if (a.name === "url") {
     if (args.length != 1) throw new SyntaxError("url() requires exactly one argument.");
-    return { type: "url", text: `url(${interpretBasic$1(a.args[0]).text})` };
+    return { type: "url", text: `url(${isBasic(a.args[0]).text})` };
   }
+}
+function isAngle(a) {
+  a = isBasic(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "angle", text: "0deg", unit: "deg", num: 0 };
+  if (a?.type === "angle")
+    return a;
+}
+function isAnglePercent(a) {
+  a = isBasic(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "angle", text: "0deg", unit: "deg", num: 0 };
+  if (a?.type === "angle" || a?.type === "percent")
+    return a;
+}
+function isLengthPercent(a) {
+  a = isBasic(a);
+  if (a?.type === "length" || a?.type === "percent" || (a?.num == 0 && a?.type === "number"))
+    return a;
+}
+function isPercent(a) {
+  a = isBasic(a);
+  if (a?.type === "percent")
+    return a;
+}
+function isZero(a) {
+  a = isBasic(a);
+  if (a?.text === "0")
+    return a;
+}
+function isLength(a) {
+  a = isBasic(a);
+  if (a?.type === "length" || (a?.num == 0 && a?.type === "number"))
+    return a;
+}
+function isTime(a) {
+  a = isBasic(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "time", text: "0s", unit: "s", num: 0 };
+  if (a?.type === "time")
+    return a;
+}
+function isResolution(a) {
+  a = isBasic(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "resolution", text: "0x", unit: "x", num: 0 };
+  if (a?.type === "resolution")
+    return a;
+}
+function isNumber(a) {
+  a = isBasic(a);
+  if (a?.type === "number" && a.unit == "")
+    return a;
+}
+function isNumberPercent(a) {
+  a = isBasic(a);
+  if (a?.type === "number" && a.unit == "" || a?.type === "percent")
+    return a;
+}
+function isQuote(a) {
+  if (a.kind === "QUOTE")
+    return a;
+}
+
+//interprets returns STRINGS
+function interpretName(a) {
+  if (a.kind === "WORD" && a.text[0].match(/[a-zA-Z0-9-]/))
+    return a.text;
+}
+function interpretRadian(a) {
+  if (a?.num == 0 && a.type === "number")
+    return 0;
+  if (a?.type !== "angle")
+    return;
+  if (a.unit === "rad")
+    return a.num;
+  if (a.unit === "deg")
+    return a.num * (Math.PI / 180);
+  if (a.unit === "grad")
+    return a.num * (Math.PI / 200);
+  if (a.unit === "turn")
+    return a.num * (2 * Math.PI);
 }
 function interpretMimeType(a) {
   const MIME = {
@@ -695,18 +777,18 @@ function interpretMimeType(a) {
 }
 
 function interpretImage(arg) {
-  const url = interpretUrl(arg);
+  const url = isUrl(arg);
   if (url) return url;
   if (arg.name == "imageSet") {
     const set = [];
     const args = arg.args.slice();
     while (args.length) {
-      const url = interpretUrl(a);
+      const url = isUrl(a);
       if (!url)
         throw new SyntaxError("imageSet() sequences must start with a url.");
       args.shift();
       let type = args.length && interpretMimeType(args[0]);
-      let resolution = args.length && interpretResolution(args[0]);
+      let resolution = args.length && isResolution(args[0]);
       type ||= args.length && interpretMimeType(args[0]);
       type && args.shift();
       resolution && args.shift();
@@ -716,68 +798,6 @@ function interpretImage(arg) {
   }
 }
 
-function interpretAngle(a) {
-  a = interpretBasic$1(a);
-  if (a?.num == 0 && a.type === "number")
-    return { type: "angle", text: "0deg", unit: "deg", num: 0 };
-  if (a?.type === "angle")
-    return a;
-}
-function interpretAnglePercent(a) {
-  a = interpretBasic$1(a);
-  if (a?.num == 0 && a.type === "number")
-    return { type: "angle", text: "0deg", unit: "deg", num: 0 };
-  if (a?.type === "angle" || a?.type === "percent")
-    return a;
-}
-function interpretLengthPercent(a) {
-  a = interpretBasic$1(a);
-  if (a?.type === "length" || a?.type === "percent" || (a?.num == 0 && a?.type === "number"))
-    return a;
-}
-function interpretPercent(a) {
-  a = interpretBasic$1(a);
-  if (a?.type === "percent")
-    return a;
-}
-function interpretZero(a) {
-  a = interpretBasic$1(a);
-  if (a?.text === "0")
-    return a;
-}
-function interpretLength(a) {
-  a = interpretBasic$1(a);
-  if (a?.type === "length" || (a?.num == 0 && a?.type === "number"))
-    return a;
-}
-function interpretTime(a) {
-  a = interpretBasic$1(a);
-  if (a?.num == 0 && a.type === "number")
-    return { type: "time", text: "0s", unit: "s", num: 0 };
-  if (a?.type === "time")
-    return a;
-}
-function interpretResolution(a) {
-  a = interpretBasic$1(a);
-  if (a?.num == 0 && a.type === "number")
-    return { type: "resolution", text: "0x", unit: "x", num: 0 };
-  if (a?.type === "resolution")
-    return a;
-}
-function interpretNumber(a) {
-  a = interpretBasic$1(a);
-  if (a?.type === "number" && a.unit == "")
-    return a;
-}
-function interpretNumberPercent(a) {
-  a = interpretBasic$1(a);
-  if (a?.type === "number" && a.unit == "" || a?.type === "percent")
-    return a;
-}
-function interpretQuote(a) {
-  if (a.kind === "QUOTE")
-    return a;
-}
 function makeExtractor(cb) {
   return function (args) {
     if (!args?.length) return;
@@ -785,18 +805,26 @@ function makeExtractor(cb) {
     return res != null && args.shift() && res.text;
   };
 }
-const extractTime = makeExtractor(interpretTime);
-const extractLength = makeExtractor(interpretLength);
-const extractLengthPercent = makeExtractor(interpretLengthPercent);
-const extractAngle = makeExtractor(interpretAngle);
-const extractAnglePercent = makeExtractor(interpretAnglePercent);
-const extractNumber$1 = makeExtractor(interpretNumber);
-const extractNumberPercent = makeExtractor(interpretNumberPercent);
-const extractUrl = makeExtractor(interpretUrl);
+const extractTime = makeExtractor(isTime);
+const extractLength = makeExtractor(isLength);
+const extractLengthPercent = makeExtractor(isLengthPercent);
+const extractAngle = makeExtractor(isAngle);
+const extractAnglePercent = makeExtractor(isAnglePercent);
+const extractNumber$1 = makeExtractor(isNumber);
+const extractNumberPercent = makeExtractor(isNumberPercent);
+const extractUrl = makeExtractor(isUrl);
 const extractImage = makeExtractor(interpretImage);
 const extractMimeType = makeExtractor(interpretMimeType);
-const extractColor = makeExtractor(interpretColor);
-const extractName = makeExtractor(interpretName);
+const extractColor = makeExtractor(isColor);
+const extractWord = makeExtractor(isWord);
+function extractName(args) {
+  const a = extractWord(args);
+  return a ?? interpretName(a);
+}
+function extractRadian(args) {
+  const a = extractAngle(args) || undefined;
+  return a && interpretRadian(a);
+}
 
 function makeEvaluator(interpret) {
   return function (a, i) {
@@ -806,17 +834,17 @@ function makeEvaluator(interpret) {
     throw new SyntaxError(`invalid argument ${i + 1}: "${a.text}" cannot be interpreted as ${interpret.name.slice(9)}.`);
   }
 }
-const evaluateTime = makeEvaluator(interpretTime);
-const evaluateLength = makeEvaluator(interpretLength);
-const evaluateLengthPercent = makeEvaluator(interpretLengthPercent);
-const evaluateAngle = makeEvaluator(interpretAngle);
-const evaluateAnglePercent = makeEvaluator(interpretAnglePercent);
-const evaluateNumber = makeEvaluator(interpretNumber);
-const evaluateNumberPercent = makeEvaluator(interpretNumberPercent);
-const evaluateUrl = makeEvaluator(interpretUrl);
+const evaluateTime = makeEvaluator(isTime);
+const evaluateLength = makeEvaluator(isLength);
+const evaluateLengthPercent = makeEvaluator(isLengthPercent);
+const evaluateAngle = makeEvaluator(isAngle);
+const evaluateAnglePercent = makeEvaluator(isAnglePercent);
+const evaluateNumber = makeEvaluator(isNumber);
+const evaluateNumberPercent = makeEvaluator(isNumberPercent);
+const evaluateUrl = makeEvaluator(isUrl);
 const evaluateImage = makeEvaluator(interpretImage);
 const evaluateMimeType = makeEvaluator(interpretMimeType);
-const evaluateColor = makeEvaluator(interpretColor);
+const evaluateColor = makeEvaluator(isColor);
 const evaluateName = makeEvaluator(interpretName);
 
 // const SpecializedNativeCssFunctions = {
@@ -828,21 +856,21 @@ const evaluateName = makeEvaluator(interpretName);
 // };
 
 const INTERPRETERS = {
-  number: interpretNumber,
-  zero: interpretZero,
-  length: interpretLength,
-  percent: interpretPercent,
-  angle: interpretAngle,
-  time: interpretTime,
-  resolution: interpretResolution,
-  color: interpretColor,
-  url: interpretUrl,
-  repeat: interpretRepeat,
-  minmax: interpretMinmax,
-  span: interpretSpan,
+  number: isNumber,
+  zero: isZero,
+  length: isLength,
+  percent: isPercent,
+  angle: isAngle,
+  time: isTime,
+  resolution: isResolution,
+  color: isColor,
+  url: isUrl,
+  repeat: isRepeat,
+  minmax: isMinmax,
+  span: isSpan,
   image: interpretImage,
-  quote: interpretQuote,
-  basic: interpretBasic$1,
+  quote: isQuote,
+  basic: isBasic,
 };
 
 const NativeCssProperties = Object.fromEntries(Object.entries(NativeCss.supported).map(([kebab, types]) => {
@@ -852,7 +880,7 @@ const NativeCssProperties = Object.fromEntries(Object.entries(NativeCss.supporte
     return m ? m[1] + m[3] + m[2] : originalCamel;
   }
   camel = fixBorderNames(camel);
-  const functions = [interpretBasic$1, ...types.map(t => INTERPRETERS[t]).filter(Boolean)].reverse();
+  const functions = [isBasic, ...types.map(t => INTERPRETERS[t]).filter(Boolean)].reverse();
 
   function interpretNativeValue(args) {
     const argsOut = args.map(a => {
@@ -903,7 +931,7 @@ function size$1(args) {
   if (args.length < 1 || args.length > 2)
     throw new SyntaxError("background size() requires one or two arguments.");
   args = args.map(a => {
-    a = a.text == "auto" ? a.text : interpretLengthPercent(a);
+    a = a.text == "auto" ? a.text : isLengthPercent(a);
     if (!a)
       throw new SyntaxError(`background size argument not LengthPercent: ${a.text}`);
     return a.text;
@@ -919,7 +947,7 @@ function pos(name, dims, args) {
   return args.map((a, i) => {
     if (["left", "right", "center", "top", "bottom"].includes(a.text))
       return a.text;
-    a = interpretLengthPercent(a);
+    a = isLengthPercent(a);
     if (a)
       return dims ? dims[i] + " " + a.text : a.text;
     throw new SyntaxError(`background position argument not LengthPercent: ${a.text}`);
@@ -1121,7 +1149,7 @@ function bgColorOrImage(args) {
   const img = interpretImage(args[0]);
   if (img)
     return args.shift(), img.text;
-  const color = interpretColor(args[0]);
+  const color = isColor(args[0]);
   if (color)
     return args.shift(), `linear-gradient(${color.text})`;
   throw new SyntaxError(`$bg must include either a color or url: ${color.text}.`);
@@ -1235,8 +1263,8 @@ function border(ar) {
   ar = ar.map(a => {
     a = BORDER[a.name]?.(a.args) ??
       BORDER[a.text] ??
-      interpretColor(a) ??
-      interpretBasic$1(a);
+      isColor(a) ??
+      isBasic(a);
     if (!a)
       throw new SyntaxError(`Could not interpret $border argument: ${a.text}.`);
     if (a.type == "color")
@@ -1290,15 +1318,15 @@ const FONT_WORDS = {
   titlingCaps: { fontVariantCaps: "titling-caps" },
   noVariant: { fontVariantCaps: "normal" },
 
-  condensed: { fontStretch: "condensed" },
-  expanded: { fontStretch: "expanded" },
-  semiCondensed: { fontStretch: "semi-condensed" },
-  semiExpanded: { fontStretch: "semi-expanded" },
-  extraCondensed: { fontStretch: "extra-condensed" },
-  extraExpanded: { fontStretch: "extra-expanded" },
-  ultraCondensed: { fontStretch: "ultra-condensed" },
-  ultraExpanded: { fontStretch: "ultra-expanded" },
-  noStretch: { fontStretch: "normal" },
+  condensed: { fontWidth: "condensed" },
+  expanded: { fontWidth: "expanded" },
+  semiCondensed: { fontWidth: "semi-condensed" },
+  semiExpanded: { fontWidth: "semi-expanded" },
+  extraCondensed: { fontWidth: "extra-condensed" },
+  extraExpanded: { fontWidth: "extra-expanded" },
+  ultraCondensed: { fontWidth: "ultra-condensed" },
+  ultraExpanded: { fontWidth: "ultra-expanded" },
+  noStretch: { fontWidth: "normal" },
 
   kerning: { fontKerning: "normal" },
   noKerning: { fontKerning: "none" },
@@ -1370,12 +1398,12 @@ function face(args, fontFamily) {
 }
 
 const FONT_FUNCTIONS = {
-  size: a => ({ fontSize: interpretLength(a) }),
+  size: a => ({ fontSize: isLength(a) }),
   // weight: a => ({ fontWeight: interpretNumber(a) }), //todo this should be primitive
   // style: a => ({ fontStyle: interpretWord(a) }), //todo this should not be allowed to be wrapped??
   variant: a => ({ fontVariant: interpretBasic(a) }),
-  stretch: a => ({ fontStretch: interpretBasic(a) }),
-  spacing: a => ({ letterSpacing: interpretBasic(a) }),
+  width: a => ({ fontWidth: isPercent(a) }),
+  spacing: a => (a.text == "normal" ? a.text : { letterSpacing: isLength(a) }),
   adjust: a => ({ fontSizeAdjust: interpretBasic(a) }),
 };
 
@@ -1387,7 +1415,7 @@ const FONT_DEFAULTS = Object.entries({
   fontWeight: "FontWeight",
   fontSizeAdjust: "FontSizeAdjust",
   letterSpacing: "LetterSpacing",
-  fontStretch: "FontStretch",
+  fontWidth: "FontWidth",
   fontVariantCaps: "FontVariantCaps",
   fontSynthesis: "FontSynthesis",
   fontFeatureSettings: "FontFeatureSettings",
@@ -1405,11 +1433,11 @@ function fontImpl(fontFaceName, args) {
     let a2;
     if (a.text == "emoji")
       emoji = ['Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'];
-    else if (a2 = interpretQuote(a))
+    else if (a2 = isQuote(a))
       family.push(a2.text.slice(1, -1).replaceAll("+", " "));
-    else if (a2 = interpretLength(a))
+    else if (a2 = isLength(a))
       res.fontSize = a2.text;
-    else if (a2 = interpretAngle(a))
+    else if (a2 = isAngle(a))
       res.fontStyle = "oblique " + a2.text;
     else if (a2 = FONT_WORDS[a.text] ?? FONT_FUNCTIONS[a.name]?.(a.args) ?? SYNTHESIS_WORDS[a.text])
       Object.assign(res, a2);
@@ -1418,7 +1446,7 @@ function fontImpl(fontFaceName, args) {
     else if (a.name == "face" && (a2 = face(a.args, fontFaceName))) {
       Object.assign(res, a2);
       family.push(Object.values(a2)[0].fontFamily);
-    } else if (a2 = interpretNumber(a)?.num) {
+    } else if (a2 = isNumber(a)?.num) {
       if (a2 && 1 <= a2 && a2 <= 1000)
         res.fontWeight = a2;
       else if (0 < a2 && a2 < 1)
@@ -1475,13 +1503,15 @@ const BUILTIN_TYPES = {
 // todo should we add extra requirements for the typeName? say it can only be of specific characters?
 // typeName.match(/^[a-z][a-z0-9-]*$/))
 function font(args) {
-  const typeName = interpretName(args[0])?.text;
+  const typeName = interpretName(args[0]);
   if (!typeName)
     throw new SyntaxError(`first argument is not a name: "${args[0].text}"`);
   const tmp = fontImpl(undefined, args);
+  tmp.fontFamily = `var(--${typeName}FontFamily, ${tmp.fontFamily})`; //stacking
   const vars = {}, res = {};
   for (let [k, varKey] of FONT_DEFAULTS)
-    vars["--font" + varKey] = (res[k] = tmp[k] ?? `var(--${typeName + varKey}, unset)`);
+    vars["--font" + varKey] = (res[k] = tmp[k] ?? `var(--${typeName + varKey}, unset)`); //clashing
+  res.fontStretch = res.fontWidth;
   return { ...res, ...vars };
 }
 
@@ -1508,7 +1538,8 @@ var fonts = {
   fontStyle: a => ({ [p]: a == "unset" ? `var(--fontStyle, unset)` : a }),
   fontWeight: a => ({ [p]: a == "unset" ? `var(--fontWeight, unset)` : a }),
   fontVariantCaps: a => ({ [p]: a == "unset" ? `var(--fontVariantCaps, unset)` : a }),
-  fontStretch: a => ({ [p]: a == "unset" ? `var(--fontStretch, unset)` : a }),
+  fontWidth: a => ({ [p]: a == "unset" ? `var(--fontWidth, unset)` : a }),
+  // fontStretch: a => ({ [p]: a == "unset" ? `var(--fontStretch, unset)` : a }), //renamed to fontWidth as per css spec
   fontSynthesis: a => ({ [p]: a == "unset" ? `var(--fontSynthesis, unset)` : a }),
   fontSizeAdjust: a => ({ [p]: a == "unset" ? `var(--fontSizeAdjust, unset)` : a }),
   letterSpacing: a => ({ [p]: a == "unset" ? `var(--letterSpacing, unset)` : a }),
@@ -1625,7 +1656,7 @@ function toSize(NAME, args) {
     throw new SyntaxError(`$${NAME}() accepts only 1 or 3 arguments, got ${args.length}.`);
   args = args.map(a =>
     a.text == "_" ? "unset" :
-      interpretBasic$1(a).text
+      isBasic(a).text
   );
   if (args.length === 1)
     return { [NAME]: args[0] };
@@ -1810,7 +1841,7 @@ const _LAYOUT = {
 function gap(args) {
   if (!args.length || args.length > 2)
     throw new SyntaxError("gap only accepts 1 or 2 arguments");
-  args = args.map(interpretBasic$1).map(a => a.text);
+  args = args.map(isBasic).map(a => a.text);
   if (args.length == 1 || args[0] == args[1])
     return { gap: args[0] };
   args = args.map(a => a == "unset" ? "normal" : a);
@@ -1822,7 +1853,7 @@ function gap(args) {
 //they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
 //so it should be with layout.
 function blockGap(args) {
-  const [wordSpacing, lineHeight] = args.map(interpretBasic$1).map(a => a.text);
+  const [wordSpacing, lineHeight] = args.map(isBasic).map(a => a.text);
   return { wordSpacing, lineHeight };
 }
 const BLOCK = {
@@ -1847,7 +1878,7 @@ function blockItem(argsIn) {
 }
 
 function lineClamp([lines, ...args]) {
-  lines = interpretBasic$1(lines);
+  lines = isBasic(lines);
   if (lines.type != "number")
     throw new SyntaxError(`$lineClamp() first argument must be a simple number, got ${lines}.`);
   return Object.assign(block(args), {
@@ -1862,10 +1893,10 @@ const GRID = {
   ...OVERFLOWS,
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.placeItems,
-  cols: args => ({ gridTemplateColumns: args.map(a => interpretRepeat(a) ?? interpretBasic$1(a)).map(a => a.text).join(" ") }),
-  columns: args => ({ gridTemplateColumns: args.map(a => interpretRepeat(a) ?? interpretBasic$1(a)).map(a => a.text).join(" ") }),
-  rows: args => ({ gridTemplateRows: args.map(a => interpretRepeat(a) ?? interpretBasic$1(a)).map(a => a.text).join(" ") }),
-  areas: args => ({ gridTemplateAreas: args.map(a => interpretRepeat(a) ?? interpretBasic$1(a)).map(a => a.text).join(" ") }),
+  cols: args => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
+  columns: args => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
+  rows: args => ({ gridTemplateRows: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
+  areas: args => ({ gridTemplateAreas: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
   ...LAYOUT,
   gap,
   //todo test this!!
@@ -1893,11 +1924,11 @@ function grid(argsIn) {
 // $grid(col(1,4))
 // $grid(col_1_4)
 const column = args => {
-  const [start, end] = args.map(a => interpretSpan(a) ?? interpretBasic$1(a)).map(a => a.text);
+  const [start, end] = args.map(a => isSpan(a) ?? isBasic(a)).map(a => a.text);
   return { gridColumn: end ? `${start} / ${end}` : start };
 };
 const row = args => {
-  const [start, end] = args.map(a => interpretSpan(a) ?? interpretBasic$1(a)).map(a => a.text);
+  const [start, end] = args.map(a => isSpan(a) ?? isBasic(a)).map(a => a.text);
   return { gridRow: end ? `${start} / ${end}` : start };
 };
 
@@ -1934,10 +1965,10 @@ function flex(argsIn) {
 const FlexItem = {
   ..._LAYOUT,
   ...ALIGNMENTS.alignSelf,
-  basis: args => ({ flexBasis: args.map(interpretBasic$1).map(a => a.text).join(" ") }),
-  grow: args => ({ flexGrow: args.map(interpretBasic$1).map(a => a.text).join(" ") }),
-  shrink: args => ({ flexShrink: args.map(interpretBasic$1).map(a => a.text).join(" ") }),
-  order: args => ({ order: args.map(interpretBasic$1).map(a => a.text).join(" ") }),
+  basis: args => ({ flexBasis: args.map(isBasic).map(a => a.text).join(" ") }),
+  grow: args => ({ flexGrow: args.map(isBasic).map(a => a.text).join(" ") }),
+  shrink: args => ({ flexShrink: args.map(isBasic).map(a => a.text).join(" ") }),
+  order: args => ({ order: args.map(isBasic).map(a => a.text).join(" ") }),
   //todo safe
 };
 
@@ -1958,7 +1989,7 @@ var layouts = {
   height: undefined,
   minHeight: undefined,
   maxHeight: undefined,
-  inlinseSize: undefined,
+  inlineSize: undefined,
   minInlineSize: undefined,
   maxInlineSize: undefined,
   blockSize: undefined,
@@ -2108,41 +2139,44 @@ function fromLCH(L, C, H, alpha = 1) {
   return makeColor([lchToLab, labToXyz, xyzToRGB, RGBToRgb, rgbToHex6, hex6AToHex8], { L, C, H, alpha });
 }
 
-function round(num, places = 2) {
+function round$1(num, places = 3) {
   const m = 10 ** places;
   return Math.round(num * m) / m;
 }
 
-function palette([role, ...colors]) {
-  if (!role || colors.length < 2)
-    throw "palette() requires role and at least two colors as parameters";
-  if (role.kind !== "WORD")
-    throw "First parameter must be a simple word";
-  role = `--color-${role.text}`;
+function makeColors(name, color) {
+  if (!color) throw `"${color.text}" is not a color.`;
+  if (!color.hex) throw `"${color.text}" is not a primitive color.`;
+  if (color.percent != 100) throw `"${color.text}" is not a primitive, fully opaque color.`;
+  let { L, C, H } = fromHex6(color.hex);
+  if (C == 0)
+    return { [name]: color.text };
+  L = round$1(L);
+  H = Math.round(H);
+  const pop = fromLCH(L, round$1((.5 - C) * .5 + C), H);
+  const accent = fromLCH(L, round$1((.5 - C) * .7 + C), H);
+  const bland = fromLCH(L, round$1(C * .5), H);
+  const neutral = fromLCH(L, 0, H);
+  return {
+    [name]: color.text,
+    [name + "Pop"]: "#" + pop.hex6,
+    [name + "Accent"]: "#" + accent.hex6,
+    [name + "Bland"]: "#" + bland.hex6,
+    [name + "Neutral"]: "#" + neutral.hex6,
+  };
+}
 
-  colors = colors.map((color, i) => {
-    color = interpretColor(color);
-    if (!color) throw `Parameter ${i + 2} is not a valid color`;
-    if (!color.hex) throw `Parameter ${i + 2} is not a primitive color`;
-    i ||= "";
-    let { L, C, H } = fromHex6(color.hex, color.percent);
-    if (C == 0)
-      throw new SyntaxError(`Cannot create palette from achromatic color: ${color.text}`);
-    L = round(L, 3);
-    H = Math.round(H);
-    const pop = fromLCH(L, round((.5 - C) * .5 + C, 3), H);
-    const accent = fromLCH(L, round((.5 - C) * .7 + C, 3), H);
-    const bland = fromLCH(L, round(C * .5, 3), H);
-    const neutral = fromLCH(L, 0, H);
-    return {
-      [role + i]: color.text,
-      [role + "Pop" + i]: "#" + pop.hex6,
-      [role + "Accent" + i]: "#" + accent.hex6,
-      [role + "Bland" + i]: "#" + bland.hex6,
-      [role + "Neutral" + i]: "#" + neutral.hex6,
-    };
-  });
-  return Object.assign({}, ...colors);
+function palette([name, main, on]) {
+  if (!name || !main || !on)
+    throw "$palette(name,bgColor,fgColor) requires three parameters";
+  if (name.kind !== "WORD")
+    throw "First parameter must be a simple word";
+  const mainName = `--color-${name.text}`;
+  const onName = `--color-on${name.text[0].toUpperCase() + name.text.slice(1)}`;
+  return {
+    ...makeColors(mainName, isColor(main)),
+    ...makeColors(onName, isColor(on))
+  };
 }
 
 var palette$1 = {
@@ -2294,7 +2328,7 @@ function transition(timing, args) {
   let a2;
   for (let a of args)
     if (a.text == "allowDiscrete") settings.push("allow-discrete");
-    else if (a2 = interpretName(a)) props.push(a.text);
+    else if (a2 = interpretName(a)) props.push(a2);
     else throw new SyntaxError(`Not a valid $transition property: ${a.text}.`);
   const _var = props.length > 1 ? timing : undefined;
   settings.push(props.length > 1 ? "var(--t)" : timing);
@@ -2305,7 +2339,7 @@ function transition(timing, args) {
 }
 
 function jump(type, args) {
-  const steps = interpretNumber(args[0])?.num;
+  const steps = isNumber(args[0])?.num;
   if (steps > 0)
     return transition(`steps(${steps}, ${type})`, args.slice(1));
   throw new SyntaxError(`$jump requires a positive integer argument first.`);
@@ -2380,9 +2414,9 @@ function textDecoration(line, style, args) {
   let thick, color, textDecorationSkipInk;
   for (let a of args) {
     let a2;
-    if (a2 = interpretColor(a))
+    if (a2 = isColor(a))
       color = a2.text;
-    else if (a2 = interpretLength(a))
+    else if (a2 = isLength(a))
       thick = a2.text;
     else if (a.text = "noSkipInk")
       textDecorationSkipInk = "none";
@@ -2526,36 +2560,111 @@ var filterTransforms = {
   rotate3d,
 };
 
-function _boxShadow(ar) {
-  let color, a2;
-  const res = [];
-  for (let a of ar) {
-    if (a.text == "none")
-      res.push("none");
-    else if (a2 = interpretColor(a))
-      color = a2.text;
-    else if (a2 = interpretLength(a))
-      res.push(a2.text);
-    else
-      throw new SyntaxError(`Could not interpret $boxShadow argument: ${a.text}.`);
+//todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
+
+// Shadows are handled similarly to transitions. Or even more sematically regulated.
+// There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 
+// Then in the $shadow(shade,angle,length,color?) to use it.
+// If the length is passed in as 
+// 
+// var(--shadowColor, #0003) is the default color for the shadow.
+// To change the default shadow color to for example white in @dark mode, do for example:
+//   @dark$--shadowColor(#fff3)
+// 
+// By design, we flip @light/@dark on the elements with the shadow. Lob.
+// This is likely better than trying to cluster such changes, as the shadows is unlikely to follow the same thematic logic in light and dark mode.
+// Ie. elements that have the same shadow in lightmode, might have different/no shadows in darkmode, and vice versa.
+
+const SHADES = {
+  ambient: { l: 0, b: 1.5, s: 1.25 },
+  edgeGlow: { l: 0, b: 3, s: -.5 },
+  soft: { l: 1, b: 1, s: 0 },
+  normal: { l: 1, b: 1.5, s: 0.75 },
+  medium: { l: 1.5, b: 2, s: 1 },
+  hard: { l: 2, b: 3, s: 1.5 },
+  sharp: { l: 3, b: 4, s: 2 },
+  heavy: { l: 4, b: 5, s: 3 },
+  massive: { l: 6, b: 8, s: 4 },
+  dramatic: { l: 8, b: 10, s: 6 },
+  pronounced: { l: 10, b: 12, s: 8 },
+  subtle: { l: 0.05, b: 0.1, s: 0.1 },
+  delicate: { l: 0.07, b: 0.15, s: 0.15 },
+};
+
+function round(num, places = 2) {
+  const m = 10 ** places;
+  return Math.round(num * m) / m;
+}
+
+function parseAbsoluteShadowArgs3(args) {
+  const x = extractLength(args);
+  if (!x)
+    return;
+  const y = extractLength(args);
+  const blur = extractLength(args);
+  const color = extractColor(args) ?? `var(--shadowColor, #0003)`;
+  if (args.length)
+    throw new TypeError("Unknown absolute $shadow() argument: " + args[0].text);
+  return { x, y, blur, color };
+}
+
+function parseAbsoluteShadowArgs4(args) {
+  const x = extractLength(args);
+  if (!x)
+    return;
+  const y = extractLength(args);
+  const blur = extractLength(args);
+  const spread = extractLength(args);
+  const color = extractColor(args) ?? `var(--shadowColor, #0003)`;
+  if (args.length)
+    throw new TypeError("Unknown absolute $shadow() argument: " + args[0].text);
+  return { x, y, blur, spread, color };
+}
+
+function parseNamedShadowArgs(args) {
+  const name = extractName(args);
+  if (!name)
+    throw `Unknown $shadow() argument: ${args[0].text}`;;
+  if (!(name in SHADES))
+    throw `Unknown shadow type: ${name}. Use one of: ${Object.keys(SHADES).join(", ")}`;
+  const length = args.length && (isLength(args[0]) ?? isNumber(args[0]));
+  if (length) args.shift();
+  const angle = extractRadian(args);
+  const color = extractColor(args) ?? `var(--shadowColor, #0003)`;
+  if (args.length)
+    throw new TypeError("Unknown named $shadow() argument: " + args[0].text);
+  let { num, unit } = length || { num: 5 };
+  if (!unit) {    // default length is plain number? 5 is "normal" => 0.25rem. 1 is very small => 0.05rem. 10 is large => 0.5rem.
+    num /= 20;
+    unit = "rem";
   }
-  if (res.length < 2 || res.length > 4)
-    throw new SyntaxError(`$boxShadow requires two, three, or four length arguments.`);
-  color && res.push(color);
-  return res.join(" ");
+  const type = SHADES[name];
+
+  const rad = angle ?? (Math.PI * .75); //default angle 135deg
+  const x = -round(Math.cos(rad) * type.l * num) + unit;
+  const y = round(Math.sin(rad) * type.l * num) + unit;
+  const blur = round(type.b * num) + unit;
+  const spread = round(type.s * num) + unit;
+
+  return { x, y, blur, spread, color };
 }
 
-function boxShadow(ar) {
-  return { boxShadow: _boxShadow(ar) };
+function boxShadow(args) {
+  const { x, y, blur, spread, color } = parseAbsoluteShadowArgs4(args) ?? parseNamedShadowArgs(args);
+  return [x, y, blur, spread, color].filter(Boolean).join(" ");
+}
+function textDropShadow(args) {
+  const { x, y, blur, color } = parseAbsoluteShadowArgs3(args) ?? parseNamedShadowArgs(args);
+  return [x, y, blur, color].filter(Boolean).join(" ");
 }
 
-function boxShadowInset(ar) {
-  return { boxShadow: "inset " + _boxShadow(ar) };
-}
-
-var boxShadow$1 = {
-  boxShadow,
-  boxShadowInset,
+var shadows = {
+  boxShadowInset: args => ({ boxShadow: "inset " + boxShadow(args) }),
+  boxShadow: args => ({ boxShadow: boxShadow(args) }),
+  textShadow: args => ({ textShadow: textDropShadow(args) }),
+  dropShadow: textDropShadow,
+  noBoxShadow: { boxShadow: "none" },
+  noTextShadow: { textShadow: "none" },
 };
 
 const origin = {
@@ -2651,7 +2760,7 @@ const SHORTS = {
   ...textDecorations,
   ...border$1,
   ...filterTransforms,
-  ...boxShadow$1,
+  ...shadows,
   ...position$1,
   ...ObjectFit,
 };
@@ -2918,6 +3027,7 @@ function goRightOperator(tokens) {
   while (tokens.length) {
     const { kind, text } = tokens[0];
     if (kind === "OPERATOR")
+      //operator priorities: (), ??, then **, then */ , then +- , left to right.
       a = { kind: "EXP", name: tokens.shift().text, args: [a, goDeep(tokens)] };
     else if (kind === "NUMBER" && (text[0] == "-" || text[0] == "+"))
       a = { kind: "EXP", name: "+", args: [a, goDeep(tokens)] };
