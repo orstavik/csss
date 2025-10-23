@@ -76,6 +76,19 @@ function bodyToTxt(rule, props) {
   return `${rule} {\n${body}\n}`;
 }
 
+function interpretShort(exp) {
+  const cb = SHORTS[exp.name ?? exp.text];
+  if (!cb) throw new ReferenceError(exp.name);
+  if (!(cb instanceof Function)) return cb;
+  try{
+  return cb(exp.args);
+  } catch (e) {
+    debugger;
+    //todo improve error message
+    throw e;
+  }
+}
+
 const MAGICWORD = `$"'$`;
 export function parse(short) {
   const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
@@ -83,12 +96,7 @@ export function parse(short) {
   const { exp, media } = parseMediaQuery(short, MEDIA_WORDS);
   let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
   exprList = exprList.map(parseNestedExpression);
-  exprList = exprList.map(exp => {
-    const cb = SHORTS[exp.name] ?? SHORTS[exp.text];
-    if (!cb) throw new ReferenceError(exp.name);
-    return !(cb instanceof Function) ? cb : cb(exp.args);
-    // cb({ todo: "here we need math and var and calc and env" }, exp.args);
-  });
+  exprList = exprList.map(interpretShort);
   exprList &&= clashOrStack(exprList);
   let { selector, item } = parseSelectorPipe(sel, clazz);
   const layer = (item ? "items" : "container") + (short.match(/^(\$|\|\$)/) ? "Default" : "");
@@ -173,6 +181,7 @@ function goRightOperator(tokens) {
   while (tokens.length) {
     const { kind, text } = tokens[0];
     if (kind === "OPERATOR")
+      //operator priorities: (), ??, then **, then */ , then +- , left to right.
       a = { kind: "EXP", name: tokens.shift().text, args: [a, goDeep(tokens)] };
     else if (kind === "NUMBER" && (text[0] == "-" || text[0] == "+"))
       a = { kind: "EXP", name: "+", args: [a, goDeep(tokens)] };
