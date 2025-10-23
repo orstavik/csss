@@ -115,9 +115,11 @@ const sign = Math.sign;
 //if undefined, [arg[0].unit, arg[0].unit]
 //if incompatible units, throws SyntaxError
 function sameType(args) {
-  for (let a of args)
-    if (a.type != null && a.type != args[0].type)
-      throw `Incompatible type differences: ${args[0].text} vs ${a.text}`;
+  args.reduce((t, a) => {
+    if (t && a.type && t.type != a.type)
+      throw new SyntaxError(`Incompatible type differences: ${t.text} vs ${a.text}`);
+    return a.type ? a : t;
+  }, null);
 }
 function illegalDividend(a, b) {
   if (b.type != "number") throw "Dividend must be a plain number.";
@@ -166,7 +168,7 @@ function doMath(check, func, post, texter, name, args) {
   const nums = computableNumbers(args);
   return nums ?
     post(func(...nums), args[0]) :
-    { type: args[0].type, text: texter(args.map(a => a.text), name) };
+    { type: args.find(a => a.type)?.type, text: texter(args.map(a => a.text), name) };
 }
 
 export default {

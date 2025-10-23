@@ -16,7 +16,7 @@ function splitMd(txt) {
 
 function printDiff({ key, actual, expected, type }) {
   if (actual == expected)
-    return //console.log(`✅ ${key}`);
+    return console.log(`✅ ${key}`);
   const d =
     //diffHtml? //diffCss? //diffJson?
     // type == "html" ? FlatHtml.fromString(actual).diff(expected) :

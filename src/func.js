@@ -399,6 +399,8 @@ export function toLogicalEight(NAME, DEFAULT, ar) {
 // };
 
 export function isBasic(arg) {
+  if (arg.kind == "VAR")
+    arg.text = `var(${arg.text})`;
   if (arg.kind !== "EXP")
     return arg;
   if (arg.name in Maths)
