@@ -1,54 +1,55 @@
-**csss:** $w(--bob??2px)
+**csss:** $border(2px+2px)
 **css:**
 ```css
 @layer containerDefault {
-  .\$w\(--bob\?\?2px\) {
-    inline-size: var(--bob,2px);
+  .\$border\(2px\+2px\) {
+    border-style: solid;
+    border-width: 4px;
+  }
+}
+```
+**csss:** $border(2px-2px*4)
+**css:**
+```css
+@layer containerDefault {
+  .\$border\(2px-2px\*4\) {
+    border-style: solid;
+    border-width: -6px;
   }
 }
 ```
 
-**csss:** $w(2px+2px)
+**csss:** $border(2px+--bob)
 **css:**
 ```css
 @layer containerDefault {
-  .\$w\(2px\+2px\) {
-    inline-size: var(--bob,2px);
-  }
-}
-```
-
-**csss:** $w(2px+--bob)
-**css:**
-```css
-@layer containerDefault {
-  .\$w\(2px\+--bob\) {
+  .\$border\(2px\+--bob\) {
     inline-size: calc(2px + var(--bob));
   }
 }
 ```
 
-**csss:** $w(--bob+2px)
+**csss:** $border(--bob+2px)
 **css:**
 ```css
 @layer containerDefault {
-  .\$w\(--bob\+2px\) {
+  .\$border\(--bob\+2px\) {
     inline-size: calc(var(--bob) + 2px);
   }
 }
 ```
 
-**csss:** $w(--bob+--alice)
+**csss:** $border(--bob+--alice)
 **css:**
 ```css
 @layer containerDefault {
-  .\$w\(--bob\+--alice\) {
+  .\$border\(--bob\+--alice\) {
     inline-size: calc(var(--bob) + var(--alice));
   }
 }
 ```
 
-**csss:** $w(--bob??3px*2)
+**csss:** $border(--bob??3px*2)
 **css:**
 ```css
 @layer containerDefault {
@@ -64,6 +65,16 @@
 @layer containerDefault {
   .\$w\(3px---bob\) {
     inline-size: calc(3px - var(--bob));
+  }
+}
+```
+
+**csss:** $border(--bob??2px)
+**css:**
+```css
+@layer containerDefault {
+  .\$border\(--bob\?\?2px\) {
+    inline-size: var(--bob,2px);
   }
 }
 ```

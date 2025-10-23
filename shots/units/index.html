@@ -2,8 +2,6 @@
   import * as CSSS from "/src/csss.js";
   import runTests from "/shots/mdTester.js";
 
-  // debugger
-  // CSSS.parse("$w(2-4vw)");
   function test({ csss, css }) {
     const key = csss.value, b = css.value;
     const actual = CSSS.parse(key);
@@ -14,6 +12,6 @@
     };
   }
 
-  //runTests("hpBorder,hpLayout,hpCalVar,hpBg,hpOne,hpOne2,hpTwo", test);
+  //runTests("calcVar", test);
   runTests("blockCombined,blockContainer,blockItem,flexCombined,flexContainer,flexItem,gap,gridCombined,gridContainer,gridItem,colorSpaces,how2UseGradientColors,gradientFunctions,font,margin,textDecoration,boxShadow,position,transitions,transforms,objectFit,backdropFilters", test);
 </script>
