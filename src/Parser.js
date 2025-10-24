@@ -177,7 +177,7 @@ function goRightComma(tokens, divider) {
 }
 
 function operatorPriority(a, name, b) {
-  const PRI = { "??": 1, "**": 2, "*": 3, "/": 3, "+": 4, "-": 4, };
+  const PRI = { "**": 1, "*": 2, "/": 2, "+": 3, "-": 3, "??": 4, };
   const leftPri = PRI[a.name] ?? 0;
   const rightPri = PRI[name] ?? 10;
   if (leftPri <= rightPri)

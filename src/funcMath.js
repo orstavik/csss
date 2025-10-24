@@ -156,6 +156,10 @@ function optionalSecondNumber(args) {
 function onlyOneArgWithUnit(args) {
   if (args.filter(a => a.unit).length > 1) throw "Only one argument can have a unit.";
 }
+function firstIsVar(args) {
+  if (args[0].kind != "VAR")
+    throw "?? must follow a var() expression.";
+}
 //POSTS
 function toNumber(num, a) { return { type: "number", unit: "", num, text: num }; }
 function toAngle(num, a) { return { type: "angle", unit: "rad", num, text: num }; }
@@ -177,6 +181,7 @@ export default {
   "*": doMath.bind(null, onlyOneArgWithUnit, multi, updateFirst, txts => `calc(${txts.join(" * ")})`),
   "/": doMath.bind(null, illegalDividend, divide, updateFirst, txts => `calc(${txts.join(" / ")})`),
   "**": doMath.bind(null, secondArgumentIsNumber, pow, updateFirst, texter.bind(null, "pow")),
+  "??": doMath.bind(null, firstIsVar, undefined, undefined, txts => txts[0].slice(0, -1) + "," + txts[1] + ")"),
   mod: doMath.bind(null, illegalDividend, mod, updateFirst, texter.bind(null, "mod")),
   rem: doMath.bind(null, illegalDividend, rem, updateFirst, texter.bind(null, "rem")),
   clamp: doMath.bind(null, sameType, clamp, updateFirst, texter.bind(null, "clamp")),
