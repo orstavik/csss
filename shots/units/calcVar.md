@@ -3,8 +3,7 @@
 ```css
 @layer containerDefault {
   .\$border\(3px---bob\) {
-    border-style: solid;
-    border-width: calc(3px - var(--bob));
+    border: calc(3px - var(--bob)) solid;
   }
 }
 ```
@@ -14,8 +13,7 @@
 ```css
 @layer containerDefault {
   .\$border\(--bob\?\?2px\) {
-    border-style: solid;
-    border-width: var(--bob,2px);
+    border: var(--bob,2px) solid;
   }
 }
 ```
@@ -25,8 +23,7 @@
 ```css
 @layer containerDefault {
   .\$border\(2px\+--bob\) {
-    border-style: solid;
-    border-width: calc(2px + var(--bob));
+    border: calc(2px + var(--bob)) solid;
   }
 }
 ```
@@ -36,8 +33,7 @@
 ```css
 @layer containerDefault {
   .\$border\(2px-2px\) {
-    border-style: solid;
-    border-width: 0px;
+    border: 0px solid;
   }
 }
 ```
@@ -46,8 +42,7 @@
 ```css
 @layer containerDefault {
   .\$border\(2px\+2px\*4\) {
-    border-style: solid;
-    border-width: 10px;
+    border: 10px solid;
   }
 }
 ```
@@ -57,8 +52,7 @@
 ```css
 @layer containerDefault {
   .\$border\(--bob\+2px\) {
-    border-style: solid;
-    border-width: calc(var(--bob) + 2px);
+    border: calc(var(--bob) + 2px) solid;
   }
 }
 ```
@@ -68,8 +62,7 @@
 ```css
 @layer containerDefault {
   .\$border\(--bob\?\?3px\*2\) {
-    border-style: solid;
-    border-width: var(--bob,6px);
+    border: var(--bob,6px) solid;
   }
 }
 ```

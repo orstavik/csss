@@ -135,8 +135,7 @@
 ```css
 @layer containerDefault {
   .\$border\(\#neutral\#40\) {
-    border-style: solid;
-    border-color: color-mix(in oklab, var(--color-neutral), var(--color-neutral1) 40%);
+    border: solid color-mix(in oklab, var(--color-neutral), var(--color-neutral1) 40%);
   }
 }
 ```
@@ -146,8 +145,7 @@
 ```css
 @layer containerDefault {
   .\$border\(\#neutral\#60\) {
-    border-style: solid;
-    border-color: color-mix(in oklab, var(--color-neutral), var(--color-neutral1) 60%);
+    border: solid color-mix(in oklab, var(--color-neutral), var(--color-neutral1) 60%);
   }
 }
 ```

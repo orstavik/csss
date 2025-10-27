@@ -1,51 +1,62 @@
-import { isBasic, isColor, toLogicalFour, toLogicalEight, toRadiusFour } from "./func.js";
+import { isColor, toRadiusFour, toLogicalEight, isLengthPercent } from "./func.js";
 
-const color = toLogicalFour.bind(null, "borderColor");
-const width = toLogicalFour.bind(null, "borderWidth");
-const radius = toRadiusFour.bind(null, "borderRadius");
-const radius8 = toLogicalEight.bind(null, "borderRadius", 0);
-const BORDER = {
-  solid: { borderStyle: "solid" },
-  dotted: { borderStyle: "dotted" },
-  dashed: { borderStyle: "dashed" },
-  double: { borderStyle: "double" },
-  groove: { borderStyle: "groove" },
-  ridge: { borderStyle: "ridge" },
-  inset: { borderStyle: "inset" },
-  outset: { borderStyle: "outset" },
-  hidden: { borderStyle: "hidden" },
-  none: { borderStyle: "none" },
-  thin: { borderWidth: "thin" },
-  medium: { borderWidth: "medium" },
-  thick: { borderWidth: "thick" },
-  width,
-  w: width,
+//$border(2px,4px,solid,red,blue)
+//$border(2px,solid,red)
+const STYLE_WORDS = {
+  solid: "solid",
+  dotted: "dotted",
+  dashed: "dashed",
+  double: "double",
+  groove: "groove",
+  ridge: "ridge",
+  inset: "inset",
+  outset: "outset",
+  hidden: "hidden",
+};
+const WIDTH_WORDS = {
+  thin: "thin",
+  medium: "medium",
+  thick: "thick",
+};
+const radius = toRadiusFour.bind(null, "radius");
+const radius8 = toLogicalEight.bind(null, "radius", 0);
+const RADIUS = {
   radius,
   r: radius,
   radius8,
   r8: radius8,
-  color,
-  c: color,
 };
 
-//border: 2px 4px solid red blue;
-//$border(w(2px,4px),solid,c(red,blue))
-//$border(2px,solid,red)
 function border(ar) {
-  ar = ar.map(a => {
-    a = BORDER[a.name]?.(a.args) ??
-      BORDER[a.text] ??
-      isColor(a) ??
-      isBasic(a);
-    if (!a)
+  let borderRadius, width = [], style = [], color = [];
+  for (let a of ar) {
+    let v;
+    if (borderRadius && a.name in RADIUS)
+      throw new SyntaxError(`More than one $border radius argument: ${a.text}.`);
+    else if (v = isColor(a)?.text)
+      color.push(v);
+    else if (v = isLengthPercent(a)?.text ?? WIDTH_WORDS[a.text])
+      width.push(v);
+    else if (v = STYLE_WORDS[a.text])
+      style.push(v);
+    else if (v = RADIUS[a.name]?.(a.args)?.text)
+      borderRadius = v;
+    else
       throw new SyntaxError(`Could not interpret $border argument: ${a.text}.`);
-    if (a.type == "color")
-      return { borderColor: a.text };
-    if (a.type == "length")
-      return { borderWidth: a.text };
-    return a;
-  });
-  return Object.assign({ borderStyle: "solid" }, ...ar);
+  }
+  if (width.length > 4)
+    throw new SyntaxError(`Too many border widths specified: ${width.join(" ")}.`);
+  if (style.length > 4)
+    throw new SyntaxError(`Too many border styles specified: ${style.join(" ")}.`);
+  if (color.length > 4)
+    throw new SyntaxError(`Too many border colors specified: ${color.join(" ")}.`);
+  if (width.length < 2 && style.length < 2 && color.length < 2) {
+    const border = [width[0], style[0] ?? "solid", color[0]].filter(Boolean).join(" ");
+    return radius ? { border, borderRadius } : { border };
+  }
+  const borderInline = [width[0], width[2], style[0] ?? "solid", style[2], color[0], color[2]].filter(Boolean).join(" ");
+  const borderBlock = [width[1] ?? width[0], width[3], style[1] ?? style[0] ?? "solid", style[3], color[1] ?? color[0], color[3]].filter(Boolean).join(" ");
+  return radius ? { borderInline, borderBlock, borderRadius } : { borderInline, borderBlock };
 }
 
 export default {

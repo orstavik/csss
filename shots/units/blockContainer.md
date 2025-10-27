@@ -131,17 +131,6 @@
 }
 ```
 
-**csss:** $border(1px,solid)
-**css:**
-```css
-@layer containerDefault {
-  .\$border\(1px\,solid\) {
-    border-style: solid;
-    border-width: 1px;
-  }
-}
-```
-
 **csss:** $block(overflowScroll)
 **css:**
 ```css
