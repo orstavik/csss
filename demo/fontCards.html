@@ -20,12 +20,16 @@
 
   <main class="$grid(cols(1fr),gap(2rem))">
     <section
-      class="$border(1px,solid,#ddd,radius(8px)) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $block(padding(2rem))">
-      <h2 class="$font(transitional,1.75rem,700) $blockItem(margin(0,0,1rem,0))">Transitional</h2>
+      class="$border(1px,solid,#ddd,radius(8px)) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) 
+      $block(padding(2rem))
+      |:first-child$blockItem(margin(0,0,1rem,0))
+      |:last-child$blockItem(margin(1.5rem,0,0,0))
+      ">
+      <h2 class="$font(transitional,1.75rem,700)">Transitional</h2>
       <div
         class="$bg(#f7f7f7) $border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
         'Charter', 'Bitstream Charter', 'Sitka Text', Cambria, serif;</div>
-      <div class="$blockItem(margin(1.5rem,0,0,0))">
+      <div>
         <p class="$font(transitional)">This is the base transitional font. It's a classic, highly readable serif, great
           for long-form text. It inherits all properties from the `transitional` umbrella.</p>
         <p class="$font(transitional,600)">This paragraph uses a
@@ -33,10 +37,11 @@
           to increase the font weight to 600, making it bolder than
           the base text, with an even bolder strong tag.
         </p>
-        <p class="$font(transitional,italic)">This paragraph uses an <span class="$font(transitional,normal)">italic
-            droplet</span>, but the emphasized text inside is reset to normal style.</p>
-        <p class="$font(transitional,14px,spacing(0.1em),allSmallCaps)">This demonstrates multiple droplets: a smaller
-          font size, custom letter spacing, and the `all-small-caps` font variant.</p>
+        <p class="$fontStyle(italic)">This paragraph uses an italic font, which is reset to normal inside this quote:
+          <span class="$fontStyle(normal)">"normal style here"
+        </p>.
+        <p class="$font(transitional,14px,spacing(0.1em),allSmallCaps)">This demonstrates nested umbrella: a
+          smaller font size, custom letter spacing, and the `all-small-caps` font variant.</p>
       </div>
     </section>
 

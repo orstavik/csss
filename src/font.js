@@ -1,4 +1,4 @@
-import { extractName, extractUrl, interpretName, isNumber, isLength, isAngle, isQuote, isPercent } from "./func.js";
+import { extractName, extractUrl, interpretName, isNumber, isLength, isAngle, isQuote, isPercent, isBasic } from "./func.js";
 
 const FONT_WORDS = {
   bold: { fontWeight: "bold" },
@@ -231,20 +231,34 @@ function typeFace(args) {
   return res;
 }
 
+function makeSingleDroplet(NAME, FUNC) {
+  return function (args) {
+    if (args.length != 1)
+      throw new SyntaxError(`$${NAME} droplet only accepts one argument, but got ${args.length}: ${args.map(a => a.text).join(", ")}`);
+    const a = args[0];
+    const v = a.text == "unset" ? `var(--${NAME}, unset)` : FUNC(a)?.text;
+    if (v == null)
+      throw new SyntaxError(`Could not interpret $${NAME} argument: ${args[0].text}.`);
+    return { [NAME]: v };
+  }
+}
+
 export default {
   font,
   typeface: typeFace,
 
   //droplets
-  fontFamily: a => ({ [p]: a == "unset" ? `var(--fontFamily, unset)` : a }),
-  fontStyle: a => ({ [p]: a == "unset" ? `var(--fontStyle, unset)` : a }),
-  fontWeight: a => ({ [p]: a == "unset" ? `var(--fontWeight, unset)` : a }),
-  fontVariantCaps: a => ({ [p]: a == "unset" ? `var(--fontVariantCaps, unset)` : a }),
-  fontWidth: a => ({ [p]: a == "unset" ? `var(--fontWidth, unset)` : a }),
-  // fontStretch: a => ({ [p]: a == "unset" ? `var(--fontStretch, unset)` : a }), //renamed to fontWidth as per css spec
-  fontSynthesis: a => ({ [p]: a == "unset" ? `var(--fontSynthesis, unset)` : a }),
-  fontSizeAdjust: a => ({ [p]: a == "unset" ? `var(--fontSizeAdjust, unset)` : a }),
-  letterSpacing: a => ({ [p]: a == "unset" ? `var(--letterSpacing, unset)` : a }),
+  fontSize: makeSingleDroplet("fontSize", isLength),
+  fontFamily: makeSingleDroplet("fontFamily", isBasic),
+  fontStyle: makeSingleDroplet("fontStyle", isBasic),
+  fontWeight: makeSingleDroplet("fontWeight", isBasic),
+  fontVariantCaps: makeSingleDroplet("fontVariantCaps", isBasic),
+  fontWidth: makeSingleDroplet("fontWidth", isBasic),     //todo we need to make them return both props.
+  fontStretch: makeSingleDroplet("fontStretch", isBasic), //todo we need to make them return both props.
+  fontSynthesis: makeSingleDroplet("fontSynthesis", isBasic),
+  fontSizeAdjust: makeSingleDroplet("fontSizeAdjust", isBasic),
+  letterSpacing: makeSingleDroplet("letterSpacing", isBasic),
+
 
   //global font words
   // bold: { fontWeight: "bold" },
