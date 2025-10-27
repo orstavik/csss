@@ -58,7 +58,18 @@
 ```css
 @layer containerDefault {
   .\$border\(r\(20px\)\) {
+    border: none;
     border-radius: 20px;
+  }
+}
+```
+
+**csss:** $noBorder
+**css:**
+```css
+@layer containerDefault {
+  .\$noBorder {
+    border: none;
   }
 }
 ```
