@@ -104,25 +104,13 @@
 }
 ```
 
-**csss:** $border(none,radius(8px))
-**css:**
-```css
-@layer containerDefault {
-  .\$border\(none\,radius\(8px\)\) {
-    border-style: none;
-    border-radius: 8px;
-  }
-}
-```
 
 **csss:** $border(2px,solid,#e0e0e0,radius(8px))
 **css:**
 ```css
 @layer containerDefault {
   .\$border\(2px\,solid\,\#e0e0e0\,radius\(8px\)\) {
-    border-style: solid;
-    border-width: 2px;
-    border-color: #e0e0e0;
+    border: 2px solid #e0e0e0;
     border-radius: 8px;
   }
 }
@@ -133,9 +121,7 @@
 ```css
 @layer containerDefault {
   .\$border\(2px\,solid\,\#white\,radius\(50px\)\) {
-    border-style: solid;
-    border-width: 2px;
-    border-color: white;
+    border: 2px solid white;
     border-radius: 50px;
   }
 }
@@ -146,7 +132,6 @@
 ```css
 @layer containerDefault {
   .\$border\(radius\(12px\)\) {
-    border-style: solid;
     border-radius: 12px;
   }
 }
@@ -157,7 +142,6 @@
 ```css
 @layer containerDefault {
   .\$border\(radius\(6px\)\) {
-    border-style: solid;
     border-radius: 6px;
   }
 }
@@ -168,11 +152,10 @@
 ```css
 @layer containerDefault {
   .\$border\(radius\(70px\,70px\,20px\,20px\)\) {
-    border-style: solid;
-    border-radius-start-start: 70px;
-    border-radius-end-end: 20px;
-    border-radius-start-end: 70px;
-    border-radius-end-start: 20px;
+    border-start-start-radius: 70px;
+    border-start-end-radius: 70px 20px;
+    border-end-start-radius: 20px 70px;
+    border-end-end-radius: 20px;
   }
 }
 ```
@@ -182,7 +165,6 @@
 ```css
 @layer containerDefault {
   .\$border\(radius\(50\%\)\) {
-    border-style: solid;
     border-radius: 50%;
   }
 }
@@ -193,9 +175,7 @@
 ```css
 @layer containerDefault {
   .\$border\(12px\,solid\,\#ffaac2\) {
-    border-style: solid;
-    border-width: 12px;
-    border-color: #ffaac2;
+    border: 12px solid #ffaac2;
   }
 }
 ```
@@ -205,9 +185,7 @@
 ```css
 @layer containerDefault {
   .\$border\(10px\,solid\,\#d0e8f0\,radius\(50\%\)\) {
-    border-style: solid;
-    border-width: 10px;
-    border-color: #d0e8f0;
+    border: 10px solid #d0e8f0;
     border-radius: 50%;
   }
 }
