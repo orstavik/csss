@@ -53,6 +53,7 @@ const STYLE_WORDS = {
   ridge: "ridge",
   inset: "inset",
   outset: "outset",
+  none: "none",
   hidden: "hidden",
 };
 const WIDTH_WORDS = {
@@ -84,7 +85,7 @@ function border(ar) {
   }
   const maxLength = Math.max(width.length, style.length, color.length);
   if (!maxLength && borderRadius)
-    return borderRadius;
+    return { border: "none", ...borderRadius };
   borderRadius ??= {};
   style[0] ??= "solid";
   if (maxLength == 1) {
