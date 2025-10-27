@@ -341,23 +341,6 @@ const COLORS = {
   mixOklchDecreasing: args => cssColorMix([{ kind: "WORD", text: "oklch decreasing hue" }, ...args]),
 };
 
-
-
-
-export function toRadiusFour(NAME, ar) {
-  ar = ar.map(isBasic).map(a => a.text);
-  if (!(ar instanceof Array))
-    return { [NAME]: ar };
-  if (ar.length === 1)
-    return { [NAME]: ar[0] };
-  return {
-    [NAME + "StartStart"]: ar[0],
-    [NAME + "EndEnd"]: ar[2] ?? ar[0],
-    [NAME + "StartEnd"]: ar[1],
-    [NAME + "EndStart"]: ar[3] ?? ar[1],
-  };
-}
-
 export function toLogicalFour(NAME, ar) {
   ar = ar.map(isBasic).map(a => a.text);
   return ar.length === 1 ? { [NAME]: ar[0] } :
@@ -366,31 +349,6 @@ export function toLogicalFour(NAME, ar) {
       [NAME + "Inline"]: ar[3] != null && ar[3] != ar[1] ? (ar[1] ?? ar[0]) + " " + ar[3] : ar[1] ?? ar[0],
     };
 }
-//todo there are different ways to do the logic here..
-//todo length == 2, I think that we could have top/bottom too
-//todo length == 3, then the third becomes all the inline ones
-//todo length === 4, then forth is the inline on the end side
-export function toLogicalEight(NAME, DEFAULT, ar) {
-  ar = ar.map(isBasic).map(a => a.text);
-  if (!(ar instanceof Array))
-    return { [NAME]: ar };
-  if (ar.length === 1)
-    return { [NAME]: ar[0] };
-  let [bss, iss, bes, ies, bse, ise, bee, iee] = ar;
-  if (ar.length === 2) ise = ies = iee = iss, bse = bes = bee = bss;
-  if (ar.length === 3) ise = ies = iee = iss, bse = bss, bee = bes;
-  if (ar.length === 4) ise = iss, iee = ies, bse = bss, bee = bes;
-  if (ar.length === 5) ise = iss, iee = ies, bee = bes;
-  if (ar.length === 6) iee = ies, bee = bes;
-  if (ar.length === 7) iee = ies;
-  const res = {};
-  if (bss || iss) res[NAME + "TopLeft"] = `${bss ?? DEFAULT} ${iss ?? DEFAULT}`;
-  if (bse || ies) res[NAME + "TopRight"] = `${bse ?? DEFAULT} ${ies ?? DEFAULT}`;
-  if (bes || ise) res[NAME + "BottomLeft"] = `${bes ?? DEFAULT} ${ise ?? DEFAULT}`;
-  if (bee || iee) res[NAME + "BottomRight"] = `${bee ?? DEFAULT} ${iee ?? DEFAULT}`;
-  return res;
-}
-
 // const NativeCssScopeUrl = (...args) => `url(${args.join(" ")})`;
 // const NativeCssScopeAttrCounter = {
 //   counter: (...args) => `counter(${args.join(",")})`,
