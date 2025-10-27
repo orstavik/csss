@@ -83,6 +83,8 @@ function border(ar) {
       throw new SyntaxError(`Could not interpret $border argument: ${a.text}.`);
   }
   const maxLength = Math.max(width.length, style.length, color.length);
+  if (!maxLength && borderRadius)
+    return borderRadius;
   borderRadius ??= {};
   style[0] ??= "solid";
   if (maxLength == 1) {

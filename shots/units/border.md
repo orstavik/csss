@@ -52,3 +52,13 @@
   }
 }
 ```
+
+**csss:** $border(r(20px))
+**css:**
+```css
+@layer containerDefault {
+  .\$border\(r\(20px\)\) {
+    border-radius: 20px;
+  }
+}
+```
