@@ -7,18 +7,27 @@ const defaultStyleEl = `
 
 const parse = CSSS.memoize(CSSS.parse, 333);
 
-function updateDoc(style) {
+function allDollars() {
+  const res = [];
   for (let el of document.querySelectorAll('[class*="$"]'))
     for (let clazz of el.classList)
-      if (clazz.includes("$") && !style.shorts.has(clazz))
-        try {
-          const res = parse(clazz);
-          const i = style.sheet.cssRules.length;
-          style.sheet.insertRule(res.cssText, i);
-          style.shorts.add(clazz);
-        } catch (er) {
-          console.error(er);
-        }
+      if (clazz.includes("$"))
+        res.push(clazz);
+  return res;
+}
+
+function updateDoc(style, dollars) {
+  for (let clazz of dollars)
+    try {
+      const res = parse(clazz);
+      const i = style.sheet.cssRules.length;
+      style.sheet.insertRule(res.cssText, i);
+      style.shorts.add(clazz);
+      if (res.atRuleText)
+        style.sheet.insertRule(res.atRuleText, style.sheet.cssRules.length);
+    } catch (er) {
+      console.error(er);
+    }
   const txt = [...style.sheet.cssRules].map(r => r.cssText).join("\n\n");
   if (txt != style.textContent)
     style.innerHTML = txt;
@@ -44,6 +53,7 @@ function sleep(interval) {
   style.shorts = new Set([...style.sheet.cssRules].map(rule => CSSS.extractShort(rule)).filter(Boolean));
   while (true) {
     await sleep(interval);
-    updateDoc(style);
+    const dollars = allDollars().filter(clazz => !style.shorts.has(clazz));
+    updateDoc(style, dollars);
   }
 })();

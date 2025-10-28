@@ -40,7 +40,7 @@
 ```css
 @layer containerDefault {
   .\$font\(system-ui\,sans-serif\,400\,0\.5\,bold\,i\,condensed\,12px\) {
-    font-family: var(--system-uiFontFamily, system-ui, sans-serif);
+    font-family: system-ui, sans-serif, var(--system-uiFontFamily, unset);
     font-size: 12px;
     font-style: italic;
     font-weight: bold;
@@ -65,7 +65,7 @@
 ```css
 @layer containerDefault {
   .\$font\(body\) {
-    font-family: var(--bodyFontFamily, body);
+    font-family: body, var(--bodyFontFamily, unset);
     font-size: var(--bodyFontSize, unset);
     font-style: var(--bodyFontStyle, unset);
     font-weight: var(--bodyFontWeight, unset);
