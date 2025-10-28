@@ -56,21 +56,6 @@
     -moz-osx-font-smoothing: var(--system-uiMozOsxFontSmoothing, unset);
     font-kerning: var(--system-uiFontKerning, unset);
     font-stretch: condensed;
-    --fontFontFamily: var(--system-uiFontFamily, system-ui, sans-serif);
-    --fontFontSize: 12px;
-    --fontFontStyle: italic;
-    --fontFontWeight: bold;
-    --fontFontSizeAdjust: 0.5;
-    --fontLetterSpacing: var(--system-uiLetterSpacing, unset);
-    --fontTextTransform: var(--system-uiTextTransform, unset);
-    --fontFontWidth: condensed;
-    --fontFontVariantCaps: var(--system-uiFontVariantCaps, unset);
-    --fontFontSynthesis: var(--system-uiFontSynthesis, unset);
-    --fontFontFeatureSettings: var(--system-uiFontFeatureSettings, unset);
-    --fontFontVariationSettings: var(--system-uiFontVariationSettings, unset);
-    --fontWebkitFontSmoothing: var(--system-uiWebkitFontSmoothing, unset);
-    --fontMozOsxFontSmoothing: var(--system-uiMozOsxFontSmoothing, unset);
-    --fontFontKerning: var(--system-uiFontKerning, unset);
   }
 }
 ```
@@ -96,21 +81,6 @@
     -moz-osx-font-smoothing: var(--bodyMozOsxFontSmoothing, unset);
     font-kerning: var(--bodyFontKerning, unset);
     font-stretch: var(--bodyFontWidth, unset);
-    --fontFontFamily: var(--bodyFontFamily, body);
-    --fontFontSize: var(--bodyFontSize, unset);
-    --fontFontStyle: var(--bodyFontStyle, unset);
-    --fontFontWeight: var(--bodyFontWeight, unset);
-    --fontFontSizeAdjust: var(--bodyFontSizeAdjust, unset);
-    --fontLetterSpacing: var(--bodyLetterSpacing, unset);
-    --fontTextTransform: var(--bodyTextTransform, unset);
-    --fontFontWidth: var(--bodyFontWidth, unset);
-    --fontFontVariantCaps: var(--bodyFontVariantCaps, unset);
-    --fontFontSynthesis: var(--bodyFontSynthesis, unset);
-    --fontFontFeatureSettings: var(--bodyFontFeatureSettings, unset);
-    --fontFontVariationSettings: var(--bodyFontVariationSettings, unset);
-    --fontWebkitFontSmoothing: var(--bodyWebkitFontSmoothing, unset);
-    --fontMozOsxFontSmoothing: var(--bodyMozOsxFontSmoothing, unset);
-    --fontFontKerning: var(--bodyFontKerning, unset);
   }
 }
 ```

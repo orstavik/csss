@@ -1,5 +1,12 @@
 import { extractName, extractUrl, interpretName, isNumber, isLength, isAngle, isQuote, isPercent, isBasic } from "./func.js";
 
+/**
+ * TextTransform is a semi inherited css property (inherits over inline elements, but not block elements).
+ * The same way as shifting font family or style, caption is a family-ish trait. Would be normal to consider part of font umbrella.
+ * Most of the text properties are either layout (text-align, line-height, word-spacing, hyphenation).
+ * text-decoration is standalone. text-shadow is standalone (in same space as colors).
+ * ??candidate for font is hyphenation. Where we break the words, that could be more a font characteristic than a layout characteristic??
+ */
 const TEXT_TRANSFORM = {
   uppercase: { textTransform: "uppercase" },
   lowercase: { textTransform: "lowercase" },
@@ -220,11 +227,11 @@ function font(args) {
     throw new SyntaxError(`first argument is not a name: "${args[0].text}"`);
   const tmp = fontImpl(undefined, args);
   tmp.fontFamily = `var(--${typeName}FontFamily, ${tmp.fontFamily})`; //stacking
-  const vars = {}, res = {};
+  const res = {};
   for (let [k, varKey] of FONT_DEFAULTS)
-    vars["--font" + varKey] = (res[k] = tmp[k] ?? `var(--${typeName + varKey}, unset)`); //clashing
+    res[k] = tmp[k] ?? `var(--${typeName + varKey}, unset)`; //clashing
   res.fontStretch = res.fontWidth;
-  return { ...res, ...vars };
+  return res;
 }
 
 function typeFace(args) {
