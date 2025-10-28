@@ -24,19 +24,19 @@ function printDiff({ key, actual, expected, type }) {
   const noMatch = d.find(({ type, a, b }) => type != "match" && (a.trim() || b.trim()))
   if (!noMatch)
     return console.log(`🟦 ${key}`, d);
-  console.log(`❌ ${key}`);
+  console.error(`❌ ${key}`);
   for (let { a, b, type } of d)
-    type == "ins" ? console.log("%c%s", "background-color:green", b) :
-      type == "del" ? console.log("%c%s", "background-color:red", a) :
-        console.log("%c%s", "color:grey", a);
-  console.info(actual);
+    type == "ins" ? console.error("%c%s", "background-color:green", b) :
+      type == "del" ? console.error("%c%s", "background-color:red", a) :
+        console.error("%c%s", "color:grey", a);
+  console.error(actual);
 }
 
 export default async function runTests(paths, test) {
   if (!location.hash) location.hash = paths;
   const tests = location.hash.slice(1).split(",").map(p => p + ".md");
   for (let file of tests) {
-    console.info(`Testing ${file}`);
+    console.warn(`Testing ${file}`);
     const txt = await (await fetch(file)).text();
     for (let shot of splitMd(txt))
       printDiff(await test(shot));
