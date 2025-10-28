@@ -16,5 +16,18 @@
 .\$block { display: block; }
 ```
 
+**csss:** $textTransform(lowercase)
+**css:** textTransform is not recognized
+**shouldbeerror:** we need to make a good error message here.
+**corrected:** $lowercase
+**css:**
+```css
+@layer containerDefault {
+  .\$lowercase {
+    text-transform: lowercase;
+  }
+}
+```
+
 
 

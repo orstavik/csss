@@ -161,52 +161,22 @@
 }
 ```
 
-**csss:** $textTransform(uppercase)
+**csss:** $uppercase
 **css:**
 ```css
 @layer containerDefault {
-  .\$textTransform\(uppercase\) {
+  .\$uppercase {
     text-transform: uppercase;
   }
 }
 ```
 
-**csss:** $textTransform(lowercase)
+**csss:** $noTextTransform
 **css:**
 ```css
 @layer containerDefault {
-  .\$textTransform\(lowercase\) {
-    text-transform: lowercase;
-  }
-}
-```
-
-**csss:** $textTransform(capitalize)
-**css:**
-```css
-@layer containerDefault {
-  .\$textTransform\(capitalize\) {
-    text-transform: capitalize;
-  }
-}
-```
-
-**csss:** $zIndex(1)
-**css:**
-```css
-@layer containerDefault {
-  .\$zIndex\(1\) {
-    z-index: 1;
-  }
-}
-```
-
-**csss:** $zIndex(2)
-**css:**
-```css
-@layer containerDefault {
-  .\$zIndex\(2\) {
-    z-index: 2;
+  .\$noTextTransform {
+    text-transform: none;
   }
 }
 ```
@@ -217,16 +187,6 @@
 @layer containerDefault {
   .\$zIndex\(10\) {
     z-index: 10;
-  }
-}
-```
-
-**csss:** $zIndex(999)
-**css:**
-```css
-@layer containerDefault {
-  .\$zIndex\(999\) {
-    z-index: 999;
   }
 }
 ```
@@ -249,42 +209,3 @@
   }
 }
 ```
-
-**csss:** $palette(secondary,#ffaac2,#333333)
-**css:**
-```css
-@layer containerDefault {
-  .\$palette\(secondary\,\#ffaac2\,\#333333\) {
-    --color-secondary: #ffaac2;
-    --color-secondaryPop: #ffcce6;
-    --color-secondaryAccent: #ffc2e5;
-    --color-secondaryBland: #f7e6ea;
-    --color-secondaryNeutral: #ebebea;
-    --color-onSecondary: #333333;
-    --color-onSecondaryPop: #489eef;
-    --color-onSecondaryAccent: #00a0ff;
-    --color-onSecondaryBland: #9a9a99;
-    --color-onSecondaryNeutral: #9a9a99;
-  }
-}
-```
-
-**csss:** $palette(accent,#d0e8f0,#333333)
-**css:**
-```css
-@layer containerDefault {
-  .\$palette\(accent\,\#d0e8f0\,\#333333\) {
-    --color-accent: #d0e8f0;
-    --color-accentPop: #a7ffff;
-    --color-accentAccent: #7cffff;
-    --color-accentBland: #f2f6f8;
-    --color-accentNeutral: #f5f5f5;
-    --color-onAccent: #333333;
-    --color-onAccentPop: #489eef;
-    --color-onAccentAccent: #00a0ff;
-    --color-onAccentBland: #9a9a99;
-    --color-onAccentNeutral: #9a9a99;
-  }
-}
-```
-

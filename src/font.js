@@ -280,6 +280,7 @@ export default {
   capitalize: { textTransform: "capitalize" },
   fullWidth: { textTransform: "full-width" },
   noTextTransform: { textTransform: "none" },
+  textTransform: undefined,
 
   italic: { fontStyle: "italic" },
   noStyle: { fontStyle: "normal" },
