@@ -1,19 +1,9 @@
-**csss:** $opacity(0.5)
+**csss:** $opacity(.95)
 **css:**
 ```css
 @layer containerDefault {
-  .\$opacity\(0\.5\) {
-    filter: opacity(0.5);
-  }
-}
-```
-
-**csss:** $opacity(0.95)
-**css:**
-```css
-@layer containerDefault {
-  .\$opacity\(0\.95\) {
-    filter: opacity(0.95);
+  .\$opacity\(\.95\) {
+    filter: opacity(.95);
   }
 }
 ```
@@ -84,38 +74,6 @@
 }
 ```
 
-**csss:** $lineHeight(1.6)
-**css:**
-```css
-@layer containerDefault {
-  .\$lineHeight\(1\.6\) {
-    line-height: 1.6;
-  }
-}
-```
-
-**csss:** $lineHeight(1.1)
-**css:**
-```css
-@layer containerDefault {
-  .\$lineHeight\(1\.1\) {
-    line-height: 1.1;
-  }
-}
-```
-
-
-**csss:** $border(2px,solid,#e0e0e0,radius(8px))
-**css:**
-```css
-@layer containerDefault {
-  .\$border\(2px\,solid\,\#e0e0e0\,radius\(8px\)\) {
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-  }
-}
-```
-
 **csss:** $border(2px,solid,#white,radius(50px))
 **css:**
 ```css
@@ -123,28 +81,6 @@
   .\$border\(2px\,solid\,\#white\,radius\(50px\)\) {
     border: 2px solid white;
     border-radius: 50px;
-  }
-}
-```
-
-**csss:** $border(radius(12px))
-**css:**
-```css
-@layer containerDefault {
-  .\$border\(radius\(12px\)\) {
-    border: none;
-    border-radius: 12px;
-  }
-}
-```
-
-**csss:** $border(radius(6px))
-**css:**
-```css
-@layer containerDefault {
-  .\$border\(radius\(6px\)\) {
-    border: none;
-    border-radius: 6px;
   }
 }
 ```
