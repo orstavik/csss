@@ -1,6 +1,15 @@
 import { extractName, extractUrl, interpretName, isNumber, isLength, isAngle, isQuote, isPercent, isBasic } from "./func.js";
 
+const TEXT_TRANSFORM = {
+  uppercase: { textTransform: "uppercase" },
+  lowercase: { textTransform: "lowercase" },
+  capitalize: { textTransform: "capitalize" },
+  fullWidth: { textTransform: "full-width" },
+  noTransform: { textTransform: "none" },
+};
+
 const FONT_WORDS = {
+  ...TEXT_TRANSFORM,
   bold: { fontWeight: "bold" },
   b: { fontWeight: "bold" },
   bolder: { fontWeight: "bolder" },
@@ -100,7 +109,7 @@ function face(args, fontFamily) {
 }
 
 const FONT_FUNCTIONS = {
-  size: a => ({ fontSize: isLength(a) }),
+  // size: a => ({ fontSize: isLength(a) }),
   // weight: a => ({ fontWeight: interpretNumber(a) }), //todo this should be primitive
   // style: a => ({ fontStyle: interpretWord(a) }), //todo this should not be allowed to be wrapped??
   variant: a => ({ fontVariant: interpretBasic(a) }),
@@ -117,6 +126,7 @@ const FONT_DEFAULTS = Object.entries({
   fontWeight: "FontWeight",
   fontSizeAdjust: "FontSizeAdjust",
   letterSpacing: "LetterSpacing",
+  textTransform: "TextTransform",
   fontWidth: "FontWidth",
   fontVariantCaps: "FontVariantCaps",
   fontSynthesis: "FontSynthesis",

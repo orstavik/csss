@@ -19,16 +19,17 @@
 ```
 
 
-**csss:** $typeface(body,system-ui,sans-serif,400,0.5,bold,i,condensed,12px)
+**csss:** $typeface(body,system-ui,sans-serif,400,0.5,bold,i,condensed,12px,uppercase)
 **css:**
 ```css
 @layer containerDefault {
-  .\$typeface\(body\,system-ui\,sans-serif\,400\,0\.5\,bold\,i\,condensed\,12px\) {
+  .\$typeface\(body\,system-ui\,sans-serif\,400\,0\.5\,bold\,i\,condensed\,12px\,uppercase\) {
     --bodyFontFamily: system-ui, sans-serif;
     --bodyFontSize: 12px;
     --bodyFontStyle: italic;
     --bodyFontWeight: bold;
     --bodyFontSizeAdjust: 0.5;
+    --bodyTextTransform: uppercase;
     --bodyFontWidth: condensed;
   }
 }
@@ -45,6 +46,7 @@
     font-weight: bold;
     font-size-adjust: 0.5;
     letter-spacing: var(--system-uiLetterSpacing, unset);
+    text-transform: var(--system-uiTextTransform, unset);
     font-width: condensed;
     font-variant-caps: var(--system-uiFontVariantCaps, unset);
     font-synthesis: var(--system-uiFontSynthesis, unset);
@@ -60,6 +62,7 @@
     --fontFontWeight: bold;
     --fontFontSizeAdjust: 0.5;
     --fontLetterSpacing: var(--system-uiLetterSpacing, unset);
+    --fontTextTransform: var(--system-uiTextTransform, unset);
     --fontFontWidth: condensed;
     --fontFontVariantCaps: var(--system-uiFontVariantCaps, unset);
     --fontFontSynthesis: var(--system-uiFontSynthesis, unset);
@@ -83,6 +86,7 @@
     font-weight: var(--bodyFontWeight, unset);
     font-size-adjust: var(--bodyFontSizeAdjust, unset);
     letter-spacing: var(--bodyLetterSpacing, unset);
+    text-transform: var(--bodyTextTransform, unset);
     font-width: var(--bodyFontWidth, unset);
     font-variant-caps: var(--bodyFontVariantCaps, unset);
     font-synthesis: var(--bodyFontSynthesis, unset);
@@ -98,6 +102,7 @@
     --fontFontWeight: var(--bodyFontWeight, unset);
     --fontFontSizeAdjust: var(--bodyFontSizeAdjust, unset);
     --fontLetterSpacing: var(--bodyLetterSpacing, unset);
+    --fontTextTransform: var(--bodyTextTransform, unset);
     --fontFontWidth: var(--bodyFontWidth, unset);
     --fontFontVariantCaps: var(--bodyFontVariantCaps, unset);
     --fontFontSynthesis: var(--bodyFontSynthesis, unset);
