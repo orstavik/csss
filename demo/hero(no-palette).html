@@ -2,95 +2,97 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Design Courses - Academy</title>
-    <script src="../src/auto.js?style=style&interval=400" type="module"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Design Courses - Academy</title>
+  <script src="../src/auto.js?style=style&interval=400" type="module"></script>
 </head>
 
-<body class="$typeface(main,system-ui,sans-serif,16px,400) $typeface(heading,system-ui,sans-serif,90px,800) $block(padding(0)) $blockItem(margin(0),size(100%,100vh)) $bg(#white) $color(#333) $grid(cols(1fr),rows(auto,1fr),gap(0)) |header$gridItem(column(1),row(1)) |main$gridItem(column(1),row(2))">
-    <!-- Header -->
-    <header class="$flex(contentBetween,itemsCenter,padding(2rem,4rem))">
-        <div class="$flex(itemsCenter,gap(0.5rem))">
-            <div class="$blockItem(size(40px,40px)) $bg(#ff5470) $border(radius(6px)) $flex(contentCenter,itemsCenter)">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M5 3L17 10L5 17V3Z" fill="white" />
-                </svg>
-            </div>
-            <span class="$font(main,1.3rem,600)">Academy</span>
+<body
+  class="$typeface(main,system-ui,sans-serif,16px,400) $typeface(heading,system-ui,sans-serif,90px,800) $block(padding(0)) $blockItem(margin(0),size(100%,100vh)) $bg(#white) $color(#333) $grid(cols(1fr),rows(auto,1fr),gap(0)) |header$gridItem(column(1),row(1)) |main$gridItem(column(1),row(2))">
+  <!-- Header -->
+  <header class="$flex(contentBetween,itemsCenter,padding(2rem,4rem))">
+    <div class="$flex(itemsCenter,gap(0.5rem))">
+      <div class="$blockItem(size(40px,40px)) $bg(#ff5470) $border(radius(6px)) $flex(contentCenter,itemsCenter)">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M5 3L17 10L5 17V3Z" fill="white" />
+        </svg>
+      </div>
+      <span class="$font(main,1.3rem,600)">Academy</span>
+    </div>
+    <nav class="$flex(itemsCenter,gap(1rem))">
+      <button
+        class="$font(main,1rem,500) $block(padding(0.75rem,1.5rem)) $border(2px,solid,#e0e0e0,radius(8px)) $cursor(pointer) $easeIn(0.2s) :hover$border(2px,solid,#ff5470) :hover$color(#ff5470)">
+        Explore Course List
+      </button>
+      <button
+        class="$bg(#ff5470) $color(#white) $font(main,1rem,600) $block(padding(0.75rem,1.5rem)) $border(none,radius(8px)) $cursor(pointer)">
+        Enroll Now
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Grid: 2 columns -->
+  <main class="$grid(cols(1fr,1fr),gap(4rem),padding(3rem,4rem),itemsCenter)">
+
+    <!-- Left: Text Content -->
+    <div class="$flex(column,gap(3rem))">
+      <h1 class="$font(heading,5rem,800) $blockItem(margin(0)) $color(#ffaac2) $lineHeight(1.1)">
+        Design<br />Courses
+      </h1>
+      <div class="$flex(row,gap(3rem))">
+        <div class="$flex(column,gap(0.5rem))">
+          <div class="$font(main,2.5rem,700) $color(#d0e8f0)">300+</div>
+          <div class="$font(main,1rem,400) $color(#d0e8f0)">Courses</div>
         </div>
-        <nav class="$flex(itemsCenter,gap(1rem))">
-            <button class="$font(main,1rem,500) $block(padding(0.75rem,1.5rem)) $border(2px,solid,#e0e0e0,radius(8px)) $cursor(pointer) $easeIn(0.2s) :hover$border(2px,solid,#ff5470) :hover$color(#ff5470)">
-                Explore Course List
-            </button>
-            <button class="$bg(#ff5470) $color(#white) $font(main,1rem,600) $block(padding(0.75rem,1.5rem)) $border(none,radius(8px)) $cursor(pointer)">
-                Enroll Now
-            </button>
-        </nav>
-    </header>
-
-    <!-- Main Grid: 2 columns -->
-    <main class="$grid(cols(1fr,1fr),gap(4rem),padding(3rem,4rem),itemsCenter)">
-
-        <!-- Left: Text Content -->
-        <div class="$flex(column,gap(3rem))">
-            <h1 class="$font(heading,5rem,800) $blockItem(margin(0)) $color(#ffaac2) $lineHeight(1.1)">
-                Design<br />Courses
-            </h1>
-            <div class="$flex(row,gap(3rem))">
-                <div class="$flex(column,gap(0.5rem))">
-                    <div class="$font(main,2.5rem,700) $color(#d0e8f0)">300+</div>
-                    <div class="$font(main,1rem,400) $color(#d0e8f0)">Courses</div>
-                </div>
-                <div class="$flex(column,gap(0.5rem))">
-                    <div class="$font(main,2.5rem,700) $color(#d0e8f0)">50+</div>
-                    <div class="$font(main,1rem,400) $color(#d0e8f0)">Mentors</div>
-                </div>
-                <div class="$flex(column,gap(0.5rem))">
-                    <div class="$font(main,2.5rem,700) $color(#ffaac2)">1000+</div>
-                    <div class="$font(main,1rem,400) $color(#ffaac2)">Students</div>
-                </div>
-            </div>
+        <div class="$flex(column,gap(0.5rem))">
+          <div class="$font(main,2.5rem,700) $color(#d0e8f0)">50+</div>
+          <div class="$font(main,1rem,400) $color(#d0e8f0)">Mentors</div>
         </div>
-
-        <!-- Right: Geometric Shapes Grid -->
-        <div
-            class="$grid(cols(repeat(3,140px)),rows(repeat(3,140px)),gap(0)) $blockItem(size(420px,420px)) |:nth-child(3)$gridItem(row(1,span(2)),column(3))">
-            <!-- Top-left: Dark red semi-circle (left rounded) -->
-            <div class="$bg(#8b1538) $blockItem(size(130px,130px)) $border(radius(90px,90px,0px,90px))"></div>
-
-            <!-- Top-middle: Red diamond -->
-            <div class="$flex(contentCenter,itemsCenter)">
-                <div class="$blockItem(size(100px,100px)) $bg(#ff5470) $rotate(45deg)"></div>
-            </div>
-
-            <!-- Top-right: Pink semi-circle (right rounded, spans 2 rows) -->
-            <div class="$bg(#ffaac2) $border(radius(0px,90px,90px,90px))"></div>
-
-            <!-- Middle-left: Pink square outline -->
-            <div class="$bg(#white) $border(12px,solid,#ffaac2)"></div>
-
-            <!-- Middle-center: Light blue circle -->
-            <div class="$flex(contentCenter,itemsCenter)">
-                <div class="$blockItem(size(120px,120px)) $bg(#d0e8f0) $border(radius(50%))"></div>
-            </div>
-
-            <!-- Bottom-left: Pink rounded square (bottom-left corner rounded) -->
-                <div class="$bg(#ffcce0) $border(radius(70px,70px,30px,40px))"></div>
-
-            <!-- Bottom-center: Light blue triangle outline -->
-            <div class="$flex(contentCenter,itemsCenter)">
-                <svg width="220" height="220" viewBox="0 0 120 120">
-                    <path d="M60 20 L100 100 L20 100 Z" fill="white" stroke="#d0e8f0" stroke-width="16" />
-                </svg>
-            </div>
-
-            <!-- Bottom-right: Pink rounded square (bottom-right corner rounded) -->
-            <div class="$bg(#ffcce0) $blockItem(size(130px,130px)) $border(radius(0px,100px,100px,0px))"></div>
+        <div class="$flex(column,gap(0.5rem))">
+          <div class="$font(main,2.5rem,700) $color(#ffaac2)">1000+</div>
+          <div class="$font(main,1rem,400) $color(#ffaac2)">Students</div>
         </div>
+      </div>
+    </div>
 
-    </main>
+    <!-- Right: Geometric Shapes Grid -->
+    <div
+      class="$grid(cols(repeat(3,140px)),rows(repeat(3,140px)),gap(0)) $blockItem(size(420px,420px)) |:nth-child(3)$gridItem(row(1,span(2)),column(3))">
+      <!-- Top-left: Dark red semi-circle (left rounded) -->
+      <div class="$bg(#8b1538) $blockItem(size(130px,130px)) $border(radius(90px,90px,0px,90px))"></div>
+
+      <!-- Top-middle: Red diamond -->
+      <div class="$flex(contentCenter,itemsCenter)">
+        <div class="$blockItem(size(100px,100px)) $bg(#ff5470) $rotate(45deg)"></div>
+      </div>
+
+      <!-- Top-right: Pink semi-circle (right rounded, spans 2 rows) -->
+      <div class="$bg(#ffaac2) $border(radius(0px,90px,90px,90px))"></div>
+
+      <!-- Middle-left: Pink square outline -->
+      <div class="$bg(#white) $border(12px,solid,#ffaac2)"></div>
+
+      <!-- Middle-center: Light blue circle -->
+      <div class="$flex(contentCenter,itemsCenter)">
+        <div class="$blockItem(size(120px,120px)) $bg(#d0e8f0) $border(radius(50%))"></div>
+      </div>
+
+      <!-- Bottom-left: Pink rounded square (bottom-left corner rounded) -->
+      <div class="$bg(#ffcce0) $border(radius(70px,70px,30px,40px))"></div>
+
+      <!-- Bottom-center: Light blue triangle outline -->
+      <div class="$flex(contentCenter,itemsCenter)">
+        <svg width="220" height="220" viewBox="0 0 120 120">
+          <path d="M60 20 L100 100 L20 100 Z" fill="white" stroke="#d0e8f0" stroke-width="16" />
+        </svg>
+      </div>
+
+      <!-- Bottom-right: Pink rounded square (bottom-right corner rounded) -->
+      <div class="$bg(#ffcce0) $blockItem(size(130px,130px)) $border(radius(0px,100px,100px,0px))"></div>
+    </div>
+
+  </main>
 </body>
 
 </html>
-

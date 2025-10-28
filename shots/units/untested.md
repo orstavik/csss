@@ -132,6 +132,7 @@
 ```css
 @layer containerDefault {
   .\$border\(radius\(12px\)\) {
+    border: none;
     border-radius: 12px;
   }
 }
@@ -142,6 +143,7 @@
 ```css
 @layer containerDefault {
   .\$border\(radius\(6px\)\) {
+    border: none;
     border-radius: 6px;
   }
 }
@@ -152,6 +154,7 @@
 ```css
 @layer containerDefault {
   .\$border\(radius\(70px\,70px\,20px\,20px\)\) {
+    border: none;
     border-start-start-radius: 70px;
     border-start-end-radius: 70px 20px;
     border-end-start-radius: 20px 70px;
@@ -165,6 +168,7 @@
 ```css
 @layer containerDefault {
   .\$border\(radius\(50\%\)\) {
+    border: none;
     border-radius: 50%;
   }
 }
