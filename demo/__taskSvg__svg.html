@@ -1,361 +1,364 @@
-<style>
-  /*** SVG demonstration ***/
+<!DOCTYPE html>
+<html lang="en">
 
-  /* page */
-  svg {
-    background-color: beige;
-  }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complex Flower Demo - CSSS SVG</title>
+  <script src="../src/auto.js?style=style&interval=400" type="module"></script>
+  <style>
+    .segment-fill:hover {
+      fill: plum !important;
+      stroke: none !important;
+    }
 
-  #heading {
-    font-size: 24px;
-    font-weight: bold;
-  }
+    .segment-edge:hover {
+      stroke: slateblue !important;
+    }
+  </style>
 
-  #caption {
-    font-size: 12px;
-  }
+</head>
 
-  /* flower */
-  #flower:hover {
-    cursor: crosshair;
-  }
+<body class="$block(padding(20px)) $blockItem(margin(0)) $linear(135deg,#e3f2fd,#f3e5f5)">
+  <div class="container $flex(column,itemsCenter,gap(20px))">
+    <h1 class="$color(#333) $block(textCenter) $blockItem(margin(0,0,30px))">Complex Flower Demo - CSSS SVG
+      Shortcuts</h1>
 
-  /* gradient */
-  #fade-stop-1 {
-    stop-color: blue;
-  }
+    <div class="demo-section $bg(#white) $block(padding(20px)) $border(radius(10px)) $blockItem(margin(10px))">
+      <div class="demo-title $fontSize(18px) $fontWeight(bold) $blockItem(margin(0,0,15px)) $color(#555)">Complex
+        Flower with CSSS SVG Shortcuts</div>
+      <svg width="600px" height="600px" viewBox="-300 -300 600 600" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink" class="$bg(#beige)">
 
-  #fade-stop-2 {
-    stop-color: white;
-  }
+        <title>SVG demonstration</title>
+        <desc>Mozilla CSS Getting Started - SVG demonstration</desc>
 
-  /* petals */
-  .segment-fill {
-    fill: var(--segment-fill-fill);
-    stroke: var(--segment-fill-stroke);
-    stroke-width: var(--segment-fill-stroke-width);
-  }
+        <defs>
+          <radialGradient id="fade" cx="0" cy="0" r="200" gradientUnits="userSpaceOnUse">
+            <stop id="fade-stop-1" offset="33%" class="$stopColor(#blue)" />
+            <stop id="fade-stop-2" offset="95%" class="$stopColor(#white)" />
+          </radialGradient>
+        </defs>
 
-  .segment-fill:hover {
-    fill: var(--segment-fill-fill-hover);
-    stroke: var(--segment-fill-stroke-hover);
-  }
+        <text id="heading" x="-280" y="-270" class="$fontSize(24px) $fontWeight(bold)">SVG demonstration</text>
+        <text id="caption" x="-280" y="-250" class="$fontSize(12px)">
+          Move your mouse pointer over the flower.
+        </text>
 
-  .segment-edge {
-    fill: var(--segment-edge-fill);
-    stroke: var(--segment-edge-stroke);
-    stroke-width: var(--segment-edge-stroke-width);
-  }
+        <g id="flower" class="$cursor(crosshair)">
+          <circle id="overlay" cx="0" cy="0" r="200" class="$noStroke $fill(url(#fade))" />
 
-  .segment-edge:hover {
-    stroke: var(--segment-edge-stroke-hover);
-  }
+          <g id="outer-petals" class="$opacity(0.75)">
+            <g class="quadrant">
+              <g class="segment">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(18)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(36)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(54)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(72)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+            </g>
 
-  /* outer petals */
-  #outer-petals {
-    opacity: 0.75;
-    --segment-fill-fill: azure;
-    --segment-fill-stroke: lightsteelblue;
-    --segment-fill-stroke-width: 1;
-    --segment-edge-fill: none;
-    --segment-edge-stroke: deepskyblue;
-    --segment-edge-stroke-width: 3;
-    --segment-fill-fill-hover: plum;
-    --segment-fill-stroke-hover: none;
-    --segment-edge-stroke-hover: slateblue;
-  }
+            <g class="quadrant">
+              <g class="segment" transform="rotate(90)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(108)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(126)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(144)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(162)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+            </g>
 
-  /*
- Non-standard way of styling elements referenced via <use> elements,
- supported by some older browsers
-*/
-  #outer-petals .segment-fill {
-    fill: azure;
-    stroke: lightsteelblue;
-    stroke-width: 1;
-  }
+            <g class="quadrant">
+              <g class="segment" transform="rotate(180)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(198)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(216)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(234)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(252)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+            </g>
 
-  #outer-petals .segment-edge {
-    fill: none;
-    stroke: deepskyblue;
-    stroke-width: 3;
-  }
+            <g class="quadrant">
+              <g class="segment" transform="rotate(270)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(288)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(306)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(324)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(342)">
+                <path
+                  class="segment-fill $fill(#azure) $stroke(#lightsteelblue) $strokeWidth(1px) :hover$fill(#plum) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#deepskyblue) $strokeWidth(3px) :hover$stroke(#slateblue)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+            </g>
+          </g>
 
-  #outer-petals .segment:hover>.segment-fill {
-    fill: plum;
-    stroke: none;
-  }
+          <g id="inner-petals" transform="rotate(9) scale(0.33)">
+            <g class="quadrant">
+              <g class="segment">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(18)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(36)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(54)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(72)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+            </g>
 
-  #outer-petals .segment:hover>.segment-edge {
-    stroke: slateblue;
-  }
+            <g class="quadrant">
+              <g class="segment" transform="rotate(90)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(108)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(126)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(144)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(162)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+            </g>
 
-  /* inner petals */
-  #inner-petals {
-    --segment-fill-fill: yellow;
-    --segment-fill-stroke: yellow;
-    --segment-fill-stroke-width: 1;
-    --segment-edge-fill: none;
-    --segment-edge-stroke: yellowgreen;
-    --segment-edge-stroke-width: 9;
-    --segment-fill-fill-hover: darkseagreen;
-    --segment-fill-stroke-hover: none;
-    --segment-edge-stroke-hover: green;
-  }
+            <g class="quadrant">
+              <g class="segment" transform="rotate(180)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(198)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(216)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(234)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(252)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+            </g>
 
-  /*
- Non-standard way of styling elements referenced via <use> elements,
- supported by some older browsers
-*/
-  #inner-petals .segment-fill {
-    fill: yellow;
-    stroke: yellow;
-    stroke-width: 1;
-  }
+            <g class="quadrant">
+              <g class="segment" transform="rotate(270)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(288)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(306)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(324)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+              <g class="segment" transform="rotate(342)">
+                <path
+                  class="segment-fill $fill(#yellow) $stroke(#yellow) $strokeWidth(1px) :hover$fill(#darkseagreen) :hover$noStroke"
+                  d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
+                <path class="segment-edge $noFill $stroke(#yellowgreen) $strokeWidth(9px) :hover$stroke(#green)"
+                  d="M0,-200 a40,40 0 0,0 -62,10" />
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+</body>
 
-  #inner-petals .segment-edge {
-    fill: none;
-    stroke: yellowgreen;
-    stroke-width: 9;
-  }
-
-  #inner-petals .segment:hover>.segment-fill {
-    fill: darkseagreen;
-    stroke: none;
-  }
-
-  #inner-petals .segment:hover>.segment-edge {
-    stroke: green;
-  }
-</style>
-
-<svg
-  width="600px"
-  height="600px"
-  viewBox="-300 -300 600 600"
-  xmlns="http://www.w3.org/2000/svg"
-  xmlns:xlink="http://www.w3.org/1999/xlink">
-  <link
-    xmlns="http://www.w3.org/1999/xhtml"
-    rel="stylesheet"
-    href="style8.css"
-    type="text/css" />
-
-  <title>SVG demonstration</title>
-  <desc>Mozilla CSS Getting Started - SVG demonstration</desc>
-
-  <defs>
-    <radialGradient
-      id="fade"
-      cx="0"
-      cy="0"
-      r="200"
-      gradientUnits="userSpaceOnUse">
-      <stop id="fade-stop-1" offset="33%" />
-      <stop id="fade-stop-2" offset="95%" />
-    </radialGradient>
-  </defs>
-
-  <text id="heading" x="-280" y="-270">SVG demonstration</text>
-  <text id="caption" x="-280" y="-250">
-    Move your mouse pointer over the flower.
-  </text>
-
-  <g id="flower">
-    <circle
-      id="overlay"
-      cx="0"
-      cy="0"
-      r="200"
-      stroke="none"
-      fill="url(#fade)" />
-
-    <g id="outer-petals">
-      <g class="quadrant">
-        <g class="segment">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(18)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(36)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(54)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(72)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-      </g>
-
-      <g class="quadrant">
-        <g class="segment" transform="rotate(90)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(108)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(126)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(144)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(162)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-      </g>
-
-      <g class="quadrant">
-        <g class="segment" transform="rotate(180)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(198)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(216)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(234)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(252)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-      </g>
-
-      <g class="quadrant">
-        <g class="segment" transform="rotate(270)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(288)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(306)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(324)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(342)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-      </g>
-    </g>
-
-    <g id="inner-petals" transform="rotate(9) scale(0.33)">
-      <g class="quadrant">
-        <g class="segment">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(18)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(36)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(54)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(72)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-      </g>
-
-      <g class="quadrant">
-        <g class="segment" transform="rotate(90)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(108)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(126)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(144)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(162)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-      </g>
-
-      <g class="quadrant">
-        <g class="segment" transform="rotate(180)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(198)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(216)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(234)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(252)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-      </g>
-
-      <g class="quadrant">
-        <g class="segment" transform="rotate(270)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(288)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(306)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(324)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-        <g class="segment" transform="rotate(342)">
-          <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z" />
-          <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10" />
-        </g>
-      </g>
-    </g>
-  </g>
-</svg>
+</html>

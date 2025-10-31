@@ -392,7 +392,7 @@ export function isUrl(a) {
   if (a.kind === "QUOTE")
     return { type: "url", text: `url(${a.text})` };
   if (a.name === "url") {
-    if (args.length != 1) throw new SyntaxError("url() requires exactly one argument.");
+    if (a.args.length != 1) throw new SyntaxError("url() requires exactly one argument.");
     return { type: "url", text: `url(${isBasic(a.args[0]).text})` };
   }
 }

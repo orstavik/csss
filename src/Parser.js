@@ -466,7 +466,7 @@ const tokenize = (_ => {
       else if (c) out.push({ text, kind: "COLOR" });
       else if (quote) out.push({ text, kind: "QUOTE" });
       else if (vari) out.push({ text, kind: "VAR" });
-      else if (word && text.match(MATH)) out.push({ text, kind: "MATH" });
+      else if (word && text.match(MATH) && input.slice(TOKENS.lastIndex).trimStart().startsWith('(')) out.push({ text, kind: "MATH" });
       else if (word) out.push({ text, kind: "WORD" });
       else if (op) out.push({ text, kind: "OPERATOR" });
       else if (cpp) out.push({ text, kind: "SYN" });

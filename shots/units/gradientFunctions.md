@@ -555,3 +555,39 @@
   }
 }
 ```
+
+**csss:** $circle(at(50%,50%),#ff0000,#transparent)
+**css:**
+```css
+@layer containerDefault {
+  .\$circle\(at\(50\%\,50\%\)\,\#ff0000\,\#transparent\) {
+    background: none;
+    background-image: radial-gradient(circle at 50% 50%, #ff0000, transparent);
+    background-position: 0% 0%;
+    background-repeat: repeat;
+    background-size: auto;
+    background-origin: padding-box;
+    background-clip: border-box;
+    background-blend-mode: normal;
+    background-attachment: scroll;
+  }
+}
+```
+
+**csss:** $circle(at(20%,30%),#rgba(255,255,255,0.1),#transparent)
+**css:**
+```css
+@layer containerDefault {
+  .\$circle\(at\(20\%\,30\%\)\,\#rgba\(255\,255\,255\,0\.1\)\,\#transparent\) {
+    background: none;
+    background-image: radial-gradient(circle at 20% 30%, #ffffff1a, transparent);
+    background-position: 0% 0%;
+    background-repeat: repeat;
+    background-size: auto;
+    background-origin: padding-box;
+    background-clip: border-box;
+    background-blend-mode: normal;
+    background-attachment: scroll;
+  }
+}
+```

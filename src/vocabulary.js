@@ -9,6 +9,7 @@ import textDecorations from "./textDecorations.js";
 import filterTransforms from "./filterTransform.js";
 import shadows from "./shadows.js";
 import position from "./position.js";
+import svg from "./__todo__svg.js";
 
 const ObjectFit = {
   objectFit: undefined,
@@ -31,6 +32,7 @@ const SHORTS = {
   ...filterTransforms,
   ...shadows,
   ...position,
+  ...svg,
   ...ObjectFit,
 };
 
