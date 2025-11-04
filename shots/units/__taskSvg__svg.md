@@ -1,8 +1,8 @@
-**csss:** $fill(azure)
+**csss:** $fill(#azure)
 **css:**
 ```css
 @layer containerDefault {
-  .\$fill\(azure\) {
+  .\$fill\(\#azure\) {
     fill: azure;
   }
 }
@@ -18,11 +18,11 @@
 }
 ```
 
-**csss:** $stroke(deepskyblue)
+**csss:** $stroke(#deepskyblue)
 **css:**
 ```css
 @layer containerDefault {
-  .\$stroke\(deepskyblue\) {
+  .\$stroke\(\#deepskyblue\) {
     stroke: deepskyblue;
   }
 }
@@ -58,11 +58,11 @@
 }
 ```
 
-**csss:** $stopColor(blue)
+**csss:** $stopColor(#blue)
 **css:**
 ```css
 @layer containerDefault {
-  .\$stopColor\(blue\) {
+  .\$stopColor\(\#blue\) {
     stop-color: blue;
   }
 }

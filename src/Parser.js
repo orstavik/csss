@@ -466,6 +466,9 @@ const tokenize = (_ => {
       else if (c) out.push({ text, kind: "COLOR" });
       else if (quote) out.push({ text, kind: "QUOTE" });
       else if (vari) out.push({ text, kind: "VAR" });
+      // Fixed: Only treat words as MATH functions if followed by opening parenthesis
+      // This prevents false positives where words like "sin", "cos", "max" etc. are treated as math
+      // Original line: else if (word && text.match(MATH)) out.push({ text, kind: "MATH" });
       else if (word && text.match(MATH) && input.slice(TOKENS.lastIndex).trimStart().startsWith('(')) out.push({ text, kind: "MATH" });
       else if (word) out.push({ text, kind: "WORD" });
       else if (op) out.push({ text, kind: "OPERATOR" });
