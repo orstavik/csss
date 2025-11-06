@@ -181,7 +181,7 @@ const MASK_TYPE_WORDS = {
     luminance: "luminance", 
     alpha: "alpha" 
 };
-
+$svg(luminance,optimizeSpeedQuality,linearRGB)
 
 const fill = createColorFunction("fill");
 const stroke = createColorFunction("stroke");
@@ -213,18 +213,20 @@ const markerEnd = createMarkerFunction("marker-end");
 const strokeMiterlimit = createNumberFunction("stroke-miterlimit", "4");
 
 export default {
-    fill,
     stroke,
-    strokeWidth,
-    strokeLinecap,
-    strokeLinejoin,
-    strokeDasharray,
-    strokeMiterlimit,
-    strokeDashoffset,
-    paintOrder,
+    strokeWidth: undefined,
+    strokeLinecap: undefined,
+    strokeLinejoin: undefined,
+    strokeDasharray: undefined,
+    strokeMiterlimit: undefined,
+    strokeDashoffset: undefined,
+    strokeOpacity: undefined,
+    
+    fill,
+    fillRule: undefined,
+    fillOpacity: undefined,
+
     vectorEffect,
-    fillOpacity,
-    strokeOpacity,
     opacity: svgOpacity,
     markerStart,
     markerMid,
@@ -235,7 +237,6 @@ export default {
     dominantBaseline,
     alignmentBaseline,
     baselineShift,
-    fillRule,
     clipRule,
     shapeRendering,
     colorInterpolation,
@@ -265,6 +266,13 @@ export default {
     hangingBaseline: { "dominant-baseline": "hanging" },
     crispEdges: { "shape-rendering": "crispEdges" },
     geometricPrecision: { "shape-rendering": "geometricPrecision" },
+    paintOrder,
     optimizeSpeed: { "color-rendering": "optimizeSpeed", "image-rendering": "optimizeSpeed" },
     optimizeQuality: { "color-rendering": "optimizeQuality", "image-rendering": "optimizeQuality" },
+    optimizeSpeedQuality: { "color-rendering": "optimizeSpeed", "image-rendering": "optimizeQuality" },
+    optimizeQualitySpeed: { "color-rendering": "optimizeQuality", "image-rendering": "optimizeSpeed" },
+    optimizeQualityAuto: { "color-rendering": "optimizeQuality", "image-rendering": "auto" },
+    optimizeAutoQuality: { "color-rendering": "auto", "image-rendering": "optimizeQuality" },
+    optimizeSpeedAuto: { "color-rendering": "optimizeSpeed", "image-rendering": "auto" },
+    optimizeAutoSpeed: { "color-rendering": "auto", "image-rendering": "optimizeSpeed" },
 };
