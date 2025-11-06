@@ -55,3 +55,13 @@
   }
 }
 ```
+
+**csss:** $zIndex(10)
+**css:**
+```css
+@layer containerDefault {
+  .\$zIndex\(10\) {
+    z-index: 10;
+  }
+}
+```

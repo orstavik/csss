@@ -29,3 +29,23 @@
   }
 }
 ```
+
+**csss:** $uppercase
+**css:**
+```css
+@layer containerDefault {
+  .\$uppercase {
+    text-transform: uppercase;
+  }
+}
+```
+
+**csss:** $noTextTransform
+**css:**
+```css
+@layer containerDefault {
+  .\$noTextTransform {
+    text-transform: none;
+  }
+}
+```
