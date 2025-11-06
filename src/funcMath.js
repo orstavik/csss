@@ -165,14 +165,17 @@ function toNumber(num, a) { return { type: "number", unit: "", num, text: num };
 function toAngle(num, a) { return { type: "angle", unit: "rad", num, text: num }; }
 function updateFirst(num, a) { return { ...a, num, text: num + a.unit }; }
 //TEXTERS
-function texter(name, args) { return `${name}(${args.map(a => a.text).join(", ")})`; }
+function texter(name, args) { return `${name}(${args.join(", ")})`; }
+function stripCalc(name, args) {
+  return `${name}(${args.map(a => a.replaceAll(/^calc\((.*)\)$/g, (_, a) => a)).join(", ")})`;
+}
 
 function doMath(check, func, post, texter, name, args) {
   check(args);
   const nums = computableNumbers(args);
   return nums ?
     post(func(...nums), args[0]) :
-    { type: args.find(a => a.type)?.type, text: texter(args.map(a => a.text), name) };
+    { type: args.find(a => a.type)?.type, text: texter(args.map(a => a.text)) };
 }
 
 export default {
@@ -187,7 +190,7 @@ export default {
   clamp: doMath.bind(null, sameType, clamp, updateFirst, texter.bind(null, "clamp")),
   min: doMath.bind(null, sameType, min, updateFirst, texter.bind(null, "min")),
   max: doMath.bind(null, sameType, max, updateFirst, texter.bind(null, "max")),
-  round: doMath.bind(null, singleArgumentOnly, round, updateFirst, texter.bind(null, "round")),
+  round: doMath.bind(null, sameType, round, updateFirst, stripCalc.bind(null, "round")),
   sin: doMath.bind(null, singleAngleOnly, sin, toNumber, texter.bind(null, "sin")),
   cos: doMath.bind(null, singleAngleOnly, cos, toNumber, texter.bind(null, "cos")),
   tan: doMath.bind(null, singleAngleOnly, tan, toNumber, texter.bind(null, "tan")),

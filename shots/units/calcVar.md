@@ -66,3 +66,23 @@
   }
 }
 ```
+
+**csss:** $border(round(1.5px))
+**css:**
+```css
+@layer containerDefault {
+  .\$border\(round\(1\.5px\)\) {
+    border: 2px solid;
+  }
+}
+```
+
+**csss:** $border(round(1.5px+--bob,3vw))
+**css:**
+```css
+@layer containerDefault {
+  .\$border\(round\(1\.5px\+--bob\,3vw\)\) {
+    border: round(1.5px + var(--bob), 3vw) solid;
+  }
+}
+```
