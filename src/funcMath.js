@@ -62,12 +62,12 @@ function computableNumbers(args) {
   for (let a of args) {
     if (a.num == null)
       return; //incomputable
-    else if (a.type == "number")
+    if (a.type == "number")
       nums.push(a.num);
     else if (a.unit == (firstUnit ??= a.unit))
       nums.push(a.num);
-    else if (FACTORS[firstUnit + "_ " + a.type])
-      nums.push(a.num * FACTORS[firstUnit + "_ " + a.type]);
+    else if (FACTORS[firstUnit + "_" + a.type])
+      nums.push(a.num * FACTORS[firstUnit + "_" + a.type]);
     else
       return; //incomputable
   }
