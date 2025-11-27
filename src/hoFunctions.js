@@ -7,7 +7,7 @@ export const stackBasedOnTypeObject = (name, matchers, composer, res = {}) => ar
         continue main;
       }
     }
-    throw new SyntaxError(`Unrecognized ${name} argument: ${arg.text ?? arg}`);
+    throw new SyntaxError(`Bad argument: ${name}(${arg.text ?? arg})`);
   }
   return composer(res);
 };
@@ -26,7 +26,7 @@ export const onesBasedOnTypeObject = (name, matchers) => args => {
         continue main;
       }
     }
-    throw new SyntaxError(`Unrecognized ${name} argument: ${arg.text ?? arg}`);
+    throw new SyntaxError(`Bad argument: ${name}(${arg.text ?? arg})`);
   }
   return res;
 };
@@ -50,7 +50,7 @@ export const onesBasedOnTypeString = (name, matchers, joiner = " ") => args => {
         continue main;
       }
     }
-    throw new SyntaxError(`Unrecognized ${name} argument: ${arg.text ?? arg}`);
+    throw new SyntaxError(`Bad argument: ${name}(${arg.text ?? arg})`);
   }
   return typeof joiner === 'function' ? joiner(parts) : parts.join(joiner);
 };
@@ -74,7 +74,7 @@ export const sequentialObject = (name, validators, keysOrComposer) => args => {
   for (let i = 0; i < args.length; i++) {
     const val = validators[i](args[i], i); // Pass index just in case
     if (!val)
-      throw new SyntaxError(`Invalid argument ${i + 1} for ${name}: ${args[i].text ?? args[i]}`);
+      throw new SyntaxError(`Bad argument ${i + 1}: ${name}(${args[i].text ?? args[i]})`);
     validatedArgs.push(val);
   }
 
@@ -101,8 +101,8 @@ export const sequentialString = (name, validators, template) => args => {
   for (let i = 0; i < args.length; i++) {
     const val = validators[i](args[i], i);
     if (!val)
-      throw new SyntaxError(`Invalid argument ${i + 1} for $${name}: ${args[i].text || args[i]}`);
-    validatedArgs.push(val.text || val);
+      throw new SyntaxError(`Bad argument ${i + 1}: ${name}(${args[i].text ?? args[i]})`);
+    validatedArgs.push(val.text ?? val);
   }
 
   if (typeof template === "function") {
