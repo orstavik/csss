@@ -12,17 +12,13 @@ Then go to: (http://127.0.0.1:3003/test)[http://127.0.0.1:3003/test]
 
 ## About CSSS
 
-CSSS (CSS Shorts) is a CSS preprocessor engine that introduces two main concepts for simplified CSS authoring:
-
-1. **Dollar Shorts**: Shorthand syntax patterns that start with `$`. These provide concise, expressive ways to write common CSS patterns.
-   
-2. **Supershorts**: An even more concise way to combine multiple dollar shorts together, creating reusable style combinations.
+CSSS (CSS Shorts) is a preprocessor engine that simplifies CSS authoring using **Dollar Shorts** ($): concise, expressive shorthand patterns for common CSS properties.
 
 ## Core Features
 
 ### Dollar Shorts ($)
 
-Write CSS properties directly in HTML using simple function-like syntax:
+Apply CSS properties in HTML via function-like syntax:
 
 ```html
 <div class="$border(dotted,2px,radius(1px))">
@@ -32,7 +28,7 @@ Write CSS properties directly in HTML using simple function-like syntax:
 
 ### Nested Selectors (|)
 
-Target child elements without writing separate CSS rules:
+Style children without separate rules:
 
 ```html
 <div class="$block(s,gap(0.3em,1em)) |*$blockItem(indent(15%))">
@@ -42,7 +38,7 @@ Target child elements without writing separate CSS rules:
 
 ### Color System
 
-Define and use color palettes with intelligent color relationships:
+Intelligent color palette generation:
 
 ```html
 <div class="$palette(#14a69b) $color(primary) $border(solid,2px)">
@@ -52,7 +48,7 @@ Define and use color palettes with intelligent color relationships:
 
 ### Layout Utilities
 
-Simplified layout controls for common patterns:
+Simplified common layout patterns:
 
 ```html
 <div class="$grid(cols(1fr,1fr,1fr),gap(1rem))">
@@ -64,24 +60,12 @@ Simplified layout controls for common patterns:
 
 ### Media Queries and States
 
-Responsive design with built-in media query shortcuts:
+Built-in media query shortcuts:
 
 ```html
 <div class="@sm$w(100%) @md$w(50%) @lg$w(33%)">
   Responsive element
 </div>
-```
-
-### Custom Super Shorts
-
-Define your own reusable combinations of styles:
-
-```css
-$myButton = $padding(1rem,2rem) $border(solid,2px) $flex(cc)
-```
-
-```html
-<button class="$myButton">Styled Button</button>
 ```
 
 ## Project Structure
@@ -91,7 +75,6 @@ csss/
 ├── src/
 │   ├── Parser.js         # Main parser
 │   ├── func.js           # Core functions
-│   ├── BuiltinSupers.js  # Predefined supershorts
 │   ├── engine.js         # Processing engine
 │   ├── layout.js         # Layout utilities
 │   ├── palette.js        # Color palette tools
@@ -101,13 +84,11 @@ csss/
 └── color_analysis/       # Color tools
 ```
 
-## Development
+## Components
 
-CSSS is composed of several components:
-
-- **Parser System**: Interprets the CSSS syntax
-- **Function System**: Provides core CSS function implementations
-- **Color System**: Handles color manipulation and palette generation
+- **Parser System**: Interprets CSSS syntax
+- **Function System**: Core CSS function implementations
+- **Color System**: Color manipulation and palette generation
 - **Engine**: Converts CSSS to standard CSS
 
 ## Browser Support
