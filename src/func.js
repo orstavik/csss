@@ -652,7 +652,7 @@ export const SEQ = (interpreters, post) => (args, name) => {
       return a2.text;
     throw new SyntaxError(`Bad argument ${name}/${i + 1}.
     "${args[i].text}" is not a ${interpreter.name.slice(2)}.
-    ${name}(${args.slice(0, i).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).join(",")}).`);
+    ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
   }));
 };
 
