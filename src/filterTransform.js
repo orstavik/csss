@@ -9,36 +9,62 @@ import {
   evaluateNumberPercent,
 } from "./func.js";
 
-const filter1 = (prop, name, evaluators) => args => {
+function evaluate(evaluators, args, optionals) {
+  const res = [];
+  for (let i = 0; i < evaluators.length; i++) {
+
+  }
+  return evaluators.map((evaluator, i) => {
+    const v = evaluator(args[i], i);
+    if (!v && optional[i]) return undefined;
+    if (!v) throw new SyntaxError(`Bad argument ${i + 1}: ${args[i].text ?? args[i]}. Expected ${evaluator.name.slice(2)}.`);
+    return v;
+  });
+}
+
+const strictFunctionAsObj = (prop, funcName, sep, evaluators) =>
+  args => ({ [prop]: `${funcName}(${evaluators.map((e, i) => e(args[i], i)).join(sep)})` });
+
+// const onePropObj = (prop, cb) => (args) => ({ [prop]: cb(args) });
+// const cssFunction = (name, sep = ", ") => (ar) => `${name}(${ar.join(sep)})`;
+// const argSequence = (evaluators) => (args) => {
+//   if (args.length != evaluators.length)
+//     throw new SyntaxError(`${name} requires exactly ${evaluators.length} arguments, got ${args.length} arguments.`);
+//   return args.map((a, i) => {
+//     const v = evaluators[i](a, i);
+//     if (v !== undefined) return v;
+//     throw new SyntaxError(`Bad argument ${i + 1}: ${a.text ?? a}. Expected ${evaluators[i].name.slice(2)}.`);
+//   });
+// };
+
+// const blur = onePropObj("filter", cssFunction("blur", " ", argSequence([evaluateLength])));
+
+// const argSequenceOptional = (evaluators, skips) => (args) => args.reduce((acc, arg, i) => {
+//   const v = evaluators[i](arg, i);
+//   if (!v && skips[i]) return acc;
+//   if (!v) throw new SyntaxError(`Bad argument ${i + 1}: ${arg.text ?? arg}`);
+//   acc.push(v);
+//   return acc;
+// }, []);
+
+
+const sequenceFunctionAsObj = (prop, name, evaluators, sep = " ") => args => {
   if (args.length != evaluators.length)
-    throw new SyntaxError(`${name} requires exactly ${evaluators.length} arguments, got ${args.length} arguments.`);
-  return { [prop]: `${name}(${args.map((a, i) => evaluators[i](a, i)).join(" ")})` };
+    throw new SyntaxError(`${name} requires ${evaluators.length} arguments, got ${args.length} arguments.`);
+  return { [prop]: `${name}(${args.map((a, i) => evaluators[i](a, i)).join(sep)})` };
 };
 
-const filter2 = (prop, evaluator) => args => {
-  if (args.length != 1)
-    throw new SyntaxError(`${prop} requires exactly 1 argument, got ${args.length} arguments.`);
-  return { [prop]: evaluator(args[0]) };
+const sequenceProperties = (prop, evaluators, sep = " ") => args => {
+  if (args.length != evaluators.length)
+    throw new SyntaxError(`${prop} requires ${evaluators.length} arguments, got ${args.length} arguments.`);
+  return { [prop]: args.map((a, i) => evaluators[i](a, i)).join(sep) };
 };
 
-const transform1 = (name, evaluator, count) => args => {
-  if (args.length != count)
-    throw new SyntaxError(`${name} requires exactly ${count} arguments, got ${args.length} arguments.`);
-  return { transform: `${name}(${args.map(evaluator).join(", ")})` };
-};
-
-const transform2 = (name, evaluator) => args => {
+const transform2 = (prop, name, [evaluator], sep) => args => {
   if (args.length < 1 || args.length > 2)
     throw new SyntaxError(`${name} requires between 1 and 2 arguments, got ${args.length} arguments.`);
-  return { transform: `${name}(${args.map(evaluator).join(", ")})` };
+  return { [prop]: `${name}(${args.map(evaluator).join(sep)})` };
 };
-function rotate3d([one, two, three, four]) {
-  one = evaluateNumber(one, 0);
-  two = evaluateNumber(two, 1);
-  three = evaluateNumber(three, 2);
-  four = evaluateAngle(four, 3);
-  return { transform: `rotate3d(${[one, two, three, four].join(", ")})` };
-}
 
 export default {
   transform: undefined,
@@ -46,49 +72,49 @@ export default {
   noBackdropFilter: { backdropFilter: "none" },
   noFilter: { filter: "none" },
 
-  blur: filter1("filter", "blur", [evaluateLength]),
-  brightness: filter1("filter", "brightness", [evaluateNumberPercent]),
-  contrast: filter1("filter", "contrast", [evaluateNumberPercent]),
-  grayscale: filter1("filter", "grayscale", [evaluateNumberPercent]),
-  invert: filter1("filter", "invert", [evaluateNumberPercent]),
-  opacity: filter1("filter", "opacity", [evaluateNumberPercent]),
-  saturate: filter1("filter", "saturate", [evaluateNumberPercent]),
-  sepia: filter1("filter", "sepia", [evaluateNumberPercent]),
-  dropShadow: filter1("filter", "drop-shadow", [evaluateColor, evaluateLength, evaluateLength, evaluateLengthPercent]),
-  hueRotate: filter1("filter", "hue-rotate", [evaluateAngle]),
-  filter: filter2("filter", evaluateUrl),
+  blur: sequenceFunctionAsObj("filter", "blur", [evaluateLength]),
+  brightness: sequenceFunctionAsObj("filter", "brightness", [evaluateNumberPercent]),
+  contrast: sequenceFunctionAsObj("filter", "contrast", [evaluateNumberPercent]),
+  grayscale: sequenceFunctionAsObj("filter", "grayscale", [evaluateNumberPercent]),
+  invert: sequenceFunctionAsObj("filter", "invert", [evaluateNumberPercent]),
+  opacity: sequenceFunctionAsObj("filter", "opacity", [evaluateNumberPercent]),
+  saturate: sequenceFunctionAsObj("filter", "saturate", [evaluateNumberPercent]),
+  sepia: sequenceFunctionAsObj("filter", "sepia", [evaluateNumberPercent]),
+  dropShadow: sequenceFunctionAsObj("filter", "drop-shadow", [evaluateColor, evaluateLength, evaluateLength, evaluateLengthPercent]),
+  hueRotate: sequenceFunctionAsObj("filter", "hue-rotate", [evaluateAngle]),
+  filter: sequenceProperties("filter", [evaluateUrl]),
 
-  backdropBlur: filter1("backdropFilter", "blur", [evaluateLength]),
-  backdropBrightness: filter1("backdropFilter", "brightness", [evaluateNumberPercent]),
-  backdropContrast: filter1("backdropFilter", "contrast", [evaluateNumberPercent]),
-  backdropGrayscale: filter1("backdropFilter", "grayscale", [evaluateNumberPercent]),
-  backdropInvert: filter1("backdropFilter", "invert", [evaluateNumberPercent]),
-  backdropOpacity: filter1("backdropFilter", "opacity", [evaluateNumberPercent]),
-  backdropSaturate: filter1("backdropFilter", "saturate", [evaluateNumberPercent]),
-  backdropSepia: filter1("backdropFilter", "sepia", [evaluateNumberPercent]),
-  backdropDropShadow: filter1("backdropFilter", "drop-shadow", [evaluateColor, evaluateLength, evaluateLength, evaluateLengthPercent]),
-  backdropHueRotate: filter1("backdropFilter", "hue-rotate", [evaluateAngle]),
-  backdropFilter: filter2("backdropFilter", evaluateUrl),
+  backdropBlur: sequenceFunctionAsObj("backdropFilter", "blur", [evaluateLength]),
+  backdropBrightness: sequenceFunctionAsObj("backdropFilter", "brightness", [evaluateNumberPercent]),
+  backdropContrast: sequenceFunctionAsObj("backdropFilter", "contrast", [evaluateNumberPercent]),
+  backdropGrayscale: sequenceFunctionAsObj("backdropFilter", "grayscale", [evaluateNumberPercent]),
+  backdropInvert: sequenceFunctionAsObj("backdropFilter", "invert", [evaluateNumberPercent]),
+  backdropOpacity: sequenceFunctionAsObj("backdropFilter", "opacity", [evaluateNumberPercent]),
+  backdropSaturate: sequenceFunctionAsObj("backdropFilter", "saturate", [evaluateNumberPercent]),
+  backdropSepia: sequenceFunctionAsObj("backdropFilter", "sepia", [evaluateNumberPercent]),
+  backdropDropShadow: sequenceFunctionAsObj("backdropFilter", "drop-shadow", [evaluateColor, evaluateLength, evaluateLength, evaluateLengthPercent]),
+  backdropHueRotate: sequenceFunctionAsObj("backdropFilter", "hue-rotate", [evaluateAngle]),
+  backdropFilter: sequenceProperties("backdropFilter", [evaluateUrl]),
 
-  matrix: transform1("matrix", evaluateNumber, 6),
-  matrix3d: transform1("matrix3d", evaluateNumber, 16),
-  perspective: transform1("perspective", evaluateLength, 1),
-  rotate: transform1("rotate", evaluateAngle, 1),
-  rotateZ: transform1("rotateZ", evaluateAngle, 1),
-  rotateY: transform1("rotateY", evaluateAngle, 1),
-  rotateX: transform1("rotateX", evaluateAngle, 1),
-  translateX: transform1("translateX", evaluateLengthPercent, 1),
-  translateY: transform1("translateY", evaluateLengthPercent, 1),
-  translateZ: transform1("translateZ", evaluateLengthPercent, 1),
-  translate3d: transform1("translate3d", evaluateLengthPercent, 3),
-  scaleX: transform1("scaleX", evaluateNumber, 1),
-  scaleY: transform1("scaleY", evaluateNumber, 1),
-  scaleZ: transform1("scaleZ", evaluateNumber, 1),
-  scale3d: transform1("scale3d", evaluateNumber, 3),
-  skewX: transform1("skewX", evaluateAnglePercent, 1),
-  skewY: transform1("skewY", evaluateAnglePercent, 1),
-  translate: transform2("translate", evaluateLengthPercent),
-  scale: transform2("scale", evaluateNumberPercent),
-  skew: transform2("skew", evaluateAnglePercent),
-  rotate3d,
+  matrix: sequenceFunctionAsObj("transform", "matrix", Array(6).fill(evaluateNumber), ", "),
+  matrix3d: sequenceFunctionAsObj("transform", "matrix3d", Array(16).fill(evaluateNumber), ", "),
+  perspective: sequenceFunctionAsObj("transform", "perspective", [evaluateLength], ", "),
+  rotate: sequenceFunctionAsObj("transform", "rotate", [evaluateAngle], ", "),
+  rotateZ: sequenceFunctionAsObj("transform", "rotateZ", [evaluateAngle], ", "),
+  rotateY: sequenceFunctionAsObj("transform", "rotateY", [evaluateAngle], ", "),
+  rotateX: sequenceFunctionAsObj("transform", "rotateX", [evaluateAngle], ", "),
+  translateX: sequenceFunctionAsObj("transform", "translateX", [evaluateLengthPercent], ", "),
+  translateY: sequenceFunctionAsObj("transform", "translateY", [evaluateLengthPercent], ", "),
+  translateZ: sequenceFunctionAsObj("transform", "translateZ", [evaluateLengthPercent], ", "),
+  translate3d: sequenceFunctionAsObj("transform", "translate3d", Array(3).fill(evaluateLengthPercent), ", "),
+  scaleX: sequenceFunctionAsObj("transform", "scaleX", [evaluateNumber], ", "),
+  scaleY: sequenceFunctionAsObj("transform", "scaleY", [evaluateNumber], ", "),
+  scaleZ: sequenceFunctionAsObj("transform", "scaleZ", [evaluateNumber], ", "),
+  scale3d: sequenceFunctionAsObj("transform", "scale3d", Array(3).fill(evaluateNumber), ", "),
+  skewX: sequenceFunctionAsObj("transform", "skewX", [evaluateAnglePercent], ", "),
+  skewY: sequenceFunctionAsObj("transform", "skewY", [evaluateAnglePercent], ", "),
+  translate: transform2("transform", "translate", [evaluateLengthPercent], ", "),
+  scale: transform2("transform", "scale", [evaluateNumberPercent], ", "),
+  skew: transform2("transform", "skew", [evaluateAnglePercent], ", "),
+  rotate3d: sequenceFunctionAsObj("transform", "rotate3d", [evaluateNumber, evaluateNumber, evaluateNumber, evaluateAngle], ", "),
 };
