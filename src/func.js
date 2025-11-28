@@ -642,3 +642,33 @@ export default {
   ...UnpackedNativeCssProperties,
   em: NativeCssProperties.fontSize,
 };
+
+export const SEQ = (interpreters, post) => (args, name) => {
+  if (args.length != interpreters.length)
+    throw new SyntaxError(`${name} requires ${interpreters.length} arguments, got ${args.length} arguments.`);
+  return post(interpreters.map((interpreter, i) => {
+    const a2 = interpreter(args[i]);
+    if (a2)
+      return a2.text;
+    throw new SyntaxError(`Bad argument ${name}/${i + 1}.
+    "${args[i].text}" is not a ${interpreter.name.slice(2)}.
+    ${name}(${args.slice(0, i).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).join(",")}).`);
+  }));
+};
+
+export const POLY = (funcs) => (args, name) => {
+  let errors = [];
+  for (let cb of funcs) {
+    try {
+      const v = cb(args, name);
+      if (v !== undefined) return v;
+    } catch (e) {
+      errors.push(e.message);
+    }
+  }
+  throw new SyntaxError(errors.join("\n   OR   \n"));
+};
+
+export const SpaceListObj = (prop) => ar => ({ [prop]: ar.join(" ") });
+export const SpaceFuncObj = (prop, func) => ar => ({ [prop]: `${func}(${ar.join(" ")})` });
+export const CommaFuncObj = (prop, func) => ar => ({ [prop]: `${func}(${ar.join(", ")})` });
