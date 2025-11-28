@@ -81,7 +81,7 @@ function interpretShort(exp) {
   if (!cb) throw new ReferenceError(exp.name);
   if (!(cb instanceof Function)) return cb;
   try {
-    return cb(exp.args);
+    return cb(exp.args, exp.name);
   } catch (e) {
     debugger;
     //todo improve error message
