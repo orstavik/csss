@@ -1,11 +1,10 @@
-import { isNumber, isTime, isName, isLength, SEQ } from "./func.js";
+import { isNumber, isTime, isName, SEQ } from "./func.js";
 import * as CURVES from "./Curves.js";
 
 export const TYP = (singles, sets, post) => {
-  debugger;
   singles = Object.entries(singles);
   sets = Object.entries(sets);
-  return (args, name) => {
+  return ({ args, name }) => {
     const res = {};
     main: for (let i = 0; i < args.length; i++) {
       const a = args[i];
@@ -36,12 +35,16 @@ ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, $
 
 const singles = {
   allowDiscrete: a => a.text == "allowDiscrete" && ({ text: "allow-discrete" }),
-  steps: SEQ([isLength], ar => ({ text: `steps(${ar[0].text})` })),
-  stepsEnd: SEQ([isLength], ar => ({ text: `steps(${ar[0].text})` })),
-  stepsStart: SEQ([isLength], ar => ({ text: `steps(${ar[0].text}, start)` })),
-  stepsBoth: SEQ([isLength], ar => ({ text: `steps(${ar[0].text}, jump-both)` })),
-  stepsNone: SEQ([isLength], ar => ({ text: `steps(${ar[0].text}, jump-none)` })),
-  ease: a => /^ease(|In|Out|InOut)|linear$/.test(a.text) && a,
+  steps: ({ name, args }) => {
+    if (!/^(steps(|End|Start|Both|None))$/.test(name))
+      return;
+    const v = SEQ([isNumber], ar => ar[0])({ name, args });
+    if (name == "steps" || name == "stepsEnd") return { text: `steps(${v})` };
+    if (name == "stepsStart") return { text: `steps(${v}, start)` };
+    if (name == "stepsBoth") return { text: `steps(${v}, jump-both)` };
+    if (name == "stepsNone") return { text: `steps(${v}, jump-none)` };
+  },
+  ease: a => /^(?:ease(In|Out|InOut)?|linear)$/.test(a.text) && { text: a.text.replace(/[A-Z]/g, "-$&").toLowerCase() },
   curve: a => a.text in CURVES && a,
 };
 const lists = {
@@ -49,22 +52,22 @@ const lists = {
   cubicBezier: isNumber,
   props: isName,
 };
-function transitionPost({ allowDiscrete, steps, stepsEnd, stepsStart, stepsBoth, stepsNone, ease, curve }, { durDelay = [], cubicBezier = [], props = [] }) {
+function transitionPost({ allowDiscrete, steps, ease, curve, durDelay = [], cubicBezier, props = [] }) {
   if (durDelay.length > 2) throw new SyntaxError(`more than two duration and delay arguments`);
-  if (!!steps + !!stepsEnd + !!stepsStart + !!stepsBoth + !!stepsNone + !!ease + !!curve > 1) throw new SyntaxError(`more than one timing functions`);
-  if (cubicBezier.length != 4) throw new SyntaxError(`cubic-bezier requires four number arguments`);
+  if (!!steps + !!ease + !!curve > 1) throw new SyntaxError(`more than one timing functions`);
+  if (cubicBezier && cubicBezier.length != 4) throw new SyntaxError(`cubic-bezier requires four number arguments`);
 
   if (cubicBezier) cubicBezier = cubicBezier.map(a => a.text).join(",");
-  if (!props.length) props = [undefined];
+  if (!props.length) props = [""];
   const settings = [...durDelay, allowDiscrete].filter(Boolean).map(a => a.text);
   if (curve)
     return {
       [`--transition-${curve.text}`]: CURVES[curve.text],
-      transition: props.map(p => [p, `var(--transition-${curve.text})`, ...settings].filter(Boolean).join(" ")).join(", "),
+      transition: props.map(p => [p?.text, `var(--transition-${curve.text})`, ...settings].filter(Boolean).join(" ")).join(", "),
     }
-  const timing = (cubicBezier ?? ease ?? steps ?? stepsEnd ?? stepsStart ?? stepsBoth ?? stepsNone)?.text;
+  const timing = (cubicBezier ?? ease ?? steps)?.text;
   return {
-    transition: props.map(p => [p, timing, ...settings].filter(Boolean).join(" ")).join(", ")
+    transition: props.map(p => [p?.text, timing, ...settings].filter(Boolean).join(" ")).join(", ")
   };
 }
 

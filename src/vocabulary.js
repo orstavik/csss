@@ -4,7 +4,7 @@ import border from "./border.js";
 import fonts from "./font.js";
 import layouts from "./layout.js";
 import palette from "./palette.js";
-import transitions from "./transitions.js";
+import transitions from "./transitions2.js";
 import textDecorations from "./textDecorations2.js";
 import filterTransforms from "./filterTransform.js";
 import shadows from "./shadows.js";

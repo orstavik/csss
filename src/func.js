@@ -648,6 +648,7 @@ export default {
 };
 
 export const SEQ = (interpreters, post) => ({ args, name }) => {
+  if (!name) return;
   if (args.length != interpreters.length)
     throw new SyntaxError(`${name} requires ${interpreters.length} arguments, got ${args.length} arguments.`);
   return post(interpreters.map((interpreter, i) => {
