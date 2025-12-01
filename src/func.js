@@ -677,3 +677,33 @@ export const POLY = (funcs) => (exp) => {
 export const SpaceListObj = (prop) => ar => ({ [prop]: ar.join(" ") });
 export const SpaceFuncObj = (prop, func) => ar => ({ [prop]: `${func}(${ar.join(" ")})` });
 export const CommaFuncObj = (prop, func) => ar => ({ [prop]: `${func}(${ar.join(", ")})` });
+
+const matchPrimes = (primes) => {
+  primes = Object.entries(primes);
+  return a => {
+    for (let [k, v] of primes)
+      if ((v = v(a)) !== undefined)
+        return [k, v];
+  };
+};
+
+export const TYPA = (wes = {}, primes = {}, post) => {
+  primes = matchPrimes(primes);
+  return ({ args, name }) => {
+    const res = {};
+    for (let i = 0; i < args.length; i++) {
+      const a = args[i];
+      let kv;
+      if (a.name in wes)
+        res[a.name] = wes[a.name](a);
+      else if (a.text in wes)
+        res[a.text] = wes[a.text];
+      else if (kv = primes(a))
+        (res[kv[0]] ??= []).push(kv[1]);
+      else
+        throw new SyntaxError(`Bad argument ${name}/${i + 1}.
+${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
+    }
+    return post(res);
+  };
+};

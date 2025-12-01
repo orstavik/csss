@@ -1,75 +1,45 @@
-import { isNumber, isTime, isName, SEQ } from "./func.js";
+import { isNumber, isTime, isName, SEQ, TYPA } from "./func.js";
 import * as CURVES from "./Curves.js";
 
-export const TYP = (singles, sets, post) => {
-  singles = Object.entries(singles);
-  sets = Object.entries(sets);
-  return ({ args, name }) => {
-    const res = {};
-    main: for (let i = 0; i < args.length; i++) {
-      const a = args[i];
-      if (singles)
-        for (let [k, v] of singles) {
-          if (k in res)
-            continue;
-          const a2 = v(a);
-          if (a2) {
-            res[k] = a2;
-            continue main;
-          }
-        }
-      if (sets)
-        for (let [k, v] of sets) {
-          const a2 = v(a);
-          if (a2) {
-            (res[k] ??= []).push(a2);
-            continue main;
-          }
-        }
-      throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
+const transition = TYPA({
+  ease: "ease",
+  easeIn: "ease-in",
+  easeOut: "ease-out",
+  easeInOut: "ease-in-out",
+  linear: "linear",
+  ...CURVES,
+  steps: SEQ([isNumber], ar => `steps(${ar[0]})`),
+  stepsEnd: SEQ([isNumber], ar => `steps(${ar[0]})`),
+  stepsStart: SEQ([isNumber], ar => `steps(${ar[0]}, start)`),
+  stepsBoth: SEQ([isNumber], ar => `steps(${ar[0]}, jump-both)`),
+  stepsNone: SEQ([isNumber], ar => `steps(${ar[0]}, jump-none)`),
+  allowDiscrete: "allow-discrete",
+}, {
+  durationAndDelay: isTime,
+  cubicBezierFunction: isNumber,
+  properties: isName
+},
+  ({ durationAndDelay, cubicBezierFunction, properties, allowDiscrete, ...timers }) => {
+    if (cubicBezierFunction) {
+      if (cubicBezierFunction.length != 4) throw new SyntaxError(`cubic-bezier transition timing function requires 4 numbers, got ${cubicBezierFunction.length}`);
+      const cube = cubicBezierFunction.join(",");
+      timers[`cubic-bezier(${cube})`] = `cubic-bezier(${cube})`;
     }
-    return post(res);
-  };
-};
-
-const singles = {
-  allowDiscrete: a => a.text == "allowDiscrete" && ({ text: "allow-discrete" }),
-  steps: ({ name, args }) => {
-    if (!/^(steps(|End|Start|Both|None))$/.test(name))
-      return;
-    const v = SEQ([isNumber], ar => ar[0])({ name, args });
-    if (name == "steps" || name == "stepsEnd") return { text: `steps(${v})` };
-    if (name == "stepsStart") return { text: `steps(${v}, start)` };
-    if (name == "stepsBoth") return { text: `steps(${v}, jump-both)` };
-    if (name == "stepsNone") return { text: `steps(${v}, jump-none)` };
-  },
-  ease: a => /^(?:ease(In|Out|InOut)?|linear)$/.test(a.text) && { text: a.text.replace(/[A-Z]/g, "-$&").toLowerCase() },
-  curve: a => a.text in CURVES && a,
-};
-const lists = {
-  durDelay: isTime,
-  cubicBezier: isNumber,
-  props: isName,
-};
-function transitionPost({ allowDiscrete, steps, ease, curve, durDelay = [], cubicBezier, props = [] }) {
-  if (durDelay.length > 2) throw new SyntaxError(`more than two duration and delay arguments`);
-  if (!!steps + !!ease + !!curve > 1) throw new SyntaxError(`more than one timing functions`);
-  if (cubicBezier && cubicBezier.length != 4) throw new SyntaxError(`cubic-bezier requires four number arguments`);
-
-  if (cubicBezier) cubicBezier = cubicBezier.map(a => a.text).join(",");
-  if (!props.length) props = [""];
-  const settings = [...durDelay, allowDiscrete].filter(Boolean).map(a => a.text);
-  if (curve)
+    if (Object.keys(timers).length > 1) throw new SyntaxError(`more than one transition timing function: ${Object.keys(timers).join(" AND ")}`);
+    if (durationAndDelay && durationAndDelay.length > 2) throw new SyntaxError(`more than two duration and delay arguments`);
+    const [timerName, timerValue] = Object.entries(timers)[0];
+    let settings = durationAndDelay?.map(a => a.text).join(" ") ?? "";
+    if (allowDiscrete) settings += " " + allowDiscrete;
+    properties = properties ? properties.map(a => a.text) : [""];
+    if (timerName in CURVES)
+      return {
+        [`--transition-${timerName}`]: timerValue,
+        transition: properties.map(p => `${p} var(--transition-${timerName}) ${settings}`.trim()).join(", "),
+      }
     return {
-      [`--transition-${curve.text}`]: CURVES[curve.text],
-      transition: props.map(p => [p?.text, `var(--transition-${curve.text})`, ...settings].filter(Boolean).join(" ")).join(", "),
-    }
-  const timing = (cubicBezier ?? ease ?? steps)?.text;
-  return {
-    transition: props.map(p => [p?.text, timing, ...settings].filter(Boolean).join(" ")).join(", ")
-  };
-}
+      transition: properties.map(p => `${p} ${timerValue} ${settings}`.trim()).join(", ")
+    };
+  });
 
 export default {
   transitionProperty: undefined,
@@ -77,5 +47,5 @@ export default {
   transitionTimingFunction: undefined,
   transitionDelay: undefined,
   transitionSkipInk: undefined,
-  transition: TYP(singles, lists, transitionPost),
+  transition,
 };
