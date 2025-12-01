@@ -62,12 +62,12 @@ function computableNumbers(args) {
   for (let a of args) {
     if (a.num == null)
       return; //incomputable
-    else if (a.type == "number")
+    if (a.type == "number")
       nums.push(a.num);
     else if (a.unit == (firstUnit ??= a.unit))
       nums.push(a.num);
-    else if (FACTORS[firstUnit + "_ " + a.type])
-      nums.push(a.num * FACTORS[firstUnit + "_ " + a.type]);
+    else if (FACTORS[firstUnit + "_" + a.type])
+      nums.push(a.num * FACTORS[firstUnit + "_" + a.type]);
     else
       return; //incomputable
   }
@@ -115,9 +115,11 @@ const sign = Math.sign;
 //if undefined, [arg[0].unit, arg[0].unit]
 //if incompatible units, throws SyntaxError
 function sameType(args) {
-  for (let a of args)
-    if (a.type != null && a.type != args[0].type)
-      throw `Incompatible type differences: ${args[0].text} vs ${a.text}`;
+  args.reduce((t, a) => {
+    if (t && a.type && t.type != a.type)
+      throw new SyntaxError(`Incompatible type differences: ${t.text} vs ${a.text}`);
+    return a.type ? a : t;
+  }, null);
 }
 function illegalDividend(a, b) {
   if (b.type != "number") throw "Dividend must be a plain number.";
@@ -154,19 +156,26 @@ function optionalSecondNumber(args) {
 function onlyOneArgWithUnit(args) {
   if (args.filter(a => a.unit).length > 1) throw "Only one argument can have a unit.";
 }
+function firstIsVar(args) {
+  if (args[0].kind != "VAR")
+    throw "?? must follow a var() expression.";
+}
 //POSTS
 function toNumber(num, a) { return { type: "number", unit: "", num, text: num }; }
 function toAngle(num, a) { return { type: "angle", unit: "rad", num, text: num }; }
 function updateFirst(num, a) { return { ...a, num, text: num + a.unit }; }
 //TEXTERS
-function texter(name, args) { return `${name}(${args.map(a => a.text).join(", ")})`; }
+function texter(name, args) { return `${name}(${args.join(", ")})`; }
+function stripCalc(name, args) {
+  return `${name}(${args.map(a => a.replaceAll(/^calc\((.*)\)$/g, (_, a) => a)).join(", ")})`;
+}
 
 function doMath(check, func, post, texter, name, args) {
   check(args);
   const nums = computableNumbers(args);
   return nums ?
     post(func(...nums), args[0]) :
-    { type: args[0].type, text: texter(args.map(a => a.text), name) };
+    { type: args.find(a => a.type)?.type, text: texter(args.map(a => a.text)) };
 }
 
 var Maths = {
@@ -175,12 +184,13 @@ var Maths = {
   "*": doMath.bind(null, onlyOneArgWithUnit, multi, updateFirst, txts => `calc(${txts.join(" * ")})`),
   "/": doMath.bind(null, illegalDividend, divide, updateFirst, txts => `calc(${txts.join(" / ")})`),
   "**": doMath.bind(null, secondArgumentIsNumber, pow, updateFirst, texter.bind(null, "pow")),
+  "??": doMath.bind(null, firstIsVar, undefined, undefined, txts => txts[0].slice(0, -1) + "," + txts[1] + ")"),
   mod: doMath.bind(null, illegalDividend, mod, updateFirst, texter.bind(null, "mod")),
   rem: doMath.bind(null, illegalDividend, rem, updateFirst, texter.bind(null, "rem")),
   clamp: doMath.bind(null, sameType, clamp, updateFirst, texter.bind(null, "clamp")),
   min: doMath.bind(null, sameType, min, updateFirst, texter.bind(null, "min")),
   max: doMath.bind(null, sameType, max, updateFirst, texter.bind(null, "max")),
-  round: doMath.bind(null, singleArgumentOnly, round$2, updateFirst, texter.bind(null, "round")),
+  round: doMath.bind(null, sameType, round$2, updateFirst, stripCalc.bind(null, "round")),
   sin: doMath.bind(null, singleAngleOnly, sin, toNumber, texter.bind(null, "sin")),
   cos: doMath.bind(null, singleAngleOnly, cos, toNumber, texter.bind(null, "cos")),
   tan: doMath.bind(null, singleAngleOnly, tan, toNumber, texter.bind(null, "tan")),
@@ -585,23 +595,6 @@ const COLORS = {
   mixOklchDecreasing: args => cssColorMix([{ kind: "WORD", text: "oklch decreasing hue" }, ...args]),
 };
 
-
-
-
-function toRadiusFour(NAME, ar) {
-  ar = ar.map(isBasic).map(a => a.text);
-  if (!(ar instanceof Array))
-    return { [NAME]: ar };
-  if (ar.length === 1)
-    return { [NAME]: ar[0] };
-  return {
-    [NAME + "StartStart"]: ar[0],
-    [NAME + "EndEnd"]: ar[2] ?? ar[0],
-    [NAME + "StartEnd"]: ar[1],
-    [NAME + "EndStart"]: ar[3] ?? ar[1],
-  };
-}
-
 function toLogicalFour(NAME, ar) {
   ar = ar.map(isBasic).map(a => a.text);
   return ar.length === 1 ? { [NAME]: ar[0] } :
@@ -610,31 +603,6 @@ function toLogicalFour(NAME, ar) {
       [NAME + "Inline"]: ar[3] != null && ar[3] != ar[1] ? (ar[1] ?? ar[0]) + " " + ar[3] : ar[1] ?? ar[0],
     };
 }
-//todo there are different ways to do the logic here..
-//todo length == 2, I think that we could have top/bottom too
-//todo length == 3, then the third becomes all the inline ones
-//todo length === 4, then forth is the inline on the end side
-function toLogicalEight(NAME, DEFAULT, ar) {
-  ar = ar.map(isBasic).map(a => a.text);
-  if (!(ar instanceof Array))
-    return { [NAME]: ar };
-  if (ar.length === 1)
-    return { [NAME]: ar[0] };
-  let [bss, iss, bes, ies, bse, ise, bee, iee] = ar;
-  if (ar.length === 2) ise = ies = iee = iss, bse = bes = bee = bss;
-  if (ar.length === 3) ise = ies = iee = iss, bse = bss, bee = bes;
-  if (ar.length === 4) ise = iss, iee = ies, bse = bss, bee = bes;
-  if (ar.length === 5) ise = iss, iee = ies, bee = bes;
-  if (ar.length === 6) iee = ies, bee = bes;
-  if (ar.length === 7) iee = ies;
-  const res = {};
-  if (bss || iss) res[NAME + "TopLeft"] = `${bss ?? DEFAULT} ${iss ?? DEFAULT}`;
-  if (bse || ies) res[NAME + "TopRight"] = `${bse ?? DEFAULT} ${ies ?? DEFAULT}`;
-  if (bes || ise) res[NAME + "BottomLeft"] = `${bes ?? DEFAULT} ${ise ?? DEFAULT}`;
-  if (bee || iee) res[NAME + "BottomRight"] = `${bee ?? DEFAULT} ${iee ?? DEFAULT}`;
-  return res;
-}
-
 // const NativeCssScopeUrl = (...args) => `url(${args.join(" ")})`;
 // const NativeCssScopeAttrCounter = {
 //   counter: (...args) => `counter(${args.join(",")})`,
@@ -643,6 +611,8 @@ function toLogicalEight(NAME, DEFAULT, ar) {
 // };
 
 function isBasic(arg) {
+  if (arg.kind == "VAR")
+    arg.text = `var(${arg.text})`;
   if (arg.kind !== "EXP")
     return arg;
   if (arg.name in Maths)
@@ -676,7 +646,7 @@ function isUrl(a) {
   if (a.kind === "QUOTE")
     return { type: "url", text: `url(${a.text})` };
   if (a.name === "url") {
-    if (args.length != 1) throw new SyntaxError("url() requires exactly one argument.");
+    if (a.args.length != 1) throw new SyntaxError("url() requires exactly one argument.");
     return { type: "url", text: `url(${isBasic(a.args[0]).text})` };
   }
 }
@@ -926,6 +896,36 @@ var nativeAndMore = {
   ...UnpackedNativeCssProperties,
   em: NativeCssProperties.fontSize,
 };
+
+const SEQ = (interpreters, post) => (args, name) => {
+  if (args.length != interpreters.length)
+    throw new SyntaxError(`${name} requires ${interpreters.length} arguments, got ${args.length} arguments.`);
+  return post(interpreters.map((interpreter, i) => {
+    const a2 = interpreter(args[i]);
+    if (a2)
+      return a2.text;
+    throw new SyntaxError(`Bad argument ${name}/${i + 1}.
+    "${args[i].text}" is not a ${interpreter.name.slice(2)}.
+    ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
+  }));
+};
+
+const POLY = (funcs) => (args, name) => {
+  let errors = [];
+  for (let cb of funcs) {
+    try {
+      const v = cb(args, name);
+      if (v !== undefined) return v;
+    } catch (e) {
+      errors.push(e.message);
+    }
+  }
+  throw new SyntaxError(errors.join("\n   OR   \n"));
+};
+
+const SpaceListObj = (prop) => ar => ({ [prop]: ar.join(" ") });
+const SpaceFuncObj = (prop, func) => ar => ({ [prop]: `${func}(${ar.join(" ")})` });
+const CommaFuncObj = (prop, func) => ar => ({ [prop]: `${func}(${ar.join(", ")})` });
 
 function size$1(args) {
   if (args.length < 1 || args.length > 2)
@@ -1228,77 +1228,310 @@ var backgrounds = {
   bg: makeBg(bgColorOrImage),
 };
 
-const color = toLogicalFour.bind(null, "borderColor");
-const width = toLogicalFour.bind(null, "borderWidth");
-const radius = toRadiusFour.bind(null, "borderRadius");
-const radius8 = toLogicalEight.bind(null, "borderRadius", 0);
-const BORDER = {
-  solid: { borderStyle: "solid" },
-  dotted: { borderStyle: "dotted" },
-  dashed: { borderStyle: "dashed" },
-  double: { borderStyle: "double" },
-  groove: { borderStyle: "groove" },
-  ridge: { borderStyle: "ridge" },
-  inset: { borderStyle: "inset" },
-  outset: { borderStyle: "outset" },
-  hidden: { borderStyle: "hidden" },
-  none: { borderStyle: "none" },
-  thin: { borderWidth: "thin" },
-  medium: { borderWidth: "medium" },
-  thick: { borderWidth: "thick" },
-  width,
-  w: width,
+//1. BlockInline order is the naming sequence of each corner, and also the two values for each corner.
+//   borderStartEndRadius: 2px 4px means something like borderTopRightRadius with top radius 2px side radius 4px.
+//2. When we pass values into the function, we follow the normal css logical property sequence, inline then block, start then end.
+//3. Upto 4 values is easy: inline, block, inlineEnd, blockEnd.
+//4. More than 4 values follows the same sequence for the first 4 values, but then values 5 to 8 will override:
+//   5: inlineLeftBottom (and 1: inlineLeftTop), 
+//   6: blockTopRight (and 2: blockTopLeft), 
+//   7: inlineRightBottom (and 3: inlineRightTop), 
+//   8: blockBottomRight (and 4: blockBottomLeft).
+function radius(ar) {
+  ar = ar.map(isBasic).map(a => a.text);
+  if (ar.length > 8)
+    throw new SyntaxError(`max 8 arguments for borderRadius: ${ar.length}.`);
+  if (ar.length === 1)
+    return { borderRadius: ar[0] };
+  if (ar.length === 2) {
+    const [l, t] = ar;
+    return {
+      borderStartStartRadius: `${t} ${l}`,
+      borderStartEndRadius: `${t} ${l}`,
+      borderEndEndRadius: `${t} ${l}`,
+      borderEndStartRadius: `${t} ${l}`,
+    };
+  }
+  if (ar.length <= 4) {
+    const [l, t, r, b = t] = ar;
+    return {
+      borderStartStartRadius: l == t ? l : `${t} ${l}`,
+      borderStartEndRadius: t == r ? t : `${t} ${r}`,
+      borderEndStartRadius: b == l ? b : `${b} ${l}`,
+      borderEndEndRadius: r == b ? r : `${b} ${r}`,
+    };
+  }
+  const [lt, tl, rt, bl, lb, tr = tl, rb = rt, br = bl] = ar;
+  return {
+    borderStartStartRadius: tl == lt ? tl : `${tl} ${lt}`,
+    borderStartEndRadius: tr == rt ? tr : `${tr} ${rt}`,
+    borderEndStartRadius: bl == lb ? bl : `${bl} ${lb}`,
+    borderEndEndRadius: br == rb ? br : `${br} ${rb}`,
+  };
+}
+
+//$border(2px,4px,solid,red,blue)
+//$border(2px,solid,red)
+const STYLE_WORDS = {
+  solid: "solid",
+  dotted: "dotted",
+  dashed: "dashed",
+  double: "double",
+  groove: "groove",
+  ridge: "ridge",
+  inset: "inset",
+  outset: "outset",
+  none: "none",
+  hidden: "hidden",
+};
+const WIDTH_WORDS = {
+  thin: "thin",
+  medium: "medium",
+  thick: "thick",
+};
+const RADIUS = {
   radius,
   r: radius,
-  radius8,
-  r8: radius8,
-  color,
-  c: color,
 };
 
-//border: 2px 4px solid red blue;
-//$border(w(2px,4px),solid,c(red,blue))
-//$border(2px,solid,red)
 function border(ar) {
-  ar = ar.map(a => {
-    a = BORDER[a.name]?.(a.args) ??
-      BORDER[a.text] ??
-      isColor(a) ??
-      isBasic(a);
-    if (!a)
+  let borderRadius, width = [], style = [], color = [];
+  for (let a of ar) {
+    let v;
+    if (borderRadius && a.name in RADIUS)
+      throw new SyntaxError(`More than one $border radius argument: ${a.text}.`);
+    else if (v = isColor(a)?.text)
+      color.push(v);
+    else if (v = isLengthPercent(a)?.text ?? WIDTH_WORDS[a.text])
+      width.push(v);
+    else if (v = STYLE_WORDS[a.text])
+      style.push(v);
+    else if (v = RADIUS[a.name]?.(a.args))
+      borderRadius = v;
+    else
       throw new SyntaxError(`Could not interpret $border argument: ${a.text}.`);
-    if (a.type == "color")
-      return { borderColor: a.text };
-    if (a.type == "length")
-      return { borderWidth: a.text };
-    return a;
-  });
-  return Object.assign({ borderStyle: "solid" }, ...ar);
+  }
+  const maxLength = Math.max(width.length, style.length, color.length);
+  if (!maxLength && borderRadius)
+    return { border: "none", ...borderRadius };
+  borderRadius ??= {};
+  style[0] ??= "solid";
+  if (maxLength == 1) {
+    const border = [width[0], style[0], color[0]].filter(Boolean).join(" ");
+    return { border, ...borderRadius };
+  }
+  style[1] ??= style[0];
+  width[1] ??= width[0];
+  color[1] ??= color[0];
+  if (maxLength == 2) {
+    const borderInline = [width[0], style[0], color[0]].filter(Boolean).join(" ");
+    const borderBlock = [width[1], style[1], color[1]].filter(Boolean).join(" ");
+    return { borderInline, borderBlock, ...borderRadius };
+  }
+  style[2] ??= style[0];
+  width[2] ??= width[0];
+  color[2] ??= color[0];
+  if (maxLength == 3) {
+    const borderInlineStart = [width[0], style[0], color[0]].filter(Boolean).join(" ");
+    const borderBlock = [width[1], style[1], color[1]].filter(Boolean).join(" ");
+    const borderInlineEnd = [width[2], style[2], color[2]].filter(Boolean).join(" ");
+    return { borderInlineStart, borderBlock, borderInlineEnd, ...borderRadius };
+  }
+  style[3] ??= style[1];
+  width[3] ??= width[1];
+  color[3] ??= color[1];
+  if (maxLength == 4) {
+    const borderInlineStart = [width[0], style[0], color[0]].filter(Boolean).join(" ");
+    const borderBlockStart = [width[1], style[1], color[1]].filter(Boolean).join(" ");
+    const borderInlineEnd = [width[2], style[2], color[2]].filter(Boolean).join(" ");
+    const borderBlockEnd = [width[3], style[3], color[3]].filter(Boolean).join(" ");
+    return { borderInlineStart, borderBlockStart, borderInlineEnd, borderBlockEnd, ...borderRadius };
+  }
+  const tooBig = width.length > 4 ? width : style.length > 4 ? style : color;
+  throw new SyntaxError(`More than 4 border arguments: ${tooBig.join(" ")}.`);
 }
 
 var border$1 = {
+  border,
+  noBorder: { border: "none" },
+
   borderStyle: undefined,
   borderWidth: undefined,
   borderColor: undefined,
   borderRadius: undefined,
+
   borderTopStyle: undefined,
   borderTopWidth: undefined,
   borderTopColor: undefined,
+
   borderRightStyle: undefined,
   borderRightWidth: undefined,
   borderRightColor: undefined,
+
   borderBottomStyle: undefined,
   borderBottomWidth: undefined,
   borderBottomColor: undefined,
+
   borderLeftStyle: undefined,
   borderLeftWidth: undefined,
   borderLeftColor: undefined,
-  //todo so many, make more that we should block.
-  border,
-  noBorder: { border: "none" },
+
+  borderInline: undefined,
+  borderBlock: undefined,
+
+  borderInlineStart: undefined,
+  borderBlockStart: undefined,
+  borderInlineEnd: undefined,
+  borderBlockEnd: undefined,
+
+  borderInlineEndColor: undefined,
+  borderBlockStartColor: undefined,
+  borderInlineStartColor: undefined,
+  borderBlockEndColor: undefined,
+
+  borderInlineEndWidth: undefined,
+  borderBlockStartWidth: undefined,
+  borderInlineStartWidth: undefined,
+  borderBlockEndWidth: undefined,
+
+  borderInlineEndStyle: undefined,
+  borderBlockStartStyle: undefined,
+  borderInlineStartStyle: undefined,
+  borderBlockEndStyle: undefined,
+
+  borderStartEndRadius: undefined,
+  borderEndStartRadius: undefined,
+  borderStartStartRadius: undefined,
+  borderEndEndRadius: undefined,
+  //todo block all the others properties that can set border style, width, color, and radius.
 };
 
+// //there are different ways to do the logic here..
+// //length == 2, I think that we could have top/bottom too
+// //length == 3, then the third becomes all the inline ones
+// //length === 4, then forth is the inline on the end side
+// export function toLogicalEight(NAME, DEFAULT, ar) {
+//   ar = ar.map(isBasic).map(a => a.text);
+//   if (!(ar instanceof Array))
+//     return { [NAME]: ar };
+//   if (ar.length === 1)
+//     return { [NAME]: ar[0] };
+//   let [bss, iss, bes, ies, bse, ise, bee, iee] = ar;
+//   if (ar.length === 2) ise = ies = iee = iss, bse = bes = bee = bss;
+//   if (ar.length === 3) ise = ies = iee = iss, bse = bss, bee = bes;
+//   if (ar.length === 4) ise = iss, iee = ies, bse = bss, bee = bes;
+//   if (ar.length === 5) ise = iss, iee = ies, bee = bes;
+//   if (ar.length === 6) iee = ies, bee = bes;
+//   if (ar.length === 7) iee = ies;
+//   const res = {};
+//   if (bss || iss) res[NAME + "TopLeft"] = `${bss ?? DEFAULT} ${iss ?? DEFAULT}`;
+//   if (bse || ies) res[NAME + "TopRight"] = `${bse ?? DEFAULT} ${ies ?? DEFAULT}`;
+//   if (bes || ise) res[NAME + "BottomLeft"] = `${bes ?? DEFAULT} ${ise ?? DEFAULT}`;
+//   if (bee || iee) res[NAME + "BottomRight"] = `${bee ?? DEFAULT} ${iee ?? DEFAULT}`;
+//   return res;
+// }
+
+// export function toRadiusFour(NAME, ar) {
+//   ar = ar.map(isBasic).map(a => a.text);
+//   if (!(ar instanceof Array))
+//     return { [NAME]: ar };
+//   if (ar.length === 1)
+//     return { [NAME]: ar[0] };
+//   return {
+//     [NAME + "StartStart"]: ar[0],
+//     [NAME + "EndEnd"]: ar[2] ?? ar[0],
+//     [NAME + "StartEnd"]: ar[1],
+//     [NAME + "EndStart"]: ar[3] ?? ar[1],
+//   };
+// }
+
+//The $font umbrella and $typeface cloud regulate this property cluster. $typeface also regulates @font-face{}.
+const FONT_DEFAULTS = Object.entries({
+  fontFamily: "FontFamily",
+  fontSize: "FontSize",
+  fontStyle: "FontStyle",
+  fontWeight: "FontWeight",
+  fontSizeAdjust: "FontSizeAdjust",
+  letterSpacing: "LetterSpacing",
+  textTransform: "TextTransform",
+  fontWidth: "FontWidth",
+  fontVariantCaps: "FontVariantCaps",
+  fontSynthesis: "FontSynthesis",
+  fontFeatureSettings: "FontFeatureSettings",
+  fontVariationSettings: "FontVariationSettings",
+  WebkitFontSmoothing: "WebkitFontSmoothing",
+  MozOsxFontSmoothing: "MozOsxFontSmoothing",
+  fontKerning: "FontKerning",
+});
+
+/**
+ * TextTransform is a semi inherited css property (inherits over inline elements, but not block elements).
+ * The same way as shifting font family or style, caption is a family-ish trait. Would be normal to consider part of font umbrella.
+ * Most of the text properties are either layout (text-align, line-height, word-spacing, hyphenation).
+ * text-decoration is standalone. text-shadow is standalone (in same space as colors).
+ * ??candidate for font is hyphenation. Where we break the words, that could be more a font characteristic than a layout characteristic??
+ */
+
+//$typeface(comic,"MS+Comic+Sans",face("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2"),xxs,semiExpanded,italic,bolder)
+function face(args, fontFamily) {
+
+  function featureAndVariation(args) {
+    return args.map(a => a.split("=")).map(([k, v = 1]) => `"${k}" ${v}`).join(", ");
+  }
+
+  const FACE = {
+    feature: args => ({ fontFeatureSettings: featureAndVariation(args) }),
+    variation: args => ({ fontVariationSettings: featureAndVariation(args) }),
+    i: { fontStyle: "italic" },
+    italic: { fontStyle: "italic" },
+    ital: { fontStyle: "italic" },
+  };
+
+  let src = extractUrl(args);
+  if (!src)
+    throw new SyntaxError(`The first argument of face(...) must be a quote or a URL, but got: ${args[0]}`);
+  const res = {
+    fontFamily: fontFamily ??= src.slice(4, -1),
+    fontStyle: "normal",
+    src: `local(${fontFamily}), ${src}`,
+  };
+  for (let a of args) {
+    const a2 = FACE[a.name]?.(a.args) ?? FACE[a.text];
+    if (a2) Object.assign(res, a2);
+    throw new SyntaxError(`Unrecognized font face argument: ${a}`);
+  }
+  return { [`@fontFace /*${res.fontFamily} ${res.fontStyle}*/`]: res };
+}
+
+const SYNTHESIS_WORDS = (function () {
+  function* permutations(arr, remainder) {
+    for (let i = 0; i < arr.length; i++) {
+      const x = arr[i];
+      const rest = arr.slice(0, i).concat(arr.slice(i + 1));
+      if (remainder == 1)
+        yield [x];
+      else
+        for (let p of permutations(rest, remainder - 1))
+          yield [x, ...p];
+    }
+  }
+  const res = {};
+  const synths = ["Style", "Weight", "SmallCaps", "Position"];
+  for (let k = 1; k <= synths.length - 1; k++)
+    for (const combo of permutations(synths, k))
+      res["no" + combo.join("") + "Synthesis"] = synths.filter(k => !combo.includes(k)).join(" ").replace("Caps", "-caps").toLowerCase();
+  res.noSynthesis = { fontSynthesis: "none" };
+  return res;
+})();
+
 const FONT_WORDS = {
+  ...SYNTHESIS_WORDS,
+  uppercase: { textTransform: "uppercase" },
+  lowercase: { textTransform: "lowercase" },
+  capitalize: { textTransform: "capitalize" },
+  fullWidth: { textTransform: "full-width" },
+  noTransform: { textTransform: "none" },
+
   bold: { fontWeight: "bold" },
   b: { fontWeight: "bold" },
   bolder: { fontWeight: "bolder" },
@@ -1344,87 +1577,12 @@ const FONT_WORDS = {
   xl: { fontSize: "x-large" },
   xxl: { fontSize: "xx-large" },
   xxxl: { fontSize: "xxx-large" },
-};
 
-const SYNTHESIS_WORDS = (function () {
-  function* permutations(arr, remainder) {
-    for (let i = 0; i < arr.length; i++) {
-      const x = arr[i];
-      const rest = arr.slice(0, i).concat(arr.slice(i + 1));
-      if (remainder == 1)
-        yield [x];
-      else
-        for (let p of permutations(rest, remainder - 1))
-          yield [x, ...p];
-    }
-  }
-  const res = {};
-  const synths = ["Style", "Weight", "SmallCaps", "Position"];
-  for (let k = 1; k <= synths.length - 1; k++)
-    for (const combo of permutations(synths, k))
-      res["no" + combo.join("") + "Synthesis"] = synths.filter(k => !combo.includes(k)).join(" ").replace("Caps", "-caps").toLowerCase();
-  res.noSynthesis = { fontSynthesis: "none" };
-  return res;
-})();
-
-function featureAndVariation(args) {
-  return args.map(a => a.split("=")).map(([k, v = 1]) => `"${k}" ${v}`).join(", ");
-}
-
-//$typeface(comic,"MS+Comic+Sans",face("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2"),xxs,semiExpanded,italic,bolder)
-const FACE = {
-  feature: args => ({ fontFeatureSettings: featureAndVariation(args) }),
-  variation: args => ({ fontVariationSettings: featureAndVariation(args) }),
-  i: { fontStyle: "italic" },
-  italic: { fontStyle: "italic" },
-  ital: { fontStyle: "italic" },
-};
-
-function face(args, fontFamily) {
-  let src = extractUrl(args);
-  if (!src)
-    throw new SyntaxError(`The first argument of face(...) must be a quote or a URL, but got: ${args[0]}`);
-  const res = {
-    fontFamily: fontFamily ??= src.slice(4, -1),
-    fontStyle: "normal",
-    src: `local(${fontFamily}), ${src}`,
-  };
-  for (let a of args) {
-    const a2 = FACE[a.name] ?? FACE[a.text];
-    if (a2) Object.assign(res, a2);
-    throw new SyntaxError(`Unrecognized font face argument: ${a}`);
-  }
-  return { [`@fontFace /*${res.fontFamily} ${res.fontStyle}*/`]: res };
-}
-
-const FONT_FUNCTIONS = {
-  size: a => ({ fontSize: isLength(a) }),
-  // weight: a => ({ fontWeight: interpretNumber(a) }), //todo this should be primitive
-  // style: a => ({ fontStyle: interpretWord(a) }), //todo this should not be allowed to be wrapped??
   variant: a => ({ fontVariant: interpretBasic(a) }),
   width: a => ({ fontWidth: isPercent(a) }),
   spacing: a => (a.text == "normal" ? a.text : { letterSpacing: isLength(a) }),
   adjust: a => ({ fontSizeAdjust: interpretBasic(a) }),
 };
-
-
-const FONT_DEFAULTS = Object.entries({
-  fontFamily: "FontFamily",
-  fontSize: "FontSize",
-  fontStyle: "FontStyle",
-  fontWeight: "FontWeight",
-  fontSizeAdjust: "FontSizeAdjust",
-  letterSpacing: "LetterSpacing",
-  fontWidth: "FontWidth",
-  fontVariantCaps: "FontVariantCaps",
-  fontSynthesis: "FontSynthesis",
-  fontFeatureSettings: "FontFeatureSettings",
-  fontVariationSettings: "FontVariationSettings",
-  WebkitFontSmoothing: "WebkitFontSmoothing",
-  MozOsxFontSmoothing: "MozOsxFontSmoothing",
-  fontKerning: "FontKerning",
-});
-
 
 //first have a function that extracts all the nonFamily 
 function fontImpl(fontFaceName, args) {
@@ -1439,7 +1597,7 @@ function fontImpl(fontFaceName, args) {
       res.fontSize = a2.text;
     else if (a2 = isAngle(a))
       res.fontStyle = "oblique " + a2.text;
-    else if (a2 = FONT_WORDS[a.text] ?? FONT_FUNCTIONS[a.name]?.(a.args) ?? SYNTHESIS_WORDS[a.text])
+    else if (a2 = FONT_WORDS[a.text] ?? FONT_WORDS[a.name]?.(a.args))
       Object.assign(res, a2);
     else if (a.kind == "WORD")
       family.push(a.text);
@@ -1500,19 +1658,21 @@ const BUILTIN_TYPES = {
   handwritten: { fontFamily: "'Segoe Print','Bradley Hand',Chilanka,TSCu_Comic,casual,cursive" },
 };
 
-// todo should we add extra requirements for the typeName? say it can only be of specific characters?
-// typeName.match(/^[a-z][a-z0-9-]*$/))
+//I think that for $font() we should have either using a name, *or* using a face(). If we use a typeface, then we can't override the family.
+//that just breads confusion. So, if the $font() only has a single family, then we try to use that as the typeface name. Otherwise, we consider it a face referece. 
 function font(args) {
   const typeName = interpretName(args[0]);
   if (!typeName)
     throw new SyntaxError(`first argument is not a name: "${args[0].text}"`);
   const tmp = fontImpl(undefined, args);
-  tmp.fontFamily = `var(--${typeName}FontFamily, ${tmp.fontFamily})`; //stacking
-  const vars = {}, res = {};
+  const res = {};
   for (let [k, varKey] of FONT_DEFAULTS)
-    vars["--font" + varKey] = (res[k] = tmp[k] ?? `var(--${typeName + varKey}, unset)`); //clashing
+    res[k] = tmp[k] ?? `var(--${typeName + varKey}, unset)`; //clashing
   res.fontStretch = res.fontWidth;
-  return { ...res, ...vars };
+  tmp.fontFamily.length == 1 ?
+    res.fontFamily = `var(--${typeName}FontFamily, ${typeName})` : //single family means typeface reference.
+    res.fontFamily = tmp.fontFamily + `, var(--${typeName}FontFamily, unset)`; //multiple families means face reference.
+  return res;
 }
 
 function typeFace(args) {
@@ -1529,42 +1689,70 @@ function typeFace(args) {
   return res;
 }
 
+function makeSingleDroplet(NAME, FUNC) {
+  return function (args) {
+    if (args.length != 1)
+      throw new SyntaxError(`$${NAME} droplet only accepts one argument, but got ${args.length}: ${args.map(a => a.text).join(", ")}`);
+    const a = args[0];
+    const v = a.text == "unset" ? `var(--${NAME}, unset)` : FUNC(a)?.text;
+    if (v == null)
+      throw new SyntaxError(`Could not interpret $${NAME} argument: ${args[0].text}.`);
+    return { [NAME]: v };
+  }
+}
+
 var fonts = {
   font,
   typeface: typeFace,
 
   //droplets
-  fontFamily: a => ({ [p]: a == "unset" ? `var(--fontFamily, unset)` : a }),
-  fontStyle: a => ({ [p]: a == "unset" ? `var(--fontStyle, unset)` : a }),
-  fontWeight: a => ({ [p]: a == "unset" ? `var(--fontWeight, unset)` : a }),
-  fontVariantCaps: a => ({ [p]: a == "unset" ? `var(--fontVariantCaps, unset)` : a }),
-  fontWidth: a => ({ [p]: a == "unset" ? `var(--fontWidth, unset)` : a }),
-  // fontStretch: a => ({ [p]: a == "unset" ? `var(--fontStretch, unset)` : a }), //renamed to fontWidth as per css spec
-  fontSynthesis: a => ({ [p]: a == "unset" ? `var(--fontSynthesis, unset)` : a }),
-  fontSizeAdjust: a => ({ [p]: a == "unset" ? `var(--fontSizeAdjust, unset)` : a }),
-  letterSpacing: a => ({ [p]: a == "unset" ? `var(--letterSpacing, unset)` : a }),
+  fontSize: makeSingleDroplet("fontSize", isLength),
+  // fontFamily: makeSingleDroplet("fontFamily", isBasic), //todo this should not be possible.
+  // fontStyle: makeSingleDroplet("fontStyle", isBasic),
+  // fontWeight: makeSingleDroplet("fontWeight", isBasic),
+  // fontVariantCaps: makeSingleDroplet("fontVariantCaps", isBasic),
+  fontWidth: makeSingleDroplet("fontWidth", isBasic),     //todo we need to make them return both props.
+  fontStretch: makeSingleDroplet("fontStretch", isBasic), //todo we need to make them return both props.
+  fontSynthesis: makeSingleDroplet("fontSynthesis", isBasic),
+  fontSizeAdjust: makeSingleDroplet("fontSizeAdjust", isBasic),
+  letterSpacing: makeSingleDroplet("letterSpacing", isBasic),
+
 
   //global font words
-  // bold: { fontWeight: "bold" },
-  // bolder: { fontWeight: "bolder" },
-  // lighter: { fontWeight: "lighter" },
-  // italic: { fontStyle: "italic" },
-  // smallCaps: { fontVariantCaps: "small-caps" },
-  // allSmallCaps: { fontVariantCaps: "all-small-caps" },
-  // petiteCaps: { fontVariantCaps: "petite-caps" },
-  // allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
-  // unicase: { fontVariantCaps: "unicase" },
-  // titlingCaps: { fontVariantCaps: "titling-caps" },
-  // condensed: { Stretch: "condensed" },
-  // expanded: { Stretch: "expanded" },
-  // semiCondensed: { Stretch: "semi-condensed" },
-  // semiExpanded: { Stretch: "semi-expanded" },
-  // extraCondensed: { Stretch: "extra-condensed" },
-  // extraExpanded: { Stretch: "extra-expanded" },
-  // ultraCondensed: { Stretch: "ultra-condensed" },
-  // ultraExpanded: { Stretch: "ultra-expanded" },
-  // kerning: { fontKerning: "normal" },
-  // noKerning: { fontKerning: "none" },
+  ...SYNTHESIS_WORDS,
+  uppercase: { textTransform: "uppercase" },
+  lowercase: { textTransform: "lowercase" },
+  capitalize: { textTransform: "capitalize" },
+  fullWidth: { textTransform: "full-width" },
+  noTextTransform: { textTransform: "none" },
+  textTransform: undefined,
+
+  italic: { fontStyle: "italic" },
+  noStyle: { fontStyle: "normal" },
+  bold: { fontWeight: "bold" },
+  bolder: { fontWeight: "bolder" },
+  lighter: { fontWeight: "lighter" },
+  noWeight: { fontWeight: "normal" },
+  normal: { fontStyle: "normal", fontWeight: "normal" },
+  larger: { fontSize: "larger" },
+  smaller: { fontSize: "smaller" },
+  smallCaps: { fontVariantCaps: "small-caps" },
+  allSmallCaps: { fontVariantCaps: "all-small-caps" },
+  petiteCaps: { fontVariantCaps: "petite-caps" },
+  allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
+  unicase: { fontVariantCaps: "unicase" },
+  titlingCaps: { fontVariantCaps: "titling-caps" },
+  condensed: { fontStretch: "condensed" },
+  expanded: { fontStretch: "expanded" },
+
+  semiCondensed: { fontStretch: "semi-condensed", fontWidth: "semi-condensed" },
+  semiExpanded: { fontStretch: "semi-expanded", fontWidth: "semi-expanded" },
+  extraCondensed: { fontStretch: "extra-condensed", fontWidth: "extra-condensed" },
+  extraExpanded: { fontStretch: "extra-expanded", fontWidth: "extra-expanded" },
+  ultraCondensed: { fontStretch: "ultra-condensed", fontWidth: "ultra-condensed" },
+  ultraExpanded: { fontStretch: "ultra-expanded", fontWidth: "ultra-expanded" },
+  kerning: { fontKerning: "normal" },
+  noKerning: { fontKerning: "none" },
 };
 
 
@@ -2345,6 +2533,36 @@ function jump(type, args) {
   throw new SyntaxError(`$jump requires a positive integer argument first.`);
 }
 
+const SEQopt = (core, extras, post) => (args, name) => {
+  if (args.length < core.length)
+    throw new SyntaxError(`${name} requires ${core.length} arguments, got ${args.length} arguments.`);
+  const res = core.map((interpreter, i) => {
+    const a2 = interpreter(args[i]);
+    if (a2)
+      return a2.text;
+    throw new SyntaxError(`Bad argument ${name}/${i + 1}.
+    "${args[i].text}" is not a ${interpreter.name.slice(2)}.
+    ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.map(a => a.text).slice(i + 1).join(",")}).`);
+  });
+  for (let i = 0; i < args.length - core.length; i++) {
+    const a2 = extras(args[i + core.length]);
+    if (a2)
+      res.push(a2.text);
+    else
+      throw new SyntaxError(`Bad argument ${name}/${i + core.length + 1}.
+      "${args[i + core.length].text}" is not a ${extras.name.slice(2)}.
+      ${name}(${args.slice(0, i + core.length).join(",")}, => ${args[i + core.length].text} <=, ${args.slice(i + core.length + 1).join(",")}).`);
+  }
+  return post(res);
+};
+
+const jump2 = (type) => args => {
+  const steps = isNumber(args[0])?.num;
+  if (steps > 0)
+    return transition(`steps(${steps}, ${type})`, args.slice(1));
+  throw new SyntaxError(`$jump requires a positive integer argument first.`);
+};
+
 function cube(cube, args) { return transition(`cubic-bezier(${cube})`, args); }
 
 const backInEaseOut = transition.bind(null, backInEaseOut$1);
@@ -2360,7 +2578,7 @@ const wobble = transition.bind(null, wobble$1);
 
 var transitions = {
 
-  ...undefined,
+  // ...Transitions.WAVE_STRINGS,
 
   transitionProperty: undefined,
   transitionDuration: undefined,
@@ -2402,6 +2620,7 @@ var transitions = {
       throw new SyntaxError(`$transition (cubic-bezier) requires four number arguments first.`);
     return transition(`cubic-bezier(${x1},${y1},${x2},${y2})`, args.slice(4))
   },
+
   jump: jump.bind(null, ""), //jumpEnd is default.
   jumpEnd: jump.bind(null, "jump-end"),
   jumpStart: jump.bind(null, "jump-start"),
@@ -2478,86 +2697,67 @@ var textDecorations = {
   spellingError: textDecoration.bind(null, "spelling-error", null),
 };
 
-function filter1(prop, name, evaluators, args) {
-  if (args.length != evaluators.length)
-    throw new SyntaxError(`${name} requires exactly ${evaluators.length} arguments, got ${args.length} arguments.`);
-  return { [prop]: `${name}(${args.map((a, i) => evaluators[i](a, i)).join(" ")})` };
-}
-function filter2(prop, evaluator, args) {
-  if (args.length != 1)
-    throw new SyntaxError(`${prop} requires exactly 1 argument, got ${args.length} arguments.`);
-  return { [prop]: evaluator(args[0]) };
-}
-
-function transform1(name, evaluator, count, args) {
-  if (args.length != count)
-    throw new SyntaxError(`${name} requires exactly ${count} arguments, got ${args.length} arguments.`);
-  return { transform: `${name}(${args.map(evaluator).join(", ")})` };
-}
-function transform2(name, evaluator, args) {
-  if (args.length < 1 || args.length > 2)
-    throw new SyntaxError(`${name} requires between 1 and 2 arguments, got ${args.length} arguments.`);
-  return { transform: `${name}(${args.map(evaluator).join(", ")})` };
-}
-function rotate3d([one, two, three, four]) {
-  one = evaluateNumber(one, 0);
-  two = evaluateNumber(two, 1);
-  three = evaluateNumber(three, 2);
-  four = evaluateAngle(four, 3);
-  return { transform: `rotate3d(${[one, two, three, four].join(", ")})` };
-}
-
 var filterTransforms = {
   transform: undefined,
 
   noBackdropFilter: { backdropFilter: "none" },
   noFilter: { filter: "none" },
 
-  blur: filter1.bind(null, "filter", "blur", [evaluateLength]),
-  brightness: filter1.bind(null, "filter", "brightness", [evaluateNumberPercent]),
-  contrast: filter1.bind(null, "filter", "contrast", [evaluateNumberPercent]),
-  grayscale: filter1.bind(null, "filter", "grayscale", [evaluateNumberPercent]),
-  invert: filter1.bind(null, "filter", "invert", [evaluateNumberPercent]),
-  opacity: filter1.bind(null, "filter", "opacity", [evaluateNumberPercent]),
-  saturate: filter1.bind(null, "filter", "saturate", [evaluateNumberPercent]),
-  sepia: filter1.bind(null, "filter", "sepia", [evaluateNumberPercent]),
-  dropShadow: filter1.bind(null, "filter", "drop-shadow", [evaluateColor, evaluateLength, evaluateLength, evaluateLengthPercent]),
-  hueRotate: filter1.bind(null, "filter", "hue-rotate", [evaluateAngle]),
-  filter: filter2.bind(null, "filter", evaluateUrl),
+  blur: SEQ([isLength], SpaceFuncObj("filter", "blur")),
+  brightness: SEQ([isNumberPercent], SpaceFuncObj("filter", "brightness")),
+  contrast: SEQ([isNumberPercent], SpaceFuncObj("filter", "contrast")),
+  grayscale: SEQ([isNumberPercent], SpaceFuncObj("filter", "grayscale")),
+  invert: SEQ([isNumberPercent], SpaceFuncObj("filter", "invert")),
+  opacity: SEQ([isNumberPercent], SpaceFuncObj("filter", "opacity")),
+  saturate: SEQ([isNumberPercent], SpaceFuncObj("filter", "saturate")),
+  sepia: SEQ([isNumberPercent], SpaceFuncObj("filter", "sepia")),
+  dropShadow: SEQ([isColor, isLength, isLength, isLengthPercent], SpaceFuncObj("filter", "drop-shadow")),
+  hueRotate: SEQ([isAngle], SpaceFuncObj("filter", "hue-rotate")),
+  filter: SEQ([isUrl], SpaceListObj("filter")),
 
-  backdropBlur: filter1.bind(null, "backdropFilter", "blur", [evaluateLength]),
-  backdropBrightness: filter1.bind(null, "backdropFilter", "brightness", [evaluateNumberPercent]),
-  backdropContrast: filter1.bind(null, "backdropFilter", "contrast", [evaluateNumberPercent]),
-  backdropGrayscale: filter1.bind(null, "backdropFilter", "grayscale", [evaluateNumberPercent]),
-  backdropInvert: filter1.bind(null, "backdropFilter", "invert", [evaluateNumberPercent]),
-  backdropOpacity: filter1.bind(null, "backdropFilter", "opacity", [evaluateNumberPercent]),
-  backdropSaturate: filter1.bind(null, "backdropFilter", "saturate", [evaluateNumberPercent]),
-  backdropSepia: filter1.bind(null, "backdropFilter", "sepia", [evaluateNumberPercent]),
-  backdropDropShadow: filter1.bind(null, "backdropFilter", "drop-shadow", [evaluateColor, evaluateLength, evaluateLength, evaluateLengthPercent]),
-  backdropHueRotate: filter1.bind(null, "backdropFilter", "hue-rotate", [evaluateAngle]),
-  backdropFilter: filter2.bind(null, "backdropFilter", evaluateUrl),
+  backdropBlur: SEQ([isLength], SpaceFuncObj("backdropFilter", "blur")),
+  backdropBrightness: SEQ([isNumberPercent], SpaceFuncObj("backdropFilter", "brightness")),
+  backdropContrast: SEQ([isNumberPercent], SpaceFuncObj("backdropFilter", "contrast")),
+  backdropGrayscale: SEQ([isNumberPercent], SpaceFuncObj("backdropFilter", "grayscale")),
+  backdropInvert: SEQ([isNumberPercent], SpaceFuncObj("backdropFilter", "invert")),
+  backdropOpacity: SEQ([isNumberPercent], SpaceFuncObj("backdropFilter", "opacity")),
+  backdropSaturate: SEQ([isNumberPercent], SpaceFuncObj("backdropFilter", "saturate")),
+  backdropSepia: SEQ([isNumberPercent], SpaceFuncObj("backdropFilter", "sepia")),
+  backdropDropShadow: SEQ([isColor, isLength, isLength, isLengthPercent], SpaceFuncObj("backdropFilter", "drop-shadow")),
+  backdropHueRotate: SEQ([isAngle], SpaceFuncObj("backdropFilter", "hue-rotate")),
+  backdropFilter: SEQ([isUrl], SpaceListObj("backdropFilter")),
 
-  matrix: transform1.bind(null, "matrix", evaluateNumber, 6),
-  matrix3d: transform1.bind(null, "matrix3d", evaluateNumber, 16),
-  perspective: transform1.bind(null, "perspective", evaluateLength, 1),
-  rotate: transform1.bind(null, "rotate", evaluateAngle, 1),
-  rotateZ: transform1.bind(null, "rotateZ", evaluateAngle, 1),
-  rotateY: transform1.bind(null, "rotateY", evaluateAngle, 1),
-  rotateX: transform1.bind(null, "rotateX", evaluateAngle, 1),
-  translateX: transform1.bind(null, "translateX", evaluateLengthPercent, 1),
-  translateY: transform1.bind(null, "translateY", evaluateLengthPercent, 1),
-  translateZ: transform1.bind(null, "translateZ", evaluateLengthPercent, 1),
-  translate3d: transform1.bind(null, "translate3d", evaluateLengthPercent, 3),
-  scaleX: transform1.bind(null, "scaleX", evaluateNumber, 1),
-  scaleY: transform1.bind(null, "scaleY", evaluateNumber, 1),
-  scaleZ: transform1.bind(null, "scaleZ", evaluateNumber, 1),
-  scale3d: transform1.bind(null, "scale3d", evaluateNumber, 3),
-  skewX: transform1.bind(null, "skewX", evaluateAnglePercent, 1),
-  skewY: transform1.bind(null, "skewY", evaluateAnglePercent, 1),
-  translate: transform2.bind(null, "translate", evaluateLengthPercent),
-  scale: transform2.bind(null, "scale", evaluateNumberPercent),
-  skew: transform2.bind(null, "skew", evaluateAnglePercent),
-  rotate3d,
+  matrix: SEQ([Array(6).fill(isNumber)], CommaFuncObj("transform", "matrix")),
+  matrix3d: SEQ([Array(16).fill(isNumber)], CommaFuncObj("transform", "matrix3d")),
+  perspective: SEQ([isLength], CommaFuncObj("transform", "perspective")),
+  rotate: SEQ([isAngle], CommaFuncObj("transform", "rotate")),
+  rotateZ: SEQ([isAngle], CommaFuncObj("transform", "rotateZ")),
+  rotateY: SEQ([isAngle], CommaFuncObj("transform", "rotateY")),
+  rotateX: SEQ([isAngle], CommaFuncObj("transform", "rotateX")),
+  translateX: SEQ([isLengthPercent], CommaFuncObj("transform", "translateX")),
+  translateY: SEQ([isLengthPercent], CommaFuncObj("transform", "translateY")),
+  translateZ: SEQ([isLengthPercent], CommaFuncObj("transform", "translateZ")),
+  translate3d: SEQ([Array(3).fill(isLengthPercent)], CommaFuncObj("transform", "translate3d")),
+  scaleX: SEQ([isNumber], CommaFuncObj("transform", "scaleX")),
+  scaleY: SEQ([isNumber], CommaFuncObj("transform", "scaleY")),
+  scaleZ: SEQ([isNumber], CommaFuncObj("transform", "scaleZ")),
+  scale3d: SEQ([Array(3).fill(isNumber)], CommaFuncObj("transform", "scale3d")),
+  skewX: SEQ([isAnglePercent], CommaFuncObj("transform", "skewX")),
+  skewY: SEQ([isAnglePercent], CommaFuncObj("transform", "skewY")),
+  rotate3d: SEQ([isNumber, isNumber, isNumber, isAngle], CommaFuncObj("transform", "rotate3d")),
+
+  translate: POLY([
+    SEQ([isLengthPercent], CommaFuncObj("transform", "translate")),
+    SEQ([isLengthPercent, isLengthPercent], CommaFuncObj("transform", "translate")),
+  ]),
+  scale: POLY([
+    SEQ([isNumberPercent], CommaFuncObj("transform", "scale")),
+    SEQ([isNumberPercent, isNumberPercent], CommaFuncObj("transform", "scale")),
+  ]),
+  skew: POLY([
+    SEQ([isAnglePercent], CommaFuncObj("transform", "skew")),
+    SEQ([isAnglePercent, isAnglePercent], CommaFuncObj("transform", "skew")),
+  ]),
 };
 
 //todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
@@ -2741,6 +2941,342 @@ var position$1 = {
   // positionAnchor,
 };
 
+//arity is an optional check function that can wrap other functions to check for 
+
+// function oneOfEach(definitions, args) {
+//   const res = {};
+//   const usedKeys = new Set();
+//   for (let a of args)
+//     for (const [prop, def] of Object.entries(definitions)) {
+//       if (!usedKeys.has(prop))
+//         continue;
+//       if (!(a.text in definitions || a.name in definitions))
+//         throw new TypeError(`Unknown argument: ${a.text}`);
+//       Object.assign(res, definitions[a.text] ?? definitions[a.name](a));
+//     }
+//   return res;
+// }
+
+// const x = {
+//   butt: {strokeLinecap: "butt"}, 
+//   round: {strokeLinecap: "round"}, 
+//   square: {strokeLinecap: "square"}, 
+//   miter: {strokeLinejoin: isLengthPercent}, 
+//   round: {strokeLinejoin: "round"}, 
+//   bevel: {strokeLinejoin: "bevel"},
+//   strokeColor: isColor,
+//   strokeWidth: isLengthPercent,
+//   strokeOpacity: isFraction,
+//   dash: {
+//     strokeDasharray: isLengthPercentNumber,
+//     strokeDashoffset: { offset: isLengthPercentNumber },
+//   }
+// };
+
+
+// const y = [
+//   ["butt", "strokeLinecap", "butt" ],
+//   ["round", "strokeLinecap", "round" ],
+//   ["square", "strokeLinecap", "square" ],
+//   ["miter", "strokeLinejoin", isLengthPercent ],
+//   ["round", "strokeLinejoin", "round" ],
+//   ["bevel", "strokeLinejoin", "bevel" ]
+
+// ].forEach(([name, property, value]) => {
+//   stroke[name + "Stroke"] = { [property]: value };
+// });
+
+// function dash(args) {
+//   return clusterInArrays({
+//     strokeDasharray: isLengthPercentNumber,
+//     strokeDashoffset: { offset: isLengthPercentNumber },
+//   }, args);
+// }
+// //$stroke(color, lengthPercent width, butt|round|square, miter(number)|round|bevel, dash(offset(number/lengthPercent),...number/lengthPercent),opacity(fraction/percent))
+// function stroke(args) {
+//   return oneOfEach({
+//     strokeColor: isColor,
+//     strokeWidth: isLengthPercent,
+//     strokeLinecap: ["butt", "round", "square"],
+//     strokeLinejoin: { miter: isLengthPercent } || ["round", "bevel"], //todo this doesn't work.
+//     strokeOpacity: { strokeOpacity: isFraction },
+//     dash,
+//   }, args);
+// }
+//$fill(color, opacity(fraction/percent), nonzero|evenodd)
+
+//$svg(opacity(fraction/percent), )
+
+function createColorFunction(property) {
+  return args => {
+    if (!args?.length) return { [property]: "currentColor" };
+    const c = extractColor(args) || extractUrl(args);
+    if (c) {
+      if (args.length) throw new SyntaxError(`Unknown ${property} argument: ${args[0].text}`);
+      return { [property]: c };
+    }
+    const b = isBasic(args[0]);
+    if (b) {
+      args.shift();
+      if (args.length) throw new SyntaxError(`Unknown ${property} argument: ${args[0].text}`);
+      return { [property]: b.text };
+    }
+    throw new SyntaxError(`${property}() requires a color, url(), or valid CSS value. Got: ${args[0]?.text || 'undefined'}`);
+  }
+}
+
+function createLengthFunction(property, defaultValue) {
+  return function (args) {
+    if (!args?.length) return { [property]: defaultValue };
+    const value = extractLength(args) ?? extractName(args);
+    if (!value) throw new SyntaxError(`${property}() requires a length or valid CSS value. Got: ${args[0]?.text || 'undefined'}`);
+    if (args.length) throw new SyntaxError(`Unknown ${property} argument: ${args[0].text}`);
+    return { [property]: value };
+  };
+}
+
+function createEnumFunction(property, validWords) {
+  return args => {
+    if (!args?.length) return { [property]: validWords[Object.keys(validWords)[0]] };
+    const v = extractName(args);
+    if (!(v in validWords)) throw new SyntaxError(`Unknown ${property}: ${v}. Use: ${Object.keys(validWords).join(", ")}`);
+    if (args.length) throw new SyntaxError(`Unknown ${property} argument: ${args[0].text}`);
+    return { [property]: validWords[v] };
+  };
+}
+
+function createOpacityFunction(property) {
+  return args => {
+    if (!args?.length) return { [property]: "1" };
+    const opacity = isNumber(args[0]) ?? isBasic(args[0]);
+    if (!opacity) throw new SyntaxError(`${property}() requires a number or percentage. Got: ${args[0]?.text || 'undefined'}`);
+    args.shift();
+    if (args.length) throw new SyntaxError(`Unknown ${property} argument: ${args[0].text}`);
+    return { [property]: opacity.text };
+  };
+}
+
+function createMarkerFunction(property) {
+  return function (args) {
+    if (!args?.length) return { [property]: "none" };
+    const marker = extractUrl(args) ?? (extractName(args) === "none" ? "none" : null);
+    if (!marker) throw new SyntaxError(`${property}() requires url() or 'none'. Got: ${args[0]?.text || 'undefined'}`);
+    if (args.length) throw new SyntaxError(`Unknown ${property} argument: ${args[0].text}`);
+    return { [property]: marker };
+  };
+}
+
+function createNumberFunction(property, defaultValue) {
+  return function (args) {
+    if (!args?.length) return { [property]: defaultValue };
+    const value = extractNumber$1(args) ?? extractName(args);
+    if (!value) throw new SyntaxError(`${property}() requires a number or valid CSS value. Got: ${args[0]?.text || 'undefined'}`);
+    if (args.length) throw new SyntaxError(`Unknown ${property} argument: ${args[0].text}`);
+    return { [property]: value };
+  };
+}
+
+function strokeDasharray(args) {
+  if (!args?.length) return { "stroke-dasharray": "none" };
+  const values = [];
+  while (args.length) {
+    const arg = args.shift();
+    const basic = isBasic(arg);
+    if (basic && (basic.type === "number" || basic.type === "length" || basic.text === "none")) {
+      values.push(basic.text);
+    } else if (arg.kind === "WORD" && arg.text === "none") {
+      values.push("none");
+    } else {
+      args.unshift(arg);
+      break;
+    }
+  }
+  if (args.length) throw new SyntaxError(`Unknown strokeDasharray argument: ${args[0].text}`);
+  return { "stroke-dasharray": values.join(" ") };
+}
+
+function paintOrder(args) {
+  if (!args?.length) return { "paint-order": "normal" };
+
+  const values = [];
+  while (args.length) {
+    const v = extractName(args);
+    if (!(v in PAINT_ORDER_WORDS)) throw new SyntaxError(`Unknown paint-order value: ${v}. Use: ${Object.keys(PAINT_ORDER_WORDS).join(", ")}`);
+    values.push(PAINT_ORDER_WORDS[v]);
+  }
+
+  return { "paint-order": values.join(" ") };
+}
+
+const LINECAP_WORDS = {
+  butt: "butt",
+  round: "round",
+  square: "square",
+};
+
+const LINEJOIN_WORDS = {
+  miter: "miter",
+  round: "round",
+  bevel: "bevel",
+};
+
+const TEXT_ANCHOR_WORDS = {
+  start: "start",
+  middle: "middle",
+  end: "end"
+};
+
+const SHAPE_RENDERING_WORDS = {
+  auto: "auto",
+  optimizeSpeed: "optimizeSpeed",
+  crispEdges: "crispEdges",
+  geometricPrecision: "geometricPrecision"
+};
+
+const PAINT_ORDER_WORDS = {
+  normal: "normal",
+  fill: "fill",
+  stroke: "stroke",
+  markers: "markers"
+};
+
+const VECTOR_EFFECT_WORDS = {
+  none: "none",
+  nonScalingStroke: "non-scaling-stroke",
+  nonScalingSize: "non-scaling-size",
+  nonRotation: "non-rotation",
+  fixedPosition: "fixed-position"
+};
+
+const DOMINANT_BASELINE_WORDS = {
+  auto: "auto", ideographic: "ideographic", alphabetic: "alphabetic", hanging: "hanging",
+  mathematical: "mathematical", central: "central", middle: "middle",
+  textAfterEdge: "text-after-edge", textBeforeEdge: "text-before-edge"
+};
+
+const ALIGNMENT_BASELINE_WORDS = {
+  auto: "auto", baseline: "baseline", beforeEdge: "before-edge", textBeforeEdge: "text-before-edge",
+  middle: "middle", central: "central", afterEdge: "after-edge", textAfterEdge: "text-after-edge",
+  ideographic: "ideographic", alphabetic: "alphabetic", hanging: "hanging", mathematical: "mathematical"
+};
+
+const RULE_WORDS = {
+  nonzero: "nonzero",
+  evenodd: "evenodd"
+};
+
+const COLOR_INTERPOLATION_WORDS = {
+  auto: "auto",
+  sRGB: "sRGB",
+  linearRGB: "linearRGB"
+};
+
+const COLOR_RENDERING_WORDS = {
+  auto: "auto",
+  optimizeSpeed: "optimizeSpeed",
+  optimizeQuality: "optimizeQuality"
+};
+
+const IMAGE_RENDERING_WORDS = {
+  auto: "auto",
+  optimizeSpeed: "optimizeSpeed",
+  optimizeQuality: "optimizeQuality",
+  pixelated: "pixelated"
+};
+
+const MASK_TYPE_WORDS = {
+  luminance: "luminance",
+  alpha: "alpha"
+};
+
+
+const fill = createColorFunction("fill");
+const stroke = createColorFunction("stroke");
+const stopColor = createColorFunction("stop-color");
+const lightingColor = createColorFunction("lighting-color");
+const strokeWidth = createLengthFunction("stroke-width", "1");
+const strokeDashoffset = createLengthFunction("stroke-dashoffset", "0");
+const baselineShift = createLengthFunction("baseline-shift", "baseline");
+const strokeLinecap = createEnumFunction("stroke-linecap", LINECAP_WORDS);
+const strokeLinejoin = createEnumFunction("stroke-linejoin", LINEJOIN_WORDS);
+const textAnchor = createEnumFunction("text-anchor", TEXT_ANCHOR_WORDS);
+const shapeRendering = createEnumFunction("shape-rendering", SHAPE_RENDERING_WORDS);
+const vectorEffect = createEnumFunction("vector-effect", VECTOR_EFFECT_WORDS);
+const dominantBaseline = createEnumFunction("dominant-baseline", DOMINANT_BASELINE_WORDS);
+const alignmentBaseline = createEnumFunction("alignment-baseline", ALIGNMENT_BASELINE_WORDS);
+const fillRule = createEnumFunction("fill-rule", RULE_WORDS);
+const clipRule = createEnumFunction("clip-rule", RULE_WORDS);
+const colorInterpolation = createEnumFunction("color-interpolation", COLOR_INTERPOLATION_WORDS);
+const colorRendering = createEnumFunction("color-rendering", COLOR_RENDERING_WORDS);
+const imageRendering = createEnumFunction("image-rendering", IMAGE_RENDERING_WORDS);
+const maskType = createEnumFunction("mask-type", MASK_TYPE_WORDS);
+const fillOpacity = createOpacityFunction("fill-opacity");
+const strokeOpacity = createOpacityFunction("stroke-opacity");
+const svgOpacity = createOpacityFunction("opacity");
+const stopOpacity = createOpacityFunction("stop-opacity");
+const markerStart = createMarkerFunction("marker-start");
+const markerMid = createMarkerFunction("marker-mid");
+const markerEnd = createMarkerFunction("marker-end");
+const strokeMiterlimit = createNumberFunction("stroke-miterlimit", "4");
+
+var svg = {
+  fill,
+  stroke,
+  strokeWidth,
+  strokeLinecap,
+  strokeLinejoin,
+  strokeDasharray,
+  strokeMiterlimit,
+  strokeDashoffset,
+  strokeOpacity,
+  paintOrder,
+  vectorEffect,
+
+  fillOpacity,
+  fillRule,
+  opacity: svgOpacity,
+  markerStart,
+  markerMid,
+  markerEnd,
+  stopColor,
+  stopOpacity,
+  textAnchor,
+  dominantBaseline,
+  alignmentBaseline,
+  baselineShift,
+  clipRule,
+  shapeRendering,
+  colorInterpolation,
+  colorRendering,
+  imageRendering,
+  lightingColor,
+  maskType,
+  noFill: () => ({ fill: "none" }),
+  noStroke: () => ({ stroke: "none" }),
+  noMarkers: () => ({ "marker-start": "none", "marker-mid": "none", "marker-end": "none" }),
+  thinStroke: { "stroke-width": "1" },
+  mediumStroke: { "stroke-width": "2" },
+  thickStroke: { "stroke-width": "3" },
+  solidStroke: { "stroke-dasharray": "none" },
+  dashedStroke: { "stroke-dasharray": "5,5" },
+  dottedStroke: { "stroke-dasharray": "1,1" },
+  roundStroke: { "stroke-linecap": "round", "stroke-linejoin": "round" },
+  sharpStroke: { "stroke-linecap": "butt", "stroke-linejoin": "miter" },
+  nonScalingStroke: { "vector-effect": "non-scaling-stroke" },
+  nonzeroFill: { "fill-rule": "nonzero" },
+  evenoddFill: { "fill-rule": "evenodd" },
+  startText: { "text-anchor": "start" },
+  middleText: { "text-anchor": "middle" },
+  endText: { "text-anchor": "end" },
+  alphabeticBaseline: { "dominant-baseline": "alphabetic" },
+  middleBaseline: { "dominant-baseline": "middle" },
+  hangingBaseline: { "dominant-baseline": "hanging" },
+  crispEdges: { "shape-rendering": "crispEdges" },
+  geometricPrecision: { "shape-rendering": "geometricPrecision" },
+  optimizeSpeed: { "color-rendering": "optimizeSpeed", "image-rendering": "optimizeSpeed" },
+  optimizeQuality: { "color-rendering": "optimizeQuality", "image-rendering": "optimizeQuality" },
+};
+
 const ObjectFit = {
   objectFit: undefined,
   fitFill: { objectFit: "fill" },
@@ -2762,6 +3298,7 @@ const SHORTS = {
   ...filterTransforms,
   ...shadows,
   ...position$1,
+  ...svg,
   ...ObjectFit,
 };
 
@@ -2930,6 +3467,19 @@ function bodyToTxt(rule, props) {
   return `${rule} {\n${body}\n}`;
 }
 
+function interpretShort(exp) {
+  const cb = SHORTS[exp.name ?? exp.text];
+  if (!cb) throw new ReferenceError(exp.name);
+  if (!(cb instanceof Function)) return cb;
+  try {
+    return cb(exp.args, exp.name);
+  } catch (e) {
+    debugger;
+    //todo improve error message
+    throw e;
+  }
+}
+
 const MAGICWORD = `$"'$`;
 function parse(short) {
   const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
@@ -2937,12 +3487,7 @@ function parse(short) {
   const { exp, media } = parseMediaQuery(short, MEDIA_WORDS);
   let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
   exprList = exprList.map(parseNestedExpression);
-  exprList = exprList.map(exp => {
-    const cb = SHORTS[exp.name] ?? SHORTS[exp.text];
-    if (!cb) throw new ReferenceError(exp.name);
-    return !(cb instanceof Function) ? cb : cb(exp.args);
-    // cb({ todo: "here we need math and var and calc and env" }, exp.args);
-  });
+  exprList = exprList.map(interpretShort);
   exprList &&= clashOrStack(exprList);
   let { selector, item } = parseSelectorPipe(sel, clazz);
   const layer = (item ? "items" : "container") + (short.match(/^(\$|\|\$)/) ? "Default" : "");
@@ -3022,13 +3567,22 @@ function goRightComma(tokens, divider) {
   throw new SyntaxError("missing ')'");
 }
 
+function operatorPriority(a, name, b) {
+  const PRI = { "**": 1, "*": 2, "/": 2, "+": 3, "-": 3, "??": 4, };
+  const leftPri = PRI[a.name] ?? 0;
+  const rightPri = PRI[name] ?? 10;
+  if (leftPri <= rightPri)
+    return { kind: "EXP", name, args: [a, b] };
+  a.args[1] = { kind: "EXP", name, args: [a.args[1], b] };
+  return a;
+}
+
 function goRightOperator(tokens) {
   let a = goDeep(tokens);
   while (tokens.length) {
     const { kind, text } = tokens[0];
     if (kind === "OPERATOR")
-      //operator priorities: (), ??, then **, then */ , then +- , left to right.
-      a = { kind: "EXP", name: tokens.shift().text, args: [a, goDeep(tokens)] };
+      a = operatorPriority(a, tokens.shift().text, goDeep(tokens));
     else if (kind === "NUMBER" && (text[0] == "-" || text[0] == "+"))
       a = { kind: "EXP", name: "+", args: [a, goDeep(tokens)] };
     else if (kind == "COLOR" && (a.type == "color" || a.kind == "COLOR"))
@@ -3045,7 +3599,6 @@ function goDeep(tokens) {
     return { kind: "EXP", name: tokens.shift().text, args: goRightComma(tokens, ",") };
   if (tokens[0].kind === "SYN")
     throw new SyntaxError(`Expected expression, got: ${tokens[0].text}`);
-
   if (tokens[1].text === "(") {
     const { text: name, kind } = tokens.shift();
     tokens.shift();
@@ -3259,12 +3812,11 @@ const TYPES = {
 
   COLOR_NAMES: "aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen",
   COLOR_FUNCTIONS: "rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch",
-  MATH: "min|max|clamp|round|ceil|floor|abs|sin|cos|tan|asin|acos|atan|atan2|sqrt|log2|log10|exp|pow",
+  // MATH: "min|max|clamp|round|ceil|floor|abs|sin|cos|tan|asin|acos|atan|atan2|sqrt|log2|log10|exp|pow",
   // OTHER_FUNCTIONS: "url|attr|var|env|counter|counters|rect|repeat|minmax",
 };
 
 const NUMBER = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${TYPES.LENGTHS})|(${TYPES.ANGLES})|(${TYPES.TIMES})|(${TYPES.PERCENT})|(${TYPES.FR}))?`;
-const MATH = new RegExp(`^(${TYPES.MATH})$`);
 
 
 const tokenize = (_ => {
@@ -3304,7 +3856,6 @@ const tokenize = (_ => {
       else if (c) out.push({ text, kind: "COLOR" });
       else if (quote) out.push({ text, kind: "QUOTE" });
       else if (vari) out.push({ text, kind: "VAR" });
-      else if (word && text.match(MATH)) out.push({ text, kind: "MATH" });
       else if (word) out.push({ text, kind: "WORD" });
       else if (op) out.push({ text, kind: "OPERATOR" });
       else if (cpp) out.push({ text, kind: "SYN" });

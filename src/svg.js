@@ -1,4 +1,70 @@
-import { isBasic, isNumber, extractColor, extractLength, extractName, extractUrl, extractNumber } from "./func.js";
+import { isBasic, isNumber, extractColor, extractLength, extractName, extractUrl, extractNumber, isLength, isLengthPercent } from "./func.js";
+
+//arity is an optional check function that can wrap other functions to check for 
+
+// function oneOfEach(definitions, args) {
+//   const res = {};
+//   const usedKeys = new Set();
+//   for (let a of args)
+//     for (const [prop, def] of Object.entries(definitions)) {
+//       if (!usedKeys.has(prop))
+//         continue;
+//       if (!(a.text in definitions || a.name in definitions))
+//         throw new TypeError(`Unknown argument: ${a.text}`);
+//       Object.assign(res, definitions[a.text] ?? definitions[a.name](a));
+//     }
+//   return res;
+// }
+
+// const x = {
+//   butt: {strokeLinecap: "butt"}, 
+//   round: {strokeLinecap: "round"}, 
+//   square: {strokeLinecap: "square"}, 
+//   miter: {strokeLinejoin: isLengthPercent}, 
+//   round: {strokeLinejoin: "round"}, 
+//   bevel: {strokeLinejoin: "bevel"},
+//   strokeColor: isColor,
+//   strokeWidth: isLengthPercent,
+//   strokeOpacity: isFraction,
+//   dash: {
+//     strokeDasharray: isLengthPercentNumber,
+//     strokeDashoffset: { offset: isLengthPercentNumber },
+//   }
+// };
+
+
+// const y = [
+//   ["butt", "strokeLinecap", "butt" ],
+//   ["round", "strokeLinecap", "round" ],
+//   ["square", "strokeLinecap", "square" ],
+//   ["miter", "strokeLinejoin", isLengthPercent ],
+//   ["round", "strokeLinejoin", "round" ],
+//   ["bevel", "strokeLinejoin", "bevel" ]
+
+// ].forEach(([name, property, value]) => {
+//   stroke[name + "Stroke"] = { [property]: value };
+// });
+
+// function dash(args) {
+//   return clusterInArrays({
+//     strokeDasharray: isLengthPercentNumber,
+//     strokeDashoffset: { offset: isLengthPercentNumber },
+//   }, args);
+// }
+// //$stroke(color, lengthPercent width, butt|round|square, miter(number)|round|bevel, dash(offset(number/lengthPercent),...number/lengthPercent),opacity(fraction/percent))
+// function stroke(args) {
+//   return oneOfEach({
+//     strokeColor: isColor,
+//     strokeWidth: isLengthPercent,
+//     strokeLinecap: ["butt", "round", "square"],
+//     strokeLinejoin: { miter: isLengthPercent } || ["round", "bevel"], //todo this doesn't work.
+//     strokeOpacity: { strokeOpacity: isFraction },
+//     dash,
+//   }, args);
+// }
+//$fill(color, opacity(fraction/percent), nonzero|evenodd)
+
+//$svg(opacity(fraction/percent), )
 
 function createColorFunction(property) {
   return args => {
@@ -221,10 +287,12 @@ export default {
   strokeDasharray,
   strokeMiterlimit,
   strokeDashoffset,
+  strokeOpacity,
   paintOrder,
   vectorEffect,
+
   fillOpacity,
-  strokeOpacity,
+  fillRule,
   opacity: svgOpacity,
   markerStart,
   markerMid,
@@ -235,7 +303,6 @@ export default {
   dominantBaseline,
   alignmentBaseline,
   baselineShift,
-  fillRule,
   clipRule,
   shapeRendering,
   colorInterpolation,

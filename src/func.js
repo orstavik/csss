@@ -458,6 +458,10 @@ export function isQuote(a) {
   if (a.kind === "QUOTE")
     return a;
 }
+export function isName(a) {
+  if (a.kind === "WORD" && a.text[0].match(/[a-zA-Z0-9-]/))
+    return a;
+}
 
 //interprets returns STRINGS
 export function interpretName(a) {
