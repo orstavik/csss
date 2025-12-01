@@ -9,7 +9,7 @@
 
 import { isNumber, extractTime, interpretName } from "./func.js";
 
-function transition(timing, args) {
+function transition(timing, { args }) {
   const dur = extractTime(args);
   const delay = extractTime(args);
   const settings = [dur, delay].filter(Boolean);
@@ -30,11 +30,11 @@ function transition(timing, args) {
 function jump(type, args) {
   const steps = isNumber(args[0])?.num;
   if (steps > 0)
-    return transition(`steps(${steps}, ${type})`, args.slice(1));
+    return transition(`steps(${steps}, ${type})`, { args: args.slice(1) });
   throw new SyntaxError(`$jump requires a positive integer argument first.`);
 }
 
-function cube(cube, args) { return transition(`cubic-bezier(${cube})`, args); }
+function cube(cube, { args }) { return transition(`cubic-bezier(${cube})`, { args }); }
 
 import * as Transitions from "./Curves.js";
 
@@ -84,7 +84,7 @@ export default {
   springInOut,
   wobble,
 
-  transition: ([x1, y1, x2, y2, ...args]) => {
+  transition: ({ args: [x1, y1, x2, y2, ...args] }) => {
     x1 = extractNumber(x1);
     y1 = extractNumber(y1);
     x2 = extractNumber(x2);
@@ -93,9 +93,9 @@ export default {
       throw new SyntaxError(`$transition (cubic-bezier) requires four number arguments first.`);
     return transition(`cubic-bezier(${x1},${y1},${x2},${y2})`, args.slice(4))
   },
-  jump: jump.bind(null, ""), //jumpEnd is default.
-  jumpEnd: jump.bind(null, "jump-end"),
-  jumpStart: jump.bind(null, "jump-start"),
-  jumpNone: jump.bind(null, "jump-none"),
-  jumpBoth: jump.bind(null, "jump-both"),
+  jump: ({ args }) => jump("", args), //jumpEnd is default.
+  jumpEnd: ({ args }) => jump("jump-end", args),
+  jumpStart: ({ args }) => jump("jump-start", args),
+  jumpNone: ({ args }) => jump("jump-none", args),
+  jumpBoth: ({ args }) => jump("jump-both", args),
 };

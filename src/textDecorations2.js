@@ -3,7 +3,7 @@ import { isColor, isLength } from "./func.js";
 export const TYP = (singles, sets, post) => {
   singles = Object.entries(singles);
   sets = Object.entries(sets);
-  return (args, name) => {
+  return ({args, name}) => {
     const resOnes = {}, resMany = {};
     main: for (let i = 0; i < args.length; i++) {
       const a = args[i];

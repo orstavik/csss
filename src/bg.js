@@ -238,7 +238,7 @@ function bgColorOrImage(args) {
 }
 
 function makeBg(cb) {
-  return function (argsIn) {
+  return function ({args: argsIn}) {
     const { res, args } = initiateBackground(argsIn);
     if (!args.length)
       throw new SyntaxError(`Missing background main argument: color, image, or gradient.`);

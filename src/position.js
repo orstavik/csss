@@ -23,7 +23,7 @@ const origin = {
   rightEnd: ["right", "insetBlockEnd"],
 };
 
-function position(position, ar) {
+function position(position, {args: ar}) {
   const res = { position };
   if (!ar?.length) return res;
   const [pl1, pl2] = origin[extractName(ar)] ?? ["left", "top"];

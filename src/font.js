@@ -215,7 +215,7 @@ const BUILTIN_TYPES = {
 
 //I think that for $font() we should have either using a name, *or* using a face(). If we use a typeface, then we can't override the family.
 //that just breads confusion. So, if the $font() only has a single family, then we try to use that as the typeface name. Otherwise, we consider it a face referece. 
-function font(args) {
+function font({ args }) {
   const typeName = interpretName(args[0]);
   if (!typeName)
     throw new SyntaxError(`first argument is not a name: "${args[0].text}"`);
@@ -230,7 +230,7 @@ function font(args) {
   return res;
 }
 
-function typeFace(args) {
+function typeFace({ args }) {
   const typeName = extractName(args);
   if (!typeName)
     throw new SyntaxError(`first argument is not a name: "${args[0].text}"`);
@@ -245,7 +245,7 @@ function typeFace(args) {
 }
 
 function makeSingleDroplet(NAME, FUNC) {
-  return function (args) {
+  return function ({ args }) {
     if (args.length != 1)
       throw new SyntaxError(`$${NAME} droplet only accepts one argument, but got ${args.length}: ${args.map(a => a.text).join(", ")}`);
     const a = args[0];

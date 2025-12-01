@@ -602,7 +602,7 @@ const NativeCssProperties = Object.fromEntries(Object.entries(NativeCss.supporte
   camel = fixBorderNames(camel);
   const functions = [isBasic, ...types.map(t => INTERPRETERS[t]).filter(Boolean)].reverse();
 
-  function interpretNativeValue(args) {
+  function interpretNativeValue({ args, name }) {
     const argsOut = args.map(a => {
       let result;
       for (const cb of functions)
@@ -647,7 +647,7 @@ export default {
   em: NativeCssProperties.fontSize,
 };
 
-export const SEQ = (interpreters, post) => (args, name) => {
+export const SEQ = (interpreters, post) => ({ args, name }) => {
   if (args.length != interpreters.length)
     throw new SyntaxError(`${name} requires ${interpreters.length} arguments, got ${args.length} arguments.`);
   return post(interpreters.map((interpreter, i) => {
@@ -660,11 +660,11 @@ export const SEQ = (interpreters, post) => (args, name) => {
   }));
 };
 
-export const POLY = (funcs) => (args, name) => {
+export const POLY = (funcs) => (exp) => {
   let errors = [];
   for (let cb of funcs) {
     try {
-      const v = cb(args, name);
+      const v = cb(exp);
       if (v !== undefined) return v;
     } catch (e) {
       errors.push(e.message);

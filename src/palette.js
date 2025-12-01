@@ -28,7 +28,7 @@ function makeColors(name, color) {
   };
 }
 
-function palette([name, main, on]) {
+function palette({args: [name, main, on]}) {
   if (!name || !main || !on)
     throw "$palette(name,bgColor,fgColor) requires three parameters";
   if (name.kind !== "WORD")

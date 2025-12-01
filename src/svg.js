@@ -67,7 +67,7 @@ import { isBasic, isNumber, extractColor, extractLength, extractName, extractUrl
 //$svg(opacity(fraction/percent), )
 
 function createColorFunction(property) {
-  return args => {
+  return ({ args }) => {
     if (!args?.length) return { [property]: "currentColor" };
     const c = extractColor(args) || extractUrl(args);
     if (c) {
@@ -85,7 +85,7 @@ function createColorFunction(property) {
 }
 
 function createLengthFunction(property, defaultValue) {
-  return function (args) {
+  return ({ args }) => {
     if (!args?.length) return { [property]: defaultValue };
     const value = extractLength(args) ?? extractName(args);
     if (!value) throw new SyntaxError(`${property}() requires a length or valid CSS value. Got: ${args[0]?.text || 'undefined'}`);
@@ -95,7 +95,7 @@ function createLengthFunction(property, defaultValue) {
 }
 
 function createEnumFunction(property, validWords) {
-  return args => {
+  return ({ args }) => {
     if (!args?.length) return { [property]: validWords[Object.keys(validWords)[0]] };
     const v = extractName(args);
     if (!(v in validWords)) throw new SyntaxError(`Unknown ${property}: ${v}. Use: ${Object.keys(validWords).join(", ")}`);
@@ -105,7 +105,7 @@ function createEnumFunction(property, validWords) {
 }
 
 function createOpacityFunction(property) {
-  return args => {
+  return ({ args }) => {
     if (!args?.length) return { [property]: "1" };
     const opacity = isNumber(args[0]) ?? isBasic(args[0]);
     if (!opacity) throw new SyntaxError(`${property}() requires a number or percentage. Got: ${args[0]?.text || 'undefined'}`);
@@ -116,7 +116,7 @@ function createOpacityFunction(property) {
 }
 
 function createMarkerFunction(property) {
-  return function (args) {
+  return ({ args }) => {
     if (!args?.length) return { [property]: "none" };
     const marker = extractUrl(args) ?? (extractName(args) === "none" ? "none" : null);
     if (!marker) throw new SyntaxError(`${property}() requires url() or 'none'. Got: ${args[0]?.text || 'undefined'}`);
@@ -126,7 +126,7 @@ function createMarkerFunction(property) {
 }
 
 function createNumberFunction(property, defaultValue) {
-  return function (args) {
+  return ({ args }) => {
     if (!args?.length) return { [property]: defaultValue };
     const value = extractNumber(args) ?? extractName(args);
     if (!value) throw new SyntaxError(`${property}() requires a number or valid CSS value. Got: ${args[0]?.text || 'undefined'}`);
@@ -135,7 +135,7 @@ function createNumberFunction(property, defaultValue) {
   };
 }
 
-function strokeDasharray(args) {
+function strokeDasharray({ args }) {
   if (!args?.length) return { "stroke-dasharray": "none" };
   const values = [];
   while (args.length) {
@@ -154,7 +154,7 @@ function strokeDasharray(args) {
   return { "stroke-dasharray": values.join(" ") };
 }
 
-function paintOrder(args) {
+function paintOrder({ args }) {
   if (!args?.length) return { "paint-order": "normal" };
 
   const values = [];
