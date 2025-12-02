@@ -56,7 +56,7 @@ export function extractShort(rule) {
 function extractAtRules(obj) {
   const atRules = {}, mainRule = {};
   for (let [k, v] of Object.entries(obj))
-    (k.startsWith("@") ? atRules : mainRule)[k] = v;
+    ((k.startsWith("@") || k == ":root") ? atRules : mainRule)[k] = v;
   return { atRules, mainRule };
 }
 
