@@ -1,23 +1,3 @@
-**csss:** $w(100vh)
-**css:**
-```css
-@layer containerDefault {
-  .\$w\(100vh\) {
-    inline-size: 100vh;
-  }
-}
-```
-
-**csss:** $h(100vh)
-**css:**
-```css
-@layer containerDefault {
-  .\$h\(100vh\) {
-    block-size: 100vh;
-  }
-}
-```
-
 **csss:** $linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c)
 **css:**
 ```css
