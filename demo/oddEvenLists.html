@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odd/Even Colored Lists - CSSS Demo</title>
+    <script src="../src/auto.js?style=style&interval=400" type="module"></script>
+</head>
+
+<body class="$typeface(main,Inter,sans-serif,16px,400) $palette(primary,#6366f1,#ffffff) $palette(secondary,#8b5cf6,#ffffff) $block(padding(2rem)) $bg(#f8fafc) $color(#1e293b)">
+
+    <div class="$blockItem(inlineSize(800px,_,95%)) $blockItem(margin(0,auto))">
+        
+        <h1 class="$font(main,2.5rem,700) $color(#1e293b) $blockItem(margin(0,0,2rem,0)) $block(textCenter)">
+            📋 Task List
+        </h1>
+
+        <ul class="$block(padding(0)) $blockItem(margin(0)) |li$flex(row,itemsCenter,gap(1rem),padding(1rem))$border(1px,solid,#e2e8f0)$blockItem(margin(0,0,-1px,0))$easeIn(0.2s) |li:nth-child(odd)$bg(#f0f9ff) |li:nth-child(even)$bg(#white) |li:first-child$border(radius(12px,12px,0,0)) |li:last-child$border(radius(0,0,12px,12px)) |li:hover$bg(#e0f2fe)">
+            
+            <li>
+                <div class="$blockItem(size(40px,40px)) $bg(#primary) $border(radius(50%)) $flex(contentCenter,itemsCenter)">
+                    <span class="$font(main,1rem,600) $color(#white)">1</span>
+                </div>
+                <div class="$flex(column,gap(0.25rem))">
+                    <span class="$font(main,1.1rem,600) $color(#1e293b)">Complete project proposal</span>
+                    <span class="$font(main,0.9rem) $color(#64748b)">Due today</span>
+                </div>
+            </li>
+
+            <li>
+                <div class="$blockItem(size(40px,40px)) $bg(#secondary) $border(radius(50%)) $flex(contentCenter,itemsCenter)">
+                    <span class="$font(main,1rem,600) $color(#white)">2</span>
+                </div>
+                <div class="$flex(column,gap(0.25rem))">
+                    <span class="$font(main,1.1rem,600) $color(#1e293b)">Review team feedback</span>
+                    <span class="$font(main,0.9rem) $color(#64748b)">Due tomorrow</span>
+                </div>
+            </li>
+
+            <li>
+                <div class="$blockItem(size(40px,40px)) $bg(#10b981) $border(radius(50%)) $flex(contentCenter,itemsCenter)">
+                    <span class="$font(main,1rem,600) $color(#white)">3</span>
+                </div>
+                <div class="$flex(column,gap(0.25rem))">
+                    <span class="$font(main,1.1rem,600) $color(#1e293b)">Update documentation</span>
+                    <span class="$font(main,0.9rem) $color(#64748b)">Due next week</span>
+                </div>
+            </li>
+
+            <li>
+                <div class="$blockItem(size(40px,40px)) $bg(#f59e0b) $border(radius(50%)) $flex(contentCenter,itemsCenter)">
+                    <span class="$font(main,1rem,600) $color(#white)">4</span>
+                </div>
+                <div class="$flex(column,gap(0.25rem))">
+                    <span class="$font(main,1.1rem,600) $color(#1e293b)">Schedule client meeting</span>
+                    <span class="$font(main,0.9rem) $color(#64748b)">Due Friday</span>
+                </div>
+            </li>
+
+            <li>
+                <div class="$blockItem(size(40px,40px)) $bg(#ef4444) $border(radius(50%)) $flex(contentCenter,itemsCenter)">
+                    <span class="$font(main,1rem,600) $color(#white)">5</span>
+                </div>
+                <div class="$flex(column,gap(0.25rem))">
+                    <span class="$font(main,1.1rem,600) $color(#1e293b)">Test new features</span>
+                    <span class="$font(main,0.9rem) $color(#64748b)">Due next month</span>
+                </div>
+            </li>
+
+        </ul>
+
+    </div>
+
+</body>
+
+</html>

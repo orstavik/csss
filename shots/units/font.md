@@ -55,6 +55,7 @@
     -webkit-font-smoothing: var(--system-uiWebkitFontSmoothing, unset);
     -moz-osx-font-smoothing: var(--system-uiMozOsxFontSmoothing, unset);
     font-kerning: var(--system-uiFontKerning, unset);
+    hyphens: var(--system-uiHyphens, unset);
     font-stretch: condensed;
   }
 }
@@ -80,6 +81,7 @@
     -webkit-font-smoothing: var(--bodyWebkitFontSmoothing, unset);
     -moz-osx-font-smoothing: var(--bodyMozOsxFontSmoothing, unset);
     font-kerning: var(--bodyFontKerning, unset);
+    hyphens: var(--bodyHyphens, unset);
     font-stretch: var(--bodyFontWidth, unset);
   }
 }
@@ -91,6 +93,52 @@
 @layer containerDefault {
   .\$lineHeight\(1\.5\) {
     line-height: 1.5;
+  }
+}
+```
+
+**csss:** $font(serif,hyphens)
+**css:**
+```css
+@layer containerDefault {
+  .\$font\(serif\,hyphens\) {
+    font-family: serif, hyphens, var(--serifFontFamily, unset);
+    font-size: var(--serifFontSize, unset);
+    font-style: var(--serifFontStyle, unset);
+    font-weight: var(--serifFontWeight, unset);
+    font-size-adjust: var(--serifFontSizeAdjust, unset);
+    letter-spacing: var(--serifLetterSpacing, unset);
+    text-transform: var(--serifTextTransform, unset);
+    font-width: var(--serifFontWidth, unset);
+    font-variant-caps: var(--serifFontVariantCaps, unset);
+    font-synthesis: var(--serifFontSynthesis, unset);
+    font-feature-settings: var(--serifFontFeatureSettings, unset);
+    font-variation-settings: var(--serifFontVariationSettings, unset);
+    -webkit-font-smoothing: var(--serifWebkitFontSmoothing, unset);
+    -moz-osx-font-smoothing: var(--serifMozOsxFontSmoothing, unset);
+    font-kerning: var(--serifFontKerning, unset);
+    hyphens: var(--serifHyphens, unset);
+    font-stretch: var(--serifFontWidth, unset);
+  }
+}
+```
+
+**csss:** $shy
+**css:**
+```css
+@layer containerDefault {
+  .\$shy {
+    hyphens: manual;
+  }
+}
+```
+
+**csss:** $noHyphens
+**css:**
+```css
+@layer containerDefault {
+  .\$noHyphens {
+    hyphens: none;
   }
 }
 ```

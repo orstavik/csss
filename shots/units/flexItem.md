@@ -8,8 +8,6 @@
     place-content: unset;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     gap: 1rem;
@@ -107,8 +105,6 @@
     place-content: unset;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     gap: 1rem;

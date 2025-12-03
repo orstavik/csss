@@ -6,8 +6,6 @@
     display: block;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: justify;
     text-indent: unset;
   }
@@ -22,8 +20,6 @@
     display: block;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: center;
     text-indent: unset;
   }
@@ -38,8 +34,6 @@
     display: block;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: start;
     text-indent: unset;
   }
@@ -54,8 +48,6 @@
     display: block;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: end;
     text-indent: unset;
   }
@@ -70,8 +62,6 @@
     display: block;
     word-spacing: 0.5rem;
     line-height: 1.8;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
   }
@@ -86,8 +76,6 @@
     display: block;
     word-spacing: 0;
     line-height: 1.2;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
   }
@@ -102,8 +90,6 @@
     display: block;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     overflow: hidden;
@@ -139,8 +125,6 @@
     display: block;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     overflow: scroll;
@@ -156,8 +140,6 @@
     display: block;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     overflow-block: hidden;
@@ -166,34 +148,28 @@
 }
 ```
 
-**csss:** $block(hyphens)
+**csss:** $font(hyphens)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(hyphens\) {
-    display: block;
-    word-spacing: unset;
-    line-height: unset;
-    white-space: unset;
-    hyphens: auto;
-    text-align: unset;
-    text-indent: unset;
-  }
-}
-```
-
-**csss:** $block(preWrap)
-**css:**
-```css
-@layer containerDefault {
-  .\$block\(preWrap\) {
-    display: block;
-    word-spacing: unset;
-    line-height: unset;
-    white-space: pre-wrap;
-    hyphens: unset;
-    text-align: unset;
-    text-indent: unset;
+  .\$font\(hyphens\) {
+    font-family: hyphens, var(--hyphensFontFamily, unset);
+    font-size: var(--hyphensFontSize, unset);
+    font-style: var(--hyphensFontStyle, unset);
+    font-weight: var(--hyphensFontWeight, unset);
+    font-size-adjust: var(--hyphensFontSizeAdjust, unset);
+    letter-spacing: var(--hyphensLetterSpacing, unset);
+    text-transform: var(--hyphensTextTransform, unset);
+    font-width: var(--hyphensFontWidth, unset);
+    font-variant-caps: var(--hyphensFontVariantCaps, unset);
+    font-synthesis: var(--hyphensFontSynthesis, unset);
+    font-feature-settings: var(--hyphensFontFeatureSettings, unset);
+    font-variation-settings: var(--hyphensFontVariationSettings, unset);
+    -webkit-font-smoothing: var(--hyphensWebkitFontSmoothing, unset);
+    -moz-osx-font-smoothing: var(--hyphensMozOsxFontSmoothing, unset);
+    font-kerning: var(--hyphensFontKerning, unset);
+    hyphens: var(--hyphensHyphens, unset);
+    font-stretch: var(--hyphensFontWidth, unset);
   }
 }
 ```
@@ -206,8 +182,6 @@
     display: block;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     overflow-wrap: break-word;
@@ -223,29 +197,9 @@
     display: block;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     word-break: break-all;
-  }
-}
-```
-
-**csss:** $block(ellipsis,overflowHidden)
-**css:**
-```css
-@layer containerDefault {
-  .\$block\(ellipsis\,overflowHidden\) {
-    display: block;
-    word-spacing: unset;
-    line-height: unset;
-    white-space: nowrap;
-    hyphens: unset;
-    text-align: unset;
-    text-indent: unset;
-    text-overflow: ellipsis;
-    overflow: hidden;
   }
 }
 ```
@@ -258,8 +212,6 @@
     display: -webkit-box;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     -webkit-line-clamp: 3;

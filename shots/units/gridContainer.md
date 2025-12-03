@@ -8,8 +8,6 @@
     place-content: unset;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     grid-template-columns: 1fr 2fr;
@@ -30,8 +28,6 @@
     place-content: center;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     grid-template-columns: repeat(2, 1fr);
@@ -51,8 +47,6 @@
     place-content: start space-between;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     grid-template-columns: repeat(2, 1fr);
@@ -72,8 +66,6 @@
     place-content: center;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: justify;
     text-indent: unset;
     grid-template-columns: repeat(2, 1fr);
@@ -93,8 +85,6 @@
     place-content: start end;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     grid-template-columns: repeat(2, 1fr);
@@ -114,8 +104,6 @@
     place-content: unset;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     grid-template-columns: repeat(2, 1fr);
@@ -135,8 +123,6 @@
     place-content: unset;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     grid-template-rows: repeat(3, 1fr);
@@ -157,8 +143,6 @@
     place-content: unset;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     grid-template-columns: repeat(4, 1fr);
