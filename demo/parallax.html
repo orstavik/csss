@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parallax Zoom Effect - CSSS Demo</title>
+    <script src="../src/auto.js?style=style&interval=400" type="module"></script>
+    <style>
+        @keyframes zoomOut {
+            from {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .parallax-zoom {
+            position: relative;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .parallax-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease-out;
+        }
+
+        .zoom-trigger {
+            transform: scale(0.3);
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .zoom-trigger.zoomed {
+            transform: scale(1.5);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .observe-point {
+            position: relative;
+        }
+
+        .scroll-zoom-container {
+            height: 300vh;
+            position: relative;
+        }
+
+        .scroll-zoom-sticky {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .growing-image {
+            position: absolute;
+            width: 200px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 20px;
+            transition: none;
+            bottom: -400px;
+        }
+    </style>
+</head>
+
+<body class="$typeface(main,Inter,sans-serif,16px,400) $typeface(heading,Playfair+Display,serif,48px,700) $palette(primary,#667eea,#ffffff) $palette(secondary,#764ba2,#ffffff) $palette(accent,#f093fb,#ffffff) $palette(dark,#1a202c,#ffffff) $palette(light,#f7fafc,#2d3748) $blockItem(margin(0)) $block(padding(0))">
+
+    <section class="$relative $blockItem(size(100%,100vh)) $flex(contentCenter,itemsCenter) $bg(#dark) observe-point |>div:first-child$absolute(0,0)$blockItem(size(100%,100%))$zIndex(0) |>div:last-child$relative$zIndex(10)$block(textCenter)$color(#white)" data-section="hero">
+        <div>
+            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop" class="parallax-image" alt="Mountain landscape" style="animation: zoomOut 2s ease-out;">
+        </div>
+        <div>
+            <h1 class="$font(heading,5rem,700) $blockItem(margin(0,0,1rem,0)) $textShadow(0,4px,30px,#rgba(0,0,0,0.8))">
+                Parallax Zoom
+            </h1>
+            <p class="$font(main,1.5rem,300) $opacity(0.9) $textShadow(0,2px,20px,#rgba(0,0,0,0.6))">
+                Scroll to experience the journey
+            </p>
+        </div>
+    </section>
+
+    <div class="scroll-zoom-container" id="zoomContainer">
+        <div class="scroll-zoom-sticky">
+            <img src="https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=1920&h=1080&fit=crop" class="growing-image" id="growingImage" alt="Transforming landscape">
+        </div>
+    </div>
+
+    <section class="$relative $blockItem(size(100%,100vh)) $block(overflowHidden)" data-section="section3">
+        <div class="$absolute(0,0) $blockItem(size(100%,100%)) $zIndex(0)" style="background-image: url('https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=1920&h=1080&fit=crop'); background-size: cover; background-position: center; background-attachment: fixed;">
+        </div>
+    </section>
+
+    <section class="$relative $blockItem(size(100%,100vh)) $flex(contentCenter,itemsCenter) $bg(#light) observe-point" data-section="section4">
+        <div class="$relative $zIndex(10) $blockItem(inlineSize(1200px,_,95%)) |h2$font(heading,3.5rem,700)$color(#dark)$blockItem(margin(0,0,3rem,0))$block(textCenter)">
+            <h2>Visual Gallery</h2>
+            <div class="$grid(cols(repeat(3,1fr)),gap(2rem)) |>div$relative$blockItem(size(100%,300px))$block(overflowHidden)$border(radius(16px))">
+                <div>
+                    <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&h=600&fit=crop" class="zoom-trigger" id="grid1" alt="Road" style="width: 100%; height: 100%; object-fit: cover; transform: scale(0.8);">
+                </div>
+                <div>
+                    <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&h=600&fit=crop" class="zoom-trigger" id="grid2" alt="Forest" style="width: 100%; height: 100%; object-fit: cover; transform: scale(0.8);">
+                </div>
+                <div>
+                    <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=600&fit=crop" class="zoom-trigger" id="grid3" alt="Mountain" style="width: 100%; height: 100%; object-fit: cover; transform: scale(0.8);">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="parallax-zoom observe-point |>div:first-child$absolute(0,0)$blockItem(size(100%,100%))$zIndex(0) |>div:last-child$relative$zIndex(10)$blockItem(size(100%,100%))$flex(contentCenter,itemsCenter)" data-section="final">
+        <div>
+            <img src="https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1920&h=1080&fit=crop" class="parallax-image" id="parallaxFinal" alt="Stars" style="transform: translate(-50%, -50%) scale(1.3);">
+        </div>
+        <div>
+            <div class="$block(textCenter) $color(#white) |h2$font(heading,4.5rem,700)$blockItem(margin(0,0,1.5rem,0))$textShadow(0,4px,40px,#rgba(0,0,0,0.9)) |p$font(main,1.4rem,300)$opacity(0.95)$textShadow(0,2px,30px,#rgba(0,0,0,0.8))$blockItem(margin(0,0,3rem,0)) |button$bg(#primary)$color(#white)$font(main,1.1rem,600)$block(padding(1.2rem,3rem))$border(none,radius(50px))$cursor(pointer)$easeIn(0.3s)$boxShadow(0,10px,40px,#rgba(102,126,234,0.4))">
+                <h2>Infinite Possibilities</h2>
+                <p>The journey never ends</p>
+                <button class=":hover$translateY(-3px) :hover$boxShadow(0,15px,50px,#rgba(102,126,234,0.6))" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    Start Again
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const observerOptions = {
+            threshold: 0.3,
+            rootMargin: '0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('zoomed');
+                } else {
+                    entry.target.classList.remove('zoomed');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.zoom-trigger').forEach(el => {
+            observer.observe(el);
+        });
+
+        let ticking = false;
+
+        function updateParallax() {
+            const sections = document.querySelectorAll('.parallax-zoom');
+
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                const scrollPercent = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+
+                if (scrollPercent >= 0 && scrollPercent <= 1) {
+                    const image = section.querySelector('.parallax-image');
+                    if (image) {
+                        const scale = 1 + (scrollPercent * 0.3);
+                        image.style.transform = `translate(-50%, -50%) scale(${scale})`;
+                    }
+                }
+            });
+
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(updateParallax);
+                ticking = true;
+            }
+        });
+
+        updateParallax();
+
+        const zoomContainer = document.getElementById('zoomContainer');
+        const growingImage = document.getElementById('growingImage');
+
+        function updateGrowingImage() {
+            if (!zoomContainer || !growingImage) return;
+
+            const containerRect = zoomContainer.getBoundingClientRect();
+            const containerTop = containerRect.top;
+            const containerHeight = containerRect.height;
+            const viewportHeight = window.innerHeight;
+
+            if (containerTop > viewportHeight || containerTop < -containerHeight) {
+                return;
+            }
+
+            const progress = Math.max(0, Math.min(1, -containerTop / (containerHeight - viewportHeight)));
+
+            if (progress <= 0.33) {
+                const stage1Progress = progress / 0.33;
+                const bottom = -400 + (stage1Progress * 500);
+                growingImage.style.bottom = `${bottom}px`;
+                growingImage.style.width = '200px';
+                growingImage.style.height = '300px';
+                growingImage.style.borderRadius = '20px';
+                growingImage.style.transform = 'none';
+            }
+            else if (progress <= 0.66) {
+                const stage2Progress = (progress - 0.33) / 0.33;
+                const width = 200 + (stage2Progress * 400);
+                const height = 300 + (stage2Progress * 200);
+                growingImage.style.bottom = '50%';
+                growingImage.style.width = `${width}px`;
+                growingImage.style.height = `${height}px`;
+                growingImage.style.borderRadius = `${20 - (stage2Progress * 20)}px`;
+                growingImage.style.transform = `translateY(50%)`;
+            }
+            else {
+                const stage3Progress = (progress - 0.66) / 0.34;
+                const width = 600 + (stage3Progress * (window.innerWidth - 600));
+                const height = 500 + (stage3Progress * (window.innerHeight - 500));
+                growingImage.style.bottom = '50%';
+                growingImage.style.width = `${width}px`;
+                growingImage.style.height = `${height}px`;
+                growingImage.style.borderRadius = '0';
+                growingImage.style.transform = `translateY(50%)`;
+            }
+        }
+
+        window.addEventListener('scroll', () => {
+            updateGrowingImage();
+        });
+
+        updateGrowingImage();
+    </script>
+
+</body>
+
+</html>

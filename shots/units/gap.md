@@ -6,8 +6,6 @@
     display: block;
     word-spacing: 0.5rem;
     line-height: 1.8;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
   }
@@ -24,8 +22,6 @@
     place-content: unset;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     flex-wrap: wrap;
@@ -44,8 +40,6 @@
     place-content: unset;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     grid-template-columns: repeat(2, 1fr);

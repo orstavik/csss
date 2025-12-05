@@ -129,8 +129,6 @@ function defaultContainer(obj, argsIn, argsOut) {
   const containerDefaults = {
     wordSpacing: "unset",
     lineHeight: "unset",
-    whiteSpace: "unset",
-    hyphens: "unset",
     textAlign: "unset",
     textIndent: "unset",
   };
@@ -147,16 +145,8 @@ const LAYOUT = {
   padding: toLogicalFour.bind(null, "padding"),
   scrollPadding: toLogicalFour.bind(null, "scroll-padding"),
   ...ALIGNMENTS.textAlign,
-  shy: { hyphens: "manual" },
-  hyphens: { hyphens: "auto" },
   breakWord: { overflowWrap: "break-word" },
   breakAnywhere: { overflowWrap: "anywhere" },
-  nowrap: { whiteSpace: "nowrap" },
-  preWrap: { whiteSpace: "pre-wrap" },
-  preLine: { whiteSpace: "pre-line" },
-  pre: { whiteSpace: "pre" },
-  breakSpaces: { whiteSpace: "break-spaces" },
-  ellipsis: { whiteSpace: "nowrap", textOverflow: "ellipsis" },
   breakAll: { wordBreak: "break-all" },
   keepAll: { wordBreak: "keep-all" },
   snapStop: { scrollSnapStop: "always" },
@@ -224,6 +214,34 @@ function block(args) {
 function blockItem(argsIn) {
   const argsOut = argsIn.map(a => BlockItem[a.name]?.(a.args) ?? BlockItem[a.text]);
   return defaultItem("blockItem", argsIn, argsOut);
+}
+
+const IBLOCK = {
+  ...LAYOUT,
+  ...OVERFLOWS,
+  gap: blockGap,
+};
+
+const IBlockItem = {
+  ..._LAYOUT,
+  alignTop: { verticalAlign: "top" },
+  alignMiddle: { verticalAlign: "middle" },
+  alignBottom: { verticalAlign: "bottom" },
+  alignBaseline: { verticalAlign: "baseline" },
+  alignTextTop: { verticalAlign: "text-top" },
+  alignTextBottom: { verticalAlign: "text-bottom" },
+  alignSuper: { verticalAlign: "super" },
+  alignSub: { verticalAlign: "sub" },
+};
+
+function iBlock(args) {
+  const args2 = args.map(a => IBLOCK[a.name]?.(a.args) ?? IBLOCK[a.text]);
+  return defaultContainer({ display: "inline-block" }, args, args2);
+}
+
+function iBlockItem(argsIn) {
+  const argsOut = argsIn.map(a => IBlockItem[a.name]?.(a.args) ?? IBlockItem[a.text]);
+  return defaultItem("iBlockItem", argsIn, argsOut);
 }
 
 function lineClamp([lines, ...args]) {
@@ -365,10 +383,10 @@ export default {
   justifySelf: undefined,
   alignSelf: undefined,
   textAlign: undefined,
-  //we want to block *all* that are used here!
-
   block,
   blockItem,
+  iBlock,
+  iBlockItem,
   grid,
   gridItem,
   flex,

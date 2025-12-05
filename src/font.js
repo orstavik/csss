@@ -17,6 +17,7 @@ const FONT_DEFAULTS = Object.entries({
   WebkitFontSmoothing: "WebkitFontSmoothing",
   MozOsxFontSmoothing: "MozOsxFontSmoothing",
   fontKerning: "FontKerning",
+  hyphens: "Hyphens",
 });
 
 /**
@@ -308,6 +309,9 @@ export default {
   ultraExpanded: { fontStretch: "ultra-expanded", fontWidth: "ultra-expanded" },
   kerning: { fontKerning: "normal" },
   noKerning: { fontKerning: "none" },
+  shy: { hyphens: "manual" },
+  hyphens: { hyphens: "auto" },
+  noHyphens: { hyphens: "none" },
 };
 
 

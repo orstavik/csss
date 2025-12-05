@@ -10,6 +10,7 @@ import filterTransforms from "./filterTransform.js";
 import shadows from "./shadows.js";
 import position from "./position.js";
 import svg from "./svg.js";
+import whitespace from "./whitespace.js";
 
 const ObjectFit = {
   objectFit: undefined,
@@ -33,6 +34,7 @@ const SHORTS = {
   ...shadows,
   ...position,
   ...svg,
+  ...whitespace,
   ...ObjectFit,
 };
 

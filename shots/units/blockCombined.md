@@ -6,8 +6,6 @@
     display: block;
     word-spacing: 0.3em;
     line-height: 1.6;
-    white-space: unset;
-    hyphens: unset;
     text-align: justify;
     text-indent: unset;
   }
@@ -70,8 +68,6 @@
     display: block;
     word-spacing: 0.2em;
     line-height: 1.4;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     overflow-wrap: break-word;
@@ -108,8 +104,6 @@
     display: block;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: center;
     text-indent: unset;
     overflow: auto;
@@ -148,8 +142,6 @@
     display: block;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     padding: 1.5rem;

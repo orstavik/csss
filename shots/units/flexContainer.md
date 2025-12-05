@@ -8,8 +8,6 @@
     place-content: unset;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     flex-direction: column;
@@ -29,8 +27,6 @@
     place-content: unset;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     flex-direction: row-reverse;
@@ -50,8 +46,6 @@
     place-content: unset;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     flex-wrap: wrap;
@@ -71,8 +65,6 @@
     place-content: start;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     gap: 1rem;
@@ -93,8 +85,6 @@
     place-content: start end;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     gap: 1rem;
@@ -114,8 +104,6 @@
     place-content: stretch normal;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     gap: 1rem;
@@ -135,8 +123,6 @@
     place-content: normal space-between;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     gap: 1rem;
@@ -156,8 +142,6 @@
     place-content: center;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: justify;
     text-indent: unset;
     gap: 1rem;
@@ -177,8 +161,6 @@
     place-content: space-between stretch;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     gap: 1rem;
@@ -198,8 +180,6 @@
     place-content: unset;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: justify;
     text-indent: unset;
     gap: 1rem;
@@ -219,8 +199,6 @@
     place-content: unset;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     gap: 2rem;
@@ -239,8 +217,6 @@
     place-content: unset;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     overflow: scroll;

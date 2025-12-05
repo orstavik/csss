@@ -6,8 +6,6 @@
     display: block;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: justify;
     text-indent: unset;
   }

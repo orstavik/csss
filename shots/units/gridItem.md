@@ -8,8 +8,6 @@
     place-content: unset;
     word-spacing: unset;
     line-height: unset;
-    white-space: unset;
-    hyphens: unset;
     text-align: unset;
     text-indent: unset;
     grid-template-columns: repeat(3, 1fr);
