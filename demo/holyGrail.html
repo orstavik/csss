@@ -8,9 +8,9 @@
     <script src="../src/auto.js?style=style&interval=400" type="module"></script>
 </head>
 
-<body class="$typeface(main,Inter,sans-serif,16px,400) $palette(primary,#6366f1,#ffffff) $palette(secondary,#8b5cf6,#ffffff) $palette(accent,#ec4899,#ffffff) $blockItem(margin(0),size(100%,100vh)) $bg(#f8fafc) $color(#1e293b)">
+<body class="$typeface(main,Inter,sans-serif,16px,400) $palette(primary,#6366f1,#ffffff) $palette(secondary,#8b5cf6,#ffffff) $palette(accent,#ec4899,#ffffff) $palette(dark,#1e293b,#ffffff) $palette(muted,#64748b,#ffffff) $palette(light,#f8fafc,#1e293b) $palette(surface,#f1f5f9,#1e293b) $blockItem(margin(0),size(100%,100vh)) $bg(#light) $color(#dark)">
 
-    <div class="$flex(column) $blockItem(size(100%,100%)) |header$bg(#primary)$color(#white)$block(padding(1.5rem),textCenter) |main$flex(row)$flexItem(grow(1)) |footer$bg(#1e293b)$color(#white)$block(padding(1rem),textCenter)">
+    <div class="$flex(column) $blockItem(size(100%,100%)) |header$bg(#primary)$color(#white)$block(padding(1.5rem),textCenter) |main$flex(row)$flexItem(grow(1)) |footer$bg(#dark)$color(#white)$block(padding(1rem),textCenter)">
         
         <header>
             <h1 class="$font(main,2rem,700) $blockItem(margin(0))">🏛️ Holy Grail Layout</h1>
@@ -21,30 +21,30 @@
             
             <nav>
                 <h3 class="$font(main,1.2rem,600) $blockItem(margin(0,0,1.5rem,0))">🧭 Navigation</h3>
-                <ul class="$block(padding(0)) $blockItem(margin(0)) |li$blockItem(margin(0,0,0.75rem,0))">
+                <ul class="$block(padding(0)) $blockItem(margin(0)) |li$blockItem(margin(0,0,0.75rem,0))$color(#white) $opacity(0.9) $noTextDecoration $cursor(pointer) $easeIn(0.2s)">
                     <li>
-                        <a class="$color(#white) $opacity(0.9) $noTextDecoration $cursor(pointer) $easeIn(0.2s) :hover$opacity(1)">🏠 Home</a>
+                        <a>🏠 Home</a>
                     </li>
                     <li>
-                        <a class="$color(#white) $opacity(0.9) $noTextDecoration $cursor(pointer) $easeIn(0.2s) :hover$opacity(1)">ℹ️ About</a>
+                        <a>ℹ️ About</a>
                     </li>
                     <li>
-                        <a class="$color(#white) $opacity(0.9) $noTextDecoration $cursor(pointer) $easeIn(0.2s) :hover$opacity(1)">⚙️ Services</a>
+                        <a>⚙️ Services</a>
                     </li>
-                    <li>
-                        <a class="$color(#white) $opacity(0.9) $noTextDecoration $cursor(pointer) $easeIn(0.2s) :hover$opacity(1)">📞 Contact</a>
+                    <li>    
+                        <a>📞 Contact</a>
                     </li>
                 </ul>
             </nav>
 
             <section>
-                <h2 class="$font(main,1.8rem,700) $color(#1e293b) $blockItem(margin(0,0,1rem,0))">📄 Main Content</h2>
+                <h2 class="$font(main,1.8rem,700) $color(#dark) $blockItem(margin(0,0,1rem,0))">📄 Main Content</h2>
                 
-                <p class="$font(main,1rem) $color(#64748b) $lineHeight(1.6) $blockItem(margin(0,0,1.5rem,0))">
+                <p class="$font(main,1rem) $color(#muted) $lineHeight(1.6) $blockItem(margin(0,0,1.5rem,0))">
                     This is the <strong>Holy Grail Layout</strong> - a classic web design pattern with:
                 </p>
 
-                <ul class="$block(padding(0,0,0,1.5rem)) $blockItem(margin(0,0,1.5rem,0)) |li$font(main,1rem)$color(#64748b)$lineHeight(1.6)$blockItem(margin(0,0,0.5rem,0))">
+                <ul class="$block(padding(0,0,0,1.5rem)) $blockItem(margin(0,0,1.5rem,0)) |li$font(main,1rem)$color(#muted)$lineHeight(1.6)$blockItem(margin(0,0,0.5rem,0))">
                     <li><strong>Fixed Header</strong> at the top</li>
                     <li><strong>Fixed Footer</strong> at the bottom</li>
                     <li><strong>Fixed-width Navigation</strong> on the left (200px)</li>
@@ -52,15 +52,15 @@
                     <li><strong>Fixed-width Sidebar</strong> on the right (180px)</li>
                 </ul>
 
-                <div class="$bg(#f1f5f9) $block(padding(1.5rem)) $border(radius(8px)) $blockItem(margin(0,0,1.5rem,0))">
-                    <h3 class="$font(main,1.2rem,600) $color(#1e293b) $blockItem(margin(0,0,0.75rem,0))">✨ Key Features</h3>
-                    <p class="$font(main,0.95rem) $color(#64748b) $lineHeight(1.5) $blockItem(margin(0))">
+                <div class="$bg(#surface) $block(padding(1.5rem)) $border(radius(8px)) $blockItem(margin(0,0,1.5rem,0))">
+                    <h3 class="$font(main,1.2rem,600) $color(#dark) $blockItem(margin(0,0,0.75rem,0))">✨ Key Features</h3>
+                    <p class="$font(main,0.95rem) $color(#muted) $lineHeight(1.5) $blockItem(margin(0))">
                         The center column expands to fill available space, while the sidebars maintain their fixed widths. 
                         The layout uses flexbox for optimal browser support and responsive behavior.
                     </p>
                 </div>
 
-                <p class="$font(main,1rem) $color(#64748b) $lineHeight(1.6) $blockItem(margin(0))">
+                <p class="$font(main,1rem) $color(#muted) $lineHeight(1.6) $blockItem(margin(0))">
                     This implementation uses CSSS pipe selectors to minimize code repetition while maintaining clean, semantic HTML structure.
                 </p>
             </section>
@@ -78,11 +78,11 @@
                     </ul>
                 </div>
 
-                <div class="$bg(#rgba(255,255,255,0.2)) $block(padding(1rem)) $border(radius(6px))">
-                    <h4 class="$font(main,1rem,600) $blockItem(margin(0,0,0.5rem,0))">📈 Statistics</h4>
-                    <div class="$font(main,0.9rem) $blockItem(margin(0,0,0.25rem,0))">👥 Users: 1,234</div>
-                    <div class="$font(main,0.9rem) $blockItem(margin(0,0,0.25rem,0))">📝 Posts: 567</div>
-                    <div class="$font(main,0.9rem) $blockItem(margin(0))">👀 Views: 89,012</div>
+                <div class="$bg(#rgba(255,255,255,0.2)) $block(padding(1rem)) $border(radius(6px)) $font(main,1rem,600) |$blockItem(margin(0,0,0.5rem,0))">
+                    <h4>📈 Statistics</h4>
+                    <div>👥 Users: 1,234</div>
+                    <div>📝 Posts: 567</div>
+                    <div>👀 Views: 89,012</div>
                 </div>
             </aside>
 
