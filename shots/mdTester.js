@@ -22,14 +22,13 @@ function printDiff({ key, actual, expected, type }) {
     // type == "html" ? FlatHtml.fromString(actual).diff(expected) :
     diff(expected, actual);
   const noMatch = d.find(({ type, a, b }) => type != "match" && (a.trim() || b.trim()))
-  if (!noMatch)
-    return console.log(`🟦 ${key}`, d);
-  console.error(`❌ ${key}`);
+  const logger = noMatch ? console.error : console.log;
+  logger(`${noMatch ? "❌" : "🟦"} ${key}`);
   for (let { a, b, type } of d)
-    type == "ins" ? console.error("%c%s", "background-color:green", b) :
-      type == "del" ? console.error("%c%s", "background-color:red", a) :
-        console.error("%c%s", "color:grey", a);
-  console.error(actual);
+    type == "ins" ? logger("%c%s", "background-color:green", b) :
+      type == "del" ? logger("%c%s", "background-color:red", a) :
+        logger("%c%s", "color:grey", a);
+  logger(actual);
 }
 
 export default async function runTests(paths, test) {
