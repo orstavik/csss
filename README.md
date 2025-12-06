@@ -41,8 +41,8 @@ Style children without separate rules:
 Intelligent color palette generation:
 
 ```html
-<div class="$palette(#14a69b) $color(primary) $border(solid,2px)">
-  <div class="$color(secondary)">Secondary color text</div>
+<div class="$palette(#14a69b) $color(#primary) $border(solid,2px)">
+  <div class="$color(#secondary)">Secondary color text</div>
 </div>
 ```
 
@@ -63,7 +63,7 @@ Simplified common layout patterns:
 Built-in media query shortcuts:
 
 ```html
-<div class="@sm$w(100%) @md$w(50%) @lg$w(33%)">
+<div class="@sm$blockItem(inlineSize(100%)) @md$blockItem(inlineSize(50%)) @lg$blockItem(inlineSize(33%))">
   Responsive element
 </div>
 ```
