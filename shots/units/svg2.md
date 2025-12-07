@@ -1,30 +1,11 @@
-**csss:** $fill(#azure)
+**csss:** $stroke(#deepskyblue,3px,.5)
 **css:**
 ```css
 @layer containerDefault {
-  .\$fill\(\#azure\) {
-    fill: azure;
-  }
-}
-```
-
-**csss:** $fill(url(#gradient))
-**css:**
-```css
-@layer containerDefault {
-  .\$fill\(url\(\#gradient\)\) {
-    fill: url(#gradient);
-  }
-}
-```
-
-**csss:** $stroke(#deepskyblue,3px)
-**css:**
-```css
-@layer containerDefault {
-  .\$stroke\(\#deepskyblue\,3px\) {
+  .\$stroke\(\#deepskyblue\,3px\,\.5\) {
     stroke: deepskyblue;
     stroke-width: 3px;
+    stroke-opacity: .5;
   }
 }
 ```
@@ -40,12 +21,22 @@
 }
 ```
 
-**csss:** $noFill
+**csss:** $fillOpacity(0.5)
 **css:**
 ```css
 @layer containerDefault {
-  .\$noFill {
-    fill: none;
+  .\$fillOpacity\(0\.5\) {
+    fill-opacity: 0.5;
+  }
+}
+```
+
+**csss:** $strokeOpacity(0.8)
+**css:**
+```css
+@layer containerDefault {
+  .\$strokeOpacity\(0\.8\) {
+    stroke-opacity: 0.8;
   }
 }
 ```
@@ -100,32 +91,43 @@
 }
 ```
 
+**csss:** $fill(#azure)
+**css:**
+```css
+@layer containerDefault {
+  .\$fill\(\#azure\) {
+    fill: azure;
+  }
+}
+```
+
+**csss:** $noFill
+**css:**
+```css
+@layer containerDefault {
+  .\$noFill {
+    fill: none;
+  }
+}
+```
+
+**csss:** $fill(url(#gradient))
+**css:**
+```css
+@layer containerDefault {
+  .\$fill\(url\(\#gradient\)\) {
+    fill: url(#gradient);
+  }
+}
+```
+
+
 **csss:** $textAnchor(middle)
 **css:**
 ```css
 @layer containerDefault {
   .\$textAnchor\(middle\) {
     text-anchor: middle;
-  }
-}
-```
-
-**csss:** $fillOpacity(0.5)
-**css:**
-```css
-@layer containerDefault {
-  .\$fillOpacity\(0\.5\) {
-    fill-opacity: 0.5;
-  }
-}
-```
-
-**csss:** $strokeOpacity(0.8)
-**css:**
-```css
-@layer containerDefault {
-  .\$strokeOpacity\(0\.8\) {
-    stroke-opacity: 0.8;
   }
 }
 ```

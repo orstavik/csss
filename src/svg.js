@@ -15,8 +15,8 @@ const strokeX = TYPB({
   // strokeDasharray: isLength,
 }, ({ color, opacity, width, strokeLinecap, strokeLinejoin, dasharray, dashoffset }) => ({
   stroke: color,
-  strokeOpacity: opacity,
   strokeWidth: width,
+  strokeOpacity: opacity,
   strokeLinecap: strokeLinecap,
   strokeLinejoin: strokeLinejoin,
   strokeDasharray: dasharray,
