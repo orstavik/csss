@@ -415,6 +415,11 @@ export function isLengthPercent(a) {
   if (a?.type === "length" || a?.type === "percent" || (a?.num == 0 && a?.type === "number"))
     return a;
 }
+export function isLengthPercentNumber(a) {
+  a = isBasic(a);
+  if (a?.type === "length" || a?.type === "percent" || a?.type === "number")
+    return a;
+}
 export function isPercent(a) {
   a = isBasic(a);
   if (a?.type === "percent")

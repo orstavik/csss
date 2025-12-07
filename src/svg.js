@@ -1,6 +1,5 @@
-import { TYPB, SEQ, isBasic, isNumber, isColor, extractColor, extractLength, extractName, extractUrl, extractNumber, isLength, isLengthPercent, SIN_minmax } from "./func.js";
+import { TYPB, SEQ, isBasic, isNumber, isColor, extractColor, extractLength, extractName, extractUrl, extractNumber, isLength, isLengthPercent, isLengthPercentNumber, SIN_minmax } from "./func.js";
 
-const isLengthPercentNumber = isLengthPercent;
 const strokeX = TYPB({
 
 }, {
@@ -9,19 +8,22 @@ const strokeX = TYPB({
   color: isColor,
   opacity: isNumber, //isFraction
   width: isLength,
-  dasharray: SIN_minmax(1, 99, isLengthPercentNumber, ar => ar.join(", ")),
-  dashoffset: SEQ([isLengthPercent], ar => ar[0]),
+  dasharray: SIN_minmax(1, 99, isLengthPercentNumber, ar => ({ text: ar.join(", ") })),
+  dashoffset: SEQ([isLengthPercent], ar => ({ text: ar[0] })),
 }, {
   // strokeDasharray: isLength,
-}, ({ color, opacity, width, strokeLinecap, strokeLinejoin, dasharray, dashoffset }) => ({
-  stroke: color,
-  strokeWidth: width,
-  strokeOpacity: opacity,
-  strokeLinecap: strokeLinecap,
-  strokeLinejoin: strokeLinejoin,
-  strokeDasharray: dasharray,
-  strokeDashoffset: dashoffset,
-}));
+}, ({ color, opacity, width, strokeLinecap, strokeLinejoin, dasharray, dashoffset }) => {
+  // debugger; 
+  return ({
+    stroke: color,
+    strokeWidth: width,
+    strokeOpacity: opacity,
+    strokeLinecap: strokeLinecap,
+    strokeLinejoin: strokeLinejoin,
+    strokeDasharray: dasharray,
+    strokeDashoffset: dashoffset,
+  })
+});
 
 //arity is an optional check function that can wrap other functions to check for 
 
@@ -304,13 +306,13 @@ const strokeMiterlimit = createNumberFunction("stroke-miterlimit", "4");
 export default {
   fill,
   stroke: strokeX,
-  strokeWidth,
-  strokeLinecap,
-  strokeLinejoin,
-  strokeDasharray,
-  strokeMiterlimit,
-  strokeDashoffset,
-  strokeOpacity,
+  strokeWidth: undefined,
+  strokeLinecap: undefined,
+  strokeLinejoin: undefined,
+  strokeDasharray: undefined,
+  strokeMiterlimit: undefined,
+  strokeDashoffset: undefined,
+  strokeOpacity: undefined,
   paintOrder,
   vectorEffect,
 

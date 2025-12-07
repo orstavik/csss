@@ -1,11 +1,14 @@
-**csss:** $stroke(#deepskyblue,3px,.5)
+**csss:** $stroke(#deepskyblue,3px,.5,bevel,butt,dasharray(5px,5%))
 **css:**
 ```css
 @layer containerDefault {
-  .\$stroke\(\#deepskyblue\,3px\,\.5\) {
+  .\$stroke\(\#deepskyblue\,3px\,\.5\,bevel\,butt\,dasharray\(5px\,5\%\)\) {
     stroke: deepskyblue;
     stroke-width: 3px;
     stroke-opacity: .5;
+    stroke-linecap: butt;
+    stroke-linejoin: bevel;
+    stroke-dasharray: 5px, 5%;
   }
 }
 ```
@@ -21,21 +24,11 @@
 }
 ```
 
-**csss:** $fillOpacity(0.5)
+**csss:** $stroke(0.8)
 **css:**
 ```css
 @layer containerDefault {
-  .\$fillOpacity\(0\.5\) {
-    fill-opacity: 0.5;
-  }
-}
-```
-
-**csss:** $strokeOpacity(0.8)
-**css:**
-```css
-@layer containerDefault {
-  .\$strokeOpacity\(0\.8\) {
+  .\$stroke\(0\.8\) {
     stroke-opacity: 0.8;
   }
 }
@@ -61,32 +54,32 @@
 }
 ```
 
-**csss:** $strokeLinecap(round)
+**csss:** $stroke(round)
 **css:**
 ```css
 @layer containerDefault {
-  .\$strokeLinecap\(round\) {
+  .\$stroke\(round\) {
     stroke-linecap: round;
   }
 }
 ```
 
-**csss:** $strokeLinejoin(bevel)
+**csss:** $stroke(bevel)
 **css:**
 ```css
 @layer containerDefault {
-  .\$strokeLinejoin\(bevel\) {
+  .\$stroke\(bevel\) {
     stroke-linejoin: bevel;
   }
 }
 ```
 
-**csss:** $strokeDasharray(5,5)
+**csss:** $stroke(dasharray(5,5))
 **css:**
 ```css
 @layer containerDefault {
-  .\$strokeDasharray\(5\,5\) {
-    stroke-dasharray: 5 5;
+  .\$stroke\(dasharray\(5\,5\)\) {
+    stroke-dasharray: 5, 5;
   }
 }
 ```
@@ -97,6 +90,16 @@
 @layer containerDefault {
   .\$fill\(\#azure\) {
     fill: azure;
+  }
+}
+```
+
+**csss:** $fillOpacity(0.5)
+**css:**
+```css
+@layer containerDefault {
+  .\$fillOpacity\(0\.5\) {
+    fill-opacity: 0.5;
   }
 }
 ```
