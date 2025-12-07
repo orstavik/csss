@@ -12,18 +12,15 @@ const strokeX = TYPB({
   dashoffset: SEQ([isLengthPercent], ar => ({ text: ar[0] })),
 }, {
   // strokeDasharray: isLength,
-}, ({ color, opacity, width, strokeLinecap, strokeLinejoin, dasharray, dashoffset }) => {
-  // debugger; 
-  return ({
-    stroke: color,
-    strokeWidth: width,
-    strokeOpacity: opacity,
-    strokeLinecap: strokeLinecap,
-    strokeLinejoin: strokeLinejoin,
-    strokeDasharray: dasharray,
-    strokeDashoffset: dashoffset,
-  })
-});
+}, ({ color, opacity, width, strokeLinecap, strokeLinejoin, dasharray, dashoffset }) => ({
+  stroke: color,
+  strokeWidth: width,
+  strokeOpacity: opacity,
+  strokeLinecap: strokeLinecap,
+  strokeLinejoin: strokeLinejoin,
+  strokeDasharray: dasharray,
+  strokeDashoffset: dashoffset,
+}));
 
 //arity is an optional check function that can wrap other functions to check for 
 
