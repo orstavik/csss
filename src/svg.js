@@ -1,4 +1,27 @@
-import { isBasic, isNumber, extractColor, extractLength, extractName, extractUrl, extractNumber, isLength, isLengthPercent } from "./func.js";
+import { TYPB, SEQ, isBasic, isNumber, isColor, extractColor, extractLength, extractName, extractUrl, extractNumber, isLength, isLengthPercent, SIN_minmax } from "./func.js";
+
+const isLengthPercentNumber = isLengthPercent;
+const strokeX = TYPB({
+
+}, {
+  strokeLinecap: a => /^(butt|round|square)$/.test(a.text) ? a : undefined,
+  strokeLinejoin: a => /^(miter|round|bevel)$/.test(a.text) ? a : undefined,
+  color: isColor,
+  opacity: isNumber, //isFraction
+  width: isLength,
+  dasharray: SIN_minmax(1, 99, isLengthPercentNumber, ar => ar.join(", ")),
+  dashoffset: SEQ([isLengthPercent], ar => ar[0]),
+}, {
+  // strokeDasharray: isLength,
+}, ({ color, opacity, width, strokeLinecap, strokeLinejoin, dasharray, dashoffset }) => ({
+  stroke: color,
+  strokeOpacity: opacity,
+  strokeWidth: width,
+  strokeLinecap: strokeLinecap,
+  strokeLinejoin: strokeLinejoin,
+  strokeDasharray: dasharray,
+  strokeDashoffset: dashoffset,
+}));
 
 //arity is an optional check function that can wrap other functions to check for 
 
@@ -280,7 +303,7 @@ const strokeMiterlimit = createNumberFunction("stroke-miterlimit", "4");
 
 export default {
   fill,
-  stroke,
+  stroke: strokeX,
   strokeWidth,
   strokeLinecap,
   strokeLinejoin,
