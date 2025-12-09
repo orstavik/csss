@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nested Items Demo</title>
+    <script src="../src/auto.js?style=style&interval=400" type="module"></script>
+</head>
+
+<body class="
+$block(padding(2rem))
+|h1$blockItem(margin(0,0,2rem,0))
+|section$blockItem(margin(0,0,3rem,0)) 
+|section|h2$blockItem(margin(0,0,1rem,0))
+
+$bg(#f5f5f5)
+$typeface(main,arial,600)
+$typeface(header,system-ui,1.5rem,600)
+
+$font(main)
+">
+    <h1 class="$font(heading,2rem,700)">Nested Items Demo</h1>
+    <section>
+        <h2 class="$font(main,1.5rem,600)">
+            Example 1: Grid > Flex > Styled grandchildren
+        </h2>
+
+        <div class="
+        $grid(cols(repeat(3,1fr)),gap(1rem),padding(1rem)) 
+        |$flex(column,gap(0.5rem))
+        ||$flexItem(margin(0.5rem))
+        ||$flex(padding(0.75rem))
+
+        $bg(#white)$border(1px,solid,#ddd,radius(8px))
+        ||$bg(#e3f2fd)$border(radius(4px))
+        ">
+            <div>
+                <span>Card 1 - Item A</span>
+                <span>Card 1 - Item B</span>
+                <span>Card 1 - Item C</span>
+            </div>
+            <div>
+                <span>Card 2 - Item A</span>
+                <span>Card 2 - Item B</span>
+            </div>
+            <div>
+                <span>Card 3 - Item A</span>
+                <span>Card 3 - Item B</span>
+                <span>Card 3 - Item C</span>
+                <span>Card 3 - Item D</span>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="$font(header)">
+            Example 2: Flex > Flex > Styled grandchildren
+        </h2>
+
+        <div class="
+        $flex(row,gap(1rem),padding(1rem))
+        |$flex(padding(1rem),column,gap(0.5rem))
+        ||$flex(padding(0.5rem))
+
+        $bg(#white)$border(1px,solid,#ddd,radius(8px))
+        |$bg(#e0e0e0)$border(radius(6px))
+        ||$color(#333)$bg(#f9f9f1)$border(1px,solid,#e0e0e0,radius(3px))
+        
+        
+        ">
+            <div>
+                <span>Section A - Line 1</span>
+                <span>Section A - Line 2</span>
+                <span>Section A - Line 3</span>
+            </div>
+            <div>
+                <span>Section B - Line 1</span>
+                <span>Section B - Line 2</span>
+            </div>
+            <div>
+                <span>Section C - Line 1</span>
+                <span>Section C - Line 2</span>
+                <span>Section C - Line 3</span>
+            </div>
+        </div>
+    </section>
+    
+    <section>
+        <h2 class="$font(header)">
+            Example 3: Grid > Grid > Styled grandchildren
+        </h2>
+
+        <div class="$fontSize(1.2rem)
+        $grid(cols(repeat(2,1fr)),gap(1.5rem),padding(1.5rem)) 
+        |$grid(cols(repeat(2,1fr)),gap(0.75rem),padding(1rem))
+        ||$gridItem(size(80px,80px))
+        ||$flex(contentCenter,itemsCenter)
+
+        $bg(#white)$border(1px,solid,#ddd,radius(8px))
+        |$bg(#fafafa)$border(radius(6px))
+        ||$bg(#4caf50)$color(#white)$border(radius(4px))
+
+        ">
+            <div>
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+            </div>
+            <div>
+                <span>A</span>
+                <span>B</span>
+                <span>C</span>
+                <span>D</span>
+            </div>
+            <div>
+                <span>α</span>
+                <span>β</span>
+                <span>γ</span>
+                <span>δ</span>
+            </div>
+            <div>
+                <span>★</span>
+                <span>●</span>
+                <span>■</span>
+                <span>▲</span>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="$font(header)">
+            Example 4: Complex nested styling with selectors
+        </h2>
+
+        <div class="
+        $flex(row,gap(1rem),padding(1rem)) 
+        |:first-child$flex(column,gap(0.5rem),padding(1rem))
+        |:nth-child(2)$flex(column,gap(0.5rem),padding(1rem))
+
+        $bg(#white)$border(1px,solid,#ddd,radius(8px))
+        |.green$bg(#e8f5e9)
+        |.green|$color(#2e7d32)
+        |.blue$bg(#e3f2fd)
+        |.blue|$color(#1565c0)">
+
+            <div class="green">
+                <span>Green Section - Item 1</span>
+                <span>Green Section - Item 2</span>
+                <span>Green Section - Item 3</span>
+            </div>
+            <div class="blue">
+                <span>Blue Section - Item 1</span>
+                <span>Blue Section - Item 2</span>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>

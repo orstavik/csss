@@ -8,20 +8,44 @@
     <script src="../src/auto.js?style=style&interval=400" type="module"></script>
 </head>
 
-<body
-    class="$typeface(main,Inter,sans-serif,16px) $palette(primary,#6366f1,#ffffff) $palette(secondary,#8b5cf6,#ffffff) $palette(dark,#1e293b,#ffffff) $palette(muted,#64748b,#ffffff) $palette(light,#f8fafc,#1e293b) $block(padding(3rem,2rem)) $bg(#light) $color(#dark) $blockItem(margin(0))">
+<body class="
+$block(padding(3rem,2rem))
+$blockItem(margin(0))
+|div$blockItem(inlineSize(900px,_,95%),margin(0,auto))
+|div|h1$font(main,2.5rem,700)$blockItem(margin(0,0,3rem,0))$block(textCenter)
+|div|section$blockItem(margin(0,0,3rem,0))
+|div|section|h2$font(main,1.3rem,600)$blockItem(margin(0,0,1.5rem,0))
 
-    <div class="$blockItem(inlineSize(900px,_,95%),margin(0,auto))">
+$bg(#light)$color(#dark)
 
-        <h1 class="$font(main,2.5rem,700) $color(#dark) $blockItem(margin(0,0,3rem,0)) $block(textCenter)">
+$typeface(main,Inter,sans-serif,16px)
+$palette(primary,#6366f1,#ffffff)
+$palette(secondary,#8b5cf6,#ffffff)
+$palette(dark,#1e293b,#ffffff)
+$palette(muted,#64748b,#ffffff)
+$palette(light,#f8fafc,#1e293b)
+">
+
+    <div>
+
+        <h1>
             📦 Cards with Padding
         </h1>
 
-        <section class="$blockItem(margin(0,0,3rem,0))">
-            <h2 class="$font(main,1.3rem,600) $color(#muted) $blockItem(margin(0,0,1.5rem,0))">
+        <section>
+            <h2>
                 Small Padding (1rem)
             </h2>
-            <div class="$grid(cols(repeat(3,1fr)),gap(1.5rem)) >div|$bg(#white)$block(padding(1rem))$border(radius(12px))$boxShadow(0,2px,8px,#rgba(0,0,0,0.08)) >div|>div$font(main,1.8rem)$blockItem(margin(0,0,0.5rem,0)) >div|h3$font(main,1.1rem,600)$blockItem(margin(0,0,0.5rem,0)) >div|p$font(main,0.9rem)$opacity(0.7)$blockItem(margin(0))">
+            <div class="
+            $grid(cols(repeat(3,1fr)),gap(1.5rem))
+            |$block(padding(1rem))
+            |h3$font(main,1.1rem,600)$blockItem(margin(0,0,0.5rem,0))
+            |p$font(main,0.9rem)$blockItem(margin(0))
+            ||$font(main,1.8rem)$blockItem(margin(0,0,0.5rem,0))
+            
+            |$bg(#white)$border(radius(12px))$boxShadow(0,2px,8px,#rgba(0,0,0,0.08))
+            |p$opacity(0.7)
+            ">
                 <div>
                     <div>📊</div>
                     <h3>Analytics</h3>
