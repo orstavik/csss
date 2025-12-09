@@ -97,8 +97,8 @@ export function parse(short) {
   exprList = exprList.map(parseNestedExpression);
   exprList = exprList.map(interpretShort);
   exprList &&= clashOrStack(exprList);
-  let { selector, item } = parseSelectorPipe(sel, clazz);
-  const layer = (item ? "items" : "container") + (short.match(/^(\$|\|\$)/) ? "Default" : "");
+  let { selector, item, grandItem } = parseSelectorPipe(sel, clazz);
+  const layer = (grandItem ? "grandItems" : item ? "items" : "container") + (short.match(/^(\$|\|\$|\|\|\$)/) ? "Default" : "");
   exprList = kebabcaseKeys(exprList);
   const { atRules, mainRule } = extractAtRules(exprList);
   checkProperty(mainRule);
