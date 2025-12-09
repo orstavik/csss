@@ -242,26 +242,27 @@ const clazz = /\.[a-zA-Z][a-zA-Z0-9_-]*/.source; //class
 const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
-function* combine(ar) {
-  if (ar.length == 1)
-    yield* ar;
-  else
-    for (let i of ar[0])
-      for (let jj of combine(ar.slice(1)))
-        yield [i, ...jj];
-}
-
 function parseSelectorPipe(str, clazz) {
-  const parts = str.split("|").map(parseSelectorComma);
-  let [container, ...itemLevels] = parts;
-  container = container.map(b => b.replace(MAGICWORD, clazz));
-  itemLevels = itemLevels.map(body2 => body2?.map(expr => {
-    if (!expr.startsWith(MAGICWORD))
-      throw new SyntaxError("Item selector can't have ancestor expression: " + expr);
-    return expr === MAGICWORD ? "*" : expr.slice(MAGICWORD.length);
-  }));
-  const res2 = [...combine([container, ...itemLevels])].map(combo => combo.join(">"));
-  return { selector: res2.join(", "), item: itemLevels.length === 1, grandItem: itemLevels.length === 2 };
+
+  function cartesianProduct(ar) {
+    return ar.length == 1 ? ar :
+      ar[0].flatMap(head => cartesianProduct(ar.slice(1)).map(tail => head + ">" + tail));
+  }
+
+  const levels = str.split("|").map(parseSelectorComma).map((selectors, i) => {
+    return i === 0 ?
+      selectors.map(sel => sel.replace(MAGICWORD, clazz)) :
+      selectors.map(sel => {
+        if (!sel.startsWith(MAGICWORD))
+          throw new SyntaxError("Item selector can't have ancestor expression: " + sel);
+        return sel === MAGICWORD ? "*" : sel.slice(MAGICWORD.length);
+      });
+  });
+  return {
+    selector: cartesianProduct(levels).join(",  "),
+    item: levels.length === 2,
+    grandItem: levels.length === 3
+  };
 }
 
 function parseSelectorComma(str) {
