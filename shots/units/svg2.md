@@ -1,3 +1,37 @@
+**csss:** $noStroke
+**css:**
+```css
+@layer containerDefault {
+  .\$noStroke {
+    stroke: none;
+    stroke-width: unset;
+    stroke-opacity: unset;
+    stroke-linecap: unset;
+    stroke-linejoin: unset;
+    stroke-dasharray: unset;
+    stroke-dashoffset: unset;
+    stroke-miterlimit: unset;
+  }
+}
+```
+
+**csss:** $stroke(3px,round,miterlimit(4))
+**css:**
+```css
+@layer containerDefault {
+  .\$stroke\(3px\,round\,miterlimit\(4\)\) {
+    stroke: unset;
+    stroke-width: 3px;
+    stroke-opacity: unset;
+    stroke-linecap: round;
+    stroke-linejoin: unset;
+    stroke-dasharray: unset;
+    stroke-dashoffset: unset;
+    stroke-miterlimit: 4;
+  }
+}
+```
+
 **csss:** $stroke(#deepskyblue,3px,.5,bevel,butt,dasharray(5px,5%))
 **css:**
 ```css
@@ -9,17 +43,8 @@
     stroke-linecap: butt;
     stroke-linejoin: bevel;
     stroke-dasharray: 5px, 5%;
-  }
-}
-```
-
-**csss:** $stroke(3px,round)
-**css:**
-```css
-@layer containerDefault {
-  .\$stroke\(3px\,round\) {
-    stroke-width: 3px;
-    stroke-linecap: round;
+    stroke-dashoffset: unset;
+    stroke-miterlimit: unset;
   }
 }
 ```
@@ -29,17 +54,14 @@
 ```css
 @layer containerDefault {
   .\$stroke\(0\.8\) {
+    stroke: unset;
+    stroke-width: unset;
     stroke-opacity: 0.8;
-  }
-}
-```
-
-**csss:** $noStroke
-**css:**
-```css
-@layer containerDefault {
-  .\$noStroke {
-    stroke: none;
+    stroke-linecap: unset;
+    stroke-linejoin: unset;
+    stroke-dasharray: unset;
+    stroke-dashoffset: unset;
+    stroke-miterlimit: unset;
   }
 }
 ```
@@ -59,7 +81,14 @@
 ```css
 @layer containerDefault {
   .\$stroke\(round\) {
+    stroke: unset;
+    stroke-width: unset;
+    stroke-opacity: unset;
     stroke-linecap: round;
+    stroke-linejoin: unset;
+    stroke-dasharray: unset;
+    stroke-dashoffset: unset;
+    stroke-miterlimit: unset;
   }
 }
 ```
@@ -69,7 +98,14 @@
 ```css
 @layer containerDefault {
   .\$stroke\(bevel\) {
+    stroke: unset;
+    stroke-width: unset;
+    stroke-opacity: unset;
+    stroke-linecap: unset;
     stroke-linejoin: bevel;
+    stroke-dasharray: unset;
+    stroke-dashoffset: unset;
+    stroke-miterlimit: unset;
   }
 }
 ```
@@ -79,27 +115,38 @@
 ```css
 @layer containerDefault {
   .\$stroke\(dasharray\(5\,5\)\) {
+    stroke: unset;
+    stroke-width: unset;
+    stroke-opacity: unset;
+    stroke-linecap: unset;
+    stroke-linejoin: unset;
     stroke-dasharray: 5, 5;
+    stroke-dashoffset: unset;
+    stroke-miterlimit: unset;
   }
 }
 ```
 
-**csss:** $fill(#azure)
+**csss:** $fill(#azure,.5,evenodd)
 **css:**
 ```css
 @layer containerDefault {
-  .\$fill\(\#azure\) {
+  .\$fill\(\#azure\,\.5\,evenodd\) {
     fill: azure;
+    fill-opacity: .5;
+    fill-rule: evenodd;
   }
 }
 ```
 
-**csss:** $fillOpacity(0.5)
+**csss:** $fill(0.5)
 **css:**
 ```css
 @layer containerDefault {
-  .\$fillOpacity\(0\.5\) {
+  .\$fill\(0\.5\) {
+    fill: unset;
     fill-opacity: 0.5;
+    fill-rule: unset;
   }
 }
 ```
@@ -110,27 +157,35 @@
 @layer containerDefault {
   .\$noFill {
     fill: none;
-  }
-}
-```
-
-**csss:** $fill(url(#gradient))
-**css:**
-```css
-@layer containerDefault {
-  .\$fill\(url\(\#gradient\)\) {
-    fill: url(#gradient);
+    fill-opacity: unset;
+    fill-rule: unset;
   }
 }
 ```
 
 
-**csss:** $textAnchor(middle)
+**csss:** $svgText(middle)
 **css:**
 ```css
 @layer containerDefault {
-  .\$textAnchor\(middle\) {
+  .\$svgText\(middle\) {
     text-anchor: middle;
+    dominant-baseline: unset;
+    alignment-baseline: unset;
+    baseline-shift: unset;
+  }
+}
+```
+
+**csss:** $svgText(baseline(middle,textAfterEdge))
+**css:**
+```css
+@layer containerDefault {
+  .\$svgText\(baseline\(middle\,textAfterEdge\)\) {
+    text-anchor: unset;
+    dominant-baseline: middle;
+    alignment-baseline: text-after-edge;
+    baseline-shift: unset;
   }
 }
 ```
@@ -155,15 +210,6 @@
 }
 ```
 
-**csss:** $dominantBaseline(middle)
-**css:**
-```css
-@layer containerDefault {
-  .\$dominantBaseline\(middle\) {
-    dominant-baseline: middle;
-  }
-}
-```
 
 **csss:** $paintOrder(stroke,fill)
 **css:**
@@ -171,26 +217,6 @@
 @layer containerDefault {
   .\$paintOrder\(stroke\,fill\) {
     paint-order: stroke fill;
-  }
-}
-```
-
-**csss:** $fillRule(evenodd)
-**css:**
-```css
-@layer containerDefault {
-  .\$fillRule\(evenodd\) {
-    fill-rule: evenodd;
-  }
-}
-```
-
-**csss:** $markerStart(url(#arrow))
-**css:**
-```css
-@layer containerDefault {
-  .\$markerStart\(url\(\#arrow\)\) {
-    marker-start: url(#arrow);
   }
 }
 ```

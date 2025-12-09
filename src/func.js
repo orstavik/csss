@@ -736,7 +736,8 @@ export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
       const a = args[i];
       let kv;
       if (a.name in wes)
-        res[a.name] = wes[a.name](a)?.text;
+        res[a.name] = wes[a.name](a);
+      // res[a.name] = wes[a.name](a)?.text;
       else if (a.text in wes)
         res[a.text] = wes[a.text];
       else if (kv = singlePrimes(a))
@@ -750,4 +751,84 @@ ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, $
     }
     return post(res);
   };
+};
+
+export const UMBRELLA = (SCHEMA, POST) => {
+  const umbrella = Object.fromEntries(Object.entries(SCHEMA).map(([k]) => [k, "unset"]));
+  return ({ args, name }) => {
+    if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`);
+    const res = args.reduce((res, a, i) => {
+      for (let k in SCHEMA) {
+        if (res[k] !== "unset") continue;
+        const v = SCHEMA[k](a);
+        if (v == null) continue;
+        if (v instanceof Object)
+          return Object.assign(res, v);
+        res[k] = v;
+        return res;
+      }
+      throw new SyntaxError(`Bad argument ${name}/${i + 1}.
+${name}(${[...args.slice(0, i).map(a => a.text), ` => ${args[i].text} <= `, ...args.slice(i + 1).map(a => a.text)].join(",")}).`);
+    }, { ...umbrella });
+    return POST ? POST(res) : res;
+  };
+};
+
+export const SIN_minmax2 = (NAME, min, max, interpreter, post) => ({ args, name }) => {
+  if (NAME !== name) return;
+  if (args.length < min || args.length > max)
+    throw new SyntaxError(`${name} requires ${min} to ${max} arguments, got ${args.length} arguments.`);
+  return post(args.map((a, i) => {
+    const a2 = interpreter(a);
+    if (a2 != null)
+      return a2;
+    throw new SyntaxError(`Bad argument ${name}/${i + 1}.
+    "${a.text}" is not a ${interpreter.name}.
+    ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${a.text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
+  }));
+};
+
+export const SIN = (NAME, interpreter, post) => ({ args, name }) => {
+  if (NAME && NAME !== name) return;
+  if (args.length != 1)
+    throw new SyntaxError(`${name} requires 1 argument, got ${args.length} arguments.`);
+  return post(interpreter(args[0]));
+};
+
+export const SINmax = (NAME, max, interpreter, post) => ({ args, name }) => {
+  if (NAME && NAME !== name) return;
+  if (args.length < 1 || args.length > max)
+    throw new SyntaxError(`${name} requires 1 to ${max} arguments, got ${args.length} arguments.`);
+  return post(args.map((a, i) => {
+    const a2 = interpreter(a);
+    if (a2 != null)
+      return a2;
+    args = args.map(a => a.text);
+    args[i] = ` !! ${args[i]} {{is not a ${interpreter.name}}} !! `;
+    throw new SyntaxError(`Bad argument: ${name}(${args.join(",")})`);
+  }));
+};
+
+export const SEQopt = (NAME, interpreters, post) => ({ args, name }) => {
+  if (NAME && NAME !== name) return;
+  if (args.length < 1 || args.length > interpreters.length)
+    throw new SyntaxError(`${name} requires 1 to ${interpreters.length} arguments, got ${args.length} arguments.`);
+  return post(args.map((a, i) => {
+    const interpreter = interpreters[i];
+    const a2 = interpreter(a);
+    if (a2 != null)
+      return a2;
+    args = args.map(a => a.text);
+    args[i] = ` !! ${args[i]} {{is not a ${interpreter.name}}} !! `;
+    throw new SyntaxError(`Bad argument: ${name}(${args.join(",")})`);
+  }));
+};
+
+export const CUSTOM_WORD = (NAME, WORDS, POST) => {
+  const lookupTable = Object.fromEntries(WORDS.split("|").map(w => [w.replaceAll(/-([a-z])/g, c => c[1].toUpperCase()), w]));
+  const cb = POST ?
+    a => ((a.text in lookupTable) ? POST(lookupTable[a.text]) : undefined) :
+    a => lookupTable[a.text];
+  Object.defineProperty(cb, "name", { value: NAME });
+  return cb;
 };

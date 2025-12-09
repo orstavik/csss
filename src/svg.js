@@ -1,26 +1,91 @@
-import { TYPB, SEQ, isBasic, isNumber, isColor, extractColor, extractLength, extractName, extractUrl, extractNumber, isLength, isLengthPercent, isLengthPercentNumber, SIN_minmax } from "./func.js";
+import { UMBRELLA as UMBRELLA, SINmax, SIN, isBasic, extractColor, extractLength, extractName, extractUrl, extractNumber, isLength, isPercent, isNumber, isColor, isUrl, SEQopt, CUSTOM_WORD } from "./func.js";
 
-const strokeX = TYPB({
+const Unset = a => a.text == "_" ? "unset" : undefined;
+const LengthPercent = a => (isLength(a) ?? isPercent(a))?.text;
+const LengthPercentNumber = a => (isLength(a) ?? isPercent(a) ?? isNumber(a))?.text;
+const Number = a => isNumber(a)?.text;
+const Color = a => isColor(a)?.text;
+const Length = a => isLength(a)?.text;
+const Url = a => isUrl(a)?.text;
+const UrlUnset = a => isUrl(a)?.text ?? Unset(a);
 
-}, {
-  strokeLinecap: a => /^(butt|round|square)$/.test(a.text) ? a : undefined,
-  strokeLinejoin: a => /^(miter|round|bevel)$/.test(a.text) ? a : undefined,
-  color: isColor,
-  opacity: isNumber, //isFraction
-  width: isLength,
-  dasharray: SIN_minmax(1, 99, isLengthPercentNumber, ar => ({ text: ar.join(", ") })),
-  dashoffset: SEQ([isLengthPercent], ar => ({ text: ar[0] })),
-}, {
-  // strokeDasharray: isLength,
-}, ({ color, opacity, width, strokeLinecap, strokeLinejoin, dasharray, dashoffset }) => ({
-  stroke: color,
-  strokeWidth: width,
-  strokeOpacity: opacity,
-  strokeLinecap: strokeLinecap,
-  strokeLinejoin: strokeLinejoin,
-  strokeDasharray: dasharray,
-  strokeDashoffset: dashoffset,
+const stroke = UMBRELLA({
+  stroke: Color,
+  strokeWidth: Length,
+  strokeOpacity: Number, //isFraction
+  strokeLinecap: a => a.text?.match(/^(butt|round|square)$/)?.[0],
+  strokeLinejoin: a => a.text?.match(/^(miter|round|bevel)$/)?.[0],
+  strokeDasharray: SINmax("dasharray", 999, LengthPercentNumber, ar => ar.join(", ")),
+  strokeDashoffset: SIN("dashoffset", LengthPercent, ar => ar[0]),
+  strokeMiterlimit: SIN("miterlimit", Number, ar => ar[0]),
+});
+
+const fill = UMBRELLA({
+  fill: Color,
+  fillOpacity: Number, //isFraction
+  fillRule: a => a.text?.match(/^(evenodd|nonzero)$/)?.[0],
+});
+
+const svgText = UMBRELLA({
+  textAnchor: a => a.text?.match(/^(start|middle|end)$/)?.[0],
+  baseline: SEQopt("baseline", [
+    CUSTOM_WORD("dominantBaseline", "auto|text-bottom|alphabetic|ideographic|middle|central|mathematical|hanging|text-top"),
+    CUSTOM_WORD("alignmentBaseline", "auto|baseline|before-edge|text-before-edge|middle|central|after-edge|text-after-edge|ideographic|alphabetic|hanging|mathematical"),
+    CUSTOM_WORD("baselineShift", "sub|super|baseline"),
+  ],
+    ar => ar.length == 1 ? { dominantBaseline: ar[0] } :
+      ar.length == 2 ? { dominantBaseline: ar[0], alignmentBaseline: ar[1] } :
+        { dominantBaseline: ar[0], alignmentBaseline: ar[1], baselineShift: ar[2] }
+  ),
+}, res => ({
+  textAnchor: "unset",
+  dominantBaseline: "unset",
+  alignmentBaseline: "unset",
+  baselineShift: "unset",
+  ...res,
+  baseline: undefined,
 }));
+
+const markerStart = SIN(null, Url, ar => ({ markerStart: ar[0] }));
+const markerEnd = SIN(null, Url, ar => ({ markerEnd: ar[0] }));
+const markerMid = SIN(null, Url, ar => ({ markerMid: ar[0] }));
+const marker = SINmax(null, 3, UrlUnset, m =>
+  m.length == 1 ? { marker: m[0] } :
+    m.length == 2 ? { markerStart: m[0], markerEnd: m[1] } :
+      { markerStart: m[0], markerMid: m[1], markerEnd: m[2] }
+);
+
+// **csss:** $fill(url(#gradient))
+// **css:**
+// ```css
+// @layer containerDefault {
+//   .\$fill\(url\(\#gradient\)\) {
+//     fill: url(#gradient);
+//   }
+// }
+// ```
+//
+// **csss:** $marker(url(#arrow),_,_)
+// **css:**
+// ```css
+// @layer containerDefault {
+// .\$marker\(url\(\#arrow\)\,_\,_\) {
+// marker-start: url(#arrow);
+// marker-mid: unset;
+// marker-end: unset;
+// }
+// }
+// ```
+// 
+// **csss:** $markerStart(url(#arrow))
+// **css:**
+// ```css
+// @layer containerDefault {
+// .\$markerStart\(url\(\#arrow\)\) {
+// marker-start: url(#arrow);
+// }
+// }
+// ```
 
 //arity is an optional check function that can wrap other functions to check for 
 
@@ -106,15 +171,15 @@ function createColorFunction(property) {
   }
 }
 
-function createLengthFunction(property, defaultValue) {
-  return ({ args }) => {
-    if (!args?.length) return { [property]: defaultValue };
-    const value = extractLength(args) ?? extractName(args);
-    if (!value) throw new SyntaxError(`${property}() requires a length or valid CSS value. Got: ${args[0]?.text || 'undefined'}`);
-    if (args.length) throw new SyntaxError(`Unknown ${property} argument: ${args[0].text}`);
-    return { [property]: value };
-  };
-}
+// function createLengthFunction(property, defaultValue) {
+//   return ({ args }) => {
+//     if (!args?.length) return { [property]: defaultValue };
+//     const value = extractLength(args) ?? extractName(args);
+//     if (!value) throw new SyntaxError(`${property}() requires a length or valid CSS value. Got: ${args[0]?.text || 'undefined'}`);
+//     if (args.length) throw new SyntaxError(`Unknown ${property} argument: ${args[0].text}`);
+//     return { [property]: value };
+//   };
+// }
 
 function createEnumFunction(property, validWords) {
   return ({ args }) => {
@@ -137,44 +202,44 @@ function createOpacityFunction(property) {
   };
 }
 
-function createMarkerFunction(property) {
-  return ({ args }) => {
-    if (!args?.length) return { [property]: "none" };
-    const marker = extractUrl(args) ?? (extractName(args) === "none" ? "none" : null);
-    if (!marker) throw new SyntaxError(`${property}() requires url() or 'none'. Got: ${args[0]?.text || 'undefined'}`);
-    if (args.length) throw new SyntaxError(`Unknown ${property} argument: ${args[0].text}`);
-    return { [property]: marker };
-  };
-}
+// function createMarkerFunction(property) {
+//   return ({ args }) => {
+//     if (!args?.length) return { [property]: "none" };
+//     const marker = extractUrl(args) ?? (extractName(args) === "none" ? "none" : null);
+//     if (!marker) throw new SyntaxError(`${property}() requires url() or 'none'. Got: ${args[0]?.text || 'undefined'}`);
+//     if (args.length) throw new SyntaxError(`Unknown ${property} argument: ${args[0].text}`);
+//     return { [property]: marker };
+//   };
+// }
 
-function createNumberFunction(property, defaultValue) {
-  return ({ args }) => {
-    if (!args?.length) return { [property]: defaultValue };
-    const value = extractNumber(args) ?? extractName(args);
-    if (!value) throw new SyntaxError(`${property}() requires a number or valid CSS value. Got: ${args[0]?.text || 'undefined'}`);
-    if (args.length) throw new SyntaxError(`Unknown ${property} argument: ${args[0].text}`);
-    return { [property]: value };
-  };
-}
+// function createNumberFunction(property, defaultValue) {
+//   return ({ args }) => {
+//     if (!args?.length) return { [property]: defaultValue };
+//     const value = extractNumber(args) ?? extractName(args);
+//     if (!value) throw new SyntaxError(`${property}() requires a number or valid CSS value. Got: ${args[0]?.text || 'undefined'}`);
+//     if (args.length) throw new SyntaxError(`Unknown ${property} argument: ${args[0].text}`);
+//     return { [property]: value };
+//   };
+// }
 
-function strokeDasharray({ args }) {
-  if (!args?.length) return { "stroke-dasharray": "none" };
-  const values = [];
-  while (args.length) {
-    const arg = args.shift();
-    const basic = isBasic(arg);
-    if (basic && (basic.type === "number" || basic.type === "length" || basic.text === "none")) {
-      values.push(basic.text);
-    } else if (arg.kind === "WORD" && arg.text === "none") {
-      values.push("none");
-    } else {
-      args.unshift(arg);
-      break;
-    }
-  }
-  if (args.length) throw new SyntaxError(`Unknown strokeDasharray argument: ${args[0].text}`);
-  return { "stroke-dasharray": values.join(" ") };
-}
+// function strokeDasharray({ args }) {
+//   if (!args?.length) return { "stroke-dasharray": "none" };
+//   const values = [];
+//   while (args.length) {
+//     const arg = args.shift();
+//     const basic = isBasic(arg);
+//     if (basic && (basic.type === "number" || basic.type === "length" || basic.text === "none")) {
+//       values.push(basic.text);
+//     } else if (arg.kind === "WORD" && arg.text === "none") {
+//       values.push("none");
+//     } else {
+//       args.unshift(arg);
+//       break;
+//     }
+//   }
+//   if (args.length) throw new SyntaxError(`Unknown strokeDasharray argument: ${args[0].text}`);
+//   return { "stroke-dasharray": values.join(" ") };
+// }
 
 function paintOrder({ args }) {
   if (!args?.length) return { "paint-order": "normal" };
@@ -189,23 +254,23 @@ function paintOrder({ args }) {
   return { "paint-order": values.join(" ") };
 }
 
-const LINECAP_WORDS = {
-  butt: "butt",
-  round: "round",
-  square: "square",
-};
+// const LINECAP_WORDS = {
+//   butt: "butt",
+//   round: "round",
+//   square: "square",
+// };
 
-const LINEJOIN_WORDS = {
-  miter: "miter",
-  round: "round",
-  bevel: "bevel",
-};
+// const LINEJOIN_WORDS = {
+//   miter: "miter",
+//   round: "round",
+//   bevel: "bevel",
+// };
 
-const TEXT_ANCHOR_WORDS = {
-  start: "start",
-  middle: "middle",
-  end: "end"
-};
+// const TEXT_ANCHOR_WORDS = {
+//   start: "start",
+//   middle: "middle",
+//   end: "end"
+// };
 
 const SHAPE_RENDERING_WORDS = {
   auto: "auto",
@@ -229,28 +294,28 @@ const VECTOR_EFFECT_WORDS = {
   fixedPosition: "fixed-position"
 };
 
-const DOMINANT_BASELINE_WORDS = {
-  auto: "auto", ideographic: "ideographic", alphabetic: "alphabetic", hanging: "hanging",
-  mathematical: "mathematical", central: "central", middle: "middle",
-  textAfterEdge: "text-after-edge", textBeforeEdge: "text-before-edge"
-};
+// const DOMINANT_BASELINE_WORDS = {
+//   auto: "auto", ideographic: "ideographic", alphabetic: "alphabetic", hanging: "hanging",
+//   mathematical: "mathematical", central: "central", middle: "middle",
+//   textAfterEdge: "text-after-edge", textBeforeEdge: "text-before-edge"
+// };
 
-const ALIGNMENT_BASELINE_WORDS = {
-  auto: "auto", baseline: "baseline", beforeEdge: "before-edge", textBeforeEdge: "text-before-edge",
-  middle: "middle", central: "central", afterEdge: "after-edge", textAfterEdge: "text-after-edge",
-  ideographic: "ideographic", alphabetic: "alphabetic", hanging: "hanging", mathematical: "mathematical"
-};
+// const ALIGNMENT_BASELINE_WORDS = {
+//   auto: "auto", baseline: "baseline", beforeEdge: "before-edge", textBeforeEdge: "text-before-edge",
+//   middle: "middle", central: "central", afterEdge: "after-edge", textAfterEdge: "text-after-edge",
+//   ideographic: "ideographic", alphabetic: "alphabetic", hanging: "hanging", mathematical: "mathematical"
+// };
 
 const RULE_WORDS = {
   nonzero: "nonzero",
   evenodd: "evenodd"
 };
 
-const COLOR_INTERPOLATION_WORDS = {
-  auto: "auto",
-  sRGB: "sRGB",
-  linearRGB: "linearRGB"
-};
+// const COLOR_INTERPOLATION_WORDS = {
+//   auto: "auto",
+//   sRGB: "sRGB",
+//   linearRGB: "linearRGB"
+// };
 
 const COLOR_RENDERING_WORDS = {
   auto: "auto",
@@ -265,44 +330,44 @@ const IMAGE_RENDERING_WORDS = {
   pixelated: "pixelated"
 };
 
-const MASK_TYPE_WORDS = {
-  luminance: "luminance",
-  alpha: "alpha"
-};
+// const MASK_TYPE_WORDS = {
+//   luminance: "luminance",
+//   alpha: "alpha"
+// };
 
 
-const fill = createColorFunction("fill");
-const stroke = createColorFunction("stroke");
 const stopColor = createColorFunction("stop-color");
+const stopOpacity = createOpacityFunction("stop-opacity");
 const lightingColor = createColorFunction("lighting-color");
-const strokeWidth = createLengthFunction("stroke-width", "1");
-const strokeDashoffset = createLengthFunction("stroke-dashoffset", "0");
-const baselineShift = createLengthFunction("baseline-shift", "baseline");
-const strokeLinecap = createEnumFunction("stroke-linecap", LINECAP_WORDS);
-const strokeLinejoin = createEnumFunction("stroke-linejoin", LINEJOIN_WORDS);
-const textAnchor = createEnumFunction("text-anchor", TEXT_ANCHOR_WORDS);
-const shapeRendering = createEnumFunction("shape-rendering", SHAPE_RENDERING_WORDS);
+// const baselineShift = createLengthFunction("baseline-shift", "baseline");
+// const textAnchor = createEnumFunction("text-anchor", TEXT_ANCHOR_WORDS);
 const vectorEffect = createEnumFunction("vector-effect", VECTOR_EFFECT_WORDS);
-const dominantBaseline = createEnumFunction("dominant-baseline", DOMINANT_BASELINE_WORDS);
-const alignmentBaseline = createEnumFunction("alignment-baseline", ALIGNMENT_BASELINE_WORDS);
-const fillRule = createEnumFunction("fill-rule", RULE_WORDS);
+// const dominantBaseline = createEnumFunction("dominant-baseline", DOMINANT_BASELINE_WORDS);
+// const alignmentBaseline = createEnumFunction("alignment-baseline", ALIGNMENT_BASELINE_WORDS);
 const clipRule = createEnumFunction("clip-rule", RULE_WORDS);
-const colorInterpolation = createEnumFunction("color-interpolation", COLOR_INTERPOLATION_WORDS);
+// const colorInterpolation = createEnumFunction("color-interpolation", COLOR_INTERPOLATION_WORDS);
+const shapeRendering = createEnumFunction("shape-rendering", SHAPE_RENDERING_WORDS);
 const colorRendering = createEnumFunction("color-rendering", COLOR_RENDERING_WORDS);
 const imageRendering = createEnumFunction("image-rendering", IMAGE_RENDERING_WORDS);
-const maskType = createEnumFunction("mask-type", MASK_TYPE_WORDS);
-const fillOpacity = createOpacityFunction("fill-opacity");
-const strokeOpacity = createOpacityFunction("stroke-opacity");
+// const maskType = createEnumFunction("mask-type", MASK_TYPE_WORDS);
 const svgOpacity = createOpacityFunction("opacity");
-const stopOpacity = createOpacityFunction("stop-opacity");
-const markerStart = createMarkerFunction("marker-start");
-const markerMid = createMarkerFunction("marker-mid");
-const markerEnd = createMarkerFunction("marker-end");
-const strokeMiterlimit = createNumberFunction("stroke-miterlimit", "4");
+// const markerStart = createMarkerFunction("marker-start");
+// const markerMid = createMarkerFunction("marker-mid");
+// const markerEnd = createMarkerFunction("marker-end");
+
+const strokeNone = {
+  stroke: "none",
+  strokeWidth: "unset",
+  strokeOpacity: "unset",
+  strokeLinecap: "unset",
+  strokeLinejoin: "unset",
+  strokeDasharray: "unset",
+  strokeDashoffset: "unset",
+  strokeMiterlimit: "unset",
+};
 
 export default {
-  fill,
-  stroke: strokeX,
+  stroke,
   strokeWidth: undefined,
   strokeLinecap: undefined,
   strokeLinejoin: undefined,
@@ -310,31 +375,48 @@ export default {
   strokeMiterlimit: undefined,
   strokeDashoffset: undefined,
   strokeOpacity: undefined,
-  paintOrder,
-  vectorEffect,
+  strokeNone,
+  noStroke: strokeNone,
 
-  fillOpacity,
-  fillRule,
-  opacity: svgOpacity,
+  fill,
+  fillOpacity: undefined,
+  fillRule: undefined,
+  fillNone: { fill: "none", fillOpacity: "unset", fillRule: "unset" },
+  noFill: { fill: "none", fillOpacity: "unset", fillRule: "unset" },
+
+  marker,
   markerStart,
   markerMid,
   markerEnd,
+  noMarker: { marker: "none" },
+  markerNone: { marker: "none" },
+
+
+  svgText,
+  textAnchor: undefined,
+  dominantBaseline: undefined,
+  alignmentBaseline: undefined,
+  baselineShift: undefined,
+
   stopColor,
   stopOpacity,
-  textAnchor,
-  dominantBaseline,
-  alignmentBaseline,
-  baselineShift,
+
+  paintOrder,
+  vectorEffect,
+  opacity: svgOpacity,
   clipRule,
   shapeRendering,
-  colorInterpolation,
+  // colorInterpolation,
   colorRendering,
   imageRendering,
   lightingColor,
-  maskType,
-  noFill: () => ({ fill: "none" }),
-  noStroke: () => ({ stroke: "none" }),
-  noMarkers: () => ({ "marker-start": "none", "marker-mid": "none", "marker-end": "none" }),
+  // maskType, //alpha, luminance is default/none.  as it doesn't inherit, we would likely not 
+
+  //loners
+  maskType: CUSTOM_WORD("maskType", "alpha"),
+  colorInterpolation: CUSTOM_WORD("colorInterpolation", "sRGB|linearRGB"),
+
+
   thinStroke: { "stroke-width": "1" },
   mediumStroke: { "stroke-width": "2" },
   thickStroke: { "stroke-width": "3" },
