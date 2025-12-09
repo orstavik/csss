@@ -242,42 +242,26 @@ const clazz = /\.[a-zA-Z][a-zA-Z0-9_-]*/.source; //class
 const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
+function* combine(ar) {
+  if (ar.length == 1)
+    yield* ar;
+  else
+    for (let i of ar[0])
+      for (let jj of combine(ar.slice(1)))
+        yield [i, ...jj];
+}
+
 function parseSelectorPipe(str, clazz) {
-  let [body1, body2, body3] = str.split("|").map(parseSelectorComma);
-  for (let i = 0; i < body1.length; i++)
-    body1[i] = body1[i].replace(MAGICWORD, clazz);;
-
-  if (!body2)
-    return { selector: body1.join(", "), item: false, grandItem: false };
-
-  for (let i = 0; i < body2.length; i++) {
-    const expr = body2[i];
+  const parts = str.split("|").map(parseSelectorComma);
+  let [container, ...itemLevels] = parts;
+  container = container.map(b => b.replace(MAGICWORD, clazz));
+  itemLevels = itemLevels.map(body2 => body2?.map(expr => {
     if (!expr.startsWith(MAGICWORD))
       throw new SyntaxError("Item selector can't have ancestor expression: " + expr);
-    body2[i] = expr === MAGICWORD ? "*" : expr.slice(MAGICWORD.length);
-  }
-
-  if (!body3) {
-    let res = [];
-    for (let con of body1)
-      for (let item of body2)
-        res.push(con + ">" + item);
-    return { selector: res.join(","), item: true, grandItem: false };
-  }
-
-  for (let i = 0; i < body3.length; i++) {
-    const expr = body3[i];
-    if (!expr.startsWith(MAGICWORD))
-      throw new SyntaxError("GrandItem selector can't have ancestor expression: " + expr);
-    body3[i] = expr === MAGICWORD ? "*" : expr.slice(MAGICWORD.length);
-  }
-
-  let res = [];
-  for (let con of body1)
-    for (let item of body2)
-      for (let grandItem of body3)
-        res.push(con + ">" + item + ">" + grandItem);
-  return { selector: res.join(","), item: false, grandItem: true };
+    return expr === MAGICWORD ? "*" : expr.slice(MAGICWORD.length);
+  }));
+  const res2 = [...combine([container, ...itemLevels])].map(combo => combo.join(">"));
+  return { selector: res2.join(", "), item: itemLevels.length === 1, grandItem: itemLevels.length === 2 };
 }
 
 function parseSelectorComma(str) {
