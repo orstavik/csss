@@ -98,8 +98,8 @@ export function parse(short) {
   exprList = exprList.map(parseNestedExpression);
   exprList = exprList.map(interpretShort);
   exprList &&= clashOrStack(exprList);
-  let { selector, item } = parseSelectorPipe(sel, clazz);
-  const layer = (item ? "items" : "container") + (short.match(/^(\$|\|\$)/) ? "Default" : "");
+  let { selector, item, grandItem } = parseSelectorPipe(sel, clazz);
+  const layer = (grandItem ? "grandItems" : item ? "items" : "container") + (short.match(/^(\$|\|\$|\|\|\$)/) ? "Default" : "");
   exprList = kebabcaseKeys(exprList);
   const { atRules, mainRule } = extractAtRules(exprList);
   checkProperty(mainRule);
@@ -244,12 +244,12 @@ const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
 function parseSelectorPipe(str, clazz) {
-  let [body1, body2] = str.split("|").map(parseSelectorComma);
+  let [body1, body2, body3] = str.split("|").map(parseSelectorComma);
   for (let i = 0; i < body1.length; i++)
     body1[i] = body1[i].replace(MAGICWORD, clazz);;
 
   if (!body2)
-    return { selector: body1.join(", "), item: false };
+    return { selector: body1.join(", "), item: false, grandItem: false };
 
   for (let i = 0; i < body2.length; i++) {
     const expr = body2[i];
@@ -258,13 +258,28 @@ function parseSelectorPipe(str, clazz) {
     body2[i] = expr === MAGICWORD ? "*" : expr.slice(MAGICWORD.length);
   }
 
+  if (!body3) {
+    let res = [];
+    for (let con of body1)
+      for (let item of body2)
+        res.push(con + ">" + item);
+    return { selector: res.join(","), item: true, grandItem: false };
+  }
+
+  for (let i = 0; i < body3.length; i++) {
+    const expr = body3[i];
+    if (!expr.startsWith(MAGICWORD))
+      throw new SyntaxError("GrandItem selector can't have ancestor expression: " + expr);
+    body3[i] = expr === MAGICWORD ? "*" : expr.slice(MAGICWORD.length);
+  }
+
   let res = [];
   for (let con of body1)
     for (let item of body2)
-      res.push(con + ">" + item);
-  return { selector: res.join(","), item: true };
+      for (let grandItem of body3)
+        res.push(con + ">" + item + ">" + grandItem);
+  return { selector: res.join(","), item: false, grandItem: true };
 }
-
 function parseSelectorComma(str) {
   let tokens = [...str.matchAll(selectorTokens)];
   const badToken = tokens.find(([t, ws, select, error]) => error);

@@ -2,7 +2,7 @@ import * as CSSS from "./csss.js";
 
 const defaultStyleEl = `
 <style id="csss">
-  @layer container, containerDefault, items, itemsDefault;
+  @layer container, containerDefault, items, itemsDefault, grandItems, grandItemsDefault;
 </style>`;
 
 const parse = CSSS.memoize(CSSS.parse, 333);
