@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holy Grail Layout - CSSS Demo</title>
+    <script src="../src/auto.js?style=style&interval=400" type="module"></script>
+</head>
+
+<body class="
+$blockItem(margin(0),size(100%,100vh))
+
+$typeface(main,Inter,sans-serif,16px,400)
+$bg(#light)$color(#dark)
+$palette(primary,#6366f1,#ffffff)
+$palette(secondary,#8b5cf6,#ffffff)
+$palette(accent,#ec4899,#ffffff)
+$palette(dark,#1e293b,#ffffff)
+$palette(muted,#64748b,#ffffff)
+$palette(light,#f8fafc,#1e293b)
+$palette(surface,#f1f5f9,#1e293b)
+">
+
+    <div class="
+    $flex(column)$blockItem(size(100%,100%))
+    |header$block(padding(1.5rem),textCenter)
+    |header|h1$blockItem(margin(0))
+    |header|p$blockItem(margin(0.5rem,0,0,0))
+    |main$flex(row)$flexItem(grow(1))
+    |footer$block(padding(1rem),textCenter)
+    |footer|p$blockItem(margin(0))
+    
+    |header|h1$font(main,2rem,700)
+    |header|p$font(main,1rem)
+    |footer|p$font(main,0.9rem)
+    |header$bg(#primary)$color(#white)
+    |header|p$opacity(0.9)
+    |footer$bg(#dark)$color(#white)
+    |footer|p$opacity(0.8)
+    ">
+        
+        <header>
+            <h1>🏛️ Holy Grail Layout</h1>
+            <p>Header • Navigation • Content • Sidebar • Footer</p>
+        </header>
+
+        <main class="
+        $flex(row)
+        |nav$block(padding(2rem))$blockItem(size(200px,_))
+        |nav|h3$blockItem(margin(0,0,1.5rem,0))
+        |nav|ul$block(padding(0))$blockItem(margin(0))
+        |nav|ul|li$blockItem(margin(0,0,0.75rem,0))$cursor(pointer)
+        |section$block(padding(2rem))$flexItem(grow(1))
+        |section|h2$blockItem(margin(0,0,1rem,0))
+        |section|p$blockItem(margin(0,0,1.5rem,0))
+        |section|ul$block(padding(0,0,0,1.5rem))$blockItem(margin(0,0,1.5rem,0))
+        |section|ul|li$blockItem(margin(0,0,0.5rem,0))
+        |aside$block(padding(2rem))$blockItem(size(180px,_))
+        |aside|h3$blockItem(margin(0,0,1.5rem,0))
+        
+        |nav|h3$font(main,1.2rem,600)
+        |nav|ul|li$easeIn(0.2s)
+        |section|h2$font(main,1.8rem,700)
+        |section|p$font(main,1rem)$lineHeight(1.6)
+        |section|ul|li$font(main,1rem)$lineHeight(1.6)
+        |aside|h3$font(main,1.2rem,600)
+        |nav$bg(#secondary)$color(#white)
+        |nav|ul|li$color(#white)$opacity(0.9)$noTextDecoration
+        |section$bg(#white)
+        |section|h2$color(#dark)
+        |section|p$color(#muted)
+        |section|ul|li$color(#muted)
+        |aside$bg(#accent)$color(#white)
+        ">
+            
+            <nav>
+                <h3>🧭 Navigation</h3>
+                <ul>
+                    <li>
+                        <a>🏠 Home</a>
+                    </li>
+                    <li>
+                        <a>ℹ️ About</a>
+                    </li>
+                    <li>
+                        <a>⚙️ Services</a>
+                    </li>
+                    <li>    
+                        <a>📞 Contact</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <section>
+                <h2>📄 Main Content</h2>
+                
+                <p>
+                    This is the <strong>Holy Grail Layout</strong> - a classic web design pattern with:
+                </p>
+
+                <ul>
+                    <li><strong>Fixed Header</strong> at the top</li>
+                    <li><strong>Fixed Footer</strong> at the bottom</li>
+                    <li><strong>Fixed-width Navigation</strong> on the left (200px)</li>
+                    <li><strong>Flexible Content Area</strong> in the center</li>
+                    <li><strong>Fixed-width Sidebar</strong> on the right (180px)</li>
+                </ul>
+
+                <div class="
+                $block(padding(1.5rem))$blockItem(margin(0,0,1.5rem,0))
+                |h3$blockItem(margin(0,0,0.75rem,0))
+                |p$blockItem(margin(0))
+                
+                |h3$font(main,1.2rem,600)
+                |p$font(main,0.95rem)$lineHeight(1.5)
+                $bg(#surface)$border(radius(8px))
+                |h3$color(#dark)
+                |p$color(#muted)
+                ">
+                    <h3>✨ Key Features</h3>
+                    <p>
+                        The center column expands to fill available space, while the sidebars maintain their fixed widths. 
+                        The layout uses flexbox for optimal browser support and responsive behavior.
+                    </p>
+                </div>
+
+                <p>
+                    This implementation uses CSSS pipe selectors to minimize code repetition while maintaining clean, semantic HTML structure.
+                </p>
+            </section>
+
+            <aside>
+                <h3>📊 Sidebar</h3>
+                
+                <div class="
+                $block(padding(2rem))$blockItem(margin(0,0,1.5rem,0))
+                |h4$blockItem(margin(0,0,0.5rem,0))
+                |ul$block(padding(0))$blockItem(margin(0))
+                |ul|li$blockItem(margin(0,0,0.5rem,0))
+                
+                |h4$font(main,1rem,600)
+                |ul|li$font(main,0.9rem)
+                $bg(#rgba(255,255,255,0.2))$border(radius(6px))
+                ">
+                    <h4>🔗 Quick Links</h4>
+                    <ul>
+                        <li>📚 Documentation</li>
+                        <li>🎓 Tutorials</li>
+                        <li>💡 Examples</li>
+                        <li>🆘 Support</li>
+                    </ul>
+                </div>
+
+                <div class="
+                $block(padding(1rem))
+                |h4$blockItem(margin(0,0,0.5rem,0))
+                |div$blockItem(margin(0,0,0.5rem,0))
+                
+                $font(main,1rem,600)
+                $bg(#rgba(255,255,255,0.2))$border(radius(6px))
+                ">
+                    <h4>📈 Statistics</h4>
+                    <div>👥 Users: 1,234</div>
+                    <div>📝 Posts: 567</div>
+                    <div>👀 Views: 89,012</div>
+                </div>
+            </aside>
+
+        </main>
+
+        <footer>
+            <p>
+                © 2025 Holy Grail Layout • Classic Web Design Pattern • Built with CSSS Framework
+            </p>
+        </footer>
+
+    </div>
+
+</body>
+
+</html>
