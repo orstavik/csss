@@ -26,7 +26,7 @@ const fill = UMBRELLA({
   fillRule: a => a.text?.match(/^(evenodd|nonzero)$/)?.[0],
 });
 
-const svgText = UMBRELLA({
+const svgTextAlign = UMBRELLA({
   textAnchor: a => a.text?.match(/^(start|middle|end)$/)?.[0],
   baseline: SEQopt("baseline", [
     CUSTOM_WORD("dominantBaseline", "auto|text-bottom|alphabetic|ideographic|middle|central|mathematical|hanging|text-top"),
@@ -339,17 +339,17 @@ const IMAGE_RENDERING_WORDS = {
 const stopColor = createColorFunction("stop-color");
 const stopOpacity = createOpacityFunction("stop-opacity");
 const lightingColor = createColorFunction("lighting-color");
-// const baselineShift = createLengthFunction("baseline-shift", "baseline");
-// const textAnchor = createEnumFunction("text-anchor", TEXT_ANCHOR_WORDS);
+const baselineShift = createLengthFunction("baseline-shift", "baseline");
+const textAnchor = createEnumFunction("text-anchor", TEXT_ANCHOR_WORDS);
 const vectorEffect = createEnumFunction("vector-effect", VECTOR_EFFECT_WORDS);
-// const dominantBaseline = createEnumFunction("dominant-baseline", DOMINANT_BASELINE_WORDS);
-// const alignmentBaseline = createEnumFunction("alignment-baseline", ALIGNMENT_BASELINE_WORDS);
+const dominantBaseline = createEnumFunction("dominant-baseline", DOMINANT_BASELINE_WORDS);
+const alignmentBaseline = createEnumFunction("alignment-baseline", ALIGNMENT_BASELINE_WORDS);
 const clipRule = createEnumFunction("clip-rule", RULE_WORDS);
-// const colorInterpolation = createEnumFunction("color-interpolation", COLOR_INTERPOLATION_WORDS);
+const colorInterpolation = createEnumFunction("color-interpolation", COLOR_INTERPOLATION_WORDS);
 const shapeRendering = createEnumFunction("shape-rendering", SHAPE_RENDERING_WORDS);
 const colorRendering = createEnumFunction("color-rendering", COLOR_RENDERING_WORDS);
 const imageRendering = createEnumFunction("image-rendering", IMAGE_RENDERING_WORDS);
-// const maskType = createEnumFunction("mask-type", MASK_TYPE_WORDS);
+const maskType = createEnumFunction("mask-type", MASK_TYPE_WORDS);
 const svgOpacity = createOpacityFunction("opacity");
 // const markerStart = createMarkerFunction("marker-start");
 // const markerMid = createMarkerFunction("marker-mid");
@@ -392,7 +392,7 @@ export default {
   markerNone: { marker: "none" },
 
 
-  svgText,
+  svgText: svgTextAlign,
   textAnchor: undefined,
   dominantBaseline: undefined,
   alignmentBaseline: undefined,
