@@ -244,41 +244,26 @@ const op = />>|[>+~&,!]/.source;
 const selectorTokens = new RegExp(`(\\s+)|(${op}|${pseudo}|${at}|${tag}|${clazz}|\\*)|(.)`, "g");
 
 function parseSelectorPipe(str, clazz) {
-  let [body1, body2, body3] = str.split("|").map(parseSelectorComma);
-  for (let i = 0; i < body1.length; i++)
-    body1[i] = body1[i].replace(MAGICWORD, clazz);;
 
-  if (!body2)
-    return { selector: body1.join(", "), item: false, grandItem: false };
-
-  for (let i = 0; i < body2.length; i++) {
-    const expr = body2[i];
-    if (!expr.startsWith(MAGICWORD))
-      throw new SyntaxError("Item selector can't have ancestor expression: " + expr);
-    body2[i] = expr === MAGICWORD ? "*" : expr.slice(MAGICWORD.length);
+  function cartesianProduct(ar) {
+    return ar.length == 1 ? ar :
+      ar[0].flatMap(head => cartesianProduct(ar.slice(1)).map(tail => head + ">" + tail));
   }
 
-  if (!body3) {
-    let res = [];
-    for (let con of body1)
-      for (let item of body2)
-        res.push(con + ">" + item);
-    return { selector: res.join(","), item: true, grandItem: false };
-  }
-
-  for (let i = 0; i < body3.length; i++) {
-    const expr = body3[i];
-    if (!expr.startsWith(MAGICWORD))
-      throw new SyntaxError("GrandItem selector can't have ancestor expression: " + expr);
-    body3[i] = expr === MAGICWORD ? "*" : expr.slice(MAGICWORD.length);
-  }
-
-  let res = [];
-  for (let con of body1)
-    for (let item of body2)
-      for (let grandItem of body3)
-        res.push(con + ">" + item + ">" + grandItem);
-  return { selector: res.join(","), item: false, grandItem: true };
+  const levels = str.split("|").map(parseSelectorComma).map((selectors, i) => {
+    return i === 0 ?
+      selectors.map(sel => sel.replace(MAGICWORD, clazz)) :
+      selectors.map(sel => {
+        if (!sel.startsWith(MAGICWORD))
+          throw new SyntaxError("Item selector can't have ancestor expression: " + sel);
+        return sel === MAGICWORD ? "*" : sel.slice(MAGICWORD.length);
+      });
+  });
+  return {
+    selector: cartesianProduct(levels).join(",  "),
+    item: levels.length === 2,
+    grandItem: levels.length === 3
+  };
 }
 function parseSelectorComma(str) {
   let tokens = [...str.matchAll(selectorTokens)];
