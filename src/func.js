@@ -794,3 +794,4 @@ export const Time = a => isTime(a)?.text;
 export const Unset = a => a.text == "_" ? "unset" : undefined;
 export const Url = a => isUrl(a)?.text;
 export const UrlUnset = a => isUrl(a)?.text ?? Unset(a);
+export const ColorPrimitive = a => (a.kind === "COLOR" && (a = parseColor(a.text)).hex) ? a : undefined;
