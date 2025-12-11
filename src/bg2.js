@@ -11,17 +11,18 @@ import {
   makeExtractor,
   TYPA,
   SEQ,
-  SIN_minmax,
+  SINmax,
+  LengthPercent,
 } from "./func.js";
 
 const POSITION_WORDS = {};
 const POSITIONS_FUNCS = {
-  position: SIN_minmax(1, 2, isLengthPercent, ar => ({ backgroundPosition: ar.join(" ") })),
+  position: SINmax(null, 2, LengthPercent, (name, ar) => ({ backgroundPosition: ar.join(" ") })),
 };
 
 const AT_POSITION_WORDS = {};
 const AT_POSITION_FUNCS = {
-  at: SIN_minmax(1, 2, isLengthPercent, ar => "at " + ar.join(" ")),
+  at: SINmax(null, 2, LengthPercent, (name, ar) => "at " + ar.join(" ")),
 };
 
 for (let Inline of ["Left", "Right", "Center", ""]) {

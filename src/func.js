@@ -665,18 +665,18 @@ export const SEQ = (interpreters, post) => ({ args, name }) => {
   }));
 };
 
-export const SIN_minmax = (min, max, interpreter, post) => ({ args, name }) => {
-  if (args.length < min || args.length > max)
-    throw new SyntaxError(`${name} requires ${min} to ${max} arguments, got ${args.length} arguments.`);
-  return post(args.map((a, i) => {
-    const a2 = interpreter(a);
-    if (a2)
-      return a2.text;
-    throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-    "${a.text}" is not a ${interpreter.name.slice(2)}.
-    ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${a.text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
-  }));
-};
+// export const SIN_minmax = (min, max, interpreter, post) => ({ args, name }) => {
+//   if (args.length < min || args.length > max)
+//     throw new SyntaxError(`${name} requires ${min} to ${max} arguments, got ${args.length} arguments.`);
+//   return post(args.map((a, i) => {
+//     const a2 = interpreter(a);
+//     if (a2)
+//       return a2.text;
+//     throw new SyntaxError(`Bad argument ${name}/${i + 1}.
+//     "${a.text}" is not a ${interpreter.name.slice(2)}.
+//     ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${a.text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
+//   }));
+// };
 
 export const POLY = (funcs) => (exp) => {
   let errors = [];
@@ -774,19 +774,19 @@ ${name}(${[...args.slice(0, i).map(a => a.text), ` => ${args[i].text} <= `, ...a
   };
 };
 
-export const SIN_minmax2 = (NAME, min, max, interpreter, post) => ({ args, name }) => {
-  if (NAME !== name) return;
-  if (args.length < min || args.length > max)
-    throw new SyntaxError(`${name} requires ${min} to ${max} arguments, got ${args.length} arguments.`);
-  return post(args.map((a, i) => {
-    const a2 = interpreter(a);
-    if (a2 != null)
-      return a2;
-    throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-    "${a.text}" is not a ${interpreter.name}.
-    ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${a.text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
-  }));
-};
+// export const SIN_minmax2 = (NAME, min, max, interpreter, post) => ({ args, name }) => {
+//   if (NAME !== name) return;
+//   if (args.length < min || args.length > max)
+//     throw new SyntaxError(`${name} requires ${min} to ${max} arguments, got ${args.length} arguments.`);
+//   return post(args.map((a, i) => {
+//     const a2 = interpreter(a);
+//     if (a2 != null)
+//       return a2;
+//     throw new SyntaxError(`Bad argument ${name}/${i + 1}.
+//     "${a.text}" is not a ${interpreter.name}.
+//     ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${a.text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
+//   }));
+// };
 
 export const SIN = (NAME, interpreter, post) => ({ args, name }) => {
   if (NAME && NAME !== name) return;
@@ -807,6 +807,20 @@ export const SINmax = (NAME, max, interpreter, post) => ({ args, name }) => {
     args = args.map(a => a.text);
     args[i] = ` !! ${args[i]} {{is not a ${interpreter.name}}} !! `;
     throw new SyntaxError(`Bad argument: ${name}(${args.join(",")})`);
+  }));
+};
+
+export const SEQ2 = (NAME, interpreters, post) => ({ args, name }) => {
+  if (NAME && NAME !== name) return;
+  if (args.length != interpreters.length)
+    throw new SyntaxError(`${name} requires ${interpreters.length} arguments, got ${args.length} arguments.`);
+  return post(name, interpreters.map((interpreter, i) => {
+    const a2 = interpreter(args[i]);
+    if (a2)
+      return a2;
+    throw new SyntaxError(`Bad argument ${name}/${i + 1}.
+    "${args[i].text}" is not a ${interpreter.name.slice(2)}.
+    ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
   }));
 };
 

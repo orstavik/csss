@@ -1,35 +1,31 @@
 import {
-  isAngle,
-  isLength,
-  isLengthPercent,
-  isNumber,
-  isColor,
   isUrl,
-  isNumberPercent,
-  SEQ,
   SINmax,
   SIN,
+  SEQ2,
   Angle,
   AnglePercent,
+  Color,
   Length,
   LengthPercent,
   NumberPercent,
+  Number,
   TYPA,
 } from "./func.js";
 
-const StrFunc = (name) => ar => `${name}(${ar.join(" ")})`;
+const StrFunc2 = (name, ar) => `${name}(${ar.join(" ")})`;
 
 const FILTER_FUNCS = {
-  blur: SEQ([isLength], StrFunc("blur")),
-  brightness: SEQ([isNumberPercent], StrFunc("brightness")),
-  contrast: SEQ([isNumberPercent], StrFunc("contrast")),
-  grayscale: SEQ([isNumberPercent], StrFunc("grayscale")),
-  invert: SEQ([isNumberPercent], StrFunc("invert")),
-  opacity: SEQ([isNumberPercent], StrFunc("opacity")),
-  saturate: SEQ([isNumberPercent], StrFunc("saturate")),
-  sepia: SEQ([isNumberPercent], StrFunc("sepia")),
-  dropShadow: SEQ([isColor, isLength, isLength, isLengthPercent], StrFunc("drop-shadow")),
-  hueRotate: SEQ([isAngle], StrFunc("hue-rotate")),
+  blur: SEQ2(null, [Length], StrFunc2),
+  brightness: SEQ2(null, [NumberPercent], StrFunc2),
+  contrast: SEQ2(null, [NumberPercent], StrFunc2),
+  grayscale: SEQ2(null, [NumberPercent], StrFunc2),
+  invert: SEQ2(null, [NumberPercent], StrFunc2),
+  opacity: SEQ2(null, [NumberPercent], StrFunc2),
+  saturate: SEQ2(null, [NumberPercent], StrFunc2),
+  sepia: SEQ2(null, [NumberPercent], StrFunc2),
+  dropShadow: SEQ2(null, [Color, Length, Length, LengthPercent], (n, ar) => `drop-shadow(${ar.join(" ")})`),
+  hueRotate: SEQ2(null, [Angle], (n, ar) => `hue-rotate(${ar.join(" ")})`),
 };
 
 function handleFilters(name, obj) {
@@ -38,7 +34,7 @@ function handleFilters(name, obj) {
 }
 
 
-const CommaStrFunc = (name) => ar => ({ transform: `${name}(${ar.join(", ")})` });
+const transformWithFunc = (name, ar) => ({ transform: `${name}(${ar.join(", ")})` });
 const rotate = SIN(null, Angle, (name, v) => ({ transform: `${name}(${v})` }));
 const translateX = SIN(null, LengthPercent, (name, v) => ({ transform: `${name}(${v})` }));
 const scaleX = SIN(null, NumberPercent, (name, v) => ({ transform: `${name}(${v})` }));
@@ -51,8 +47,8 @@ export default {
   backdropFilter: undefined,
 
   transform: undefined,
-  matrix: SEQ([Array(6).fill(isNumber)], CommaStrFunc("matrix")),
-  matrix3d: SEQ([Array(16).fill(isNumber)], CommaStrFunc("matrix3d")),
+  matrix: SEQ2(null, Array(6).fill(Number), transformWithFunc),
+  matrix3d: SEQ2(null, Array(16).fill(Number), transformWithFunc),
   perspective,
   rotate,
   rotateX: rotate,
@@ -61,14 +57,14 @@ export default {
   translateX,
   translateY: translateX,
   translateZ: translateX,
-  translate3d: SEQ([Array(3).fill(isLengthPercent)], CommaStrFunc("translate3d")),
+  translate3d: SEQ2(null, Array(3).fill(LengthPercent), transformWithFunc),
   scaleX,
   scaleY: scaleX,
   scaleZ: scaleX,
-  scale3d: SEQ([Array(3).fill(isNumber)], CommaStrFunc("scale3d")),
+  scale3d: SEQ2(null, Array(3).fill(Number), transformWithFunc),
   skewX,
   skewY: skewX,
-  rotate3d: SEQ([isNumber, isNumber, isNumber, isAngle], CommaStrFunc("rotate3d")),
+  rotate3d: SEQ2(null, [Number, Number, Number, Angle], transformWithFunc),
   translate: SINmax(null, 2, LengthPercent, (name, ar) => ({ transform: `${name}(${ar.join(", ")})` })),
   scale: SINmax(null, 2, NumberPercent, (name, ar) => ({ transform: `${name}(${ar.join(", ")})` })),
   skew: SINmax(null, 2, AnglePercent, (name, ar) => ({ transform: `${name}(${ar.join(", ")})` })),
