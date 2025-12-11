@@ -1,13 +1,9 @@
-import { UMBRELLA as UMBRELLA, SINmax, SIN, isBasic, extractColor, extractLength, extractName, extractUrl, extractNumber, isLength, isPercent, isNumber, isColor, isUrl, SEQopt, CUSTOM_WORD } from "./func.js";
-
-const Unset = a => a.text == "_" ? "unset" : undefined;
-const LengthPercent = a => (isLength(a) ?? isPercent(a))?.text;
-const LengthPercentNumber = a => (isLength(a) ?? isPercent(a) ?? isNumber(a))?.text;
-const Number = a => isNumber(a)?.text;
-const Color = a => isColor(a)?.text;
-const Length = a => isLength(a)?.text;
-const Url = a => isUrl(a)?.text;
-const UrlUnset = a => isUrl(a)?.text ?? Unset(a);
+import {
+  UMBRELLA as UMBRELLA, SINmax, SIN, SEQopt, CUSTOM_WORD,
+  extractLength, extractName, extractUrl, extractNumber, extractColor,
+  isLength, isPercent, isNumber, isColor, isUrl, isBasic,
+  Unset, LengthPercent, LengthPercentNumber, Number, Color, Length, Url, UrlUnset,
+} from "./func.js";
 
 const stroke = UMBRELLA({
   stroke: Color,
@@ -15,9 +11,9 @@ const stroke = UMBRELLA({
   strokeOpacity: Number, //isFraction
   strokeLinecap: a => a.text?.match(/^(butt|round|square)$/)?.[0],
   strokeLinejoin: a => a.text?.match(/^(miter|round|bevel)$/)?.[0],
-  strokeDasharray: SINmax("dasharray", 999, LengthPercentNumber, ar => ar.join(", ")),
-  strokeDashoffset: SIN("dashoffset", LengthPercent, ar => ar[0]),
-  strokeMiterlimit: SIN("miterlimit", Number, ar => ar[0]),
+  strokeDasharray: SINmax("dasharray", 999, LengthPercentNumber, (name, ar) => ar.join(", ")),
+  strokeDashoffset: SIN("dashoffset", LengthPercent),
+  strokeMiterlimit: SIN("miterlimit", Number),
 });
 
 const fill = UMBRELLA({
@@ -46,10 +42,10 @@ const svgTextAlign = UMBRELLA({
   baseline: undefined,
 }));
 
-const markerStart = SIN(null, Url, ar => ({ markerStart: ar[0] }));
-const markerEnd = SIN(null, Url, ar => ({ markerEnd: ar[0] }));
-const markerMid = SIN(null, Url, ar => ({ markerMid: ar[0] }));
-const marker = SINmax(null, 3, UrlUnset, m =>
+const markerStart = SIN(null, Url, (name, v) => ({ [name]: v }));
+const markerEnd = SIN(null, Url, (name, v) => ({ [name]: v }));
+const markerMid = SIN(null, Url, (name, v) => ({ [name]: v }));
+const marker = SINmax(null, 3, UrlUnset, (name, m) =>
   m.length == 1 ? { marker: m[0] } :
     m.length == 2 ? { markerStart: m[0], markerEnd: m[1] } :
       { markerStart: m[0], markerMid: m[1], markerEnd: m[2] }

@@ -792,14 +792,15 @@ export const SIN = (NAME, interpreter, post) => ({ args, name }) => {
   if (NAME && NAME !== name) return;
   if (args.length != 1)
     throw new SyntaxError(`${name} requires 1 argument, got ${args.length} arguments.`);
-  return post(interpreter(args[0]));
+  const v = interpreter(args[0]);
+  return post ? post(name, v) : v;
 };
 
 export const SINmax = (NAME, max, interpreter, post) => ({ args, name }) => {
   if (NAME && NAME !== name) return;
   if (args.length < 1 || args.length > max)
     throw new SyntaxError(`${name} requires 1 to ${max} arguments, got ${args.length} arguments.`);
-  return post(args.map((a, i) => {
+  return post(name, args.map((a, i) => {
     const a2 = interpreter(a);
     if (a2 != null)
       return a2;
@@ -832,3 +833,15 @@ export const CUSTOM_WORD = (NAME, WORDS, POST) => {
   Object.defineProperty(cb, "name", { value: NAME });
   return cb;
 };
+
+export const Unset = a => a.text == "_" ? "unset" : undefined;
+export const LengthPercent = a => (isLength(a) ?? isPercent(a))?.text;
+export const LengthPercentNumber = a => (isLength(a) ?? isPercent(a) ?? isNumber(a))?.text;
+export const Number = a => isNumber(a)?.text;
+export const NumberPercent = a => (isNumber(a) ?? isPercent(a))?.text;
+export const Angle = a => isAngle(a)?.text;
+export const AnglePercent = a => (isAngle(a) ?? isPercent(a))?.text;
+export const Color = a => isColor(a)?.text;
+export const Length = a => isLength(a)?.text;
+export const Url = a => isUrl(a)?.text;
+export const UrlUnset = a => isUrl(a)?.text ?? Unset(a);
