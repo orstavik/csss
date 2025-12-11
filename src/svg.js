@@ -1,7 +1,7 @@
 import {
-  UMBRELLA, SINmax, SIN, SEQopt, CUSTOM_WORD,
-  extractName, extractUrl,  extractColor,
-  isNumber,  isBasic,
+  UMBRELLA, SINmax, SIN, CHECKNAME, SEQopt, CUSTOM_WORD,
+  extractName, extractUrl, extractColor,
+  isNumber, isBasic,
   LengthPercent, LengthPercentNumber, Number, Color, Length, Url, UrlUnset,
 } from "./func.js";
 
@@ -11,9 +11,9 @@ const stroke = UMBRELLA({
   strokeOpacity: Number, //isFraction
   strokeLinecap: a => a.text?.match(/^(butt|round|square)$/)?.[0],
   strokeLinejoin: a => a.text?.match(/^(miter|round|bevel)$/)?.[0],
-  strokeDasharray: SINmax("dasharray", 999, LengthPercentNumber, (name, ar) => ar.join(", ")),
-  strokeDashoffset: SIN("dashoffset", LengthPercent),
-  strokeMiterlimit: SIN("miterlimit", Number),
+  strokeDasharray: CHECKNAME("dasharray", SINmax(null, 999, LengthPercentNumber, (name, ar) => ar.join(", "))),
+  strokeDashoffset: CHECKNAME("dashoffset", SIN(null, LengthPercent)),
+  strokeMiterlimit: CHECKNAME("miterlimit", SIN(null, Number)),
 });
 
 const fill = UMBRELLA({
@@ -24,15 +24,16 @@ const fill = UMBRELLA({
 
 const svgTextAlign = UMBRELLA({
   textAnchor: a => a.text?.match(/^(start|middle|end)$/)?.[0],
-  baseline: SEQopt("baseline", [
-    CUSTOM_WORD("dominantBaseline", "auto|text-bottom|alphabetic|ideographic|middle|central|mathematical|hanging|text-top"),
-    CUSTOM_WORD("alignmentBaseline", "auto|baseline|before-edge|text-before-edge|middle|central|after-edge|text-after-edge|ideographic|alphabetic|hanging|mathematical"),
-    CUSTOM_WORD("baselineShift", "sub|super|baseline"),
-  ],
-    ar => ar.length == 1 ? { dominantBaseline: ar[0] } :
-      ar.length == 2 ? { dominantBaseline: ar[0], alignmentBaseline: ar[1] } :
-        { dominantBaseline: ar[0], alignmentBaseline: ar[1], baselineShift: ar[2] }
-  ),
+  baseline: CHECKNAME("baseline",
+    SEQopt(null, [
+      CUSTOM_WORD("dominantBaseline", "auto|text-bottom|alphabetic|ideographic|middle|central|mathematical|hanging|text-top"),
+      CUSTOM_WORD("alignmentBaseline", "auto|baseline|before-edge|text-before-edge|middle|central|after-edge|text-after-edge|ideographic|alphabetic|hanging|mathematical"),
+      CUSTOM_WORD("baselineShift", "sub|super|baseline"),
+    ],
+      ar => ar.length == 1 ? { dominantBaseline: ar[0] } :
+        ar.length == 2 ? { dominantBaseline: ar[0], alignmentBaseline: ar[1] } :
+          { dominantBaseline: ar[0], alignmentBaseline: ar[1], baselineShift: ar[2] }
+    )),
 }, res => ({
   textAnchor: "unset",
   dominantBaseline: "unset",

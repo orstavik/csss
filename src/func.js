@@ -652,19 +652,6 @@ export default {
   em: NativeCssProperties.fontSize,
 };
 
-export const SEQ = (interpreters, post) => ({ args, name }) => {
-  if (args.length != interpreters.length)
-    throw new SyntaxError(`${name} requires ${interpreters.length} arguments, got ${args.length} arguments.`);
-  return post(interpreters.map((interpreter, i) => {
-    const a2 = interpreter(args[i]);
-    if (a2)
-      return a2.text;
-    throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-    "${args[i].text}" is not a ${interpreter.name.slice(2)}.
-    ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
-  }));
-};
-
 const matchPrimes = (primes) => {
   primes = Object.entries(primes);
   return (a, res) => {
@@ -722,15 +709,15 @@ ${name}(${[...args.slice(0, i).map(a => a.text), ` => ${args[i].text} <= `, ...a
 };
 
 export const SIN = (NAME, interpreter, post) => ({ args, name }) => {
-  if (NAME && NAME !== name) return;
   if (args.length != 1)
     throw new SyntaxError(`${name} requires 1 argument, got ${args.length} arguments.`);
   const v = interpreter(args[0]);
   return post ? post(name, v) : v;
 };
 
+export const CHECKNAME = (NAME, cb) => exp => (NAME && NAME !== exp.name) ? undefined : cb(exp);
+
 export const SINmax = (NAME, max, interpreter, post) => ({ args, name }) => {
-  if (NAME && NAME !== name) return;
   if (args.length < 1 || args.length > max)
     throw new SyntaxError(`${name} requires 1 to ${max} arguments, got ${args.length} arguments.`);
   return post(name, args.map((a, i) => {
@@ -744,7 +731,6 @@ export const SINmax = (NAME, max, interpreter, post) => ({ args, name }) => {
 };
 
 export const SEQ2 = (NAME, interpreters, post) => ({ args, name }) => {
-  if (NAME && NAME !== name) return;
   if (args.length != interpreters.length)
     throw new SyntaxError(`${name} requires ${interpreters.length} arguments, got ${args.length} arguments.`);
   return post(name, interpreters.map((interpreter, i) => {
@@ -758,7 +744,6 @@ export const SEQ2 = (NAME, interpreters, post) => ({ args, name }) => {
 };
 
 export const SEQopt = (NAME, interpreters, post) => ({ args, name }) => {
-  if (NAME && NAME !== name) return;
   if (args.length < 1 || args.length > interpreters.length)
     throw new SyntaxError(`${name} requires 1 to ${interpreters.length} arguments, got ${args.length} arguments.`);
   return post(args.map((a, i) => {
