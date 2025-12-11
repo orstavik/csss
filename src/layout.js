@@ -1,4 +1,4 @@
-import { isRepeat, isSpan, isBasic, toLogicalFour, default as AllFunctions } from "./func.js";
+import { isRepeat, isSpan, isBasic, toLogicalFour, isLength } from "./func.js";
 
 function toSize(NAME, args) {
   if (args.length != 1 && args.length != 3)
@@ -152,11 +152,17 @@ const LAYOUT = {
   snapStop: { scrollSnapStop: "always" },
 };
 
+function textIndent(args) {
+  const l = isLength(args[0]);
+  if (l)
+    return { "textIndent": l.text };
+  throw new SyntaxError("indent needs a length");
+}
 const _LAYOUT = {
   margin: toLogicalFour.bind(null, "margin"),
   scrollMargin: toLogicalFour.bind(null, "scroll-margin"),
-  textIndent: AllFunctions.textIndent,
-  indent: AllFunctions.textIndent,
+  textIndent: textIndent,
+  indent: textIndent,
   inlineSize: toSize.bind(null, "inlineSize"), //todo should we block this?
   blockSize: toSize.bind(null, "blockSize"),   //todo should we block this?
   size,
@@ -206,14 +212,14 @@ const BlockItem = {
   floatEnd: { float: "inline-end" },
 };
 
-function block(args) {
+function block({ args }) {
   const args2 = args.map(a => BLOCK[a.name]?.(a.args) ?? BLOCK[a.text]);
   return defaultContainer({ display: "block" }, args, args2);
 }
 
-function blockItem(argsIn) {
-  const argsOut = argsIn.map(a => BlockItem[a.name]?.(a.args) ?? BlockItem[a.text]);
-  return defaultItem("blockItem", argsIn, argsOut);
+function blockItem({ args }) {
+  const argsOut = args.map(a => BlockItem[a.name]?.(a.args) ?? BlockItem[a.text]);
+  return defaultItem("blockItem", args, argsOut);
 }
 
 const IBLOCK = {
@@ -234,21 +240,21 @@ const IBlockItem = {
   alignSub: { verticalAlign: "sub" },
 };
 
-function iBlock(args) {
+function iBlock({ args }) {
   const args2 = args.map(a => IBLOCK[a.name]?.(a.args) ?? IBLOCK[a.text]);
   return defaultContainer({ display: "inline-block" }, args, args2);
 }
 
-function iBlockItem(argsIn) {
-  const argsOut = argsIn.map(a => IBlockItem[a.name]?.(a.args) ?? IBlockItem[a.text]);
-  return defaultItem("iBlockItem", argsIn, argsOut);
+function iBlockItem({ args }) {
+  const argsOut = args.map(a => IBlockItem[a.name]?.(a.args) ?? IBlockItem[a.text]);
+  return defaultItem("iBlockItem", args, argsOut);
 }
 
-function lineClamp([lines, ...args]) {
+function lineClamp({ args: [lines, ...args] }) {
   lines = isBasic(lines);
   if (lines.type != "number")
     throw new SyntaxError(`$lineClamp() first argument must be a simple number, got ${lines}.`);
-  return Object.assign(block(args), {
+  return Object.assign(block({ args }), {
     display: "-webkit-box",
     WebkitLineClamp: lines.num,
     WebkitBoxOrient: "vertical",
@@ -273,9 +279,9 @@ const GRID = {
   denseRow: { gridAutoFlow: "dense row" },
 };
 
-function grid(argsIn) {
-  const argsOut = argsIn.map(a => GRID[a.name]?.(a.args) ?? GRID[a.text]);
-  return defaultContainer({ display: "grid", placeItems: "unset", placeContent: "unset" }, argsIn, argsOut);
+function grid({ args }) {
+  const argsOut = args.map(a => GRID[a.name]?.(a.args) ?? GRID[a.text]);
+  return defaultContainer({ display: "grid", placeItems: "unset", placeContent: "unset" }, args, argsOut);
 }
 
 //       1  2345   6789
@@ -305,9 +311,9 @@ const GridItem = {
   column,
   row,
 };
-function gridItem(argsIn) {
-  const argsOut = argsIn.map(a => GridItem[a.name]?.(a.args) ?? GridItem[a.text]);
-  return defaultItem("gridItem", argsIn, argsOut);
+function gridItem({ args }) {
+  const argsOut = args.map(a => GridItem[a.name]?.(a.args) ?? GridItem[a.text]);
+  return defaultItem("gridItem", args, argsOut);
 }
 
 const FLEX = {
@@ -325,9 +331,9 @@ const FLEX = {
   gap,
 };
 
-function flex(argsIn) {
-  const argsOut = argsIn.map(a => FLEX[a.name]?.(a.args) ?? FLEX[a.text]);
-  return defaultContainer({ display: "flex", alignItems: "unset", placeContent: "unset" }, argsIn, argsOut);
+function flex({ args }) {
+  const argsOut = args.map(a => FLEX[a.name]?.(a.args) ?? FLEX[a.text]);
+  return defaultContainer({ display: "flex", alignItems: "unset", placeContent: "unset" }, args, argsOut);
 }
 const FlexItem = {
   ..._LAYOUT,
@@ -339,9 +345,9 @@ const FlexItem = {
   //todo safe
 };
 
-function flexItem(argsIn) {
-  const argsOut = argsIn.map(a => FlexItem[a.name]?.(a.args) ?? FlexItem[a.text]);
-  return defaultItem("flexItem", argsIn, argsOut);
+function flexItem({ args }) {
+  const argsOut = args.map(a => FlexItem[a.name]?.(a.args) ?? FlexItem[a.text]);
+  return defaultItem("flexItem", args, argsOut);
 }
 
 export default {

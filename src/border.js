@@ -66,7 +66,7 @@ const RADIUS = {
   r: radius,
 };
 
-function border(ar) {
+function border({args: ar}) {
   let borderRadius, width = [], style = [], color = [];
   for (let a of ar) {
     let v;

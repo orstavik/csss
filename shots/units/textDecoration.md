@@ -1,31 +1,32 @@
-**csss:** $dottedOverUnderLineThrough(#green,2px,noSkipInk)
+**csss:** $textDecoration(dotted,over,under,through,#green,2px,noSkipInk)
 **css:**
 ```css
 @layer containerDefault {
-  .\$dottedOverUnderLineThrough\(\#green\,2px\,noSkipInk\) {
-    text-decoration: overline underline line-through dotted green 2px;
+  .\$textDecoration\(dotted\,over\,under\,through\,\#green\,2px\,noSkipInk\) {
+    text-decoration: dotted overline underline line-through green 2px;
     text-decoration-skip-ink: none;
   }
 }
 ```
 
-**csss:** $dashedOverLine(#red)
+**csss:** $textDecoration(dashed,over,#red)
 **css:**
 ```css
 @layer containerDefault {
-  .\$dashedOverLine\(\#red\) {
-    text-decoration: overline dashed red;
+  .\$textDecoration\(dashed\,over\,\#red\) {
+    text-decoration: dashed overline red;
+    text-decoration-skip-ink: auto;
   }
 }
 ```
 
-**csss:** $noTextDecoration
+**csss:** $textDecorationNone
 **css:**
 ```css
 @layer containerDefault {
-  .\$noTextDecoration {
+  .\$textDecorationNone {
     text-decoration: none;
-    text-decoration-skip-ink: none;
+    text-decoration-skip-ink: auto;
   }
 }
 ```

@@ -98,9 +98,9 @@ function textDropShadow(args) {
 }
 
 export default {
-  boxShadowInset: args => ({ boxShadow: "inset " + boxShadow(args) }),
-  boxShadow: args => ({ boxShadow: boxShadow(args) }),
-  textShadow: args => ({ textShadow: textDropShadow(args) }),
+  boxShadowInset: ({args}) => ({ boxShadow: "inset " + boxShadow(args) }),
+  boxShadow: ({args}) => ({ boxShadow: boxShadow(args) }),
+  textShadow: ({args}) => ({ textShadow: textDropShadow(args) }),
   dropShadow: textDropShadow,
   noBoxShadow: { boxShadow: "none" },
   noTextShadow: { textShadow: "none" },

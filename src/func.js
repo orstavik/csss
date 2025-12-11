@@ -415,6 +415,11 @@ export function isLengthPercent(a) {
   if (a?.type === "length" || a?.type === "percent" || (a?.num == 0 && a?.type === "number"))
     return a;
 }
+export function isLengthPercentNumber(a) {
+  a = isBasic(a);
+  if (a?.type === "length" || a?.type === "percent" || a?.type === "number")
+    return a;
+}
 export function isPercent(a) {
   a = isBasic(a);
   if (a?.type === "percent")
@@ -456,6 +461,10 @@ export function isNumberPercent(a) {
 }
 export function isQuote(a) {
   if (a.kind === "QUOTE")
+    return a;
+}
+export function isName(a) {
+  if (a.kind === "WORD" && a.text[0].match(/[a-zA-Z0-9-]/))
     return a;
 }
 
@@ -598,7 +607,7 @@ const NativeCssProperties = Object.fromEntries(Object.entries(NativeCss.supporte
   camel = fixBorderNames(camel);
   const functions = [isBasic, ...types.map(t => INTERPRETERS[t]).filter(Boolean)].reverse();
 
-  function interpretNativeValue(args) {
+  function interpretNativeValue({ args, name }) {
     const argsOut = args.map(a => {
       let result;
       for (const cb of functions)
@@ -642,3 +651,132 @@ export default {
   ...UnpackedNativeCssProperties,
   em: NativeCssProperties.fontSize,
 };
+
+const matchPrimes = (primes) => {
+  primes = Object.entries(primes);
+  return (a, res) => {
+    for (let [k, v] of primes)
+      if (!(k in res))
+        if ((v = v(a)) !== undefined)
+          return [k, v];
+  };
+};
+
+export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
+  singlePrimes = matchPrimes(singlePrimes);
+  primes = matchPrimes(primes);
+  return ({ args, name }) => {
+    if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`);
+    const res = {};
+    for (let i = 0; i < args.length; i++) {
+      const a = args[i];
+      let kv;
+      if (a.name in wes)
+        res[a.name] = wes[a.name](a);
+      else if (a.text in wes)
+        res[a.text] = wes[a.text];
+      else if (kv = singlePrimes(a, res))
+        res[kv[0]] = kv[1];
+      else if (kv = primes(a, {}))
+        (res[kv[0]] ??= []).push(kv[1]);
+      else
+        throw new SyntaxError(`Bad argument ${name}/${i + 1}.
+${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
+    }
+    return post(res);
+  };
+};
+
+export const UMBRELLA = (SCHEMA, POST) => {
+  const umbrella = Object.fromEntries(Object.entries(SCHEMA).map(([k]) => [k, "unset"]));
+  return ({ args, name }) => {
+    if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`);
+    const res = args.reduce((res, a, i) => {
+      for (let k in SCHEMA) {
+        if (res[k] !== "unset") continue;
+        const v = SCHEMA[k](a);
+        if (v == null) continue;
+        if (v instanceof Object)
+          return Object.assign(res, v);
+        res[k] = v;
+        return res;
+      }
+      throw new SyntaxError(`Bad argument ${name}/${i + 1}.
+${name}(${[...args.slice(0, i).map(a => a.text), ` => ${args[i].text} <= `, ...args.slice(i + 1).map(a => a.text)].join(",")}).`);
+    }, { ...umbrella });
+    return POST ? POST(res) : res;
+  };
+};
+
+export const SIN = (interpreter, post) => ({ args, name }) => {
+  if (args.length != 1)
+    throw new SyntaxError(`${name} requires 1 argument, got ${args.length} arguments.`);
+  const v = interpreter(args[0]);
+  return post ? post(name, v) : v;
+};
+
+export const CHECKNAME = (NAME, cb) => exp => (NAME && NAME !== exp.name) ? undefined : cb(exp);
+
+export const SINmax = (max, interpreter, post) => ({ args, name }) => {
+  if (args.length < 1 || args.length > max)
+    throw new SyntaxError(`${name} requires 1 to ${max} arguments, got ${args.length} arguments.`);
+  return post(name, args.map((a, i) => {
+    const a2 = interpreter(a);
+    if (a2 != null)
+      return a2;
+    args = args.map(a => a.text);
+    args[i] = ` !! ${args[i]} {{is not a ${interpreter.name}}} !! `;
+    throw new SyntaxError(`Bad argument: ${name}(${args.join(",")})`);
+  }));
+};
+
+export const SEQ = (interpreters, post) => ({ args, name }) => {
+  if (args.length != interpreters.length)
+    throw new SyntaxError(`${name} requires ${interpreters.length} arguments, got ${args.length} arguments.`);
+  return post(name, interpreters.map((interpreter, i) => {
+    const a2 = interpreter(args[i]);
+    if (a2)
+      return a2;
+    throw new SyntaxError(`Bad argument ${name}/${i + 1}.
+    "${args[i].text}" is not a ${interpreter.name}.
+    ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
+  }));
+};
+
+export const SEQopt = (interpreters, post) => ({ args, name }) => {
+  if (args.length < 1 || args.length > interpreters.length)
+    throw new SyntaxError(`${name} requires 1 to ${interpreters.length} arguments, got ${args.length} arguments.`);
+  return post(args.map((a, i) => {
+    const interpreter = interpreters[i];
+    const a2 = interpreter(a);
+    if (a2 != null)
+      return a2;
+    args = args.map(a => a.text);
+    args[i] = ` !! ${args[i]} {{is not a ${interpreter.name}}} !! `;
+    throw new SyntaxError(`Bad argument: ${name}(${args.join(",")})`);
+  }));
+};
+
+export const CUSTOM_WORD = (NAME, WORDS, POST) => {
+  const lookupTable = Object.fromEntries(WORDS.split("|").map(w => [w.replaceAll(/-([a-z])/g, c => c[1].toUpperCase()), w]));
+  const cb = POST ?
+    a => ((a.text in lookupTable) ? POST(lookupTable[a.text]) : undefined) :
+    a => lookupTable[a.text];
+  Object.defineProperty(cb, "name", { value: NAME });
+  return cb;
+};
+
+export const Angle = a => isAngle(a)?.text;
+export const AnglePercent = a => (isAngle(a) ?? isPercent(a))?.text;
+export const Color = a => isColor(a)?.text;
+export const Length = a => isLength(a)?.text;
+export const LengthPercent = a => (isLength(a) ?? isPercent(a))?.text;
+export const LengthPercentNumber = a => (isLength(a) ?? isPercent(a) ?? isNumber(a))?.text;
+export const Name = a => isName(a)?.text;
+export const Number = a => isNumber(a)?.text;
+export const NumberPercent = a => (isNumber(a) ?? isPercent(a))?.text;
+export const Time = a => isTime(a)?.text;
+export const Unset = a => a.text == "_" ? "unset" : undefined;
+export const Url = a => isUrl(a)?.text;
+export const UrlUnset = a => isUrl(a)?.text ?? Unset(a);
+export const ColorPrimitive = a => (a.kind === "COLOR" && (a = parseColor(a.text)).hex) ? a : undefined;
