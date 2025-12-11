@@ -819,7 +819,7 @@ export const SEQ2 = (NAME, interpreters, post) => ({ args, name }) => {
     if (a2)
       return a2;
     throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-    "${args[i].text}" is not a ${interpreter.name.slice(2)}.
+    "${args[i].text}" is not a ${interpreter.name}.
     ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
   }));
 };
