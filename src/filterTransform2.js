@@ -10,7 +10,7 @@ import {
   LengthPercent,
   NumberPercent,
   Number,
-  TYPA,
+  TYPB,
 } from "./func.js";
 
 const FILTER_FUNCS = {
@@ -26,12 +26,6 @@ const FILTER_FUNCS = {
   dropShadow: SEQ2(null, [Color, Length, Length, LengthPercent], (n, ar) => `drop-shadow(${ar.join(" ")})`),
 };
 
-function handleFilters(name, obj) {
-  obj.isUrl &&= obj.isUrl.map(a => a.text).join(" ");
-  return { [name]: Object.values(obj).join(" ") };
-}
-
-
 const transformWithFunc = (name, ar) => ({ transform: `${name}(${ar.join(", ")})` });
 const rotate = SIN(null, Angle, (name, v) => ({ transform: `${name}(${v})` }));
 const translateX = SIN(null, LengthPercent, (name, v) => ({ transform: `${name}(${v})` }));
@@ -40,8 +34,8 @@ const skewX = SIN(null, AnglePercent, (name, v) => ({ transform: `${name}(${v})`
 const perspective = SIN(null, Length, (name, v) => ({ transform: `${name}(${v})` }));
 
 export default {
-  filter: TYPA(FILTER_FUNCS, { isUrl }, handleFilters.bind(null, "filter")),
-  backdrop: TYPA(FILTER_FUNCS, { isUrl }, handleFilters.bind(null, "backdropFilter")),
+  filter: TYPB(FILTER_FUNCS, {}, { isUrl }, obj => ({ filter: Object.values(obj).flat().join(" ") })),
+  backdrop: TYPB(FILTER_FUNCS, {}, { isUrl }, obj => ({ backdropFilter: Object.values(obj).flat().join(" ") })),
   backdropFilter: undefined,
 
   transform: undefined,
