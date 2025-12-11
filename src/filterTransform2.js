@@ -13,19 +13,17 @@ import {
   TYPA,
 } from "./func.js";
 
-const StrFunc2 = (name, ar) => `${name}(${ar.join(" ")})`;
-
 const FILTER_FUNCS = {
-  blur: SEQ2(null, [Length], StrFunc2),
-  brightness: SEQ2(null, [NumberPercent], StrFunc2),
-  contrast: SEQ2(null, [NumberPercent], StrFunc2),
-  grayscale: SEQ2(null, [NumberPercent], StrFunc2),
-  invert: SEQ2(null, [NumberPercent], StrFunc2),
-  opacity: SEQ2(null, [NumberPercent], StrFunc2),
-  saturate: SEQ2(null, [NumberPercent], StrFunc2),
-  sepia: SEQ2(null, [NumberPercent], StrFunc2),
+  blur: SIN(null, Length, (n, v) => `${n}(${v})`),
+  brightness: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
+  contrast: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
+  grayscale: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
+  invert: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
+  opacity: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
+  saturate: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
+  sepia: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
+  hueRotate: SIN(null, Angle, (n, v) => `hue-rotate(${v})`),
   dropShadow: SEQ2(null, [Color, Length, Length, LengthPercent], (n, ar) => `drop-shadow(${ar.join(" ")})`),
-  hueRotate: SEQ2(null, [Angle], (n, ar) => `hue-rotate(${ar.join(" ")})`),
 };
 
 function handleFilters(name, obj) {
