@@ -1,134 +1,48 @@
 import {
-  isColor,
-  isLengthPercent,
-  interpretImage,
+  Color,
+  LengthPercent,
+  Url,
+  //todo isImage
+  // interpretImage,
   extractLengthPercent,
   extractAnglePercent,
   extractAngle,
   extractColor,
   makeExtractor,
+  TYPB,
+  SEQ,
+  SINmax,
 } from "./func.js";
 
-function size(args) {
-  if (args.length < 1 || args.length > 2)
-    throw new SyntaxError("background size() requires one or two arguments.");
-  args = args.map(a => {
-    a = a.text == "auto" ? a.text : isLengthPercent(a);
-    if (!a)
-      throw new SyntaxError(`background size argument not LengthPercent: ${a.text}`);
-    return a.text;
-  });
-  return { backgroundSize: args.join(" ") };
-}
-
-function pos(name, dims, args) {
-  if (args.length < 1 || args.length > 2)
-    throw new SyntaxError("background position() requires one or two arguments.");
-  if (dims && dims.length > args.length)
-    throw new SyntaxError(`background (${name} require ${dims.length} arguments, got ${args.length}.`);
-  return args.map((a, i) => {
-    if (["left", "right", "center", "top", "bottom"].includes(a.text))
-      return a.text;
-    a = isLengthPercent(a);
-    if (a)
-      return dims ? dims[i] + " " + a.text : a.text;
-    throw new SyntaxError(`background position argument not LengthPercent: ${a.text}`);
-  }).join(" ");
-}
-
 const POSITION_WORDS = {};
+const POSITIONS_FUNCS = {
+  position: SINmax(2, LengthPercent, (name, ar) => ({ backgroundPosition: ar.join(" ") })),
+};
+
 const AT_POSITION_WORDS = {};
-const POSITIONS_FUNCS = { position: args => pos("position", null, args) };
-const AT_POSITION_FUNCS = { at: args => ("at " + pos("position", null, args)) };
+const AT_POSITION_FUNCS = {
+  at: SINmax(2, LengthPercent, (name, ar) => "at " + ar.join(" ")),
+};
 
 for (let Inline of ["Left", "Right", "Center", ""]) {
   const inline = Inline.toLowerCase();
   for (let Block of ["Top", "Bottom", "Center", ""]) {
     const block = Block.toLowerCase();
     if (block === inline) continue;
+    //todo center center is not accepted? what does a single Center mean?
+    //todo with nothing, then we have position: ... and `at ...`
     const name = inline + Block;
     if (name in POSITION_WORDS) continue;
     const atName = "at" + Inline + Block;
     const dims = [inline, block].filter(Boolean);
     POSITION_WORDS[name] = dims.join(" ");
     AT_POSITION_WORDS[atName] = "at " + POSITION_WORDS[name];
-    POSITIONS_FUNCS[name] = args => ({ backgroundPosition: pos(name, dims, args) });
-    AT_POSITION_FUNCS[atName] = args => ("at " + pos(name, dims, args));
+
+    POSITIONS_FUNCS[name] = SEQ(Array(dims.length).fill(LengthPercent),
+      (name, ar) => ({ backgroundPosition: [inline, ar[0], block, ar[1]].filter(Boolean).join(" ") }));
+    AT_POSITION_FUNCS[atName] = SEQ(Array(dims.length).fill(LengthPercent),
+      (name, ar) => `at ${[inline, ar[0], block, ar[1]].filter(Boolean).join(" ")}`);
   }
-}
-
-const BACKGROUND_WORDS = {
-  ...POSITION_WORDS,
-  repeat: { backgroundRepeat: "repeat" },
-  repeatX: { backgroundRepeat: "repeat-x" },
-  repeatY: { backgroundRepeat: "repeat-y" },
-  space: { backgroundRepeat: "space" },
-  round: { backgroundRepeat: "round" },
-  noRepeat: { backgroundRepeat: "no-repeat" },
-
-  cover: { backgroundSize: "cover" },
-  contain: { backgroundSize: "contain" },
-
-  contentBox: { backgroundOrigin: "content-box" },
-  borderBox: { backgroundOrigin: "border-box" },
-
-  clipPaddingBox: { backgroundClip: "padding-box" },
-  clipContentBox: { backgroundClip: "content-box" },
-  clipText: { backgroundClip: "text" },
-  clipBorderArea: { backgroundClip: "border-area" },
-
-  multiply: { backgroundBlendMode: "multiply" },
-  screen: { backgroundBlendMode: "screen" },
-  overlay: { backgroundBlendMode: "overlay" },
-  darken: { backgroundBlendMode: "darken" },
-  lighten: { backgroundBlendMode: "lighten" },
-  colorDodge: { backgroundBlendMode: "color-dodge" },
-  colorBurn: { backgroundBlendMode: "color-burn" },
-  hardLight: { backgroundBlendMode: "hard-light" },
-  softLight: { backgroundBlendMode: "soft-light" },
-  difference: { backgroundBlendMode: "difference" },
-  exclusion: { backgroundBlendMode: "exclusion" },
-  hue: { backgroundBlendMode: "hue" },
-  saturation: { backgroundBlendMode: "saturation" },
-  color: { backgroundBlendMode: "color" },
-  luminosity: { backgroundBlendMode: "luminosity" },
-
-  fixed: { backgroundAttachment: "fixed" },
-  scroll: { backgroundAttachment: "scroll" },
-  local: { backgroundAttachment: "local" },
-  scrollLocal: { backgroundAttachment: "scroll local" },
-  localScroll: { backgroundAttachment: "local scroll" },
-  fixedLocal: { backgroundAttachment: "fixed local" },
-  scrollFixed: { backgroundAttachment: "scroll fixed" },
-  fixedScroll: { backgroundAttachment: "fixed scroll" },
-  localFixed: { backgroundAttachment: "local fixed" },
-};
-
-const BACKGROUND_FUNCS = {
-  size,
-  position: pos.bind(null, "position", null),
-  ...POSITIONS_FUNCS,
-};
-
-function initiateBackground(argsIn) {
-  const res = {
-    background: "none",
-    backgroundImage: undefined,
-    backgroundPosition: "0% 0%",
-    backgroundRepeat: "repeat",
-    backgroundSize: "auto",
-    backgroundOrigin: "padding-box",
-    backgroundClip: "border-box",
-    backgroundBlendMode: "normal",
-    backgroundAttachment: "scroll",
-  };
-  const args = [];
-  for (let a of argsIn) {
-    const a2 = BACKGROUND_WORDS[a.text] ??
-      BACKGROUND_FUNCS[a.name]?.(a.args);
-    a2 ? Object.assign(res, a2) : args.push(a);
-  }
-  return { res, args };
 }
 
 function interpretColorSpace(a) {
@@ -169,7 +83,7 @@ const extractColorSpace = makeExtractor(interpretColorSpace);
 
 const extractAt = makeExtractor(a => {
   const a2 = AT_POSITION_WORDS[a.text] ??
-    AT_POSITION_FUNCS[a.name]?.(a.args);
+    AT_POSITION_FUNCS[a.name]?.(a);
   return a2 && { text: a2 };
 });
 
@@ -227,27 +141,150 @@ function linear(type, angle, args) {
   return `${type}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})`;
 }
 
-function bgColorOrImage(args) {
-  const img = interpretImage(args[0]);
-  if (img)
-    return args.shift(), img.text;
-  const color = isColor(args[0]);
-  if (color)
-    return args.shift(), `linear-gradient(${color.text})`;
-  throw new SyntaxError(`$bg must include either a color or url: ${color.text}.`);
-}
+const GRADIENTS = {
+  linear: e => ({ backgroundImage: linear("linear", "", e.args) }),
+  linearLeft: e => ({ backgroundImage: linear("linear", "to left", e.args) }),
+  linearRight: e => ({ backgroundImage: linear("linear", "to right", e.args) }),
+  linearUp: e => ({ backgroundImage: linear("linear", "to top", e.args) }),
+  linearDown: e => ({ backgroundImage: linear("linear", "to bottom", e.args) }),
+  linearUpLeft: e => ({ backgroundImage: linear("linear", "to top left", e.args) }),
+  linearUpRight: e => ({ backgroundImage: linear("linear", "to top right", e.args) }),
+  linearDownLeft: e => ({ backgroundImage: linear("linear", "to bottom left", e.args) }),
+  linearDownRight: e => ({ backgroundImage: linear("linear", "to bottom right", e.args) }),
+  repeatingLinear: e => ({ backgroundImage: linear("repeating-linear", "", e.args) }),
+  repeatingLinearLeft: e => ({ backgroundImage: linear("repeating-linear", "to left", e.args) }),
+  repeatingLinearRight: e => ({ backgroundImage: linear("repeating-linear", "to right", e.args) }),
+  repeatingLinearUp: e => ({ backgroundImage: linear("repeating-linear", "to top", e.args) }),
+  repeatingLinearDown: e => ({ backgroundImage: linear("repeating-linear", "to bottom", e.args) }),
+  repeatingLinearUpLeft: e => ({ backgroundImage: linear("repeating-linear", "to top left", e.args) }),
+  repeatingLinearUpRight: e => ({ backgroundImage: linear("repeating-linear", "to top right", e.args) }),
+  repeatingLinearDownLeft: e => ({ backgroundImage: linear("repeating-linear", "to bottom left", e.args) }),
+  repeatingLinearDownRight: e => ({ backgroundImage: linear("repeating-linear", "to bottom right", e.args) }),
 
-function makeBg(cb) {
-  return function ({args: argsIn}) {
-    const { res, args } = initiateBackground(argsIn);
-    if (!args.length)
-      throw new SyntaxError(`Missing background main argument: color, image, or gradient.`);
-    res.backgroundImage = cb(args);
-    if (args.length)
-      throw new SyntaxError(`Could not interpret $bg() argument: ${args[0].text}.`);
-    return res;
-  };
-}
+  radial: e => ({ backgroundImage: radial("radial", "", e.args) }),
+  ellipse: e => ({ backgroundImage: radial("radial", "", e.args) }),
+  ellipseFarthestCorner: e => ({ backgroundImage: radial("radial", "", e.args) }),
+  ellipseFarthestSide: e => ({ backgroundImage: radial("radial", "farthest-side", e.args) }),
+  ellipseClosestCorner: e => ({ backgroundImage: radial("radial", "closest-corner", e.args) }),
+  ellipseClosestSide: e => ({ backgroundImage: radial("radial", "closest-side", e.args) }),
+  circle: e => ({ backgroundImage: radial("radial", "circle", e.args) }),
+  circleFarthestCorner: e => ({ backgroundImage: radial("radial", "circle", e.args) }),
+  circleFarthestSide: e => ({ backgroundImage: radial("radial", "circle farthest-side", e.args) }),
+  circleClosestCorner: e => ({ backgroundImage: radial("radial", "circle closest-corner", e.args) }),
+  circleClosestSide: e => ({ backgroundImage: radial("radial", "circle closest-side", e.args) }),
+
+  repeatingRadial: e => ({ backgroundImage: radial("repeating-radial", "", e.args) }),
+  repeatingEllipse: e => ({ backgroundImage: radial("repeating-radial", "ellipse", e.args) }),
+  repeatingEllipseFarthestCorner: e => ({ backgroundImage: radial("repeating-radial", "", e.args) }),
+  repeatingEllipseFarthestSide: e => ({ backgroundImage: radial("repeating-radial", "farthest-side", e.args) }),
+  repeatingEllipseClosestCorner: e => ({ backgroundImage: radial("repeating-radial", "closest-corner", e.args) }),
+  repeatingEllipseClosestSide: e => ({ backgroundImage: radial("repeating-radial", "closest-side", e.args) }),
+  repeatingCircle: e => ({ backgroundImage: radial("repeating-radial", "circle", e.args) }),
+  repeatingCircleFarthestCorner: e => ({ backgroundImage: radial("repeating-radial", "circle", e.args) }),
+  repeatingCircleFarthestSide: e => ({ backgroundImage: radial("repeating-radial", "circle farthest-side", e.args) }),
+  repeatingCircleClosestCorner: e => ({ backgroundImage: radial("repeating-radial", "circle closest-corner", e.args) }),
+  repeatingCircleClosestSide: e => ({ backgroundImage: radial("repeating-radial", "circle closest-side", e.args) }),
+
+  conic: e => ({ backgroundImage: conic("conic", e.args) }),
+  repeatingConic: e => ({ backgroundImage: conic("repeating-conic", e.args) }),
+};
+
+
+const BACKGROUND_WORDS = {
+  ...POSITION_WORDS,
+  repeat: { backgroundRepeat: "repeat" },
+  repeatX: { backgroundRepeat: "repeat-x" },
+  repeatY: { backgroundRepeat: "repeat-y" },
+  space: { backgroundRepeat: "space" },
+  round: { backgroundRepeat: "round" },
+  noRepeat: { backgroundRepeat: "no-repeat" },
+
+  cover: { backgroundSize: "cover" },
+  contain: { backgroundSize: "contain" },
+
+  contentBox: { backgroundOrigin: "content-box" },
+  borderBox: { backgroundOrigin: "border-box" },
+
+  clipPaddingBox: { backgroundClip: "padding-box" },
+  clipContentBox: { backgroundClip: "content-box" },
+  clipText: { backgroundClip: "text" },
+  clipBorderArea: { backgroundClip: "border-area" },
+
+  multiply: { backgroundBlendMode: "multiply" },
+  screen: { backgroundBlendMode: "screen" },
+  overlay: { backgroundBlendMode: "overlay" },
+  darken: { backgroundBlendMode: "darken" },
+  lighten: { backgroundBlendMode: "lighten" },
+  colorDodge: { backgroundBlendMode: "color-dodge" },
+  colorBurn: { backgroundBlendMode: "color-burn" },
+  hardLight: { backgroundBlendMode: "hard-light" },
+  softLight: { backgroundBlendMode: "soft-light" },
+  difference: { backgroundBlendMode: "difference" },
+  exclusion: { backgroundBlendMode: "exclusion" },
+  hue: { backgroundBlendMode: "hue" },
+  saturation: { backgroundBlendMode: "saturation" },
+  color: { backgroundBlendMode: "color" },
+  luminosity: { backgroundBlendMode: "luminosity" },
+
+  fixed: { backgroundAttachment: "fixed" },
+  scroll: { backgroundAttachment: "scroll" },
+  local: { backgroundAttachment: "local" },
+  scrollLocal: { backgroundAttachment: "scroll local" },
+  localScroll: { backgroundAttachment: "local scroll" },
+  fixedLocal: { backgroundAttachment: "fixed local" },
+  scrollFixed: { backgroundAttachment: "scroll fixed" },
+  fixedScroll: { backgroundAttachment: "fixed scroll" },
+  localFixed: { backgroundAttachment: "local fixed" },
+};
+
+const BACKGROUND_FUNCS = {
+  size: SEQ([LengthPercent, LengthPercent], (name, ar) => ({ backgroundSize: ar.join(" ") })),
+  ...POSITIONS_FUNCS,
+  ...GRADIENTS,
+};
+
+const bg = TYPB({ ...BACKGROUND_WORDS, ...BACKGROUND_FUNCS }, {}, { Color, Url },
+
+  res => {
+    //todo check that we only get one color
+    res.Color &&= { backgroundImage: `linear-gradient(${res.Color.join(", ")})` }
+    //todo check that we only get one url //todo this should be isImage
+    res.Url &&= { backgroundImage: res.Url[0] }
+    //todo check that we only define backgroundImage once, and all the other properties just once
+    return Object.assign({
+      background: "none",
+      backgroundImage: undefined,
+      backgroundPosition: "0% 0%",
+      backgroundRepeat: "repeat",
+      backgroundSize: "auto",
+      backgroundOrigin: "padding-box",
+      backgroundClip: "border-box",
+      backgroundBlendMode: "normal",
+      backgroundAttachment: "scroll",
+    }, ...Object.values(res));
+  }
+);
+
+// function bgColorOrImage(args) {
+//   const img = interpretImage(args[0]);  //isColor => linear-gradient on top level
+//isUrl => becomes a url() on top level
+//   if (img)
+//     return args.shift(), img.text;
+//   const color = isColor(args[0]);
+//   if (color)
+//     return args.shift(), `linear-gradient(${color.text})`;
+//   throw new SyntaxError(`$bg must include either a color or url: ${color.text}.`);
+// }
+// const bg = ({ name, args }) => initiateBackground(args);
+// function bg({ args: argsIn }) {
+//   const { res, args } = initiateBackground(argsIn);
+//   if (!args.length)
+//     throw new SyntaxError(`Missing background main argument: color, image, or gradient.`);
+//   res.backgroundImage = cb(args);
+//   if (args.length)
+//     throw new SyntaxError(`Could not interpret $bg() argument: ${args[0].text}.`);
+//   return res;
+// }
 
 export default {
   background: undefined,
@@ -260,52 +297,5 @@ export default {
   backgroundClip: undefined,
   backgroundBlendMode: undefined,
   backgroundAttachment: undefined,
-
-  linear: makeBg(linear.bind(null, "linear", "")),
-  linearLeft: makeBg(linear.bind(null, "linear", "to left")),
-  linearRight: makeBg(linear.bind(null, "linear", "to right")),
-  linearUp: makeBg(linear.bind(null, "linear", "to top")),
-  linearDown: makeBg(linear.bind(null, "linear", "to bottom")),
-  linearUpLeft: makeBg(linear.bind(null, "linear", "to top left")),
-  linearUpRight: makeBg(linear.bind(null, "linear", "to top right")),
-  linearDownLeft: makeBg(linear.bind(null, "linear", "to bottom left")),
-  linearDownRight: makeBg(linear.bind(null, "linear", "to bottom right")),
-  repeatingLinear: makeBg(linear.bind(null, "repeating-linear", "")),
-  repeatingLinearLeft: makeBg(linear.bind(null, "repeating-linear", "to left")),
-  repeatingLinearRight: makeBg(linear.bind(null, "repeating-linear", "to right")),
-  repeatingLinearUp: makeBg(linear.bind(null, "repeating-linear", "to top")),
-  repeatingLinearDown: makeBg(linear.bind(null, "repeating-linear", "to bottom")),
-  repeatingLinearUpLeft: makeBg(linear.bind(null, "repeating-linear", "to top left")),
-  repeatingLinearUpRight: makeBg(linear.bind(null, "repeating-linear", "to top right")),
-  repeatingLinearDownLeft: makeBg(linear.bind(null, "repeating-linear", "to bottom left")),
-  repeatingLinearDownRight: makeBg(linear.bind(null, "repeating-linear", "to bottom right")),
-
-  radial: makeBg(radial.bind(null, "radial", "")),
-  ellipse: makeBg(radial.bind(null, "radial", "")),
-  ellipseFarthestCorner: makeBg(radial.bind(null, "radial", "")),
-  ellipseFarthestSide: makeBg(radial.bind(null, "radial", "farthest-side")),
-  ellipseClosestCorner: makeBg(radial.bind(null, "radial", "closest-corner")),
-  ellipseClosestSide: makeBg(radial.bind(null, "radial", "closest-side")),
-  circle: makeBg(radial.bind(null, "radial", "circle")),
-  circleFarthestCorner: makeBg(radial.bind(null, "radial", "circle")),
-  circleFarthestSide: makeBg(radial.bind(null, "radial", "circle farthest-side")),
-  circleClosestCorner: makeBg(radial.bind(null, "radial", "circle closest-corner")),
-  circleClosestSide: makeBg(radial.bind(null, "radial", "circle closest-side")),
-
-  repeatingRadial: makeBg(radial.bind(null, "repeating-radial", "")),
-  repeatingEllipse: makeBg(radial.bind(null, "repeating-radial", "ellipse")),
-  repeatingEllipseFarthestCorner: makeBg(radial.bind(null, "repeating-radial", "")),
-  repeatingEllipseFarthestSide: makeBg(radial.bind(null, "repeating-radial", "farthest-side")),
-  repeatingEllipseClosestCorner: makeBg(radial.bind(null, "repeating-radial", "closest-corner")),
-  repeatingEllipseClosestSide: makeBg(radial.bind(null, "repeating-radial", "closest-side")),
-  repeatingCircle: makeBg(radial.bind(null, "repeating-radial", "circle")),
-  repeatingCircleFarthestCorner: makeBg(radial.bind(null, "repeating-radial", "circle")),
-  repeatingCircleFarthestSide: makeBg(radial.bind(null, "repeating-radial", "circle farthest-side")),
-  repeatingCircleClosestCorner: makeBg(radial.bind(null, "repeating-radial", "circle closest-corner")),
-  repeatingCircleClosestSide: makeBg(radial.bind(null, "repeating-radial", "circle closest-side")),
-
-  conic: makeBg(conic.bind(null, "conic")),
-  repeatingConic: makeBg(conic.bind(null, "repeating-conic")),
-
-  bg: makeBg(bgColorOrImage),
+  bg
 };
