@@ -1,7 +1,7 @@
 import {
   SINmax,
   SIN,
-  SEQ2,
+  SEQ,
   Angle,
   AnglePercent,
   Color,
@@ -23,7 +23,7 @@ const FILTER_FUNCS = {
   saturate: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
   sepia: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
   hueRotate: SIN(null, Angle, (n, v) => `hue-rotate(${v})`),
-  dropShadow: SEQ2(null, [Color, Length, Length, LengthPercent], (n, ar) => `drop-shadow(${ar.join(" ")})`),
+  dropShadow: SEQ([Color, Length, Length, LengthPercent], (n, ar) => `drop-shadow(${ar.join(" ")})`),
 };
 
 const transformWithFunc = (name, ar) => ({ transform: `${name}(${ar.join(", ")})` });
@@ -39,8 +39,8 @@ export default {
   backdropFilter: undefined,
 
   transform: undefined,
-  matrix: SEQ2(null, Array(6).fill(Number), transformWithFunc),
-  matrix3d: SEQ2(null, Array(16).fill(Number), transformWithFunc),
+  matrix: SEQ(Array(6).fill(Number), transformWithFunc),
+  matrix3d: SEQ(Array(16).fill(Number), transformWithFunc),
   perspective,
   rotate,
   rotateX: rotate,
@@ -49,15 +49,15 @@ export default {
   translateX,
   translateY: translateX,
   translateZ: translateX,
-  translate3d: SEQ2(null, Array(3).fill(LengthPercent), transformWithFunc),
+  translate3d: SEQ(Array(3).fill(LengthPercent), transformWithFunc),
   scaleX,
   scaleY: scaleX,
   scaleZ: scaleX,
-  scale3d: SEQ2(null, Array(3).fill(Number), transformWithFunc),
+  scale3d: SEQ(Array(3).fill(Number), transformWithFunc),
   skewX,
   skewY: skewX,
-  rotate3d: SEQ2(null, [Number, Number, Number, Angle], transformWithFunc),
-  translate: SINmax(null, 2, LengthPercent, (name, ar) => ({ transform: `${name}(${ar.join(", ")})` })),
-  scale: SINmax(null, 2, NumberPercent, (name, ar) => ({ transform: `${name}(${ar.join(", ")})` })),
-  skew: SINmax(null, 2, AnglePercent, (name, ar) => ({ transform: `${name}(${ar.join(", ")})` })),
+  rotate3d: SEQ([Number, Number, Number, Angle], transformWithFunc),
+  translate: SINmax(2, LengthPercent, (name, ar) => ({ transform: `${name}(${ar.join(", ")})` })),
+  scale: SINmax(2, NumberPercent, (name, ar) => ({ transform: `${name}(${ar.join(", ")})` })),
+  skew: SINmax(2, AnglePercent, (name, ar) => ({ transform: `${name}(${ar.join(", ")})` })),
 };

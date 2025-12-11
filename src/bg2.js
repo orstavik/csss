@@ -10,18 +10,18 @@ import {
   extractColor,
   makeExtractor,
   TYPB,
-  SEQ2,
+  SEQ,
   SINmax,
 } from "./func.js";
 
 const POSITION_WORDS = {};
 const POSITIONS_FUNCS = {
-  position: SINmax(null, 2, LengthPercent, (name, ar) => ({ backgroundPosition: ar.join(" ") })),
+  position: SINmax(2, LengthPercent, (name, ar) => ({ backgroundPosition: ar.join(" ") })),
 };
 
 const AT_POSITION_WORDS = {};
 const AT_POSITION_FUNCS = {
-  at: SINmax(null, 2, LengthPercent, (name, ar) => "at " + ar.join(" ")),
+  at: SINmax(2, LengthPercent, (name, ar) => "at " + ar.join(" ")),
 };
 
 for (let Inline of ["Left", "Right", "Center", ""]) {
@@ -38,9 +38,9 @@ for (let Inline of ["Left", "Right", "Center", ""]) {
     POSITION_WORDS[name] = dims.join(" ");
     AT_POSITION_WORDS[atName] = "at " + POSITION_WORDS[name];
 
-    POSITIONS_FUNCS[name] = SEQ2(null, Array(dims.length).fill(LengthPercent),
+    POSITIONS_FUNCS[name] = SEQ(Array(dims.length).fill(LengthPercent),
       (name, ar) => ({ backgroundPosition: [inline, ar[0], block, ar[1]].filter(Boolean).join(" ") }));
-    AT_POSITION_FUNCS[atName] = SEQ2(null, Array(dims.length).fill(LengthPercent),
+    AT_POSITION_FUNCS[atName] = SEQ(Array(dims.length).fill(LengthPercent),
       (name, ar) => `at ${[inline, ar[0], block, ar[1]].filter(Boolean).join(" ")}`);
   }
 }
@@ -238,7 +238,7 @@ const BACKGROUND_WORDS = {
 };
 
 const BACKGROUND_FUNCS = {
-  size: SEQ2(null, [LengthPercent, LengthPercent], (name, ar) => ({ backgroundSize: ar.join(" ") })),
+  size: SEQ([LengthPercent, LengthPercent], (name, ar) => ({ backgroundSize: ar.join(" ") })),
   ...POSITIONS_FUNCS,
   ...GRADIENTS,
 };

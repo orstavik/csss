@@ -717,7 +717,7 @@ export const SIN = (NAME, interpreter, post) => ({ args, name }) => {
 
 export const CHECKNAME = (NAME, cb) => exp => (NAME && NAME !== exp.name) ? undefined : cb(exp);
 
-export const SINmax = (NAME, max, interpreter, post) => ({ args, name }) => {
+export const SINmax = (max, interpreter, post) => ({ args, name }) => {
   if (args.length < 1 || args.length > max)
     throw new SyntaxError(`${name} requires 1 to ${max} arguments, got ${args.length} arguments.`);
   return post(name, args.map((a, i) => {
@@ -730,7 +730,7 @@ export const SINmax = (NAME, max, interpreter, post) => ({ args, name }) => {
   }));
 };
 
-export const SEQ2 = (NAME, interpreters, post) => ({ args, name }) => {
+export const SEQ = (interpreters, post) => ({ args, name }) => {
   if (args.length != interpreters.length)
     throw new SyntaxError(`${name} requires ${interpreters.length} arguments, got ${args.length} arguments.`);
   return post(name, interpreters.map((interpreter, i) => {
@@ -743,7 +743,7 @@ export const SEQ2 = (NAME, interpreters, post) => ({ args, name }) => {
   }));
 };
 
-export const SEQopt = (NAME, interpreters, post) => ({ args, name }) => {
+export const SEQopt = (interpreters, post) => ({ args, name }) => {
   if (args.length < 1 || args.length > interpreters.length)
     throw new SyntaxError(`${name} requires 1 to ${interpreters.length} arguments, got ${args.length} arguments.`);
   return post(args.map((a, i) => {

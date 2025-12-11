@@ -1,4 +1,4 @@
-import { SEQ2, Name, ColorPrimitive } from "./func.js";
+import { SEQ, Name, ColorPrimitive } from "./func.js";
 import { fromLCH, fromHex6 } from "./Color.js";
 
 function makeColors(name, color) {
@@ -22,7 +22,7 @@ function makeColors(name, color) {
 }
 
 export default {
-  palette: SEQ2(null, [Name, ColorPrimitive, ColorPrimitive], (n, [name, main, on]) => ({
+  palette: SEQ([Name, ColorPrimitive, ColorPrimitive], (n, [name, main, on]) => ({
     ...makeColors(`--color-${name}`, main),
     ...makeColors(`--color-on${name[0].toUpperCase() + name.slice(1)}`, on)
   })),
