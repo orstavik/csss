@@ -708,7 +708,7 @@ ${name}(${[...args.slice(0, i).map(a => a.text), ` => ${args[i].text} <= `, ...a
   };
 };
 
-export const SIN = (NAME, interpreter, post) => ({ args, name }) => {
+export const SIN = (interpreter, post) => ({ args, name }) => {
   if (args.length != 1)
     throw new SyntaxError(`${name} requires 1 argument, got ${args.length} arguments.`);
   const v = interpreter(args[0]);

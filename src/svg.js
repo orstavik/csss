@@ -12,8 +12,8 @@ const stroke = UMBRELLA({
   strokeLinecap: a => a.text?.match(/^(butt|round|square)$/)?.[0],
   strokeLinejoin: a => a.text?.match(/^(miter|round|bevel)$/)?.[0],
   strokeDasharray: CHECKNAME("dasharray", SINmax(999, LengthPercentNumber, (name, ar) => ar.join(", "))),
-  strokeDashoffset: CHECKNAME("dashoffset", SIN(null, LengthPercent)),
-  strokeMiterlimit: CHECKNAME("miterlimit", SIN(null, Number)),
+  strokeDashoffset: CHECKNAME("dashoffset", SIN(LengthPercent)),
+  strokeMiterlimit: CHECKNAME("miterlimit", SIN(Number)),
 });
 
 const fill = UMBRELLA({
@@ -43,9 +43,9 @@ const svgTextAlign = UMBRELLA({
   baseline: undefined,
 }));
 
-const markerStart = SIN(null, Url, (name, v) => ({ [name]: v }));
-const markerEnd = SIN(null, Url, (name, v) => ({ [name]: v }));
-const markerMid = SIN(null, Url, (name, v) => ({ [name]: v }));
+const markerStart = SIN(Url, (name, v) => ({ [name]: v }));
+const markerEnd = SIN(Url, (name, v) => ({ [name]: v }));
+const markerMid = SIN(Url, (name, v) => ({ [name]: v }));
 const marker = SINmax(3, UrlUnset, (name, m) =>
   m.length == 1 ? { marker: m[0] } :
     m.length == 2 ? { markerStart: m[0], markerEnd: m[1] } :

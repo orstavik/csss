@@ -14,24 +14,24 @@ import {
 } from "./func.js";
 
 const FILTER_FUNCS = {
-  blur: SIN(null, Length, (n, v) => `${n}(${v})`),
-  brightness: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
-  contrast: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
-  grayscale: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
-  invert: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
-  opacity: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
-  saturate: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
-  sepia: SIN(null, NumberPercent, (n, v) => `${n}(${v})`),
-  hueRotate: SIN(null, Angle, (n, v) => `hue-rotate(${v})`),
+  blur: SIN(Length, (n, v) => `${n}(${v})`),
+  brightness: SIN(NumberPercent, (n, v) => `${n}(${v})`),
+  contrast: SIN(NumberPercent, (n, v) => `${n}(${v})`),
+  grayscale: SIN(NumberPercent, (n, v) => `${n}(${v})`),
+  invert: SIN(NumberPercent, (n, v) => `${n}(${v})`),
+  opacity: SIN(NumberPercent, (n, v) => `${n}(${v})`),
+  saturate: SIN(NumberPercent, (n, v) => `${n}(${v})`),
+  sepia: SIN(NumberPercent, (n, v) => `${n}(${v})`),
+  hueRotate: SIN(Angle, (n, v) => `hue-rotate(${v})`),
   dropShadow: SEQ([Color, Length, Length, LengthPercent], (n, ar) => `drop-shadow(${ar.join(" ")})`),
 };
 
 const transformWithFunc = (name, ar) => ({ transform: `${name}(${ar.join(", ")})` });
-const rotate = SIN(null, Angle, (name, v) => ({ transform: `${name}(${v})` }));
-const translateX = SIN(null, LengthPercent, (name, v) => ({ transform: `${name}(${v})` }));
-const scaleX = SIN(null, NumberPercent, (name, v) => ({ transform: `${name}(${v})` }));
-const skewX = SIN(null, AnglePercent, (name, v) => ({ transform: `${name}(${v})` }));
-const perspective = SIN(null, Length, (name, v) => ({ transform: `${name}(${v})` }));
+const rotate = SIN(Angle, (name, v) => ({ transform: `${name}(${v})` }));
+const translateX = SIN(LengthPercent, (name, v) => ({ transform: `${name}(${v})` }));
+const scaleX = SIN(NumberPercent, (name, v) => ({ transform: `${name}(${v})` }));
+const skewX = SIN(AnglePercent, (name, v) => ({ transform: `${name}(${v})` }));
+const perspective = SIN(Length, (name, v) => ({ transform: `${name}(${v})` }));
 
 export default {
   filter: TYPB(FILTER_FUNCS, {}, { Url }, obj => ({ filter: Object.values(obj).flat().join(" ") })),
