@@ -13,7 +13,7 @@ import {
 } from "./func.js";
 
 const StrFunc = (name) => ar => `${name}(${ar.join(" ")})`;
-const CommaStrFunc = (name) => ar => `${name}(${ar.join(", ")})`;
+const CommaStrFunc = (name) => ar => ({ transform: `${name}(${ar.join(", ")})` });
 
 const FILTER_FUNCS = {
   blur: SEQ([isLength], StrFunc("blur")),
@@ -28,7 +28,17 @@ const FILTER_FUNCS = {
   hueRotate: SEQ([isAngle], StrFunc("hue-rotate")),
 };
 
-const TRANSFORM_FUNCS = {
+function handleFilters(name, obj) {
+  obj.isUrl &&= obj.isUrl.map(a => a.text).join(" ");
+  return { [name]: Object.values(obj).join(" ") };
+}
+
+export default {
+  filter: TYPA(FILTER_FUNCS, { isUrl }, handleFilters.bind(null, "filter")),
+  backdrop: TYPA(FILTER_FUNCS, { isUrl }, handleFilters.bind(null, "backdropFilter")),
+  backdropFilter: undefined,
+
+  transform: undefined,
   matrix: SEQ([Array(6).fill(isNumber)], CommaStrFunc("matrix")),
   matrix3d: SEQ([Array(16).fill(isNumber)], CommaStrFunc("matrix3d")),
   perspective: SEQ([isLength], CommaStrFunc("perspective")),
@@ -50,16 +60,4 @@ const TRANSFORM_FUNCS = {
   translate: SIN_minmax(1, 2, isLengthPercent, CommaStrFunc("translate")),
   scale: SIN_minmax(1, 2, isNumberPercent, CommaStrFunc("scale")),
   skew: SIN_minmax(1, 2, isAnglePercent, CommaStrFunc("skew")),
-};
-
-function handleFilters(name, obj) {
-  obj.isUrl &&= obj.isUrl.map(a => a.text).join(" ");
-  return { [name]: Object.values(obj).join(" ") };
-}
-
-export default {
-  transform: TYPA(TRANSFORM_FUNCS, { isUrl }, handleFilters.bind(null, "transform")),
-  filter: TYPA(FILTER_FUNCS, { isUrl }, handleFilters.bind(null, "filter")),
-  backdrop: TYPA(FILTER_FUNCS, { isUrl }, handleFilters.bind(null, "backdropFilter")),
-  backdropFilter: undefined,
 };
