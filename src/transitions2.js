@@ -1,4 +1,4 @@
-import { isNumber, isTime, isName, SEQ, TYPA } from "./func.js";
+import { Number, Time, Name, SIN, TYPB } from "./func.js";
 import * as CURVES from "./Curves.js";
 
 function cubicBezierFunction(ar) {
@@ -6,25 +6,27 @@ function cubicBezierFunction(ar) {
   return `cubic-bezier(${ar.join(",")})`;
 }
 
-const transition = TYPA({
+const transition = TYPB({
   ease: "ease",
   easeIn: "ease-in",
   easeOut: "ease-out",
   easeInOut: "ease-in-out",
   linear: "linear",
   ...CURVES,
-  steps: SEQ([isNumber], ar => `steps(${ar[0]})`),
-  stepsEnd: SEQ([isNumber], ar => `steps(${ar[0]})`),
-  stepsStart: SEQ([isNumber], ar => `steps(${ar[0]}, start)`),
-  stepsBoth: SEQ([isNumber], ar => `steps(${ar[0]}, jump-both)`),
-  stepsNone: SEQ([isNumber], ar => `steps(${ar[0]}, jump-none)`),
+  steps: SIN(null, Number, (n, v) => `steps(${v})`),
+  stepsEnd: SIN(null, Number, (n, v) => `steps(${v})`),
+  stepsStart: SIN(null, Number, (n, v) => `steps(${v}, start)`),
+  stepsBoth: SIN(null, Number, (n, v) => `steps(${v}, jump-both)`),
+  stepsNone: SIN(null, Number, (n, v) => `steps(${v}, jump-none)`),
   allowDiscrete: "allow-discrete",
 }, {
-  durationAndDelay: isTime,
-  cubicBezier: isNumber,
-  properties: isName,
+  duration: Time,
+  delay: Time,
+}, {
+  cubicBezier: Number,
+  properties: Name,
 },
-  ({ properties, durationAndDelay, allowDiscrete, ...timers }) => {
+  ({ properties, duration, delay, allowDiscrete, ...timers }) => {
     if (Object.keys(timers).length > 1) throw new SyntaxError(`more than one transition timing function: ${Object.keys(timers).join(" AND ")}`);
     timers.cubicBezier &&= cubicBezierFunction(timers.cubicBezier);
     let [timerName, timerValue] = Object.entries(timers)[0] ?? [];
@@ -33,10 +35,8 @@ const transition = TYPA({
       res[":root"] = { [`--transition-${timerName}`]: timerValue };
       timerValue = `var(--transition-${timerName})`;
     }
-    if (durationAndDelay && durationAndDelay.length > 2)
-      throw new SyntaxError(`more than two duration and delay arguments`);
-    const tail = [timerValue, durationAndDelay?.map(a => a.text).join(" "), allowDiscrete].filter(Boolean).join(" ");
-    res.transition = !properties ? tail : properties.map(p => `${p.text} ${tail}`).join(", ");
+    const tail = [timerValue, duration, delay, allowDiscrete].filter(Boolean).join(" ");
+    res.transition = !properties ? tail : properties.map(p => `${p} ${tail}`).join(", ");
     return res;
   });
 

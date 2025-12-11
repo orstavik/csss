@@ -1,4 +1,4 @@
-import { TYPB, isColor, isLength } from "./func.js";
+import { TYPB, Color, Length } from "./func.js";
 
 const textDecoration = TYPB({
   noSkipInk: "none",
@@ -6,12 +6,12 @@ const textDecoration = TYPB({
   under: "underline",
   through: "line-through",
 }, {
-  isColor,
-  isLength,
-  style: a => /^(solid|dashed|dotted|double|wavy|blink|grammarError|spellingError)$/.test(a.text) ? a : undefined,
+  Color,
+  Length,
+  style: a => a.text?.match(/^(solid|dashed|dotted|double|wavy|blink|grammarError|spellingError)$/)?.[0],
 }, {
-}, ({ style, over, under, through, isColor, isLength, noSkipInk }) => ({
-  textDecoration: [style, over, under, through, isColor, isLength].filter(Boolean).join(" ") || "solid",
+}, ({ style, over, under, through, Color, Length, noSkipInk }) => ({
+  textDecoration: [style, over, under, through, Color, Length].filter(Boolean).join(" ") || "solid",
   textDecorationSkipInk: noSkipInk ?? "auto",
 }));
 

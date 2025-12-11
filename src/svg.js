@@ -1,8 +1,8 @@
 import {
-  UMBRELLA as UMBRELLA, SINmax, SIN, SEQopt, CUSTOM_WORD,
-  extractLength, extractName, extractUrl, extractNumber, extractColor,
-  isLength, isPercent, isNumber, isColor, isUrl, isBasic,
-  Unset, LengthPercent, LengthPercentNumber, Number, Color, Length, Url, UrlUnset,
+  UMBRELLA, SINmax, SIN, SEQopt, CUSTOM_WORD,
+  extractName, extractUrl,  extractColor,
+  isNumber,  isBasic,
+  LengthPercent, LengthPercentNumber, Number, Color, Length, Url, UrlUnset,
 } from "./func.js";
 
 const stroke = UMBRELLA({

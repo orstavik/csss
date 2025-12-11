@@ -1,7 +1,7 @@
 import {
-  isColor,
-  isLengthPercent,
-  isUrl,
+  Color,
+  LengthPercent,
+  Url,
   //todo isImage
   // interpretImage,
   extractLengthPercent,
@@ -9,10 +9,9 @@ import {
   extractAngle,
   extractColor,
   makeExtractor,
-  TYPA,
-  SEQ,
+  TYPB,
+  SEQ2,
   SINmax,
-  LengthPercent,
 } from "./func.js";
 
 const POSITION_WORDS = {};
@@ -39,10 +38,10 @@ for (let Inline of ["Left", "Right", "Center", ""]) {
     POSITION_WORDS[name] = dims.join(" ");
     AT_POSITION_WORDS[atName] = "at " + POSITION_WORDS[name];
 
-    POSITIONS_FUNCS[name] = SEQ(Array(dims.length).fill(isLengthPercent),
-      ar => ({ backgroundPosition: [inline, ar[0], block, ar[1]].filter(Boolean).join(" ") }));
-    AT_POSITION_FUNCS[atName] = SEQ(Array(dims.length).fill(isLengthPercent),
-      ar => `at ${[inline, ar[0], block, ar[1]].filter(Boolean).join(" ")}`);
+    POSITIONS_FUNCS[name] = SEQ2(null, Array(dims.length).fill(LengthPercent),
+      (name, ar) => ({ backgroundPosition: [inline, ar[0], block, ar[1]].filter(Boolean).join(" ") }));
+    AT_POSITION_FUNCS[atName] = SEQ2(null, Array(dims.length).fill(LengthPercent),
+      (name, ar) => `at ${[inline, ar[0], block, ar[1]].filter(Boolean).join(" ")}`);
   }
 }
 
@@ -239,18 +238,18 @@ const BACKGROUND_WORDS = {
 };
 
 const BACKGROUND_FUNCS = {
-  size: SEQ([isLengthPercent, isLengthPercent], ar => ({ backgroundSize: ar.join(" ") })),
+  size: SEQ2(null, [LengthPercent, LengthPercent], (name, ar) => ({ backgroundSize: ar.join(" ") })),
   ...POSITIONS_FUNCS,
   ...GRADIENTS,
 };
 
-const bg = TYPA({ ...BACKGROUND_WORDS, ...BACKGROUND_FUNCS }, { isColor, isUrl },
+const bg = TYPB({ ...BACKGROUND_WORDS, ...BACKGROUND_FUNCS }, {}, { Color, Url },
 
   res => {
     //todo check that we only get one color
-    res.isColor &&= { backgroundImage: `linear-gradient(${res.isColor[0].text})` }
+    res.Color &&= { backgroundImage: `linear-gradient(${res.Color.join(", ")})` }
     //todo check that we only get one url //todo this should be isImage
-    res.isUrl &&= { backgroundImage: res.isUrl[0].text }
+    res.Url &&= { backgroundImage: res.Url[0] }
     //todo check that we only define backgroundImage once, and all the other properties just once
     return Object.assign({
       background: "none",

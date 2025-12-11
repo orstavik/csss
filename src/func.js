@@ -665,67 +665,16 @@ export const SEQ = (interpreters, post) => ({ args, name }) => {
   }));
 };
 
-// export const SIN_minmax = (min, max, interpreter, post) => ({ args, name }) => {
-//   if (args.length < min || args.length > max)
-//     throw new SyntaxError(`${name} requires ${min} to ${max} arguments, got ${args.length} arguments.`);
-//   return post(args.map((a, i) => {
-//     const a2 = interpreter(a);
-//     if (a2)
-//       return a2.text;
-//     throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-//     "${a.text}" is not a ${interpreter.name.slice(2)}.
-//     ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${a.text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
-//   }));
-// };
-
-export const POLY = (funcs) => (exp) => {
-  let errors = [];
-  for (let cb of funcs) {
-    try {
-      const v = cb(exp);
-      if (v !== undefined) return v;
-    } catch (e) {
-      errors.push(e.message);
-    }
-  }
-  throw new SyntaxError(errors.join("\n   OR   \n"));
-};
-
-export const SpaceListObj = (prop) => ar => ({ [prop]: ar.join(" ") });
-export const SpaceFuncObj = (prop, func) => ar => ({ [prop]: `${func}(${ar.join(" ")})` });
-export const CommaFuncObj = (prop, func) => ar => ({ [prop]: `${func}(${ar.join(", ")})` });
-
 const matchPrimes = (primes) => {
   primes = Object.entries(primes);
-  return a => {
+  return (a, res) => {
     for (let [k, v] of primes)
-      if ((v = v(a)) !== undefined)
-        return [k, v];
+      if (!(k in res))
+        if ((v = v(a)) !== undefined)
+          return [k, v];
   };
 };
 
-//todo make TYPA into a function that returns .text values instead of the tokens that matches. We want the extractInterpreter function.
-export const TYPA = (wes = {}, primes = {}, post) => {
-  primes = matchPrimes(primes);
-  return ({ args, name }) => {
-    if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`);
-    const res = {};
-    for (let i = 0; i < args.length; i++) {
-      const a = args[i];
-      let kv;
-      if (a.name in wes)
-        res[a.name] = wes[a.name](a);
-      else if (a.text in wes)
-        res[a.text] = wes[a.text];
-      else if (kv = primes(a))
-        (res[kv[0]] ??= []).push(kv[1]);
-      else
-        throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
-    }
-    return post(res);
-  };
-};
 export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
   singlePrimes = matchPrimes(singlePrimes);
   primes = matchPrimes(primes);
@@ -737,14 +686,12 @@ export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
       let kv;
       if (a.name in wes)
         res[a.name] = wes[a.name](a);
-      // res[a.name] = wes[a.name](a)?.text;
       else if (a.text in wes)
         res[a.text] = wes[a.text];
-      else if (kv = singlePrimes(a))
-        if (res[kv[0]] !== undefined) throw new SyntaxError(`Duplicate argument ${name}/${i + 1}.`);
-        else res[kv[0]] = kv[1]?.text;
-      else if (kv = primes(a))
-        (res[kv[0]] ??= []).push(kv[1]?.text);
+      else if (kv = singlePrimes(a, res))
+        res[kv[0]] = kv[1];
+      else if (kv = primes(a, {}))
+        (res[kv[0]] ??= []).push(kv[1]);
       else
         throw new SyntaxError(`Bad argument ${name}/${i + 1}.
 ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
@@ -773,20 +720,6 @@ ${name}(${[...args.slice(0, i).map(a => a.text), ` => ${args[i].text} <= `, ...a
     return POST ? POST(res) : res;
   };
 };
-
-// export const SIN_minmax2 = (NAME, min, max, interpreter, post) => ({ args, name }) => {
-//   if (NAME !== name) return;
-//   if (args.length < min || args.length > max)
-//     throw new SyntaxError(`${name} requires ${min} to ${max} arguments, got ${args.length} arguments.`);
-//   return post(args.map((a, i) => {
-//     const a2 = interpreter(a);
-//     if (a2 != null)
-//       return a2;
-//     throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-//     "${a.text}" is not a ${interpreter.name}.
-//     ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${a.text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
-//   }));
-// };
 
 export const SIN = (NAME, interpreter, post) => ({ args, name }) => {
   if (NAME && NAME !== name) return;
@@ -848,14 +781,16 @@ export const CUSTOM_WORD = (NAME, WORDS, POST) => {
   return cb;
 };
 
-export const Unset = a => a.text == "_" ? "unset" : undefined;
-export const LengthPercent = a => (isLength(a) ?? isPercent(a))?.text;
-export const LengthPercentNumber = a => (isLength(a) ?? isPercent(a) ?? isNumber(a))?.text;
-export const Number = a => isNumber(a)?.text;
-export const NumberPercent = a => (isNumber(a) ?? isPercent(a))?.text;
 export const Angle = a => isAngle(a)?.text;
 export const AnglePercent = a => (isAngle(a) ?? isPercent(a))?.text;
 export const Color = a => isColor(a)?.text;
 export const Length = a => isLength(a)?.text;
+export const LengthPercent = a => (isLength(a) ?? isPercent(a))?.text;
+export const LengthPercentNumber = a => (isLength(a) ?? isPercent(a) ?? isNumber(a))?.text;
+export const Name = a => isName(a)?.text;
+export const Number = a => isNumber(a)?.text;
+export const NumberPercent = a => (isNumber(a) ?? isPercent(a))?.text;
+export const Time = a => isTime(a)?.text;
+export const Unset = a => a.text == "_" ? "unset" : undefined;
 export const Url = a => isUrl(a)?.text;
 export const UrlUnset = a => isUrl(a)?.text ?? Unset(a);

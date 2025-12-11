@@ -1,5 +1,4 @@
 import {
-  isUrl,
   SINmax,
   SIN,
   SEQ2,
@@ -10,6 +9,7 @@ import {
   LengthPercent,
   NumberPercent,
   Number,
+  Url,
   TYPB,
 } from "./func.js";
 
@@ -34,8 +34,8 @@ const skewX = SIN(null, AnglePercent, (name, v) => ({ transform: `${name}(${v})`
 const perspective = SIN(null, Length, (name, v) => ({ transform: `${name}(${v})` }));
 
 export default {
-  filter: TYPB(FILTER_FUNCS, {}, { isUrl }, obj => ({ filter: Object.values(obj).flat().join(" ") })),
-  backdrop: TYPB(FILTER_FUNCS, {}, { isUrl }, obj => ({ backdropFilter: Object.values(obj).flat().join(" ") })),
+  filter: TYPB(FILTER_FUNCS, {}, { Url }, obj => ({ filter: Object.values(obj).flat().join(" ") })),
+  backdrop: TYPB(FILTER_FUNCS, {}, { Url }, obj => ({ backdropFilter: Object.values(obj).flat().join(" ") })),
   backdropFilter: undefined,
 
   transform: undefined,
