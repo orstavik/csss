@@ -1,15 +1,8 @@
-import { isColor } from "./func.js";
+import { SEQ, Name, ColorPrimitive } from "./func.js";
 import { fromLCH, fromHex6 } from "./Color.js";
 
-function round(num, places = 3) {
-  const m = 10 ** places;
-  return Math.round(num * m) / m;
-}
-
 function makeColors(name, color) {
-  if (!color) throw `"${color.text}" is not a color.`;
-  if (!color.hex) throw `"${color.text}" is not a primitive color.`;
-  if (color.percent != 100) throw `"${color.text}" is not a primitive, fully opaque color.`;
+  const round = (num, places = 3) => Math.round(num * 10 ** places) / (10 ** places);
   let { L, C, H } = fromHex6(color.hex);
   if (C == 0)
     return { [name]: color.text };
@@ -28,19 +21,9 @@ function makeColors(name, color) {
   };
 }
 
-function palette([name, main, on]) {
-  if (!name || !main || !on)
-    throw "$palette(name,bgColor,fgColor) requires three parameters";
-  if (name.kind !== "WORD")
-    throw "First parameter must be a simple word";
-  const mainName = `--color-${name.text}`;
-  const onName = `--color-on${name.text[0].toUpperCase() + name.text.slice(1)}`;
-  return {
-    ...makeColors(mainName, isColor(main)),
-    ...makeColors(onName, isColor(on))
-  };
-}
-
 export default {
-  palette
+  palette: SEQ([Name, ColorPrimitive, ColorPrimitive], (n, [name, main, on]) => ({
+    ...makeColors(`--color-${name}`, main),
+    ...makeColors(`--color-on${name[0].toUpperCase() + name.slice(1)}`, on)
+  })),
 };

@@ -56,7 +56,7 @@ export function extractShort(rule) {
 function extractAtRules(obj) {
   const atRules = {}, mainRule = {};
   for (let [k, v] of Object.entries(obj))
-    (k.startsWith("@") ? atRules : mainRule)[k] = v;
+    ((k.match(/^[@:]/)) ? atRules : mainRule)[k] = v;
   return { atRules, mainRule };
 }
 
@@ -68,7 +68,7 @@ function kebabcaseKeys(obj) {
 function checkProperty(obj) {
   for (let k in obj)
     if (CSS.supports(k, "inherit") && !CSS.supports(k, obj[k]))
-      throw new SyntaxError(`Invalid CSS$ value: ${k} = ${obj[k]}`);
+      throw new SyntaxError(`Invalid CSS$ value => ${k}: ${obj[k]}`);
 }
 
 function bodyToTxt(rule, props) {
@@ -77,11 +77,10 @@ function bodyToTxt(rule, props) {
 }
 
 function interpretShort(exp) {
-  const cb = SHORTS[exp.name ?? exp.text];
-  if (!cb) throw new ReferenceError(exp.name);
-  if (!(cb instanceof Function)) return cb;
   try {
-    return cb(exp.args);
+    const cb = SHORTS[exp.name ?? exp.text];
+    if (!cb) throw new ReferenceError(exp.name);
+    return cb instanceof Function ? cb(exp) : cb;
   } catch (e) {
     debugger;
     //todo improve error message

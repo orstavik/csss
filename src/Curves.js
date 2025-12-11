@@ -1,3 +1,12 @@
+//ease is defined in native css as accelerating and decelerating.
+//crisp means that it starts or ends quickly, but not both.
+//harsh means that it starts or ends very quickly, but not both.
+//playful means that it overshoots either coming in, going out, or both.
+//bounce means that it overshoots more than playful, either coming in, going out, or both.
+//hesitate means that it goes forward, then pauses, then forward again. 
+//wiggle means that it goes forward, then backtracks a little, then forward again.
+//wobble means that it goes forward, then backtracks a fully, then forward again, then backtracks a little, then forward again.
+
 function cubicBezier([x1, y1, x2, y2], sampleSize = 240, precision = 5) {
   if (![x1, y1, x2, y2].every(Number.isFinite))
     throw new TypeError("Control points must be finite numbers.");
