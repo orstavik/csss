@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Animations - CSSS Demo</title>
+    <script src="../src/auto.js?style=style&interval=400" type="module"></script>
+    <style>
+        /* Infinite Loop Animations */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes wave {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(15deg);
+            }
+
+            75% {
+                transform: rotate(-15deg);
+            }
+        }
+
+        @keyframes bounceLoop {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        @keyframes slideLoop {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            10% {
+                transform: scale(1.1);
+            }
+
+            20% {
+                transform: scale(1);
+            }
+
+            30% {
+                transform: scale(1.15);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes swing {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(10deg);
+            }
+
+            50% {
+                transform: rotate(0deg);
+            }
+
+            75% {
+                transform: rotate(-10deg);
+            }
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 5px rgba(99, 102, 241, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(99, 102, 241, 1), 0 0 40px rgba(99, 102, 241, 0.8);
+            }
+        }
+
+        @keyframes dotPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes progressBar {
+            0% {
+                width: 0%;
+            }
+
+            100% {
+                width: 100%;
+            }
+        }
+
+        @keyframes typing {
+            0% {
+                width: 0;
+            }
+
+            100% {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes colorShift {
+            0% {
+                filter: hue-rotate(0deg);
+            }
+
+            100% {
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        @keyframes rotateBorder {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Animation classes */
+        .spin-anim {
+            animation: spin 2s linear infinite;
+        }
+
+        .pulse-anim {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .float-anim {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .wave-anim {
+            animation: wave 1s ease-in-out infinite;
+        }
+
+        .bounce-anim {
+            animation: bounceLoop 1s ease-in-out infinite;
+        }
+
+        .heartbeat-anim {
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        .swing-anim {
+            animation: swing 2s ease-in-out infinite;
+            transform-origin: top center;
+        }
+
+        .glow-anim {
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        /* Shimmer effect */
+        .shimmer-box {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        /* Loading dots */
+        .loading-dots {
+            display: inline-flex;
+            gap: 0.5rem;
+        }
+
+        .loading-dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #6366f1;
+            animation: dotPulse 1.4s ease-in-out infinite;
+        }
+
+        .loading-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            height: 8px;
+            background: #6366f1;
+            border-radius: 4px;
+            animation: progressBar 3s ease-in-out infinite;
+        }
+
+        /* Typing animation */
+        .typing-text {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid #6366f1;
+            animation: typing 4s steps(40) infinite, blink 0.75s step-end infinite;
+            max-width: fit-content;
+        }
+
+        /* Color shift */
+        .color-shift {
+            animation: colorShift 5s linear infinite;
+        }
+
+        /* Marquee */
+        .marquee {
+            overflow: hidden;
+            position: relative;
+            height: 50px;
+        }
+
+        .marquee-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: slideLoop 15s linear infinite;
+        }
+
+        /* Pause on hover */
+        .pause-on-hover:hover {
+            animation-play-state: paused;
+        }
+
+        /* Rotating border */
+        .rotating-border {
+            position: relative;
+            padding: 2rem;
+        }
+
+        .rotating-border::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: conic-gradient(from 0deg, #667eea, #764ba2, #f093fb, #667eea);
+            border-radius: 16px;
+            animation: rotateBorder 3s linear infinite;
+            z-index: -1;
+        }
+
+        .rotating-border>div {
+            background: white;
+            border-radius: 12px;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body class="
+$blockItem(margin(0))
+$block(padding(3rem,2rem))
+$bg(#light)
+
+$typeface(main,Inter,sans-serif,16px,400)
+$typeface(heading,Inter,sans-serif,32px,700)
+
+$palette(primary,#6366f1,#ffffff)
+$palette(secondary,#8b5cf6,#ffffff)
+$palette(accent,#ec4899,#ffffff)
+$palette(dark,#1e293b,#ffffff)
+$palette(light,#f8fafc,#1e293b)
+$palette(border,#e0e0e0,#1e293b)
+$palette(surface,#ffffff,#1e293b)
+$palette(muted,#64748b,#ffffff)
+
+||div$blockItem(inlineSize(1200px,_,95%),margin(0,auto))
+||div|h1$font(heading)$blockItem(margin(0,0,1rem,0))$color(#dark)
+||div|p$font(main,1.1rem)$blockItem(margin(0,0,3rem,0))$color(#muted)
+||div|section$blockItem(margin(0,0,4rem,0))
+||div|section|h2$font(main,1.5rem,600)$blockItem(margin(0,0,1.5rem,0))$color(#dark)
+">
+
+    <div>
+        <h1>♾️ Infinite Loop Animations</h1>
+        <p>Continuously running animations for loading states, backgrounds, and visual effects</p>
+
+        <!-- Basic Infinite Animations -->
+        <section>
+            <h2>🔄 Basic Infinite Loops</h2>
+            <div class="
+            $grid(cols(repeat(auto-fit,minmax(180px,1fr))),gap(1.5rem))
+            |$block(padding(2rem))
+            |$bg(#surface)
+            |$border(2px,solid,#border,radius(12px))
+            |$flex(contentCenter,itemsCenter,column,gap(1rem))
+            |$blockItem(size(_,180px))
+            |$block(textCenter)
+            
+            |div:first-child$fontSize(3rem)
+            |div:last-child$font(main,1rem,600)$color(#dark)
+            ">
+                <div>
+                    <div class="spin-anim">⚙️</div>
+                    <div>Spin</div>
+                </div>
+                <div>
+                    <div class="pulse-anim">💓</div>
+                    <div>Pulse</div>
+                </div>
+                <div>
+                    <div class="float-anim">🎈</div>
+                    <div>Float</div>
+                </div>
+                <div>
+                    <div class="wave-anim">👋</div>
+                    <div>Wave</div>
+                </div>
+                <div>
+                    <div class="bounce-anim">🏀</div>
+                    <div>Bounce</div>
+                </div>
+                <div>
+                    <div class="heartbeat-anim">❤️</div>
+                    <div>Heartbeat</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Indicators -->
+        <section>
+            <h2>⏳ Loading Indicators</h2>
+            <div class="$grid(cols(repeat(2,1fr)),gap(2rem))">
+                <!-- Loading Dots -->
+                <div
+                    class="$bg(#surface)$border(2px,solid,#border,radius(12px))$flex(contentCenter,itemsCenter,column,gap(2rem),padding(2rem))">
+                    <div class="$font(main,1.2rem,600)">Loading Dots</div>
+                    <div class="loading-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+
+                <!-- Spinning Circle -->
+                <div
+                    class="$flex(contentCenter,itemsCenter,column,gap(2rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                    <div class="$font(main,1.2rem,600)">Spinning Loader</div>
+                    <div class="spin-anim $blockItem(size(50px,50px))$border(4px,solid,#border,radius(50%))">
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="$flex(column,gap(2rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                    <div class="$font(main,1.2rem,600)$block(textCenter)">Progress Bar</div>
+                    <div class="$bg(#border)$border(radius(4px))">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+
+                <!-- Shimmer Effect -->
+                <div class="$flex(column,gap(2rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                    <div class="$font(main,1.2rem,600)$block(textCenter)">Shimmer Loading</div>
+                    <div class="shimmer-box $blockItem(size(_,80px))$border(radius(8px))"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Animations -->
+        <section>
+            <h2>🎮 Hover to Pause</h2>
+            <div class="
+            $grid(cols(repeat(3,1fr)),gap(1.5rem))
+            @sm$grid(cols(1fr))
+            ">
+                <div class="
+                $flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))
+                $bg(linear(135deg,#667eea,#764ba2))
+                $color(#white)
+                $border(radius(12px))
+                $blockItem(size(_,200px))
+                ">
+                    <div class="spin-anim pause-on-hover $fontSize(3rem)">🎡</div>
+                    <div class="$font(main,1rem,600)">Hover to Pause</div>
+                </div>
+
+                <div class="
+                $flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))
+                $bg(linear(135deg,#f093fb,#f5576c))
+                $color(#white)
+                $border(radius(12px))
+                $blockItem(size(_,200px))
+                ">
+                    <div class="float-anim pause-on-hover $fontSize(3rem)">☁️</div>
+                    <div class="$font(main,1rem,600)">Hover to Pause</div>
+                </div>
+
+                <div class="
+                $flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))
+                $bg(linear(135deg,#4facfe,#00f2fe))
+                $color(#white)
+                $border(radius(12px))
+                $blockItem(size(_,200px))
+                ">
+                    <div class="bounce-anim pause-on-hover $fontSize(3rem)">⚽</div>
+                    <div class="$font(main,1rem,600)">Hover to Pause</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Text Animations -->
+        <section>
+            <h2>📝 Animated Text Effects</h2>
+            <div class="$flex(column,gap(2rem))">
+                <!-- Typing Effect -->
+                <div
+                    class="$flex(contentCenter,itemsCenter,padding(3rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                    <div class="typing-text $font(main,1.5rem,600)">
+                        Welcome to CSSS Framework...
+                    </div>
+                </div>
+
+                <!-- Marquee Scroll -->
+                <div class="$block(padding(3rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                    <div class="marquee">
+                        <div class="marquee-content $font(main,1.5rem,600)">
+                            🎉 Breaking News: CSSS is awesome! • 🚀 Fast Development • 💎 Beautiful Designs • ✨ Easy to
+                            Use •
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advanced Effects -->
+        <section>
+            <h2>✨ Advanced Effects</h2>
+            <div class="$grid(cols(repeat(2,1fr)),gap(2rem)) @sm$grid(cols(1fr))">
+                <!-- Rotating Border -->
+                <div class="rotating-border">
+                    <div class="$block(padding(2rem),textCenter)">
+                        <div class="$fontSize(3rem)$blockItem(margin(0,0,1rem,0))">🌈</div>
+                        <div class="$font(main,1.2rem,600)">Rotating Border</div>
+                        <p class="$blockItem(margin(0.5rem,0,0,0))$opacity(0.7)">Conic gradient animation</p>
+                    </div>
+                </div>
+
+                <!-- Glowing Box -->
+                <div class="
+                $block(padding(2rem),textCenter)
+                $bg(#surface)
+                $border(2px,solid,#primary,radius(12px))
+                glow-anim
+                ">
+                    <div class="$fontSize(3rem)$blockItem(margin(0,0,1rem,0))">💫</div>
+                    <div class="$font(main,1.2rem,600)">Glowing Effect</div>
+                    <p class="$blockItem(margin(0.5rem,0,0,0))$opacity(0.7)">Pulsing box shadow</p>
+                </div>
+
+                <!-- Color Shift -->
+                <div class="
+                $block(padding(2rem),textCenter)
+                $bg(linear(135deg,#667eea,#764ba2))
+                $color(#white)
+                $border(radius(12px))
+                color-shift
+                ">
+                    <div class="$fontSize(3rem)$blockItem(margin(0,0,1rem,0))">🎨</div>
+                    <div class="$font(main,1.2rem,600)">Color Shift</div>
+                    <p class="$blockItem(margin(0.5rem,0,0,0))$opacity(0.9)">Hue rotation filter</p>
+                </div>
+
+                <!-- Swinging Element -->
+                <div class="
+                $block(padding(2rem))
+                $bg(#surface)
+                $border(2px,solid,#border,radius(12px))
+                $flex(contentCenter,itemsCenter,column,gap(1rem))
+                ">
+                    <div class="swing-anim $fontSize(3rem)">🔔</div>
+                    <div class="$font(main,1.2rem,600)">Swing Animation</div>
+                    <p class="$blockItem(margin(0))$opacity(0.7)">Pendulum motion</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skeleton Loaders -->
+        <section>
+            <h2>💀 Skeleton Loaders</h2>
+            <div class="$grid(cols(repeat(3,1fr)),gap(2rem)) @sm$grid(cols(1fr))">
+                <div class="$flex(column,gap(1rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                    <div class="shimmer-box $blockItem(size(_,120px))$border(radius(8px))"></div>
+                    <div class="shimmer-box $blockItem(size(80%,20px))$border(radius(4px))"></div>
+                    <div class="shimmer-box $blockItem(size(60%,20px))$border(radius(4px))"></div>
+                </div>
+
+                <div class="$flex(column,gap(1rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                    <div class="shimmer-box $blockItem(size(_,120px))$border(radius(8px))"></div>
+                    <div class="shimmer-box $blockItem(size(80%,20px))$border(radius(4px))"></div>
+                    <div class="shimmer-box $blockItem(size(60%,20px))$border(radius(4px))"></div>
+                </div>
+
+                <div class="$flex(column,gap(1rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                    <div class="shimmer-box $blockItem(size(_,120px))$border(radius(8px))"></div>
+                    <div class="shimmer-box $blockItem(size(80%,20px))$border(radius(4px))"></div>
+                    <div class="shimmer-box $blockItem(size(60%,20px))$border(radius(4px))"></div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+
+</html>
