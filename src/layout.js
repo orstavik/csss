@@ -1,6 +1,6 @@
 import { isRepeat, isSpan, isBasic, toLogicalFour, isLength } from "./func.js";
 
-function toSize(NAME, {args}) {
+function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
     throw new SyntaxError(`$${NAME}() accepts only 1 or 3 arguments, got ${args.length}.`);
   args = args.map(a =>
@@ -17,18 +17,18 @@ function toSize(NAME, {args}) {
   };
 }
 
-function size({args}) {
+function size({ args }) {
   if (args.length == 1)
-    return toSize("inlineSize", {args});
+    return toSize("inlineSize", { args });
   if (args.length == 2)
     return {
-      ...toSize("inlineSize", {args: [args[0]]}),
-      ...toSize("blockSize", {args: [args[1]]})
+      ...toSize("inlineSize", { args: [args[0]] }),
+      ...toSize("blockSize", { args: [args[1]] })
     };
   if (args.length == 6)
     return {
-      ...toSize("inlineSize", {args: args.slice(0, 3)}),
-      ...toSize("blockSize", {args: args.slice(3)})
+      ...toSize("inlineSize", { args: args.slice(0, 3) }),
+      ...toSize("blockSize", { args: args.slice(3) })
     };
   throw new SyntaxError(`$size() accepts only 1, 2 or 4 arguments, got ${args.length}.`);
 }
@@ -142,8 +142,8 @@ function defaultItem(name, argsIn, argsOut) {
 }
 
 const LAYOUT = {
-  padding: ({args}) => toLogicalFour("padding", args),
-  scrollPadding: ({args}) => toLogicalFour("scroll-padding", args),
+  padding: ({ args }) => toLogicalFour("padding", args),
+  scrollPadding: ({ args }) => toLogicalFour("scroll-padding", args),
   ...ALIGNMENTS.textAlign,
   breakWord: { overflowWrap: "break-word" },
   breakAnywhere: { overflowWrap: "anywhere" },
@@ -152,15 +152,15 @@ const LAYOUT = {
   snapStop: { scrollSnapStop: "always" },
 };
 
-function textIndent({args}) {
+function textIndent({ args }) {
   const l = isLength(args[0]);
   if (l)
     return { "textIndent": l.text };
   throw new SyntaxError("indent needs a length");
 }
 const _LAYOUT = {
-  margin: ({args}) => toLogicalFour("margin", args),
-  scrollMargin: ({args}) => toLogicalFour("scroll-margin", args),
+  margin: ({ args }) => toLogicalFour("margin", args),
+  scrollMargin: ({ args }) => toLogicalFour("scroll-margin", args),
   textIndent: textIndent,
   indent: textIndent,
   inlineSize: toSize.bind(null, "inlineSize"), //todo should we block this?
@@ -183,7 +183,7 @@ const _LAYOUT = {
   // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
 
-function gap({args}) {
+function gap({ args }) {
   if (!args.length || args.length > 2)
     throw new SyntaxError("gap only accepts 1 or 2 arguments");
   args = args.map(isBasic).map(a => a.text);
@@ -197,7 +197,7 @@ function gap({args}) {
 //todo the question is if this will be recognized by the llm..
 //they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
 //so it should be with layout.
-function blockGap({args}) {
+function blockGap({ args }) {
   const [wordSpacing, lineHeight] = args.map(isBasic).map(a => a.text);
   return { wordSpacing, lineHeight };
 }
@@ -266,10 +266,10 @@ const GRID = {
   ...OVERFLOWS,
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.placeItems,
-  cols: ({args}) => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
-  columns: ({args}) => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
-  rows: ({args}) => ({ gridTemplateRows: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
-  areas: ({args}) => ({ gridTemplateAreas: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
+  cols: ({ args }) => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
+  columns: ({ args }) => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
+  rows: ({ args }) => ({ gridTemplateRows: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
+  areas: ({ args }) => ({ gridTemplateAreas: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
   ...LAYOUT,
   gap,
   //todo test this!!
@@ -296,11 +296,11 @@ function grid({ args }) {
 
 // $grid(col(1,4))
 // $grid(col_1_4)
-const column = ({args}) => {
+const column = ({ args }) => {
   const [start, end] = args.map(a => isSpan(a) ?? isBasic(a)).map(a => a.text);
   return { gridColumn: end ? `${start} / ${end}` : start };
 };
-const row = ({args}) => {
+const row = ({ args }) => {
   const [start, end] = args.map(a => isSpan(a) ?? isBasic(a)).map(a => a.text);
   return { gridRow: end ? `${start} / ${end}` : start };
 };
@@ -338,10 +338,10 @@ function flex({ args }) {
 const FlexItem = {
   ..._LAYOUT,
   ...ALIGNMENTS.alignSelf,
-  basis: ({args}) => ({ flexBasis: args.map(isBasic).map(a => a.text).join(" ") }),
-  grow: ({args}) => ({ flexGrow: args.map(isBasic).map(a => a.text).join(" ") }),
-  shrink: ({args}) => ({ flexShrink: args.map(isBasic).map(a => a.text).join(" ") }),
-  order: ({args}) => ({ order: args.map(isBasic).map(a => a.text).join(" ") }),
+  basis: ({ args }) => ({ flexBasis: args.map(isBasic).map(a => a.text).join(" ") }),
+  grow: ({ args }) => ({ flexGrow: args.map(isBasic).map(a => a.text).join(" ") }),
+  shrink: ({ args }) => ({ flexShrink: args.map(isBasic).map(a => a.text).join(" ") }),
+  order: ({ args }) => ({ order: args.map(isBasic).map(a => a.text).join(" ") }),
   //todo safe
 };
 

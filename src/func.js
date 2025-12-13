@@ -767,16 +767,19 @@ export const CUSTOM_WORD = (NAME, WORDS, POST) => {
 };
 
 export const Angle = a => isAngle(a)?.text;
-export const AnglePercent = a => (isAngle(a) ?? isPercent(a))?.text;
 export const Color = a => isColor(a)?.text;
 export const Length = a => isLength(a)?.text;
-export const LengthPercent = a => (isLength(a) ?? isPercent(a))?.text;
-export const LengthPercentNumber = a => (isLength(a) ?? isPercent(a) ?? isNumber(a))?.text;
 export const Name = a => isName(a)?.text;
 export const Number = a => isNumber(a)?.text;
-export const NumberPercent = a => (isNumber(a) ?? isPercent(a))?.text;
+export const Percent = a => isPercent(a)?.text;
 export const Time = a => isTime(a)?.text;
 export const Unset = a => a.text == "_" ? "unset" : undefined;
 export const Url = a => isUrl(a)?.text;
-export const UrlUnset = a => isUrl(a)?.text ?? Unset(a);
+
+export const AnglePercent = a => Angle(a) ?? Percent(a);
+export const LengthUnset = a => Length(a) ?? Unset(a);
+export const LengthPercent = a => Length(a) ?? Percent(a);
+export const LengthPercentNumber = a => Length(a) ?? Percent(a) ?? Number(a);
+export const NumberPercent = a => Number(a) ?? Percent(a);
+export const UrlUnset = a => Url(a) ?? Unset(a);
 export const ColorPrimitive = a => (a.kind === "COLOR" && (a = parseColor(a.text)).hex) ? a : undefined;

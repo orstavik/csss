@@ -29,15 +29,15 @@ const FONT_DEFAULTS = Object.entries({
  */
 
 //$typeface(comic,"MS+Comic+Sans",face("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2"),xxs,semiExpanded,italic,bolder)
-function face({args}, fontFamily) {
+function face({ args }, fontFamily) {
 
   function featureAndVariation(args) {
     return args.map(a => a.split("=")).map(([k, v = 1]) => `"${k}" ${v}`).join(", ");
   }
 
   const FACE = {
-    feature: ({args}) => ({ fontFeatureSettings: featureAndVariation(args) }),
-    variation: ({args}) => ({ fontVariationSettings: featureAndVariation(args) }),
+    feature: ({ args }) => ({ fontFeatureSettings: featureAndVariation(args) }),
+    variation: ({ args }) => ({ fontVariationSettings: featureAndVariation(args) }),
     i: { fontStyle: "italic" },
     italic: { fontStyle: "italic" },
     ital: { fontStyle: "italic" },
@@ -134,10 +134,10 @@ const FONT_WORDS = {
   xxl: { fontSize: "xx-large" },
   xxxl: { fontSize: "xxx-large" },
 
-  variant: ({args}) => ({ fontVariant: interpretBasic(args[0]) }),
-  width: ({args}) => ({ fontWidth: isPercent(args[0]) }),
-  spacing: ({args}) => (args[0].text == "normal" ? args[0].text : { letterSpacing: isLength(args[0]) }),
-  adjust: ({args}) => ({ fontSizeAdjust: interpretBasic(args[0]) }),
+  variant: ({ args }) => ({ fontVariant: interpretBasic(args[0]) }),
+  width: ({ args }) => ({ fontWidth: isPercent(args[0]) }),
+  spacing: ({ args }) => (args[0].text == "normal" ? args[0].text : { letterSpacing: isLength(args[0]) }),
+  adjust: ({ args }) => ({ fontSizeAdjust: interpretBasic(args[0]) }),
 };
 
 //first have a function that extracts all the nonFamily 
