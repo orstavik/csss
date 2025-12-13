@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkbox Animations - CSSS Demo</title>
+    <script src="../src/auto.js?style=style&interval=400" type="module"></script>
+    <style>
+        /* Keyframe Animations */
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes rotateIn {
+            from {
+                transform: rotate(-180deg) scale(0);
+                opacity: 0;
+            }
+
+            to {
+                transform: rotate(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes expandHeight {
+            from {
+                max-height: 0;
+                opacity: 0;
+            }
+
+            to {
+                max-height: 500px;
+                opacity: 1;
+            }
+        }
+
+        /* Hide checkbox but keep it functional */
+        .hidden-checkbox {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Basic toggle animations */
+        #toggle1:checked~.content1 {
+            animation: slideInLeft 0.5s ease forwards;
+        }
+
+        .content1 {
+            display: none;
+        }
+
+        #toggle1:checked~.content1 {
+            display: block;
+        }
+
+        /* Fade and scale */
+        #toggle2:checked~.content2 {
+            animation: scaleIn 0.5s ease forwards;
+        }
+
+        .content2 {
+            display: none;
+        }
+
+        #toggle2:checked~.content2 {
+            display: block;
+        }
+
+        /* Rotate animation */
+        #toggle3:checked~.content3 {
+            animation: rotateIn 0.6s ease forwards;
+        }
+
+        .content3 {
+            display: none;
+        }
+
+        #toggle3:checked~.content3 {
+            display: block;
+        }
+
+        /* Bounce effect */
+        #toggle4:checked~.content4 {
+            animation: bounceIn 0.6s ease forwards;
+        }
+
+        .content4 {
+            display: none;
+        }
+
+        #toggle4:checked~.content4 {
+            display: block;
+        }
+
+        /* Accordion effect */
+        #accordion1:checked~.accordion-content1 {
+            animation: expandHeight 0.4s ease forwards;
+        }
+
+        .accordion-content1 {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        #accordion1:checked~.accordion-content1 {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        #accordion2:checked~.accordion-content2 {
+            animation: expandHeight 0.4s ease forwards;
+        }
+
+        .accordion-content2 {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        #accordion2:checked~.accordion-content2 {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        #accordion3:checked~.accordion-content3 {
+            animation: expandHeight 0.4s ease forwards;
+        }
+
+        .accordion-content3 {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        #accordion3:checked~.accordion-content3 {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        /* Tab switching */
+        #tab1:checked~.tabs .tab-content1,
+        #tab2:checked~.tabs .tab-content2,
+        #tab3:checked~.tabs .tab-content3 {
+            display: block;
+            animation: fadeInUp 0.4s ease forwards;
+        }
+
+        .tab-content1,
+        .tab-content2,
+        .tab-content3 {
+            display: none;
+        }
+
+        /* Accordion arrow rotation on check */
+        #accordion1:checked~label .accordion-arrow,
+        #accordion2:checked~label .accordion-arrow,
+        #accordion3:checked~label .accordion-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Staggered reveal animations */
+        #reveal:checked~.reveal-items .reveal-item:nth-child(1) {
+            animation: fadeInUp 0.4s ease 0s forwards;
+        }
+
+        #reveal:checked~.reveal-items .reveal-item:nth-child(2) {
+            animation: fadeInUp 0.4s ease 0.1s forwards;
+        }
+
+        #reveal:checked~.reveal-items .reveal-item:nth-child(3) {
+            animation: fadeInUp 0.4s ease 0.2s forwards;
+        }
+
+        #reveal:checked~.reveal-items .reveal-item:nth-child(4) {
+            animation: fadeInUp 0.4s ease 0.3s forwards;
+        }
+
+        .reveal-item {
+            opacity: 0;
+        }
+
+        #reveal:checked~.reveal-items .reveal-item {
+            opacity: 1;
+        }
+
+        /* Gallery filter animations */
+        #filterAll:checked~.gallery .gallery-item,
+        #filterRed:checked~.gallery .item-red,
+        #filterBlue:checked~.gallery .item-blue,
+        #filterGreen:checked~.gallery .item-green {
+            display: block;
+            animation: scaleIn 0.3s ease forwards;
+        }
+
+        .gallery-item {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="
+$blockItem(margin(0))
+$block(padding(3rem,2rem))
+$bg(#light)
+
+$typeface(main,Inter,sans-serif,16px,400)
+$typeface(heading,Inter,sans-serif,32px,700)
+
+$palette(primary,#6366f1,#ffffff)
+$palette(secondary,#8b5cf6,#ffffff)
+$palette(accent,#ec4899,#ffffff)
+$palette(dark,#1e293b,#ffffff)
+$palette(light,#f8fafc,#1e293b)
+$palette(border,#e0e0e0,#1e293b)
+$palette(surface,#ffffff,#1e293b)
+$palette(muted,#64748b,#ffffff)
+
+||div$blockItem(inlineSize(1200px,_,95%),margin(0,auto))
+||div|h1$font(heading)$blockItem(margin(0,0,1rem,0))$color(#dark)
+||div|p$font(main,1.1rem)$blockItem(margin(0,0,3rem,0))$color(#muted)
+||div|section$blockItem(margin(0,0,4rem,0))
+||div|section|h2$font(main,1.5rem,600)$blockItem(margin(0,0,1.5rem,0))$color(#dark)
+">
+
+    <div>
+        <h1>☑️ Checkbox-Triggered Animations</h1>
+        <p>Click buttons to toggle animations using the :checked ~ * trick</p>
+
+        <!-- Basic Toggle Animations -->
+        <section>
+            <h2>🎬 Basic Toggle Animations</h2>
+            <div class="
+            $grid(cols(repeat(2,1fr)),gap(2rem))
+            @sm$grid(cols(1fr))
+            ">
+                <!-- Slide In Left -->
+                <div class="$block(padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                    <input type="checkbox" id="toggle1" class="hidden-checkbox">
+                    <label for="toggle1" class="$cursor(pointer)$block(padding(0.75rem,1.5rem))$bg(#primary)$color(#white)$border(radius(8px))$transition(easeIn,0.3s)$font(main,_,600)
+                        :hover$bg(#4f46e5)$scale(1.05)
+                        :active$scale(0.95)">Toggle
+                        Slide Left</label>
+                    <div
+                        class="content1 $blockItem(margin(1.5rem,0,0,0))$block(padding(1.5rem))$color(#white)$border(radius(8px)) $bg(linear(135deg,#667eea,0%,#764ba2,100%))">
+                        <div class="$font(main,2rem)$blockItem(margin(0,0,0.5rem,0))">👈</div>
+                        <div class="$font(main,_,600)">Sliding from the left!</div>
+                    </div>
+                </div>
+
+                <!-- Scale In -->
+                <div class="$block(padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                    <input type="checkbox" id="toggle2" class="hidden-checkbox">
+                    <label for="toggle2" class="$cursor(pointer)$block(padding(0.75rem,1.5rem))$bg(#primary)$color(#white)$border(radius(8px))$transition(easeIn,0.3s)$font(main,_,600)
+                        :hover$bg(#4f46e5)$scale(1.05)
+                        :active$scale(0.95)">Toggle
+                        Scale In</label>
+                    <div
+                        class="content2 $blockItem(margin(1.5rem,0,0,0))$block(padding(1.5rem))$color(#white)$border(radius(8px)) $bg(linear(135deg,#f093fb,0%,#f5576c,100%))">
+                        <div class="$font(main,2rem)$blockItem(margin(0,0,0.5rem,0))">📈</div>
+                        <div class="$font(main,_,600)">Scaling into view!</div>
+                    </div>
+                </div>
+
+                <!-- Rotate In -->
+                <div class="$block(padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                    <input type="checkbox" id="toggle3" class="hidden-checkbox">
+                    <label for="toggle3" class="$cursor(pointer)$block(padding(0.75rem,1.5rem))$bg(#primary)$color(#white)$border(radius(8px))$transition(easeIn,0.3s)$font(main,_,600)
+                        :hover$bg(#4f46e5)$scale(1.05)
+                        :active$scale(0.95)">Toggle
+                        Rotate In</label>
+                    <div
+                        class="content3 $blockItem(margin(1.5rem,0,0,0))$block(padding(1.5rem))$color(#white)$border(radius(8px)) $bg(linear(135deg,#4facfe,0%,#00f2fe,100%))">
+                        <div class="$font(main,2rem)$blockItem(margin(0,0,0.5rem,0))">🔄</div>
+                        <div class="$font(main,_,600)">Rotating into place!</div>
+                    </div>
+                </div>
+
+                <!-- Bounce In -->
+                <div class="$block(padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                    <input type="checkbox" id="toggle4" class="hidden-checkbox">
+                    <label for="toggle4" class="$cursor(pointer)$block(padding(0.75rem,1.5rem))$bg(#primary)$color(#white)$border(radius(8px))$transition(easeIn,0.3s)$font(main,_,600)
+                        :hover$bg(#4f46e5)$scale(1.05)
+                        :active$scale(0.95)">Toggle
+                        Bounce In</label>
+                    <div
+                        class="content4 $blockItem(margin(1.5rem,0,0,0))$block(padding(1.5rem))$color(#white)$border(radius(8px)) $bg(linear(135deg,#43e97b,0%,#38f9d7,100%))">
+                        <div class="$font(main,2rem)$blockItem(margin(0,0,0.5rem,0))">🏀</div>
+                        <div class="$font(main,_,600)">Bouncing in!</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Accordion -->
+        <section>
+            <h2>📂 Accordion Menu</h2>
+            <div class="$flex(column,gap(1rem))">
+                <!-- Accordion 1 -->
+                <div class="$bg(#surface)$border(2px,solid,#border,radius(12px))$block(padding(0))">
+                    <input type="checkbox" id="accordion1" class="hidden-checkbox">
+                    <label for="accordion1" class="$block(padding(1.5rem))$cursor(pointer)$font(main,1.1rem,600)">
+                        🎨 What is CSSS?
+                        <span class="accordion-arrow $transition(easeIn,0.3s)$blockItem(margin(0,0,0,0.5rem))">▼</span>
+                    </label>
+                    <div class="accordion-content1 $block(padding(0,1.5rem,1.5rem,1.5rem))$border(1px,solid,#border)">
+                        <p class="$blockItem(margin(1rem,0,0,0))">CSSS (CSS Shorts) is a powerful CSS preprocessor that
+                            enables
+                            concise, expressive CSS authoring directly in HTML using Dollar Shorts syntax.</p>
+                    </div>
+                </div>
+
+                <!-- Accordion 2 -->
+                <div class="$bg(#surface)$border(2px,solid,#border,radius(12px))$block(padding(0))">
+                    <input type="checkbox" id="accordion2" class="hidden-checkbox">
+                    <label for="accordion2" class="$block(padding(1.5rem))$cursor(pointer)$font(main,1.1rem,600)">
+                        🚀 Key Features
+                        <span class="accordion-arrow $transition(easeIn,0.3s)$blockItem(margin(0,0,0,0.5rem))">▼</span>
+                    </label>
+                    <div class="accordion-content2 $block(padding(0,1.5rem,1.5rem,1.5rem))$border(1px,solid,#border)">
+                        <ul class="$blockItem(margin(1rem,0,0,0))$block(padding(0,0,0,1.5rem))">
+                            <li>Dollar Shorts ($) for concise syntax</li>
+                            <li>Pipe selectors (|) for nested styling</li>
+                            <li>Intelligent color palette system</li>
+                            <li>Powerful typeface management</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Accordion 3 -->
+                <div
+                    class="$bg(#surface)$border(2px,solid,#border,radius(12px))$block(padding(0))$blockItem(margin(1rem,0))">
+                    <input type="checkbox" id="accordion3" class="hidden-checkbox">
+                    <label for="accordion3" class="$block(padding(1.5rem))$cursor(pointer)$font(main,1.1rem,600)">
+                        💡 Why Use It?
+                        <span class="accordion-arrow $transition(easeIn,0.3s)$blockItem(margin(0,0,0,0.5rem))">▼</span>
+                    </label>
+                    <div class="accordion-content3 $block(padding(0,1.5rem,1.5rem,1.5rem))$border(1px,solid,#border)">
+                        <p class="$blockItem(margin(1rem,0,0,0))">CSSS reduces boilerplate, improves maintainability,
+                            and makes
+                            your HTML more expressive while maintaining full CSS power.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab Navigation -->
+        <section>
+            <h2>📑 Tab Navigation</h2>
+            <div class="$bg(#surface)$border(2px,solid,#border,radius(12px))$block(padding(2rem))">
+                <input type="radio" name="tabs" id="tab1" class="hidden-checkbox" checked>
+                <input type="radio" name="tabs" id="tab2" class="hidden-checkbox">
+                <input type="radio" name="tabs" id="tab3" class="hidden-checkbox">
+
+                <div class="tab-labels $flex(row,gap(0.5rem))$blockItem(margin(0,0,2rem,0))$border(2px,solid,#border)">
+                    <label for="tab1" class="$cursor(pointer)$block(padding(1rem,2rem))$bg(#surface)$border(2px,solid,#border,radius(8px,8px,0,0))$transition(easeIn,0.3s)
+                        :hover$bg(#light)$border(2px,solid,#primary,radius(8px,8px,0,0))">🏠
+                        Home</label>
+                    <label for="tab2" class="$cursor(pointer)$block(padding(1rem,2rem))$bg(#surface)$border(2px,solid,#border,radius(8px,8px,0,0))$transition(easeIn,0.3s)
+                        :hover$bg(#light)$border(2px,solid,#primary,radius(8px,8px,0,0))">📊
+                        Features</label>
+                    <label for="tab3" class="$cursor(pointer)$block(padding(1rem,2rem))$bg(#surface)$border(2px,solid,#border,radius(8px,8px,0,0))$transition(easeIn,0.3s)
+                        :hover$bg(#light)$border(2px,solid,#primary,radius(8px,8px,0,0))">📞
+                        Contact</label>
+                </div>
+
+                <div class="tabs">
+                    <div
+                        class="tab-content1 $block(padding(1.5rem))$color(#white)$border(radius(8px)) $bg(linear(135deg,#667eea,0%,#764ba2,100%))">
+                        <h3 class="$blockItem(margin(0,0,1rem,0))$font(main,1.5rem)">🏠 Welcome Home</h3>
+                        <p class="$blockItem(margin(0))">This is the home tab content. Click other tabs to see
+                            animations!</p>
+                    </div>
+                    <div
+                        class="tab-content2 $block(padding(1.5rem))$color(#white)$border(radius(8px)) $bg(linear(135deg,#f093fb,0%,#f5576c,100%))">
+                        <h3 class="$blockItem(margin(0,0,1rem,0))$font(main,1.5rem)">📊 Amazing Features</h3>
+                        <p class="$blockItem(margin(0))">Explore powerful features like dollar shorts, pipe selectors,
+                            and palette
+                            systems.</p>
+                    </div>
+                    <div
+                        class="tab-content3 $block(padding(1.5rem))$color(#white)$border(radius(8px)) $bg(linear(135deg,#4facfe,0%,#00f2fe,100%))">
+                        <h3 class="$blockItem(margin(0,0,1rem,0))$font(main,1.5rem)">📞 Get In Touch</h3>
+                        <p class="$blockItem(margin(0))">Contact information and support resources go here.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Staggered Reveal -->
+        <section>
+            <h2>✨ Staggered Reveal</h2>
+            <div class="$bg(#surface)$border(2px,solid,#border,radius(12px))$block(padding(2rem))">
+                <input type="checkbox" id="reveal" class="hidden-checkbox">
+                <label for="reveal" class="$cursor(pointer)$block(padding(0.75rem,1.5rem))$bg(#primary)$color(#white)$border(radius(8px))$transition(easeIn,0.3s)$font(main,_,600)
+                    :hover$bg(#4f46e5)$scale(1.05)
+                    :active$scale(0.95)">Reveal
+                    All Items</label>
+
+                <div class="reveal-items $blockItem(margin(2rem,0,0,0))$grid(cols(repeat(2,1fr)),gap(1rem))">
+                    <div
+                        class="reveal-item $block(padding(1.5rem),textCenter)$color(#white)$border(radius(8px)) $bg(linear(135deg,#667eea,0%,#764ba2,100%))">
+                        <div class="$font(main,2rem)">🎯</div>
+                        <div class="$font(main,_,600)$blockItem(margin(0.5rem,0,0,0))">Item One</div>
+                    </div>
+                    <div
+                        class="reveal-item $block(padding(1.5rem),textCenter)$color(#white)$border(radius(8px)) $bg(linear(135deg,#f093fb,0%,#f5576c,100%))">
+                        <div class="$font(main,2rem)">🚀</div>
+                        <div class="$font(main,_,600)$blockItem(margin(0.5rem,0,0,0))">Item Two</div>
+                    </div>
+                    <div
+                        class="reveal-item $block(padding(1.5rem),textCenter)$color(#white)$border(radius(8px)) $bg(linear(135deg,#4facfe,0%,#00f2fe,100%))">
+                        <div class="$font(main,2rem)">⚡</div>
+                        <div class="$font(main,_,600)$blockItem(margin(0.5rem,0,0,0))">Item Three</div>
+                    </div>
+                    <div
+                        class="reveal-item $block(padding(1.5rem),textCenter)$color(#white)$border(radius(8px)) $bg(linear(135deg,#43e97b,0%,#38f9d7,100%))">
+                        <div class="$font(main,2rem)">💎</div>
+                        <div class="$font(main,_,600)$blockItem(margin(0.5rem,0,0,0))">Item Four</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filter Gallery -->
+        <section>
+            <h2>🎨 Filtered Gallery</h2>
+            <div class="$bg(#surface)$border(2px,solid,#border,radius(12px))$block(padding(2rem))">
+                <input type="radio" name="filter" id="filterAll" class="hidden-checkbox" checked>
+                <input type="radio" name="filter" id="filterRed" class="hidden-checkbox">
+                <input type="radio" name="filter" id="filterBlue" class="hidden-checkbox">
+                <input type="radio" name="filter" id="filterGreen" class="hidden-checkbox">
+
+                <div class="filter-labels $blockItem(margin(0,0,2rem,0))
+                |label$cursor(pointer)$block(padding(0.5rem,1rem))$bg(#surface)$border(2px,solid,#border,radius(8px))$blockItem(margin(0.25rem))$transition(easeIn,0.3s)
+                |label:hover$bg(#light)$border(2px,solid,#primary,radius(8px))">
+                    <label for="filterAll">All</label>
+                    <label for="filterRed">🔴 Red</label>
+                    <label for="filterBlue">🔵 Blue</label>
+                    <label for="filterGreen">🟢 Green</label>
+                </div>
+
+                <div class="gallery $grid(cols(repeat(3,1fr)),gap(1rem))">
+                    <div
+                        class="gallery-item item-red $block(padding(2rem),textCenter)$color(#white)$border(radius(8px))$font(main,_,600) $bg(linear(135deg,#f093fb,0%,#f5576c,100%))">
+                        Red 1
+                    </div>
+                    <div
+                        class="gallery-item item-blue $block(padding(2rem),textCenter)$color(#white)$border(radius(8px))$font(main,_,600) $bg(linear(135deg,#4facfe,0%,#00f2fe,100%))">
+                        Blue 1
+                    </div>
+                    <div
+                        class="gallery-item item-green $block(padding(2rem),textCenter)$color(#white)$border(radius(8px))$font(main,_,600) $bg(linear(135deg,#43e97b,0%,#38f9d7,100%))">
+                        Green 1
+                    </div>
+                    <div
+                        class="gallery-item item-red $block(padding(2rem),textCenter)$color(#white)$border(radius(8px))$font(main,_,600) $bg(linear(135deg,#f093fb,0%,#f5576c,100%))">
+                        Red 2
+                    </div>
+                    <div
+                        class="gallery-item item-blue $block(padding(2rem),textCenter)$color(#white)$border(radius(8px))$font(main,_,600) $bg(linear(135deg,#4facfe,0%,#00f2fe,100%))">
+                        Blue 2
+                    </div>
+                    <div
+                        class="gallery-item item-green $block(padding(2rem),textCenter)$color(#white)$border(radius(8px))$font(main,_,600) $bg(linear(135deg,#43e97b,0%,#38f9d7,100%))">
+                        Green 2
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+
+</html>

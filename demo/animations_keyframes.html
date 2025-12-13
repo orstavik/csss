@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyframe Variations - CSSS Demo</title>
+    <script src="../src/auto.js?style=style&interval=400" type="module"></script>
+    <style>
+        /* Entry Animations - One-time on load */
+        @keyframes slideInFromLeft {
+            from {
+                transform: translateX(-100vw);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInFromRight {
+            from {
+                transform: translateX(100vw);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInFromTop {
+            from {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInFromBottom {
+            from {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes flipInX {
+            from {
+                transform: perspective(400px) rotateX(-90deg);
+                opacity: 0;
+            }
+
+            to {
+                transform: perspective(400px) rotateX(0deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes flipInY {
+            from {
+                transform: perspective(400px) rotateY(-90deg);
+                opacity: 0;
+            }
+
+            to {
+                transform: perspective(400px) rotateY(0deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes rollIn {
+            from {
+                transform: translateX(-100%) rotate(-360deg);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        /* Complex multi-step animations */
+        @keyframes complexBounce {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+
+            25% {
+                transform: translateY(-50px) scale(1.1);
+            }
+
+            50% {
+                transform: translateY(0) scale(1);
+            }
+
+            75% {
+                transform: translateY(-25px) scale(1.05);
+            }
+
+            100% {
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes morphShape {
+
+            0%,
+            100% {
+                border-radius: 50%;
+                transform: rotate(0deg) scale(1);
+            }
+
+            25% {
+                border-radius: 20%;
+                transform: rotate(90deg) scale(1.2);
+            }
+
+            50% {
+                border-radius: 0%;
+                transform: rotate(180deg) scale(1);
+            }
+
+            75% {
+                border-radius: 20%;
+                transform: rotate(270deg) scale(1.2);
+            }
+        }
+
+        @keyframes rainbowBorder {
+            0% {
+                border-color: #ff0000;
+            }
+
+            17% {
+                border-color: #ff7700;
+            }
+
+            33% {
+                border-color: #ffff00;
+            }
+
+            50% {
+                border-color: #00ff00;
+            }
+
+            67% {
+                border-color: #0000ff;
+            }
+
+            83% {
+                border-color: #8b00ff;
+            }
+
+            100% {
+                border-color: #ff0000;
+            }
+        }
+
+        @keyframes gradient3D {
+            0% {
+                transform: perspective(1000px) rotateY(0deg);
+                background-: 0% 50%;
+            }
+
+            50% {
+                transform: perspective(1000px) rotateY(180deg);
+                background-: 100% 50%;
+            }
+
+            100% {
+                transform: perspective(1000px) rotateY(360deg);
+                background-: 0% 50%;
+            }
+        }
+
+        @keyframes jello {
+
+            0%,
+            100% {
+                transform: scale(1, 1);
+            }
+
+            30% {
+                transform: scale(1.25, 0.75);
+            }
+
+            40% {
+                transform: scale(0.75, 1.25);
+            }
+
+            50% {
+                transform: scale(1.15, 0.85);
+            }
+
+            65% {
+                transform: scale(0.95, 1.05);
+            }
+
+            75% {
+                transform: scale(1.05, 0.95);
+            }
+        }
+
+        /* Timing function demonstrations */
+        @keyframes slide {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(200px);
+            }
+        }
+
+        /* Animation classes for entry animations */
+        .entry-left {
+            animation: slideInFromLeft 1s ease-out;
+        }
+
+        .entry-right {
+            animation: slideInFromRight 1s ease-out;
+        }
+
+        .entry-top {
+            animation: slideInFromTop 1s ease-out;
+        }
+
+        .entry-bottom {
+            animation: slideInFromBottom 1s ease-out;
+        }
+
+        .entry-zoom {
+            animation: zoomIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .entry-flipX {
+            animation: flipInX 1s ease-out;
+        }
+
+        .entry-flipY {
+            animation: flipInY 1s ease-out;
+        }
+
+        .entry-roll {
+            animation: rollIn 1s ease-out;
+        }
+
+        /* Staggered entry animations */
+        .stagger-item {
+            opacity: 0;
+            animation: slideInFromBottom 0.6s ease-out forwards;
+        }
+
+        .stagger-item:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .stagger-item:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .stagger-item:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .stagger-item:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .stagger-item:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .stagger-item:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        /* Complex animations */
+        .complex-bounce {
+            animation: complexBounce 2s ease-in-out infinite;
+        }
+
+        .morph-shape {
+            animation: morphShape 4s ease-in-out infinite;
+        }
+
+        .rainbow-border {
+            animation: rainbowBorder 3s linear infinite;
+        }
+
+        .gradient-3d {
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            background-size: 300% 300%;
+            animation: gradient3D 4s ease-in-out infinite;
+        }
+
+        .jello-anim {
+            animation: jello 1.5s ease-in-out infinite;
+        }
+
+        /* Timing function variations */
+        .timing-track {
+            overflow: hidden;
+        }
+
+        .timing-linear {
+            animation: slide 2s linear infinite alternate;
+        }
+
+        .timing-ease {
+            animation: slide 2s ease infinite alternate;
+        }
+
+        .timing-ease-in {
+            animation: slide 2s ease-in infinite alternate;
+        }
+
+        .timing-ease-out {
+            animation: slide 2s ease-out infinite alternate;
+        }
+
+        .timing-ease-in-out {
+            animation: slide 2s ease-in-out infinite alternate;
+        }
+
+        .timing-cubic {
+            animation: slide 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite alternate;
+        }
+    </style>
+</head>
+
+<body class="
+$blockItem(margin(0))
+$block(padding(3rem,2rem))
+$bg(#light)
+
+$typeface(main,Inter,sans-serif,16px,400)
+$typeface(heading,Inter,sans-serif,32px,700)
+
+$palette(primary,#6366f1,#ffffff)
+$palette(secondary,#8b5cf6,#ffffff)
+$palette(accent,#ec4899,#ffffff)
+$palette(dark,#1e293b,#ffffff)
+$palette(light,#f8fafc,#1e293b)
+$palette(border,#e0e0e0,#1e293b)
+$palette(surface,#ffffff,#1e293b)
+$palette(muted,#64748b,#ffffff)
+
+||div$blockItem(inlineSize(1200px,_,95%),margin(0,auto))
+||div|h1$font(heading)$blockItem(margin(0,0,1rem,0))$color(#dark)
+||div|p$font(main,1.1rem)$blockItem(margin(0,0,3rem,0))$color(#muted)
+||div|section$blockItem(margin(0,0,4rem,0))
+||div|section|h2$font(main,1.5rem,600)$blockItem(margin(0,0,1.5rem,0))$color(#dark)
+">
+
+    <div>
+        <h1>🎬 Keyframe Animation Variations</h1>
+        <p>Exploring different keyframe patterns, timing functions, and animation sequences</p>
+
+        <!-- Entry Animations -->
+        <section>
+            <h2>📥 Entry Animations</h2>
+            <div class="$block(textCenter)$blockItem(margin(0,0,1.5rem,0))">
+                <button
+                    class="$cursor(pointer)$block(padding(0.75rem,1.5rem))$bg(#primary)$color(#white)$border(none,radius(8px))$font(main,_,600)$transition(easeIn,0.3s) :hover$bg(#4f46e5)$scale(1.05) :active$scale(0.95)"
+                    onclick="restartSection('entry-grid')">🔄 Restart Entry Animations</button>
+            </div>
+            <div id="entry-grid" class="
+            $grid(cols(repeat(auto-fit,minmax(200px,1fr))),gap(1.5rem))
+            |$flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))
+            |$bg(#surface)
+            |$border(2px,solid,#border,radius(12px))
+            |$blockItem(size(_,180px))
+            |$block(textCenter)
+            
+            |div:first-child$fontSize(3rem)
+            |div:last-child$font(main,1rem,600)$color(#dark)
+            ">
+                <div class="entry-left">
+                    <div>⬅️</div>
+                    <div>From Left</div>
+                </div>
+                <div class="entry-right">
+                    <div>➡️</div>
+                    <div>From Right</div>
+                </div>
+                <div class="entry-top">
+                    <div>⬆️</div>
+                    <div>From Top</div>
+                </div>
+                <div class="entry-bottom">
+                    <div>⬇️</div>
+                    <div>From Bottom</div>
+                </div>
+                <div class="entry-zoom">
+                    <div>🎯</div>
+                    <div>Zoom In</div>
+                </div>
+                <div class="entry-flipX">
+                    <div>🔄</div>
+                    <div>Flip X</div>
+                </div>
+                <div class="entry-flipY">
+                    <div>🔃</div>
+                    <div>Flip Y</div>
+                </div>
+                <div class="entry-roll">
+                    <div>🎲</div>
+                    <div>Roll In</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Staggered Animations -->
+        <section>
+            <h2>⚡ Staggered Entry</h2>
+            <div class="$block(textCenter)$blockItem(margin(0,0,1.5rem,0))">
+                <button
+                    class="$cursor(pointer)$block(padding(0.75rem,1.5rem))$bg(#primary)$color(#white)$border(none,radius(8px))$font(main,_,600)$transition(easeIn,0.3s) :hover$bg(#4f46e5)$scale(1.05) :active$scale(0.95)"
+                    onclick="restartSection('stagger-grid')">🔄 Restart Stagger</button>
+            </div>
+            <div id="stagger-grid" class="
+            $grid(cols(repeat(3,1fr)),gap(1.5rem))
+            @sm$grid(cols(1fr))
+            ">
+                <div
+                    class="stagger-item $block(padding(2rem),textCenter)$bg(linear(135deg,#667eea,#764ba2))$color(#white)$border(radius(12px))">
+                    <div class="$fontSize(2.5rem)$blockItem(margin(0,0,0.5rem,0))">🎨</div>
+                    <div class="$font(main,1.2rem,600)">Card 1</div>
+                </div>
+                <div
+                    class="stagger-item $block(padding(2rem),textCenter)$bg(linear(135deg,#f093fb,#f5576c))$color(#white)$border(radius(12px))">
+                    <div class="$fontSize(2.5rem)$blockItem(margin(0,0,0.5rem,0))">🚀</div>
+                    <div class="$font(main,1.2rem,600)">Card 2</div>
+                </div>
+                <div
+                    class="stagger-item $block(padding(2rem),textCenter)$bg(linear(135deg,#4facfe,#00f2fe))$color(#white)$border(radius(12px))">
+                    <div class="$fontSize(2.5rem)$blockItem(margin(0,0,0.5rem,0))">⚡</div>
+                    <div class="$font(main,1.2rem,600)">Card 3</div>
+                </div>
+                <div
+                    class="stagger-item $block(padding(2rem),textCenter)$bg(linear(135deg,#43e97b,#38f9d7))$color(#white)$border(radius(12px))">
+                    <div class="$fontSize(2.5rem)$blockItem(margin(0,0,0.5rem,0))">💎</div>
+                    <div class="$font(main,1.2rem,600)">Card 4</div>
+                </div>
+                <div
+                    class="stagger-item $block(padding(2rem),textCenter)$bg(linear(135deg,#fa709a,#fee140))$color(#white)$border(radius(12px))">
+                    <div class="$fontSize(2.5rem)$blockItem(margin(0,0,0.5rem,0))">🌟</div>
+                    <div class="$font(main,1.2rem,600)">Card 5</div>
+                </div>
+                <div
+                    class="stagger-item $block(padding(2rem),textCenter)$bg(linear(135deg,#30cfd0,#330867))$color(#white)$border(radius(12px))">
+                    <div class="$fontSize(2.5rem)$blockItem(margin(0,0,0.5rem,0))">🎭</div>
+                    <div class="$font(main,1.2rem,600)">Card 6</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Complex Multi-Step Animations -->
+        <section>
+            <h2>🎪 Complex Multi-Step Animations</h2>
+            <div class="$grid(cols(repeat(auto-fit,minmax(200px,1fr))),gap(2rem))">
+                <div
+                    class="$flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))$blockItem(size(_,220px))">
+                    <div class="complex-bounce $fontSize(3rem)">🏀</div>
+                    <div class="$font(main,1rem,600)$block(textCenter)">Complex Bounce</div>
+                    <div class="$fontSize(0.85rem)$opacity(0.7)$block(textCenter)">Multi-stage easing</div>
+                </div>
+
+                <div
+                    class="$flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))$blockItem(size(_,220px))">
+                    <div class="morph-shape $blockItem(size(80px,80px))$bg(linear(135deg,#667eea,#764ba2))"></div>
+                    <div class="$font(main,1rem,600)$block(textCenter)">Shape Morph</div>
+                    <div class="$fontSize(0.85rem)$opacity(0.7)$block(textCenter)">Border radius animation</div>
+                </div>
+
+                <div
+                    class="$flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))$bg(#surface)$border(8px,solid,#ff0000,radius(12px))$blockItem(size(_,220px)) rainbow-border">
+                    <div class="$fontSize(3rem)">🌈</div>
+                    <div class="$font(main,1rem,600)$block(textCenter)">Rainbow Border</div>
+                    <div class="$fontSize(0.85rem)$opacity(0.7)$block(textCenter)">Color cycling</div>
+                </div>
+
+                <div
+                    class="$flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))$border(2px,solid,#border,radius(12px))$blockItem(size(_,220px)) gradient-3d">
+                    <div class="$fontSize(3rem)">🎨</div>
+                    <div class="$font(main,1rem,600)$block(textCenter)$color(#white)">3D Gradient</div>
+                    <div class="$fontSize(0.85rem)$color(#rgba(255,255,255,0.9))$block(textCenter)">Perspective rotation
+                    </div>
+                </div>
+
+                <div
+                    class="$flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))$blockItem(size(_,220px))">
+                    <div class="jello-anim $fontSize(3rem)">🍮</div>
+                    <div class="$font(main,1rem,600)$block(textCenter)">Jello Effect</div>
+                    <div class="$fontSize(0.85rem)$opacity(0.7)$block(textCenter)">Elastic squash & stretch</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timing Functions Comparison -->
+        <section>
+            <h2>⏱️ Timing Function Comparison</h2>
+            <div class="$bg(#surface)$border(2px,solid,#border,radius(12px))$block(padding(2rem))">
+                <p class="$font(main,1rem)$blockItem(margin(0,0,2rem,0))$opacity(0.8)">
+                    Watch how different easing functions affect the same animation
+                </p>
+                <div class="$flex(column,gap(1.5rem))">
+                    <div>
+                        <div class="$font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Linear</div>
+                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$border(radius(8px))$relative timing-track">
+                            <div
+                                class="timing-linear $blockItem(size(50px,50px))$bg(linear(135deg,#667eea,#764ba2))$border(radius(8px))$absolute">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="$font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Ease</div>
+                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$border(radius(8px))$relative timing-track">
+                            <div
+                                class="timing-ease $blockItem(size(50px,50px))$bg(linear(135deg,#f093fb,#f5576c))$border(radius(8px))$absolute">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="$font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Ease-In</div>
+                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$border(radius(8px))$relative timing-track">
+                            <div
+                                class="timing-ease-in $blockItem(size(50px,50px))$bg(linear(135deg,#4facfe,#00f2fe))$border(radius(8px))$absolute">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="$font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Ease-Out</div>
+                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$border(radius(8px))$relative timing-track">
+                            <div
+                                class="timing-ease-out $blockItem(size(50px,50px))$bg(linear(135deg,#43e97b,#38f9d7))$border(radius(8px))$absolute">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="$font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Ease-In-Out</div>
+                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$border(radius(8px))$relative timing-track">
+                            <div
+                                class="timing-ease-in-out $blockItem(size(50px,50px))$bg(linear(135deg,#fa709a,#fee140))$border(radius(8px))$absolute">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="$font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Cubic Bezier (Bounce)</div>
+                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$border(radius(8px))$relative timing-track">
+                            <div
+                                class="timing-cubic $blockItem(size(50px,50px))$bg(linear(135deg,#30cfd0,#330867))$border(radius(8px))$absolute">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        function restartSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const children = section.children;
+
+            // Remove and re-add each child to restart animations
+            Array.from(children).forEach(child => {
+                const clone = child.cloneNode(true);
+                child.parentNode.replaceChild(clone, child);
+            });
+        }
+    </script>
+
+</body>
+
+</html>
