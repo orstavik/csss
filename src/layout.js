@@ -1,6 +1,6 @@
 import { isRepeat, isSpan, isBasic, toLogicalFour, isLength } from "./func.js";
 
-function toSize(NAME, args) {
+function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
     throw new SyntaxError(`$${NAME}() accepts only 1 or 3 arguments, got ${args.length}.`);
   args = args.map(a =>
@@ -17,18 +17,18 @@ function toSize(NAME, args) {
   };
 }
 
-function size(args) {
+function size({ args }) {
   if (args.length == 1)
-    return toSize("inlineSize", args);
+    return toSize("inlineSize", { args });
   if (args.length == 2)
     return {
-      ...toSize("inlineSize", [args[0]]),
-      ...toSize("blockSize", [args[1]])
+      ...toSize("inlineSize", { args: [args[0]] }),
+      ...toSize("blockSize", { args: [args[1]] })
     };
   if (args.length == 6)
     return {
-      ...toSize("inlineSize", args.slice(0, 3)),
-      ...toSize("blockSize", args.slice(3))
+      ...toSize("inlineSize", { args: args.slice(0, 3) }),
+      ...toSize("blockSize", { args: args.slice(3) })
     };
   throw new SyntaxError(`$size() accepts only 1, 2 or 4 arguments, got ${args.length}.`);
 }
@@ -142,8 +142,8 @@ function defaultItem(name, argsIn, argsOut) {
 }
 
 const LAYOUT = {
-  padding: toLogicalFour.bind(null, "padding"),
-  scrollPadding: toLogicalFour.bind(null, "scroll-padding"),
+  padding: ({ args }) => toLogicalFour("padding", args),
+  scrollPadding: ({ args }) => toLogicalFour("scroll-padding", args),
   ...ALIGNMENTS.textAlign,
   breakWord: { overflowWrap: "break-word" },
   breakAnywhere: { overflowWrap: "anywhere" },
@@ -152,15 +152,15 @@ const LAYOUT = {
   snapStop: { scrollSnapStop: "always" },
 };
 
-function textIndent(args) {
+function textIndent({ args }) {
   const l = isLength(args[0]);
   if (l)
     return { "textIndent": l.text };
   throw new SyntaxError("indent needs a length");
 }
 const _LAYOUT = {
-  margin: toLogicalFour.bind(null, "margin"),
-  scrollMargin: toLogicalFour.bind(null, "scroll-margin"),
+  margin: ({ args }) => toLogicalFour("margin", args),
+  scrollMargin: ({ args }) => toLogicalFour("scroll-margin", args),
   textIndent: textIndent,
   indent: textIndent,
   inlineSize: toSize.bind(null, "inlineSize"), //todo should we block this?
@@ -183,7 +183,7 @@ const _LAYOUT = {
   // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
 
-function gap(args) {
+function gap({ args }) {
   if (!args.length || args.length > 2)
     throw new SyntaxError("gap only accepts 1 or 2 arguments");
   args = args.map(isBasic).map(a => a.text);
@@ -197,7 +197,7 @@ function gap(args) {
 //todo the question is if this will be recognized by the llm..
 //they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
 //so it should be with layout.
-function blockGap(args) {
+function blockGap({ args }) {
   const [wordSpacing, lineHeight] = args.map(isBasic).map(a => a.text);
   return { wordSpacing, lineHeight };
 }
@@ -213,12 +213,12 @@ const BlockItem = {
 };
 
 function block({ args }) {
-  const args2 = args.map(a => BLOCK[a.name]?.(a.args) ?? BLOCK[a.text]);
+  const args2 = args.map(a => BLOCK[a.name]?.(a) ?? BLOCK[a.text]);
   return defaultContainer({ display: "block" }, args, args2);
 }
 
 function blockItem({ args }) {
-  const argsOut = args.map(a => BlockItem[a.name]?.(a.args) ?? BlockItem[a.text]);
+  const argsOut = args.map(a => BlockItem[a.name]?.(a) ?? BlockItem[a.text]);
   return defaultItem("blockItem", args, argsOut);
 }
 
@@ -241,12 +241,12 @@ const IBlockItem = {
 };
 
 function iBlock({ args }) {
-  const args2 = args.map(a => IBLOCK[a.name]?.(a.args) ?? IBLOCK[a.text]);
+  const args2 = args.map(a => IBLOCK[a.name]?.(a) ?? IBLOCK[a.text]);
   return defaultContainer({ display: "inline-block" }, args, args2);
 }
 
 function iBlockItem({ args }) {
-  const argsOut = args.map(a => IBlockItem[a.name]?.(a.args) ?? IBlockItem[a.text]);
+  const argsOut = args.map(a => IBlockItem[a.name]?.(a) ?? IBlockItem[a.text]);
   return defaultItem("iBlockItem", args, argsOut);
 }
 
@@ -266,10 +266,10 @@ const GRID = {
   ...OVERFLOWS,
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.placeItems,
-  cols: args => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
-  columns: args => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
-  rows: args => ({ gridTemplateRows: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
-  areas: args => ({ gridTemplateAreas: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
+  cols: ({ args }) => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
+  columns: ({ args }) => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
+  rows: ({ args }) => ({ gridTemplateRows: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
+  areas: ({ args }) => ({ gridTemplateAreas: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
   ...LAYOUT,
   gap,
   //todo test this!!
@@ -280,7 +280,7 @@ const GRID = {
 };
 
 function grid({ args }) {
-  const argsOut = args.map(a => GRID[a.name]?.(a.args) ?? GRID[a.text]);
+  const argsOut = args.map(a => GRID[a.name]?.(a) ?? GRID[a.text]);
   return defaultContainer({ display: "grid", placeItems: "unset", placeContent: "unset" }, args, argsOut);
 }
 
@@ -296,11 +296,11 @@ function grid({ args }) {
 
 // $grid(col(1,4))
 // $grid(col_1_4)
-const column = args => {
+const column = ({ args }) => {
   const [start, end] = args.map(a => isSpan(a) ?? isBasic(a)).map(a => a.text);
   return { gridColumn: end ? `${start} / ${end}` : start };
 };
-const row = args => {
+const row = ({ args }) => {
   const [start, end] = args.map(a => isSpan(a) ?? isBasic(a)).map(a => a.text);
   return { gridRow: end ? `${start} / ${end}` : start };
 };
@@ -312,7 +312,7 @@ const GridItem = {
   row,
 };
 function gridItem({ args }) {
-  const argsOut = args.map(a => GridItem[a.name]?.(a.args) ?? GridItem[a.text]);
+  const argsOut = args.map(a => GridItem[a.name]?.(a) ?? GridItem[a.text]);
   return defaultItem("gridItem", args, argsOut);
 }
 
@@ -332,21 +332,21 @@ const FLEX = {
 };
 
 function flex({ args }) {
-  const argsOut = args.map(a => FLEX[a.name]?.(a.args) ?? FLEX[a.text]);
+  const argsOut = args.map(a => FLEX[a.name]?.(a) ?? FLEX[a.text]);
   return defaultContainer({ display: "flex", alignItems: "unset", placeContent: "unset" }, args, argsOut);
 }
 const FlexItem = {
   ..._LAYOUT,
   ...ALIGNMENTS.alignSelf,
-  basis: args => ({ flexBasis: args.map(isBasic).map(a => a.text).join(" ") }),
-  grow: args => ({ flexGrow: args.map(isBasic).map(a => a.text).join(" ") }),
-  shrink: args => ({ flexShrink: args.map(isBasic).map(a => a.text).join(" ") }),
-  order: args => ({ order: args.map(isBasic).map(a => a.text).join(" ") }),
+  basis: ({ args }) => ({ flexBasis: args.map(isBasic).map(a => a.text).join(" ") }),
+  grow: ({ args }) => ({ flexGrow: args.map(isBasic).map(a => a.text).join(" ") }),
+  shrink: ({ args }) => ({ flexShrink: args.map(isBasic).map(a => a.text).join(" ") }),
+  order: ({ args }) => ({ order: args.map(isBasic).map(a => a.text).join(" ") }),
   //todo safe
 };
 
 function flexItem({ args }) {
-  const argsOut = args.map(a => FlexItem[a.name]?.(a.args) ?? FlexItem[a.text]);
+  const argsOut = args.map(a => FlexItem[a.name]?.(a) ?? FlexItem[a.text]);
   return defaultItem("flexItem", args, argsOut);
 }
 
