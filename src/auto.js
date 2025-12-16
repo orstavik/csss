@@ -21,9 +21,11 @@ function updateDoc(style, dollars) {
     try {
       const res = parse(clazz);
       const i = style.sheet.cssRules.length;
-      style.shorts.add(clazz);
-      for (let rule of res)
-        style.sheet.insertRule(rule.cssText, i);
+      for (let { cssText, rule, short } of res) {
+        if (rule && style.shorts.has(rule)) continue;
+        style.sheet.insertRule(cssText, i);
+        rule && style.shorts.add(rule);
+      }
     } catch (er) {
       console.error(er);
     }
@@ -53,6 +55,7 @@ function sleep(interval) {
   while (true) {
     await sleep(interval);
     const dollars = allDollars().filter(clazz => !style.shorts.has(clazz));
+    style.shorts.add(...dollars);
     updateDoc(style, dollars);
   }
 })();

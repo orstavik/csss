@@ -112,14 +112,14 @@ export function parse(short) {
   let { selector, item, grandItem } = parseSelectorPipe(sel, clazz);
   const layer = (grandItem ? "grandItems" : item ? "items" : "container") + (short.match(/^(\$|\|\$|\|\|\$)/) ? "Default" : "");
   exprList = kebabcaseKeys(exprList);
-  const { atRules, mainRule } = extractAtRules(exprList);
-  checkProperty(mainRule);
-  let obj = { [selector]: mainRule };
+  const { atRules, mainRule: body } = extractAtRules(exprList);
+  checkProperty(body);
+  let obj = { [selector]: body };
   if (media) obj = { [`@media ${media}`]: obj };
   const cssText = bodyToTxt2(`@layer ${layer}`, obj);
-  const main = { short, layer, media, selector, mainRule, cssText };
+  const main = { short, layer, media, selector, body, cssText };
 
-  const atRuleTexts = Object.entries(atRules).map(([rule, body]) => ({ rule, mainRule, cssText: bodyToTxt2(rule, body) }));
+  const atRuleTexts = Object.entries(atRules).map(([rule, body]) => ({ rule, body, cssText: bodyToTxt2(rule, body) }));
   return [main, ...atRuleTexts];
 }
 
