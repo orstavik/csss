@@ -112,20 +112,3 @@
   }
 }
 ```
-
-**csssx:** $translateX(100px,to(*3))
-**cssx:**
-```css
-@keyframes translateX-to-\*3 {
-  100% {
-    transform: translateX(300px);
-  }
-}
-
-@layer containerDefault {
-  .\$translateX\(100px\,to\(\*3\)\) {
-    transform: translateX(100px);
-    animation: translateX-to-\*3 1s;
-  }
-}
-```

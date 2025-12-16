@@ -132,22 +132,40 @@ function isRelativeCalc(arg) {
   return arg?.kind === "EXP" && arg.name in Maths && arg.args?.length > 0;
 }
 
-function processRelCalc(relCalc, baseArg) {
-  //todo this is not correct i think, we need to use the computable() function in funcMath.js.
-  //todo the relCalc expressions doesn't work now, so we either need to remove this ability from animations, 
-  // or fix the relCalc expressions in Parser.js.
-  //   const args3 = computableNumbers(args2);
-  // debugger
 
+//TODO not implemented/supported, neither here nor in the Parser.js
+// **csssx:** $translateX(100px,to(*3))
+// **cssx:**
+// ```css
+// @keyframes translateX-to-\*3 {
+//   100% {
+//     transform: translateX(300px);
+//   }
+// }
 
-  // Process relative calculations like calc(+ 10px) applied to a base value
-  const baseVal = isBasic(baseArg);
-  if (!baseVal) return baseArg;
-
-  // Use the math function from funcMath.js
-  const mathResult = Maths[relCalc.name](relCalc.name, [baseVal, ...relCalc.args.map(isBasic)]);
-  return mathResult || baseArg;
-}
+// @layer containerDefault {
+//   .\$translateX\(100px\,to\(\*3\)\) {
+//     transform: translateX(100px);
+//     animation: translateX-to-\*3 1s;
+//   }
+// }
+// ```
+// function processRelCalc(relCalcs, argsIn) {
+//  for each relCalc in relCalcs
+//  find out if relCalc is a relative calc
+//  if(!(relCalc.kind == "EXP" && relCalc.args.length > 1 && relCalc.args[0] == null))
+//    return undefined;
+//  run the relCalc against all the incoming argsIn
+//  here we can either fail if not all argsIn are computable, 
+//  or we can just filter away the argsIn that are not computable.
+//  const argsOut = argsIn.map(a => /*compute(relCalc.name, a, relCalc.args[1])?.text*/);
+//  then return the resulting argsIn.map(arg => arg.text);
+//         if (nextArgs && isRelativeCalc(nextArgs[0]))
+//         nextArgs = args2.map(baseArg => {
+//           const relCalc = nextArgs.find(na => isRelativeCalc(na));
+//           return relCalc ? processRelCalc(relCalc, baseArg) : baseArg;
+//         });
+// }
 
 export function animationHo(cb) {
   return ({ name, args }) => {
@@ -182,16 +200,11 @@ export function animationHo(cb) {
         throw new SyntaxError(`Not a valid animation argument: ${animName}. Remember, all animation arguments must come after other arguments for every property.`);
 
       let { settings: extraSettings, stepKey, nextArgs } = ANIMS[animName](anim.args || []);
-      if (nextArgs && isRelativeCalc(nextArgs[0]))
-        nextArgs = args2.map(baseArg => {
-          const relCalc = nextArgs.find(na => isRelativeCalc(na));
-          return relCalc ? processRelCalc(relCalc, baseArg) : baseArg;
-        });
+      // nextArgs = processRelCalc(nextArgs[0], nextArgs);
       if (nextArgs)
         keyframes[stepKey] = cb({ name, args: nextArgs });
-      if (extraSettings) {
+      if (extraSettings)
         Object.assign(settings, extraSettings);
-      }
     }
 
     // Build animation CSS property
