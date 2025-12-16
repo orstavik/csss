@@ -103,54 +103,28 @@ const ANIMS = {
         const percent = args[0]?.text || "50%";
         return { settings: {}, stepKey: percent, nextArgs: args.slice(1) };
     },
-    infiniteAlternate: function (args) {
+    infiniteAlternate: function () {
         return {
             settings: { iterationCount: "infinite", direction: "alternate" },
-            stepKey: undefined,
-            nextArgs: args
         };
     },
-    infinite: function (args) {
-        return {
-            settings: { iterationCount: "infinite" },
-            stepKey: undefined,
-            nextArgs: args
-        };
+    infinite: function () {
+        return { settings: { iterationCount: "infinite" }, };
     },
-    alternate: function (args) {
-        return {
-            settings: { direction: "alternate" },
-            stepKey: undefined,
-            nextArgs: args
-        };
+    alternate: function () {
+        return { settings: { direction: "alternate" }, };
     },
-    reverse: function (args) {
-        return {
-            settings: { direction: "reverse" },
-            stepKey: undefined,
-            nextArgs: args
-        };
+    reverse: function () {
+        return { settings: { direction: "reverse" }, };
     },
-    forwards: function (args) {
-        return {
-            settings: { fillMode: "forwards" },
-            stepKey: undefined,
-            nextArgs: args
-        };
+    forwards: function () {
+        return { settings: { fillMode: "forwards" }, };
     },
-    backwards: function (args) {
-        return {
-            settings: { fillMode: "backwards" },
-            stepKey: undefined,
-            nextArgs: args
-        };
+    backwards: function () {
+        return { settings: { fillMode: "backwards" }, };
     },
-    both: function (args) {
-        return {
-            settings: { fillMode: "both" },
-            stepKey: undefined,
-            nextArgs: args
-        };
+    both: function () {
+        return { settings: { fillMode: "both" }, };
     },
 };
 
@@ -202,13 +176,13 @@ export function animationHo(cb) {
                 throw new SyntaxError(`Not a valid animation argument: ${animName}. Remember, all animation arguments must come after other arguments for every property.`);
 
             let { settings: extraSettings, stepKey, nextArgs } = ANIMS[animName](anim.args || []);
-            if (nextArgs.length > 0 && isRelativeCalc(nextArgs[0]))
+            if (nextArgs && isRelativeCalc(nextArgs[0]))
                 nextArgs = args2.map(baseArg => {
                     const relCalc = nextArgs.find(na => isRelativeCalc(na));
                     return relCalc ? processRelCalc(relCalc, baseArg) : baseArg;
                 });
-            const next = nextArgs.length > 0 ? cb({ name, args: nextArgs }) : {};
-            animRes[stepKey] = next;
+            if (nextArgs)
+                animRes[stepKey] = cb({ name, args: nextArgs });
             if (extraSettings) {
                 Object.assign(settings, extraSettings);
             }

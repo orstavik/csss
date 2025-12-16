@@ -63,7 +63,7 @@ function extractAtRules(obj) {
 function kebabcaseKeys(obj) {
   if (!(obj instanceof Object)) return obj;
   return Object.fromEntries(Object.entries(obj).map(([k, v]) =>
-    [k.startsWith("--") ? k : k.replace(/[A-Z]/g, "-$&").toLowerCase(), kebabcaseKeys(v)]));
+    [k.match(/^(--|@|:)/) ? k : k.replace(/[A-Z]/g, "-$&").toLowerCase(), kebabcaseKeys(v)]));
 }
 
 function checkProperty(obj) {
@@ -72,20 +72,15 @@ function checkProperty(obj) {
       throw new SyntaxError(`Invalid CSS$ value => ${k}: ${obj[k]}`);
 }
 
-function bodyToTxt(rule, props) {
-  const body = Object.entries(props).map(([k, v]) => `  ${k}: ${v};`).join("\n");
-  return `${rule} {\n${body}\n}`;
-}
-
-function bodyToTxt2(name, body, depth = 0) {
+function bodyToTxt(name, body, depth = 0) {
   const spaces = "  ".repeat(depth);
   const spaces2 = "  ".repeat(depth + 1);
   const body2 = Object.entries(body).map(([k, v]) =>
     v instanceof Object ?
-      bodyToTxt2(k, v, depth + 1) :
+      bodyToTxt(k, v, depth + 1) :
       `${spaces2}${k}: ${v};`
   ).join("\n");
-  return `${spaces}${name} {\n${body2}${spaces}\n}`;
+  return `${spaces}${name} {\n${body2}\n${spaces}}`;
 }
 
 function interpretShort(exp) {
@@ -116,10 +111,10 @@ export function parse(short) {
   checkProperty(body);
   let obj = { [selector]: body };
   if (media) obj = { [`@media ${media}`]: obj };
-  const cssText = bodyToTxt2(`@layer ${layer}`, obj);
+  const cssText = bodyToTxt(`@layer ${layer}`, obj);
   const main = { short, layer, media, selector, body, cssText };
 
-  const atRuleTexts = Object.entries(atRules).map(([rule, body]) => ({ rule, body, cssText: bodyToTxt2(rule, body) }));
+  const atRuleTexts = Object.entries(atRules).map(([rule, body]) => ({ rule, body, cssText: bodyToTxt(rule, body) }));
   return [main, ...atRuleTexts];
 }
 
