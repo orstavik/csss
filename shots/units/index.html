@@ -7,7 +7,7 @@
     const actual = CSSS.parse(key);
     return {
       key,
-      actual: [...actual.atRuleTexts, actual.cssText].filter(Boolean).join("\n\n"),
+      actual: actual.map(({ cssText }) => cssText).reverse().join("\n\n"),
       expected: b
     };
   }

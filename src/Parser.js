@@ -117,8 +117,10 @@ export function parse(short) {
   let obj = { [selector]: mainRule };
   if (media) obj = { [`@media ${media}`]: obj };
   const cssText = bodyToTxt2(`@layer ${layer}`, obj);
-  const atRuleTexts = Object.entries(atRules).map(([rule, body]) => bodyToTxt2(rule, body));
-  return { short, layer, media, selector, mainRule, cssText, atRules, atRuleTexts };
+  const main = { short, layer, media, selector, mainRule, cssText };
+
+  const atRuleTexts = Object.entries(atRules).map(([rule, body]) => ({ rule, mainRule, cssText: bodyToTxt2(rule, body) }));
+  return [main, ...atRuleTexts];
 }
 
 const clashOrStack = (function () {

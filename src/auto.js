@@ -21,14 +21,9 @@ function updateDoc(style, dollars) {
     try {
       const res = parse(clazz);
       const i = style.sheet.cssRules.length;
-      style.sheet.insertRule(res.cssText, i);
       style.shorts.add(clazz);
-
-      for (let atRule of res.atRuleTexts || [])
-        style.sheet.insertRule(atRule, style.sheet.cssRules.length);
-      // if (res.atRuleText)
-      //   style.sheet.insertRule(res.atRuleText, style.sheet.cssRules.length);
-
+      for (let rule of res)
+        style.sheet.insertRule(rule.cssText, i);
     } catch (er) {
       console.error(er);
     }
