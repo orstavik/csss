@@ -256,26 +256,7 @@ export function animationHo(cb) {
         if (settings.playState) animationParts.push(settings.playState);
 
         main.animation = animationParts.join(" ");
-
-        // Add keyframes as @ rule
-        // Format: "@keyframes name" -> special marker object that auto.js will handle
-        if (Object.keys(animRes).length > 0) {
-            // Build the complete keyframes CSS string
-            const keyframesBody = Object.entries(animRes)
-                .map(([percent, props]) => {
-                    const propsText = Object.entries(props)
-                        .map(([k, v]) => `    ${k}: ${v};`)
-                        .join("\n");
-                    return `  ${percent} {\n${propsText}\n  }`;
-                })
-                .join("\n");
-
-            const keyframesRule = `@keyframes ${animName} {\n${keyframesBody}\n}`;
-
-            // Store as a special marker so we can identify it later
-            main[`@keyframes ${animName}`] = { __keyframesText: keyframesRule };
-        }
-
+        main[`@keyframes ${animName}`] = animRes;
         return main;
     };
 }
