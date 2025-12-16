@@ -181,8 +181,8 @@ export function animationHo(cb) {
         const anims = args.slice(i);
 
         // Generate unique animation name based on property name and content
-        const animContent = [name, ...args2.map(a => a.text), ...anims.map(a => a.text)].join("-");
-        const animName = "anim-" + animContent.replace(/[^a-zA-Z0-9-_]/g, "").substring(0, 50);
+        const animContent = [name, ...args2.map(a => a.text), ...anims.map(a => a.text ?? (a.name + "(" + a.args.map(a => a.text).join(",") + ")"))].join("-");
+        const animName = "anim-" + animContent.replaceAll(/[^a-zA-Z0-9-_]/g, "\\$&").substring(0, 50);
 
         // Check if first anim is the animation() settings function
         let settings = {};
@@ -195,42 +195,20 @@ export function animationHo(cb) {
         // Process the main/initial state
         const main = cb({ name, args: args2 });
         const animRes = {};
-
         // Process each animation step
         for (let anim of anims) {
             const animName = anim.name || anim.text;
-            if (!(animName in ANIMS)) continue;
+            if (!(animName in ANIMS))
+                throw new SyntaxError(`Not a valid animation argument: ${animName}. Remember, all animation arguments must come after other arguments for every property.`);
 
             let { settings: extraSettings, stepKey, nextArgs } = ANIMS[animName](anim.args || []);
-
-            // Handle relative calculations
-            if (nextArgs.length > 0 && isRelativeCalc(nextArgs[0])) {
-                // Apply relative calc to each arg from args2
+            if (nextArgs.length > 0 && isRelativeCalc(nextArgs[0]))
                 nextArgs = args2.map(baseArg => {
                     const relCalc = nextArgs.find(na => isRelativeCalc(na));
                     return relCalc ? processRelCalc(relCalc, baseArg) : baseArg;
                 });
-            }
-
-            // Generate the next state
             const next = nextArgs.length > 0 ? cb({ name, args: nextArgs }) : {};
-
-            // Only include properties that differ from main state
-            // Skip @ rules and pseudo selectors
-            if (stepKey) {
-                const keyframeProps = {};
-                for (let [k, v] of Object.entries(next)) {
-                    if (main[k] !== v && !k.startsWith("@") && !k.startsWith(":")) {
-                        keyframeProps[k] = v;
-                    }
-                }
-                // Only add keyframe if there are actual property changes
-                if (Object.keys(keyframeProps).length > 0) {
-                    animRes[stepKey] = keyframeProps;
-                }
-            }
-
-            // Merge any extra settings
+            animRes[stepKey] = next;
             if (extraSettings) {
                 Object.assign(settings, extraSettings);
             }

@@ -11,11 +11,8 @@ import shadows from "./shadows.js";
 import position from "./position.js";
 import svg from "./svg.js";
 import whitespace from "./whitespace.js";
-import animationWrappers from "./animationWrappers.js";
+import animationWrappers from "./animationWrappersIvar.js";
 import animations from "./animations.js";
-// import animationsHo from "./animations.js";
-
-// const translateX = animationsHo(translateX);
 
 const ObjectFit = {
   objectFit: undefined,
@@ -41,7 +38,6 @@ const SHORTS = {
   ...svg,
   ...whitespace,
   ...ObjectFit,
-  // translateX,
   ...animationWrappers,
   ...animations,
 };
