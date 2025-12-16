@@ -11,6 +11,8 @@ import shadows from "./shadows.js";
 import position from "./position.js";
 import svg from "./svg.js";
 import whitespace from "./whitespace.js";
+import animationWrappers from "./animationWrappers.js";
+import animations from "./animations.js";
 
 const ObjectFit = {
   objectFit: undefined,
@@ -36,6 +38,8 @@ const SHORTS = {
   ...svg,
   ...whitespace,
   ...ObjectFit,
+  ...animationWrappers,
+  ...animations,
 };
 
 const MEDIA_WORDS = {

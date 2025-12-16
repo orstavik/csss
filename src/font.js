@@ -56,7 +56,7 @@ function face({ args }, fontFamily) {
     if (a2) Object.assign(res, a2);
     throw new SyntaxError(`Unrecognized font face argument: ${a}`);
   }
-  return { [`@fontFace /*${res.fontFamily} ${res.fontStyle}*/`]: res };
+  return { [`@font-face /*${res.fontFamily} ${res.fontStyle}*/`]: res };
 }
 
 const SYNTHESIS_WORDS = (function () {

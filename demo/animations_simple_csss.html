@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Animations - CSSS Demo</title>
+    <script src="../src/auto.js?style=style&interval=400" type="module"></script>
+</head>
+
+<body
+    class="$blockItem(size(_,100vh)) $flex(column,contentCenter,itemsCenter,gap(30px)) $font(main,1rem) $typeface(main,system-ui,sans-serif,16px,400) $bg(#667eea) $color(#ffffff)">
+
+    <h1 class="$font(main,2.5rem,700) $blockItem(margin(0,0,2rem,0)) $textShadow(0,2px,4px,#rgba(0,0,0,0.3))">Click to
+        Animate!</h1>
+
+    <input type="checkbox" id="check1" class="$display(none)" />
+
+    <label for="check1"
+        class="$display(inline-block) $block(padding(12px,24px),textCenter) $bg(#rgba(255,255,255,0.2)) $color(#ffffff) $border(2px,solid,#rgba(255,255,255,0.3),radius(8px)) $cursor(pointer) $userSelect(none) $font(main,1rem,700) $transition(easeIn,0.3s) :hover$bg(#rgba(255,255,255,0.3)) :hover$border(2px,solid,#rgba(255,255,255,0.5)) :hover$translateY(-2px) :active$translateY(0)">Toggle
+        Animation</label>
+
+    <div
+        class=":checked~*$opacity(0.3,from(1)) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $bg(#3b82f6) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        Opacity Fade
+    </div>
+
+    <div
+        class=":checked~*$scale(1.5,from(1)) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $bg(#10b981) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        Scale Up
+    </div>
+
+    <div
+        class=":checked~*$translateX(100px,from(0px)) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $bg(#ef4444) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        Slide Right
+    </div>
+
+    <div
+        class=":checked~*$rotate(180deg,from(0deg)) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $bg(#f59e0b) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        Rotate
+    </div>
+
+    <div
+        class=":checked~*$bg(#8b5cf6,from(#f59e0b))$color(#000000,to(#ffffff)) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        Background & Color
+    </div>
+
+    <div
+        class=":checked~*$border(3px,solid,#10b981,from(0px,solid,#000000)) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $bg(#rgba(255,255,255,0.1)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        Border Animation
+    </div>
+
+    <div
+        class=":checked~*$bg(linear(#667eea,#764ba2),infiniteAlternate,to(linear(#f093fb,#f5576c))) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        Gradient Shift
+    </div>
+
+</body>
+
+</html>
