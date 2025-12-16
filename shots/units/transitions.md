@@ -1,13 +1,3 @@
-**csss:** $transition(easeIn,2s)
-**css:**
-```css
-@layer containerDefault {
-  .\$transition\(easeIn\,2s\) {
-    transition: ease-in 2s;
-  }
-}
-```
-
 **csss:** $transition(bounceInOut,2s,margin,color)
 **css:**
 ```css
@@ -18,6 +8,16 @@
 @layer containerDefault {
   .\$transition\(bounceInOut\,2s\,margin\,color\) {
     transition: margin var(--transition-bounceInOut) 2s, color var(--transition-bounceInOut) 2s;
+  }
+}
+```
+
+**csss:** $transition(easeIn,2s)
+**css:**
+```css
+@layer containerDefault {
+  .\$transition\(easeIn\,2s\) {
+    transition: ease-in 2s;
   }
 }
 ```

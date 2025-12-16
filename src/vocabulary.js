@@ -13,6 +13,9 @@ import svg from "./svg.js";
 import whitespace from "./whitespace.js";
 import animationWrappers from "./animationWrappers.js";
 import animations from "./animations.js";
+// import animationsHo from "./animations.js";
+
+// const translateX = animationsHo(translateX);
 
 const ObjectFit = {
   objectFit: undefined,
@@ -38,6 +41,7 @@ const SHORTS = {
   ...svg,
   ...whitespace,
   ...ObjectFit,
+  // translateX,
   ...animationWrappers,
   ...animations,
 };

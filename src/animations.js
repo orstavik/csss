@@ -50,7 +50,7 @@ const ANIMS = {
         if (res.delay) settings.delay = res.delay;
         if (res.iterationCount) settings.iterationCount = res.iterationCount;
         if (res.infinite) settings.iterationCount = "infinite";
-        
+
         // Handle direction
         for (let key in DIRECTION_WORDS) {
             if (res[key]) {
@@ -58,7 +58,7 @@ const ANIMS = {
                 break;
             }
         }
-        
+
         // Handle fillMode
         for (let key in FILL_MODE_WORDS) {
             if (res[key]) {
@@ -66,7 +66,7 @@ const ANIMS = {
                 break;
             }
         }
-        
+
         // Handle playState
         for (let key in PLAY_STATE_WORDS) {
             if (res[key]) {
@@ -74,7 +74,7 @@ const ANIMS = {
                 break;
             }
         }
-        
+
         // Handle easing
         for (let key in EASING_WORDS) {
             if (res[key]) {
@@ -82,14 +82,14 @@ const ANIMS = {
                 break;
             }
         }
-        
+
         if (res.cubicBezier) {
             settings.easing = { name: "cubicBezier", args: res.cubicBezier };
         }
         if (res.steps) {
             settings.easing = { name: "steps", args: res.steps };
         }
-        
+
         return { settings, stepKey: undefined, nextArgs: [] };
     }),
     to: function (args) {

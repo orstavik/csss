@@ -109,25 +109,24 @@ export function parse(short) {
   const atRuleTexts = Object.entries(atRules).map(([rule, body]) => {
     // Handle special keyframes text format (before kebabcaseKeys)
     if (body.__keyframesText) return body.__keyframesText;
-    body = kebabcaseKeys(body);
-    return bodyToTxt(rule, body);
+    return bodyToTxt(rule, kebabcaseKeys(body));
   });
-  
+
   // Store processed atRules (for compatibility)
   for (let atRule in atRules) {
-    if (!atRules[atRule].__keyframesText)
+    if (!atRules[atRule].__keyframesText) //todo __keyframesText ??
       atRules[atRule] = kebabcaseKeys(atRules[atRule]);
   }
-  
-  // Keep atRuleText for backward compatibility (joined), and add atRuleTexts array
-  const atRuleText = atRuleTexts.join("\n\n");
-  return { short, layer, media, selector, mainRule, cssText, atRules, atRuleText, atRuleTexts };
 
-  
-    // for (let atRule in atRules)
-    // atRules[atRule] = kebabcaseKeys(atRules[atRule]);
+  // Keep atRuleText for backward compatibility (joined), and add atRuleTexts array
+  // const atRuleText = atRuleTexts.join("\n\n");
+  return { short, layer, media, selector, mainRule, cssText, atRules, atRuleTexts }; // atRuleText,
+
+  // for (let atRule in atRules)
+  //   atRules[atRule] = kebabcaseKeys(atRules[atRule]);
   // const atRuleText = Object.entries(atRules).map(([rule, body]) => bodyToTxt(rule, body)).join("\n\n");
   // return { short, layer, media, selector, mainRule, cssText, atRules, atRuleText };
+
   // const miniCssRule = {cssText, name: layer, cssRules: [{ media, cssRules: [{ selectorText: selector, style: { cssText: body }, props }] }]};
 }
 
