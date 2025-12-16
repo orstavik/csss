@@ -133,6 +133,13 @@ function isRelativeCalc(arg) {
 }
 
 function processRelCalc(relCalc, baseArg) {
+  //todo this is not correct i think, we need to use the computable() function in funcMath.js.
+  //todo the relCalc expressions doesn't work now, so we either need to remove this ability from animations, 
+  // or fix the relCalc expressions in Parser.js.
+  //   const args3 = computableNumbers(args2);
+  // debugger
+
+
   // Process relative calculations like calc(+ 10px) applied to a base value
   const baseVal = isBasic(baseArg);
   if (!baseVal) return baseArg;
@@ -154,8 +161,8 @@ export function animationHo(cb) {
 
     // Generate unique animation name based on property name and content
     //todo we need to have the expression get the .text property too..
-    const animContent = [name, ...args.map(({ text, name, args }) => text ?? (name + "(" + args.map(a => a.text).join(",") + ")"))].join("-");
-    const animName = "anim-" + animContent.replaceAll(/[^a-zA-Z0-9-_]/g, "\\$&").substring(0, 50);
+    const animContent = [name, ...anims.map(({ text, name, args }) => text ?? (name + args.map(a => a.text).join(",")))].join("-");
+    const animName = animContent.replaceAll(/[^a-zA-Z0-9-_]/g, "\\$&").substring(0, 50);
 
     // Check if first anim is the animation() settings function
     let settings = {};
