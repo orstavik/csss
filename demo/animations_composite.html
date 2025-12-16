@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Composite Animations - CSSS Demo</title>
+    <script src="../src/auto.js?style=style&interval=400" type="module"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .demo-card h2 {
+            margin-top: 0;
+            color: #333;
+            font-size: 1.2rem;
+        }
+
+        .demo-card p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            background: #4facfe;
+            border-radius: 8px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .trigger {
+            display: none;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #4facfe;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            user-select: none;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: #3b96e8;
+        }
+
+        /* Demo 1: Bounce with scale and translate - keyframes */
+        @keyframes bounce1 {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-30px) scale(1.1);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+            }
+        }
+        .trigger1:checked ~ * .box1 {
+            animation: bounce1 0.6s ease;
+        }
+
+        /* Demo 2: Rotation with staggered delays would be better separate */
+        @keyframes rotateComposite {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+            33% {
+                transform: rotate(120deg) scale(1.2);
+            }
+            66% {
+                transform: rotate(240deg) scale(0.8);
+            }
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+        .trigger2:checked ~ * .box2 {
+            animation: rotateComposite 1.2s ease;
+        }
+
+        /* Demo 3: Slide with opacity - could benefit from offset timing */
+        @keyframes slideOpacity {
+            0% {
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            60% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .trigger3:checked ~ * .box3 {
+            animation: slideOpacity 0.8s ease;
+        }
+
+        /* Demo 4: Multi-property with different keyframe stops */
+        @keyframes multiProp {
+            0% {
+                transform: scale(1) rotate(0deg);
+                background: #4facfe;
+                opacity: 1;
+            }
+            25% {
+                transform: scale(1.3) rotate(45deg);
+            }
+            50% {
+                background: #fa709a;
+                opacity: 0.5;
+            }
+            75% {
+                transform: scale(0.9) rotate(180deg);
+            }
+            100% {
+                transform: scale(1) rotate(360deg);
+                background: #4facfe;
+                opacity: 1;
+            }
+        }
+        .trigger4:checked ~ * .box4 {
+            animation: multiProp 2s ease-in-out;
+        }
+
+        /* Demo 5: Fade with scale - actually better separate */
+        @keyframes fadeScale {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        .trigger5:checked ~ * .box5 {
+            animation: fadeScale 0.5s ease;
+        }
+
+        /* Demo 6: Complex path - requires keyframes */
+        @keyframes complexPath {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(50px, -20px) rotate(90deg);
+            }
+            50% {
+                transform: translate(50px, 20px) rotate(180deg);
+            }
+            75% {
+                transform: translate(0, 20px) rotate(270deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+        .trigger6:checked ~ * .box6 {
+            animation: complexPath 2s ease-in-out;
+        }
+
+        code {
+            display: block;
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Composite Keyframe Animations</h1>
+        <p style="color: white; text-align: center; margin-bottom: 40px;">
+            These demos test "true" composite animations with multiple keyframe stops.
+            Question: Would these benefit from slightly offset timing between properties?
+        </p>
+
+        <div class="demo-grid">
+            <!-- Demo 1 -->
+            <input type="checkbox" id="trigger1" class="trigger trigger1">
+            <div class="demo-card">
+                <h2>Bounce Effect</h2>
+                <p>Scale and translate at same keyframes. Could scale peak slightly before/after translate?</p>
+                <label for="trigger1" class="btn">Toggle Animation</label>
+                <div class="box box1">Bounce</div>
+                <code>$translateY(0)$scale(1)
+$go(50%,-30px,1.1)
+$to(0,1)
+$animation(0.6s,ease)</code>
+            </div>
+
+            <!-- Demo 2 -->
+            <input type="checkbox" id="trigger2" class="trigger trigger2">
+            <div class="demo-card">
+                <h2>Rotation Steps</h2>
+                <p>Rotation with scale at specific points. Would offsetting scale changes improve feel?</p>
+                <label for="trigger2" class="btn">Toggle Animation</label>
+                <div class="box box2">Rotate</div>
+                <code>$rotate(0)$scale(1)
+$go(33%,120deg,1.2)
+$go(66%,240deg,0.8)
+$to(360deg,1)</code>
+            </div>
+
+            <!-- Demo 3 -->
+            <input type="checkbox" id="trigger3" class="trigger trigger3">
+            <div class="demo-card">
+                <h2>Slide + Fade</h2>
+                <p>Opacity reaches 100% at 60%, translate at 100%. Better separate or together?</p>
+                <label for="trigger3" class="btn">Toggle Animation</label>
+                <div class="box box3">Slide</div>
+                <code>$translateX(-100px)$opacity(0)
+$go(60%,opacity(1))
+$to(0,1)</code>
+                <p style="margin-top: 10px; font-size: 0.85rem;"><strong>Note:</strong> This one actually 
+                benefits from different timing - opacity completes before movement!</p>
+            </div>
+        </div>
+
+        <div class="demo-grid">
+            <!-- Demo 4 -->
+            <input type="checkbox" id="trigger4" class="trigger trigger4">
+            <div class="demo-card">
+                <h2>Multi-Property Complex</h2>
+                <p>Transform, color, and opacity with different keyframe stops. Complex composite animation.</p>
+                <label for="trigger4" class="btn">Toggle Animation</label>
+                <div class="box box4">Complex</div>
+                <code>$scale(1)$rotate(0)$bg(#4facfe)$opacity(1)
+$go(25%,scale(1.3),rotate(45deg))
+$go(50%,bg(#fa709a),opacity(0.5))
+$go(75%,scale(0.9),rotate(180deg))
+$to(scale(1),rotate(360deg),bg(#4facfe),opacity(1))</code>
+            </div>
+
+            <!-- Demo 5 -->
+            <input type="checkbox" id="trigger5" class="trigger trigger5">
+            <div class="demo-card">
+                <h2>Fade + Scale In</h2>
+                <p>Classic fade-in with scale. Simple 0-100%, but would it be better if they peaked differently?</p>
+                <label for="trigger5" class="btn">Toggle Animation</label>
+                <div class="box box5">Fade In</div>
+                <code>$scale(0)$opacity(0)
+$to(scale(1),opacity(1))</code>
+                <p style="margin-top: 10px; font-size: 0.85rem;"><strong>Note:</strong> This could be improved 
+                with a slight overshoot on scale at 80% for a more natural feel.</p>
+            </div>
+
+            <!-- Demo 6 -->
+            <input type="checkbox" id="trigger6" class="trigger trigger6">
+            <div class="demo-card">
+                <h2>Complex Path</h2>
+                <p>True composite: rotation and translation must be synchronized to follow a specific path.</p>
+                <label for="trigger6" class="btn">Toggle Animation</label>
+                <div class="box box6">Path</div>
+                <code>$translate(0,0)$rotate(0)
+$go(25%,translate(50px,-20px),rotate(90deg))
+$go(50%,translate(50px,20px),rotate(180deg))
+$go(75%,translate(0,20px),rotate(270deg))
+$to(translate(0,0),rotate(360deg))</code>
+            </div>
+        </div>
+
+        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; color: white; margin-top: 30px;">
+            <h3>Research Notes: Composite Animations</h3>
+            <p><strong>Question:</strong> Would composite animations benefit from offset timing between properties?</p>
+            <p><strong>Key Observations:</strong></p>
+            <ul>
+                <li><strong>Bounce (Demo 1):</strong> Scale could reach peak slightly before/after translate for more natural bounce</li>
+                <li><strong>Slide + Fade (Demo 3):</strong> Already uses different timing! Opacity completes at 60%, movement at 100%</li>
+                <li><strong>Fade In (Demo 5):</strong> Could benefit from scale overshooting at 80% while opacity stays linear</li>
+                <li><strong>Complex Path (Demo 6):</strong> This is the rare true composite - rotation and position must stay synced</li>
+            </ul>
+            <p><strong>Conclusion:</strong> Most "composite" animations would actually benefit from independent timing per property! 
+               True composites (like choreographed paths) are rare. @keyframes may be an overfit to a small edge case.</p>
+            <p><strong>Better Approach:</strong> Allow each property to have its own duration, delay, and easing. For example:
+               <code style="margin-top: 5px; background-color: black;">$scale(1)$to(1.5)$animation(0.3s,ease-out)
+$opacity(1)$to(0.5)$animation(0.5s,ease-in)</code></p>
+        </div>
+    </div>
+</body>
+
+</html>

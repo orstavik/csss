@@ -23,8 +23,17 @@ function updateDoc(style, dollars) {
       const i = style.sheet.cssRules.length;
       style.sheet.insertRule(res.cssText, i);
       style.shorts.add(clazz);
-      if (res.atRuleText)
+      // Handle multiple atRules (e.g., keyframes)
+      if (res.atRuleTexts && res.atRuleTexts.length > 0) {
+        for (let atRule of res.atRuleTexts)
+          style.sheet.insertRule(atRule, style.sheet.cssRules.length);
+      } else if (res.atRuleText) {
         style.sheet.insertRule(res.atRuleText, style.sheet.cssRules.length);
+      }
+
+      // if (res.atRuleText)
+      //   style.sheet.insertRule(res.atRuleText, style.sheet.cssRules.length);
+
     } catch (er) {
       console.error(er);
     }
