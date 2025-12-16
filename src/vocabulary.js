@@ -11,7 +11,7 @@ import shadows from "./shadows.js";
 import position from "./position.js";
 import svg from "./svg.js";
 import whitespace from "./whitespace.js";
-import animationWrappers from "./animationWrappersIvar.js";
+import animationWrappers from "./animationWrappers.js";
 import animations from "./animations.js";
 
 const ObjectFit = {
