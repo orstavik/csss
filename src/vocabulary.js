@@ -30,6 +30,7 @@ const Animations = {
   skewY: animationHo(filterTransforms.skewY),
   opacity: animationHo(nativeAndMore.opacity),
   bg: animationHo(backgrounds.bg),
+  bgColor: animationHo(backgrounds.bgColor),
   color: animationHo(nativeAndMore.color),
   border: animationHo(border.border),
 }

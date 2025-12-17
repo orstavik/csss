@@ -11,6 +11,7 @@ import {
   makeExtractor,
   TYPB,
   SEQ,
+  SIN,
   SINmax,
 } from "./func.js";
 
@@ -297,5 +298,6 @@ export default {
   backgroundClip: undefined,
   backgroundBlendMode: undefined,
   backgroundAttachment: undefined,
+  bgColor: SIN(Color, (n, v) => ({ backgroundColor: v })),
   bg
 };
