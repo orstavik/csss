@@ -55,7 +55,8 @@ function sleep(interval) {
   while (true) {
     await sleep(interval);
     const dollars = allDollars().filter(clazz => !style.shorts.has(clazz));
-    style.shorts.add(...dollars);
+    if (!dollars.length) continue;
+    dollars.forEach(d => style.shorts.add(d));
     updateDoc(style, dollars);
   }
 })();

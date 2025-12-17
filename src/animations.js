@@ -1,4 +1,4 @@
-import { Number as NumberInterpreter, Time, Name, isNumber, isBasic, TYPB, CUSTOM_WORD } from "./func.js";
+import { Number as NumberInterpreter, Time, isBasic, TYPB } from "./func.js";
 import * as CURVES from "./Curves.js";
 import Maths from "./funcMath.js";
 
@@ -50,7 +50,6 @@ const ANIMS = {
     if (res.delay) settings.delay = res.delay;
     if (res.iterationCount) settings.iterationCount = res.iterationCount;
     if (res.infinite) settings.iterationCount = "infinite";
-
     // Handle direction
     for (let key in DIRECTION_WORDS) {
       if (res[key]) {
@@ -58,7 +57,6 @@ const ANIMS = {
         break;
       }
     }
-
     // Handle fillMode
     for (let key in FILL_MODE_WORDS) {
       if (res[key]) {
@@ -82,56 +80,33 @@ const ANIMS = {
         break;
       }
     }
-
     if (res.cubicBezier) {
       settings.easing = { name: "cubicBezier", args: res.cubicBezier };
     }
     if (res.steps) {
       settings.easing = { name: "steps", args: res.steps };
     }
-
-    return { settings, stepKey: undefined, nextArgs: [] };
+    return { settings };
   }),
-  to: function (args) {
+  to: function ({ args }) {
     return { settings: {}, stepKey: "100%", nextArgs: args };
   },
-  from: function (args) {
+  from: function ({ args }) {
     return { settings: {}, stepKey: "0%", nextArgs: args };
   },
-  go: function (args) {
+  go: function ({ args }) {
     // go(50%) means keyframe at 50%
     const percent = args[0]?.text || "50%";
     return { settings: {}, stepKey: percent, nextArgs: args.slice(1) };
   },
-  infiniteAlternate: function () {
-    return {
-      settings: { iterationCount: "infinite", direction: "alternate" },
-    };
-  },
-  infinite: function () {
-    return { settings: { iterationCount: "infinite" }, };
-  },
-  alternate: function () {
-    return { settings: { direction: "alternate" }, };
-  },
-  reverse: function () {
-    return { settings: { direction: "reverse" }, };
-  },
-  forwards: function () {
-    return { settings: { fillMode: "forwards" }, };
-  },
-  backwards: function () {
-    return { settings: { fillMode: "backwards" }, };
-  },
-  both: function () {
-    return { settings: { fillMode: "both" }, };
-  },
+  infiniteAlternate: { settings: { iterationCount: "infinite", direction: "alternate" } },
+  infinite: { settings: { iterationCount: "infinite" } },
+  alternate: { settings: { direction: "alternate" } },
+  reverse: { settings: { direction: "reverse" } },
+  forwards: { settings: { fillMode: "forwards" } },
+  backwards: { settings: { fillMode: "backwards" } },
+  both: { settings: { fillMode: "both" } },
 };
-
-function isRelativeCalc(arg) {
-  return arg?.kind === "EXP" && arg.name in Maths && arg.args?.length > 0;
-}
-
 
 //TODO not implemented/supported, neither here nor in the Parser.js
 // **csssx:** $translateX(100px,to(*3))
@@ -150,6 +125,9 @@ function isRelativeCalc(arg) {
 //   }
 // }
 // ```
+// function isRelativeCalc(arg) {
+//   return arg?.kind === "EXP" && arg.name in Maths && arg.args?.length > 0;
+// }
 // function processRelCalc(relCalcs, argsIn) {
 //  for each relCalc in relCalcs
 //  find out if relCalc is a relative calc
@@ -182,24 +160,19 @@ export function animationHo(cb) {
     const animContent = [name, ...anims.map(({ text, name, args }) => text ?? (name + args.map(a => a.text).join(",")))].join("-");
     const animName = animContent.replaceAll(/[^a-zA-Z0-9-_]/g, "\\$&").substring(0, 50);
 
-    // Check if first anim is the animation() settings function
-    let settings = {};
-    if (anims[0].name === "animation") {
-      const anim = anims.shift();
-      const animSettings = ANIMS.animation({ name: anim.name, args: anim.args });
-      settings = animSettings.settings;
-    }
-
-    // Process the main/initial state
     const result = cb({ name, args: args2 });
+    const settings = {};
     const keyframes = {};
     // Process each animation step
     for (let anim of anims) {
-      const animName = anim.name || anim.text;
-      if (!(animName in ANIMS))
+      let extraSettings, stepKey, nextArgs;
+      if (anim.text in ANIMS)
+        ({ settings: extraSettings, stepKey, nextArgs } = ANIMS[anim.text]);
+      else if (anim.name in ANIMS)
+        ({ settings: extraSettings, stepKey, nextArgs } = ANIMS[anim.name](anim));
+      else
         throw new SyntaxError(`Not a valid animation argument: ${animName}. Remember, all animation arguments must come after other arguments for every property.`);
 
-      let { settings: extraSettings, stepKey, nextArgs } = ANIMS[animName](anim.args || []);
       // nextArgs = processRelCalc(nextArgs[0], nextArgs);
       if (nextArgs)
         keyframes[stepKey] = cb({ name, args: nextArgs });
@@ -210,14 +183,14 @@ export function animationHo(cb) {
     // Build animation CSS property
     const animationParts = [animName];
     // Add default duration if not specified
-    animationParts.push(settings.duration || "1s");
+    animationParts.push(settings.duration || "2s");
     if (settings.easing) {
       if (typeof settings.easing === "string") {
         animationParts.push(settings.easing);
       } else if (settings.easing.name === "cubicBezier") {
-        animationParts.push(`cubic-bezier(${settings.easing.args.map(a => isBasic(a).text).join(",")})`);
+        animationParts.push(`cubic-bezier(${settings.easing.args.map(NumberInterpreter).join(",")})`);
       } else if (settings.easing.name === "steps") {
-        animationParts.push(`steps(${settings.easing.args.map(a => isBasic(a).text).join(",")})`);
+        animationParts.push(`steps(${settings.easing.args.map(NumberInterpreter).join(",")})`);
       }
     }
     if (settings.delay) animationParts.push(settings.delay);
