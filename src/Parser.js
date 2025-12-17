@@ -61,8 +61,9 @@ function extractAtRules(obj) {
 }
 
 function kebabcaseKeys(obj) {
+  if (!(obj instanceof Object)) return obj;
   return Object.fromEntries(Object.entries(obj).map(([k, v]) =>
-    [k.startsWith("--") ? k : k.replace(/[A-Z]/g, "-$&").toLowerCase(), v]));
+    [k.match(/^(--|@|:)/) ? k : k.replace(/[A-Z]/g, "-$&").toLowerCase(), kebabcaseKeys(v)]));
 }
 
 function checkProperty(obj) {
@@ -71,9 +72,15 @@ function checkProperty(obj) {
       throw new SyntaxError(`Invalid CSS$ value => ${k}: ${obj[k]}`);
 }
 
-function bodyToTxt(rule, props) {
-  const body = Object.entries(props).map(([k, v]) => `  ${k}: ${v};`).join("\n");
-  return `${rule} {\n${body}\n}`;
+function bodyToTxt(name, body, depth = 0) {
+  const spaces = "  ".repeat(depth);
+  const spaces2 = "  ".repeat(depth + 1);
+  const body2 = Object.entries(body).map(([k, v]) =>
+    v instanceof Object ?
+      bodyToTxt(k, v, depth + 1) :
+      `${spaces2}${k}: ${v};`
+  ).join("\n");
+  return `${spaces}${name} {\n${body2}\n${spaces}}`;
 }
 
 function interpretShort(exp) {
@@ -100,17 +107,15 @@ export function parse(short) {
   let { selector, item, grandItem } = parseSelectorPipe(sel, clazz);
   const layer = (grandItem ? "grandItems" : item ? "items" : "container") + (short.match(/^(\$|\|\$|\|\|\$)/) ? "Default" : "");
   exprList = kebabcaseKeys(exprList);
-  const { atRules, mainRule } = extractAtRules(exprList);
-  checkProperty(mainRule);
-  let cssText = bodyToTxt(selector, mainRule);
-  if (media) cssText = `@media ${media} {\n${cssText.replaceAll(/^|\n/g, "$&  ")}\n}`;
-  cssText = `@layer ${layer} {\n${cssText.replaceAll(/^|\n/g, "$&  ")}\n}`;
+  const { atRules, mainRule: body } = extractAtRules(exprList);
+  checkProperty(body);
+  let obj = { [selector]: body };
+  if (media) obj = { [`@media ${media}`]: obj };
+  const cssText = bodyToTxt(`@layer ${layer}`, obj);
+  const main = { short, layer, media, selector, body, cssText };
 
-  for (let atRule in atRules)
-    atRules[atRule] = kebabcaseKeys(atRules[atRule]);
-  const atRuleText = Object.entries(atRules).map(([rule, body]) => bodyToTxt(rule, body)).join("\n\n");
-  return { short, layer, media, selector, mainRule, cssText, atRules, atRuleText };
-  // const miniCssRule = {cssText, name: layer, cssRules: [{ media, cssRules: [{ selectorText: selector, style: { cssText: body }, props }] }]};
+  const atRuleTexts = Object.entries(atRules).map(([rule, body]) => ({ rule, body, cssText: bodyToTxt(rule, body) }));
+  return [main, ...atRuleTexts];
 }
 
 const clashOrStack = (function () {

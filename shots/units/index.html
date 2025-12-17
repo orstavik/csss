@@ -7,9 +7,9 @@
     const actual = CSSS.parse(key);
     return {
       key,
-      actual: [actual.atRuleText, actual.cssText].filter(Boolean).join("\n\n"),
+      actual: actual.map(({ cssText }) => cssText).reverse().join("\n\n"),
       expected: b
     };
   }
-  runTests("border,blockCombined,blockContainer,blockItem,iBlockContainer,iBlockItem,filter,flexCombined,flexContainer,flexItem,gap,gridCombined,gridContainer,gridItem,grandItems,nestedItems,colorSpaces,how2UseGradientColors,gradientFunctions,font,margin,textDecoration,shadows,position,transitions,transforms,objectFit,backdropFilters,calcVar,palette,svg,whitespace", test);
+  runTests("animations,bg,border,blockCombined,blockContainer,blockItem,iBlockContainer,iBlockItem,filter,flexCombined,flexContainer,flexItem,gap,gridCombined,gridContainer,gridItem,grandItems,nestedItems,colorSpaces,how2UseGradientColors,gradientFunctions,font,margin,textDecoration,shadows,position,transitions,transforms,objectFit,backdropFilters,calcVar,palette,svg,whitespace", test);
 </script>

@@ -21,10 +21,11 @@ function updateDoc(style, dollars) {
     try {
       const res = parse(clazz);
       const i = style.sheet.cssRules.length;
-      style.sheet.insertRule(res.cssText, i);
-      style.shorts.add(clazz);
-      if (res.atRuleText)
-        style.sheet.insertRule(res.atRuleText, style.sheet.cssRules.length);
+      for (let { cssText, rule, short } of res) {
+        if (rule && style.shorts.has(rule)) continue;
+        style.sheet.insertRule(cssText, i);
+        rule && style.shorts.add(rule);
+      }
     } catch (er) {
       console.error(er);
     }
@@ -54,6 +55,8 @@ function sleep(interval) {
   while (true) {
     await sleep(interval);
     const dollars = allDollars().filter(clazz => !style.shorts.has(clazz));
+    if (!dollars.length) continue;
+    dollars.forEach(d => style.shorts.add(d));
     updateDoc(style, dollars);
   }
 })();

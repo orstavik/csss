@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relative Calculations & Triggers - CSSS Demo</title>
+    <script src="../src/auto.js?style=style&interval=400" type="module"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-card h2 {
+            margin-top: 0;
+            color: #333;
+            font-size: 1.2rem;
+        }
+
+        .demo-card p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            border: 2px solid transparent;
+        }
+
+        .trigger {
+            display: none;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            user-select: none;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+        }
+
+        /* Demo 1: Double the border width */
+        .box1 {
+            border: 2px solid #764ba2;
+        }
+        .trigger1:checked ~ * .box1 {
+            border-width: 4px; /* 2px * 2 */
+            transition: border-width 0.5s ease;
+        }
+
+        /* Demo 2: Scale by 1.5x */
+        .box2 {
+            transform: scale(1);
+        }
+        .trigger2:checked ~ * .box2 {
+            transform: scale(1.5); /* 1 * 1.5 */
+            transition: transform 0.5s ease;
+        }
+
+        /* Demo 3: Add 10px to current translateX */
+        .box3 {
+            transform: translateX(0);
+        }
+        .trigger3:checked ~ * .box3 {
+            transform: translateX(50px); /* 0 + 50px */
+            transition: transform 0.5s ease;
+        }
+
+        /* Demo 4: Hover trigger with transform */
+        .box4 {
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+        .box4:hover {
+            transform: scale(1.2);
+        }
+
+        /* Demo 5: Checkbox ~ * selector pattern */
+        .trigger5:checked ~ * .content5 {
+            max-height: 300px;
+            opacity: 1;
+            transition: max-height 0.5s ease, opacity 0.5s ease;
+        }
+        .content5 {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            background: #f0f0f0;
+            border-radius: 6px;
+            padding: 0 15px;
+            transition: max-height 0.5s ease, opacity 0.5s ease;
+        }
+        .content5 p {
+            padding: 15px 0;
+        }
+
+        /* Demo 6: Multiple transforms with checkbox */
+        .box6 {
+            transform: translateY(10px);
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .trigger6:checked ~ * .box6 {
+            transform: translateY(10px) rotate(180deg) scale(1.3);
+        }
+
+        code {
+            display: block;
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            word-wrap: break-word;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Relative Calculations & Animation Triggers</h1>
+        <p style="text-align: center; margin-bottom: 40px; color: #666;">
+            Testing relative calculations (*2, +5px) and different animation triggers (:hover, :checked~*)
+        </p>
+
+        <h2 style="color: #333; margin-top: 40px;">Relative Calculations</h2>
+        <div class="demo-grid">
+            <!-- Demo 1 -->
+            <input type="checkbox" id="trigger1" class="trigger trigger1">
+            <div class="demo-card">
+                <h2>Multiply Border Width</h2>
+                <p>Starting border: 2px. Animation multiplies by 2.</p>
+                <label for="trigger1" class="btn">Toggle (*2)</label>
+                <div class="box box1">×2</div>
+                <code>$border(2px,solid,#764ba2)
+$to(*2)</code>
+                <div class="highlight">
+                    <strong>Relative calc:</strong> *2 multiplies current value (2px → 4px)
+                </div>
+            </div>
+
+            <!-- Demo 2 -->
+            <input type="checkbox" id="trigger2" class="trigger trigger2">
+            <div class="demo-card">
+                <h2>Scale by Factor</h2>
+                <p>Current scale: 1. Multiply by 1.5.</p>
+                <label for="trigger2" class="btn">Toggle (*1.5)</label>
+                <div class="box box2">×1.5</div>
+                <code>$scale(1)
+$to(*1.5)</code>
+                <div class="highlight">
+                    <strong>Relative calc:</strong> *1.5 multiplies current scale
+                </div>
+            </div>
+
+            <!-- Demo 3 -->
+            <input type="checkbox" id="trigger3" class="trigger trigger3">
+            <div class="demo-card">
+                <h2>Add to Translation</h2>
+                <p>Current translateX: 0. Add 50px.</p>
+                <label for="trigger3" class="btn">Toggle (+50px)</label>
+                <div class="box box3">+50px</div>
+                <code>$translateX(0)
+$to(+50px)</code>
+                <div class="highlight">
+                    <strong>Relative calc:</strong> +50px adds to current value
+                </div>
+            </div>
+        </div>
+
+        <h2 style="color: #333; margin-top: 40px;">Animation Triggers</h2>
+        <div class="demo-grid">
+            <!-- Demo 4 -->
+            <div class="demo-card">
+                <h2>Hover Trigger</h2>
+                <p>Simplest trigger: :hover pseudo-class.</p>
+                <div class="box box4">Hover Me</div>
+                <code>.box:hover$scale(1)$to(1.2)</code>
+                <div class="highlight">
+                    <strong>:hover</strong> is the most straightforward CSS-only animation trigger
+                </div>
+            </div>
+
+            <!-- Demo 5 -->
+            <input type="checkbox" id="trigger5" class="trigger trigger5">
+            <div class="demo-card">
+                <h2>Checkbox Hack - Expand</h2>
+                <p>Using :checked~* to reveal hidden content.</p>
+                <label for="trigger5" class="btn">Toggle Accordion</label>
+                <div class="content5">
+                    <p>This content is hidden by default (max-height: 0, opacity: 0) and revealed when the 
+                    checkbox is checked. The :checked~* selector targets any sibling after the checkbox.</p>
+                </div>
+                <code>&lt;input type="checkbox" id="trigger" /&gt;
+&lt;div class=":checked~*$maxHeight(0)$opacity(0)$to(300px,1)"&gt;
+  Hidden content
+&lt;/div&gt;</code>
+            </div>
+
+            <!-- Demo 6 -->
+            <input type="checkbox" id="trigger6" class="trigger trigger6">
+            <div class="demo-card">
+                <h2>Transform Stacking with Checkbox</h2>
+                <p>Base transform preserved, animation adds more transforms.</p>
+                <label for="trigger6" class="btn">Toggle Stack</label>
+                <div class="box box6">Stack</div>
+                <code>/* Base value */
+transform: translateY(10px);
+
+/* On :checked, stack more transforms */
+$translateY(10px)
+$rotate(0)$scale(1)
+$to(rotate(180deg),scale(1.3))</code>
+                <div class="highlight">
+                    <strong>Transform stacking:</strong> Base translateY(10px) is preserved, 
+                    animation adds rotate and scale on top
+                </div>
+            </div>
+        </div>
+
+        <div style="background: white; padding: 25px; border-radius: 12px; margin-top: 40px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
+            <h3 style="color: #333;">Research Notes</h3>
+            
+            <h4 style="color: #667eea;">Relative Calculations</h4>
+            <p><strong>Implied currentValue:</strong> The arguments before animation shorts become the base values. 
+            Relative calculations (*2, +5px, -10%) operate on these base values.</p>
+            <ul>
+                <li><code>*n</code> - Multiply current numeric value</li>
+                <li><code>+value</code> - Add to current value (with same unit)</li>
+                <li><code>-value</code> - Subtract from current value</li>
+                <li><code>/n</code> - Divide current numeric value</li>
+            </ul>
+            <p><strong>Implementation:</strong> When processing $to(*2), we detect the relative calc operator (*), 
+            extract the current value from the primary short's arguments, and compute the result.</p>
+
+            <h4 style="color: #667eea; margin-top: 20px;">Checkbox Hack (:checked~*)</h4>
+            <p>The checkbox hack provides CSS-only interactive animations:</p>
+            <ol>
+                <li>Hide the checkbox visually: <code>position: absolute; opacity: 0;</code></li>
+                <li>Use a label to trigger the checkbox</li>
+                <li>Target siblings after checkbox: <code>.checkbox:checked ~ * .target</code></li>
+                <li>Apply animation/transition styles on the checked state</li>
+            </ol>
+            <p><strong>Pattern in CSSS:</strong></p>
+            <code>&lt;input type="checkbox" id="toggle" class="trigger" /&gt;
+&lt;div class=":checked~*$prop(startValue)$to(endValue)"&gt;
+  Animated element
+&lt;/div&gt;</code>
+
+            <h4 style="color: #667eea; margin-top: 20px;">Transform Stacking</h4>
+            <p>CSS transforms can be stacked by separating them with spaces. This is crucial for animations:</p>
+            <ul>
+                <li><code>transform: translate(2px) scale(1);</code></li>
+                <li><code>transform: scale(3) translate(2px) scale(1);</code> (all equivalent)</li>
+                <li>When animating, preserve base transform values by prepending them</li>
+            </ul>
+            <p><strong>In CSSS:</strong> If a base transform exists, animation keyframes should include it: 
+            <code>@keyframes { to { transform: ${baseTransform} ${animatedTransform}; } }</code></p>
+        </div>
+    </div>
+</body>
+
+</html>

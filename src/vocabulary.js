@@ -11,6 +11,29 @@ import shadows from "./shadows.js";
 import position from "./position.js";
 import svg from "./svg.js";
 import whitespace from "./whitespace.js";
+import { animationHo } from "./animations.js";
+
+const Animations = {
+  translateY: animationHo(filterTransforms.translateY),
+  translate: animationHo(filterTransforms.translate),
+  translateX: animationHo(filterTransforms.translateX),
+  translateZ: animationHo(filterTransforms.translateZ),
+  scale: animationHo(filterTransforms.scale),
+  scaleX: animationHo(filterTransforms.scaleX),
+  scaleY: animationHo(filterTransforms.scaleY),
+  scaleZ: animationHo(filterTransforms.scaleZ),
+  rotate: animationHo(filterTransforms.rotate),
+  rotateX: animationHo(filterTransforms.rotateX),
+  rotateY: animationHo(filterTransforms.rotateY),
+  rotateZ: animationHo(filterTransforms.rotateZ),
+  skewX: animationHo(filterTransforms.skewX),
+  skewY: animationHo(filterTransforms.skewY),
+  opacity: animationHo(nativeAndMore.opacity),
+  bg: animationHo(backgrounds.bg),
+  bgColor: animationHo(backgrounds.bgColor),
+  color: animationHo(nativeAndMore.color),
+  border: animationHo(border.border),
+}
 
 const ObjectFit = {
   objectFit: undefined,
@@ -36,6 +59,7 @@ const SHORTS = {
   ...svg,
   ...whitespace,
   ...ObjectFit,
+  ...Animations,
 };
 
 const MEDIA_WORDS = {
