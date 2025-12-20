@@ -6,7 +6,7 @@ import {
 } from "./func.js";
 
 const stroke = UMBRELLA({
-  stroke: Color,
+  stroke: a => Color(a) ?? Url(a),
   strokeWidth: Length,
   strokeOpacity: Number, //isFraction
   strokeLinecap: a => a.text?.match(/^(butt|round|square)$/)?.[0],
@@ -17,7 +17,7 @@ const stroke = UMBRELLA({
 });
 
 const fill = UMBRELLA({
-  fill: Color,
+  fill: a => Color(a) ?? Url(a),
   fillOpacity: Number, //isFraction
   fillRule: a => a.text?.match(/^(evenodd|nonzero)$/)?.[0],
 });

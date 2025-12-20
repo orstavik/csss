@@ -23,7 +23,7 @@ $typeface(heading,Space+Grotesk,sans-serif,48px,700)
 $bg(#white)$color(#dark)
 |section:nth-child(2)|:first-child$font(main,0.85rem,600,spacing(0.15em))
 |section:nth-child(2)|h2$font(heading,3.5rem,700)$lineHeight(1.2)$color(#dark)
-|section:nth-child(3)|div$easeIn(0.3s)
+|section:nth-child(3)|div$transition(easeIn,0.3s)
 |section:nth-child(3)|div|h3$font(heading,1.5rem,700)
 |section:nth-child(3)|div|p$font(main,1rem)$lineHeight(1.6)
 |section:nth-child(3)|div$bg(#white)$border(radius(16px))$boxShadow(0,4px,15px,#rgba(0,0,0,0.05))
@@ -47,7 +47,7 @@ $palette(light,#f1f5f9,#0f172a)
         $flex(row,itemsCenter,gap(0.75rem))
         |div$flexItem(size(40px,40px))$flex(contentCenter,itemsCenter)
         
-        |div$linear(135deg,#primary,#secondary)$border(radius(8px))
+        |div$bg(linear(135deg,#primary,#secondary))$border(radius(8px))
         |span$font(heading,1.5rem,700)$color(#dark)
         ">
             <div>
@@ -64,9 +64,9 @@ $palette(light,#f1f5f9,#0f172a)
         |button$block(padding(0.75rem,1.75rem))
         |button:hover$translateY(-2px)
         
-        |a$font(main,1rem,500)$color(#dark)$opacity(0.8)$easeIn(0.2s)$noTextDecoration
+        |a$font(main,1rem,500)$color(#dark)$opacity(0.8)$transition(easeIn,0.2s)$noTextDecoration
         |a:hover$opacity(1)$color(#primary)
-        |button$font(main,1rem,600)$bg(#primary)$color(#white)$border(none,radius(8px))$cursor(pointer)$easeIn(0.3s)
+        |button$font(main,1rem,600)$bg(#primary)$color(#white)$border(none,radius(8px))$cursor(pointer)$transition(easeIn,0.3s)
         |button:hover$boxShadow(0,8px,20px,#rgba(99,102,241,0.3))
         ">
             <a>Features</a>
@@ -82,13 +82,13 @@ $palette(light,#f1f5f9,#0f172a)
     <main class="
     $flex(column,contentCenter,itemsCenter,padding(2rem),textCenter)$relative
     
-    $linear(135deg,#primary,#secondary)$color(#white)
+    $bg(linear(135deg,#primary,#secondary))$color(#white)
     ">
         <div class="
         $relative$zIndex(1)$flexItem(inlineSize(900px,_,90%))
         ">
             <div class="
-            $block(padding(0.5rem,1.5rem))$backdropBlur(10px)$blockItem(inlineSize(fit-content),margin(0,auto,1.5rem))
+            $block(padding(0.5rem,1.5rem))$backdrop(blur(10px))$blockItem(inlineSize(fit-content),margin(0,auto,1.5rem))
             
             $font(main,0.9rem,600,spacing(0.2em))$opacity(0.95)$bg(#rgba(255,255,255,0.15))$border(radius(50px))
             ">
@@ -116,7 +116,7 @@ $palette(light,#f1f5f9,#0f172a)
             $flex(row,contentCenter,gap(1.5rem))
             |button$block(padding(1.2rem,3rem))$cursor(pointer)
             
-            |button$border(radius(12px))$font(main,1.1rem,600)$easeIn(0.3s)
+            |button$border(radius(12px))$font(main,1.1rem,600)$transition(easeIn,0.3s)
             ">
                 <button class="
                 $bg(#white)$color(#primary)$boxShadow(0,10px,30px,#rgba(0,0,0,0.2))
@@ -125,7 +125,7 @@ $palette(light,#f1f5f9,#0f172a)
                     Start Free Trial
                 </button>
                 <button class="
-                $bg(#rgba(255,255,255,0.1))$color(#white)$border(2px,solid,#rgba(255,255,255,0.4),radius(12px))$backdropBlur(10px)
+                $bg(#rgba(255,255,255,0.1))$color(#white)$border(2px,solid,#rgba(255,255,255,0.4),radius(12px))$backdrop(blur(10px))
                 :hover$bg(#rgba(255,255,255,0.2))$translateY(-3px)$border(2px,solid,#rgba(255,255,255,0.6),radius(12px))
                 ">
                     Watch Demo
@@ -155,7 +155,7 @@ $palette(light,#f1f5f9,#0f172a)
 
             <div class="
             $grid(cols(repeat(3,1fr)),gap(2rem))
-            |$block(padding(2.5rem))$easeIn(0.3s)
+            |$block(padding(2.5rem))$transition(easeIn,0.3s)
             ">
 
                 <div class=":hover$translateY(-8px) :hover$boxShadow(0,12px,30px,#primary#15)">
@@ -291,7 +291,7 @@ $palette(light,#f1f5f9,#0f172a)
     </section>
 
     <section class="
-    $block(padding(5rem,2rem))$linear(135deg,#dark,#darker)$color(#light)
+    $block(padding(5rem,2rem))$bg(linear(135deg,#dark,#darker))$color(#light)
     ">
         <div>
             <div class="
@@ -401,9 +401,9 @@ $palette(light,#f1f5f9,#0f172a)
 
     <section class="
     $block(padding(7rem,2rem),textCenter)$relative
-    |:nth-child(1)$absolute(0,0)$blockItem(size(400px,400px))$circle(at(50%,50%),#rgba(255,255,255,0.1),#transparent)$opacity(0.5)
+    |:nth-child(1)$absolute(0,0)$blockItem(size(400px,400px))$bg(circle(at(50%,50%),#rgba(255,255,255,0.1),#transparent))$opacity(0.5)
     
-    $opacity(0.4)$linear(135deg,#accent,#secondary,#primary)$color(#white)
+    $opacity(0.4)$bg(linear(135deg,#accent,#secondary,#primary))$color(#white)
     ">
 
         <div>
@@ -424,7 +424,7 @@ $palette(light,#f1f5f9,#0f172a)
             </p>
             <div class="
             $flex(row,contentCenter,gap(1.5rem))
-            |button$block(padding(1.3rem,3.5rem))$border(radius(12px))$font(main,1.2rem,600)$cursor(pointer)$easeIn(0.3s)
+            |button$block(padding(1.3rem,3.5rem))$border(radius(12px))$font(main,1.2rem,600)$cursor(pointer)$transition(easeIn,0.3s)
             ">
                 <button class="
                 $bg(#white)$color(#secondary)$border(none,radius(12px))$boxShadow(0,12px,35px,#rgba(0,0,0,0.25))
@@ -433,7 +433,7 @@ $palette(light,#f1f5f9,#0f172a)
                     Start Free Trial
                 </button>
                 <button class="
-                $bg(#rgba(255,255,255,0.15))$color(#white)$border(2px,solid,#rgba(255,255,255,0.5),radius(12px))$backdropBlur(10px)
+                $bg(#rgba(255,255,255,0.15))$color(#white)$border(2px,solid,#rgba(255,255,255,0.5),radius(12px))$backdrop(blur(10px))
                 :hover$bg(#rgba(255,255,255,0.25))$translateY(-4px)$border(2px,solid,#rgba(255,255,255,0.8),radius(12px))
                 ">
                     Contact Sales
@@ -458,7 +458,7 @@ $palette(light,#f1f5f9,#0f172a)
             ||p$font(main,0.95rem)$opacity(0.7)
             ||h4$font(main,1rem,600)
             ||div:last-child
-            ||a$font(main,0.95rem)$opacity(0.2)$easeIn(0.2s)
+            ||a$font(main,0.95rem)$opacity(0.2)$transition(easeIn,0.2s)
             ||a:hover$opacity(1)
             ">
 
