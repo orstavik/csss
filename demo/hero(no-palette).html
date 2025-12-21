@@ -13,7 +13,7 @@
   <!-- Header -->
   <header class="$flex(contentBetween,itemsCenter,padding(2rem,4rem))">
     <div class="$flex(itemsCenter,gap(0.5rem))">
-      <div class="$blockItem(size(40px,40px)) $bg(#ff5470) $border(radius(6px)) $flex(contentCenter,itemsCenter)">
+      <div class="$blockItem(size(40px,40px)) $bg(#ff5470) $Border(radius(6px)) $flex(contentCenter,itemsCenter)">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path d="M5 3L17 10L5 17V3Z" fill="white" />
         </svg>
@@ -22,11 +22,11 @@
     </div>
     <nav class="$flex(itemsCenter,gap(1rem))">
       <button
-        class="$font(main,1rem,500) $block(padding(0.75rem,1.5rem)) $border(2px,solid,#e0e0e0,radius(8px)) $cursor(pointer) $transition(easeIn,0.2s) :hover$border(2px,solid,#ff5470) :hover$color(#ff5470)">
+        class="$font(main,1rem,500) $block(padding(0.75rem,1.5rem)) $Border(2px,solid,#e0e0e0,radius(8px)) $cursor(pointer) $transition(easeIn,0.2s) :hover$border(#ff5470) :hover$color(#ff5470)">
         Explore Course List
       </button>
       <button
-        class="$bg(#ff5470) $color(#white) $font(main,1rem,600) $block(padding(0.75rem,1.5rem)) $border(none,radius(8px)) $cursor(pointer)">
+        class="$bg(#ff5470) $color(#white) $font(main,1rem,600) $block(padding(0.75rem,1.5rem)) $Border(radius(8px)) $cursor(pointer)">
         Enroll Now
       </button>
     </nav>
@@ -60,7 +60,7 @@
     <div
       class="$grid(cols(repeat(3,140px)),rows(repeat(3,140px)),gap(0)) $blockItem(size(420px,420px)) |:nth-child(3)$gridItem(row(1,span(2)),column(3))">
       <!-- Top-left: Dark red semi-circle (left rounded) -->
-      <div class="$bg(#8b1538) $blockItem(size(130px,130px)) $border(radius(90px,90px,0px,90px))"></div>
+      <div class="$bg(#8b1538) $blockItem(size(130px,130px)) $Border(radius(90px,90px,0px,90px))"></div>
 
       <!-- Top-middle: Red diamond -->
       <div class="$flex(contentCenter,itemsCenter)">
@@ -68,18 +68,18 @@
       </div>
 
       <!-- Top-right: Pink semi-circle (right rounded, spans 2 rows) -->
-      <div class="$bg(#ffaac2) $border(radius(0px,90px,90px,90px))"></div>
+      <div class="$bg(#ffaac2) $Border(radius(0px,90px,90px,90px))"></div>
 
       <!-- Middle-left: Pink square outline -->
-      <div class="$bg(#white) $border(12px,solid,#ffaac2)"></div>
+      <div class="$bg(#white) $Border(12px,solid,#ffaac2)"></div>
 
       <!-- Middle-center: Light blue circle -->
       <div class="$flex(contentCenter,itemsCenter)">
-        <div class="$blockItem(size(120px,120px)) $bg(#d0e8f0) $border(radius(50%))"></div>
+        <div class="$blockItem(size(120px,120px)) $bg(#d0e8f0) $Border(radius(50%))"></div>
       </div>
 
       <!-- Bottom-left: Pink rounded square (bottom-left corner rounded) -->
-      <div class="$bg(#ffcce0) $border(radius(70px,70px,30px,40px))"></div>
+      <div class="$bg(#ffcce0) $Border(radius(70px,70px,30px,40px))"></div>
 
       <!-- Bottom-center: Light blue triangle outline -->
       <div class="$flex(contentCenter,itemsCenter)">
@@ -89,7 +89,7 @@
       </div>
 
       <!-- Bottom-right: Pink rounded square (bottom-right corner rounded) -->
-      <div class="$bg(#ffcce0) $blockItem(size(130px,130px)) $border(radius(0px,100px,100px,0px))"></div>
+      <div class="$bg(#ffcce0) $blockItem(size(130px,130px)) $Border(radius(0px,100px,100px,0px))"></div>
     </div>
 
   </main>

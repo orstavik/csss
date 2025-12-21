@@ -26,7 +26,7 @@ $bg(#white)$color(#dark)
 |section:nth-child(3)|div$transition(easeIn,0.3s)
 |section:nth-child(3)|div|h3$font(heading,1.5rem,700)
 |section:nth-child(3)|div|p$font(main,1rem)$lineHeight(1.6)
-|section:nth-child(3)|div$bg(#white)$border(radius(16px))$boxShadow(0,4px,15px,#rgba(0,0,0,0.05))
+|section:nth-child(3)|div$bg(#white)$Border(radius(16px))$boxShadow(0,4px,15px,#rgba(0,0,0,0.05))
 |section:nth-child(3)|div|h3$color(#dark)
 |section:nth-child(3)|div|p$color(#dark)$opacity(0.7)
 $palette(primary,#6366f1,#ffffff)
@@ -47,7 +47,7 @@ $palette(light,#f1f5f9,#0f172a)
         $flex(row,itemsCenter,gap(0.75rem))
         |div$flexItem(size(40px,40px))$flex(contentCenter,itemsCenter)
         
-        |div$bg(linear(135deg,#primary,#secondary))$border(radius(8px))
+        |div$bg(linear(135deg,#primary,#secondary))$Border(radius(8px))
         |span$font(heading,1.5rem,700)$color(#dark)
         ">
             <div>
@@ -66,7 +66,7 @@ $palette(light,#f1f5f9,#0f172a)
         
         |a$font(main,1rem,500)$color(#dark)$opacity(0.8)$transition(easeIn,0.2s)$noTextDecoration
         |a:hover$opacity(1)$color(#primary)
-        |button$font(main,1rem,600)$bg(#primary)$color(#white)$border(none,radius(8px))$cursor(pointer)$transition(easeIn,0.3s)
+        |button$font(main,1rem,600)$bg(#primary)$color(#white)$Border(none,radius(8px))$cursor(pointer)$transition(easeIn,0.3s)
         |button:hover$boxShadow(0,8px,20px,#rgba(99,102,241,0.3))
         ">
             <a>Features</a>
@@ -90,7 +90,7 @@ $palette(light,#f1f5f9,#0f172a)
             <div class="
             $block(padding(0.5rem,1.5rem))$backdrop(blur(10px))$blockItem(inlineSize(fit-content),margin(0,auto,1.5rem))
             
-            $font(main,0.9rem,600,spacing(0.2em))$opacity(0.95)$bg(#rgba(255,255,255,0.15))$border(radius(50px))
+            $font(main,0.9rem,600,spacing(0.2em))$opacity(0.95)$bg(#rgba(255,255,255,0.15))$Border(radius(50px))
             ">
                 🚀 Next-Gen Platform
             </div>
@@ -116,7 +116,7 @@ $palette(light,#f1f5f9,#0f172a)
             $flex(row,contentCenter,gap(1.5rem))
             |button$block(padding(1.2rem,3rem))$cursor(pointer)
             
-            |button$border(radius(12px))$font(main,1.1rem,600)$transition(easeIn,0.3s)
+            |button$Border(radius(12px))$font(main,1.1rem,600)$transition(easeIn,0.3s)
             ">
                 <button class="
                 $bg(#white)$color(#primary)$boxShadow(0,10px,30px,#rgba(0,0,0,0.2))
@@ -125,8 +125,8 @@ $palette(light,#f1f5f9,#0f172a)
                     Start Free Trial
                 </button>
                 <button class="
-                $bg(#rgba(255,255,255,0.1))$color(#white)$border(2px,solid,#rgba(255,255,255,0.4),radius(12px))$backdrop(blur(10px))
-                :hover$bg(#rgba(255,255,255,0.2))$translateY(-3px)$border(2px,solid,#rgba(255,255,255,0.6),radius(12px))
+                $bg(#rgba(255,255,255,0.1))$color(#white)$Border(2px,solid,#rgba(255,255,255,0.4),radius(12px))$backdrop(blur(10px))
+                :hover$bg(#rgba(255,255,255,0.2))$translateY(-3px)$Border(2px,solid,#rgba(255,255,255,0.6),radius(12px))
                 ">
                     Watch Demo
                 </button>
@@ -162,7 +162,7 @@ $palette(light,#f1f5f9,#0f172a)
                     <div class="
                     $blockItem(size(60px,60px),margin(0,0,1.5rem,0))$flex(contentCenter,itemsCenter)
                     
-                    $bg(#primary#20)$border(radius(12px))
+                    $bg(#primary#20)$Border(radius(12px))
                     |div$font(main,2rem)
                     ">
                         <div>⚡</div>
@@ -179,7 +179,7 @@ $palette(light,#f1f5f9,#0f172a)
                     <div class="
                     $blockItem(size(60px,60px),margin(0,0,1.5rem,0))$flex(contentCenter,itemsCenter)
                     
-                    $bg(#secondary#20)$border(radius(12px))
+                    $bg(#secondary#20)$Border(radius(12px))
                     |div$font(main,2rem)
                     ">
                         <div>🔒</div>
@@ -196,7 +196,7 @@ $palette(light,#f1f5f9,#0f172a)
                     <div class="
                     $blockItem(size(60px,60px),margin(0,0,1.5rem,0))$flex(contentCenter,itemsCenter)
                     
-                    $bg(#accent#20)$border(radius(12px))
+                    $bg(#accent#20)$Border(radius(12px))
                     |div$font(main,2rem)
                     ">
                         <div>📊</div>
@@ -245,7 +245,7 @@ $palette(light,#f1f5f9,#0f172a)
                 ||:last-child|h4$blockItem(margin(0,0,0.5rem,0))
                 ||:last-child|p
                 
-                ||:first-child$border(radius(50%))
+                ||:first-child$Border(radius(50%))
                 ||:first-child|div$font(main,0.8rem)$color(#white)
                 ||:last-child|h4$font(main,1.1rem,600)$color(#dark)
                 ||:last-child|p$font(main,1rem)$color(#dark)$opacity(0.7)$lineHeight(1.6)
@@ -340,7 +340,7 @@ $palette(light,#f1f5f9,#0f172a)
             |$block(padding(2rem))
             ||p$font(main,1.05rem)$color(#dark)$lineHeight(1.7)$blockItem(margin(0,0,1.5rem,0))$opacity(0.8)
             ||div$flex(row,gap(1rem),itemsCenter)
-            ||div|div:first-child$blockItem(size(50px,50px))$border(radius(50%))$flex(contentCenter,itemsCenter)
+            ||div|div:first-child$blockItem(size(50px,50px))$Border(radius(50%))$flex(contentCenter,itemsCenter)
             
             ||div|div:first-child|div$font(main,1.3rem,600)$color(#white)
             ||div|div:last-child|div:first-child$font(main,1rem,600)$color(#dark)
@@ -424,17 +424,17 @@ $palette(light,#f1f5f9,#0f172a)
             </p>
             <div class="
             $flex(row,contentCenter,gap(1.5rem))
-            |button$block(padding(1.3rem,3.5rem))$border(radius(12px))$font(main,1.2rem,600)$cursor(pointer)$transition(easeIn,0.3s)
+            |button$block(padding(1.3rem,3.5rem))$Border(radius(12px))$font(main,1.2rem,600)$cursor(pointer)$transition(easeIn,0.3s)
             ">
                 <button class="
-                $bg(#white)$color(#secondary)$border(none,radius(12px))$boxShadow(0,12px,35px,#rgba(0,0,0,0.25))
+                $bg(#white)$color(#secondary)$Border(none,radius(12px))$boxShadow(0,12px,35px,#rgba(0,0,0,0.25))
                 :hover$translateY(-4px)$boxShadow(0,18px,50px,#rgba(0,0,0,0.35))
                 ">
                     Start Free Trial
                 </button>
                 <button class="
-                $bg(#rgba(255,255,255,0.15))$color(#white)$border(2px,solid,#rgba(255,255,255,0.5),radius(12px))$backdrop(blur(10px))
-                :hover$bg(#rgba(255,255,255,0.25))$translateY(-4px)$border(2px,solid,#rgba(255,255,255,0.8),radius(12px))
+                $bg(#rgba(255,255,255,0.15))$color(#white)$Border(2px,solid,#rgba(255,255,255,0.5),radius(12px))$backdrop(blur(10px))
+                :hover$bg(#rgba(255,255,255,0.25))$translateY(-4px)$border(#rgba(255,255,255,0.8))
                 ">
                     Contact Sales
                 </button>
@@ -499,7 +499,7 @@ $palette(light,#f1f5f9,#0f172a)
             </div>
 
             <div class="
-            $block(padding(2rem,0,0,0),textCenter)$blockItem(margin(2rem,0,0,0))$border(1px,solid,#rgba(255,255,255,0.1))
+            $block(padding(2rem,0,0,0),textCenter)$blockItem(margin(2rem,0,0,0))$Border(1px,solid,#rgba(255,255,255,0.1))
             |p$font(main,0.9rem)$opacity(0.6)
             ">
                 <p>

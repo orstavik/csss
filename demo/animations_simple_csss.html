@@ -20,63 +20,63 @@
         $display(inline-block) 
         $block(padding(12px,24px),textCenter) 
         $bg(#rgba(255,255,255,0.2)) $color(#ffffff) 
-        $border(2px,solid,#rgba(255,255,255,0.3),radius(8px)) $cursor(pointer) $userSelect(none) 
+        $Border(2px,solid,#rgba(255,255,255,0.3),radius(8px)) $cursor(pointer) $userSelect(none) 
         $font(main,1rem,700) $transition(easeIn,0.3s) :hover$bg(#rgba(255,255,255,0.3)) 
-        :hover$border(2px,solid,#rgba(255,255,255,0.5)) :hover$translateY(-2px) :active$translateY(0)">Toggle
+        :hover$border(#rgba(255,255,255,0.5)) :hover$translateY(-2px) :active$translateY(0)">Toggle
         Animation</label>
 
     <div
-        class=":checked~*$opacity(0.3,from(1)) $bg(#3b82f6) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        class=":checked~*$opacity(0.3,from(1)) $bg(#3b82f6) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $Border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
         Opacity Fade
     </div>
 
     <div
-        class=":checked~*$scale(1.5,from(1)) $bg(#10b981) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        class=":checked~*$scale(1.5,from(1)) $bg(#10b981) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $Border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
         Scale Up
     </div>
 
     <div
-        class=":checked~*$translateX(100px,from(0px)) $bg(#ef4444) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        class=":checked~*$translateX(100px,from(0px)) $bg(#ef4444) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $Border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
         Slide Right
     </div>
 
     <div
-        class=":checked~*$rotate(180deg,from(0deg)) $bg(#f59e0b) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        class=":checked~*$rotate(180deg,from(0deg)) $bg(#f59e0b) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $Border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
         Rotate
     </div>
 
     <div
-        class=":checked~*$opacity(1,from(0.3))$scale(1.2,from(0.8))$translateY(0px,from(30px)) $bg(#8b5cf6) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        class=":checked~*$opacity(1,from(0.3))$scale(1.2,from(0.8))$translateY(0px,from(30px)) $bg(#8b5cf6) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $Border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
         Combined
     </div>
 
     <div
-        class=":checked~*$translateY(20px,infiniteAlternate,from(-20px)) $bg(#ec4899) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        class=":checked~*$translateY(20px,infiniteAlternate,from(-20px)) $bg(#ec4899) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $Border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
         Bounce Forever
     </div>
 
     <div
-        class=":checked~*$color(#red,to(#blue)) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        class=":checked~*$color(#red,to(#blue)) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $Border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
         COLORRRR
     </div>
 
     <div
-        class=":checked~*$bgColor(#red,to(#blue)) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        class=":checked~*$bgColor(#red,to(#blue)) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $Border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
         bgColor
     </div>
 
     <div
-        class=":checked~*$bg(#8b5cf6,from(#f59e0b))$color(#000000,to(#ffffff)) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        class=":checked~*$bg(#8b5cf6,from(#f59e0b))$color(#000000,to(#ffffff)) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $Border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
         Background & Color
     </div>
 
     <div
-        class=":checked~*$border(3px,solid,#10b981,from(0px,solid,#000000)) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $bg(#rgba(255,255,255,0.1)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        class=":checked~*$Border(3px,solid,#10b981,from(0px,solid,#000000)) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $bg(#rgba(255,255,255,0.1)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
         Border Animation
     </div>
 
     <div
-        class=":checked~*$bg(linear(#667eea,#764ba2),infiniteAlternate,to(linear(#f093fb,#f5576c))) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
+        class=":checked~*$bg(linear(#667eea,#764ba2),infiniteAlternate,to(linear(#f093fb,#f5576c))) $blockItem(size(200px,100px),margin(10px,0,20px,0)) $flex(contentCenter,itemsCenter) $Border(radius(10px)) $font(main,1.2rem,700) $boxShadow(0,4px,6px,#rgba(0,0,0,0.1)) $transition(easeIn,0.5s)">
         Gradient Shift / blink (should be fixed using css var and @property definition)
     </div>
 </body>

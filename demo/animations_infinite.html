@@ -381,7 +381,7 @@ $palette(muted,#64748b,#ffffff)
             $grid(cols(repeat(auto-fit,minmax(180px,1fr))),gap(1.5rem))
             |$block(padding(2rem))
             |$bg(#surface)
-            |$border(2px,solid,#border,radius(12px))
+            |$Border(2px,solid,#border,radius(12px))
             |$flex(contentCenter,itemsCenter,column,gap(1rem))
             |$blockItem(size(_,180px))
             |$block(textCenter)
@@ -422,7 +422,7 @@ $palette(muted,#64748b,#ffffff)
             <div class="$grid(cols(repeat(2,1fr)),gap(2rem))">
                 <!-- Loading Dots -->
                 <div
-                    class="$bg(#surface)$border(2px,solid,#border,radius(12px))$flex(contentCenter,itemsCenter,column,gap(2rem),padding(2rem))">
+                    class="$bg(#surface)$Border(2px,solid,#border,radius(12px))$flex(contentCenter,itemsCenter,column,gap(2rem),padding(2rem))">
                     <div class="$font(main,1.2rem,600)">Loading Dots</div>
                     <div class="loading-dots">
                         <span></span>
@@ -433,24 +433,24 @@ $palette(muted,#64748b,#ffffff)
 
                 <!-- Spinning Circle -->
                 <div
-                    class="$flex(contentCenter,itemsCenter,column,gap(2rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                    class="$flex(contentCenter,itemsCenter,column,gap(2rem),padding(2rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
                     <div class="$font(main,1.2rem,600)">Spinning Loader</div>
-                    <div class="spin-anim $blockItem(size(50px,50px))$border(4px,solid,#border,radius(50%))">
+                    <div class="spin-anim $blockItem(size(50px,50px))$Border(4px,solid,#border,radius(50%))">
                     </div>
                 </div>
 
                 <!-- Progress Bar -->
-                <div class="$flex(column,gap(2rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                <div class="$flex(column,gap(2rem),padding(2rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
                     <div class="$font(main,1.2rem,600)$block(textCenter)">Progress Bar</div>
-                    <div class="$bg(#border)$border(radius(4px))">
+                    <div class="$bg(#border)$Border(radius(4px))">
                         <div class="progress-bar"></div>
                     </div>
                 </div>
 
                 <!-- Shimmer Effect -->
-                <div class="$flex(column,gap(2rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                <div class="$flex(column,gap(2rem),padding(2rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
                     <div class="$font(main,1.2rem,600)$block(textCenter)">Shimmer Loading</div>
-                    <div class="shimmer-box $blockItem(size(_,80px))$border(radius(8px))"></div>
+                    <div class="shimmer-box $blockItem(size(_,80px))$Border(radius(8px))"></div>
                 </div>
             </div>
         </section>
@@ -466,7 +466,7 @@ $palette(muted,#64748b,#ffffff)
                 $flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))
                 $bg(linear(135deg,#667eea,#764ba2))
                 $color(#white)
-                $border(radius(12px))
+                $Border(radius(12px))
                 $blockItem(size(_,200px))
                 ">
                     <div class="spin-anim pause-on-hover $fontSize(3rem)">🎡</div>
@@ -477,7 +477,7 @@ $palette(muted,#64748b,#ffffff)
                 $flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))
                 $bg(linear(135deg,#f093fb,#f5576c))
                 $color(#white)
-                $border(radius(12px))
+                $Border(radius(12px))
                 $blockItem(size(_,200px))
                 ">
                     <div class="float-anim pause-on-hover $fontSize(3rem)">☁️</div>
@@ -488,7 +488,7 @@ $palette(muted,#64748b,#ffffff)
                 $flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))
                 $bg(linear(135deg,#4facfe,#00f2fe))
                 $color(#white)
-                $border(radius(12px))
+                $Border(radius(12px))
                 $blockItem(size(_,200px))
                 ">
                     <div class="bounce-anim pause-on-hover $fontSize(3rem)">⚽</div>
@@ -503,14 +503,14 @@ $palette(muted,#64748b,#ffffff)
             <div class="$flex(column,gap(2rem))">
                 <!-- Typing Effect -->
                 <div
-                    class="$flex(contentCenter,itemsCenter,padding(3rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                    class="$flex(contentCenter,itemsCenter,padding(3rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
                     <div class="typing-text $font(main,1.5rem,600)">
                         Welcome to CSSS Framework...
                     </div>
                 </div>
 
                 <!-- Marquee Scroll -->
-                <div class="$block(padding(3rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                <div class="$block(padding(3rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
                     <div class="marquee">
                         <div class="marquee-content $font(main,1.5rem,600)">
                             🎉 Breaking News: CSSS is awesome! • 🚀 Fast Development • 💎 Beautiful Designs • ✨ Easy to
@@ -538,7 +538,7 @@ $palette(muted,#64748b,#ffffff)
                 <div class="
                 $block(padding(2rem),textCenter)
                 $bg(#surface)
-                $border(2px,solid,#primary,radius(12px))
+                $Border(2px,solid,#primary,radius(12px))
                 glow-anim
                 ">
                     <div class="$fontSize(3rem)$blockItem(margin(0,0,1rem,0))">💫</div>
@@ -551,7 +551,7 @@ $palette(muted,#64748b,#ffffff)
                 $block(padding(2rem),textCenter)
                 $bg(linear(135deg,#667eea,#764ba2))
                 $color(#white)
-                $border(radius(12px))
+                $Border(radius(12px))
                 color-shift
                 ">
                     <div class="$fontSize(3rem)$blockItem(margin(0,0,1rem,0))">🎨</div>
@@ -563,7 +563,7 @@ $palette(muted,#64748b,#ffffff)
                 <div class="
                 $block(padding(2rem))
                 $bg(#surface)
-                $border(2px,solid,#border,radius(12px))
+                $Border(2px,solid,#border,radius(12px))
                 $flex(contentCenter,itemsCenter,column,gap(1rem))
                 ">
                     <div class="swing-anim $fontSize(3rem)">🔔</div>
@@ -577,22 +577,22 @@ $palette(muted,#64748b,#ffffff)
         <section>
             <h2>💀 Skeleton Loaders</h2>
             <div class="$grid(cols(repeat(3,1fr)),gap(2rem)) @sm$grid(cols(1fr))">
-                <div class="$flex(column,gap(1rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
-                    <div class="shimmer-box $blockItem(size(_,120px))$border(radius(8px))"></div>
-                    <div class="shimmer-box $blockItem(size(80%,20px))$border(radius(4px))"></div>
-                    <div class="shimmer-box $blockItem(size(60%,20px))$border(radius(4px))"></div>
+                <div class="$flex(column,gap(1rem),padding(2rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
+                    <div class="shimmer-box $blockItem(size(_,120px))$Border(radius(8px))"></div>
+                    <div class="shimmer-box $blockItem(size(80%,20px))$Border(radius(4px))"></div>
+                    <div class="shimmer-box $blockItem(size(60%,20px))$Border(radius(4px))"></div>
                 </div>
 
-                <div class="$flex(column,gap(1rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
-                    <div class="shimmer-box $blockItem(size(_,120px))$border(radius(8px))"></div>
-                    <div class="shimmer-box $blockItem(size(80%,20px))$border(radius(4px))"></div>
-                    <div class="shimmer-box $blockItem(size(60%,20px))$border(radius(4px))"></div>
+                <div class="$flex(column,gap(1rem),padding(2rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
+                    <div class="shimmer-box $blockItem(size(_,120px))$Border(radius(8px))"></div>
+                    <div class="shimmer-box $blockItem(size(80%,20px))$Border(radius(4px))"></div>
+                    <div class="shimmer-box $blockItem(size(60%,20px))$Border(radius(4px))"></div>
                 </div>
 
-                <div class="$flex(column,gap(1rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
-                    <div class="shimmer-box $blockItem(size(_,120px))$border(radius(8px))"></div>
-                    <div class="shimmer-box $blockItem(size(80%,20px))$border(radius(4px))"></div>
-                    <div class="shimmer-box $blockItem(size(60%,20px))$border(radius(4px))"></div>
+                <div class="$flex(column,gap(1rem),padding(2rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
+                    <div class="shimmer-box $blockItem(size(_,120px))$Border(radius(8px))"></div>
+                    <div class="shimmer-box $blockItem(size(80%,20px))$Border(radius(4px))"></div>
+                    <div class="shimmer-box $blockItem(size(60%,20px))$Border(radius(4px))"></div>
                 </div>
             </div>
         </section>
