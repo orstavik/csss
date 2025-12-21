@@ -31,12 +31,12 @@ $palette(light,#f1f5f9,#0f172a)
     |nav|a:hover
     
     $bg(#white)$boxShadow(0,2px,10px,#rgba(0,0,0,0.05))
-    |div:first-child|div:first-child$linear(135deg,#primary,#secondary)$border(radius(8px))
+    |div:first-child|div:first-child$bg(linear(135deg,#primary,#secondary))$border(radius(8px))
     |div:first-child|span$font(heading,1.5rem,700)$color(#dark)
-    |nav|a$font(main,1rem,500)$color(#dark)$opacity(0.8)$easeIn(0.2s)$noTextDecoration
+    |nav|a$font(main,1rem,500)$color(#dark)$opacity(0.8)$transition(easeIn,0.2s)$noTextDecoration
     |nav|a:hover$opacity(1)$color(#primary)
          ">
-        
+
         <div>
             <div>
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -56,16 +56,16 @@ $palette(light,#f1f5f9,#0f172a)
     <main class="
     $flex(column,contentCenter,itemsCenter,padding(6rem,2rem),textCenter)$relative
     |div$relative$zIndex(1)$blockItem(inlineSize(900px,_,90%))
-    |div|div:first-child$uppercase$block(padding(0.5rem,1.5rem))$backdropBlur(10px)$blockItem(inlineSize(fit-content),margin(0,auto,1.5rem))
+    |div|div:first-child$uppercase$block(padding(0.5rem,1.5rem))$backdrop(blur(10px))$blockItem(inlineSize(fit-content),margin(0,auto,1.5rem))
     |div|h1$blockItem(margin(0,0,1.5rem,0))$lineHeight(1.1)
     |div|p$blockItem(inlineSize(700px,_,90%),margin(0,auto,3rem))
     
-    $linear(135deg,#primary,#secondary)$color(#white)
+    $bg(linear(135deg,#primary,#secondary))$color(#white)
     |div|div:first-child$font(main,0.9rem,600,spacing(0.2em))$opacity(0.95)$bg(#rgba(255,255,255,0.15))$border(radius(50px))
     |div|h1$font(heading,5rem,800,spacing(-0.02em))$textShadow(0,4px,20px,#rgba(0,0,0,0.2))
     |div|p$font(main,1.4rem,400)$opacity(0.92)$lineHeight(1.7)
     ">
-        
+
         <div>
             <div>
                 🚀 Next-Gen Platform with GrandItems
@@ -73,13 +73,14 @@ $palette(light,#f1f5f9,#0f172a)
 
             <h1>Elevate Your Business<br />to New Heights</h1>
 
-            <p>The all-in-one platform that helps you build, grow, and scale your business with cutting-edge tools and insights</p>
+            <p>The all-in-one platform that helps you build, grow, and scale your business with cutting-edge tools and
+                insights</p>
 
             <div class="
             $flex(row,contentCenter,gap(1.5rem))
             |button$block(padding(1.2rem,3rem))$cursor(pointer)
             
-            |button$border(none,radius(12px))$font(main,1.1rem,600)$easeIn(0.3s)
+            |button$border(none,radius(12px))$font(main,1.1rem,600)$transition(easeIn,0.3s)
             ">
                 <button class="
                 $bg(#white)$color(#primary)$boxShadow(0,10px,30px,#rgba(0,0,0,0.2))
@@ -88,7 +89,7 @@ $palette(light,#f1f5f9,#0f172a)
                     Start Free Trial
                 </button>
                 <button class="
-                $bg(#rgba(255,255,255,0.1))$color(#white)$border(2px,solid,#rgba(255,255,255,0.4),radius(12px))$backdropBlur(10px)
+                $bg(#rgba(255,255,255,0.1))$color(#white)$border(2px,solid,#rgba(255,255,255,0.4),radius(12px))$backdrop(blur(10px))
                 :hover$bg(#rgba(255,255,255,0.2))$translateY(-3px)
                 ">
                     Watch Demo
@@ -98,7 +99,7 @@ $palette(light,#f1f5f9,#0f172a)
     </main>
 
     <section class="$block(padding(6rem,2rem)) $bg(#light#10)">
-        
+
         <div class="$blockItem(inlineSize(1200px,_,95%),margin(0,auto))">
             <div class="
             $block(textCenter)$blockItem(margin(0,0,4rem,0))
@@ -126,7 +127,7 @@ $palette(light,#f1f5f9,#0f172a)
             ||h3$blockItem(margin(0,0,1rem,0))
             ||p
             
-            |$bg(#white)$border(radius(16px))$boxShadow(0,4px,15px,#rgba(0,0,0,0.05))$easeIn(0.3s)
+            |$bg(#white)$border(radius(16px))$boxShadow(0,4px,15px,#rgba(0,0,0,0.05))$transition(easeIn,0.3s)
             ||div:first-child$border(radius(12px))
             ||div:first-child|div$font(main,2rem)
             ||h3$font(heading,1.5rem,700)$color(#dark)
@@ -163,7 +164,7 @@ $palette(light,#f1f5f9,#0f172a)
     <section class="
     $block(padding(6rem,2rem))$bg(#white)
     ">
-        
+
         <div class="
         $blockItem(inlineSize(1200px,_,95%),margin(0,auto))
         |div:first-child$uppercase$blockItem(margin(0,0,1rem,0))
@@ -231,9 +232,9 @@ $palette(light,#f1f5f9,#0f172a)
     </section>
 
     <section class="
-    $block(padding(5rem,2rem))$linear(135deg,#dark,#rgba(15,23,43,1))$color(#white)
+    $block(padding(5rem,2rem))$bg(linear(135deg,#dark,#rgba(15,23,43,1)))$color(#white)
     ">
-        
+
         <div class="$blockItem(inlineSize(1200px,_,95%),margin(0,auto))">
             <div class="
             $grid(cols(repeat(4,1fr)),gap(3rem),textCenter)
@@ -265,7 +266,7 @@ $palette(light,#f1f5f9,#0f172a)
     <section class="
     $block(padding(6rem,2rem))$bg(#light#10)
     ">
-        
+
         <div class="$blockItem(inlineSize(1200px,_,95%),margin(0,auto))">
             <div class="
             $block(textCenter)
@@ -340,9 +341,9 @@ $palette(light,#f1f5f9,#0f172a)
     </section>
 
     <section class="
-    $block(padding(7rem,2rem),textCenter)$relative$linear(135deg,#accent,#secondary,#primary)$color(#white)
+    $block(padding(7rem,2rem),textCenter)$relative$bg(linear(135deg,#accent,#secondary,#primary))$color(#white)
     ">
-        
+
         <div class="
         $relative$zIndex(1)$blockItem(inlineSize(800px,_,90%),margin(0,auto))
         |h2$blockItem(margin(0,0,1.5rem,0))$lineHeight(1.1)
@@ -355,7 +356,7 @@ $palette(light,#f1f5f9,#0f172a)
             <p>Join thousands of teams already using our platform. Start your free trial today.</p>
             <div class="
             $flex(row,contentCenter,gap(1.5rem))
-            |button$block(padding(1.3rem,3.5rem))$border(radius(12px))$font(main,1.2rem,600)$cursor(pointer)$easeIn(0.3s)
+            |button$block(padding(1.3rem,3.5rem))$border(radius(12px))$font(main,1.2rem,600)$cursor(pointer)$transition(easeIn,0.3s)
             ">
                 <button class="
                 $bg(#white)
@@ -371,7 +372,7 @@ $palette(light,#f1f5f9,#0f172a)
                 $bg(#rgba(255,255,255,0.15))
                 $color(#white)
                 $border(2px,solid,#rgba(255,255,255,0.5),radius(12px))
-                $backdropBlur(10px)
+                $backdrop(blur(10px))
                 :hover$bg(#rgba(255,255,255,0.25))
                 :hover$translateY(-4px)
                 ">
@@ -384,7 +385,7 @@ $palette(light,#f1f5f9,#0f172a)
     <footer class="
     $block(padding(3rem,2rem))$bg(#dark)$color(#white)
     ">
-        
+
         <div class="$blockItem(inlineSize(1200px,_,95%),margin(0,auto))">
             <div class="
             $grid(cols(repeat(4,1fr)),gap(3rem))
@@ -397,7 +398,7 @@ $palette(light,#f1f5f9,#0f172a)
             ||div:first-child$font(heading,1.5rem,700)
             ||p$font(main,0.95rem)$opacity(0.7)
             ||h4$font(main,1rem,600)
-            ||div:last-child|a$font(main,0.95rem)$opacity(0.7)$easeIn(0.2s)$noTextDecoration
+            ||div:last-child|a$font(main,0.95rem)$opacity(0.7)$transition(easeIn,0.2s)$noTextDecoration
             ||a:hover$opacity(1)
             ">
                 <div>
