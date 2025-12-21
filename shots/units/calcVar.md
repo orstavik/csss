@@ -3,7 +3,7 @@
 ```css
 @layer containerDefault {
   .\$border\(3px---bob\) {
-    border: calc(3px - var(--bob)) solid;
+    border-width: calc(3px - var(--bob));
   }
 }
 ```
@@ -13,7 +13,7 @@
 ```css
 @layer containerDefault {
   .\$border\(--bob\?\?2px\) {
-    border: var(--bob,2px) solid;
+    border-width: var(--bob,2px);
   }
 }
 ```
@@ -23,7 +23,7 @@
 ```css
 @layer containerDefault {
   .\$border\(2px\+--bob\) {
-    border: calc(2px + var(--bob)) solid;
+    border-width: calc(2px + var(--bob));
   }
 }
 ```
@@ -33,7 +33,7 @@
 ```css
 @layer containerDefault {
   .\$border\(2px-2px\) {
-    border: 0px solid;
+    border-width: 0px;
   }
 }
 ```
@@ -42,7 +42,7 @@
 ```css
 @layer containerDefault {
   .\$border\(2px\+2px\*4\) {
-    border: 10px solid;
+    border-width: 10px;
   }
 }
 ```
@@ -52,7 +52,7 @@
 ```css
 @layer containerDefault {
   .\$border\(--bob\+2px\) {
-    border: calc(var(--bob) + 2px) solid;
+    border-width: calc(var(--bob) + 2px);
   }
 }
 ```
@@ -62,7 +62,7 @@
 ```css
 @layer containerDefault {
   .\$border\(--bob\?\?3px\*2\) {
-    border: var(--bob,6px) solid;
+    border-width: var(--bob,6px);
   }
 }
 ```
@@ -72,7 +72,7 @@
 ```css
 @layer containerDefault {
   .\$border\(round\(1\.5px\)\) {
-    border: 2px solid;
+    border-width: 2px;
   }
 }
 ```
@@ -82,7 +82,7 @@
 ```css
 @layer containerDefault {
   .\$border\(round\(1\.5px\+--bob\,3vw\)\) {
-    border: round(1.5px + var(--bob), 3vw) solid;
+    border-width: round(1.5px + var(--bob), 3vw);
   }
 }
 ```

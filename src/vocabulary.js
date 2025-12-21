@@ -1,6 +1,6 @@
 import nativeAndMore from "./func.js";
 import backgrounds from "./bg.js";
-import border from "./border.js";
+import border from "./border2.js";
 import fonts from "./font.js";
 import layouts from "./layout.js";
 import palette from "./palette.js";
@@ -33,6 +33,7 @@ const Animations = {
   bgColor: animationHo(backgrounds.bgColor),
   color: animationHo(nativeAndMore.color),
   border: animationHo(border.border),
+  Border: animationHo(border.Border),
 }
 
 const ObjectFit = {
