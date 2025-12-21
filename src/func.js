@@ -782,4 +782,5 @@ export const LengthPercent = a => Length(a) ?? Percent(a);
 export const LengthPercentNumber = a => Length(a) ?? Percent(a) ?? Number(a);
 export const NumberPercent = a => Number(a) ?? Percent(a);
 export const UrlUnset = a => Url(a) ?? Unset(a);
+export const ColorUrl = a => Color(a) ?? Url(a);
 export const ColorPrimitive = a => (a.kind === "COLOR" && (a = parseColor(a.text)).hex) ? a : undefined;

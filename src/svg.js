@@ -2,11 +2,11 @@ import {
   UMBRELLA, SINmax, SIN, CHECKNAME, SEQopt, CUSTOM_WORD,
   extractName, extractUrl, extractColor,
   isNumber, isBasic,
-  LengthPercent, LengthPercentNumber, Number, Color, Length, Url, UrlUnset,
+  LengthPercent, LengthPercentNumber, Number, ColorUrl, Length, Url, UrlUnset,
 } from "./func.js";
 
 const stroke = UMBRELLA({
-  stroke: a => Color(a) ?? Url(a),
+  stroke: ColorUrl,
   strokeWidth: Length,
   strokeOpacity: Number, //isFraction
   strokeLinecap: a => a.text?.match(/^(butt|round|square)$/)?.[0],
@@ -17,7 +17,7 @@ const stroke = UMBRELLA({
 });
 
 const fill = UMBRELLA({
-  fill: a => Color(a) ?? Url(a),
+  fill: ColorUrl,
   fillOpacity: Number, //isFraction
   fillRule: a => a.text?.match(/^(evenodd|nonzero)$/)?.[0],
 });
