@@ -3,11 +3,8 @@
 ```css
 @layer containerDefault {
   .\$block\(gap\(0\.5rem\,1\.8\)\) {
-    display: block;
     word-spacing: 0.5rem;
     line-height: 1.8;
-    text-align: unset;
-    text-indent: unset;
   }
 }
 ```

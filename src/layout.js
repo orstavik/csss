@@ -1,4 +1,4 @@
-import { isRepeat, isSpan, isBasic, toLogicalFour, isLength } from "./func.js";
+import { isRepeat, isSpan, isBasic, toLogicalFour, isLength, TYPB, Number as NumberInterpreter } from "./func.js";
 
 function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
@@ -212,10 +212,10 @@ const BlockItem = {
   floatEnd: { float: "inline-end" },
 };
 
-function block({ args }) {
-  const args2 = args.map(a => BLOCK[a.name]?.(a) ?? BLOCK[a.text]);
-  return defaultContainer({ display: "block" }, args, args2);
-}
+// function block({ args }) {
+//   const args2 = args.map(a => BLOCK[a.name]?.(a) ?? BLOCK[a.text]);
+//   return defaultContainer({ display: "block" }, args, args2);
+// }
 
 function blockItem({ args }) {
   const argsOut = args.map(a => BlockItem[a.name]?.(a) ?? BlockItem[a.text]);
@@ -250,17 +250,17 @@ function iBlockItem({ args }) {
   return defaultItem("iBlockItem", args, argsOut);
 }
 
-function lineClamp({ args: [lines, ...args] }) {
-  lines = isBasic(lines);
-  if (lines.type != "number")
-    throw new SyntaxError(`$lineClamp() first argument must be a simple number, got ${lines}.`);
-  return Object.assign(block({ args }), {
-    display: "-webkit-box",
-    WebkitLineClamp: lines.num,
-    WebkitBoxOrient: "vertical",
-    overflowBlock: "hidden"
-  });
-}
+// function lineClamp({ args: [lines, ...args] }) {
+//   lines = isBasic(lines);
+//   if (lines.type != "number")
+//     throw new SyntaxError(`$lineClamp() first argument must be a simple number, got ${lines}.`);
+//   return Object.assign(block({ args }), {
+//     display: "-webkit-box",
+//     WebkitLineClamp: lines.num,
+//     WebkitBoxOrient: "vertical",
+//     overflowBlock: "hidden"
+//   });
+// }
 
 const GRID = {
   ...OVERFLOWS,
@@ -350,7 +350,49 @@ function flexItem({ args }) {
   return defaultItem("flexItem", args, argsOut);
 }
 
+const BlockDefaults = {
+  display: "block",
+  wordSpacing: "unset",
+  lineHeight: "unset",
+  textAlign: "unset",
+  textIndent: "unset",
+};
+const LineClampDefaults = {
+  display: "-webkit-box",
+  WebkitLineClamp: 3, //this is always overwritten
+  WebkitBoxOrient: "vertical",
+  overflowBlock: "hidden",
+};
+
+//todo this is a generic hoFunction that will extract the first argument and then run the rest inside. Same as we do in $Font().
+const lineClampHO = cb => ({ name, args }) => {
+  const WebkitLineClamp = NumberInterpreter(args[0]);
+  if (WebkitLineClamp == null)
+    throw new SyntaxError(`$lineClamp() first argument must be a simple number, got ${args[0].text}.`);
+  const inner = args.length > 1 ? cb({ name, args: args.slice(1) }) : {};
+  return { WebkitLineClamp, ...inner };
+};
+const block = TYPB(BLOCK, {}, {}, res => Object.assign({}, ...Object.values(res)));
+
+const Umbrella = (base, cb) => exp => Object.assign({}, base, cb(exp));
+const Block = Umbrella(BlockDefaults, block);
+const lineClamp = Umbrella(LineClampDefaults, lineClampHO(block));
+const LineClamp = Umbrella(BlockDefaults, lineClamp);
+
 export default {
+  Block,
+  block,
+  LineClamp,
+  lineClamp,
+  blockItem,
+  iBlock,
+  iBlockItem,
+  grid,
+  gridItem,
+  flex,
+  flexItem,
+  hide: _ => ({ display: "none" }),
+
   order: undefined,
   float: undefined,
   gap: undefined,
@@ -389,14 +431,4 @@ export default {
   justifySelf: undefined,
   alignSelf: undefined,
   textAlign: undefined,
-  block,
-  blockItem,
-  iBlock,
-  iBlockItem,
-  grid,
-  gridItem,
-  flex,
-  flexItem,
-  lineClamp,
-  hide: _ => ({ display: "none" }),
 };

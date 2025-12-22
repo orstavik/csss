@@ -1,13 +1,25 @@
-**csss:** $block(textJustify,gap(0.3em,1.6))
+**csss:** $Block(textJustify,gap(0.3em,1.6))
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(textJustify\,gap\(0\.3em\,1\.6\)\) {
+  .\$Block\(textJustify\,gap\(0\.3em\,1\.6\)\) {
     display: block;
     word-spacing: 0.3em;
     line-height: 1.6;
     text-align: justify;
     text-indent: unset;
+  }
+}
+```
+
+**csss:** $block(textJustify,gap(0.3em,1.6))
+**css:**
+```css
+@layer containerDefault {
+  .\$block\(textJustify\,gap\(0\.3em\,1\.6\)\) {
+    text-align: justify;
+    word-spacing: 0.3em;
+    line-height: 1.6;
   }
 }
 ```
@@ -65,12 +77,9 @@
 ```css
 @layer containerDefault {
   .\$block\(breakWord\,gap\(0\.2em\,1\.4\)\) {
-    display: block;
+    overflow-wrap: break-word;
     word-spacing: 0.2em;
     line-height: 1.4;
-    text-align: unset;
-    text-indent: unset;
-    overflow-wrap: break-word;
   }
 }
 ```
@@ -101,12 +110,8 @@
 ```css
 @layer containerDefault {
   .\$block\(overflowAuto\,textCenter\) {
-    display: block;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: center;
-    text-indent: unset;
     overflow: auto;
+    text-align: center;
   }
 }
 ```
@@ -139,11 +144,6 @@
 ```css
 @layer containerDefault {
   .\$block\(padding\(1\.5rem\)\) {
-    display: block;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     padding: 1.5rem;
   }
 }

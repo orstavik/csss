@@ -1,17 +1,3 @@
-**csss:** $block(textJustify)
-**css:**
-```css
-@layer containerDefault {
-  .\$block\(textJustify\) {
-    display: block;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: justify;
-    text-indent: unset;
-  }
-}
-```
-
 **csss:** |*$blockItem(margin(1rem,0,0.5rem))
 **css:**
 ```css

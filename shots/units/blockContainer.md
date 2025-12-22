@@ -3,11 +3,7 @@
 ```css
 @layer containerDefault {
   .\$block\(textJustify\) {
-    display: block;
-    word-spacing: unset;
-    line-height: unset;
     text-align: justify;
-    text-indent: unset;
   }
 }
 ```
@@ -17,11 +13,7 @@
 ```css
 @layer containerDefault {
   .\$block\(textCenter\) {
-    display: block;
-    word-spacing: unset;
-    line-height: unset;
     text-align: center;
-    text-indent: unset;
   }
 }
 ```
@@ -31,11 +23,7 @@
 ```css
 @layer containerDefault {
   .\$block\(textStart\) {
-    display: block;
-    word-spacing: unset;
-    line-height: unset;
     text-align: start;
-    text-indent: unset;
   }
 }
 ```
@@ -45,11 +33,7 @@
 ```css
 @layer containerDefault {
   .\$block\(textEnd\) {
-    display: block;
-    word-spacing: unset;
-    line-height: unset;
     text-align: end;
-    text-indent: unset;
   }
 }
 ```
@@ -59,11 +43,8 @@
 ```css
 @layer containerDefault {
   .\$block\(gap\(0\.5rem\,1\.8\)\) {
-    display: block;
     word-spacing: 0.5rem;
     line-height: 1.8;
-    text-align: unset;
-    text-indent: unset;
   }
 }
 ```
@@ -73,11 +54,8 @@
 ```css
 @layer containerDefault {
   .\$block\(gap\(0\,1\.2\)\) {
-    display: block;
     word-spacing: 0;
     line-height: 1.2;
-    text-align: unset;
-    text-indent: unset;
   }
 }
 ```
@@ -87,11 +65,6 @@
 ```css
 @layer containerDefault {
   .\$block\(overflowHidden\) {
-    display: block;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     overflow: hidden;
   }
 }
@@ -122,11 +95,6 @@
 ```css
 @layer containerDefault {
   .\$block\(overflowScroll\) {
-    display: block;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     overflow: scroll;
   }
 }
@@ -137,11 +105,6 @@
 ```css
 @layer containerDefault {
   .\$block\(overflowHiddenScroll\) {
-    display: block;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     overflow-block: hidden;
     overflow-inline: scroll;
   }
@@ -153,11 +116,6 @@
 ```css
 @layer containerDefault {
   .\$block\(breakWord\) {
-    display: block;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     overflow-wrap: break-word;
   }
 }
@@ -168,12 +126,24 @@
 ```css
 @layer containerDefault {
   .\$block\(breakAll\) {
-    display: block;
+    word-break: break-all;
+  }
+}
+```
+
+**csss:** $LineClamp(3)
+**css:**
+```css
+@layer containerDefault {
+  .\$LineClamp\(3\) {
+    display: -webkit-box;
     word-spacing: unset;
     line-height: unset;
     text-align: unset;
     text-indent: unset;
-    word-break: break-all;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow-block: hidden;
   }
 }
 ```
@@ -184,10 +154,6 @@
 @layer containerDefault {
   .\$lineClamp\(3\) {
     display: -webkit-box;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow-block: hidden;
