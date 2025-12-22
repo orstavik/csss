@@ -5,6 +5,7 @@ import {
   LengthPercent, LengthPercentNumber, Number, ColorUrl, Length, Url, UrlUnset,
 } from "./func.js";
 
+//todo here we need to update the methods to use TYPB + Umbrella instead. That should give us the same result.
 const stroke = UMBRELLA({
   stroke: ColorUrl,
   strokeWidth: Length,
