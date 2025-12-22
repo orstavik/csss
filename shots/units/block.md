@@ -160,3 +160,62 @@
   }
 }
 ```
+
+**csss:** $Block(textJustify,gap(0.3em,1.6))
+**css:**
+```css
+@layer containerDefault {
+  .\$Block\(textJustify\,gap\(0\.3em\,1\.6\)\) {
+    display: block;
+    word-spacing: 0.3em;
+    line-height: 1.6;
+    text-align: justify;
+    text-indent: unset;
+  }
+}
+```
+
+**csss:** $block(textJustify,gap(0.3em,1.6))
+**css:**
+```css
+@layer containerDefault {
+  .\$block\(textJustify\,gap\(0\.3em\,1\.6\)\) {
+    text-align: justify;
+    word-spacing: 0.3em;
+    line-height: 1.6;
+  }
+}
+```
+
+**csss:** $block(breakWord,gap(0.2em,1.4))
+**css:**
+```css
+@layer containerDefault {
+  .\$block\(breakWord\,gap\(0\.2em\,1\.4\)\) {
+    overflow-wrap: break-word;
+    word-spacing: 0.2em;
+    line-height: 1.4;
+  }
+}
+```
+
+**csss:** $block(overflowAuto,textCenter)
+**css:**
+```css
+@layer containerDefault {
+  .\$block\(overflowAuto\,textCenter\) {
+    overflow: auto;
+    text-align: center;
+  }
+}
+```
+
+**csss:** $block(padding(1.5rem))
+**css:**
+```css
+@layer containerDefault {
+  .\$block\(padding\(1\.5rem\)\) {
+    padding: 1.5rem;
+  }
+}
+```

@@ -219,10 +219,10 @@ const BlockItem = {
 //   return defaultContainer({ display: "block" }, args, args2);
 // }
 
-function blockItem({ args }) {
-  const argsOut = args.map(a => BlockItem[a.name]?.(a) ?? BlockItem[a.text]);
-  return defaultItem("blockItem", args, argsOut);
-}
+// function blockItem({ args }) {
+//   const argsOut = args.map(a => BlockItem[a.name]?.(a) ?? BlockItem[a.text]);
+//   return defaultItem("blockItem", args, argsOut);
+// }
 
 const IBLOCK = {
   ...LAYOUT,
@@ -387,8 +387,10 @@ const lineClampHO = cb => ({ name, args }) => {
 };
 const block = TYPB(BLOCK, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
+const blockItem = TYPB(BlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const Umbrella = (base, cb) => exp => Object.assign({}, base, cb(exp));
 const Block = Umbrella(BlockDefaults, block);
+const BlockItemX = Umbrella(BlockItemDefaults, blockItem);
 const lineClamp = Umbrella(LineClampDefaults, lineClampHO(block));
 const LineClamp = Umbrella(BlockDefaults, lineClamp);
 
@@ -398,6 +400,7 @@ export default {
   LineClamp,
   lineClamp,
   blockItem,
+  BlockItem: BlockItemX,
   iBlock,
   iBlockItem,
   grid,
