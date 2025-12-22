@@ -161,10 +161,12 @@ function textIndent({ args }) {
 const _LAYOUT = {
   margin: ({ args }) => toLogicalFour("margin", args),
   scrollMargin: ({ args }) => toLogicalFour("scroll-margin", args),
+  //this is now on the item. But that is inconsitent, as the gap in block controls the lineHeight etc for the text in the container.
+  //todo i think that textIndent should be moved to the container again.
   textIndent: textIndent,
   indent: textIndent,
-  inlineSize: toSize.bind(null, "inlineSize"), //todo should we block this?
-  blockSize: toSize.bind(null, "blockSize"),   //todo should we block this?
+  inlineSize: toSize.bind(null, "inlineSize"), //todo should we block this? is size(10px) enough?
+  blockSize: toSize.bind(null, "blockSize"),   //todo should we block this? is size(_,10px) enough?
   size,
   // w: AllFunctions.width,
   // h: AllFunctions.height,
@@ -350,12 +352,23 @@ function flexItem({ args }) {
   return defaultItem("flexItem", args, argsOut);
 }
 
+const BlockItemDefaults = {
+  inlineSize: "unset",
+  blockSize: "unset",
+  marginBlock: "unset",
+  marginInline: "unset",
+  textIndent: "unset",        //as textIndent inherits, we need to unset on both container and item
+  scrollMargin: "unset",
+  scrollSnapAlign: "unset",
+};
 const BlockDefaults = {
   display: "block",
   wordSpacing: "unset",
   lineHeight: "unset",
   textAlign: "unset",
-  textIndent: "unset",
+  textIndent: "unset",        //as textIndent inherits, we need to unset on both container and item 
+  //todo this is NOT as easy as I thought..
+  //">* /*blockItem*/": BlockItemDefaults,    //the BlockItem defaults are always set by the Block.
 };
 const LineClampDefaults = {
   display: "-webkit-box",
