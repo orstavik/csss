@@ -142,3 +142,30 @@
   }
 }
 ```
+
+**comment:** $font(hyphens) should work, and $Font(hypens) is what we have below. 
+**csss:** $font(hyphens)
+**css:**
+```css
+@layer containerDefault {
+  .\$font\(hyphens\) {
+    font-family: hyphens, var(--hyphensFontFamily, unset);
+    font-size: var(--hyphensFontSize, unset);
+    font-style: var(--hyphensFontStyle, unset);
+    font-weight: var(--hyphensFontWeight, unset);
+    font-size-adjust: var(--hyphensFontSizeAdjust, unset);
+    letter-spacing: var(--hyphensLetterSpacing, unset);
+    text-transform: var(--hyphensTextTransform, unset);
+    font-width: var(--hyphensFontWidth, unset);
+    font-variant-caps: var(--hyphensFontVariantCaps, unset);
+    font-synthesis: var(--hyphensFontSynthesis, unset);
+    font-feature-settings: var(--hyphensFontFeatureSettings, unset);
+    font-variation-settings: var(--hyphensFontVariationSettings, unset);
+    -webkit-font-smoothing: var(--hyphensWebkitFontSmoothing, unset);
+    -moz-osx-font-smoothing: var(--hyphensMozOsxFontSmoothing, unset);
+    font-kerning: var(--hyphensFontKerning, unset);
+    hyphens: var(--hyphensHyphens, unset);
+    font-stretch: var(--hyphensFontWidth, unset);
+  }
+}
+```
