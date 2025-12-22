@@ -154,6 +154,7 @@ const clashOrStack = (function () {
         if (v == null) continue;
         if (!(k in res))
           res[k] = v;
+        //todo if ::before and ::after or >* or other atRules clash, then add /*comments to separate them*/ as transitions and @font-face does.
         else if (k in STACKABLE_PROPERTIES)
           res[k] += (STACKABLE_PROPERTIES[k] + v);
         else
