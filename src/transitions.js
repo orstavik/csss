@@ -32,7 +32,7 @@ const transition = TYPB({
     let [timerName, timerValue] = Object.entries(timers)[0] ?? [];
     const res = {};
     if (timerName in CURVES) {
-      res[":root"] = { [`--transition-${timerName}`]: timerValue };
+      res[`:root /*--transition-${timerName}*/`] = { [`--transition-${timerName}`]: timerValue };
       timerValue = `var(--transition-${timerName})`;
     }
     const tail = [timerValue, duration, delay, allowDiscrete].filter(Boolean).join(" ");
