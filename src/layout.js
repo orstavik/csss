@@ -1,4 +1,4 @@
-import { isRepeat, isSpan, isBasic, toLogicalFour, isLength, TYPB, Number as NumberInterpreter } from "./func.js";
+import { isRepeat, isSpan, isBasic, toLogicalFour, isLength, TYPB, Number as NumberInterpreter, Umbrella } from "./func.js";
 
 function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
@@ -203,26 +203,6 @@ function blockGap({ args }) {
   const [wordSpacing, lineHeight] = args.map(isBasic).map(a => a.text);
   return { wordSpacing, lineHeight };
 }
-const BLOCK = {
-  ...LAYOUT,
-  ...OVERFLOWS,
-  gap: blockGap,
-};
-const BlockItem = {
-  ..._LAYOUT,
-  floatStart: { float: "inline-start" },
-  floatEnd: { float: "inline-end" },
-};
-
-// function block({ args }) {
-//   const args2 = args.map(a => BLOCK[a.name]?.(a) ?? BLOCK[a.text]);
-//   return defaultContainer({ display: "block" }, args, args2);
-// }
-
-// function blockItem({ args }) {
-//   const argsOut = args.map(a => BlockItem[a.name]?.(a) ?? BlockItem[a.text]);
-//   return defaultItem("blockItem", args, argsOut);
-// }
 
 const IBLOCK = {
   ...LAYOUT,
@@ -352,47 +332,60 @@ function flexItem({ args }) {
   return defaultItem("flexItem", args, argsOut);
 }
 
-const BlockItemDefaults = {
-  inlineSize: "unset",
-  blockSize: "unset",
-  marginBlock: "unset",
-  marginInline: "unset",
-  textIndent: "unset",        //as textIndent inherits, we need to unset on both container and item
-  scrollMargin: "unset",
-  scrollSnapAlign: "unset",
-};
-const BlockDefaults = {
-  display: "block",
-  wordSpacing: "unset",
-  lineHeight: "unset",
-  textAlign: "unset",
-  textIndent: "unset",        //as textIndent inherits, we need to unset on both container and item 
-  //todo this is NOT as easy as I thought..
-  //">* /*blockItem*/": BlockItemDefaults,    //the BlockItem defaults are always set by the Block.
-};
-const LineClampDefaults = {
-  display: "-webkit-box",
-  WebkitLineClamp: 3, //this is always overwritten
-  WebkitBoxOrient: "vertical",
-  overflowBlock: "hidden",
+//NEW SYSTEM STARTS HERE
+const DEFAULTS = {
+  Block: {
+    display: "block",
+    wordSpacing: "unset",
+    lineHeight: "unset",
+    textAlign: "unset",
+    textIndent: "unset",        //as textIndent inherits, we need to unset on both container and item 
+    //todo this is NOT as easy as I thought..
+    //">* /*blockItem*/": BlockItemDefaults,    //the BlockItem defaults are always set by the Block.
+  },
+  BlockItem: {
+    inlineSize: "unset",
+    blockSize: "unset",
+    marginBlock: "unset",
+    marginInline: "unset",
+    textIndent: "unset",        //as textIndent inherits, we need to unset on both container and item
+    scrollMargin: "unset",
+    scrollSnapAlign: "unset",
+  },
+  LineClamp: {
+    display: "-webkit-box",
+    WebkitLineClamp: 3, //this is always overwritten
+    WebkitBoxOrient: "vertical",
+    overflowBlock: "hidden",
+  },
 };
 
 //todo this is a generic hoFunction that will extract the first argument and then run the rest inside. Same as we do in $Font().
 const lineClampHO = cb => ({ name, args }) => {
   const WebkitLineClamp = NumberInterpreter(args[0]);
   if (WebkitLineClamp == null)
-    throw new SyntaxError(`$lineClamp() first argument must be a simple number, got ${args[0].text}.`);
+    throw new SyntaxError(`${name}() first argument must be a simple number, got ${args[0].text}.`);
   const inner = args.length > 1 ? cb({ name, args: args.slice(1) }) : {};
   return { WebkitLineClamp, ...inner };
 };
-const block = TYPB(BLOCK, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const block = TYPB({
+  ...LAYOUT,
+  ...OVERFLOWS,
+  gap: blockGap,
+}, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
-const blockItem = TYPB(BlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const Umbrella = (base, cb) => exp => Object.assign({}, base, cb(exp));
-const Block = Umbrella(BlockDefaults, block);
-const BlockItemX = Umbrella(BlockItemDefaults, blockItem);
-const lineClamp = Umbrella(LineClampDefaults, lineClampHO(block));
-const LineClamp = Umbrella(BlockDefaults, lineClamp);
+const blockItem = TYPB({
+  ..._LAYOUT,
+  floatStart: { float: "inline-start" },
+  floatEnd: { float: "inline-end" },
+}, {}, {}, res => Object.assign({}, ...Object.values(res)));
+
+const Block = Umbrella(DEFAULTS.Block, block);
+const BlockItem = Umbrella(DEFAULTS.BlockItem, blockItem);
+const lineClamp = Umbrella(DEFAULTS.LineClamp, lineClampHO(block));
+const LineClamp = Umbrella(DEFAULTS.Block, lineClamp);
+
+//NEW SYSTEM ENDS HERE
 
 export default {
   Block,
@@ -400,7 +393,7 @@ export default {
   LineClamp,
   lineClamp,
   blockItem,
-  BlockItem: BlockItemX,
+  BlockItem,
   iBlock,
   iBlockItem,
   grid,

@@ -708,6 +708,8 @@ ${name}(${[...args.slice(0, i).map(a => a.text), ` => ${args[i].text} <= `, ...a
   };
 };
 
+export const Umbrella = (base, cb) => exp => Object.assign({}, base, cb(exp));
+
 export const SIN = (interpreter, post) => ({ args, name }) => {
   if (args.length != 1)
     throw new SyntaxError(`${name} requires 1 argument, got ${args.length} arguments.`);
