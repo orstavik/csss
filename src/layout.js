@@ -1,4 +1,4 @@
-import { isRepeat, isSpan, isBasic, toLogicalFour, isLength, TYPB, Number as NumberInterpreter, Umbrella } from "./func.js";
+import { isRepeat, isSpan, isBasic, toLogicalFour, isLength, TYPB, Number as NumberInterpreter, Umbrella, FIRST } from "./func.js";
 
 function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
@@ -360,14 +360,6 @@ const DEFAULTS = {
   },
 };
 
-//todo this is a generic hoFunction that will extract the first argument and then run the rest inside. Same as we do in $Font().
-const lineClampHO = cb => ({ name, args }) => {
-  const WebkitLineClamp = NumberInterpreter(args[0]);
-  if (WebkitLineClamp == null)
-    throw new SyntaxError(`${name}() first argument must be a simple number, got ${args[0].text}.`);
-  const inner = args.length > 1 ? cb({ name, args: args.slice(1) }) : {};
-  return { WebkitLineClamp, ...inner };
-};
 const block = TYPB({
   ...LAYOUT,
   ...OVERFLOWS,
@@ -382,7 +374,7 @@ const blockItem = TYPB({
 
 const Block = Umbrella(DEFAULTS.Block, block);
 const BlockItem = Umbrella(DEFAULTS.BlockItem, blockItem);
-const lineClamp = Umbrella(DEFAULTS.LineClamp, lineClampHO(block));
+const lineClamp = FIRST(NumberInterpreter, block, (n, a, b) => ({ ...DEFAULTS.LineClamp, WebkitLineClamp: a, ...b }));
 const LineClamp = Umbrella(DEFAULTS.Block, lineClamp);
 
 //NEW SYSTEM ENDS HERE
