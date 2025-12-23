@@ -1,4 +1,4 @@
-import { isRepeat, isSpan, isBasic, toLogicalFour, isLength, TYPB, Number as NumberInterpreter, Umbrella, FIRST } from "./func.js";
+import { isRepeat, isSpan, isBasic, toLogicalFour, isLength, TYPB, Number as NumberInterpreter, Umbrella, FIRST, SEQ, Length, LengthPercentNumber, SINmax, LengthPercentUnset } from "./func.js";
 
 function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
@@ -185,24 +185,19 @@ const _LAYOUT = {
   // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
 
-function gap({ args }) {
-  if (!args.length || args.length > 2)
-    throw new SyntaxError("gap only accepts 1 or 2 arguments");
-  args = args.map(isBasic).map(a => a.text);
-  if (args.length == 1 || args[0] == args[1])
-    return { gap: args[0] };
-  args = args.map(a => a == "unset" ? "normal" : a);
-  return { gap: args[0] + " " + args[1] };
-}
+const gap = SINmax(2, LengthPercentUnset, (n, ar) => {
+  if (ar[0] == ar[1] || ar.length == 1) return { gap: ar[0] };
+  if (ar[1] == "unset") return { rowGap: ar[0] };
+  if (ar[0] == "unset") return { columnGap: ar[1] };
+  return { gap: ar.join(" ") };
+});
 
 //todo rename this to space() and then do block, inline as the two options.
 //todo the question is if this will be recognized by the llm..
 //they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
 //so it should be with layout.
-function blockGap({ args }) {
-  const [wordSpacing, lineHeight] = args.map(isBasic).map(a => a.text);
-  return { wordSpacing, lineHeight };
-}
+// call it textSpacing?
+const blockGap = SEQ([Length, LengthPercentNumber], (n, ar) => ({ wordSpacing: ar[0], lineHeight: ar[1] }));
 
 const IBLOCK = {
   ...LAYOUT,

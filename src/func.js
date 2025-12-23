@@ -793,6 +793,7 @@ export const Url = a => isUrl(a)?.text;
 export const AnglePercent = a => Angle(a) ?? Percent(a);
 export const LengthUnset = a => Length(a) ?? Unset(a);
 export const LengthPercent = a => Length(a) ?? Percent(a);
+export const LengthPercentUnset = a => Length(a) ?? Percent(a) ?? Unset(a);
 export const LengthPercentNumber = a => Length(a) ?? Percent(a) ?? Number(a);
 export const NumberPercent = a => Number(a) ?? Percent(a);
 export const UrlUnset = a => Url(a) ?? Unset(a);
