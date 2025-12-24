@@ -20,6 +20,18 @@
 ```css
 @layer containerDefault {
   .\$stroke\(3px\,round\,miterlimit\(4\)\) {
+    stroke-width: 3px;
+    stroke-linecap: round;
+    stroke-miterlimit: 4;
+  }
+}
+```
+
+**csss:** $Stroke(3px,round,miterlimit(4))
+**css:**
+```css
+@layer containerDefault {
+  .\$Stroke\(3px\,round\,miterlimit\(4\)\) {
     stroke: unset;
     stroke-width: 3px;
     stroke-opacity: unset;
@@ -43,8 +55,6 @@
     stroke-linecap: butt;
     stroke-linejoin: bevel;
     stroke-dasharray: 5px, 5%;
-    stroke-dashoffset: unset;
-    stroke-miterlimit: unset;
   }
 }
 ```
@@ -54,14 +64,7 @@
 ```css
 @layer containerDefault {
   .\$stroke\(0\.8\) {
-    stroke: unset;
-    stroke-width: unset;
     stroke-opacity: 0.8;
-    stroke-linecap: unset;
-    stroke-linejoin: unset;
-    stroke-dasharray: unset;
-    stroke-dashoffset: unset;
-    stroke-miterlimit: unset;
   }
 }
 ```
@@ -81,14 +84,7 @@
 ```css
 @layer containerDefault {
   .\$stroke\(round\) {
-    stroke: unset;
-    stroke-width: unset;
-    stroke-opacity: unset;
     stroke-linecap: round;
-    stroke-linejoin: unset;
-    stroke-dasharray: unset;
-    stroke-dashoffset: unset;
-    stroke-miterlimit: unset;
   }
 }
 ```
@@ -98,14 +94,7 @@
 ```css
 @layer containerDefault {
   .\$stroke\(bevel\) {
-    stroke: unset;
-    stroke-width: unset;
-    stroke-opacity: unset;
-    stroke-linecap: unset;
     stroke-linejoin: bevel;
-    stroke-dasharray: unset;
-    stroke-dashoffset: unset;
-    stroke-miterlimit: unset;
   }
 }
 ```
@@ -115,14 +104,7 @@
 ```css
 @layer containerDefault {
   .\$stroke\(dasharray\(5\,5\)\) {
-    stroke: unset;
-    stroke-width: unset;
-    stroke-opacity: unset;
-    stroke-linecap: unset;
-    stroke-linejoin: unset;
     stroke-dasharray: 5, 5;
-    stroke-dashoffset: unset;
-    stroke-miterlimit: unset;
   }
 }
 ```
@@ -144,9 +126,19 @@
 ```css
 @layer containerDefault {
   .\$fill\(0\.5\) {
-    fill: unset;
     fill-opacity: 0.5;
-    fill-rule: unset;
+  }
+}
+```
+
+**csss:** $Fill(#azure,.5,evenodd)
+**css:**
+```css
+@layer containerDefault {
+  .\$Fill\(\#azure\,\.5\,evenodd\) {
+    fill: azure;
+    fill-opacity: .5;
+    fill-rule: evenodd;
   }
 }
 ```
@@ -170,9 +162,6 @@
 @layer containerDefault {
   .\$svgText\(middle\) {
     text-anchor: middle;
-    dominant-baseline: unset;
-    alignment-baseline: unset;
-    baseline-shift: unset;
   }
 }
 ```
@@ -182,9 +171,20 @@
 ```css
 @layer containerDefault {
   .\$svgText\(baseline\(middle\,textAfterEdge\)\) {
-    text-anchor: unset;
     dominant-baseline: middle;
     alignment-baseline: text-after-edge;
+  }
+}
+```
+
+**csss:** $SvgText(middle,baseline(alphabetic,textBeforeEdge))
+**css:**
+```css
+@layer containerDefault {
+  .\$SvgText\(middle\,baseline\(alphabetic\,textBeforeEdge\)\) {
+    text-anchor: middle;
+    dominant-baseline: alphabetic;
+    alignment-baseline: text-before-edge;
     baseline-shift: unset;
   }
 }

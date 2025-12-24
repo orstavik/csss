@@ -2,19 +2,19 @@
 <script src="../src/auto.js?style=style&interval=400" type="module"></script>
 
 <body class="
-    $typeface(transitional,'Charter','Bitstream+Charter','Sitka+Text',Cambria,serif,18px,400)
-    $typeface(neoGrotesque,'Inter','Roboto','Helvetica+Neue',Arial,sans-serif,17px,400)
-    $typeface(monoCode,'ui-monospace','Cascadia+Code','Source+Code+Pro',monospace,16px,400)
-    $typeface(oldStyle,'Iowan+Old+Style','Palatino+Linotype','URW+Palladio+L',P052,serif,18px,400)
-    $typeface(industrial,Bahnschrift,'DIN+Alternate','Franklin+Gothic+Medium','Nimbus+Sans+Narrow','sans-serif-condensed',sans-serif,17px,400)
-    $typeface(comic,'MS+Comic+Sans',face('https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@0.0.2/files/comic-neue-latin-400.woff2'))
+    $Typeface(transitional,'Charter','Bitstream+Charter','Sitka+Text',Cambria,serif,18px,400)
+    $Typeface(neoGrotesque,'Inter','Roboto','Helvetica+Neue',Arial,sans-serif,17px,400)
+    $Typeface(monoCode,'ui-monospace','Cascadia+Code','Source+Code+Pro',monospace,16px,400)
+    $Typeface(oldStyle,'Iowan+Old+Style','Palatino+Linotype','URW+Palladio+L',P052,serif,18px,400)
+    $Typeface(industrial,Bahnschrift,'DIN+Alternate','Franklin+Gothic+Medium','Nimbus+Sans+Narrow','sans-serif-condensed',sans-serif,17px,400)
+    $Typeface(comic,'MS+Comic+Sans',face('https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@0.0.2/files/comic-neue-latin-400.woff2'))
     $block(padding(2rem,4rem))
 ">
 
   <header class="$blockItem(margin(0,0,2rem,0))">
     <h1 class="$font(neoGrotesque,2.5rem,700)">Typography: Cloud & Umbrella & Droplet Demo</h1>
     <p class="$font(neoGrotesque,1.1rem)">This page demonstrates the CSSS font system. The `body` tag defines several
-      "umbrella" `$typeface()`s. Child elements then use `$font()` to apply an umbrella and can add
+      "umbrella" `$Typeface()`s. Child elements then use `$font()` to apply an umbrella and can add
       "droplets" such as `$fontStyle()` to override specific properties within the `$font()` scope.
     </p>
   </header>
@@ -78,7 +78,7 @@
         'ui-monospace', 'Cascadia Code', 'Source Code Pro', monospace;</div>
       <div class="$blockItem(margin(1.5rem,0,0,0))">
         <p class="">This is the base monospace font, ideal for div snippets and technical text, such as:
-        <div>const umbrella = "$typeface(monoCode, ...)";</div>
+        <div>const umbrella = "$Typeface(monoCode, ...)";</div>
         </p>
         <p class="$noKerning">This paragraph has `$noKerning` via a droplet.</p>
       </div>

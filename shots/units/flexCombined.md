@@ -3,13 +3,6 @@
 ```css
 @layer containerDefault {
   .\$flex\(row\,gap\(1rem\)\,padding\(1rem\)\) {
-    display: flex;
-    align-items: unset;
-    place-content: unset;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     flex-direction: row;
     gap: 1rem;
     padding: 1rem;
@@ -42,13 +35,6 @@
 ```css
 @layer containerDefault {
   .\$flex\(gap\(0\.5rem\)\) {
-    display: flex;
-    align-items: unset;
-    place-content: unset;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     gap: 0.5rem;
   }
 }

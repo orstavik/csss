@@ -11,29 +11,29 @@
 <body class="
 $blockItem(margin(0),size(100%,100vh))
 
-$typeface(main,Inter,sans-serif,16px,400)
+$Typeface(main,Inter,sans-serif,16px,400)
 $bg(#light)$color(#dark)
-$palette(primary,#6366f1,#ffffff)
-$palette(secondary,#8b5cf6,#ffffff)
-$palette(accent,#ec4899,#ffffff)
-$palette(dark,#1e293b,#ffffff)
-$palette(muted,#64748b,#ffffff)
-$palette(light,#f8fafc,#1e293b)
-$palette(surface,#f1f5f9,#1e293b)
+$Palette(primary,#6366f1,#ffffff)
+$Palette(secondary,#8b5cf6,#ffffff)
+$Palette(accent,#ec4899,#ffffff)
+$Palette(dark,#1e293b,#ffffff)
+$Palette(muted,#64748b,#ffffff)
+$Palette(light,#f8fafc,#1e293b)
+$Palette(surface,#f1f5f9,#1e293b)
 ">
 
     <div class="
-    $flex(column)$blockItem(size(100%,100%))
-    |header$block(padding(1.5rem),textCenter)
+    $Flex(column)$flexItem(size(100%,100%))
+    |header$Block(padding(1.5rem),textCenter)
     |header|h1$blockItem(margin(0))
     |header|p$blockItem(margin(0.5rem,0,0,0))
-    |main$flex(row)$flexItem(grow(1))
-    |footer$block(padding(1rem),textCenter)
+    |main$Flex(row)$flexItem(grow(1))
+    |footer$Block(padding(1rem),textCenter)
     |footer|p$blockItem(margin(0))
     
-    |header|h1$font(main,2rem,700)
-    |header|p$font(main,1rem)
-    |footer|p$font(main,0.9rem)
+    |header|h1$Font(main,2rem,700)
+    |header|p$Font(main,1rem)
+    |footer|p$Font(main,0.9rem)
     |header$bg(#primary)$color(#white)
     |header|p$opacity(0.9)
     |footer$bg(#dark)$color(#white)
@@ -46,25 +46,25 @@ $palette(surface,#f1f5f9,#1e293b)
         </header>
 
         <main class="
-        $flex(row)
-        |nav$block(padding(2rem))$blockItem(size(200px,_))
+        $Flex(row)
+        |nav$Block(padding(2rem))$flexItem(size(200px,_))
         |nav|h3$blockItem(margin(0,0,1.5rem,0))
-        |nav|ul$block(padding(0))$blockItem(margin(0))
+        |nav|ul$Block(padding(0))$blockItem(margin(0))
         |nav|ul|li$blockItem(margin(0,0,0.75rem,0))$cursor(pointer)
-        |section$block(padding(2rem))$flexItem(grow(1))
+        |section$Block(padding(2rem))$flexItem(grow(1))
         |section|h2$blockItem(margin(0,0,1rem,0))
         |section|p$blockItem(margin(0,0,1.5rem,0))
-        |section|ul$block(padding(0,0,0,1.5rem))$blockItem(margin(0,0,1.5rem,0))
+        |section|ul$Block(padding(0,0,0,1.5rem))$blockItem(margin(0,0,1.5rem,0))
         |section|ul|li$blockItem(margin(0,0,0.5rem,0))
-        |aside$block(padding(2rem))$blockItem(size(180px,_))
+        |aside$Block(padding(2rem))$flexItem(size(180px,_))
         |aside|h3$blockItem(margin(0,0,1.5rem,0))
         
-        |nav|h3$font(main,1.2rem,600)
+        |nav|h3$Font(main,1.2rem,600)
         |nav|ul|li$transition(easeIn,0.2s)
-        |section|h2$font(main,1.8rem,700)
-        |section|p$font(main,1rem)$lineHeight(1.6)
-        |section|ul|li$font(main,1rem)$lineHeight(1.6)
-        |aside|h3$font(main,1.2rem,600)
+        |section|h2$Font(main,1.8rem,700)
+        |section|p$Font(main,1rem)$lineHeight(1.6)
+        |section|ul|li$Font(main,1rem)$lineHeight(1.6)
+        |aside|h3$Font(main,1.2rem,600)
         |nav$bg(#secondary)$color(#white)
         |nav|ul|li$color(#white)$opacity(0.9)$noTextDecoration
         |section$bg(#white)
@@ -108,12 +108,12 @@ $palette(surface,#f1f5f9,#1e293b)
                 </ul>
 
                 <div class="
-                $block(padding(1.5rem))$blockItem(margin(0,0,1.5rem,0))
+                $Block(padding(1.5rem))$blockItem(margin(0,0,1.5rem,0))
                 |h3$blockItem(margin(0,0,0.75rem,0))
                 |p$blockItem(margin(0))
                 
-                |h3$font(main,1.2rem,600)
-                |p$font(main,0.95rem)$lineHeight(1.5)
+                |h3$Font(main,1.2rem,600)
+                |p$Font(main,0.95rem)$lineHeight(1.5)
                 $bg(#surface)$Border(radius(8px))
                 |h3$color(#dark)
                 |p$color(#muted)
@@ -134,13 +134,13 @@ $palette(surface,#f1f5f9,#1e293b)
                 <h3>📊 Sidebar</h3>
                 
                 <div class="
-                $block(padding(2rem))$blockItem(margin(0,0,1.5rem,0))
+                $Block(padding(2rem))$blockItem(margin(0,0,1.5rem,0))
                 |h4$blockItem(margin(0,0,0.5rem,0))
-                |ul$block(padding(0))$blockItem(margin(0))
+                |ul$Block(padding(0))$blockItem(margin(0))
                 |ul|li$blockItem(margin(0,0,0.5rem,0))
                 
-                |h4$font(main,1rem,600)
-                |ul|li$font(main,0.9rem)
+                |h4$Font(main,1rem,600)
+                |ul|li$Font(main,0.9rem)
                 $bg(#rgba(255,255,255,0.2))$Border(radius(6px))
                 ">
                     <h4>🔗 Quick Links</h4>
@@ -153,11 +153,11 @@ $palette(surface,#f1f5f9,#1e293b)
                 </div>
 
                 <div class="
-                $block(padding(1rem))
+                $Block(padding(1rem))
                 |h4$blockItem(margin(0,0,0.5rem,0))
                 |div$blockItem(margin(0,0,0.5rem,0))
                 
-                $font(main,1rem,600)
+                $Font(main,1rem,600)
                 $bg(#rgba(255,255,255,0.2))$Border(radius(6px))
                 ">
                     <h4>📈 Statistics</h4>

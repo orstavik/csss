@@ -1,8 +1,8 @@
-**csss:** $palette(warm,#red,#brown)
+**csss:** $Palette(warm,#red,#brown)
 **css:**
 ```css
 @layer containerDefault {
-  .\$palette\(warm\,\#red\,\#brown\) {
+  .\$Palette\(warm\,\#red\,\#brown\) {
     --color-warm: red;
     --color-warmPop: #ffa67d;
     --color-warmAccent: #ff9f6c;
@@ -17,11 +17,11 @@
 }
 ```
 
-**csss:** $palette(primary,#royalblue,#skyblue)
+**csss:** $Palette(primary,#royalblue,#skyblue)
 **css:**
 ```css
 @layer containerDefault {
-  .\$palette\(primary\,\#royalblue\,\#skyblue\) {
+  .\$Palette\(primary\,\#royalblue\,\#skyblue\) {
     --color-primary: royalblue;
     --color-primaryPop: #87c8ff;
     --color-primaryAccent: #77c9ff;

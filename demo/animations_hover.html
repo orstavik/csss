@@ -214,26 +214,26 @@
 
 <body class="
 $blockItem(margin(0))
-$block(padding(3rem,2rem))
+$Block(padding(3rem,2rem))
 $bg(#light)
 
-$typeface(main,Inter,sans-serif,16px,400)
-$typeface(heading,Inter,sans-serif,32px,700)
+$Typeface(main,Inter,sans-serif,16px,400)
+$Typeface(heading,Inter,sans-serif,32px,700)
 
-$palette(primary,#6366f1,#ffffff)
-$palette(secondary,#8b5cf6,#ffffff)
-$palette(accent,#ec4899,#ffffff)
-$palette(dark,#1e293b,#ffffff)
-$palette(light,#f8fafc,#1e293b)
-$palette(border,#e0e0e0,#1e293b)
-$palette(surface,#ffffff,#1e293b)
-$palette(muted,#64748b,#ffffff)
+$Palette(primary,#6366f1,#ffffff)
+$Palette(secondary,#8b5cf6,#ffffff)
+$Palette(accent,#ec4899,#ffffff)
+$Palette(dark,#1e293b,#ffffff)
+$Palette(light,#f8fafc,#1e293b)
+$Palette(border,#e0e0e0,#1e293b)
+$Palette(surface,#ffffff,#1e293b)
+$Palette(muted,#64748b,#ffffff)
 
 ||div$blockItem(inlineSize(1200px,_,95%),margin(0,auto))
-||div|h1$font(heading)$blockItem(margin(0,0,1rem,0))$color(#dark)
-||div|p$font(main,1.1rem)$blockItem(margin(0,0,3rem,0))$color(#muted)
+||div|h1$Font(heading)$blockItem(margin(0,0,1rem,0))$color(#dark)
+||div|p$Font(main,1.1rem)$blockItem(margin(0,0,3rem,0))$color(#muted)
 ||div|section$blockItem(margin(0,0,4rem,0))
-||div|section|h2$font(main,1.5rem,600)$blockItem(margin(0,0,1.5rem,0))$color(#dark)
+||div|section|h2$Font(main,1.5rem,600)$blockItem(margin(0,0,1.5rem,0))$color(#dark)
 ">
 
     <div>
@@ -244,17 +244,17 @@ $palette(muted,#64748b,#ffffff)
         <section>
             <h2>📦 Keyframe Animations (hover-triggered)</h2>
             <div class="
-            $grid(cols(repeat(auto-fit,minmax(200px,1fr))),gap(1.5rem))
-            |$block(padding(2rem))
+            $Grid(cols(repeat(auto-fit,minmax(200px,1fr))),gap(1.5rem))
+            |$Block(padding(2rem))
             |$bg(#surface)
             |$Border(2px,solid,#border,radius(12px))
-            |$flex(contentCenter,itemsCenter,column,gap(1rem))
+            |$Flex(contentCenter,itemsCenter,column,gap(1rem))
             |$cursor(pointer)
             |$blockItem(size(_,180px))
-            |$block(textCenter)
+            |$Block(textCenter)
             
             |div:first-child$fontSize(3rem)
-            |div:last-child$font(main,1rem,600)$color(#dark)
+            |div:last-child$Font(main,1rem,600)$color(#dark)
             ">
                 <div class="bounce-hover">
                     <div>🏀</div>
@@ -287,17 +287,17 @@ $palette(muted,#64748b,#ffffff)
         <section>
             <h2>🎨 CSS Transition Effects</h2>
             <div class="
-            $grid(cols(repeat(auto-fit,minmax(200px,1fr))),gap(1.5rem))
-            |$block(padding(2rem))
+            $Grid(cols(repeat(auto-fit,minmax(200px,1fr))),gap(1.5rem))
+            |$Block(padding(2rem))
             |$bg(#surface)
             |$Border(2px,solid,#border,radius(12px))
-            |$flex(contentCenter,itemsCenter,column,gap(1rem))
+            |$Flex(contentCenter,itemsCenter,column,gap(1rem))
             |$cursor(pointer)
             |$blockItem(size(_,180px))
-            |$block(textCenter)
+            |$Block(textCenter)
             
             |div:first-child$fontSize(3rem)
-            |div:last-child$font(main,1rem,600)$color(#dark)
+            |div:last-child$Font(main,1rem,600)$color(#dark)
             ">
                 <div class="$transition(easeIn,0.3s) :hover$scale(1.15)">
                     <div>🎈</div>
@@ -321,15 +321,15 @@ $palette(muted,#64748b,#ffffff)
         <!-- Flip Card -->
         <section>
             <h2>🔄 3D Flip Card</h2>
-            <div class="$grid(cols(repeat(auto-fit,minmax(250px,1fr))),gap(2rem))">
+            <div class="$Grid(cols(repeat(auto-fit,minmax(250px,1fr))),gap(2rem))">
                 <div class="flip-card $blockItem(size(_,250px))">
                     <div class="flip-inner">
                         <div
-                            class="flip-front $bg(linear(135deg,#667eea,0%,#764ba2,100%))$color(#white)$Border(radius(12px))$font(main,2rem,600)">
+                            class="flip-front $bg(linear(135deg,#667eea,0%,#764ba2,100%))$color(#white)$Border(radius(12px))$Font(main,2rem,600)">
                             🎴 Hover Me
                         </div>
                         <div
-                            class="flip-back $bg(linear(135deg,#f093fb,0%,#f5576c,100%))$color(#white)$Border(radius(12px))$font(main,1.5rem,600)">
+                            class="flip-back $bg(linear(135deg,#f093fb,0%,#f5576c,100%))$color(#white)$Border(radius(12px))$Font(main,1.5rem,600)">
                             ✨ Surprise!
                         </div>
                     </div>
@@ -338,11 +338,11 @@ $palette(muted,#64748b,#ffffff)
                 <div class="flip-card $blockItem(size(_,250px))">
                     <div class="flip-inner">
                         <div
-                            class="flip-front $bg(linear(135deg,#4facfe,0%,#00f2fe,100%))$color(#white)$Border(radius(12px))$font(main,2rem,600)">
+                            class="flip-front $bg(linear(135deg,#4facfe,0%,#00f2fe,100%))$color(#white)$Border(radius(12px))$Font(main,2rem,600)">
                             💎 Front
                         </div>
                         <div
-                            class="flip-back $bg(linear(135deg,#43e97b,0%,#38f9d7,100%))$color(#white)$Border(radius(12px))$font(main,1.5rem,600)">
+                            class="flip-back $bg(linear(135deg,#43e97b,0%,#38f9d7,100%))$color(#white)$Border(radius(12px))$Font(main,1.5rem,600)">
                             🎨 Back
                         </div>
                     </div>
@@ -351,11 +351,11 @@ $palette(muted,#64748b,#ffffff)
                 <div class="flip-card $blockItem(size(_,250px))">
                     <div class="flip-inner">
                         <div
-                            class="flip-front $bg(linear(135deg,#fa709a,0%,#fee140,100%))$color(#white)$Border(radius(12px))$font(main,2rem,600)">
+                            class="flip-front $bg(linear(135deg,#fa709a,0%,#fee140,100%))$color(#white)$Border(radius(12px))$Font(main,2rem,600)">
                             🌟 Card
                         </div>
                         <div
-                            class="flip-back $bg(linear(135deg,#30cfd0,0%,#330867,100%))$color(#white)$Border(radius(12px))$font(main,1.5rem,600)">
+                            class="flip-back $bg(linear(135deg,#30cfd0,0%,#330867,100%))$color(#white)$Border(radius(12px))$Font(main,1.5rem,600)">
                             🎭 Flipped!
                         </div>
                     </div>
@@ -367,11 +367,11 @@ $palette(muted,#64748b,#ffffff)
         <section>
             <h2>🎯 Combined Animations</h2>
             <div class="
-            $grid(cols(repeat(2,1fr)),gap(2rem))
-            @sm$grid(cols(1fr))
+            $Grid(cols(repeat(2,1fr)),gap(2rem))
+            @sm$Grid(cols(1fr))
             ">
                 <div class="
-                $block(padding(2rem))
+                $Block(padding(2rem))
                 $bg(linearRight(#667eea,#764ba2))
                 $color(#white)
                 $Border(radius(16px))
@@ -379,8 +379,8 @@ $palette(muted,#64748b,#ffffff)
                 $boxShadow(0,4px,6px,#rgba(0,0,0,0.1))
                 $transition(easeIn,0.3s)
                 
-                |h3$font(main,1.5rem,700)$blockItem(margin(0,0,1rem,0))
-                |p$font(main,1rem)$blockItem(margin(0))$opacity(0.9)
+                |h3$Font(main,1.5rem,700)$blockItem(margin(0,0,1rem,0))
+                |p$Font(main,1rem)$blockItem(margin(0))$opacity(0.9)
                 
                 :hover$translateY(-10px)$scale(1.15)$boxShadow(0,10px,25px,#rgba(0,0,0,0.2))
                 ">
@@ -389,7 +389,7 @@ $palette(muted,#64748b,#ffffff)
                 </div>
 
                 <div class="
-                $block(padding(2rem))
+                $Block(padding(2rem))
                 $bg(linearRight(#f093fb,#f5576c))
                 $color(#white)
                 $Border(radius(16px))
@@ -397,8 +397,8 @@ $palette(muted,#64748b,#ffffff)
                 $boxShadow(0,4px,6px,#rgba(0,0,0,0.1))
                 $transition(easeIn,0.3s)
                 
-                |h3$font(main,1.5rem,700)$blockItem(margin(0,0,1rem,0))
-                |p$font(main,1rem)$blockItem(margin(0))$opacity(0.9)
+                |h3$Font(main,1.5rem,700)$blockItem(margin(0,0,1rem,0))
+                |p$Font(main,1rem)$blockItem(margin(0))$opacity(0.9)
                 
                 :hover$translateY(-10px)$rotate(5deg)$scale(1.05)$boxShadow(0,10px,25px,#rgba(0,0,0,0.2))
                 ">
@@ -412,67 +412,67 @@ $palette(muted,#64748b,#ffffff)
         <section>
             <h2>⚡ Nested Hover Effects</h2>
             <div class="
-            $flex(row,gap(2rem))
-            $block(padding(3rem))
+            $Flex(row,gap(2rem))
+            $Block(padding(3rem))
             $bg(linear(135deg,#667eea,#764ba2))
             $Border(radius(16px))
-            @sm$flex(column)
+            @sm$Flex(column)
             ">
                 <div class="
                 parent-hover
-                $flex(column,gap(1rem))
+                $Flex(column,gap(1rem))
                 $flexItem(grow(1))
                 ">
                     <div class="
                     child-item
-                    $block(padding(1.5rem))
+                    $Block(padding(1.5rem))
                     $bg(#rgba(255,255,255,0.2))
                     $color(#white)
                     $Border(radius(8px))
-                    $font(main,1rem,600)
+                    $Font(main,1rem,600)
                     ">
                         ✨ Staggered Item 1
                     </div>
                     <div class="
                     child-item
-                    $block(padding(1.5rem))
+                    $Block(padding(1.5rem))
                     $bg(#rgba(255,255,255,0.2))
                     $color(#white)
                     $Border(radius(8px))
-                    $font(main,1rem,600)
+                    $Font(main,1rem,600)
                     ">
                         🎨 Staggered Item 2
                     </div>
                     <div class="
                     child-item
-                    $block(padding(1.5rem))
+                    $Block(padding(1.5rem))
                     $bg(#rgba(255,255,255,0.2))
                     $color(#white)
                     $Border(radius(8px))
-                    $font(main,1rem,600)
+                    $Font(main,1rem,600)
                     ">
                         🎯 Staggered Item 3
                     </div>
                     <div class="
                     child-item
-                    $block(padding(1.5rem))
+                    $Block(padding(1.5rem))
                     $bg(#rgba(255,255,255,0.2))
                     $color(#white)
                     $Border(radius(8px))
-                    $font(main,1rem,600)
+                    $Font(main,1rem,600)
                     ">
                         🚀 Staggered Item 4
                     </div>
                 </div>
                 <div class="
-                $flex(contentCenter,itemsCenter)
+                $Flex(contentCenter,itemsCenter)
                 $flexItem(grow(1))
                 $color(#white)
-                $block(textCenter)
+                $Block(textCenter)
                 ">
                     <div>
-                        <h3 class="$font(main,2rem,700)$blockItem(margin(0,0,1rem,0))">Hover the cards!</h3>
-                        <p class="$font(main,1.1rem)$blockItem(margin(0))$opacity(0.9)">Watch them animate in sequence
+                        <h3 class="$Font(main,2rem,700)$blockItem(margin(0,0,1rem,0))">Hover the cards!</h3>
+                        <p class="$Font(main,1.1rem)$blockItem(margin(0))$opacity(0.9)">Watch them animate in sequence
                         </p>
                     </div>
                 </div>

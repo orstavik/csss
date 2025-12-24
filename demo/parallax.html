@@ -81,31 +81,31 @@
 </head>
 
 <body class="
-$blockItem(margin(0),size(100%,auto))$block(padding(0),overflowVisibleHidden)
+$blockItem(margin(0),size(100%,auto))$Block(padding(0),overflowVisibleHidden)
 
-$typeface(main,Inter,sans-serif,16px,400)
-$typeface(heading,Playfair+Display,serif,48px,700)
-$palette(primary,#667eea,#ffffff)
-$palette(secondary,#764ba2,#ffffff)
-$palette(accent,#f093fb,#ffffff)
-$palette(dark,#1a202c,#ffffff)
-$palette(light,#f7fafc,#2d3748)
+$Typeface(main,Inter,sans-serif,16px,400)
+$Typeface(heading,Playfair+Display,serif,48px,700)
+$Palette(primary,#667eea,#ffffff)
+$Palette(secondary,#764ba2,#ffffff)
+$Palette(accent,#f093fb,#ffffff)
+$Palette(dark,#1a202c,#ffffff)
+$Palette(light,#f7fafc,#2d3748)
 ">
 
     <section class="
     $relative
     $blockItem(size(100%,100vh))
-    $flex(contentCenter,itemsCenter)
+    $Flex(contentCenter,itemsCenter)
     observe-point
     |:first-child$absolute(0,0)$blockItem(size(100%,100%))$zIndex(0)
-    |:last-child$relative$zIndex(10)$block(textCenter)
+    |:last-child$relative$zIndex(10)$Block(textCenter)
     |:last-child|h1$blockItem(margin(0,0,1rem,0))
     |:last-child|p
     
     $bg(#dark)
     |:last-child$color(#white)
-    |:last-child|h1$font(heading,5rem,700)$textShadow(0,4px,30px,#rgba(0,0,0,0.8))
-    |:last-child|p$font(main,1.5rem,300)$opacity(0.9)$textShadow(0,2px,20px,#rgba(0,0,0,0.6))
+    |:last-child|h1$Font(heading,5rem,700)$textShadow(0,4px,30px,#rgba(0,0,0,0.8))
+    |:last-child|p$Font(main,1.5rem,300)$opacity(0.9)$textShadow(0,2px,20px,#rgba(0,0,0,0.6))
     " data-section="hero">
         <div>
             <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop" class="parallax-image" alt="Mountain landscape" style="animation: zoomOut 2s ease-out;">
@@ -129,7 +129,7 @@ $palette(light,#f7fafc,#2d3748)
     <section class="
     $relative
     $blockItem(size(100%,100vh))
-    $block(overflowHidden)
+    $Block(overflowHidden)
     |div$absolute(0,0)$blockItem(size(100%,100%))$zIndex(0)
     " data-section="section3">
         <div style="background-image: url('https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=1920&h=1080&fit=crop'); background-size: cover; background-position: center; background-attachment: fixed;">
@@ -139,7 +139,7 @@ $palette(light,#f7fafc,#2d3748)
     <section class="
     $relative
     $blockItem(size(100%,100vh))
-    $flex(contentCenter,itemsCenter)
+    $Flex(contentCenter,itemsCenter)
     observe-point
     
     $bg(#light)
@@ -148,14 +148,14 @@ $palette(light,#f7fafc,#2d3748)
         $relative
         $zIndex(10)
         $blockItem(inlineSize(1200px,_,95%))
-        |h2$blockItem(margin(0,0,3rem,0))$block(textCenter)
+        |h2$blockItem(margin(0,0,3rem,0))$Block(textCenter)
         
-        |h2$font(heading,3.5rem,700)$color(#dark)
+        |h2$Font(heading,3.5rem,700)$color(#dark)
         ">
             <h2>Visual Gallery</h2>
             <div class="
-            $grid(cols(repeat(3,1fr)),gap(2rem))
-            |$relative$blockItem(size(100%,300px))$block(overflowHidden)$Border(radius(16px))
+            $Grid(cols(repeat(3,1fr)),gap(2rem))
+            |$relative$blockItem(size(100%,300px))$Block(overflowHidden)$Border(radius(16px))
             ">
                 <div>
                     <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&h=600&fit=crop" class="zoom-trigger" id="grid1" alt="Road" style="width: 100%; height: 100%; object-fit: cover; transform: scale(0.8);">
@@ -174,23 +174,23 @@ $palette(light,#f7fafc,#2d3748)
     parallax-zoom
     observe-point
     |:first-child$absolute(0,0)$blockItem(size(100%,100%))$zIndex(0)
-    |:last-child$relative$zIndex(10)$blockItem(size(100%,100%))$flex(contentCenter,itemsCenter)
+    |:last-child$relative$zIndex(10)$blockItem(size(100%,100%))$Flex(contentCenter,itemsCenter)
     " data-section="final">
         <div>
             <img src="https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1920&h=1080&fit=crop" class="parallax-image" id="parallaxFinal" alt="Stars" style="transform: translate(-50%, -50%) scale(1.3);">
         </div>
         <div>
             <div class="
-            $block(textCenter)
+            $Block(textCenter)
             |h2$blockItem(margin(0,0,1.5rem,0))
             |p$blockItem(margin(0,0,3rem,0))
-            |button$block(padding(1.2rem,3rem))$cursor(pointer)
+            |button$Block(padding(1.2rem,3rem))$cursor(pointer)
             |button:hover$translateY(-3px)
             
             $color(#white)
-            |h2$font(heading,4.5rem,700)$textShadow(0,4px,40px,#rgba(0,0,0,0.9))
-            |p$font(main,1.4rem,300)$opacity(0.95)$textShadow(0,2px,30px,#rgba(0,0,0,0.8))
-            |button$font(main,1.1rem,600)$bg(#primary)$color(#white)$Border(radius(50px))$boxShadow(0,10px,40px,#rgba(102,126,234,0.4))$transition(easeIn,0.3s)
+            |h2$Font(heading,4.5rem,700)$textShadow(0,4px,40px,#rgba(0,0,0,0.9))
+            |p$Font(main,1.4rem,300)$opacity(0.95)$textShadow(0,2px,30px,#rgba(0,0,0,0.8))
+            |button$Font(main,1.1rem,600)$bg(#primary)$color(#white)$Border(radius(50px))$boxShadow(0,10px,40px,#rgba(102,126,234,0.4))$transition(easeIn,0.3s)
             |button:hover$boxShadow(0,15px,50px,#rgba(102,126,234,0.6))
             ">
                 <h2>Infinite Possibilities</h2>

@@ -3,16 +3,26 @@
 ```css
 @layer containerDefault {
   .\$grid\(cols\(repeat\(3\,1fr\)\)\,rows\(100px\,100px\)\,gap\(1rem\)\) {
-    display: grid;
-    place-items: unset;
-    place-content: unset;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: 100px 100px;
     gap: 1rem;
+  }
+}
+```
+
+**csss:** |:nth-child(1)$GridItem(column(1,span(3)))
+**css:**
+```css
+@layer items {
+  .\|\:nth-child\(1\)\$GridItem\(column\(1\,span\(3\)\)\)>:where(:nth-child(1)) {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    text-indent: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    grid-column: 1 / span 3;
   }
 }
 ```

@@ -21,9 +21,12 @@ function makeColors(name, color) {
   };
 }
 
+const Palette = SEQ([Name, ColorPrimitive, ColorPrimitive], (n, [name, main, on]) => ({
+  ...makeColors(`--color-${name}`, main),
+  ...makeColors(`--color-on${name[0].toUpperCase() + name.slice(1)}`, on)
+}));
+
 export default {
-  palette: SEQ([Name, ColorPrimitive, ColorPrimitive], (n, [name, main, on]) => ({
-    ...makeColors(`--color-${name}`, main),
-    ...makeColors(`--color-on${name[0].toUpperCase() + name.slice(1)}`, on)
-  })),
+  Palette,
+
 };

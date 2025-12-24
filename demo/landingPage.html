@@ -9,46 +9,46 @@
 </head>
 
 <body class="
-$blockItem(margin(0),size(100%,auto))$block(padding(0))$relative
+$blockItem(margin(0),size(100%,auto))$Block(padding(0))$relative
 |section:first-child$blockItem(inlineSize(1200px,_,95%),margin(0,auto))
-|section:nth-child(2)$block(textCenter)$blockItem(margin(0,0,4rem,0))
+|section:nth-child(2)$Block(textCenter)$blockItem(margin(0,0,4rem,0))
 |section:nth-child(2)|:first-child$blockItem(margin(0,0,1rem,0))
 |section:nth-child(2)|h2$blockItem(margin(0,0,1rem,0))
-|section:nth-child(3)|div$block(padding(2.5rem))
+|section:nth-child(3)|div$Block(padding(2.5rem))
 |section:nth-child(3)|div|h3$blockItem(margin(0,0,1rem,0))
 |footer:first-child$blockItem(inlineSize(1200px,_,95%),margin(0,auto))
 
-$typeface(main,Inter,sans-serif,16px,400)
-$typeface(heading,Space+Grotesk,sans-serif,48px,700)
+$Typeface(main,Inter,sans-serif,16px,400)
+$Typeface(heading,Space+Grotesk,sans-serif,48px,700)
 $bg(#white)$color(#dark)
-|section:nth-child(2)|:first-child$font(main,0.85rem,600,spacing(0.15em))
-|section:nth-child(2)|h2$font(heading,3.5rem,700)$lineHeight(1.2)$color(#dark)
+|section:nth-child(2)|:first-child$Font(main,0.85rem,600,spacing(0.15em))
+|section:nth-child(2)|h2$Font(heading,3.5rem,700)$lineHeight(1.2)$color(#dark)
 |section:nth-child(3)|div$transition(easeIn,0.3s)
-|section:nth-child(3)|div|h3$font(heading,1.5rem,700)
-|section:nth-child(3)|div|p$font(main,1rem)$lineHeight(1.6)
+|section:nth-child(3)|div|h3$Font(heading,1.5rem,700)
+|section:nth-child(3)|div|p$Font(main,1rem)$lineHeight(1.6)
 |section:nth-child(3)|div$bg(#white)$Border(radius(16px))$boxShadow(0,4px,15px,#rgba(0,0,0,0.05))
 |section:nth-child(3)|div|h3$color(#dark)
 |section:nth-child(3)|div|p$color(#dark)$opacity(0.7)
-$palette(primary,#6366f1,#ffffff)
-$palette(secondary,#8b5cf6,#ffffff)
-$palette(accent,#ec4899,#ffffff)
-$palette(dark,#1e293b,#ffffff)
-$palette(darker,#334155,#ffffff)
-$palette(light,#f1f5f9,#0f172a)
+$Palette(primary,#6366f1,#ffffff)
+$Palette(secondary,#8b5cf6,#ffffff)
+$Palette(accent,#ec4899,#ffffff)
+$Palette(dark,#1e293b,#ffffff)
+$Palette(darker,#334155,#ffffff)
+$Palette(light,#f1f5f9,#0f172a)
 ">
 
 
     <header class="
-    $flex(contentBetween,itemsCenter,padding(2rem,4rem))
+    $Flex(contentBetween,itemsCenter,padding(2rem,4rem))
     
     $bg(#white)$boxShadow(0,2px,10px,#rgba(0,0,0,0.05))
     ">
         <div class="
-        $flex(row,itemsCenter,gap(0.75rem))
-        |div$flexItem(size(40px,40px))$flex(contentCenter,itemsCenter)
+        $Flex(row,itemsCenter,gap(0.75rem))
+        |div$flexItem(size(40px,40px))$Flex(contentCenter,itemsCenter)
         
         |div$bg(linear(135deg,#primary,#secondary))$Border(radius(8px))
-        |span$font(heading,1.5rem,700)$color(#dark)
+        |span$Font(heading,1.5rem,700)$color(#dark)
         ">
             <div>
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -59,14 +59,14 @@ $palette(light,#f1f5f9,#0f172a)
         </div>
 
         <nav class="
-        $flex(row,itemsCenter,gap(2.5rem))
+        $Flex(row,itemsCenter,gap(2.5rem))
         |a$cursor(pointer)
-        |button$block(padding(0.75rem,1.75rem))
+        |button$Block(padding(0.75rem,1.75rem))
         |button:hover$translateY(-2px)
         
-        |a$font(main,1rem,500)$color(#dark)$opacity(0.8)$transition(easeIn,0.2s)$noTextDecoration
+        |a$Font(main,1rem,500)$color(#dark)$opacity(0.8)$transition(easeIn,0.2s)$noTextDecoration
         |a:hover$opacity(1)$color(#primary)
-        |button$font(main,1rem,600)$bg(#primary)$color(#white)$Border(none,radius(8px))$cursor(pointer)$transition(easeIn,0.3s)
+        |button$Font(main,1rem,600)$bg(#primary)$color(#white)$Border(none,radius(8px))$cursor(pointer)$transition(easeIn,0.3s)
         |button:hover$boxShadow(0,8px,20px,#rgba(99,102,241,0.3))
         ">
             <a>Features</a>
@@ -80,7 +80,7 @@ $palette(light,#f1f5f9,#0f172a)
     </header>
 
     <main class="
-    $flex(column,contentCenter,itemsCenter,padding(2rem),textCenter)$relative
+    $Flex(column,contentCenter,itemsCenter,padding(2rem),textCenter)$relative
     
     $bg(linear(135deg,#primary,#secondary))$color(#white)
     ">
@@ -88,9 +88,9 @@ $palette(light,#f1f5f9,#0f172a)
         $relative$zIndex(1)$flexItem(inlineSize(900px,_,90%))
         ">
             <div class="
-            $block(padding(0.5rem,1.5rem))$backdrop(blur(10px))$blockItem(inlineSize(fit-content),margin(0,auto,1.5rem))
+            $Block(padding(0.5rem,1.5rem))$backdrop(blur(10px))$blockItem(inlineSize(fit-content),margin(0,auto,1.5rem))
             
-            $font(main,0.9rem,600,spacing(0.2em))$opacity(0.95)$bg(#rgba(255,255,255,0.15))$Border(radius(50px))
+            $Font(main,0.9rem,600,spacing(0.2em))$opacity(0.95)$bg(#rgba(255,255,255,0.15))$Border(radius(50px))
             ">
                 🚀 Next-Gen Platform
             </div>
@@ -98,7 +98,7 @@ $palette(light,#f1f5f9,#0f172a)
             <h1 class="
             $blockItem(margin(0,0,1.5rem,0))$lineHeight(1.1)
             
-            $font(heading,5rem,800,spacing(-0.02em))$textShadow(0,4px,20px,#rgba(0,0,0,0.2))
+            $Font(heading,5rem,800,spacing(-0.02em))$textShadow(0,4px,20px,#rgba(0,0,0,0.2))
             ">
                 Elevate Your Business<br />to New Heights
             </h1>
@@ -106,17 +106,17 @@ $palette(light,#f1f5f9,#0f172a)
             <p class="
             $lineHeight(1.7)$blockItem(inlineSize(700px,_,90%),margin(0,auto,3rem))
             
-            $font(main,1.4rem,400)$opacity(0.92)
+            $Font(main,1.4rem,400)$opacity(0.92)
             ">
                 The all-in-one platform that helps you build, grow, and scale your business with cutting-edge tools and
                 insights
             </p>
 
             <div class="
-            $flex(row,contentCenter,gap(1.5rem))
-            |button$block(padding(1.2rem,3rem))$cursor(pointer)
+            $Flex(row,contentCenter,gap(1.5rem))
+            |button$Block(padding(1.2rem,3rem))$cursor(pointer)
             
-            |button$Border(radius(12px))$font(main,1.1rem,600)$transition(easeIn,0.3s)
+            |button$Border(radius(12px))$Font(main,1.1rem,600)$transition(easeIn,0.3s)
             ">
                 <button class="
                 $bg(#white)$color(#primary)$boxShadow(0,10px,30px,#rgba(0,0,0,0.2))
@@ -135,7 +135,7 @@ $palette(light,#f1f5f9,#0f172a)
         </div>
     </main>
 
-    <section class="$block(padding(6rem,2rem))$bg(#light#10)">
+    <section class="$Block(padding(6rem,2rem))$bg(#light#10)">
         <div>
             <div>
                 <div class="$color(#primary)">
@@ -147,23 +147,23 @@ $palette(light,#f1f5f9,#0f172a)
                 <p class="
                 $blockItem(inlineSize(600px,_,90%),margin(0,auto))
 
-                $font(main,1.2rem)$color(#dark)$opacity(0.7)
+                $Font(main,1.2rem)$color(#dark)$opacity(0.7)
                 ">
                     Everything you need to succeed, all in one place
                 </p>
             </div>
 
             <div class="
-            $grid(cols(repeat(3,1fr)),gap(2rem))
-            |$block(padding(2.5rem))$transition(easeIn,0.3s)
+            $Grid(cols(repeat(3,1fr)),gap(2rem))
+            |$Block(padding(2.5rem))$transition(easeIn,0.3s)
             ">
 
                 <div class=":hover$translateY(-8px) :hover$boxShadow(0,12px,30px,#primary#15)">
                     <div class="
-                    $blockItem(size(60px,60px),margin(0,0,1.5rem,0))$flex(contentCenter,itemsCenter)
+                    $blockItem(size(60px,60px),margin(0,0,1.5rem,0))$Flex(contentCenter,itemsCenter)
                     
                     $bg(#primary#20)$Border(radius(12px))
-                    |div$font(main,2rem)
+                    |div$Font(main,2rem)
                     ">
                         <div>⚡</div>
                     </div>
@@ -177,10 +177,10 @@ $palette(light,#f1f5f9,#0f172a)
 
                 <div class=":hover$translateY(-8px) :hover$boxShadow(0,12px,30px,#secondary#15)">
                     <div class="
-                    $blockItem(size(60px,60px),margin(0,0,1.5rem,0))$flex(contentCenter,itemsCenter)
+                    $blockItem(size(60px,60px),margin(0,0,1.5rem,0))$Flex(contentCenter,itemsCenter)
                     
                     $bg(#secondary#20)$Border(radius(12px))
-                    |div$font(main,2rem)
+                    |div$Font(main,2rem)
                     ">
                         <div>🔒</div>
                     </div>
@@ -194,10 +194,10 @@ $palette(light,#f1f5f9,#0f172a)
 
                 <div class=":hover$translateY(-8px) :hover$boxShadow(0,12px,30px,#accent#15)">
                     <div class="
-                    $blockItem(size(60px,60px),margin(0,0,1.5rem,0))$flex(contentCenter,itemsCenter)
+                    $blockItem(size(60px,60px),margin(0,0,1.5rem,0))$Flex(contentCenter,itemsCenter)
                     
                     $bg(#accent#20)$Border(radius(12px))
-                    |div$font(main,2rem)
+                    |div$Font(main,2rem)
                     ">
                         <div>📊</div>
                     </div>
@@ -214,17 +214,17 @@ $palette(light,#f1f5f9,#0f172a)
     </section>
 
     <section class="
-    $block(padding(6rem,2rem))$bg(#white)
+    $Block(padding(6rem,2rem))$bg(#white)
     ">
         <div class="
-        $grid(cols(1fr,1fr),gap(4rem),itemsCenter)
+        $Grid(cols(1fr,1fr),gap(4rem),itemsCenter)
         |div|div:first-child$blockItem(margin(0,0,1rem,0))
         |div|h2$blockItem(margin(0,0,1.5rem,0))
         |div|p:first-of-type$blockItem(margin(0,0,2rem,0))
         
-        |div|div:first-child$font(main,0.85rem,600,spacing(0.15em))$color(#secondary)
-        |div|h2$font(heading,3rem,700)$color(#dark)$lineHeight(1.2)
-        |div|p:first-of-type$font(main,1.15rem)$color(#dark)$opacity(0.7)$lineHeight(1.7)
+        |div|div:first-child$Font(main,0.85rem,600,spacing(0.15em))$color(#secondary)
+        |div|h2$Font(heading,3rem,700)$color(#dark)$lineHeight(1.2)
+        |div|p:first-of-type$Font(main,1.15rem)$color(#dark)$opacity(0.7)$lineHeight(1.7)
         ">
             <div>
                 <div>
@@ -238,17 +238,17 @@ $palette(light,#f1f5f9,#0f172a)
                     their goals faster than ever before.
                 </p>
                 <div class="
-                $flex(column,gap(1.5rem))
-                |$flex(row,gap(1rem),itemsStart)
-                ||:first-child$flexItem(shrink(0))$blockItem(size(24px,24px))$flex(contentCenter,itemsCenter)
+                $Flex(column,gap(1.5rem))
+                |$Flex(row,gap(1rem),itemsStart)
+                ||:first-child$flexItem(shrink(0))$blockItem(size(24px,24px))$Flex(contentCenter,itemsCenter)
                 ||:first-child|div
                 ||:last-child|h4$blockItem(margin(0,0,0.5rem,0))
                 ||:last-child|p
                 
                 ||:first-child$Border(radius(50%))
-                ||:first-child|div$font(main,0.8rem)$color(#white)
-                ||:last-child|h4$font(main,1.1rem,600)$color(#dark)
-                ||:last-child|p$font(main,1rem)$color(#dark)$opacity(0.7)$lineHeight(1.6)
+                ||:first-child|div$Font(main,0.8rem)$color(#white)
+                ||:last-child|h4$Font(main,1.1rem,600)$color(#dark)
+                ||:last-child|p$Font(main,1rem)$color(#dark)$opacity(0.7)$lineHeight(1.6)
                 ">
                     <div>
                         <div class="$bg(#primary)">
@@ -291,14 +291,14 @@ $palette(light,#f1f5f9,#0f172a)
     </section>
 
     <section class="
-    $block(padding(5rem,2rem))$bg(linear(135deg,#dark,#darker))$color(#light)
+    $Block(padding(5rem,2rem))$bg(linear(135deg,#dark,#darker))$color(#light)
     ">
         <div>
             <div class="
-            $grid(cols(repeat(4,1fr)),gap(3rem),textCenter)
-            |$flex(column,gap(0.5rem))
-            ||:first-child$font(heading,4rem,800)
-            ||:nth-child(2)$font(main,1.1rem,500)$opacity(0.8)
+            $Grid(cols(repeat(4,1fr)),gap(3rem),textCenter)
+            |$Flex(column,gap(0.5rem))
+            ||:first-child$Font(heading,4rem,800)
+            ||:nth-child(2)$Font(main,1.1rem,500)$opacity(0.8)
             ">
                 <div>
                     <div>50K+</div>
@@ -322,7 +322,7 @@ $palette(light,#f1f5f9,#0f172a)
     </section>
 
     <section class="
-    $block(padding(6rem,2rem))$bg(#light#10)
+    $Block(padding(6rem,2rem))$bg(#light#10)
     ">
         <div>
 
@@ -336,15 +336,15 @@ $palette(light,#f1f5f9,#0f172a)
             </div>
 
             <div class="
-            $grid(cols(repeat(3,1fr)),gap(2rem))
-            |$block(padding(2rem))
-            ||p$font(main,1.05rem)$color(#dark)$lineHeight(1.7)$blockItem(margin(0,0,1.5rem,0))$opacity(0.8)
-            ||div$flex(row,gap(1rem),itemsCenter)
-            ||div|div:first-child$blockItem(size(50px,50px))$Border(radius(50%))$flex(contentCenter,itemsCenter)
+            $Grid(cols(repeat(3,1fr)),gap(2rem))
+            |$Block(padding(2rem))
+            ||p$Font(main,1.05rem)$color(#dark)$lineHeight(1.7)$blockItem(margin(0,0,1.5rem,0))$opacity(0.8)
+            ||div$Flex(row,gap(1rem),itemsCenter)
+            ||div|div:first-child$blockItem(size(50px,50px))$Border(radius(50%))$Flex(contentCenter,itemsCenter)
             
-            ||div|div:first-child|div$font(main,1.3rem,600)$color(#white)
-            ||div|div:last-child|div:first-child$font(main,1rem,600)$color(#dark)
-            ||div|div:last-child|div:last-child$font(main,0.9rem)$color(#dark)$opacity(0.6)
+            ||div|div:first-child|div$Font(main,1.3rem,600)$color(#white)
+            ||div|div:last-child|div:first-child$Font(main,1rem,600)$color(#dark)
+            ||div|div:last-child|div:last-child$Font(main,0.9rem)$color(#dark)$opacity(0.6)
             ">
 
                 <div>
@@ -400,7 +400,7 @@ $palette(light,#f1f5f9,#0f172a)
     </section>
 
     <section class="
-    $block(padding(7rem,2rem),textCenter)$relative
+    $Block(padding(7rem,2rem),textCenter)$relative
     |:nth-child(1)$absolute(0,0)$blockItem(size(400px,400px))$bg(circle(at(50%,50%),#rgba(255,255,255,0.1),#transparent))$opacity(0.5)
     
     $opacity(0.4)$bg(linear(135deg,#accent,#secondary,#primary))$color(#white)
@@ -413,8 +413,8 @@ $palette(light,#f1f5f9,#0f172a)
 
         <div class="
         $relative$zIndex(1)$blockItem(inlineSize(800px,_,90%),margin(0,auto))
-        |h2$font(heading,4rem,800)$blockItem(margin(0,0,1.5rem,0))$lineHeight(1.1)$textShadow(0,4px,20px,#rgba(0,0,0,0.2))
-        |p$font(main,1.4rem)$blockItem(margin(0,0,3rem,0))$opacity(0.95)$lineHeight(1.7)
+        |h2$Font(heading,4rem,800)$blockItem(margin(0,0,1.5rem,0))$lineHeight(1.1)$textShadow(0,4px,20px,#rgba(0,0,0,0.2))
+        |p$Font(main,1.4rem)$blockItem(margin(0,0,3rem,0))$opacity(0.95)$lineHeight(1.7)
         ">
             <h2>
                 Ready to Get Started?
@@ -423,8 +423,8 @@ $palette(light,#f1f5f9,#0f172a)
                 Join thousands of teams already using our platform to achieve their goals. Start your free trial today.
             </p>
             <div class="
-            $flex(row,contentCenter,gap(1.5rem))
-            |button$block(padding(1.3rem,3.5rem))$Border(radius(12px))$font(main,1.2rem,600)$cursor(pointer)$transition(easeIn,0.3s)
+            $Flex(row,contentCenter,gap(1.5rem))
+            |button$Block(padding(1.3rem,3.5rem))$Border(radius(12px))$Font(main,1.2rem,600)$cursor(pointer)$transition(easeIn,0.3s)
             ">
                 <button class="
                 $bg(#white)$color(#secondary)$Border(none,radius(12px))$boxShadow(0,12px,35px,#rgba(0,0,0,0.25))
@@ -443,22 +443,22 @@ $palette(light,#f1f5f9,#0f172a)
     </section>
 
     <footer class="
-    $block(padding(3rem,2rem))$bg(#dark)$color(#white)
+    $Block(padding(3rem,2rem))$bg(#dark)$color(#white)
     ">
         <div>
             <div class="
-            $grid(cols(repeat(4,1fr)),gap(3rem))
+            $Grid(cols(repeat(4,1fr)),gap(3rem))
             ||div:first-child$blockItem(margin(0,0,1rem,0))
             ||p$lineHeight(1.6)
             ||h4$blockItem(margin(0,0,1rem,0))
-            ||div:last-child$flex(column,gap(0.7rem))
+            ||div:last-child$Flex(column,gap(0.7rem))
             ||div:last-child|a$cursor(pointer)
             
-            ||div:first-child$font(heading,1.5rem,700)
-            ||p$font(main,0.95rem)$opacity(0.7)
-            ||h4$font(main,1rem,600)
+            ||div:first-child$Font(heading,1.5rem,700)
+            ||p$Font(main,0.95rem)$opacity(0.7)
+            ||h4$Font(main,1rem,600)
             ||div:last-child
-            ||a$font(main,0.95rem)$opacity(0.2)$transition(easeIn,0.2s)
+            ||a$Font(main,0.95rem)$opacity(0.2)$transition(easeIn,0.2s)
             ||a:hover$opacity(1)
             ">
 
@@ -499,8 +499,8 @@ $palette(light,#f1f5f9,#0f172a)
             </div>
 
             <div class="
-            $block(padding(2rem,0,0,0),textCenter)$blockItem(margin(2rem,0,0,0))$Border(1px,solid,#rgba(255,255,255,0.1))
-            |p$font(main,0.9rem)$opacity(0.6)
+            $Block(padding(2rem,0,0,0),textCenter)$blockItem(margin(2rem,0,0,0))$Border(1px,solid,#rgba(255,255,255,0.1))
+            |p$Font(main,0.9rem)$opacity(0.6)
             ">
                 <p>
                     © 2025 Elevate. All rights reserved. Built with CSSS Framework.
