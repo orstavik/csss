@@ -195,7 +195,7 @@ function fontImpl({ name, args }) {
 //$type(name) => uses a type and sets the font properties to the type's properties.
 
 // Font defaults for umbrella
-export const fontDefaults = Object.fromEntries(
+const fontDefaults = Object.fromEntries(
   Object.entries({
     fontFamily: "FontFamily",
     fontSize: "FontSize",
@@ -218,29 +218,23 @@ export const fontDefaults = Object.fromEntries(
 );
 
 const fontWithName = FIRST(
-  NameUnset,    // INTERPRETER: allows normal name or "unset"
-  fontImpl,     // INNERcb: applies to the rest of the arguments
+  NameUnset,    
+  fontImpl,     
   (nameNode, nameText, fontProps) => {
-    // Case 1: $Font(_, fontFamily, ...styles) - underscore means no typeface name
     if (nameText === "unset") {
       if (!fontProps?.fontFamily) {
         throw new SyntaxError(`$Font(_, ...) requires at least one font family after underscore`);
       }
       return fontProps;
     }
-    
-    // Case 2: $Font(typefaceName, ...styles) - typeface name only, no font families allowed
     if (fontProps?.fontFamily) {
       throw new SyntaxError(`$Font(${nameText}, ...) cannot contain font families. Found font-family in arguments. Use $Font(_, fontFamily, ...) instead.`);
     }
-    
-    // Create CSS variable cluster for typeface
     const res = {};
     for (let [k, varKey] of FONT_DEFAULTS) {
       res[k] = fontProps?.[k] ?? `var(--${nameText + varKey}, unset)`;
     }
     res.fontFamily = `var(--${nameText}FontFamily, ${nameText})`;
-    
     return res;
   }
 );

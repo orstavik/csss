@@ -5,8 +5,7 @@ import {
     LengthPercent, LengthPercentNumber, Number, ColorUrl, Length, Url, UrlUnset,
   } from "./func.js";
   
-  // Defaults for SVG property clusters
-  export const strokeDefaults = {
+   const strokeDefaults = {
     stroke: "unset",
     strokeWidth: "unset",
     strokeOpacity: "unset",
@@ -17,13 +16,13 @@ import {
     strokeMiterlimit: "unset",
   };
   
-  export const fillDefaults = {
+  const fillDefaults = {
     fill: "unset",
     fillOpacity: "unset",
     fillRule: "unset",
   };
   
-  export const svgTextDefaults = {
+  const svgTextDefaults = {
     textAnchor: "unset",
     dominantBaseline: "unset",
     alignmentBaseline: "unset",

@@ -95,7 +95,6 @@ function interpretShort(exp) {
   }
 }
 
-// Droplets that are illegal in container mode (must be used in item mode with |)
 const ILLEGAL_IN_CONTAINER_MODE = new Set([
   "margin",
   "padding",

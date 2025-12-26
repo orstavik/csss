@@ -114,32 +114,13 @@ const OVERFLOWS = (_ => {
   return res;
 })();
 
-function checkUndefined(funcName, argsIn, argsOut) {
-  for (let i = 0; i < argsIn.length; i++)
-    if (argsOut[i] === undefined)
-      throw new ReferenceError(`$${funcName}() cannot process ${argsIn[i].name}.`);
-}
-
 //todo rename this to container() and then do block, grid, flex as the two options.
 //todo the question is if this will be recognized by the llm..
 //they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
 //so it should be with layout.
 //todo rename the text block layout unit to $page
-function defaultContainer(obj, argsIn, argsOut) {
-  const containerDefaults = {
-    wordSpacing: "unset",
-    lineHeight: "unset",
-    textAlign: "unset",
-    textIndent: "unset",
-  };
-  checkUndefined(obj.display, argsIn, argsOut);
-  return Object.assign(obj, containerDefaults, ...argsOut);
-}
 
-function defaultItem(name, argsIn, argsOut) {
-  checkUndefined(name, argsIn, argsOut);
-  return Object.assign({}, ...argsOut);
-}
+
 
 const LAYOUT = {
   padding: ({ args }) => toLogicalFour("padding", args),
@@ -261,7 +242,6 @@ const _IBlockItem = {
   alignSub: { verticalAlign: "sub" },
 };
 
-// Convert to TYPB pattern
 const iBlock = TYPB({
   ...IBLOCK,
 }, {}, {}, res => Object.assign({}, ...Object.values(res)));
@@ -337,7 +317,6 @@ const _GridItem = {
   row,
 };
 
-// Convert to TYPB pattern
 const gridItem = TYPB({
   ..._GridItem,
 }, {}, {}, res => Object.assign({}, ...Object.values(res)));
@@ -359,7 +338,6 @@ const FLEX = {
   gap,
 };
 
-// Convert to TYPB pattern
 const flex = TYPB({
   ...FLEX,
 }, {}, {}, res => Object.assign({}, ...Object.values(res)));
@@ -376,14 +354,12 @@ const _FlexItem = {
   //todo safe
 };
 
-// Convert to TYPB pattern
 const flexItem = TYPB({
   ..._FlexItem,
 }, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
 const FlexItem = Umbrella(DEFAULTS.BlockItem, flexItem);
 
-//NEW SYSTEM - Block/BlockItem/LineClamp using TYPB pattern
 const block = TYPB({
   ...LAYOUT,
   ...OVERFLOWS,
