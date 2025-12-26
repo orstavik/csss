@@ -9,31 +9,31 @@
 </head>
 
 <body class="
-$blockItem(margin(0),size(100%,auto))$block(padding(0))
+$blockItem(margin(0),size(100%,auto))$Block(padding(0))
 
-$typeface(main,Inter,sans-serif,16px,400)
-$typeface(heading,Space+Grotesk,sans-serif,48px,700)
+$Typeface(main,Inter,sans-serif,16px,400)
+$Typeface(heading,Space+Grotesk,sans-serif,48px,700)
 $bg(#white)$color(#dark)
-$palette(primary,#6366f1,#ffffff)
-$palette(secondary,#8b5cf6,#ffffff)
-$palette(accent,#ec4899,#ffffff)
-$palette(dark,#1e293b,#ffffff)
-$palette(light,#f1f5f9,#0f172a)
+$Palette(primary,#6366f1,#ffffff)
+$Palette(secondary,#8b5cf6,#ffffff)
+$Palette(accent,#ec4899,#ffffff)
+$Palette(dark,#1e293b,#ffffff)
+$Palette(light,#f1f5f9,#0f172a)
 ">
 
     <header class="
-    $flex(contentBetween,itemsCenter,padding(2rem,4rem))
-    |div:first-child$flex(row,itemsCenter,gap(0.75rem))
-    |div:first-child|div:first-child$flexItem(size(40px,40px))$flex(contentCenter,itemsCenter)
+    $Flex(contentBetween,itemsCenter,padding(2rem,4rem))
+    |div:first-child$Flex(row,itemsCenter,gap(0.75rem))
+    |div:first-child|div:first-child$flexItem(size(40px,40px))$Flex(contentCenter,itemsCenter)
     |div:first-child|span
-    |nav$flex(row,itemsCenter,gap(2.5rem))
+    |nav$Flex(row,itemsCenter,gap(2.5rem))
     |nav|a$cursor(pointer)
     |nav|a:hover
     
     $bg(#white)$boxShadow(0,2px,10px,#rgba(0,0,0,0.05))
-    |div:first-child|div:first-child$bg(linear(135deg,#primary,#secondary))$border(radius(8px))
-    |div:first-child|span$font(heading,1.5rem,700)$color(#dark)
-    |nav|a$font(main,1rem,500)$color(#dark)$opacity(0.8)$transition(easeIn,0.2s)$noTextDecoration
+    |div:first-child|div:first-child$bg(linear(135deg,#primary,#secondary))$Border(radius(8px))
+    |div:first-child|span$Font(heading,1.5rem,700)$color(#dark)
+    |nav|a$Font(main,1rem,500)$color(#dark)$opacity(0.8)$transition(easeIn,0.2s)$noTextDecoration
     |nav|a:hover$opacity(1)$color(#primary)
          ">
 
@@ -54,16 +54,16 @@ $palette(light,#f1f5f9,#0f172a)
     </header>
 
     <main class="
-    $flex(column,contentCenter,itemsCenter,padding(6rem,2rem),textCenter)$relative
+    $Flex(column,contentCenter,itemsCenter,padding(6rem,2rem),textCenter)$relative
     |div$relative$zIndex(1)$blockItem(inlineSize(900px,_,90%))
-    |div|div:first-child$uppercase$block(padding(0.5rem,1.5rem))$backdrop(blur(10px))$blockItem(inlineSize(fit-content),margin(0,auto,1.5rem))
+    |div|div:first-child$uppercase$Block(padding(0.5rem,1.5rem))$backdrop(blur(10px))$blockItem(inlineSize(fit-content),margin(0,auto,1.5rem))
     |div|h1$blockItem(margin(0,0,1.5rem,0))$lineHeight(1.1)
     |div|p$blockItem(inlineSize(700px,_,90%),margin(0,auto,3rem))
     
     $bg(linear(135deg,#primary,#secondary))$color(#white)
-    |div|div:first-child$font(main,0.9rem,600,spacing(0.2em))$opacity(0.95)$bg(#rgba(255,255,255,0.15))$border(radius(50px))
-    |div|h1$font(heading,5rem,800,spacing(-0.02em))$textShadow(0,4px,20px,#rgba(0,0,0,0.2))
-    |div|p$font(main,1.4rem,400)$opacity(0.92)$lineHeight(1.7)
+    |div|div:first-child$Font(main,0.9rem,600,spacing(0.2em))$opacity(0.95)$bg(#rgba(255,255,255,0.15))$Border(radius(50px))
+    |div|h1$Font(heading,5rem,800,spacing(-0.02em))$textShadow(0,4px,20px,#rgba(0,0,0,0.2))
+    |div|p$Font(main,1.4rem,400)$opacity(0.92)$lineHeight(1.7)
     ">
 
         <div>
@@ -77,10 +77,10 @@ $palette(light,#f1f5f9,#0f172a)
                 insights</p>
 
             <div class="
-            $flex(row,contentCenter,gap(1.5rem))
-            |button$block(padding(1.2rem,3rem))$cursor(pointer)
+            $Flex(row,contentCenter,gap(1.5rem))
+            |button$Block(padding(1.2rem,3rem))$cursor(pointer)
             
-            |button$border(none,radius(12px))$font(main,1.1rem,600)$transition(easeIn,0.3s)
+            |button$Border(none,radius(12px))$Font(main,1.1rem,600)$transition(easeIn,0.3s)
             ">
                 <button class="
                 $bg(#white)$color(#primary)$boxShadow(0,10px,30px,#rgba(0,0,0,0.2))
@@ -89,7 +89,7 @@ $palette(light,#f1f5f9,#0f172a)
                     Start Free Trial
                 </button>
                 <button class="
-                $bg(#rgba(255,255,255,0.1))$color(#white)$border(2px,solid,#rgba(255,255,255,0.4),radius(12px))$backdrop(blur(10px))
+                $bg(#rgba(255,255,255,0.1))$color(#white)$Border(2px,solid,#rgba(255,255,255,0.4),radius(12px))$backdrop(blur(10px))
                 :hover$bg(#rgba(255,255,255,0.2))$translateY(-3px)
                 ">
                     Watch Demo
@@ -98,18 +98,18 @@ $palette(light,#f1f5f9,#0f172a)
         </div>
     </main>
 
-    <section class="$block(padding(6rem,2rem)) $bg(#light#10)">
+    <section class="$Block(padding(6rem,2rem)) $bg(#light#10)">
 
         <div class="$blockItem(inlineSize(1200px,_,95%),margin(0,auto))">
             <div class="
-            $block(textCenter)$blockItem(margin(0,0,4rem,0))
+            $Block(textCenter)$blockItem(margin(0,0,4rem,0))
             |div:first-child$uppercase
             |h2$blockItem(margin(0,0,1rem,0))
             |p$blockItem(inlineSize(600px,_,90%),margin(0,auto))
             
-            |div:first-child$font(main,0.85rem,600,spacing(0.15em))$color(#primary)
-            |h2$font(heading,3.5rem,700)$color(#dark)
-            |p$font(main,1.2rem)$color(#dark)$opacity(0.7)
+            |div:first-child$Font(main,0.85rem,600,spacing(0.15em))$color(#primary)
+            |h2$Font(heading,3.5rem,700)$color(#dark)
+            |p$Font(main,1.2rem)$color(#dark)$opacity(0.7)
             ">
                 <div>Why Choose Us</div>
                 <h2>Powerful Features</h2>
@@ -119,19 +119,19 @@ $palette(light,#f1f5f9,#0f172a)
             </div>
 
             <div class="
-            $grid(cols(repeat(3,1fr)),gap(2rem))
-            |$block(padding(2.5rem))
+            $Grid(cols(repeat(3,1fr)),gap(2rem))
+            |$Block(padding(2.5rem))
             |:hover$translateY(-8px)
-            ||div:first-child$blockItem(size(60px,60px),margin(0,0,1.5rem,0))$flex(contentCenter,itemsCenter)
+            ||div:first-child$blockItem(size(60px,60px),margin(0,0,1.5rem,0))$Flex(contentCenter,itemsCenter)
             ||div:first-child|div
             ||h3$blockItem(margin(0,0,1rem,0))
             ||p
             
-            |$bg(#white)$border(radius(16px))$boxShadow(0,4px,15px,#rgba(0,0,0,0.05))$transition(easeIn,0.3s)
-            ||div:first-child$border(radius(12px))
-            ||div:first-child|div$font(main,2rem)
-            ||h3$font(heading,1.5rem,700)$color(#dark)
-            ||p$font(main,1rem)$color(#dark)$opacity(0.7)$lineHeight(1.6)
+            |$bg(#white)$Border(radius(16px))$boxShadow(0,4px,15px,#rgba(0,0,0,0.05))$transition(easeIn,0.3s)
+            ||div:first-child$Border(radius(12px))
+            ||div:first-child|div$Font(main,2rem)
+            ||h3$Font(heading,1.5rem,700)$color(#dark)
+            ||p$Font(main,1rem)$color(#dark)$opacity(0.7)$lineHeight(1.6)
             ">
 
                 <div class=":hover$boxShadow(0,12px,30px,#primary#15)">
@@ -162,7 +162,7 @@ $palette(light,#f1f5f9,#0f172a)
     </section>
 
     <section class="
-    $block(padding(6rem,2rem))$bg(#white)
+    $Block(padding(6rem,2rem))$bg(#white)
     ">
 
         <div class="
@@ -171,9 +171,9 @@ $palette(light,#f1f5f9,#0f172a)
         |h2$blockItem(margin(0,0,1.5rem,0))
         |p:first-of-type$blockItem(margin(0,0,2rem,0))
         
-        |div:first-child$font(main,0.85rem,600,spacing(0.15em))$color(#secondary)
+        |div:first-child$Font(main,0.85rem,600,spacing(0.15em))$color(#secondary)
         |h2$color(#dark)$lineHeight(1.2)
-        |p:first-of-type$font(main,1.15rem)$color(#dark)$opacity(0.7)$lineHeight(1.7)
+        |p:first-of-type$Font(main,1.15rem)$color(#dark)$opacity(0.7)$lineHeight(1.7)
         ">
             <div>
                 <div>
@@ -187,15 +187,15 @@ $palette(light,#f1f5f9,#0f172a)
                 </p>
 
                 <div class="
-                $flex(column,gap(1.5rem))
-                |$flex(row,gap(1rem),itemsStart)
-                ||:first-child$blockItem(size(24px,24px))$flexItem(shrink(0))$flex(contentCenter,itemsCenter)
+                $Flex(column,gap(1.5rem))
+                |$Flex(row,gap(1rem),itemsStart)
+                ||:first-child$blockItem(size(24px,24px))$flexItem(shrink(0))$Flex(contentCenter,itemsCenter)
                 ||:last-child|h4$blockItem(margin(0,0,0.5rem,0))
                 
-                ||:first-child$border(radius(50%))
-                ||:first-child|div$font(main,0.8rem)$color(#white)
-                ||:last-child|h4$font(main,1.1rem,600)$color(#dark)
-                ||:last-child|p$font(main,1rem)$color(#dark)$opacity(0.7)$lineHeight(1.6)
+                ||:first-child$Border(radius(50%))
+                ||:first-child|div$Font(main,0.8rem)$color(#white)
+                ||:last-child|h4$Font(main,1.1rem,600)$color(#dark)
+                ||:last-child|p$Font(main,1rem)$color(#dark)$opacity(0.7)$lineHeight(1.6)
                 ">
                     <div>
                         <div class="$bg(#primary)">
@@ -232,16 +232,16 @@ $palette(light,#f1f5f9,#0f172a)
     </section>
 
     <section class="
-    $block(padding(5rem,2rem))$bg(linear(135deg,#dark,#rgba(15,23,43,1)))$color(#white)
+    $Block(padding(5rem,2rem))$bg(linear(135deg,#dark,#rgba(15,23,43,1)))$color(#white)
     ">
 
         <div class="$blockItem(inlineSize(1200px,_,95%),margin(0,auto))">
             <div class="
-            $grid(cols(repeat(4,1fr)),gap(3rem),textCenter)
-            |$flex(column,gap(0.5rem))
+            $Grid(cols(repeat(4,1fr)),gap(3rem),textCenter)
+            |$Flex(column,gap(0.5rem))
             
-            ||div:first-child$font(heading,4rem,800)$color(#white)
-            ||div:nth-child(2)$font(main,1.1rem,500)$opacity(0.8)
+            ||div:first-child$Font(heading,4rem,800)$color(#white)
+            ||div:nth-child(2)$Font(main,1.1rem,500)$opacity(0.8)
             ">
                 <div>
                     <div>50K+</div>
@@ -264,39 +264,39 @@ $palette(light,#f1f5f9,#0f172a)
     </section>
 
     <section class="
-    $block(padding(6rem,2rem))$bg(#light#10)
+    $Block(padding(6rem,2rem))$bg(#light#10)
     ">
 
         <div class="$blockItem(inlineSize(1200px,_,95%),margin(0,auto))">
             <div class="
-            $block(textCenter)
+            $Block(textCenter)
             $blockItem(margin(0,0,4rem,0))
             |div:first-child$uppercase
             |h2$blockItem(margin(0,0,1rem,0))
             
-            |div:first-child$color(#accent)$font(main,0.85rem,600,spacing(0.15em))
-            |h2$font(heading,3.5rem,700)$color(#dark)
+            |div:first-child$color(#accent)$Font(main,0.85rem,600,spacing(0.15em))
+            |h2$Font(heading,3.5rem,700)$color(#dark)
             ">
                 <div>Testimonials</div>
                 <h2>Loved by Thousands</h2>
             </div>
 
             <div class="
-            $grid(cols(repeat(3,1fr)),gap(2rem))
-            |$block(padding(2rem))
+            $Grid(cols(repeat(3,1fr)),gap(2rem))
+            |$Block(padding(2rem))
             ||p$blockItem(margin(0,0,1.5rem,0))
-            ||div$flex(row,gap(1rem),itemsCenter)
-            ||div|div:first-child$blockItem(size(50px,50px))$flex(contentCenter,itemsCenter)
+            ||div$Flex(row,gap(1rem),itemsCenter)
+            ||div|div:first-child$blockItem(size(50px,50px))$Flex(contentCenter,itemsCenter)
             ||div|div:first-child|div
             ||div|div:last-child|div:first-child
             ||div|div:last-child|div:last-child
             
-            |$bg(#white)$border(radius(16px))$boxShadow(0,4px,15px,#rgba(0,0,0,0.05))
-            ||p$font(main,1.05rem)$color(#dark)$lineHeight(1.7)$opacity(0.8)
-            ||div|div:first-child$border(radius(50%))
-            ||div|div:first-child|div$font(main,1.3rem,600)$color(#white)
-            ||div|div:last-child|div:first-child$font(main,1rem,600)$color(#dark)
-            ||div|div:last-child|div:last-child$font(main,0.9rem)$color(#dark)$opacity(0.6)
+            |$bg(#white)$Border(radius(16px))$boxShadow(0,4px,15px,#rgba(0,0,0,0.05))
+            ||p$Font(main,1.05rem)$color(#dark)$lineHeight(1.7)$opacity(0.8)
+            ||div|div:first-child$Border(radius(50%))
+            ||div|div:first-child|div$Font(main,1.3rem,600)$color(#white)
+            ||div|div:last-child|div:first-child$Font(main,1rem,600)$color(#dark)
+            ||div|div:last-child|div:last-child$Font(main,0.9rem)$color(#dark)$opacity(0.6)
             ">
                 <div>
                     <p>"This platform with grandItems support transformed how we work. Amazing!"</p>
@@ -341,7 +341,7 @@ $palette(light,#f1f5f9,#0f172a)
     </section>
 
     <section class="
-    $block(padding(7rem,2rem),textCenter)$relative$bg(linear(135deg,#accent,#secondary,#primary))$color(#white)
+    $Block(padding(7rem,2rem),textCenter)$relative$bg(linear(135deg,#accent,#secondary,#primary))$color(#white)
     ">
 
         <div class="
@@ -349,19 +349,19 @@ $palette(light,#f1f5f9,#0f172a)
         |h2$blockItem(margin(0,0,1.5rem,0))$lineHeight(1.1)
         |p$blockItem(margin(0,0,3rem,0))$lineHeight(1.7)
         
-        |h2$font(heading,4rem,800)$textShadow(0,4px,20px,#rgba(0,0,0,0.2))
-        |p$font(main,1.4rem)$opacity(0.95)
+        |h2$Font(heading,4rem,800)$textShadow(0,4px,20px,#rgba(0,0,0,0.2))
+        |p$Font(main,1.4rem)$opacity(0.95)
         ">
             <h2>Ready to Get Started?</h2>
             <p>Join thousands of teams already using our platform. Start your free trial today.</p>
             <div class="
-            $flex(row,contentCenter,gap(1.5rem))
-            |button$block(padding(1.3rem,3.5rem))$border(radius(12px))$font(main,1.2rem,600)$cursor(pointer)$transition(easeIn,0.3s)
+            $Flex(row,contentCenter,gap(1.5rem))
+            |button$Block(padding(1.3rem,3.5rem))$Border(radius(12px))$Font(main,1.2rem,600)$cursor(pointer)$transition(easeIn,0.3s)
             ">
                 <button class="
                 $bg(#white)
                 $color(#secondary)
-                $border(none,radius(12px))
+                $Border(none,radius(12px))
                 $boxShadow(0,12px,35px,#rgba(0,0,0,0.25))
                 :hover$translateY(-4px)
                 :hover$boxShadow(0,18px,50px,#rgba(0,0,0,0.35))
@@ -371,7 +371,7 @@ $palette(light,#f1f5f9,#0f172a)
                 <button class="
                 $bg(#rgba(255,255,255,0.15))
                 $color(#white)
-                $border(2px,solid,#rgba(255,255,255,0.5),radius(12px))
+                $Border(2px,solid,#rgba(255,255,255,0.5),radius(12px))
                 $backdrop(blur(10px))
                 :hover$bg(#rgba(255,255,255,0.25))
                 :hover$translateY(-4px)
@@ -383,22 +383,22 @@ $palette(light,#f1f5f9,#0f172a)
     </section>
 
     <footer class="
-    $block(padding(3rem,2rem))$bg(#dark)$color(#white)
+    $Block(padding(3rem,2rem))$bg(#dark)$color(#white)
     ">
 
         <div class="$blockItem(inlineSize(1200px,_,95%),margin(0,auto))">
             <div class="
-            $grid(cols(repeat(4,1fr)),gap(3rem))
+            $Grid(cols(repeat(4,1fr)),gap(3rem))
             ||div:first-child$blockItem(margin(0,0,1rem,0))
             ||p$lineHeight(1.6)
             ||h4$blockItem(margin(0,0,1rem,0))
-            ||div:last-child$flex(column,gap(0.7rem))
+            ||div:last-child$Flex(column,gap(0.7rem))
             ||div:last-child|a$cursor(pointer)
             
-            ||div:first-child$font(heading,1.5rem,700)
-            ||p$font(main,0.95rem)$opacity(0.7)
-            ||h4$font(main,1rem,600)
-            ||div:last-child|a$font(main,0.95rem)$opacity(0.7)$transition(easeIn,0.2s)$noTextDecoration
+            ||div:first-child$Font(heading,1.5rem,700)
+            ||p$Font(main,0.95rem)$opacity(0.7)
+            ||h4$Font(main,1rem,600)
+            ||div:last-child|a$Font(main,0.95rem)$opacity(0.7)$transition(easeIn,0.2s)$noTextDecoration
             ||a:hover$opacity(1)
             ">
                 <div>
@@ -437,8 +437,8 @@ $palette(light,#f1f5f9,#0f172a)
             </div>
 
             <div class="
-            $block(padding(2rem,0,0,0),textCenter)$blockItem(margin(2rem,0,0,0))$border(1px,solid,#rgba(255,255,255,0.1))
-            |p$font(main,0.9rem)$opacity(0.6)
+            $Block(padding(2rem,0,0,0),textCenter)$blockItem(margin(2rem,0,0,0))$Border(1px,solid,#rgba(255,255,255,0.1))
+            |p$Font(main,0.9rem)$opacity(0.6)
             ">
                 <p>
                     © 2025 Elevate 2.0. Built with CSSS Framework + GrandItems Support.

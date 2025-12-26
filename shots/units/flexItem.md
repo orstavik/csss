@@ -3,14 +3,24 @@
 ```css
 @layer containerDefault {
   .\$flex\(gap\(1rem\)\) {
-    display: flex;
-    align-items: unset;
-    place-content: unset;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     gap: 1rem;
+  }
+}
+```
+
+**csss:** |:nth-child(1)$FlexItem(grow(1))
+**css:**
+```css
+@layer items {
+  .\|\:nth-child\(1\)\$FlexItem\(grow\(1\)\)>:where(:nth-child(1)) {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    text-indent: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    flex-grow: 1;
   }
 }
 ```
@@ -100,13 +110,6 @@
 ```css
 @layer containerDefault {
   .\$flex\(gap\(1rem\)\,padding\(1rem\)\) {
-    display: flex;
-    align-items: unset;
-    place-content: unset;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     gap: 1rem;
     padding: 1rem;
   }

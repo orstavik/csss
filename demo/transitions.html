@@ -49,9 +49,9 @@
   function runTest(name, curveStr) {
     const curve = curveStr.slice(9, -1).split(",").map(Number);
     document.body.insertAdjacentHTML("beforeend",
-      `<section class="$relative $blockItem(blockSize(50px)) $border(0,0,1px,dashed,#000) $block(padding(10px))">
+      `<section class="$relative $blockItem(blockSize(50px)) $Border(0,0,1px,dashed,#000) $block(padding(10px))">
         <div class="
-        $blockItem(size(fit-content)) $bg(#lightblue) $border(1px,solid,#blue)
+        $blockItem(size(fit-content)) $bg(#lightblue) $Border(1px,solid,#blue)
         :hover>*$translateX(400px) 
         $${name}(5s,transform)
         ">$${name}</div>

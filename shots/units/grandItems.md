@@ -3,13 +3,6 @@
 ```css
 @layer containerDefault {
   .\$flex\(gap\(1rem\)\,padding\(1rem\)\) {
-    display: flex;
-    align-items: unset;
-    place-content: unset;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     gap: 1rem;
     padding: 1rem;
   }
@@ -61,13 +54,6 @@
 ```css
 @layer containerDefault {
   .\$grid\(cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\) {
-    display: grid;
-    place-items: unset;
-    place-content: unset;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
@@ -84,4 +70,3 @@
   }
 }
 ```
-

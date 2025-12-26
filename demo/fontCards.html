@@ -2,19 +2,19 @@
 <script src="../src/auto.js?style=style&interval=400" type="module"></script>
 
 <body class="
-    $typeface(transitional,'Charter','Bitstream+Charter','Sitka+Text',Cambria,serif,18px,400)
-    $typeface(neoGrotesque,'Inter','Roboto','Helvetica+Neue',Arial,sans-serif,17px,400)
-    $typeface(monoCode,'ui-monospace','Cascadia+Code','Source+Code+Pro',monospace,16px,400)
-    $typeface(oldStyle,'Iowan+Old+Style','Palatino+Linotype','URW+Palladio+L',P052,serif,18px,400)
-    $typeface(industrial,Bahnschrift,'DIN+Alternate','Franklin+Gothic+Medium','Nimbus+Sans+Narrow','sans-serif-condensed',sans-serif,17px,400)
-    $typeface(comic,'MS+Comic+Sans',face('https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@0.0.2/files/comic-neue-latin-400.woff2'))
+    $Typeface(transitional,'Charter','Bitstream+Charter','Sitka+Text',Cambria,serif,18px,400)
+    $Typeface(neoGrotesque,'Inter','Roboto','Helvetica+Neue',Arial,sans-serif,17px,400)
+    $Typeface(monoCode,'ui-monospace','Cascadia+Code','Source+Code+Pro',monospace,16px,400)
+    $Typeface(oldStyle,'Iowan+Old+Style','Palatino+Linotype','URW+Palladio+L',P052,serif,18px,400)
+    $Typeface(industrial,Bahnschrift,'DIN+Alternate','Franklin+Gothic+Medium','Nimbus+Sans+Narrow','sans-serif-condensed',sans-serif,17px,400)
+    $Typeface(comic,'MS+Comic+Sans',face('https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@0.0.2/files/comic-neue-latin-400.woff2'))
     $block(padding(2rem,4rem))
 ">
 
   <header class="$blockItem(margin(0,0,2rem,0))">
-    <h1 class="$font(neoGrotesque,2.5rem,700)">Typography: Cloud & Umbrella & Droplet Demo</h1>
+    <h1 class="$font(2.5rem,700)">Typography: Cloud & Umbrella & Droplet Demo</h1>
     <p class="$font(neoGrotesque,1.1rem)">This page demonstrates the CSSS font system. The `body` tag defines several
-      "umbrella" `$typeface()`s. Child elements then use `$font()` to apply an umbrella and can add
+      "umbrella" `$Typeface()`s. Child elements then use `$font()` to apply an umbrella and can add
       "droplets" such as `$fontStyle()` to override specific properties within the `$font()` scope.
     </p>
   </header>
@@ -23,7 +23,7 @@
     $grid(cols(1fr),gap(2rem)) 
     |$gridItem(margin(2rem))
 
-    |$border(1px,solid,#ddd,radius(8px))
+    |$Border(1px,solid,#ddd,radius(8px))
     |$boxShadow(0,4px,6px,#rgba(0,0,0,0.1))
 
     |$block(padding(2rem))
@@ -38,7 +38,7 @@
       ">
       <h2 class="$fontSize(1.75rem) $fontWeight(700)">Transitional</h2>
       <div
-        class="$bg(#f7f7f7) $border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
+        class="$bg(#f7f7f7) $Border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
         'Charter', 'Bitstream Charter', 'Sitka Text', Cambria, serif;</div>
       <div>
         <p class="">This is the base transitional font. It's a classic, highly readable serif, great
@@ -59,7 +59,7 @@
     <section class="$font(neoGrotesque)">
       <h2 class="$font(neoGrotesque,lg,700) $blockItem(margin(0,0,1rem,0))">Neo-Grotesque</h2>
       <div
-        class="$bg(#f7f7f7) $border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family: 'Inter',
+        class="$bg(#f7f7f7) $Border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family: 'Inter',
         'Roboto', 'Helvetica Neue', Arial, sans-serif;</div>
       <div class="$blockItem(margin(1.5rem,0,0,0))">
         <p class="">This is the base neo-grotesque font. It's a modern, clean, and versatile
@@ -74,11 +74,11 @@
     <section class="$font(monoCode)">
       <h2 class="$font(monoCode,1.75rem,700) $blockItem(margin(0,0,1rem,0))">Monospace Code</h2>
       <div
-        class="$bg(#f7f7f7) $border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
+        class="$bg(#f7f7f7) $Border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
         'ui-monospace', 'Cascadia Code', 'Source Code Pro', monospace;</div>
       <div class="$blockItem(margin(1.5rem,0,0,0))">
         <p class="">This is the base monospace font, ideal for div snippets and technical text, such as:
-        <div>const umbrella = "$typeface(monoCode, ...)";</div>
+        <div>const umbrella = "$Typeface(monoCode, ...)";</div>
         </p>
         <p class="$noKerning">This paragraph has `$noKerning` via a droplet.</p>
       </div>
@@ -87,7 +87,7 @@
     <section class="">
       <h2 class="$font(oldStyle,1.75rem,700) $blockItem(margin(0,0,1rem,0))">Old Style</h2>
       <div
-        class="$bg(#f7f7f7) $border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family: 'Iowan
+        class="$bg(#f7f7f7) $Border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family: 'Iowan
         Old Style', 'Palatino Linotype', 'URW Palladio L', P052, serif;</div>
       <div class="$blockItem(margin(1.5rem,0,0,0))">
         <p class="$font(oldStyle)">This is an "Old Style" font. These typefaces have a classic, distinguished look,
@@ -100,7 +100,7 @@
     <section class="$font(industrial)">
       <h2 class="$font(industrial,1.75rem,700) $blockItem(margin(0,0,1rem,0))">Industrial</h2>
       <div
-        class="$bg(#f7f7f7) $border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
+        class="$bg(#f7f7f7) $Border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
         Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif-condensed, sans-serif;
       </div>
       <div class="$blockItem(margin(1.5rem,0,0,0))">
@@ -114,7 +114,7 @@
     <section class="$font(comic)">
       <h2 class="$font(comic,1.75rem,700) $blockItem(margin(0,0,1rem,0))">Comic Neue</h2>
       <div
-        class="$bg(#f7f7f7) $border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
+        class="$bg(#f7f7f7) $Border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
         'MS Comic Sans', var(--comicFontFamily, unset);</div>
       <div class="$blockItem(margin(1.5rem,0,0,0))">
         <p class="">This is the Comic Neue font, a modern take on the classic Comic Sans. It's more refined

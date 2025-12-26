@@ -708,6 +708,8 @@ ${name}(${[...args.slice(0, i).map(a => a.text), ` => ${args[i].text} <= `, ...a
   };
 };
 
+export const Umbrella = (base, cb) => exp => Object.assign({}, base, cb(exp));
+
 export const SIN = (interpreter, post) => ({ args, name }) => {
   if (args.length != 1)
     throw new SyntaxError(`${name} requires 1 argument, got ${args.length} arguments.`);
@@ -766,6 +768,19 @@ export const CUSTOM_WORD = (NAME, WORDS, POST) => {
   return cb;
 };
 
+export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
+  if (!args.length)
+    throw new SyntaxError(`${name} requires at least 1 argument, got 0 arguments.`)
+  const first = INTERPRETER(args[0]);
+  if (first == null)
+    throw new SyntaxError(`Bad argument ${name}/1.
+    "${args[0].text}" is not a ${INTERPRETER.name}.
+    ${name}(${args.slice(0, 0).map(a => a.text).join(",")}, => ${args[0].text} <=, ${args.slice(1).map(a => a.text).join(",")}).`);
+  
+    const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
+  return POST ? POST(name, first, res) : first;;
+};
+
 export const Angle = a => isAngle(a)?.text;
 export const Color = a => isColor(a)?.text;
 export const Length = a => isLength(a)?.text;
@@ -779,7 +794,9 @@ export const Url = a => isUrl(a)?.text;
 export const AnglePercent = a => Angle(a) ?? Percent(a);
 export const LengthUnset = a => Length(a) ?? Unset(a);
 export const LengthPercent = a => Length(a) ?? Percent(a);
+export const LengthPercentUnset = a => Length(a) ?? Percent(a) ?? Unset(a);
 export const LengthPercentNumber = a => Length(a) ?? Percent(a) ?? Number(a);
+export const NameUnset = a => Name(a) ?? Unset(a);
 export const NumberPercent = a => Number(a) ?? Percent(a);
 export const UrlUnset = a => Url(a) ?? Unset(a);
 export const ColorUrl = a => Color(a) ?? Url(a);

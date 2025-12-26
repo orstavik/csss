@@ -1,34 +1,79 @@
 <script src="../src/auto.js?style=style&interval=400" type="module"></script>
 
 <body
-  class="$typeface(main,system-ui,sans-serif,16px,400) $typeface(heading,system-ui,sans-serif,90px,800) $palette(primary,#ff5470,#ffffff) $palette(secondary,#ffaac2,#333333) $palette(accent,#d0e8f0,#333333) $palette(dark,#8b1538,#ffffff) $palette(light,#ffcce0,#333333) $block(padding(0)) $blockItem(margin(0),size(100%,100vh)) $bg(#white) $color(#333) $grid(cols(1fr),rows(auto,1fr),gap(0)) |header$gridItem(column(1),row(1)) |main$gridItem(column(1),row(2))">
+  class="
+  $Typeface(main,system-ui,sans-serif,16px,400) 
+  $Typeface(heading,Space+Grotesk,system-ui,sans-serif,90px,800) 
+  $Typeface(accent,Georgia,serif,18px,400)
+  $Palette(primary,#ff5470,#ffffff) 
+  $Palette(secondary,#ffaac2,#333333) 
+  $Palette(accent,#d0e8f0,#333333) 
+  $Palette(dark,#8b1538,#ffffff) 
+  $Palette(light,#ffcce0,#333333) 
+  $Grid(cols(1fr),rows(auto,1fr),gap(0),padding(0)) 
+  $blockItem(margin(0),size(100%,100vh)) 
+  $bg(#white) $color(#333) 
+  |header$gridItem(column(1),row(1)) 
+  |main$gridItem(column(1),row(2))
+  
+  /* Showcase: Dynamic font theming via CSS variables */
+  |:hover$Typeface(main,Inter,sans-serif,16px,500)
+  ">
 
-  <header class="$flex(contentBetween,itemsCenter,padding(2rem,4rem))">
-    <div class="$flex(itemsCenter,gap(0.5rem))">
-      <div
-        class="$blockItem(size(40px,40px)) $bg(#primary) $border(radius(6px)) $flex(contentCenter,itemsCenter)">
+  <header class="$Flex(contentBetween,itemsCenter,padding(2rem,4rem)) $bg(#rgba(255,255,255,0.95)) $backdropFilter(blur(10px))">
+    <div class="$Flex(itemsCenter,gap(0.75rem))">
+      <div class="$blockItem(size(40px,40px)) $bg(#primary) $Border(radius(6px)) $Flex(contentCenter,itemsCenter) $transition(easeIn,0.3s) :hover$scale(1.1)">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path d="M5 3L17 10L5 17V3Z" fill="white" />
         </svg>
       </div>
-      <span class="$font(main,1.3rem,600)">Academy</span>
+      <div class="$Flex(column)">
+        <span class="$Font(heading) $font(1.4rem,700) $spacing(-0.02em) $color(#primary)">Academy</span>
+        <span class="$Font(_,monospace,0.7rem,400) $color(#666) $spacing(0.1em) $allSmallCaps">Font System Demo</span>
+      </div>
     </div>
-    <nav class="$flex(itemsCenter,gap(1rem))">
-      <button
-        class="$font(main,1rem,500) $block(padding(0.75rem,1.5rem)) $border(2px,solid,#primaryBland,radius(8px)) $cursor(pointer) $transition(easeIn,0.2s) :hover$border(2px,solid,#primary) :hover$color(#primary)">Explore
-        Course List</button>
-      <button
-        class="$bg(#primary) $color(#white) $font(main,1rem,600) $block(padding(0.75rem,1.5rem)) $border(none,radius(8px)) $cursor(pointer)">Enroll
-        Now</button>
+    
+    <nav class="$Flex(itemsCenter,gap(1rem))">
+      <button class="
+        $Font(main) $font(1rem,500) 
+        $Block(padding(0.75rem,1.5rem)) 
+        $Border(2px,solid,#primaryBland,radius(8px)) 
+        $cursor(pointer) $transition(easeIn,0.2s) 
+        :hover$border(#primary) :hover$color(#primary) :hover$font(600)
+        ">
+        Explore Courses
+      </button>
+      
+      <button class="
+        $Font(_,system-ui,sans-serif,1rem,600)
+        $bg(#primary) $color(#white) 
+        $Block(padding(0.75rem,1.5rem)) 
+        $Border(radius(8px)) $cursor(pointer)
+        $transition(easeIn,0.3s)
+        :hover$bg(#dark) :hover$scale(1.05)
+        ">
+        Enroll Now
+      </button>
+      
+      <button class="
+        $Font(accent) $font(0.9rem,italic) 
+        $color(#secondary) $cursor(pointer)
+        $Block(padding(0.5rem,1rem))
+        $Border(1px,solid,transparent,radius(4px))
+        $transition(easeIn,0.2s)
+        :hover$bg(#light) :hover$font(600)
+        ">
+        Learn More
+      </button>
     </nav>
   </header>
 
-  <main class="$grid(cols(1fr,1fr),gap(4rem),padding(3rem,4rem),itemsCenter)">
-    <div class="$flex(column,gap(3rem))">
-      <h1 class="$font(heading,5rem,800) $blockItem(margin(0)) $color(#secondary) $lineHeight(1.1)">
+  <main class="$Grid(cols(1fr,1fr),gap(4rem),padding(3rem,4rem),itemsCenter)">
+    <div class="$Flex(column,gap(3rem))">
+      <h1 class="$Font(heading) $font(5rem,800) $blockItem(margin(0)) $color(#secondary) $lineHeight(1.1)">
         Design<br />Courses</h1>
       <div
-        class="$flex(row,gap(3rem)) |div$flex(column,gap(0.5rem)) |div:nth-child(1)>div:first-child$font(main,2.5rem,700)$color(#accent) |div:nth-child(1)>div:last-child$font(main,1rem,400)$color(#accent) |div:nth-child(2)>div:first-child$font(main,2.5rem,700)$color(#accent) |div:nth-child(2)>div:last-child$font(main,1rem,400)$color(#accent) |div:nth-child(3)>div:first-child$font(main,2.5rem,700)$color(#secondary) |div:nth-child(3)>div:last-child$font(main,1rem,400)$color(#secondary)">
+        class="$Flex(row,gap(3rem)) |div$Flex(column,gap(0.5rem)) |div:nth-child(1)>div:first-child$Font(main) $font(2.5rem,700)$color(#accent) |div:nth-child(1)>div:last-child$Font(main) $font(1rem,400)$color(#accent) |div:nth-child(2)>div:first-child$Font(main) $font(2.5rem,700)$color(#accent) |div:nth-child(2)>div:last-child$Font(main) $font(1rem,400)$color(#accent) |div:nth-child(3)>div:first-child$Font(main) $font(2.5rem,700)$color(#secondary) |div:nth-child(3)>div:last-child$Font(main) $font(1rem,400)$color(#secondary)">
         <div>
           <div>300+</div>
           <div>Courses</div>
@@ -46,38 +91,38 @@
 
     <!-- Right: Geometric Shapes Grid -->
     <div
-      class="$grid(cols(repeat(3,140px)),rows(repeat(3,140px)),gap(0)) $blockItem(size(420px,420px)) |:nth-child(3)$gridItem(row(1,span(2)),column(3))">
+      class="$Grid(cols(repeat(3,140px)),rows(repeat(3,140px)),gap(0)) $blockItem(size(420px,420px)) |:nth-child(3)$gridItem(row(1,span(2)),column(3))">
       <!-- Top-left: Dark red semi-circle (left rounded) -->
-      <div class="$bg(#dark) $blockItem(size(130px,130px)) $border(radius(90px,90px,0px,90px))"></div>
+      <div class="$bg(#dark) $blockItem(size(130px,130px)) $Border(radius(90px,90px,0px,90px))"></div>
 
       <!-- Top-middle: Red diamond -->
-      <div class="$flex(contentCenter,itemsCenter)">
+      <div class="$Flex(contentCenter,itemsCenter)">
         <div class="$blockItem(size(100px,100px)) $bg(#primary) $rotate(45deg)"></div>
       </div>
 
       <!-- Top-right: Pink semi-circle (right rounded, spans 2 rows) -->
-      <div class="$bg(#secondary) $border(radius(0px,90px,90px,90px))"></div>
+      <div class="$bg(#secondary) $Border(radius(0px,90px,90px,90px))"></div>
 
       <!-- Middle-left: Pink square outline -->
-      <div class="$bg(#white) $border(12px,solid,#secondary)"></div>
+      <div class="$bg(#white) $Border(12px,solid,#secondary)"></div>
 
       <!-- Middle-center: Light blue circle -->
-      <div class="$flex(contentCenter,itemsCenter)">
-        <div class="$blockItem(size(120px,120px)) $bg(#accent) $border(radius(50%))"></div>
+      <div class="$Flex(contentCenter,itemsCenter)">
+        <div class="$blockItem(size(120px,120px)) $bg(#accent) $Border(radius(50%))"></div>
       </div>
 
       <!-- Bottom-left: Pink rounded square (bottom-left corner rounded) -->
-      <div class="$bg(#light) $border(2px,solid,#light,r(90px,90px,90px,90px,90px,90px,0px))"></div>
+      <div class="$bg(#light) $Border(2px,solid,#light,r(90px,90px,90px,90px,90px,90px,0px))"></div>
 
       <!-- Bottom-center: Light blue triangle outline -->
-      <div class="$flex(contentCenter,itemsCenter)">
+      <div class="$Flex(contentCenter,itemsCenter)">
         <svg width="220" height="220" viewBox="0 0 120 120">
           <path d="M60 20 L100 100 L20 100 Z" fill="white" stroke="#d0e8f0" stroke-width="16" />
         </svg>
       </div>
 
       <!-- Bottom-right: Pink rounded square (bottom-right corner rounded) -->
-      <div class="$bg(#light) $blockItem(size(130px,130px)) $border(radius(0px,100px,100px,0px))"></div>
+      <div class="$bg(#light) $blockItem(size(130px,130px)) $Border(radius(0px,100px,100px,0px))"></div>
     </div>
 
   </main>

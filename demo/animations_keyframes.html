@@ -356,26 +356,26 @@
 
 <body class="
 $blockItem(margin(0))
-$block(padding(3rem,2rem))
+$Block(padding(3rem,2rem))
 $bg(#light)
 
-$typeface(main,Inter,sans-serif,16px,400)
-$typeface(heading,Inter,sans-serif,32px,700)
+$Typeface(main,Inter,sans-serif,16px,400)
+$Typeface(heading,Inter,sans-serif,32px,700)
 
-$palette(primary,#6366f1,#ffffff)
-$palette(secondary,#8b5cf6,#ffffff)
-$palette(accent,#ec4899,#ffffff)
-$palette(dark,#1e293b,#ffffff)
-$palette(light,#f8fafc,#1e293b)
-$palette(border,#e0e0e0,#1e293b)
-$palette(surface,#ffffff,#1e293b)
-$palette(muted,#64748b,#ffffff)
+$Palette(primary,#6366f1,#ffffff)
+$Palette(secondary,#8b5cf6,#ffffff)
+$Palette(accent,#ec4899,#ffffff)
+$Palette(dark,#1e293b,#ffffff)
+$Palette(light,#f8fafc,#1e293b)
+$Palette(border,#e0e0e0,#1e293b)
+$Palette(surface,#ffffff,#1e293b)
+$Palette(muted,#64748b,#ffffff)
 
 ||div$blockItem(inlineSize(1200px,_,95%),margin(0,auto))
-||div|h1$font(heading)$blockItem(margin(0,0,1rem,0))$color(#dark)
-||div|p$font(main,1.1rem)$blockItem(margin(0,0,3rem,0))$color(#muted)
+||div|h1$Font(heading)$blockItem(margin(0,0,1rem,0))$color(#dark)
+||div|p$Font(main,1.1rem)$blockItem(margin(0,0,3rem,0))$color(#muted)
 ||div|section$blockItem(margin(0,0,4rem,0))
-||div|section|h2$font(main,1.5rem,600)$blockItem(margin(0,0,1.5rem,0))$color(#dark)
+||div|section|h2$Font(main) $font(1.5rem,600)$blockItem(margin(0,0,1.5rem,0))$color(#dark)
 ">
 
     <div>
@@ -385,21 +385,21 @@ $palette(muted,#64748b,#ffffff)
         <!-- Entry Animations -->
         <section>
             <h2>📥 Entry Animations</h2>
-            <div class="$block(textCenter)$blockItem(margin(0,0,1.5rem,0))">
+            <div class="$Block(textCenter)$blockItem(margin(0,0,1.5rem,0))">
                 <button
-                    class="$cursor(pointer)$block(padding(0.75rem,1.5rem))$bg(#primary)$color(#white)$border(none,radius(8px))$font(main,_,600)$transition(easeIn,0.3s) :hover$bg(#4f46e5)$scale(1.05) :active$scale(0.95)"
+                    class="$cursor(pointer)$Block(padding(0.75rem,1.5rem))$bg(#primary)$color(#white)$Border(none,radius(8px))$Font(main) $font(600)$transition(easeIn,0.3s) :hover$bg(#4f46e5)$scale(1.05) :active$scale(0.95)"
                     onclick="restartSection('entry-grid')">🔄 Restart Entry Animations</button>
             </div>
             <div id="entry-grid" class="
-            $grid(cols(repeat(auto-fit,minmax(200px,1fr))),gap(1.5rem))
-            |$flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))
+            $Grid(cols(repeat(auto-fit,minmax(200px,1fr))),gap(1.5rem))
+            |$Flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))
             |$bg(#surface)
-            |$border(2px,solid,#border,radius(12px))
+            |$Border(2px,solid,#border,radius(12px))
             |$blockItem(size(_,180px))
-            |$block(textCenter)
+            |$Block(textCenter)
             
             |div:first-child$fontSize(3rem)
-            |div:last-child$font(main,1rem,600)$color(#dark)
+            |div:last-child$Font(main) $font(1rem,600)$color(#dark)
             ">
                 <div class="entry-left">
                     <div>⬅️</div>
@@ -439,44 +439,44 @@ $palette(muted,#64748b,#ffffff)
         <!-- Staggered Animations -->
         <section>
             <h2>⚡ Staggered Entry</h2>
-            <div class="$block(textCenter)$blockItem(margin(0,0,1.5rem,0))">
+            <div class="$Block(textCenter)$blockItem(margin(0,0,1.5rem,0))">
                 <button
-                    class="$cursor(pointer)$block(padding(0.75rem,1.5rem))$bg(#primary)$color(#white)$border(none,radius(8px))$font(main,_,600)$transition(easeIn,0.3s) :hover$bg(#4f46e5)$scale(1.05) :active$scale(0.95)"
+                    class="$cursor(pointer)$Block(padding(0.75rem,1.5rem))$bg(#primary)$color(#white)$Border(none,radius(8px))$Font(main) $font(600)$transition(easeIn,0.3s) :hover$bg(#4f46e5)$scale(1.05) :active$scale(0.95)"
                     onclick="restartSection('stagger-grid')">🔄 Restart Stagger</button>
             </div>
             <div id="stagger-grid" class="
-            $grid(cols(repeat(3,1fr)),gap(1.5rem))
-            @sm$grid(cols(1fr))
+            $Grid(cols(repeat(3,1fr)),gap(1.5rem))
+            @sm$Grid(cols(1fr))
             ">
                 <div
-                    class="stagger-item $block(padding(2rem),textCenter)$bg(linear(135deg,#667eea,#764ba2))$color(#white)$border(radius(12px))">
+                    class="stagger-item $Block(padding(2rem),textCenter)$bg(linear(135deg,#667eea,#764ba2))$color(#white)$Border(radius(12px))">
                     <div class="$fontSize(2.5rem)$blockItem(margin(0,0,0.5rem,0))">🎨</div>
-                    <div class="$font(main,1.2rem,600)">Card 1</div>
+                    <div class="$Font(main) $font(1.2rem,600)">Card 1</div>
                 </div>
                 <div
-                    class="stagger-item $block(padding(2rem),textCenter)$bg(linear(135deg,#f093fb,#f5576c))$color(#white)$border(radius(12px))">
+                    class="stagger-item $Block(padding(2rem),textCenter)$bg(linear(135deg,#f093fb,#f5576c))$color(#white)$Border(radius(12px))">
                     <div class="$fontSize(2.5rem)$blockItem(margin(0,0,0.5rem,0))">🚀</div>
-                    <div class="$font(main,1.2rem,600)">Card 2</div>
+                    <div class="$Font(main) $font(1.2rem,600)">Card 2</div>
                 </div>
                 <div
-                    class="stagger-item $block(padding(2rem),textCenter)$bg(linear(135deg,#4facfe,#00f2fe))$color(#white)$border(radius(12px))">
+                    class="stagger-item $Block(padding(2rem),textCenter)$bg(linear(135deg,#4facfe,#00f2fe))$color(#white)$Border(radius(12px))">
                     <div class="$fontSize(2.5rem)$blockItem(margin(0,0,0.5rem,0))">⚡</div>
-                    <div class="$font(main,1.2rem,600)">Card 3</div>
+                    <div class="$Font(main) $font(1.2rem,600)">Card 3</div>
                 </div>
                 <div
-                    class="stagger-item $block(padding(2rem),textCenter)$bg(linear(135deg,#43e97b,#38f9d7))$color(#white)$border(radius(12px))">
+                    class="stagger-item $Block(padding(2rem),textCenter)$bg(linear(135deg,#43e97b,#38f9d7))$color(#white)$Border(radius(12px))">
                     <div class="$fontSize(2.5rem)$blockItem(margin(0,0,0.5rem,0))">💎</div>
-                    <div class="$font(main,1.2rem,600)">Card 4</div>
+                    <div class="$Font(main) $font(1.2rem,600)">Card 4</div>
                 </div>
                 <div
-                    class="stagger-item $block(padding(2rem),textCenter)$bg(linear(135deg,#fa709a,#fee140))$color(#white)$border(radius(12px))">
+                    class="stagger-item $Block(padding(2rem),textCenter)$bg(linear(135deg,#fa709a,#fee140))$color(#white)$Border(radius(12px))">
                     <div class="$fontSize(2.5rem)$blockItem(margin(0,0,0.5rem,0))">🌟</div>
-                    <div class="$font(main,1.2rem,600)">Card 5</div>
+                    <div class="$Font(main) $font(1.2rem,600)">Card 5</div>
                 </div>
                 <div
-                    class="stagger-item $block(padding(2rem),textCenter)$bg(linear(135deg,#30cfd0,#330867))$color(#white)$border(radius(12px))">
+                    class="stagger-item $Block(padding(2rem),textCenter)$bg(linear(135deg,#30cfd0,#330867))$color(#white)$Border(radius(12px))">
                     <div class="$fontSize(2.5rem)$blockItem(margin(0,0,0.5rem,0))">🎭</div>
-                    <div class="$font(main,1.2rem,600)">Card 6</div>
+                    <div class="$Font(main) $font(1.2rem,600)">Card 6</div>
                 </div>
             </div>
         </section>
@@ -484,41 +484,41 @@ $palette(muted,#64748b,#ffffff)
         <!-- Complex Multi-Step Animations -->
         <section>
             <h2>🎪 Complex Multi-Step Animations</h2>
-            <div class="$grid(cols(repeat(auto-fit,minmax(200px,1fr))),gap(2rem))">
+            <div class="$Grid(cols(repeat(auto-fit,minmax(200px,1fr))),gap(2rem))">
                 <div
-                    class="$flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))$blockItem(size(_,220px))">
+                    class="$Flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))$blockItem(size(_,220px))">
                     <div class="complex-bounce $fontSize(3rem)">🏀</div>
-                    <div class="$font(main,1rem,600)$block(textCenter)">Complex Bounce</div>
-                    <div class="$fontSize(0.85rem)$opacity(0.7)$block(textCenter)">Multi-stage easing</div>
+                    <div class="$Font(main) $font(1rem,600)$Block(textCenter)">Complex Bounce</div>
+                    <div class="$fontSize(0.85rem)$opacity(0.7)$Block(textCenter)">Multi-stage easing</div>
                 </div>
 
                 <div
-                    class="$flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))$blockItem(size(_,220px))">
+                    class="$Flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))$blockItem(size(_,220px))">
                     <div class="morph-shape $blockItem(size(80px,80px))$bg(linear(135deg,#667eea,#764ba2))"></div>
-                    <div class="$font(main,1rem,600)$block(textCenter)">Shape Morph</div>
-                    <div class="$fontSize(0.85rem)$opacity(0.7)$block(textCenter)">Border radius animation</div>
+                    <div class="$Font(main) $font(1rem,600)$Block(textCenter)">Shape Morph</div>
+                    <div class="$fontSize(0.85rem)$opacity(0.7)$Block(textCenter)">Border radius animation</div>
                 </div>
 
                 <div
-                    class="$flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))$bg(#surface)$border(8px,solid,#ff0000,radius(12px))$blockItem(size(_,220px)) rainbow-border">
+                    class="$Flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))$bg(#surface)$Border(8px,solid,#ff0000,radius(12px))$blockItem(size(_,220px)) rainbow-border">
                     <div class="$fontSize(3rem)">🌈</div>
-                    <div class="$font(main,1rem,600)$block(textCenter)">Rainbow Border</div>
-                    <div class="$fontSize(0.85rem)$opacity(0.7)$block(textCenter)">Color cycling</div>
+                    <div class="$Font(main) $font(1rem,600)$Block(textCenter)">Rainbow Border</div>
+                    <div class="$fontSize(0.85rem)$opacity(0.7)$Block(textCenter)">Color cycling</div>
                 </div>
 
                 <div
-                    class="$flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))$border(2px,solid,#border,radius(12px))$blockItem(size(_,220px)) gradient-3d">
+                    class="$Flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))$Border(2px,solid,#border,radius(12px))$blockItem(size(_,220px)) gradient-3d">
                     <div class="$fontSize(3rem)">🎨</div>
-                    <div class="$font(main,1rem,600)$block(textCenter)$color(#white)">3D Gradient</div>
-                    <div class="$fontSize(0.85rem)$color(#rgba(255,255,255,0.9))$block(textCenter)">Perspective rotation
+                    <div class="$Font(main) $font(1rem,600)$Block(textCenter)$color(#white)">3D Gradient</div>
+                    <div class="$fontSize(0.85rem)$color(#rgba(255,255,255,0.9))$Block(textCenter)">Perspective rotation
                     </div>
                 </div>
 
                 <div
-                    class="$flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))$blockItem(size(_,220px))">
+                    class="$Flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))$blockItem(size(_,220px))">
                     <div class="jello-anim $fontSize(3rem)">🍮</div>
-                    <div class="$font(main,1rem,600)$block(textCenter)">Jello Effect</div>
-                    <div class="$fontSize(0.85rem)$opacity(0.7)$block(textCenter)">Elastic squash & stretch</div>
+                    <div class="$Font(main) $font(1rem,600)$Block(textCenter)">Jello Effect</div>
+                    <div class="$fontSize(0.85rem)$opacity(0.7)$Block(textCenter)">Elastic squash & stretch</div>
                 </div>
             </div>
         </section>
@@ -526,61 +526,61 @@ $palette(muted,#64748b,#ffffff)
         <!-- Timing Functions Comparison -->
         <section>
             <h2>⏱️ Timing Function Comparison</h2>
-            <div class="$bg(#surface)$border(2px,solid,#border,radius(12px))$block(padding(2rem))">
-                <p class="$font(main,1rem)$blockItem(margin(0,0,2rem,0))$opacity(0.8)">
+            <div class="$bg(#surface)$Border(2px,solid,#border,radius(12px))$Block(padding(2rem))">
+                <p class="$Font(main,1rem)$blockItem(margin(0,0,2rem,0))$opacity(0.8)">
                     Watch how different easing functions affect the same animation
                 </p>
-                <div class="$flex(column,gap(1.5rem))">
+                <div class="$Flex(column,gap(1.5rem))">
                     <div>
-                        <div class="$font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Linear</div>
-                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$border(radius(8px))$relative timing-track">
+                        <div class="$Font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Linear</div>
+                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$Border(radius(8px))$relative timing-track">
                             <div
-                                class="timing-linear $blockItem(size(50px,50px))$bg(linear(135deg,#667eea,#764ba2))$border(radius(8px))$absolute">
+                                class="timing-linear $blockItem(size(50px,50px))$bg(linear(135deg,#667eea,#764ba2))$Border(radius(8px))$absolute">
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <div class="$font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Ease</div>
-                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$border(radius(8px))$relative timing-track">
+                        <div class="$Font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Ease</div>
+                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$Border(radius(8px))$relative timing-track">
                             <div
-                                class="timing-ease $blockItem(size(50px,50px))$bg(linear(135deg,#f093fb,#f5576c))$border(radius(8px))$absolute">
+                                class="timing-ease $blockItem(size(50px,50px))$bg(linear(135deg,#f093fb,#f5576c))$Border(radius(8px))$absolute">
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <div class="$font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Ease-In</div>
-                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$border(radius(8px))$relative timing-track">
+                        <div class="$Font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Ease-In</div>
+                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$Border(radius(8px))$relative timing-track">
                             <div
-                                class="timing-ease-in $blockItem(size(50px,50px))$bg(linear(135deg,#4facfe,#00f2fe))$border(radius(8px))$absolute">
+                                class="timing-ease-in $blockItem(size(50px,50px))$bg(linear(135deg,#4facfe,#00f2fe))$Border(radius(8px))$absolute">
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <div class="$font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Ease-Out</div>
-                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$border(radius(8px))$relative timing-track">
+                        <div class="$Font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Ease-Out</div>
+                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$Border(radius(8px))$relative timing-track">
                             <div
-                                class="timing-ease-out $blockItem(size(50px,50px))$bg(linear(135deg,#43e97b,#38f9d7))$border(radius(8px))$absolute">
+                                class="timing-ease-out $blockItem(size(50px,50px))$bg(linear(135deg,#43e97b,#38f9d7))$Border(radius(8px))$absolute">
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <div class="$font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Ease-In-Out</div>
-                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$border(radius(8px))$relative timing-track">
+                        <div class="$Font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Ease-In-Out</div>
+                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$Border(radius(8px))$relative timing-track">
                             <div
-                                class="timing-ease-in-out $blockItem(size(50px,50px))$bg(linear(135deg,#fa709a,#fee140))$border(radius(8px))$absolute">
+                                class="timing-ease-in-out $blockItem(size(50px,50px))$bg(linear(135deg,#fa709a,#fee140))$Border(radius(8px))$absolute">
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <div class="$font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Cubic Bezier (Bounce)</div>
-                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$border(radius(8px))$relative timing-track">
+                        <div class="$Font(main,0.9rem,600)$blockItem(margin(0,0,0.5rem,0))">Cubic Bezier (Bounce)</div>
+                        <div class="$bg(#f0f0f0)$blockItem(size(_,50px))$Border(radius(8px))$relative timing-track">
                             <div
-                                class="timing-cubic $blockItem(size(50px,50px))$bg(linear(135deg,#30cfd0,#330867))$border(radius(8px))$absolute">
+                                class="timing-cubic $blockItem(size(50px,50px))$bg(linear(135deg,#30cfd0,#330867))$Border(radius(8px))$absolute">
                             </div>
                         </div>
                     </div>

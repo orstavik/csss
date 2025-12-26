@@ -3,17 +3,11 @@
 ```css
 @layer containerDefault {
   .\$grid\(cols\(repeat\(3\,1fr\)\)\,rows\(repeat\(3\,80px\)\)\,gap\(1rem\)\,padding\(1rem\)\,contentStartCenter\) {
-    display: grid;
-    place-items: unset;
-    place-content: start center;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 80px);
     gap: 1rem;
     padding: 1rem;
+    place-content: start center;
   }
 }
 ```

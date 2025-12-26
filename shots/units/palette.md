@@ -1,8 +1,8 @@
-**csss:** $palette(primary,#ff5470,#ffffff)
+**csss:** $Palette(primary,#ff5470,#ffffff)
 **css:**
 ```css
 @layer containerDefault {
-  .\$palette\(primary\,\#ff5470\,\#ffffff\) {
+  .\$Palette\(primary\,\#ff5470\,\#ffffff\) {
     --color-primary: #ff5470;
     --color-primaryPop: #ffafb5;
     --color-primaryAccent: #ffa7ae;
@@ -17,11 +17,11 @@
 }
 ```
 
-**csss:** $palette(warm,#red,#brown)
+**csss:** $Palette(warm,#red,#brown)
 **css:**
 ```css
 @layer containerDefault {
-  .\$palette\(warm\,\#red\,\#brown\) {
+  .\$Palette\(warm\,\#red\,\#brown\) {
     --color-warm: red;
     --color-warmPop: #ffa67d;
     --color-warmAccent: #ff9f6c;
@@ -36,11 +36,11 @@
 }
 ```
 
-**csss:** $palette(primary,#royalblue,#skyblue)
+**csss:** $Palette(primary,#royalblue,#skyblue)
 **css:**
 ```css
 @layer containerDefault {
-  .\$palette\(primary\,\#royalblue\,\#skyblue\) {
+  .\$Palette\(primary\,\#royalblue\,\#skyblue\) {
     --color-primary: royalblue;
     --color-primaryPop: #87c8ff;
     --color-primaryAccent: #77c9ff;
@@ -154,7 +154,7 @@
 ```css
 @layer containerDefault {
   .\$border\(\#neutral\#40\) {
-    border: solid color-mix(in oklab, var(--color-neutral), var(--color-neutral1) 40%);
+    border-color: color-mix(in oklab, var(--color-neutral), var(--color-neutral1) 40%);
   }
 }
 ```
@@ -164,7 +164,7 @@
 ```css
 @layer containerDefault {
   .\$border\(\#neutral\#60\) {
-    border: solid color-mix(in oklab, var(--color-neutral), var(--color-neutral1) 60%);
+    border-color: color-mix(in oklab, var(--color-neutral), var(--color-neutral1) 60%);
   }
 }
 ```
