@@ -60,15 +60,15 @@
 }
 ```
 
-**csss:** $Font(body,16px,bold)
+**csss:** $Font(body)
 **css:**
 ```css
 @layer containerDefault {
-  .\$Font\(body\,16px\,bold\) {
+  .\$Font\(body\) {
     font-family: var(--bodyFontFamily, body);
-    font-size: 16px;
+    font-size: var(--bodyFontSize, unset);
     font-style: var(--bodyFontStyle, unset);
-    font-weight: bold;
+    font-weight: var(--bodyFontWeight, unset);
     font-size-adjust: var(--bodyFontSizeAdjust, unset);
     letter-spacing: var(--bodyLetterSpacing, unset);
     text-transform: var(--bodyTextTransform, unset);
@@ -82,6 +82,32 @@
     -moz-osx-font-smoothing: var(--bodyMozOsxFontSmoothing, unset);
     font-kerning: var(--bodyFontKerning, unset);
     hyphens: var(--bodyHyphens, unset);
+  }
+}
+```
+
+**csss:** $Font(_,Arial,16px,bold)
+**css:**
+```css
+@layer containerDefault {
+  .\$Font\(_\,Arial\,16px\,bold\) {
+    font-family: Arial;
+    font-size: 16px;
+    font-style: unset;
+    font-weight: bold;
+    font-size-adjust: unset;
+    letter-spacing: unset;
+    text-transform: unset;
+    font-width: unset;
+    font-stretch: unset;
+    font-variant-caps: unset;
+    font-synthesis: unset;
+    font-feature-settings: unset;
+    font-variation-settings: unset;
+    -webkit-font-smoothing: unset;
+    -moz-osx-font-smoothing: unset;
+    font-kerning: unset;
+    hyphens: unset;
   }
 }
 ```

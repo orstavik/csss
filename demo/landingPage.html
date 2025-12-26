@@ -20,12 +20,14 @@ $blockItem(margin(0),size(100%,auto))$Block(padding(0))$relative
 
 $Typeface(main,Inter,sans-serif,16px,400)
 $Typeface(heading,Space+Grotesk,sans-serif,48px,700)
+$Typeface(accent,Georgia,serif,18px,300)
 $bg(#white)$color(#dark)
-|section:nth-child(2)|:first-child$Font(main,0.85rem,600,spacing(0.15em))
-|section:nth-child(2)|h2$Font(heading,3.5rem,700)$lineHeight(1.2)$color(#dark)
+
+|section:nth-child(2)|:first-child$Font(main) $font(0.85rem,600,spacing(0.15em))
+|section:nth-child(2)|h2$Font(heading) $font(3.5rem,700)$lineHeight(1.2)$color(#dark)
 |section:nth-child(3)|div$transition(easeIn,0.3s)
-|section:nth-child(3)|div|h3$Font(heading,1.5rem,700)
-|section:nth-child(3)|div|p$Font(main,1rem)$lineHeight(1.6)
+|section:nth-child(3)|div|h3$Font(heading) $font(1.5rem,700)
+|section:nth-child(3)|div|p$Font(main) $font(1rem)$lineHeight(1.6)
 |section:nth-child(3)|div$bg(#white)$Border(radius(16px))$boxShadow(0,4px,15px,#rgba(0,0,0,0.05))
 |section:nth-child(3)|div|h3$color(#dark)
 |section:nth-child(3)|div|p$color(#dark)$opacity(0.7)
@@ -48,7 +50,7 @@ $Palette(light,#f1f5f9,#0f172a)
         |div$flexItem(size(40px,40px))$Flex(contentCenter,itemsCenter)
         
         |div$bg(linear(135deg,#primary,#secondary))$Border(radius(8px))
-        |span$Font(heading,1.5rem,700)$color(#dark)
+        |span$Font(heading) $font(1.5rem,700)$color(#dark)
         ">
             <div>
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -64,9 +66,9 @@ $Palette(light,#f1f5f9,#0f172a)
         |button$Block(padding(0.75rem,1.75rem))
         |button:hover$translateY(-2px)
         
-        |a$Font(main,1rem,500)$color(#dark)$opacity(0.8)$transition(easeIn,0.2s)$noTextDecoration
+        |a$Font(main) $font(1rem,500)$color(#dark)$opacity(0.8)$transition(easeIn,0.2s)$noTextDecoration
         |a:hover$opacity(1)$color(#primary)
-        |button$Font(main,1rem,600)$bg(#primary)$color(#white)$Border(none,radius(8px))$cursor(pointer)$transition(easeIn,0.3s)
+        |button$Font(main) $font(1rem,600)$bg(#primary)$color(#white)$Border(none,radius(8px))$cursor(pointer)$transition(easeIn,0.3s)
         |button:hover$boxShadow(0,8px,20px,#rgba(99,102,241,0.3))
         ">
             <a>Features</a>
@@ -90,7 +92,7 @@ $Palette(light,#f1f5f9,#0f172a)
             <div class="
             $Block(padding(0.5rem,1.5rem))$backdrop(blur(10px))$blockItem(inlineSize(fit-content),margin(0,auto,1.5rem))
             
-            $Font(main,0.9rem,600,spacing(0.2em))$opacity(0.95)$bg(#rgba(255,255,255,0.15))$Border(radius(50px))
+            $Font(main) $font(0.9rem,600,spacing(0.2em))$opacity(0.95)$bg(#rgba(255,255,255,0.15))$Border(radius(50px))
             ">
                 🚀 Next-Gen Platform
             </div>
@@ -98,7 +100,7 @@ $Palette(light,#f1f5f9,#0f172a)
             <h1 class="
             $blockItem(margin(0,0,1.5rem,0))$lineHeight(1.1)
             
-            $Font(heading,5rem,800,spacing(-0.02em))$textShadow(0,4px,20px,#rgba(0,0,0,0.2))
+            $Font(heading) $font(5rem,800,spacing(-0.02em))$textShadow(0,4px,20px,#rgba(0,0,0,0.2))
             ">
                 Elevate Your Business<br />to New Heights
             </h1>
@@ -222,7 +224,7 @@ $Palette(light,#f1f5f9,#0f172a)
         |div|h2$blockItem(margin(0,0,1.5rem,0))
         |div|p:first-of-type$blockItem(margin(0,0,2rem,0))
         
-        |div|div:first-child$Font(main,0.85rem,600,spacing(0.15em))$color(#secondary)
+        |div|div:first-child$Font(main) $font(0.85rem,600,spacing(0.15em))$color(#secondary)
         |div|h2$Font(heading,3rem,700)$color(#dark)$lineHeight(1.2)
         |div|p:first-of-type$Font(main,1.15rem)$color(#dark)$opacity(0.7)$lineHeight(1.7)
         ">
@@ -248,7 +250,7 @@ $Palette(light,#f1f5f9,#0f172a)
                 ||:first-child$Border(radius(50%))
                 ||:first-child|div$Font(main,0.8rem)$color(#white)
                 ||:last-child|h4$Font(main,1.1rem,600)$color(#dark)
-                ||:last-child|p$Font(main,1rem)$color(#dark)$opacity(0.7)$lineHeight(1.6)
+                ||:last-child|p$Font(main) $font(1rem)$color(#dark)$opacity(0.7)$lineHeight(1.6)
                 ">
                     <div>
                         <div class="$bg(#primary)">
@@ -343,7 +345,7 @@ $Palette(light,#f1f5f9,#0f172a)
             ||div|div:first-child$blockItem(size(50px,50px))$Border(radius(50%))$Flex(contentCenter,itemsCenter)
             
             ||div|div:first-child|div$Font(main,1.3rem,600)$color(#white)
-            ||div|div:last-child|div:first-child$Font(main,1rem,600)$color(#dark)
+            ||div|div:last-child|div:first-child$Font(main) $font(1rem,600)$color(#dark)
             ||div|div:last-child|div:last-child$Font(main,0.9rem)$color(#dark)$opacity(0.6)
             ">
 
@@ -454,9 +456,9 @@ $Palette(light,#f1f5f9,#0f172a)
             ||div:last-child$Flex(column,gap(0.7rem))
             ||div:last-child|a$cursor(pointer)
             
-            ||div:first-child$Font(heading,1.5rem,700)
+            ||div:first-child$Font(heading) $font(1.5rem,700)
             ||p$Font(main,0.95rem)$opacity(0.7)
-            ||h4$Font(main,1rem,600)
+            ||h4$Font(main) $font(1rem,600)
             ||div:last-child
             ||a$Font(main,0.95rem)$opacity(0.2)$transition(easeIn,0.2s)
             ||a:hover$opacity(1)

@@ -1,34 +1,79 @@
 <script src="../src/auto.js?style=style&interval=400" type="module"></script>
 
 <body
-  class="$Typeface(main,system-ui,sans-serif,16px,400) $Typeface(heading,system-ui,sans-serif,90px,800) $Palette(primary,#ff5470,#ffffff) $Palette(secondary,#ffaac2,#333333) $Palette(accent,#d0e8f0,#333333) $Palette(dark,#8b1538,#ffffff) $Palette(light,#ffcce0,#333333) $Grid(cols(1fr),rows(auto,1fr),gap(0),padding(0)) $blockItem(margin(0),size(100%,100vh)) $bg(#white) $color(#333) |header$gridItem(column(1),row(1)) |main$gridItem(column(1),row(2))">
+  class="
+  $Typeface(main,system-ui,sans-serif,16px,400) 
+  $Typeface(heading,Space+Grotesk,system-ui,sans-serif,90px,800) 
+  $Typeface(accent,Georgia,serif,18px,400)
+  $Palette(primary,#ff5470,#ffffff) 
+  $Palette(secondary,#ffaac2,#333333) 
+  $Palette(accent,#d0e8f0,#333333) 
+  $Palette(dark,#8b1538,#ffffff) 
+  $Palette(light,#ffcce0,#333333) 
+  $Grid(cols(1fr),rows(auto,1fr),gap(0),padding(0)) 
+  $blockItem(margin(0),size(100%,100vh)) 
+  $bg(#white) $color(#333) 
+  |header$gridItem(column(1),row(1)) 
+  |main$gridItem(column(1),row(2))
+  
+  /* Showcase: Dynamic font theming via CSS variables */
+  |:hover$Typeface(main,Inter,sans-serif,16px,500)
+  ">
 
-  <header class="$Flex(contentBetween,itemsCenter,padding(2rem,4rem))">
-    <div class="$Flex(itemsCenter,gap(0.5rem))">
-      <div
-        class="$blockItem(size(40px,40px)) $bg(#primary) $Border(radius(6px)) $Flex(contentCenter,itemsCenter)">
+  <header class="$Flex(contentBetween,itemsCenter,padding(2rem,4rem)) $bg(#rgba(255,255,255,0.95)) $backdropFilter(blur(10px))">
+    <div class="$Flex(itemsCenter,gap(0.75rem))">
+      <div class="$blockItem(size(40px,40px)) $bg(#primary) $Border(radius(6px)) $Flex(contentCenter,itemsCenter) $transition(easeIn,0.3s) :hover$scale(1.1)">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path d="M5 3L17 10L5 17V3Z" fill="white" />
         </svg>
       </div>
-      <span class="$Font(main,1.3rem,600)">Academy</span>
+      <div class="$Flex(column)">
+        <span class="$Font(heading) $font(1.4rem,700) $spacing(-0.02em) $color(#primary)">Academy</span>
+        <span class="$Font(_,monospace,0.7rem,400) $color(#666) $spacing(0.1em) $allSmallCaps">Font System Demo</span>
+      </div>
     </div>
+    
     <nav class="$Flex(itemsCenter,gap(1rem))">
-      <button
-        class="$Font(main,1rem,500) $Block(padding(0.75rem,1.5rem)) $Border(2px,solid,#primaryBland,radius(8px)) $cursor(pointer) $transition(easeIn,0.2s) :hover$border(#primary) :hover$color(#primary)">Explore
-        Course List</button>
-      <button
-        class="$bg(#primary) $color(#white) $Font(main,1rem,600) $Block(padding(0.75rem,1.5rem)) $Border(radius(8px)) $cursor(pointer)">Enroll
-        Now</button>
+      <button class="
+        $Font(main) $font(1rem,500) 
+        $Block(padding(0.75rem,1.5rem)) 
+        $Border(2px,solid,#primaryBland,radius(8px)) 
+        $cursor(pointer) $transition(easeIn,0.2s) 
+        :hover$border(#primary) :hover$color(#primary) :hover$font(600)
+        ">
+        Explore Courses
+      </button>
+      
+      <button class="
+        $Font(_,system-ui,sans-serif,1rem,600)
+        $bg(#primary) $color(#white) 
+        $Block(padding(0.75rem,1.5rem)) 
+        $Border(radius(8px)) $cursor(pointer)
+        $transition(easeIn,0.3s)
+        :hover$bg(#dark) :hover$scale(1.05)
+        ">
+        Enroll Now
+      </button>
+      
+      <button class="
+        $Font(accent) $font(0.9rem,italic) 
+        $color(#secondary) $cursor(pointer)
+        $Block(padding(0.5rem,1rem))
+        $Border(1px,solid,transparent,radius(4px))
+        $transition(easeIn,0.2s)
+        :hover$bg(#light) :hover$font(600)
+        ">
+        Learn More
+      </button>
     </nav>
   </header>
 
   <main class="$Grid(cols(1fr,1fr),gap(4rem),padding(3rem,4rem),itemsCenter)">
     <div class="$Flex(column,gap(3rem))">
-      <h1 class="$Font(heading,5rem,800) $blockItem(margin(0)) $color(#secondary) $lineHeight(1.1)">
+      <h1 class="$Font(heading) $font(5rem,800) $blockItem(margin(0)) $color(#secondary) $lineHeight(1.1)">
         Design<br />Courses</h1>
       <div
-        class="$Flex(row,gap(3rem)) |div$Flex(column,gap(0.5rem)) |div:nth-child(1)>div:first-child$Font(main,2.5rem,700)$color(#accent) |div:nth-child(1)>div:last-child$Font(main,1rem,400)$color(#accent) |div:nth-child(2)>div:first-child$Font(main,2.5rem,700)$color(#accent) |div:nth-child(2)>div:last-child$Font(main,1rem,400)$color(#accent) |div:nth-child(3)>div:first-child$Font(main,2.5rem,700)$color(#secondary) |div:nth-child(3)>div:last-child$Font(main,1rem,400)$color(#secondary)">
+        class="$Flex(row,gap(3rem)) |div$Flex(column,gap(0.5rem)) |div:nth-child(1)>div:first-child$Font(main) $font(2.5rem,700)$color(#accent) |div:nth-child(1)>div:last-child$Font(main) $font(1rem,400)$color(#accent) |div:nth-child(2)>div:first-child$Font(main) $font(2.5rem,700)$color(#accent) |div:nth-child(2)>div:last-child$Font(main) $font(1rem,400)$color(#accent) |div:nth-child(3)>div:first-child$Font(main) $font(2.5rem,700)$color(#secondary) |div:nth-child(3)>div:last-child$Font(main) $font(1rem,400)$color(#secondary)">
         <div>
           <div>300+</div>
           <div>Courses</div>

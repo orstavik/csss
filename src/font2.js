@@ -1,4 +1,4 @@
-import { extractName, extractUrl, isNumber, isLength, isAngle, isQuote, isPercent, isBasic, FIRST, Umbrella, Name } from "./func.js";
+import { extractName, extractUrl, isNumber, isLength, isAngle, isQuote, isPercent, isBasic, FIRST, Umbrella, Name, NameUnset } from "./func.js";
 
 //The $font umbrella and $typeface cloud regulate this property cluster. $typeface also regulates @font-face{}.
 const FONT_DEFAULTS = Object.entries({
@@ -141,8 +141,8 @@ const FONT_WORDS = {
   adjust: ({ args }) => ({ fontSizeAdjust: isBasic(args[0]).text }),
 };
 
-//first have a function that extracts all the nonFamily 
-function fontImpl(fontFaceName, args) {
+function fontImpl({ name, args }) {
+  const fontFaceName = name;
   let res = {}, family = [], emoji;
   for (let a of args) {
     let a2;
@@ -217,37 +217,39 @@ export const fontDefaults = Object.fromEntries(
   }).map(([k]) => [k, "unset"])
 );
 
-function font({ args }) {
-  const res = fontImpl(undefined, args);  if (!res.fontFamily)
-    throw new SyntaxError(`$font requires at least a font family. Got: ${args.map(a => a.text).join(", ")}`);
-  return res;
-}
-
 const fontWithName = FIRST(
-  Name,
-  ({ args }) => fontImpl(undefined, args),  
-  (name, fontName, fontProps) => {
-    const res = {};
-    for (let [k, varKey] of FONT_DEFAULTS)
-      res[k] = fontProps?.[k] ?? `var(--${fontName + varKey}, unset)`;
-    if (fontProps?.fontFamily) {
-      const families = fontProps.fontFamily.split(',').map(f => f.trim());
-      res.fontFamily = families.length == 1 ?
-        `var(--${fontName}FontFamily, ${fontName})` :
-        fontProps.fontFamily + `, var(--${fontName}FontFamily, unset)`;
-    } else {
-      res.fontFamily = `var(--${fontName}FontFamily, ${fontName})`;
+  NameUnset,    // INTERPRETER: allows normal name or "unset"
+  fontImpl,     // INNERcb: applies to the rest of the arguments
+  (nameNode, nameText, fontProps) => {
+    // Case 1: $Font(_, fontFamily, ...styles) - underscore means no typeface name
+    if (nameText === "unset") {
+      if (!fontProps?.fontFamily) {
+        throw new SyntaxError(`$Font(_, ...) requires at least one font family after underscore`);
+      }
+      return fontProps;
     }
+    
+    // Case 2: $Font(typefaceName, ...styles) - typeface name only, no font families allowed
+    if (fontProps?.fontFamily) {
+      throw new SyntaxError(`$Font(${nameText}, ...) cannot contain font families. Found font-family in arguments. Use $Font(_, fontFamily, ...) instead.`);
+    }
+    
+    // Create CSS variable cluster for typeface
+    const res = {};
+    for (let [k, varKey] of FONT_DEFAULTS) {
+      res[k] = fontProps?.[k] ?? `var(--${nameText + varKey}, unset)`;
+    }
+    res.fontFamily = `var(--${nameText}FontFamily, ${nameText})`;
+    
     return res;
   }
 );
-const Font = Umbrella(fontDefaults, fontWithName);
 
 function Typeface({ args }) {
   const typeName = extractName(args);
   if (!typeName)
     throw new SyntaxError(`first argument is not a name: "${args[0].text}"`);
-  const tmp = fontImpl(typeName, args);
+  const tmp = fontImpl({ name: typeName, args });
   const res = {};
   for (let [k, varKey] of FONT_DEFAULTS) {
     if (tmp[k] !== undefined)
@@ -272,8 +274,8 @@ function makeSingleDroplet(NAME, FUNC) {
 }
 
 export default {
-  font,
-  Font,
+  font: fontImpl,
+  Font: Umbrella(fontDefaults, fontWithName),
   
   Typeface,
 
