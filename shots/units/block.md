@@ -38,22 +38,22 @@
 }
 ```
 
-**csss:** $block(gap(0.5rem,1.8))
+**csss:** $wordSpacing(0.5rem)$lineHeight(1.8)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(gap\(0\.5rem\,1\.8\)\) {
+  .\$wordSpacing\(0\.5rem\)\$lineHeight\(1\.8\) {
     word-spacing: 0.5rem;
     line-height: 1.8;
   }
 }
 ```
 
-**csss:** $block(gap(0,1.2))
+**csss:** $wordSpacing(0)$lineHeight(1.2)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(gap\(0\,1\.2\)\) {
+  .\$wordSpacing\(0\)\$lineHeight\(1\.2\) {
     word-spacing: 0;
     line-height: 1.2;
   }
@@ -137,8 +137,6 @@
 @layer containerDefault {
   .\$LineClamp\(3\) {
     display: -webkit-box;
-    word-spacing: unset;
-    line-height: unset;
     text-align: unset;
     text-indent: unset;
     -webkit-line-clamp: 3;
@@ -161,25 +159,25 @@
 }
 ```
 
-**csss:** $Block(textJustify,gap(0.3em,1.6))
+**csss:** $Block(textJustify)$wordSpacing(0.3em)$lineHeight(1.6)
 **css:**
 ```css
 @layer containerDefault {
-  .\$Block\(textJustify\,gap\(0\.3em\,1\.6\)\) {
+  .\$Block\(textJustify\)\$wordSpacing\(0\.3em\)\$lineHeight\(1\.6\) {
     display: block;
-    word-spacing: 0.3em;
-    line-height: 1.6;
     text-align: justify;
     text-indent: unset;
+    word-spacing: 0.3em;
+    line-height: 1.6;
   }
 }
 ```
 
-**csss:** $block(textJustify,gap(0.3em,1.6))
+**csss:** $block(textJustify)$wordSpacing(0.3em)$lineHeight(1.6)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(textJustify\,gap\(0\.3em\,1\.6\)\) {
+  .\$block\(textJustify\)\$wordSpacing\(0\.3em\)\$lineHeight\(1\.6\) {
     text-align: justify;
     word-spacing: 0.3em;
     line-height: 1.6;
@@ -187,11 +185,11 @@
 }
 ```
 
-**csss:** $block(breakWord,gap(0.2em,1.4))
+**csss:** $block(breakWord)$wordSpacing(0.2em)$lineHeight(1.4)
 **css:**
 ```css
 @layer containerDefault {
-  .\$block\(breakWord\,gap\(0\.2em\,1\.4\)\) {
+  .\$block\(breakWord\)\$wordSpacing\(0\.2em\)\$lineHeight\(1\.4\) {
     overflow-wrap: break-word;
     word-spacing: 0.2em;
     line-height: 1.4;

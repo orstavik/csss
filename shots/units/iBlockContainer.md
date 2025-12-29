@@ -14,8 +14,6 @@
 @layer containerDefault {
   .\$IBlock\(textCenter\) {
     display: inline-block;
-    word-spacing: unset;
-    line-height: unset;
     text-align: center;
     text-indent: unset;
   }
@@ -32,11 +30,11 @@
 }
 ```
 
-**csss:** $iBlock(gap(0.5rem,1.8))
+**csss:** $wordSpacing(0.5rem)$lineHeight(1.8)
 **css:**
 ```css
 @layer containerDefault {
-  .\$iBlock\(gap\(0\.5rem\,1\.8\)\) {
+  .\$wordSpacing\(0\.5rem\)\$lineHeight\(1\.8\) {
     word-spacing: 0.5rem;
     line-height: 1.8;
   }

@@ -1,4 +1,4 @@
-import { extractName, extractUrl, isNumber, isLength, isAngle, isQuote, isPercent, isBasic, FIRST, Umbrella, Name, NameUnset } from "./func.js";
+import { extractName, extractUrl, isNumber, isLength, isAngle, isQuote, SIN, Percent, isBasic, FIRST, Umbrella, Name, NameUnset } from "./func.js";
 
 //The $font umbrella and $typeface cloud regulate this property cluster. $typeface also regulates @font-face{}.
 const FONT_DEFAULTS = Object.entries({
@@ -121,6 +121,10 @@ const FONT_WORDS = {
   kerning: { fontKerning: "normal" },
   noKerning: { fontKerning: "none" },
 
+  hyphens: { hyphens: "auto" },
+  shy: { hyphens: "manual" },
+  noHyphens: { hyphens: "none" },
+
   normal: { fontStyle: "normal", fontWeight: "normal" },
   smooth: { WebkitFontSmoothing: "auto", MozOsxFontSmoothing: "auto" }, //todo this is wrong? should be "antialiased" for WebkitFontSmoothing and "grayscale" for MozOsxFontSmoothing??
 
@@ -136,7 +140,7 @@ const FONT_WORDS = {
   xxxl: { fontSize: "xxx-large" },
 
   variant: ({ args }) => ({ fontVariant: isBasic(args[0]).text }),
-  width: ({ args }) => ({ fontWidth: isPercent(args[0]).text }),
+  width: SIN(Percent,(n,v) => ({ fontWidth: v })),
   spacing: ({ args }) => (args[0].text == "normal" ? args[0].text : { letterSpacing: isLength(args[0]).text }),
   adjust: ({ args }) => ({ fontSizeAdjust: isBasic(args[0]).text }),
 };
@@ -255,17 +259,17 @@ function Typeface({ args }) {
   return res;
 }
 
-function makeSingleDroplet(NAME, FUNC) {
-  return function ({ args }) {
-    if (args.length != 1)
-      throw new SyntaxError(`$${NAME} droplet only accepts one argument, but got ${args.length}: ${args.map(a => a.text).join(", ")}`);
-    const a = args[0];
-    const v = a.text == "unset" ? `var(--${NAME}, unset)` : FUNC(a)?.text;
-    if (v == null)
-      throw new SyntaxError(`Could not interpret $${NAME} argument: ${args[0].text}.`);
-    return { [NAME]: v };
-  }
-}
+// function makeSingleDroplet(NAME, FUNC) {
+//   return function ({ args }) {
+//     if (args.length != 1)
+//       throw new SyntaxError(`$${NAME} droplet only accepts one argument, but got ${args.length}: ${args.map(a => a.text).join(", ")}`);
+//     const a = args[0];
+//     const v = a.text == "unset" ? `var(--${NAME}, unset)` : FUNC(a)?.text;
+//     if (v == null)
+//       throw new SyntaxError(`Could not interpret $${NAME} argument: ${args[0].text}.`);
+//     return { [NAME]: v };
+//   }
+// }
 
 export default {
   font: fontImpl,
@@ -273,55 +277,55 @@ export default {
   
   Typeface,
 
-  fontSize: makeSingleDroplet("fontSize", isLength),
-  // fontFamily: makeSingleDroplet("fontFamily", isBasic), //todo this should not be possible.
-  // fontStyle: makeSingleDroplet("fontStyle", isBasic),
-  // fontWeight: makeSingleDroplet("fontWeight", isBasic),
-  // fontVariantCaps: makeSingleDroplet("fontVariantCaps", isBasic),
-  fontWidth: makeSingleDroplet("fontWidth", isBasic),     //todo we need to make them return both props.
-  fontStretch: makeSingleDroplet("fontStretch", isBasic), //todo we need to make them return both props.
-  fontSynthesis: makeSingleDroplet("fontSynthesis", isBasic),
-  fontSizeAdjust: makeSingleDroplet("fontSizeAdjust", isBasic),
-  letterSpacing: makeSingleDroplet("letterSpacing", isBasic),
+  // fontSize: makeSingleDroplet("fontSize", isLength),
+  // // fontFamily: makeSingleDroplet("fontFamily", isBasic), //todo this should not be possible.
+  // // fontStyle: makeSingleDroplet("fontStyle", isBasic),
+  // // fontWeight: makeSingleDroplet("fontWeight", isBasic),
+  // // fontVariantCaps: makeSingleDroplet("fontVariantCaps", isBasic),
+  // fontWidth: makeSingleDroplet("fontWidth", isBasic),     //todo we need to make them return both props.
+  // fontStretch: makeSingleDroplet("fontStretch", isBasic), //todo we need to make them return both props.
+  // fontSynthesis: makeSingleDroplet("fontSynthesis", isBasic),
+  // fontSizeAdjust: makeSingleDroplet("fontSizeAdjust", isBasic),
+  // letterSpacing: makeSingleDroplet("letterSpacing", isBasic),
 
 
-  //global font words
-  ...SYNTHESIS_WORDS,
-  uppercase: { textTransform: "uppercase" },
-  lowercase: { textTransform: "lowercase" },
-  capitalize: { textTransform: "capitalize" },
-  fullWidth: { textTransform: "full-width" },
-  noTextTransform: { textTransform: "none" },
-  textTransform: undefined,
+  // //global font words
+  // ...SYNTHESIS_WORDS,
+  // uppercase: { textTransform: "uppercase" },
+  // lowercase: { textTransform: "lowercase" },
+  // capitalize: { textTransform: "capitalize" },
+  // fullWidth: { textTransform: "full-width" },
+  // noTextTransform: { textTransform: "none" },
+  // textTransform: undefined,
 
-  italic: { fontStyle: "italic" },
-  noStyle: { fontStyle: "normal" },
-  bold: { fontWeight: "bold" },
-  bolder: { fontWeight: "bolder" },
-  lighter: { fontWeight: "lighter" },
-  noWeight: { fontWeight: "normal" },
-  normal: { fontStyle: "normal", fontWeight: "normal" },
-  larger: { fontSize: "larger" },
-  smaller: { fontSize: "smaller" },
-  smallCaps: { fontVariantCaps: "small-caps" },
-  allSmallCaps: { fontVariantCaps: "all-small-caps" },
-  petiteCaps: { fontVariantCaps: "petite-caps" },
-  allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
-  unicase: { fontVariantCaps: "unicase" },
-  titlingCaps: { fontVariantCaps: "titling-caps" },
-  condensed: { fontStretch: "condensed" },
-  expanded: { fontStretch: "expanded" },
+  // italic: { fontStyle: "italic" },
+  // noStyle: { fontStyle: "normal" },
+  // bold: { fontWeight: "bold" },
+  // bolder: { fontWeight: "bolder" },
+  // lighter: { fontWeight: "lighter" },
+  // noWeight: { fontWeight: "normal" },
+  // normal: { fontStyle: "normal", fontWeight: "normal" },
+  // larger: { fontSize: "larger" },
+  // smaller: { fontSize: "smaller" },
+  // smallCaps: { fontVariantCaps: "small-caps" },
+  // allSmallCaps: { fontVariantCaps: "all-small-caps" },
+  // petiteCaps: { fontVariantCaps: "petite-caps" },
+  // allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
+  // unicase: { fontVariantCaps: "unicase" },
+  // titlingCaps: { fontVariantCaps: "titling-caps" },
+  // condensed: { fontStretch: "condensed" },
+  // expanded: { fontStretch: "expanded" },
 
-  semiCondensed: { fontStretch: "semi-condensed", fontWidth: "semi-condensed" },
-  semiExpanded: { fontStretch: "semi-expanded", fontWidth: "semi-expanded" },
-  extraCondensed: { fontStretch: "extra-condensed", fontWidth: "extra-condensed" },
-  extraExpanded: { fontStretch: "extra-expanded", fontWidth: "extra-expanded" },
-  ultraCondensed: { fontStretch: "ultra-condensed", fontWidth: "ultra-condensed" },
-  ultraExpanded: { fontStretch: "ultra-expanded", fontWidth: "ultra-expanded" },
-  kerning: { fontKerning: "normal" },
-  noKerning: { fontKerning: "none" },
-  shy: { hyphens: "manual" },
-  hyphens: { hyphens: "auto" },
-  noHyphens: { hyphens: "none" },
+  // semiCondensed: { fontStretch: "semi-condensed", fontWidth: "semi-condensed" },
+  // semiExpanded: { fontStretch: "semi-expanded", fontWidth: "semi-expanded" },
+  // extraCondensed: { fontStretch: "extra-condensed", fontWidth: "extra-condensed" },
+  // extraExpanded: { fontStretch: "extra-expanded", fontWidth: "extra-expanded" },
+  // ultraCondensed: { fontStretch: "ultra-condensed", fontWidth: "ultra-condensed" },
+  // ultraExpanded: { fontStretch: "ultra-expanded", fontWidth: "ultra-expanded" },
+  // kerning: { fontKerning: "normal" },
+  // noKerning: { fontKerning: "none" },
+  // shy: { hyphens: "manual" },
+  // hyphens: { hyphens: "auto" },
+  // noHyphens: { hyphens: "none" },
 };
 

@@ -127,38 +127,58 @@
 ```css
 @layer containerDefault {
   .\$font\(serif\,hyphens\) {
-    font-family: serif, hyphens;
+    hyphens: auto;
+    font-family: serif;
   }
 }
 ```
 
-**csss:** $shy
+**csss:** $font(shy)
 **css:**
 ```css
 @layer containerDefault {
-  .\$shy {
+  .\$font\(shy\) {
     hyphens: manual;
   }
 }
 ```
 
-**csss:** $noHyphens
+**csss:** $font(noHyphens)
 **css:**
 ```css
 @layer containerDefault {
-  .\$noHyphens {
+  .\$font\(noHyphens\) {
     hyphens: none;
   }
 }
 ```
 
-**comment:** $font(hyphens) should work, and $Font(hypens) is what we have below. 
 **csss:** $font(hyphens)
 **css:**
 ```css
 @layer containerDefault {
   .\$font\(hyphens\) {
-    font-family: hyphens;
+    hyphens: auto;
+  }
+}
+```
+
+**csss:** $font(uppercase)
+**css:**
+```css
+@layer containerDefault {
+  .\$font\(uppercase\) {
+    text-transform: uppercase;
+  }
+}
+```
+
+**csss:** $font(noTransform)
+**css:**
+```css
+@layer containerDefault {
+  .\$font\(noTransform\) {
+    text-transform: none;
   }
 }
 ```

@@ -1,13 +1,3 @@
-**csss:** $block(gap(0.5rem,1.8))
-**css:**
-```css
-@layer containerDefault {
-  .\$block\(gap\(0\.5rem\,1\.8\)\) {
-    word-spacing: 0.5rem;
-    line-height: 1.8;
-  }
-}
-```
 
 **csss:** $flex(wrap,gap(1rem,2rem))
 **css:**

@@ -1,4 +1,4 @@
-import { isRepeat, isSpan, isBasic, toLogicalFour, isLength, TYPB, Number as NumberInterpreter, Umbrella, FIRST, SEQ, Length, LengthPercentNumber, SINmax, LengthPercentUnset } from "./func.js";
+import { isRepeat, isSpan, isBasic, toLogicalFour, isLength, TYPB, SIN, Number as NumberInterpreter, Umbrella, FIRST, SEQ, Length, LengthPercentNumber, SINmax, LengthPercentUnset } from "./func.js";
 
 function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
@@ -178,13 +178,13 @@ const gap = SINmax(2, LengthPercentUnset, (n, ar) => {
 //they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
 //so it should be with layout.
 // call it textSpacing?
-const blockGap = SEQ([Length, LengthPercentNumber], (n, ar) => ({ wordSpacing: ar[0], lineHeight: ar[1] }));
+// const blockGap = SEQ([Length, LengthPercentNumber], (n, ar) => ({ wordSpacing: ar[0], lineHeight: ar[1] }));
 
 export const DEFAULTS = {
   Block: {
     display: "block",
-    wordSpacing: "unset",
-    lineHeight: "unset",
+    // wordSpacing: "unset",
+    // lineHeight: "unset",
     textAlign: "unset",
     textIndent: "unset",        //as textIndent inherits, we need to unset on both container and item 
     //todo this is NOT as easy as I thought..
@@ -209,20 +209,20 @@ export const DEFAULTS = {
     display: "flex",
     alignItems: "unset",
     placeContent: "unset",
-    textAlign: "unset", 
+    textAlign: "unset",
     textIndent: "unset",
   },
   Grid: {
     display: "grid",
     placeItems: "unset",
     placeContent: "unset",
-    textAlign: "unset", 
-    textIndent: "unset", 
+    textAlign: "unset",
+    textIndent: "unset",
   },
   IBlock: {
     display: "inline-block",
-    wordSpacing: "unset",
-    lineHeight: "unset",
+    // wordSpacing: "unset",
+    // lineHeight: "unset",
     textAlign: "unset",
     textIndent: "unset",
   },
@@ -231,7 +231,7 @@ export const DEFAULTS = {
 const IBLOCK = {
   ...LAYOUT,
   ...OVERFLOWS,
-  gap: blockGap,
+  // gap: blockGap,
 };
 
 const _IBlockItem = {
@@ -367,7 +367,7 @@ const FlexItem = Umbrella(DEFAULTS.BlockItem, flexItem);
 const block = TYPB({
   ...LAYOUT,
   ...OVERFLOWS,
-  gap: blockGap,
+  // gap: blockGap,
 }, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
 const blockItem = TYPB({
@@ -390,22 +390,25 @@ export default {
   BlockItem,
   lineClamp,
   LineClamp,
-  
+
   flex,
   Flex,
   flexItem,
   FlexItem,
-  
+
   grid,
   Grid,
   gridItem,
   GridItem,
-  
+
   iBlock,
   IBlock,
   iBlockItem,
   IBlockItem,
-  
+
+  lineHeight: SIN(LengthPercentNumber, (n, v) => ({ lineHeight: v })),
+  wordSpacing: SIN(Length, (n, v) => ({ wordSpacing: v })),
+
   hide: _ => ({ display: "none" }),
 
   order: undefined,
