@@ -209,11 +209,15 @@ export const DEFAULTS = {
     display: "flex",
     alignItems: "unset",
     placeContent: "unset",
+    textAlign: "unset", 
+    textIndent: "unset",
   },
   Grid: {
     display: "grid",
     placeItems: "unset",
     placeContent: "unset",
+    textAlign: "unset", 
+    textIndent: "unset", 
   },
   IBlock: {
     display: "inline-block",

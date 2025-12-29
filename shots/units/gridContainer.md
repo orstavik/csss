@@ -19,6 +19,8 @@
     display: grid;
     place-items: unset;
     place-content: unset;
+    text-align: unset;
+    text-indent: unset;
     grid-template-columns: 1fr 2fr;
     grid-template-rows: auto;
     gap: 1rem;

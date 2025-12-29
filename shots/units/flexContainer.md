@@ -18,6 +18,8 @@
     display: flex;
     align-items: unset;
     place-content: unset;
+     text-align: unset;
+    text-indent: unset;
     flex-direction: column;
     gap: 0.5rem;
     padding: 1rem;
