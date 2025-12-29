@@ -1,4 +1,4 @@
-import { isRepeat, isSpan, isBasic, toLogicalFour, isLength, TYPB, SIN, Number as NumberInterpreter, Umbrella, FIRST, SEQ, Length, LengthPercentNumber, SINmax, LengthPercentUnset } from "./func.js";
+import { isRepeat, isSpan, isBasic, toLogicalFour, isLength, TYPB, Number as NumberInterpreter, Umbrella, FIRST, SEQ, Length, LengthPercentNumber, SINmax, LengthPercentUnset } from "../func.js";
 
 function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
@@ -114,13 +114,32 @@ const OVERFLOWS = (_ => {
   return res;
 })();
 
+function checkUndefined(funcName, argsIn, argsOut) {
+  for (let i = 0; i < argsIn.length; i++)
+    if (argsOut[i] === undefined)
+      throw new ReferenceError(`$${funcName}() cannot process ${argsIn[i].name}.`);
+}
+
 //todo rename this to container() and then do block, grid, flex as the two options.
 //todo the question is if this will be recognized by the llm..
 //they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
 //so it should be with layout.
 //todo rename the text block layout unit to $page
+function defaultContainer(obj, argsIn, argsOut) {
+  const containerDefaults = {
+    wordSpacing: "unset",
+    lineHeight: "unset",
+    textAlign: "unset",
+    textIndent: "unset",
+  };
+  checkUndefined(obj.display, argsIn, argsOut);
+  return Object.assign(obj, containerDefaults, ...argsOut);
+}
 
-
+function defaultItem(name, argsIn, argsOut) {
+  checkUndefined(name, argsIn, argsOut);
+  return Object.assign({}, ...argsOut);
+}
 
 const LAYOUT = {
   padding: ({ args }) => toLogicalFour("padding", args),
@@ -178,63 +197,15 @@ const gap = SINmax(2, LengthPercentUnset, (n, ar) => {
 //they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
 //so it should be with layout.
 // call it textSpacing?
-// const blockGap = SEQ([Length, LengthPercentNumber], (n, ar) => ({ wordSpacing: ar[0], lineHeight: ar[1] }));
-
-export const DEFAULTS = {
-  Block: {
-    display: "block",
-    // wordSpacing: "unset",
-    // lineHeight: "unset",
-    textAlign: "unset",
-    textIndent: "unset",        //as textIndent inherits, we need to unset on both container and item 
-    //todo this is NOT as easy as I thought..
-    //">* /*blockItem*/": BlockItemDefaults,    //the BlockItem defaults are always set by the Block.
-  },
-  BlockItem: {
-    inlineSize: "unset",
-    blockSize: "unset",
-    marginBlock: "unset",
-    marginInline: "unset",
-    textIndent: "unset",        //as textIndent inherits, we need to unset on both container and item
-    scrollMargin: "unset",
-    scrollSnapAlign: "unset",
-  },
-  LineClamp: {
-    display: "-webkit-box",
-    WebkitLineClamp: 3, //this is always overwritten
-    WebkitBoxOrient: "vertical",
-    overflowBlock: "hidden",
-  },
-  Flex: {
-    display: "flex",
-    alignItems: "unset",
-    placeContent: "unset",
-    textAlign: "unset",
-    textIndent: "unset",
-  },
-  Grid: {
-    display: "grid",
-    placeItems: "unset",
-    placeContent: "unset",
-    textAlign: "unset",
-    textIndent: "unset",
-  },
-  IBlock: {
-    display: "inline-block",
-    // wordSpacing: "unset",
-    // lineHeight: "unset",
-    textAlign: "unset",
-    textIndent: "unset",
-  },
-};
+const blockGap = SEQ([Length, LengthPercentNumber], (n, ar) => ({ wordSpacing: ar[0], lineHeight: ar[1] }));
 
 const IBLOCK = {
   ...LAYOUT,
   ...OVERFLOWS,
-  // gap: blockGap,
+  gap: blockGap,
 };
 
-const _IBlockItem = {
+const IBlockItem = {
   ..._LAYOUT,
   alignTop: { verticalAlign: "top" },
   alignMiddle: { verticalAlign: "middle" },
@@ -246,16 +217,15 @@ const _IBlockItem = {
   alignSub: { verticalAlign: "sub" },
 };
 
-const iBlock = TYPB({
-  ...IBLOCK,
-}, {}, {}, res => Object.assign({}, ...Object.values(res)));
+function iBlock({ args }) {
+  const args2 = args.map(a => IBLOCK[a.name]?.(a) ?? IBLOCK[a.text]);
+  return defaultContainer({ display: "inline-block" }, args, args2);
+}
 
-const iBlockItem = TYPB({
-  ..._IBlockItem,
-}, {}, {}, res => Object.assign({}, ...Object.values(res)));
-
-const IBlock = Umbrella(DEFAULTS.IBlock, iBlock);
-const IBlockItem = Umbrella(DEFAULTS.BlockItem, iBlockItem);
+function iBlockItem({ args }) {
+  const argsOut = args.map(a => IBlockItem[a.name]?.(a) ?? IBlockItem[a.text]);
+  return defaultItem("iBlockItem", args, argsOut);
+}
 
 // function lineClamp({ args: [lines, ...args] }) {
 //   lines = isBasic(lines);
@@ -286,12 +256,10 @@ const GRID = {
   denseRow: { gridAutoFlow: "dense row" },
 };
 
-// Convert to TYPB pattern
-const grid = TYPB({
-  ...GRID,
-}, {}, {}, res => Object.assign({}, ...Object.values(res)));
-
-const Grid = Umbrella(DEFAULTS.Grid, grid);
+function grid({ args }) {
+  const argsOut = args.map(a => GRID[a.name]?.(a) ?? GRID[a.text]);
+  return defaultContainer({ display: "grid", placeItems: "unset", placeContent: "unset" }, args, argsOut);
+}
 
 //       1  2345   6789
 // $grid(col(1,span(3))) => "{ gridColumn: 1 / span 3 }"
@@ -314,18 +282,16 @@ const row = ({ args }) => {
   return { gridRow: end ? `${start} / ${end}` : start };
 };
 
-const _GridItem = {
+const GridItem = {
   ...ALIGNMENTS.placeSelf,
   ..._LAYOUT,
   column,
   row,
 };
-
-const gridItem = TYPB({
-  ..._GridItem,
-}, {}, {}, res => Object.assign({}, ...Object.values(res)));
-
-const GridItem = Umbrella(DEFAULTS.BlockItem, gridItem);
+function gridItem({ args }) {
+  const argsOut = args.map(a => GridItem[a.name]?.(a) ?? GridItem[a.text]);
+  return defaultItem("gridItem", args, argsOut);
+}
 
 const FLEX = {
   column: { flexDirection: "column" },
@@ -342,13 +308,11 @@ const FLEX = {
   gap,
 };
 
-const flex = TYPB({
-  ...FLEX,
-}, {}, {}, res => Object.assign({}, ...Object.values(res)));
-
-const Flex = Umbrella(DEFAULTS.Flex, flex);
-
-const _FlexItem = {
+function flex({ args }) {
+  const argsOut = args.map(a => FLEX[a.name]?.(a) ?? FLEX[a.text]);
+  return defaultContainer({ display: "flex", alignItems: "unset", placeContent: "unset" }, args, argsOut);
+}
+const FlexItem = {
   ..._LAYOUT,
   ...ALIGNMENTS.alignSelf,
   basis: ({ args }) => ({ flexBasis: args.map(isBasic).map(a => a.text).join(" ") }),
@@ -358,16 +322,43 @@ const _FlexItem = {
   //todo safe
 };
 
-const flexItem = TYPB({
-  ..._FlexItem,
-}, {}, {}, res => Object.assign({}, ...Object.values(res)));
+function flexItem({ args }) {
+  const argsOut = args.map(a => FlexItem[a.name]?.(a) ?? FlexItem[a.text]);
+  return defaultItem("flexItem", args, argsOut);
+}
 
-const FlexItem = Umbrella(DEFAULTS.BlockItem, flexItem);
+//NEW SYSTEM STARTS HERE
+const DEFAULTS = {
+  Block: {
+    display: "block",
+    wordSpacing: "unset",
+    lineHeight: "unset",
+    textAlign: "unset",
+    textIndent: "unset",        //as textIndent inherits, we need to unset on both container and item 
+    //todo this is NOT as easy as I thought..
+    //">* /*blockItem*/": BlockItemDefaults,    //the BlockItem defaults are always set by the Block.
+  },
+  BlockItem: {
+    inlineSize: "unset",
+    blockSize: "unset",
+    marginBlock: "unset",
+    marginInline: "unset",
+    textIndent: "unset",        //as textIndent inherits, we need to unset on both container and item
+    scrollMargin: "unset",
+    scrollSnapAlign: "unset",
+  },
+  LineClamp: {
+    display: "-webkit-box",
+    WebkitLineClamp: 3, //this is always overwritten
+    WebkitBoxOrient: "vertical",
+    overflowBlock: "hidden",
+  },
+};
 
 const block = TYPB({
   ...LAYOUT,
   ...OVERFLOWS,
-  // gap: blockGap,
+  gap: blockGap,
 }, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
 const blockItem = TYPB({
@@ -384,31 +375,18 @@ const LineClamp = Umbrella(DEFAULTS.Block, lineClamp);
 //NEW SYSTEM ENDS HERE
 
 export default {
-  block,
   Block,
+  block,
+  LineClamp,
+  lineClamp,
   blockItem,
   BlockItem,
-  lineClamp,
-  LineClamp,
-
-  flex,
-  Flex,
-  flexItem,
-  FlexItem,
-
-  grid,
-  Grid,
-  gridItem,
-  GridItem,
-
   iBlock,
-  IBlock,
   iBlockItem,
-  IBlockItem,
-
-  lineHeight: SIN(LengthPercentNumber, (n, v) => ({ lineHeight: v })),
-  wordSpacing: SIN(Length, (n, v) => ({ wordSpacing: v })),
-
+  grid,
+  gridItem,
+  flex,
+  flexItem,
   hide: _ => ({ display: "none" }),
 
   order: undefined,
