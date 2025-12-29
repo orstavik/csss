@@ -1,4 +1,4 @@
-import { extractName, extractUrl, isNumber, isLength, isAngle, isQuote, SIN, Percent, isBasic, FIRST, Umbrella, Name, NameUnset } from "./func.js";
+import { extractName, extractUrl, isNumber, isLength, isAngle, isQuote, SIN, Percent, isBasic, FIRST, Umbrella, Word, NameUnset, SINmax } from "./func.js";
 
 //The $font umbrella and $typeface cloud regulate this property cluster. $typeface also regulates @font-face{}.
 const FONT_DEFAULTS = Object.entries({
@@ -139,7 +139,8 @@ const FONT_WORDS = {
   xxl: { fontSize: "xx-large" },
   xxxl: { fontSize: "xxx-large" },
 
-  variant: ({ args }) => ({ fontVariant: isBasic(args[0]).text }),
+  // variant: ({ args }) => ({ fontVariant: isBasic(args[0]).text }),
+  variant: SINmax(5, Word,(n, v) => ({ fontVariant: v })), //todo: more specific parsing?
   width: SIN(Percent,(n,v) => ({ fontWidth: v })),
   spacing: ({ args }) => (args[0].text == "normal" ? args[0].text : { letterSpacing: isLength(args[0]).text }),
   adjust: ({ args }) => ({ fontSizeAdjust: isBasic(args[0]).text }),

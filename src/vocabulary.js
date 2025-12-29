@@ -1,15 +1,15 @@
 import nativeAndMore from "./func.js";
 import backgrounds from "./bg.js";
-import border from "./border2.js";
-import fonts from "./font2.js";
-import layouts from "./layout2.js";
+import border from "./border.js";
+import fonts from "./font.js";
+import layouts from "./layout.js";
 import palette from "./palette.js";
 import transitions from "./transitions.js";
 import textDecorations from "./textDecorations.js";
 import filterTransforms from "./filterTransform.js";
 import shadows from "./shadows.js";
 import position from "./position.js";
-import svg from "./svg2.js";
+import svg from "./svg.js";
 import whitespace from "./whitespace.js";
 import { animationHo } from "./animations.js";
 

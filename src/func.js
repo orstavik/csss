@@ -790,6 +790,7 @@ export const Percent = a => isPercent(a)?.text;
 export const Time = a => isTime(a)?.text;
 export const Unset = a => a.text == "_" ? "unset" : undefined;
 export const Url = a => isUrl(a)?.text;
+export const Word = a => isWord(a)?.text;
 
 export const AnglePercent = a => Angle(a) ?? Percent(a);
 export const LengthUnset = a => Length(a) ?? Unset(a);
