@@ -1,4 +1,4 @@
-import { isRepeat, isSpan, isBasic, toLogicalFour, isLength, TYPB, Number as NumberInterpreter, Umbrella, FIRST, SEQ, Length, LengthPercentNumber, SINmax, LengthPercentUnset } from "./func.js";
+import { isRepeat, isSpan, isBasic, toLogicalFour, isLength, TYPB, Number as NumberInterpreter, Umbrella, FIRST, SEQ, Length, LengthPercentNumber, SINmax, LengthPercentUnset, SIN } from "./func.js";
 
 function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
@@ -197,12 +197,12 @@ const gap = SINmax(2, LengthPercentUnset, (n, ar) => {
 //they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
 //so it should be with layout.
 // call it textSpacing?
-const blockGap = SEQ([Length, LengthPercentNumber], (n, ar) => ({ wordSpacing: ar[0], lineHeight: ar[1] }));
+// const blockGap = SEQ([Length, LengthPercentNumber], (n, ar) => ({ wordSpacing: ar[0], lineHeight: ar[1] }));
 
 const IBLOCK = {
   ...LAYOUT,
   ...OVERFLOWS,
-  gap: blockGap,
+  // gap: blockGap,
 };
 
 const IBlockItem = {
@@ -331,8 +331,8 @@ function flexItem({ args }) {
 const DEFAULTS = {
   Block: {
     display: "block",
-    wordSpacing: "unset",
-    lineHeight: "unset",
+    // wordSpacing: "unset",
+    // lineHeight: "unset",
     textAlign: "unset",
     textIndent: "unset",        //as textIndent inherits, we need to unset on both container and item 
     //todo this is NOT as easy as I thought..
@@ -358,7 +358,7 @@ const DEFAULTS = {
 const block = TYPB({
   ...LAYOUT,
   ...OVERFLOWS,
-  gap: blockGap,
+  // gap: blockGap,
 }, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
 const blockItem = TYPB({
@@ -388,6 +388,9 @@ export default {
   flex,
   flexItem,
   hide: _ => ({ display: "none" }),
+
+  lineHeight: SIN(LengthPercentNumber, (n, v) => ({ lineHeight: v })),
+  wordSpacing: SIN(Length, (n, v) => ({ wordSpacing: v })),
 
   order: undefined,
   float: undefined,
