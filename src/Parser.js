@@ -167,7 +167,7 @@ const clashOrStack = (function () {
 
 function goRightComma(tokens, divider) {
   const args = [];
-  if (tokens[0] == ")" && tokens.shift())
+  if (tokens[0].text == ")" && tokens.shift())
     return args;
   while (tokens.length) {
     const a = goRightOperator(tokens)
