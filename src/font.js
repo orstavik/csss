@@ -1,4 +1,4 @@
-import { extractName, extractUrl, isNumber, isLength, isAngle, isQuote, SIN, Percent, isBasic, FIRST, Umbrella, Word, NameUnset, SINmax } from "./func.js";
+import { extractName, extractUrl, isNumber, isLength, Length, isAngle, isQuote, SIN, Percent, Basic, FIRST, Umbrella, Word, NameUnset, SINmax } from "./func.js";
 
 //The $font umbrella and $typeface cloud regulate this property cluster. $typeface also regulates @font-face{}.
 const FONT_DEFAULTS = Object.entries({
@@ -46,7 +46,7 @@ function face({ args }, fontFamily) {
 
   let src = extractUrl(args);
   if (!src)
-    throw new SyntaxError(`The first argument of face(...) must be a quote or a URL, but got: ${args[0]}`); 
+    throw new SyntaxError(`The first argument of face(...) must be a quote or a URL, but got: ${args[0]}`);
   const res = {
     fontFamily: fontFamily ??= src.slice(4, -1),
     fontStyle: "normal",
@@ -139,13 +139,14 @@ const FONT_WORDS = {
   xxl: { fontSize: "xx-large" },
   xxxl: { fontSize: "xxx-large" },
 
-  // variant: ({ args }) => ({ fontVariant: isBasic(args[0]).text }),
-  variant: SINmax(5, Word,(n, v) => ({ fontVariant: v })), //todo: more specific parsing?
-  width: SIN(Percent,(n,v) => ({ fontWidth: v })),
-  spacing: ({ args }) => (args[0].text == "normal" ? args[0].text : { letterSpacing: isLength(args[0]).text }),
-  adjust: ({ args }) => ({ fontSizeAdjust: isBasic(args[0]).text }),
+  variant: SINmax(5, Word, (n, v) => ({ fontVariant: v })), //todo: more specific parsing?
+  width: SIN(Percent, (n, v) => ({ fontWidth: v })),
+  spacing: SIN(Length, (n, v) => ({ letterSpacing: v })), //"_" => "normal". This should be LengthNormal? where we do "_" as "normal"?
+  adjust: SIN(Basic, (n, v) => ({ fontSizeAdjust: v })),
 };
 
+//todo it is a problem that we are passing in the fontFaceName here.. This means that we can't do the $font() as it would need a face thing..
+//todo the face(...) should only be allowed in the Umbrella structure. We need to extract the face() same way as we do with the $animation functions.
 function fontImpl({ name, args }) {
   const fontFaceName = name;
   let res = {}, family = [], emoji;
@@ -223,8 +224,8 @@ const fontDefaults = Object.fromEntries(
 );
 
 const fontWithName = FIRST(
-  NameUnset,    
-  fontImpl,     
+  NameUnset,
+  fontImpl,
   (nameNode, nameText, fontProps) => {
     if (nameText === "unset") {
       if (!fontProps?.fontFamily) {
@@ -275,7 +276,7 @@ function Typeface({ args }) {
 export default {
   font: fontImpl,
   Font: Umbrella(fontDefaults, fontWithName),
-  
+
   Typeface,
 
   // fontSize: makeSingleDroplet("fontSize", isLength),
