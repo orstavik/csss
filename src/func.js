@@ -662,6 +662,13 @@ const matchPrimes = (primes) => {
   };
 };
 
+function BadArgument(name, args, I, expectedType = "") {
+  args = args.map(a => a.text ?? (a.name + "/" + a.args.length));
+  args[I] = ` => ${args[I]} <= `;
+  expectedType &&= `\n${args[I]} is not a ${expectedType}`;
+  return new SyntaxError(`Bad argument ${name}/${I + 1}:  ${name}(${args.join(",")})` + expectedType);
+}
+
 export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
   singlePrimes = matchPrimes(singlePrimes);
   primes = matchPrimes(primes);
@@ -680,8 +687,7 @@ export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
       else if (kv = primes(a, {}))
         (res[kv[0]] ??= []).push(kv[1]);
       else
-        throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text ?? args[i].name} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
+        throw BadArgument(name, args, i);
     }
     return post(res);
   };
@@ -701,8 +707,7 @@ ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text ?? arg
 //         res[k] = v;
 //         return res;
 //       }
-//       throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-// ${name}(${[...args.slice(0, i).map(a => a.text), ` => ${args[i].text} <= `, ...args.slice(i + 1).map(a => a.text)].join(",")}).`);
+//       throw BadArgument(name, args, i);
 //     }, { ...umbrella });
 //     return POST ? POST(res) : res;
 //   };
@@ -726,9 +731,7 @@ export const SINmax = (max, interpreter, post) => ({ args, name }) => {
     const a2 = interpreter(a);
     if (a2 != null)
       return a2;
-    args = args.map(a => a.text);
-    args[i] = ` !! ${args[i]} {{is not a ${interpreter.name}}} !! `;
-    throw new SyntaxError(`Bad argument: ${name}(${args.join(",")})`);
+    throw BadArgument(name, args, i, interpreter.name);
   }));
 };
 
@@ -739,9 +742,7 @@ export const SEQ = (interpreters, post) => ({ args, name }) => {
     const a2 = interpreter(args[i]);
     if (a2)
       return a2;
-    throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-    "${args[i].text}" is not a ${interpreter.name}.
-    ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
+    throw BadArgument(name, args, i, interpreter.name);
   }));
 };
 
@@ -753,9 +754,7 @@ export const SEQopt = (interpreters, post) => ({ args, name }) => {
     const a2 = interpreter(a);
     if (a2 != null)
       return a2;
-    args = args.map(a => a.text);
-    args[i] = ` !! ${args[i]} {{is not a ${interpreter.name}}} !! `;
-    throw new SyntaxError(`Bad argument: ${name}(${args.join(",")})`);
+    throw BadArgument(name, args, i, interpreter.name);
   }));
 };
 
@@ -774,11 +773,8 @@ export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   if (!args.length)
     throw new SyntaxError(`${name} requires at least 1 argument, got 0 arguments.`)
   const first = INTERPRETER(args[0]);
-  //todo make bad argument function
   if (first == null)
-    throw new SyntaxError(`Bad argument ${name}/1.
-    "${args[0].text}" is not a ${INTERPRETER.name}.
-    ${name}(${args.slice(0, 0).map(a => a.text).join(",")}, => ${args[0].text} <=, ${args.slice(1).map(a => a.text).join(",")}).`);
+    throw BadArgument(name, args, 0, INTERPRETER.name);
   const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
   return POST ? POST(name, first, res) : first;
 };
