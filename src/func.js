@@ -666,7 +666,7 @@ export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
   singlePrimes = matchPrimes(singlePrimes);
   primes = matchPrimes(primes);
   return ({ args, name }) => {
-    if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`);
+    // if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`); //todo do we need this one? we could do this as a separate function that we wrap around the $iBlock and $border and what have you.
     const res = {};
     for (let i = 0; i < args.length; i++) {
       const a = args[i];
@@ -681,32 +681,32 @@ export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
         (res[kv[0]] ??= []).push(kv[1]);
       else
         throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
+${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text ?? args[i].name} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
     }
     return post(res);
   };
 };
 
-export const UMBRELLA = (SCHEMA, POST) => {
-  const umbrella = Object.fromEntries(Object.entries(SCHEMA).map(([k]) => [k, "unset"]));
-  return ({ args, name }) => {
-    if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`);
-    const res = args.reduce((res, a, i) => {
-      for (let k in SCHEMA) {
-        if (res[k] !== "unset") continue;
-        const v = SCHEMA[k](a);
-        if (v == null) continue;
-        if (v instanceof Object)
-          return Object.assign(res, v);
-        res[k] = v;
-        return res;
-      }
-      throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-${name}(${[...args.slice(0, i).map(a => a.text), ` => ${args[i].text} <= `, ...args.slice(i + 1).map(a => a.text)].join(",")}).`);
-    }, { ...umbrella });
-    return POST ? POST(res) : res;
-  };
-};
+// export const UMBRELLA = (SCHEMA, POST) => {
+//   const umbrella = Object.fromEntries(Object.entries(SCHEMA).map(([k]) => [k, "unset"]));
+//   return ({ args, name }) => {
+//     if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`);
+//     const res = args.reduce((res, a, i) => {
+//       for (let k in SCHEMA) {
+//         if (res[k] !== "unset") continue;
+//         const v = SCHEMA[k](a);
+//         if (v == null) continue;
+//         if (v instanceof Object)
+//           return Object.assign(res, v);
+//         res[k] = v;
+//         return res;
+//       }
+//       throw new SyntaxError(`Bad argument ${name}/${i + 1}.
+// ${name}(${[...args.slice(0, i).map(a => a.text), ` => ${args[i].text} <= `, ...args.slice(i + 1).map(a => a.text)].join(",")}).`);
+//     }, { ...umbrella });
+//     return POST ? POST(res) : res;
+//   };
+// };
 
 export const Umbrella = (base, cb) => exp => Object.assign({}, base, cb(exp));
 
@@ -768,17 +768,19 @@ export const CUSTOM_WORD = (NAME, WORDS, POST) => {
   return cb;
 };
 
+export const WORD_IN_TABLE = TABLE => ({ text }) => TABLE[text];
+
 export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   if (!args.length)
     throw new SyntaxError(`${name} requires at least 1 argument, got 0 arguments.`)
   const first = INTERPRETER(args[0]);
+  //todo make bad argument function
   if (first == null)
     throw new SyntaxError(`Bad argument ${name}/1.
     "${args[0].text}" is not a ${INTERPRETER.name}.
     ${name}(${args.slice(0, 0).map(a => a.text).join(",")}, => ${args[0].text} <=, ${args.slice(1).map(a => a.text).join(",")}).`);
-  
-    const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
-  return POST ? POST(name, first, res) : first;;
+  const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
+  return POST ? POST(name, first, res) : first;
 };
 
 export const Angle = a => isAngle(a)?.text;
@@ -791,6 +793,7 @@ export const Time = a => isTime(a)?.text;
 export const Unset = a => a.text == "_" ? "unset" : undefined;
 export const Url = a => isUrl(a)?.text;
 export const Word = a => isWord(a)?.text;
+export const Basic = a => isBasic(a)?.text; //todo this should be replaced with something more precise in the HO functions
 
 export const AnglePercent = a => Angle(a) ?? Percent(a);
 export const LengthUnset = a => Length(a) ?? Unset(a);

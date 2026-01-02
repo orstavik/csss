@@ -18,8 +18,6 @@
     display: flex;
     align-items: unset;
     place-content: unset;
-     text-align: unset;
-    text-indent: unset;
     flex-direction: column;
     gap: 0.5rem;
     padding: 1rem;
@@ -105,14 +103,13 @@
 }
 ```
 
-**csss:** $flex(contentCenter,itemsStretch,textJustify,gap(1rem),padding(1rem),wrap)
+**csss:** $flex(contentCenter,itemsStretch,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(contentCenter\,itemsStretch\,textJustify\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
+  .\$flex\(contentCenter\,itemsStretch\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
     place-content: center;
     align-items: stretch;
-    text-align: justify;
     gap: 1rem;
     padding: 1rem;
     flex-wrap: wrap;
@@ -134,12 +131,11 @@
 }
 ```
 
-**csss:** $flex(textJustify,itemsStretch,gap(1rem),padding(1rem),wrap)
+**csss:** $flex(itemsStretch,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
 @layer containerDefault {
-  .\$flex\(textJustify\,itemsStretch\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
-    text-align: justify;
+  .\$flex\(itemsStretch\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
     align-items: stretch;
     gap: 1rem;
     padding: 1rem;
@@ -166,6 +162,49 @@
   .\$flex\(overflowScroll\,padding\(1rem\)\) {
     overflow: scroll;
     padding: 1rem;
+  }
+}
+```
+
+**csss:** $flex(gap(1rem),padding(1rem))
+**css:**
+```css
+@layer containerDefault {
+  .\$flex\(gap\(1rem\)\,padding\(1rem\)\) {
+    gap: 1rem;
+    padding: 1rem;
+  }
+}
+```
+
+**csss:** $flex(gap(1rem))
+**css:**
+```css
+@layer containerDefault {
+  .\$flex\(gap\(1rem\)\) {
+    gap: 1rem;
+  }
+}
+```
+
+**csss:** $flex(row,gap(1rem),padding(1rem))
+**css:**
+```css
+@layer containerDefault {
+  .\$flex\(row\,gap\(1rem\)\,padding\(1rem\)\) {
+    flex-direction: row;
+    gap: 1rem;
+    padding: 1rem;
+  }
+}
+```
+
+**csss:** $flex(gap(0.5rem))
+**css:**
+```css
+@layer containerDefault {
+  .\$flex\(gap\(0\.5rem\)\) {
+    gap: 0.5rem;
   }
 }
 ```

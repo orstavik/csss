@@ -112,16 +112,6 @@
 }
 ```
 
-**csss:** $lineHeight(1.5)
-**css:**
-```css
-@layer containerDefault {
-  .\$lineHeight\(1\.5\) {
-    line-height: 1.5;
-  }
-}
-```
-
 **csss:** $font(serif,hyphens)
 **css:**
 ```css

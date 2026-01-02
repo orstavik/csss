@@ -18,7 +18,6 @@
     block-size: unset;
     margin-block: 1rem 0.5rem;
     margin-inline: 0;
-    text-indent: unset;
     scroll-margin: unset;
     scroll-snap-align: unset;
   }

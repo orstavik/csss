@@ -19,7 +19,6 @@
     block-size: unset;
     margin-block: unset;
     margin-inline: unset;
-    text-indent: unset;
     scroll-margin: unset;
     scroll-snap-align: unset;
     grid-column: 1 / span 3;
@@ -94,6 +93,52 @@
 @layer items {
   .\|\:nth-child\(3\)\$gridItem\(selfStartEnd\)>:where(:nth-child(3)) {
     place-self: start end;
+  }
+}
+```
+
+**csss:** |.a$gridItem(column(1,span(2)),margin(1rem))
+**css:**
+```css
+@layer items {
+  .\|\.a\$gridItem\(column\(1\,span\(2\)\)\,margin\(1rem\)\)>:where(.a) {
+    grid-column: 1 / span 2;
+    margin: 1rem;
+  }
+}
+```
+
+**csss:** |.b$gridItem(row(1,span(2)),column(3))
+**css:**
+```css
+@layer items {
+  .\|\.b\$gridItem\(row\(1\,span\(2\)\)\,column\(3\)\)>:where(.b) {
+    grid-row: 1 / span 2;
+    grid-column: 3;
+  }
+}
+```
+
+**csss:** |.c$gridItem(selfStretchStart,column(1),row(2,span(2)))
+**css:**
+```css
+@layer items {
+  .\|\.c\$gridItem\(selfStretchStart\,column\(1\)\,row\(2\,span\(2\)\)\)>:where(.c) {
+    place-self: stretch start;
+    grid-column: 1;
+    grid-row: 2 / span 2;
+  }
+}
+```
+
+**csss:** |.d$gridItem(selfCenter,column(2),row(3))
+**css:**
+```css
+@layer items {
+  .\|\.d\$gridItem\(selfCenter\,column\(2\)\,row\(3\)\)>:where(.d) {
+    place-self: center;
+    grid-column: 2;
+    grid-row: 3;
   }
 }
 ```

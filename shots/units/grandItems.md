@@ -29,12 +29,11 @@
 }
 ```
 
-**csss:** |.item|.child$blockItem(indent(1em))
+**csss:** |.item|.child$blockItem()
 **css:**
 ```css
 @layer grandItems {
-  .\|\.item\|\.child\$blockItem\(indent\(1em\)\)>:where(.item)>:where(.child) {
-    text-indent: 1em;
+  .\|\.item\|\.child\$blockItem\(\)>:where(.item)>:where(.child) {
   }
 }
 ```

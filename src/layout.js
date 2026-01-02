@@ -1,4 +1,4 @@
-import { isRepeat, isSpan, isBasic, toLogicalFour, isLength, TYPB, SIN, Number as NumberInterpreter, Umbrella, FIRST, SEQ, Length, LengthPercentNumber, SINmax, LengthPercentUnset } from "./func.js";
+import { isRepeat, isSpan, isBasic, Basic, toLogicalFour, TYPB, SIN, Number as NumberInterpreter, Umbrella, FIRST, Length, LengthPercentNumber, SINmax, LengthPercentUnset } from "./func.js";
 
 function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
@@ -33,7 +33,6 @@ function size({ args }) {
   throw new SyntaxError(`$size() accepts only 1, 2 or 4 arguments, got ${args.length}.`);
 }
 
-//todo turn this into memory thing. same with O2
 const ALIGNMENTS = (_ => {
   const POSITIONS = "|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd";
   const SPACE = "|Around|Between|Evenly";
@@ -77,7 +76,6 @@ const ALIGNMENTS = (_ => {
     placeSelf: makePlaceAligns("placeSelf", "self", AlignSelf, JustifySelf),
     alignItems: makePlaceAligns("alignItems", "items", AlignItems),
     alignSelf: makePlaceAligns("alignSelf", "self", AlignSelf),
-    textAlign: makePlaceAligns("textAlign", "text", "Normal|Start|End|Center|Justify|Left|Right"),
   }
 })();
 
@@ -114,18 +112,10 @@ const OVERFLOWS = (_ => {
   return res;
 })();
 
-//todo rename this to container() and then do block, grid, flex as the two options.
-//todo the question is if this will be recognized by the llm..
-//they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
-//so it should be with layout.
-//todo rename the text block layout unit to $page
-
-
-
+//const CONTAINER
 const LAYOUT = {
   padding: ({ args }) => toLogicalFour("padding", args),
   scrollPadding: ({ args }) => toLogicalFour("scroll-padding", args),
-  ...ALIGNMENTS.textAlign,
   breakWord: { overflowWrap: "break-word" },
   breakAnywhere: { overflowWrap: "anywhere" },
   breakAll: { wordBreak: "break-all" },
@@ -133,19 +123,10 @@ const LAYOUT = {
   snapStop: { scrollSnapStop: "always" },
 };
 
-function textIndent({ args }) {
-  const l = isLength(args[0]);
-  if (l)
-    return { "textIndent": l.text };
-  throw new SyntaxError("indent needs a length");
-}
+//const ITEM
 const _LAYOUT = {
   margin: ({ args }) => toLogicalFour("margin", args),
   scrollMargin: ({ args }) => toLogicalFour("scroll-margin", args),
-  //this is now on the item. But that is inconsitent, as the gap in block controls the lineHeight etc for the text in the container.
-  //todo i think that textIndent should be moved to the container again.
-  textIndent: textIndent,
-  indent: textIndent,
   inlineSize: toSize.bind(null, "inlineSize"), //todo should we block this? is size(10px) enough?
   blockSize: toSize.bind(null, "blockSize"),   //todo should we block this? is size(_,10px) enough?
   size,
@@ -173,20 +154,9 @@ const gap = SINmax(2, LengthPercentUnset, (n, ar) => {
   return { gap: ar.join(" ") };
 });
 
-//todo rename this to space() and then do block, inline as the two options.
-//todo the question is if this will be recognized by the llm..
-//they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
-//so it should be with layout.
-// call it textSpacing?
-// const blockGap = SEQ([Length, LengthPercentNumber], (n, ar) => ({ wordSpacing: ar[0], lineHeight: ar[1] }));
-
 export const DEFAULTS = {
   Block: {
     display: "block",
-    // wordSpacing: "unset",
-    // lineHeight: "unset",
-    textAlign: "unset",
-    textIndent: "unset",        //as textIndent inherits, we need to unset on both container and item 
     //todo this is NOT as easy as I thought..
     //">* /*blockItem*/": BlockItemDefaults,    //the BlockItem defaults are always set by the Block.
   },
@@ -195,7 +165,6 @@ export const DEFAULTS = {
     blockSize: "unset",
     marginBlock: "unset",
     marginInline: "unset",
-    textIndent: "unset",        //as textIndent inherits, we need to unset on both container and item
     scrollMargin: "unset",
     scrollSnapAlign: "unset",
   },
@@ -209,29 +178,20 @@ export const DEFAULTS = {
     display: "flex",
     alignItems: "unset",
     placeContent: "unset",
-    textAlign: "unset",
-    textIndent: "unset",
   },
   Grid: {
     display: "grid",
     placeItems: "unset",
     placeContent: "unset",
-    textAlign: "unset",
-    textIndent: "unset",
   },
   IBlock: {
     display: "inline-block",
-    // wordSpacing: "unset",
-    // lineHeight: "unset",
-    textAlign: "unset",
-    textIndent: "unset",
   },
 };
 
 const IBLOCK = {
   ...LAYOUT,
   ...OVERFLOWS,
-  // gap: blockGap,
 };
 
 const _IBlockItem = {
@@ -286,7 +246,6 @@ const GRID = {
   denseRow: { gridAutoFlow: "dense row" },
 };
 
-// Convert to TYPB pattern
 const grid = TYPB({
   ...GRID,
 }, {}, {}, res => Object.assign({}, ...Object.values(res)));
@@ -351,10 +310,10 @@ const Flex = Umbrella(DEFAULTS.Flex, flex);
 const _FlexItem = {
   ..._LAYOUT,
   ...ALIGNMENTS.alignSelf,
-  basis: ({ args }) => ({ flexBasis: args.map(isBasic).map(a => a.text).join(" ") }),
-  grow: ({ args }) => ({ flexGrow: args.map(isBasic).map(a => a.text).join(" ") }),
-  shrink: ({ args }) => ({ flexShrink: args.map(isBasic).map(a => a.text).join(" ") }),
-  order: ({ args }) => ({ order: args.map(isBasic).map(a => a.text).join(" ") }),
+  basis: SIN(Basic, (n, v) => ({ flexBasis: v })),
+  grow: SIN(Basic, (n, v) => ({ flexGrow: v })),
+  shrink: SIN(Basic, (n, v) => ({ flexShrink: v })),
+  order: SIN(Basic, (n, v) => ({ [n]: v })),
   //todo safe
 };
 
@@ -367,7 +326,6 @@ const FlexItem = Umbrella(DEFAULTS.BlockItem, flexItem);
 const block = TYPB({
   ...LAYOUT,
   ...OVERFLOWS,
-  // gap: blockGap,
 }, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
 const blockItem = TYPB({
@@ -448,5 +406,4 @@ export default {
   placeSelf: undefined,
   justifySelf: undefined,
   alignSelf: undefined,
-  textAlign: undefined,
 };

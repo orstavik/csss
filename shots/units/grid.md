@@ -19,8 +19,6 @@
     display: grid;
     place-items: unset;
     place-content: unset;
-    text-align: unset;
-    text-indent: unset;
     grid-template-columns: 1fr 2fr;
     grid-template-rows: auto;
     gap: 1rem;
@@ -55,14 +53,13 @@
 }
 ```
 
-**csss:** $grid(contentCenter,itemsStretch,textJustify,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
+**csss:** $grid(contentCenter,itemsStretch,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
 **css:**
 ```css
 @layer containerDefault {
-  .\$grid\(contentCenter\,itemsStretch\,textJustify\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
+  .\$grid\(contentCenter\,itemsStretch\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
     place-content: center;
     place-items: stretch;
-    text-align: justify;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     padding: 1rem;
@@ -119,6 +116,20 @@
     overflow-block: scroll;
     overflow-inline: hidden;
     gap: 1rem;
+  }
+}
+```
+
+**csss:** $grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),padding(1rem),contentStartCenter)
+**css:**
+```css
+@layer containerDefault {
+  .\$grid\(cols\(repeat\(3\,1fr\)\)\,rows\(repeat\(3\,80px\)\)\,gap\(1rem\)\,padding\(1rem\)\,contentStartCenter\) {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 80px);
+    gap: 1rem;
+    padding: 1rem;
+    place-content: start center;
   }
 }
 ```
