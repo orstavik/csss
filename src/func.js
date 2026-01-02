@@ -790,6 +790,8 @@ export const Unset = a => a.text == "_" ? "unset" : undefined;
 export const Url = a => isUrl(a)?.text;
 export const Word = a => isWord(a)?.text;
 export const Basic = a => isBasic(a)?.text; //todo this should be replaced with something more precise in the HO functions
+export const Repeat = a => isRepeat(a)?.text;
+export const Span = a => isSpan(a)?.text;
 
 export const AnglePercent = a => Angle(a) ?? Percent(a);
 export const LengthUnset = a => Length(a) ?? Unset(a);
@@ -801,3 +803,5 @@ export const NumberPercent = a => Number(a) ?? Percent(a);
 export const UrlUnset = a => Url(a) ?? Unset(a);
 export const ColorUrl = a => Color(a) ?? Url(a);
 export const ColorPrimitive = a => (a.kind === "COLOR" && (a = parseColor(a.text)).hex) ? a : undefined;
+export const RepeatBasic = a => Repeat(a) ?? Basic(a);
+export const SpanBasic = a => Span(a) ?? Basic(a);

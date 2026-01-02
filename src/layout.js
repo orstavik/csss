@@ -1,4 +1,4 @@
-import { isRepeat, isSpan, isBasic, Basic, toLogicalFour, TYPB, SIN, Number as NumberInterpreter, Umbrella, FIRST, Length, LengthPercentNumber, SINmax, LengthPercentUnset } from "./func.js";
+import { RepeatBasic, SpanBasic, isBasic, Basic, toLogicalFour, TYPB, SIN, Number as NumberInterpreter, Umbrella, FIRST, Length, LengthPercentNumber, SINmax, LengthPercentUnset } from "./func.js";
 
 function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
@@ -206,38 +206,15 @@ const _IBlockItem = {
   alignSub: { verticalAlign: "sub" },
 };
 
-const iBlock = TYPB({
-  ...IBLOCK,
-}, {}, {}, res => Object.assign({}, ...Object.values(res)));
-
-const iBlockItem = TYPB({
-  ..._IBlockItem,
-}, {}, {}, res => Object.assign({}, ...Object.values(res)));
-
-const IBlock = Umbrella(DEFAULTS.IBlock, iBlock);
-const IBlockItem = Umbrella(DEFAULTS.BlockItem, iBlockItem);
-
-// function lineClamp({ args: [lines, ...args] }) {
-//   lines = isBasic(lines);
-//   if (lines.type != "number")
-//     throw new SyntaxError(`$lineClamp() first argument must be a simple number, got ${lines}.`);
-//   return Object.assign(block({ args }), {
-//     display: "-webkit-box",
-//     WebkitLineClamp: lines.num,
-//     WebkitBoxOrient: "vertical",
-//     overflowBlock: "hidden"
-//   });
-// }
-
 const GRID = {
+  ...LAYOUT,
   ...OVERFLOWS,
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.placeItems,
-  cols: ({ args }) => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
-  columns: ({ args }) => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
-  rows: ({ args }) => ({ gridTemplateRows: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
-  areas: ({ args }) => ({ gridTemplateAreas: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
-  ...LAYOUT,
+  cols: SINmax(999, RepeatBasic, (n, ar) => ({ gridTemplateColumns: ar.join(" ") })), //todo what is the bertScore distance from cols to columns?
+  columns: SINmax(999, RepeatBasic, (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
+  rows: SINmax(999, RepeatBasic, (n, ar) => ({ gridTemplateRows: ar.join(" ") })),
+  areas: SINmax(999, RepeatBasic, (n, ar) => ({ gridTemplateAreas: ar.join(" ") })),
   gap,
   //todo test this!!
   column: { gridAutoFlow: "column" },
@@ -246,45 +223,12 @@ const GRID = {
   denseRow: { gridAutoFlow: "dense row" },
 };
 
-const grid = TYPB({
-  ...GRID,
-}, {}, {}, res => Object.assign({}, ...Object.values(res)));
-
-const Grid = Umbrella(DEFAULTS.Grid, grid);
-
-//       1  2345   6789
-// $grid(col(1,span(3))) => "{ gridColumn: 1 / span 3 }"
-//
-// $grid(colStartEnd(1,3)) => "{ gridColumn: 1 / 3 }"
-// $grid(colSpan(1,3)) => "{ gridColumn: 1 / span 3 }"
-//       1     2345   6
-// $grid(column_1_span3) => "{ gridColumn: 1 / span 3 }"
-
-// $flex
-
-// $grid(col(1,4))
-// $grid(col_1_4)
-const column = ({ args }) => {
-  const [start, end] = args.map(a => isSpan(a) ?? isBasic(a)).map(a => a.text);
-  return { gridColumn: end ? `${start} / ${end}` : start };
-};
-const row = ({ args }) => {
-  const [start, end] = args.map(a => isSpan(a) ?? isBasic(a)).map(a => a.text);
-  return { gridRow: end ? `${start} / ${end}` : start };
-};
-
 const _GridItem = {
   ...ALIGNMENTS.placeSelf,
   ..._LAYOUT,
-  column,
-  row,
+  column: SINmax(2, SpanBasic, (n, ar) => ({ gridColumn: ar.join(" / ") })), //todo test how `_` works as first or second argument.
+  row: SINmax(2, SpanBasic, (n, ar) => ({ gridRow: ar.join(" / ") })),       //todo test how `_` works as first or second argument.
 };
-
-const gridItem = TYPB({
-  ..._GridItem,
-}, {}, {}, res => Object.assign({}, ...Object.values(res)));
-
-const GridItem = Umbrella(DEFAULTS.BlockItem, gridItem);
 
 const FLEX = {
   column: { flexDirection: "column" },
@@ -301,12 +245,6 @@ const FLEX = {
   gap,
 };
 
-const flex = TYPB({
-  ...FLEX,
-}, {}, {}, res => Object.assign({}, ...Object.values(res)));
-
-const Flex = Umbrella(DEFAULTS.Flex, flex);
-
 const _FlexItem = {
   ..._LAYOUT,
   ...ALIGNMENTS.alignSelf,
@@ -317,16 +255,6 @@ const _FlexItem = {
   //todo safe
 };
 
-const flexItem = TYPB({
-  ..._FlexItem,
-}, {}, {}, res => Object.assign({}, ...Object.values(res)));
-
-const FlexItem = Umbrella(DEFAULTS.BlockItem, flexItem);
-
-const block = TYPB({
-  ...LAYOUT,
-  ...OVERFLOWS,
-}, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
 const blockItem = TYPB({
   ..._LAYOUT,
@@ -334,35 +262,36 @@ const blockItem = TYPB({
   floatEnd: { float: "inline-end" },
 }, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
-const Block = Umbrella(DEFAULTS.Block, block);
-const BlockItem = Umbrella(DEFAULTS.BlockItem, blockItem);
+const block = TYPB({ ...LAYOUT, ...OVERFLOWS }, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const lineClamp = FIRST(NumberInterpreter, block, (n, a, b) => ({ ...DEFAULTS.LineClamp, WebkitLineClamp: a, ...b }));
-const LineClamp = Umbrella(DEFAULTS.Block, lineClamp);
+const grid = TYPB(GRID, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const gridItem = TYPB(_GridItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const flex = TYPB(FLEX, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const flexItem = TYPB(_FlexItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const iBlock = TYPB(IBLOCK, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const iBlockItem = TYPB(_IBlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
-//NEW SYSTEM ENDS HERE
 
 export default {
   block,
-  Block,
   blockItem,
-  BlockItem,
   lineClamp,
-  LineClamp,
-
   flex,
-  Flex,
   flexItem,
-  FlexItem,
-
   grid,
-  Grid,
   gridItem,
-  GridItem,
-
   iBlock,
-  IBlock,
   iBlockItem,
-  IBlockItem,
+
+  Block: Umbrella(DEFAULTS.Block, block),
+  BlockItem: Umbrella(DEFAULTS.BlockItem, blockItem),
+  LineClamp: Umbrella(DEFAULTS.Block, lineClamp),
+  IBlock: Umbrella(DEFAULTS.IBlock, iBlock),
+  IBlockItem: Umbrella(DEFAULTS.BlockItem, iBlockItem),
+  Grid: Umbrella(DEFAULTS.Grid, grid),
+  GridItem: Umbrella(DEFAULTS.BlockItem, gridItem),
+  Flex: Umbrella(DEFAULTS.Flex, flex),
+  FlexItem: Umbrella(DEFAULTS.BlockItem, flexItem),
 
   lineHeight: SIN(LengthPercentNumber, (n, v) => ({ lineHeight: v })),
   wordSpacing: SIN(Length, (n, v) => ({ wordSpacing: v })),
@@ -372,8 +301,8 @@ export default {
   order: undefined,
   float: undefined,
   gap: undefined,
-  margin: undefined, //_LAYOUT.margin, 
-  padding: undefined,// LAYOUT.padding,
+  margin: undefined,
+  padding: undefined,
   width: undefined,
   minWidth: undefined,
   maxWidth: undefined,
