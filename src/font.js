@@ -21,6 +21,26 @@ const FONT_DEFAULTS = Object.entries({
   hyphens: "Hyphens",
 });
 
+const fontDefaults2 = {
+  fontFamily: "unset",
+  fontSize: "unset",
+  fontStyle: "unset",
+  fontWeight: "unset",
+  fontSizeAdjust: "unset",
+  letterSpacing: "unset",
+  textTransform: "unset",
+  fontWidth: "unset",
+  fontStretch: "unset",
+  fontVariantCaps: "unset",
+  fontSynthesis: "unset",
+  fontFeatureSettings: "unset",
+  fontVariationSettings: "unset",
+  WebkitFontSmoothing: "unset",
+  MozOsxFontSmoothing: "unset",
+  fontKerning: "unset",
+  hyphens: "unset",
+};
+
 /**
  * TextTransform is a semi inherited css property (inherits over inline elements, but not block elements).
  * The same way as shifting font family or style, caption is a family-ish trait. Would be normal to consider part of font umbrella.
@@ -33,6 +53,7 @@ const FONT_DEFAULTS = Object.entries({
 function face({ args }, fontFamily) {
 
   function featureAndVariation(args) {
+    //todo this doesn't work? a.text.split instead of a.split ? 
     return args.map(a => a.split("=")).map(([k, v = 1]) => `"${k}" ${v}`).join(", ");
   }
 
@@ -200,29 +221,6 @@ function fontImpl({ name, args }) {
 //$type(name,...args) => creates a type with the given name and properties.
 //$type(name) => uses a type and sets the font properties to the type's properties.
 
-// Font defaults for umbrella
-const fontDefaults = Object.fromEntries(
-  Object.entries({
-    fontFamily: "FontFamily",
-    fontSize: "FontSize",
-    fontStyle: "FontStyle",
-    fontWeight: "FontWeight",
-    fontSizeAdjust: "FontSizeAdjust",
-    letterSpacing: "LetterSpacing",
-    textTransform: "TextTransform",
-    fontWidth: "FontWidth",
-    fontStretch: "FontWidth",  // fontStretch uses the same CSS variable as fontWidth
-    fontVariantCaps: "FontVariantCaps",
-    fontSynthesis: "FontSynthesis",
-    fontFeatureSettings: "FontFeatureSettings",
-    fontVariationSettings: "FontVariationSettings",
-    WebkitFontSmoothing: "WebkitFontSmoothing",
-    MozOsxFontSmoothing: "MozOsxFontSmoothing",
-    fontKerning: "FontKerning",
-    hyphens: "Hyphens",
-  }).map(([k]) => [k, "unset"])
-);
-
 const fontWithName = FIRST(
   NameUnset,
   fontImpl,
@@ -261,6 +259,12 @@ function Typeface({ args }) {
   return res;
 }
 
+export default {
+  font: fontImpl,
+  Font: Umbrella(fontDefaults2, fontWithName),
+
+  Typeface,
+
 // function makeSingleDroplet(NAME, FUNC) {
 //   return function ({ args }) {
 //     if (args.length != 1)
@@ -272,12 +276,6 @@ function Typeface({ args }) {
 //     return { [NAME]: v };
 //   }
 // }
-
-export default {
-  font: fontImpl,
-  Font: Umbrella(fontDefaults, fontWithName),
-
-  Typeface,
 
   // fontSize: makeSingleDroplet("fontSize", isLength),
   // // fontFamily: makeSingleDroplet("fontFamily", isBasic), //todo this should not be possible.
@@ -330,4 +328,3 @@ export default {
   // hyphens: { hyphens: "auto" },
   // noHyphens: { hyphens: "none" },
 };
-
