@@ -112,8 +112,7 @@ const OVERFLOWS = (_ => {
   return res;
 })();
 
-//const CONTAINER
-const LAYOUT = {
+const CONTAINER = {
   padding: ({ args }) => toLogicalFour("padding", args),
   scrollPadding: ({ args }) => toLogicalFour("scroll-padding", args),
   breakWord: { overflowWrap: "break-word" },
@@ -124,8 +123,7 @@ const LAYOUT = {
   ...OVERFLOWS,
 };
 
-//const ITEM
-const _LAYOUT = {
+const ITEM = {
   margin: ({ args }) => toLogicalFour("margin", args),
   scrollMargin: ({ args }) => toLogicalFour("scroll-margin", args),
   inlineSize: toSize.bind(null, "inlineSize"), //todo should we block this? is size(10px) enough?
@@ -191,11 +189,11 @@ export const DEFAULTS = {
 };
 
 const IBLOCK = {
-  ...LAYOUT,
+  ...CONTAINER,
 };
 
 const _IBlockItem = {
-  ..._LAYOUT,
+  ...ITEM,
   alignTop: { verticalAlign: "top" },
   alignMiddle: { verticalAlign: "middle" },
   alignBottom: { verticalAlign: "bottom" },
@@ -207,7 +205,7 @@ const _IBlockItem = {
 };
 
 const GRID = {
-  ...LAYOUT,
+  ...CONTAINER,
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.placeItems,
   cols: SINmax(999, RepeatBasic, (n, ar) => ({ gridTemplateColumns: ar.join(" ") })), //todo what is the bertScore distance from cols to columns?
@@ -224,7 +222,7 @@ const GRID = {
 
 const _GridItem = {
   ...ALIGNMENTS.placeSelf,
-  ..._LAYOUT,
+  ...ITEM,
   column: SINmax(2, SpanBasic, (n, ar) => ({ gridColumn: ar.join(" / ") })), //todo test how `_` works as first or second argument.
   row: SINmax(2, SpanBasic, (n, ar) => ({ gridRow: ar.join(" / ") })),       //todo test how `_` works as first or second argument.
 };
@@ -239,12 +237,12 @@ const FLEX = {
   noWrap: { flexWrap: "nowrap" },
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.alignItems,
-  ...LAYOUT,
+  ...CONTAINER,
   gap,
 };
 
 const _FlexItem = {
-  ..._LAYOUT,
+  ...ITEM,
   ...ALIGNMENTS.alignSelf,
   basis: SIN(Basic, (n, v) => ({ flexBasis: v })),
   grow: SIN(Basic, (n, v) => ({ flexGrow: v })),
@@ -253,14 +251,14 @@ const _FlexItem = {
   //todo safe
 };
 
-
-const blockItem = TYPB({
-  ..._LAYOUT,
+const BlockItem = {
+  ...ITEM,
   floatStart: { float: "inline-start" },
   floatEnd: { float: "inline-end" },
-}, {}, {}, res => Object.assign({}, ...Object.values(res)));
+}
 
-const block = TYPB(LAYOUT, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const block = TYPB(CONTAINER, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const blockItem = TYPB(BlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const lineClamp = FIRST(NumberInterpreter, block, (n, a, b) => ({ ...DEFAULTS.LineClamp, WebkitLineClamp: a, ...b }));
 const grid = TYPB(GRID, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const gridItem = TYPB(_GridItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
@@ -268,7 +266,6 @@ const flex = TYPB(FLEX, {}, {}, res => Object.assign({}, ...Object.values(res)))
 const flexItem = TYPB(_FlexItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const iBlock = TYPB(IBLOCK, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const iBlockItem = TYPB(_IBlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
-
 
 export default {
   block,
