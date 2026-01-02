@@ -1,4 +1,4 @@
-import { LengthPercentNumber, LengthPercent, TYPB, SIN, Umbrella, CUSTOM_WORD, FIRST, WORD_IN_TABLE } from "./func.js";
+import { LengthPercentNumber, LengthPercent, TYPB, SIN, Umbrella, FIRST, WORD_IN_TABLE } from "./func.js";
 
 const paragraph = TYPB({
   indent: SIN(LengthPercent, (n, v) => ({ textIndent: v })),
