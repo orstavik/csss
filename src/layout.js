@@ -121,6 +121,7 @@ const LAYOUT = {
   breakAll: { wordBreak: "break-all" },
   keepAll: { wordBreak: "keep-all" },
   snapStop: { scrollSnapStop: "always" },
+  ...OVERFLOWS,
 };
 
 //const ITEM
@@ -191,7 +192,6 @@ export const DEFAULTS = {
 
 const IBLOCK = {
   ...LAYOUT,
-  ...OVERFLOWS,
 };
 
 const _IBlockItem = {
@@ -208,7 +208,6 @@ const _IBlockItem = {
 
 const GRID = {
   ...LAYOUT,
-  ...OVERFLOWS,
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.placeItems,
   cols: SINmax(999, RepeatBasic, (n, ar) => ({ gridTemplateColumns: ar.join(" ") })), //todo what is the bertScore distance from cols to columns?
@@ -238,7 +237,6 @@ const FLEX = {
   wrap: { flexWrap: "wrap" },
   wrapReverse: { flexWrap: "wrap-reverse" },
   noWrap: { flexWrap: "nowrap" },
-  ...OVERFLOWS,
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.alignItems,
   ...LAYOUT,
@@ -262,7 +260,7 @@ const blockItem = TYPB({
   floatEnd: { float: "inline-end" },
 }, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
-const block = TYPB({ ...LAYOUT, ...OVERFLOWS }, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const block = TYPB(LAYOUT, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const lineClamp = FIRST(NumberInterpreter, block, (n, a, b) => ({ ...DEFAULTS.LineClamp, WebkitLineClamp: a, ...b }));
 const grid = TYPB(GRID, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const gridItem = TYPB(_GridItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
