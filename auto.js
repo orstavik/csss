@@ -1036,6 +1036,7 @@ const LengthPercent = a => Length(a) ?? Percent(a);
 const LengthPercentNumber = a => Length(a) ?? Percent(a) ?? Number$1(a);
 const NumberPercent = a => Number$1(a) ?? Percent(a);
 const UrlUnset = a => Url(a) ?? Unset(a);
+const ColorUrl = a => Color(a) ?? Url(a);
 const ColorPrimitive = a => (a.kind === "COLOR" && (a = parseColor(a.text)).hex) ? a : undefined;
 
 const POSITION_WORDS = {};
@@ -2935,7 +2936,7 @@ var position$1 = {
 };
 
 const stroke = UMBRELLA({
-  stroke: Color,
+  stroke: ColorUrl,
   strokeWidth: Length,
   strokeOpacity: Number$1, //isFraction
   strokeLinecap: a => a.text?.match(/^(butt|round|square)$/)?.[0],
@@ -2946,7 +2947,7 @@ const stroke = UMBRELLA({
 });
 
 const fill = UMBRELLA({
-  fill: Color,
+  fill: ColorUrl,
   fillOpacity: Number$1, //isFraction
   fillRule: a => a.text?.match(/^(evenodd|nonzero)$/)?.[0],
 });
