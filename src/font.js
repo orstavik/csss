@@ -166,6 +166,14 @@ const FONT_WORDS = {
   adjust: SIN(Basic, (n, v) => ({ fontSizeAdjust: v })),
 };
 
+function fontFaceProcess(face, fontFamily) {
+  return {
+    ...face,
+    fontFamily: fontFamily,
+    src: `local(${fontFamily}), ${face.src}`
+  };
+}
+
 //todo it is a problem that we are passing in the fontFaceName here.. This means that we can't do the $font() as it would need a face thing..
 //todo the face(...) should only be allowed in the Umbrella structure. We need to extract the face() same way as we do with the $animation functions.
 function fontImpl({ name, args }) {
@@ -190,10 +198,8 @@ function fontImpl({ name, args }) {
     else if (a2 = isFraction(a))
       res.fontSizeAdjust = a2.num;
     else if (a.name == "face" && (a2 = face(a))) {
-      if (fontFaceName) {
-        a2.fontFamily = fontFaceName;
-        a2.src = `local(${fontFaceName}), ${a2.src}`;
-      }
+      if (fontFaceName)
+        a2 = fontFaceProcess(a2, fontFaceName);
       family.push(a2.fontFamily);
       res[`@font-face /*${a2.fontFamily} ${a2.fontStyle}*/`] = a2;
     } else
