@@ -1,4 +1,4 @@
-import { Number as NumberInterpreter, Time, isBasic, TYPB } from "./func.js";
+import { NumberInterpreter, Time, isBasic, TYPB } from "./func.js";
 import * as CURVES from "./Curves.js";
 import Maths from "./funcMath.js";
 

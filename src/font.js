@@ -1,4 +1,4 @@
-import { extractName, extractUrl, isNumber, isLength, Length, isAngle, isQuote, SIN, Percent, Basic, FIRST, Umbrella, Word, NameUnset, SINmax } from "./func.js";
+import { extractName, extractUrl, isFraction, isIntegerUpTo1000, isLength, Length, isAngle, isQuote, SIN, Percent, Basic, FIRST, Umbrella, Word, NameUnset, SINmax } from "./func.js";
 
 //The $font umbrella and $typeface cloud regulate this property cluster. $typeface also regulates @font-face{}.
 const FONT_DEFAULTS = Object.entries({
@@ -185,16 +185,13 @@ function fontImpl({ name, args }) {
       Object.assign(res, a2);
     else if (a.kind == "WORD")
       family.push(a.text);
+    else if (a2 = isIntegerUpTo1000(a))
+      res.fontWeight = a2.num;
+    else if (a2 = isFraction(a))
+      res.fontSizeAdjust = a2.num;
     else if (a.name == "face" && (a2 = face(a, fontFaceName))) {
       Object.assign(res, a2);
       family.push(Object.values(a2)[0].fontFamily);
-    } else if (a2 = isNumber(a)?.num) {
-      if (a2 && 1 <= a2 && a2 <= 1000)
-        res.fontWeight = a2;
-      else if (0 < a2 && a2 < 1)
-        res.fontSizeAdjust = a2;
-      else
-        throw new SyntaxError(`Unrecognized $font number (0.01-0.99 ): ${a2}`);
     } else
       throw new SyntaxError(`Unrecognized $font argument: ${a}`);
   }
@@ -265,17 +262,17 @@ export default {
 
   Typeface,
 
-// function makeSingleDroplet(NAME, FUNC) {
-//   return function ({ args }) {
-//     if (args.length != 1)
-//       throw new SyntaxError(`$${NAME} droplet only accepts one argument, but got ${args.length}: ${args.map(a => a.text).join(", ")}`);
-//     const a = args[0];
-//     const v = a.text == "unset" ? `var(--${NAME}, unset)` : FUNC(a)?.text;
-//     if (v == null)
-//       throw new SyntaxError(`Could not interpret $${NAME} argument: ${args[0].text}.`);
-//     return { [NAME]: v };
-//   }
-// }
+  // function makeSingleDroplet(NAME, FUNC) {
+  //   return function ({ args }) {
+  //     if (args.length != 1)
+  //       throw new SyntaxError(`$${NAME} droplet only accepts one argument, but got ${args.length}: ${args.map(a => a.text).join(", ")}`);
+  //     const a = args[0];
+  //     const v = a.text == "unset" ? `var(--${NAME}, unset)` : FUNC(a)?.text;
+  //     if (v == null)
+  //       throw new SyntaxError(`Could not interpret $${NAME} argument: ${args[0].text}.`);
+  //     return { [NAME]: v };
+  //   }
+  // }
 
   // fontSize: makeSingleDroplet("fontSize", isLength),
   // // fontFamily: makeSingleDroplet("fontFamily", isBasic), //todo this should not be possible.

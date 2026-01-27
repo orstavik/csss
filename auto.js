@@ -708,6 +708,16 @@ function isNumber(a) {
   if (a?.type === "number" && a.unit == "")
     return a;
 }
+function isFraction(a) {
+  a = isNumber(a);
+  if (a && a.num >= 0 && a.num <= 1)
+    return a;
+}
+function isIntegerUpTo1000(a) {
+  a = isNumber(a);
+  if (a && Number.isInteger(a.num) && a.num >= 0 && a.num <= 1000)
+    return a;
+}
 function isNumberPercent(a) {
   a = isBasic(a);
   if (a?.type === "number" && a.unit == "" || a?.type === "percent")
@@ -916,11 +926,18 @@ const matchPrimes = (primes) => {
   };
 };
 
+function BadArgument(name, args, I, expectedType = "") {
+  args = args.map(a => a.text ?? (a.name + "/" + a.args.length));
+  args[I] = ` => ${args[I]} <= `;
+  expectedType &&= `\n${args[I]} is not a ${expectedType}`;
+  return new SyntaxError(`Bad argument ${name}/${I + 1}:  ${name}(${args.join(",")})` + expectedType);
+}
+
 const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
   singlePrimes = matchPrimes(singlePrimes);
   primes = matchPrimes(primes);
   return ({ args, name }) => {
-    if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`);
+    // if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`); //todo do we need this one? we could do this as a separate function that we wrap around the $iBlock and $border and what have you.
     const res = {};
     for (let i = 0; i < args.length; i++) {
       const a = args[i];
@@ -934,33 +951,33 @@ const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
       else if (kv = primes(a, {}))
         (res[kv[0]] ??= []).push(kv[1]);
       else
-        throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
+        throw BadArgument(name, args, i);
     }
     return post(res);
   };
 };
 
-const UMBRELLA = (SCHEMA, POST) => {
-  const umbrella = Object.fromEntries(Object.entries(SCHEMA).map(([k]) => [k, "unset"]));
-  return ({ args, name }) => {
-    if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`);
-    const res = args.reduce((res, a, i) => {
-      for (let k in SCHEMA) {
-        if (res[k] !== "unset") continue;
-        const v = SCHEMA[k](a);
-        if (v == null) continue;
-        if (v instanceof Object)
-          return Object.assign(res, v);
-        res[k] = v;
-        return res;
-      }
-      throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-${name}(${[...args.slice(0, i).map(a => a.text), ` => ${args[i].text} <= `, ...args.slice(i + 1).map(a => a.text)].join(",")}).`);
-    }, { ...umbrella });
-    return POST ? POST(res) : res;
-  };
-};
+// export const UMBRELLA = (SCHEMA, POST) => {
+//   const umbrella = Object.fromEntries(Object.entries(SCHEMA).map(([k]) => [k, "unset"]));
+//   return ({ args, name }) => {
+//     if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`);
+//     const res = args.reduce((res, a, i) => {
+//       for (let k in SCHEMA) {
+//         if (res[k] !== "unset") continue;
+//         const v = SCHEMA[k](a);
+//         if (v == null) continue;
+//         if (v instanceof Object)
+//           return Object.assign(res, v);
+//         res[k] = v;
+//         return res;
+//       }
+//       throw BadArgument(name, args, i);
+//     }, { ...umbrella });
+//     return POST ? POST(res) : res;
+//   };
+// };
+
+const Umbrella = (base, cb) => exp => Object.assign({}, base, cb(exp));
 
 const SIN = (interpreter, post) => ({ args, name }) => {
   if (args.length != 1)
@@ -978,9 +995,7 @@ const SINmax = (max, interpreter, post) => ({ args, name }) => {
     const a2 = interpreter(a);
     if (a2 != null)
       return a2;
-    args = args.map(a => a.text);
-    args[i] = ` !! ${args[i]} {{is not a ${interpreter.name}}} !! `;
-    throw new SyntaxError(`Bad argument: ${name}(${args.join(",")})`);
+    throw BadArgument(name, args, i, interpreter.name);
   }));
 };
 
@@ -991,9 +1006,7 @@ const SEQ = (interpreters, post) => ({ args, name }) => {
     const a2 = interpreter(args[i]);
     if (a2)
       return a2;
-    throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-    "${args[i].text}" is not a ${interpreter.name}.
-    ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
+    throw BadArgument(name, args, i, interpreter.name);
   }));
 };
 
@@ -1005,9 +1018,7 @@ const SEQopt = (interpreters, post) => ({ args, name }) => {
     const a2 = interpreter(a);
     if (a2 != null)
       return a2;
-    args = args.map(a => a.text);
-    args[i] = ` !! ${args[i]} {{is not a ${interpreter.name}}} !! `;
-    throw new SyntaxError(`Bad argument: ${name}(${args.join(",")})`);
+    throw BadArgument(name, args, i, interpreter.name);
   }));
 };
 
@@ -1020,23 +1031,44 @@ const CUSTOM_WORD = (NAME, WORDS, POST) => {
   return cb;
 };
 
+const WORD_IN_TABLE = TABLE => ({ text }) => TABLE[text];
+
+const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
+  if (!args.length)
+    throw new SyntaxError(`${name} requires at least 1 argument, got 0 arguments.`)
+  const first = INTERPRETER(args[0]);
+  if (first == null)
+    throw BadArgument(name, args, 0, INTERPRETER.name);
+  const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
+  return POST ? POST(name, first, res) : first;
+};
+
 const Angle = a => isAngle(a)?.text;
 const Color = a => isColor(a)?.text;
 const Length = a => isLength(a)?.text;
 const Name = a => isName(a)?.text;
-const Number$1 = a => isNumber(a)?.text;
+const NumberInterpreter = a => isNumber(a)?.text; //todo here we likely want .num!
 const Percent = a => isPercent(a)?.text;
 const Time = a => isTime(a)?.text;
 const Unset = a => a.text == "_" ? "unset" : undefined;
 const Url = a => isUrl(a)?.text;
+const Word = a => isWord(a)?.text;
+const Basic = a => isBasic(a)?.text; //todo this should be replaced with something more precise in the HO functions
+const Repeat = a => isRepeat(a)?.text;
+const Span = a => isSpan(a)?.text;
 
 const AnglePercent = a => Angle(a) ?? Percent(a);
 const LengthUnset = a => Length(a) ?? Unset(a);
 const LengthPercent = a => Length(a) ?? Percent(a);
-const LengthPercentNumber = a => Length(a) ?? Percent(a) ?? Number$1(a);
-const NumberPercent = a => Number$1(a) ?? Percent(a);
+const LengthPercentUnset = a => Length(a) ?? Percent(a) ?? Unset(a);
+const LengthPercentNumber = a => Length(a) ?? Percent(a) ?? NumberInterpreter(a);
+const NameUnset = a => Name(a) ?? Unset(a);
+const NumberPercent = a => NumberInterpreter(a) ?? Percent(a);
 const UrlUnset = a => Url(a) ?? Unset(a);
+const ColorUrl = a => Color(a) ?? Url(a);
 const ColorPrimitive = a => (a.kind === "COLOR" && (a = parseColor(a.text)).hex) ? a : undefined;
+const RepeatBasic = a => Repeat(a) ?? Basic(a);
+const SpanBasic = a => Span(a) ?? Basic(a);
 
 const POSITION_WORDS = {};
 const POSITIONS_FUNCS = {
@@ -1325,6 +1357,25 @@ var backgrounds = {
   bg
 };
 
+const BorderUmbrella = cb => exp => {
+  const res = cb(exp);
+  if (!res.borderStartStartRadius) res.borderRadius ??= "0";
+  if (!res.borderInlineColor && !res.borderInlineStyle && !res.borderInlineWidth) {
+    const res2 = {
+      border: [res.borderWidth, res.borderStyle, res.borderColor].filter(Boolean).join(" ") || "none",
+      ...res,
+    };
+    delete res2.borderColor;
+    delete res2.borderStyle;
+    delete res2.borderWidth;
+    return res2;
+  }
+  if (!res.borderInlineStyle) res.borderStyle ??= "solid";
+  if (!res.borderInlineWidth) res.borderWidth ??= "medium";
+  if (!res.borderInlineColor) res.borderColor ??= "currentColor";
+  return res;
+};
+
 //1. BlockInline order is the naming sequence of each corner, and also the two values for each corner.
 //   borderStartEndRadius: 2px 4px means something like borderTopRightRadius with top radius 2px side radius 4px.
 //2. When we pass values into the function, we follow the normal css logical property sequence, inline then block, start then end.
@@ -1391,7 +1442,7 @@ const RADIUS = {
   r: radius,
 };
 
-function border({args: ar}) {
+function border({ args: ar }) {
   let borderRadius, width = [], style = [], color = [];
   for (let a of ar) {
     let v;
@@ -1408,48 +1459,31 @@ function border({args: ar}) {
     else
       throw new SyntaxError(`Could not interpret $border argument: ${a.text}.`);
   }
-  const maxLength = Math.max(width.length, style.length, color.length);
-  if (!maxLength && borderRadius)
-    return { border: "none", ...borderRadius };
-  borderRadius ??= {};
-  style[0] ??= "solid";
-  if (maxLength == 1) {
-    const border = [width[0], style[0], color[0]].filter(Boolean).join(" ");
-    return { border, ...borderRadius };
+  const tooBig = color.length > 4 ? "color" : style.length > 4 ? "style" : width.length > 4 ? "width" : "";
+  if (tooBig)
+    throw new SyntaxError(`More than 4 border ${tooBig} arguments.`);
+  const res = {};
+  if (width.length == 1) res.borderWidth = width[0];
+  if (width.length > 1) {
+    res.borderInlineWidth = [width[0], width[2]].filter(Boolean).join(" ");
+    res.borderBlockWidth = [width[1], width[3]].filter(Boolean).join(" ");
   }
-  style[1] ??= style[0];
-  width[1] ??= width[0];
-  color[1] ??= color[0];
-  if (maxLength == 2) {
-    const borderInline = [width[0], style[0], color[0]].filter(Boolean).join(" ");
-    const borderBlock = [width[1], style[1], color[1]].filter(Boolean).join(" ");
-    return { borderInline, borderBlock, ...borderRadius };
+  if (style.length == 1) res.borderStyle = style[0];
+  if (style.length > 1) {
+    res.borderInlineStyle = [style[0], style[2]].filter(Boolean).join(" ");
+    res.borderBlockStyle = [style[1], style[3]].filter(Boolean).join(" ");
   }
-  style[2] ??= style[0];
-  width[2] ??= width[0];
-  color[2] ??= color[0];
-  if (maxLength == 3) {
-    const borderInlineStart = [width[0], style[0], color[0]].filter(Boolean).join(" ");
-    const borderBlock = [width[1], style[1], color[1]].filter(Boolean).join(" ");
-    const borderInlineEnd = [width[2], style[2], color[2]].filter(Boolean).join(" ");
-    return { borderInlineStart, borderBlock, borderInlineEnd, ...borderRadius };
+  if (color.length == 1) res.borderColor = color[0];
+  if (color.length > 1) {
+    res.borderInlineColor = [color[0], color[2]].filter(Boolean).join(" ");
+    res.borderBlockColor = [color[1], color[3]].filter(Boolean).join(" ");
   }
-  style[3] ??= style[1];
-  width[3] ??= width[1];
-  color[3] ??= color[1];
-  if (maxLength == 4) {
-    const borderInlineStart = [width[0], style[0], color[0]].filter(Boolean).join(" ");
-    const borderBlockStart = [width[1], style[1], color[1]].filter(Boolean).join(" ");
-    const borderInlineEnd = [width[2], style[2], color[2]].filter(Boolean).join(" ");
-    const borderBlockEnd = [width[3], style[3], color[3]].filter(Boolean).join(" ");
-    return { borderInlineStart, borderBlockStart, borderInlineEnd, borderBlockEnd, ...borderRadius };
-  }
-  const tooBig = width.length > 4 ? width : style.length > 4 ? style : color;
-  throw new SyntaxError(`More than 4 border arguments: ${tooBig.join(" ")}.`);
+  return { ...res, ...borderRadius };
 }
 
 var border$1 = {
   border,
+  Border: BorderUmbrella(border),
   noBorder: { border: "none" },
 
   borderStyle: undefined,
@@ -1552,6 +1586,7 @@ const FONT_DEFAULTS = Object.entries({
   letterSpacing: "LetterSpacing",
   textTransform: "TextTransform",
   fontWidth: "FontWidth",
+  fontStretch: "FontWidth",  // fontStretch uses the same CSS variable as fontWidth
   fontVariantCaps: "FontVariantCaps",
   fontSynthesis: "FontSynthesis",
   fontFeatureSettings: "FontFeatureSettings",
@@ -1561,6 +1596,26 @@ const FONT_DEFAULTS = Object.entries({
   fontKerning: "FontKerning",
   hyphens: "Hyphens",
 });
+
+const fontDefaults2 = {
+  fontFamily: "unset",
+  fontSize: "unset",
+  fontStyle: "unset",
+  fontWeight: "unset",
+  fontSizeAdjust: "unset",
+  letterSpacing: "unset",
+  textTransform: "unset",
+  fontWidth: "unset",
+  fontStretch: "unset",
+  fontVariantCaps: "unset",
+  fontSynthesis: "unset",
+  fontFeatureSettings: "unset",
+  fontVariationSettings: "unset",
+  WebkitFontSmoothing: "unset",
+  MozOsxFontSmoothing: "unset",
+  fontKerning: "unset",
+  hyphens: "unset",
+};
 
 /**
  * TextTransform is a semi inherited css property (inherits over inline elements, but not block elements).
@@ -1574,6 +1629,7 @@ const FONT_DEFAULTS = Object.entries({
 function face({ args }, fontFamily) {
 
   function featureAndVariation(args) {
+    //todo this doesn't work? a.text.split instead of a.split ? 
     return args.map(a => a.split("=")).map(([k, v = 1]) => `"${k}" ${v}`).join(", ");
   }
 
@@ -1662,6 +1718,10 @@ const FONT_WORDS = {
   kerning: { fontKerning: "normal" },
   noKerning: { fontKerning: "none" },
 
+  hyphens: { hyphens: "auto" },
+  shy: { hyphens: "manual" },
+  noHyphens: { hyphens: "none" },
+
   normal: { fontStyle: "normal", fontWeight: "normal" },
   smooth: { WebkitFontSmoothing: "auto", MozOsxFontSmoothing: "auto" }, //todo this is wrong? should be "antialiased" for WebkitFontSmoothing and "grayscale" for MozOsxFontSmoothing??
 
@@ -1676,14 +1736,16 @@ const FONT_WORDS = {
   xxl: { fontSize: "xx-large" },
   xxxl: { fontSize: "xxx-large" },
 
-  variant: ({ args }) => ({ fontVariant: interpretBasic(args[0]) }),
-  width: ({ args }) => ({ fontWidth: isPercent(args[0]) }),
-  spacing: ({ args }) => (args[0].text == "normal" ? args[0].text : { letterSpacing: isLength(args[0]) }),
-  adjust: ({ args }) => ({ fontSizeAdjust: interpretBasic(args[0]) }),
+  variant: SINmax(5, Word, (n, v) => ({ fontVariant: v })), //todo: more specific parsing?
+  width: SIN(Percent, (n, v) => ({ fontWidth: v })),
+  spacing: SIN(Length, (n, v) => ({ letterSpacing: v })), //"_" => "normal". This should be LengthNormal? where we do "_" as "normal"?
+  adjust: SIN(Basic, (n, v) => ({ fontSizeAdjust: v })),
 };
 
-//first have a function that extracts all the nonFamily 
-function fontImpl(fontFaceName, args) {
+//todo it is a problem that we are passing in the fontFaceName here.. This means that we can't do the $font() as it would need a face thing..
+//todo the face(...) should only be allowed in the Umbrella structure. We need to extract the face() same way as we do with the $animation functions.
+function fontImpl({ name, args }) {
+  const fontFaceName = name;
   let res = {}, family = [], emoji;
   for (let a of args) {
     let a2;
@@ -1699,24 +1761,20 @@ function fontImpl(fontFaceName, args) {
       Object.assign(res, a2);
     else if (a.kind == "WORD")
       family.push(a.text);
+    else if (a2 = isIntegerUpTo1000(a))
+      res.fontWeight = a2.num;
+    else if (a2 = isFraction(a))
+      res.fontSizeAdjust = a2.num;
     else if (a.name == "face" && (a2 = face(a, fontFaceName))) {
       Object.assign(res, a2);
       family.push(Object.values(a2)[0].fontFamily);
-    } else if (a2 = isNumber(a)?.num) {
-      if (a2 && 1 <= a2 && a2 <= 1000)
-        res.fontWeight = a2;
-      else if (0 < a2 && a2 < 1)
-        res.fontSizeAdjust = a2;
-      else
-        throw new SyntaxError(`Unrecognized $font number (0.01-0.99 ): ${a2}`);
     } else
       throw new SyntaxError(`Unrecognized $font argument: ${a}`);
   }
   if (emoji)
     family.push(...emoji);
-  if (!family.length)
-    throw new SyntaxError(`No font family specified in $font: ${args}`);
-  res.fontFamily = family.map(s => s.match(/[^a-z0-9_-]/gi) ? `"${s}"` : s).join(", ");
+  if (family.length)
+    res.fontFamily = family.map(s => s.match(/[^a-z0-9_-]/gi) ? `"${s}"` : s).join(", ");
   return res;
 }
 
@@ -1736,208 +1794,112 @@ function fontImpl(fontFaceName, args) {
 //$type(name,...args) => creates a type with the given name and properties.
 //$type(name) => uses a type and sets the font properties to the type's properties.
 
-const BUILTIN_TYPES = {
-  transitional: { fontFamily: "Charter,'Bitstream Charter','Sitka Text',Cambria,serif" },
-  oldStyle: { fontFamily: "'Iowan Old Style','Palatino Linotype','URW Palladio L',P052,serif" },
-  humanist: { fontFamily: "Seravek,'Gill Sans Nova',Ubuntu,Calibri,'DejaVu Sans',source-sans-pro,sans-serif" },
-  geometricHumanist: { fontFamily: "Avenir,Montserrat,Corbel,'URW Gothic',source-sans-pro,sans-serif" },
-  classicalHumanist: { fontFamily: "Optima,Candara,'Noto Sans',sans-serif" },
-  neoGrotesque: { fontFamily: "Inter,Roboto,'Helvetica Neue','Arial Nova','Nimbus Sans',Arial,sans-serif" },
-  monospaceSlabSerif: { fontFamily: "'Nimbus Mono PS','Courier New',monospace,", WebkitFontSmoothing: "auto", MozOsxFontSmoothing: "auto" },
-  monospaceCode: { fontFamily: "ui-monospace,'Cascadia Code','Source Code Pro',Menlo,Consolas,'DejaVu Sans Mono',monospace" },
-  industrial: { fontFamily: "Bahnschrift,'DIN Alternate','Franklin Gothic Medium','Nimbus Sans Narrow',sans-serif-condensed,sans-serif" },
-  roundedSans: { fontFamily: "ui-rounded,'Hiragino Maru Gothic ProN',Quicksand,Comfortaa,Manjari,'Arial Rounded MT','Arial Rounded MT Bold',Calibri,source-sans-pro,sans-serif" },
-  slabSerif: {
-    "@fontFace": { fontFamily: "Rockwell,", src: "local('Rockwell')", ascentOverride: "100%" },
-    fontFamily: "Rockwell,'Rockwell Nova','Roboto Slab','DejaVu Serif','Sitka Small',serif",
-  },
-  antique: { fontFamily: "Superclarendon,'Bookman Old Style','URW Bookman','URW Bookman L','Georgia Pro',Georgia,serif" },
-  didone: { fontFamily: "Didot,'Bodoni MT','Noto Serif Display','URW Palladio L',P052,Sylfaen,serif", WebkitFontSmoothing: "auto", MozOsxFontSmoothing: "auto" },
-  handwritten: { fontFamily: "'Segoe Print','Bradley Hand',Chilanka,TSCu_Comic,casual,cursive" },
-};
+const fontWithName = FIRST(
+  NameUnset,
+  fontImpl,
+  (nameNode, nameText, fontProps) => {
+    if (nameText === "unset") {
+      if (!fontProps?.fontFamily) {
+        throw new SyntaxError(`$Font(_, ...) requires at least one font family after underscore`);
+      }
+      return fontProps;
+    }
+    if (fontProps?.fontFamily) {
+      throw new SyntaxError(`$Font(${nameText}, ...) cannot contain font families. Found font-family in arguments. Use $Font(_, fontFamily, ...) instead.`);
+    }
+    const res = {};
+    for (let [k, varKey] of FONT_DEFAULTS) {
+      res[k] = fontProps?.[k] ?? `var(--${nameText + varKey}, unset)`;
+    }
+    res.fontFamily = `var(--${nameText}FontFamily, ${nameText})`;
+    return res;
+  }
+);
 
-//I think that for $font() we should have either using a name, *or* using a face(). If we use a typeface, then we can't override the family.
-//that just breads confusion. So, if the $font() only has a single family, then we try to use that as the typeface name. Otherwise, we consider it a face referece. 
-function font({ args }) {
-  const typeName = interpretName(args[0]);
-  if (!typeName)
-    throw new SyntaxError(`first argument is not a name: "${args[0].text}"`);
-  const tmp = fontImpl(undefined, args);
-  const res = {};
-  for (let [k, varKey] of FONT_DEFAULTS)
-    res[k] = tmp[k] ?? `var(--${typeName + varKey}, unset)`; //clashing
-  res.fontStretch = res.fontWidth;
-  tmp.fontFamily.length == 1 ?
-    res.fontFamily = `var(--${typeName}FontFamily, ${typeName})` : //single family means typeface reference.
-    res.fontFamily = tmp.fontFamily + `, var(--${typeName}FontFamily, unset)`; //multiple families means face reference.
-  return res;
-}
-
-function typeFace({ args }) {
+function Typeface({ args }) {
   const typeName = extractName(args);
   if (!typeName)
     throw new SyntaxError(`first argument is not a name: "${args[0].text}"`);
-  const tmp = fontImpl(typeName, args);
+  const tmp = fontImpl({ name: typeName, args });
   const res = {};
-  for (let [k, varKey] of FONT_DEFAULTS)
-    res[`--${typeName + varKey}`] = tmp[k] ?? undefined;
+  for (let [k, varKey] of FONT_DEFAULTS) {
+    if (tmp[k] !== undefined)
+      res[`--${typeName + varKey}`] = tmp[k];
+  }
   for (let k in tmp)
     if (k.startsWith("@"))
       res[k] = tmp[k];
   return res;
 }
 
-function makeSingleDroplet(NAME, FUNC) {
-  return function ({ args }) {
-    if (args.length != 1)
-      throw new SyntaxError(`$${NAME} droplet only accepts one argument, but got ${args.length}: ${args.map(a => a.text).join(", ")}`);
-    const a = args[0];
-    const v = a.text == "unset" ? `var(--${NAME}, unset)` : FUNC(a)?.text;
-    if (v == null)
-      throw new SyntaxError(`Could not interpret $${NAME} argument: ${args[0].text}.`);
-    return { [NAME]: v };
-  }
-}
-
 var fonts = {
-  font,
-  typeface: typeFace,
+  font: fontImpl,
+  Font: Umbrella(fontDefaults2, fontWithName),
 
-  //droplets
-  fontSize: makeSingleDroplet("fontSize", isLength),
-  // fontFamily: makeSingleDroplet("fontFamily", isBasic), //todo this should not be possible.
-  // fontStyle: makeSingleDroplet("fontStyle", isBasic),
-  // fontWeight: makeSingleDroplet("fontWeight", isBasic),
-  // fontVariantCaps: makeSingleDroplet("fontVariantCaps", isBasic),
-  fontWidth: makeSingleDroplet("fontWidth", isBasic),     //todo we need to make them return both props.
-  fontStretch: makeSingleDroplet("fontStretch", isBasic), //todo we need to make them return both props.
-  fontSynthesis: makeSingleDroplet("fontSynthesis", isBasic),
-  fontSizeAdjust: makeSingleDroplet("fontSizeAdjust", isBasic),
-  letterSpacing: makeSingleDroplet("letterSpacing", isBasic),
+  Typeface,
 
+  // function makeSingleDroplet(NAME, FUNC) {
+  //   return function ({ args }) {
+  //     if (args.length != 1)
+  //       throw new SyntaxError(`$${NAME} droplet only accepts one argument, but got ${args.length}: ${args.map(a => a.text).join(", ")}`);
+  //     const a = args[0];
+  //     const v = a.text == "unset" ? `var(--${NAME}, unset)` : FUNC(a)?.text;
+  //     if (v == null)
+  //       throw new SyntaxError(`Could not interpret $${NAME} argument: ${args[0].text}.`);
+  //     return { [NAME]: v };
+  //   }
+  // }
 
-  //global font words
-  ...SYNTHESIS_WORDS,
-  uppercase: { textTransform: "uppercase" },
-  lowercase: { textTransform: "lowercase" },
-  capitalize: { textTransform: "capitalize" },
-  fullWidth: { textTransform: "full-width" },
-  noTextTransform: { textTransform: "none" },
-  textTransform: undefined,
-
-  italic: { fontStyle: "italic" },
-  noStyle: { fontStyle: "normal" },
-  bold: { fontWeight: "bold" },
-  bolder: { fontWeight: "bolder" },
-  lighter: { fontWeight: "lighter" },
-  noWeight: { fontWeight: "normal" },
-  normal: { fontStyle: "normal", fontWeight: "normal" },
-  larger: { fontSize: "larger" },
-  smaller: { fontSize: "smaller" },
-  smallCaps: { fontVariantCaps: "small-caps" },
-  allSmallCaps: { fontVariantCaps: "all-small-caps" },
-  petiteCaps: { fontVariantCaps: "petite-caps" },
-  allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
-  unicase: { fontVariantCaps: "unicase" },
-  titlingCaps: { fontVariantCaps: "titling-caps" },
-  condensed: { fontStretch: "condensed" },
-  expanded: { fontStretch: "expanded" },
-
-  semiCondensed: { fontStretch: "semi-condensed", fontWidth: "semi-condensed" },
-  semiExpanded: { fontStretch: "semi-expanded", fontWidth: "semi-expanded" },
-  extraCondensed: { fontStretch: "extra-condensed", fontWidth: "extra-condensed" },
-  extraExpanded: { fontStretch: "extra-expanded", fontWidth: "extra-expanded" },
-  ultraCondensed: { fontStretch: "ultra-condensed", fontWidth: "ultra-condensed" },
-  ultraExpanded: { fontStretch: "ultra-expanded", fontWidth: "ultra-expanded" },
-  kerning: { fontKerning: "normal" },
-  noKerning: { fontKerning: "none" },
-  shy: { hyphens: "manual" },
-  hyphens: { hyphens: "auto" },
-  noHyphens: { hyphens: "none" },
-};
+  // fontSize: makeSingleDroplet("fontSize", isLength),
+  // // fontFamily: makeSingleDroplet("fontFamily", isBasic), //todo this should not be possible.
+  // // fontStyle: makeSingleDroplet("fontStyle", isBasic),
+  // // fontWeight: makeSingleDroplet("fontWeight", isBasic),
+  // // fontVariantCaps: makeSingleDroplet("fontVariantCaps", isBasic),
+  // fontWidth: makeSingleDroplet("fontWidth", isBasic),     //todo we need to make them return both props.
+  // fontStretch: makeSingleDroplet("fontStretch", isBasic), //todo we need to make them return both props.
+  // fontSynthesis: makeSingleDroplet("fontSynthesis", isBasic),
+  // fontSizeAdjust: makeSingleDroplet("fontSizeAdjust", isBasic),
+  // letterSpacing: makeSingleDroplet("letterSpacing", isBasic),
 
 
-const BUILTIN_TYPES2 = {
-  transitional: {
-    fontFamilyPlus: "Charter ~0.50 SafariOld, 'Bitstream Charter' ~0.50, 'Sitka Text' ~0.52, Cambria 0.466, serif",
-    fontSizeAdjust: 0.5,
-    fontFamily: "Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif",
-  },
+  // //global font words
+  // ...SYNTHESIS_WORDS,
+  // uppercase: { textTransform: "uppercase" },
+  // lowercase: { textTransform: "lowercase" },
+  // capitalize: { textTransform: "capitalize" },
+  // fullWidth: { textTransform: "full-width" },
+  // noTextTransform: { textTransform: "none" },
+  // textTransform: undefined,
 
-  oldStyle: {
-    fontFamilyPlus: "'Iowan Old Style' ~0.52 SafariOld, 'Palatino Linotype' ~0.47, 'URW Palladio L' ~0.47, P052 ~0.47, serif",
-    fontSizeAdjust: 0.47,
-    fontFamily: "'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', P052, serif",
-  },
+  // italic: { fontStyle: "italic" },
+  // noStyle: { fontStyle: "normal" },
+  // bold: { fontWeight: "bold" },
+  // bolder: { fontWeight: "bolder" },
+  // lighter: { fontWeight: "lighter" },
+  // noWeight: { fontWeight: "normal" },
+  // normal: { fontStyle: "normal", fontWeight: "normal" },
+  // larger: { fontSize: "larger" },
+  // smaller: { fontSize: "smaller" },
+  // smallCaps: { fontVariantCaps: "small-caps" },
+  // allSmallCaps: { fontVariantCaps: "all-small-caps" },
+  // petiteCaps: { fontVariantCaps: "petite-caps" },
+  // allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
+  // unicase: { fontVariantCaps: "unicase" },
+  // titlingCaps: { fontVariantCaps: "titling-caps" },
+  // condensed: { fontStretch: "condensed" },
+  // expanded: { fontStretch: "expanded" },
 
-  humanist: {
-    fontFamilyPlus: "Seravek ~0.52 SafariOld, 'Gill Sans Nova' ~0.48, Ubuntu ~0.53, Calibri 0.466, 'DejaVu Sans' ~0.53, source-sans-pro ~0.53, sans-serif",
-    fontSizeAdjust: 0.53,
-    fontFamily: "Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu Sans', source-sans-pro, sans-serif",
-  },
-
-  geometricHumanist: {
-    fontFamilyPlus: "Avenir ~0.52 SafariOld, Montserrat ~0.52, Corbel ~0.47, 'URW Gothic' ~0.48, source-sans-pro ~0.53, sans-serif",
-    fontSizeAdjust: 0.5,
-    fontFamily: "Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif",
-  },
-
-  classicalHumanist: {
-    fontFamilyPlus: "Optima ~0.48 SafariOld, Candara 0.463, 'Noto Sans' ~0.53, sans-serif",
-    fontSizeAdjust: 0.48,
-    fontFamily: "Optima, Candara, 'Noto Sans', sans-serif",
-  },
-
-  neoGrotesque: {
-    fontFamilyPlus: "Inter ~0.55, Roboto 0.528, 'Helvetica Neue' 0.523 SafariOld, 'Arial Nova' ~0.519, 'Nimbus Sans' ~0.523, Arial 0.519, sans-serif",
-    fontSizeAdjust: 0.528,
-    fontFamily: "Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif",
-  },
-
-  monospaceSlabSerif: {
-    fontFamilyPlus: "'Nimbus Mono PS' 0.425, 'Courier New' 0.423, monospace",
-    fontSizeAdjust: 0.425,
-    fontFamily: "'Nimbus Mono PS', 'Courier New', monospace",
-    WebkitFontSmoothing: "auto",
-    MozOsxFontSmoothing: "auto",
-  },
-
-  monospaceCode: {
-    fontFamilyPlus: "ui-monospace, 'Cascadia Code' ~0.54, 'Source Code Pro' ~0.53, Menlo ~0.50 SafariOld, Consolas ~0.49, 'DejaVu Sans Mono' ~0.49, monospace",
-    fontSizeAdjust: 0.5,
-    fontFamily: "ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace",
-  },
-
-  industrial: {
-    fontFamilyPlus: "Bahnschrift ~0.50, 'DIN Alternate' ~0.47 SafariOld, 'Franklin Gothic Medium' ~0.52, 'Nimbus Sans Narrow' ~0.523, sans-serif-condensed, sans-serif",
-    fontSizeAdjust: 0.5,
-    fontFamily: "Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif-condensed, sans-serif",
-  },
-
-  roundedSans: {
-    fontFamilyPlus: "ui-rounded, 'Hiragino Maru Gothic ProN' ~0.50 SafariOld, Quicksand ~0.53, Comfortaa ~0.50, Manjari ~0.52, 'Arial Rounded MT' ~0.519, 'Arial Rounded MT Bold' ~0.519, Calibri 0.466, source-sans-pro ~0.53, sans-serif",
-    fontSizeAdjust: 0.5,
-    fontFamily: "ui-rounded, 'Hiragino Maru Gothic ProN', Quicksand, Comfortaa, Manjari, 'Arial Rounded MT', 'Arial Rounded MT Bold', Calibri, source-sans-pro, sans-serif",
-  },
-
-  slabSerif: {
-    fontFamilyPlus: "Rockwell ~0.46, 'Rockwell Nova' ~0.46, 'Roboto Slab' ~0.52, 'DejaVu Serif' ~0.46, 'Sitka Small' ~0.56, serif",
-    fontSizeAdjust: 0.46,
-    fontFamily: "Rockwell, 'Rockwell Nova', 'Roboto Slab', 'DejaVu Serif', 'Sitka Small', serif",
-    "@fontFace": { fontFamily: "Rockwell", src: "local('Rockwell')", ascentOverride: "100%" },
-  },
-
-  antique: {
-    fontFamilyPlus: "Superclarendon ~0.47 SafariOld, 'Bookman Old Style' ~0.50, 'URW Bookman' ~0.50, 'URW Bookman L' ~0.50, 'Georgia Pro' 0.481, Georgia 0.481, serif",
-  },
-
-  didone: {
-    fontFamilyPlus: "Didot ~0.42 SafariOld, 'Bodoni MT' ~0.40, 'Noto Serif Display' ~0.45, 'URW Palladio L' ~0.47, P052 ~0.47, Sylfaen ~0.46, serif",
-  },
-
-  handwritten: {
-    fontFamilyPlus: "'Segoe Print' ~0.53, 'Bradley Hand' ~0.53 SafariOld, Chilanka ~0.52, TSCu_Comic ~0.50, casual, cursive",
-  },
+  // semiCondensed: { fontStretch: "semi-condensed", fontWidth: "semi-condensed" },
+  // semiExpanded: { fontStretch: "semi-expanded", fontWidth: "semi-expanded" },
+  // extraCondensed: { fontStretch: "extra-condensed", fontWidth: "extra-condensed" },
+  // extraExpanded: { fontStretch: "extra-expanded", fontWidth: "extra-expanded" },
+  // ultraCondensed: { fontStretch: "ultra-condensed", fontWidth: "ultra-condensed" },
+  // ultraExpanded: { fontStretch: "ultra-expanded", fontWidth: "ultra-expanded" },
+  // kerning: { fontKerning: "normal" },
+  // noKerning: { fontKerning: "none" },
+  // shy: { hyphens: "manual" },
+  // hyphens: { hyphens: "auto" },
+  // noHyphens: { hyphens: "none" },
 };
 
 function toSize(NAME, { args }) {
@@ -1973,7 +1935,6 @@ function size({ args }) {
   throw new SyntaxError(`$size() accepts only 1, 2 or 4 arguments, got ${args.length}.`);
 }
 
-//todo turn this into memory thing. same with O2
 const ALIGNMENTS = (_ => {
   const POSITIONS = "|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd";
   const SPACE = "|Around|Between|Evenly";
@@ -2017,7 +1978,6 @@ const ALIGNMENTS = (_ => {
     placeSelf: makePlaceAligns("placeSelf", "self", AlignSelf, JustifySelf),
     alignItems: makePlaceAligns("alignItems", "items", AlignItems),
     alignSelf: makePlaceAligns("alignSelf", "self", AlignSelf),
-    textAlign: makePlaceAligns("textAlign", "text", "Normal|Start|End|Center|Justify|Left|Right"),
   }
 })();
 
@@ -2054,57 +2014,22 @@ const OVERFLOWS = (_ => {
   return res;
 })();
 
-function checkUndefined(funcName, argsIn, argsOut) {
-  for (let i = 0; i < argsIn.length; i++)
-    if (argsOut[i] === undefined)
-      throw new ReferenceError(`$${funcName}() cannot process ${argsIn[i].name}.`);
-}
-
-//todo rename this to container() and then do block, grid, flex as the two options.
-//todo the question is if this will be recognized by the llm..
-//they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
-//so it should be with layout.
-//todo rename the text block layout unit to $page
-function defaultContainer(obj, argsIn, argsOut) {
-  const containerDefaults = {
-    wordSpacing: "unset",
-    lineHeight: "unset",
-    textAlign: "unset",
-    textIndent: "unset",
-  };
-  checkUndefined(obj.display, argsIn, argsOut);
-  return Object.assign(obj, containerDefaults, ...argsOut);
-}
-
-function defaultItem(name, argsIn, argsOut) {
-  checkUndefined(name, argsIn, argsOut);
-  return Object.assign({}, ...argsOut);
-}
-
-const LAYOUT = {
+const CONTAINER = {
   padding: ({ args }) => toLogicalFour("padding", args),
   scrollPadding: ({ args }) => toLogicalFour("scroll-padding", args),
-  ...ALIGNMENTS.textAlign,
   breakWord: { overflowWrap: "break-word" },
   breakAnywhere: { overflowWrap: "anywhere" },
   breakAll: { wordBreak: "break-all" },
   keepAll: { wordBreak: "keep-all" },
   snapStop: { scrollSnapStop: "always" },
+  ...OVERFLOWS,
 };
 
-function textIndent({ args }) {
-  const l = isLength(args[0]);
-  if (l)
-    return { "textIndent": l.text };
-  throw new SyntaxError("indent needs a length");
-}
-const _LAYOUT = {
+const ITEM = {
   margin: ({ args }) => toLogicalFour("margin", args),
   scrollMargin: ({ args }) => toLogicalFour("scroll-margin", args),
-  textIndent: textIndent,
-  indent: textIndent,
-  inlineSize: toSize.bind(null, "inlineSize"), //todo should we block this?
-  blockSize: toSize.bind(null, "blockSize"),   //todo should we block this?
+  inlineSize: toSize.bind(null, "inlineSize"), //todo should we block this? is size(10px) enough?
+  blockSize: toSize.bind(null, "blockSize"),   //todo should we block this? is size(_,10px) enough?
   size,
   // w: AllFunctions.width,
   // h: AllFunctions.height,
@@ -2123,53 +2048,54 @@ const _LAYOUT = {
   // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
 
-function gap({ args }) {
-  if (!args.length || args.length > 2)
-    throw new SyntaxError("gap only accepts 1 or 2 arguments");
-  args = args.map(isBasic).map(a => a.text);
-  if (args.length == 1 || args[0] == args[1])
-    return { gap: args[0] };
-  args = args.map(a => a == "unset" ? "normal" : a);
-  return { gap: args[0] + " " + args[1] };
-}
+const gap = SINmax(2, LengthPercentUnset, (n, ar) => {
+  if (ar[0] == ar[1] || ar.length == 1) return { gap: ar[0] };
+  if (ar[1] == "unset") return { rowGap: ar[0] };
+  if (ar[0] == "unset") return { columnGap: ar[1] };
+  return { gap: ar.join(" ") };
+});
 
-//todo rename this to space() and then do block, inline as the two options.
-//todo the question is if this will be recognized by the llm..
-//they put lineHeight with font. This is wrong.. It will influence layout and doesn't influence font.
-//so it should be with layout.
-function blockGap({ args }) {
-  const [wordSpacing, lineHeight] = args.map(isBasic).map(a => a.text);
-  return { wordSpacing, lineHeight };
-}
-const BLOCK = {
-  ...LAYOUT,
-  ...OVERFLOWS,
-  gap: blockGap,
+const DEFAULTS = {
+  Block: {
+    display: "block",
+    //todo this is NOT as easy as I thought..
+    //">* /*blockItem*/": BlockItemDefaults,    //the BlockItem defaults are always set by the Block.
+  },
+  BlockItem: {
+    inlineSize: "unset",
+    blockSize: "unset",
+    marginBlock: "unset",
+    marginInline: "unset",
+    scrollMargin: "unset",
+    scrollSnapAlign: "unset",
+  },
+  LineClamp: {
+    display: "-webkit-box",
+    WebkitLineClamp: 3, //this is always overwritten
+    WebkitBoxOrient: "vertical",
+    overflowBlock: "hidden",
+  },
+  Flex: {
+    display: "flex",
+    alignItems: "unset",
+    placeContent: "unset",
+  },
+  Grid: {
+    display: "grid",
+    placeItems: "unset",
+    placeContent: "unset",
+  },
+  IBlock: {
+    display: "inline-block",
+  },
 };
-const BlockItem = {
-  ..._LAYOUT,
-  floatStart: { float: "inline-start" },
-  floatEnd: { float: "inline-end" },
-};
-
-function block({ args }) {
-  const args2 = args.map(a => BLOCK[a.name]?.(a) ?? BLOCK[a.text]);
-  return defaultContainer({ display: "block" }, args, args2);
-}
-
-function blockItem({ args }) {
-  const argsOut = args.map(a => BlockItem[a.name]?.(a) ?? BlockItem[a.text]);
-  return defaultItem("blockItem", args, argsOut);
-}
 
 const IBLOCK = {
-  ...LAYOUT,
-  ...OVERFLOWS,
-  gap: blockGap,
+  ...CONTAINER,
 };
 
-const IBlockItem = {
-  ..._LAYOUT,
+const _IBlockItem = {
+  ...ITEM,
   alignTop: { verticalAlign: "top" },
   alignMiddle: { verticalAlign: "middle" },
   alignBottom: { verticalAlign: "bottom" },
@@ -2180,37 +2106,14 @@ const IBlockItem = {
   alignSub: { verticalAlign: "sub" },
 };
 
-function iBlock({ args }) {
-  const args2 = args.map(a => IBLOCK[a.name]?.(a) ?? IBLOCK[a.text]);
-  return defaultContainer({ display: "inline-block" }, args, args2);
-}
-
-function iBlockItem({ args }) {
-  const argsOut = args.map(a => IBlockItem[a.name]?.(a) ?? IBlockItem[a.text]);
-  return defaultItem("iBlockItem", args, argsOut);
-}
-
-function lineClamp({ args: [lines, ...args] }) {
-  lines = isBasic(lines);
-  if (lines.type != "number")
-    throw new SyntaxError(`$lineClamp() first argument must be a simple number, got ${lines}.`);
-  return Object.assign(block({ args }), {
-    display: "-webkit-box",
-    WebkitLineClamp: lines.num,
-    WebkitBoxOrient: "vertical",
-    overflowBlock: "hidden"
-  });
-}
-
 const GRID = {
-  ...OVERFLOWS,
+  ...CONTAINER,
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.placeItems,
-  cols: ({ args }) => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
-  columns: ({ args }) => ({ gridTemplateColumns: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
-  rows: ({ args }) => ({ gridTemplateRows: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
-  areas: ({ args }) => ({ gridTemplateAreas: args.map(a => isRepeat(a) ?? isBasic(a)).map(a => a.text).join(" ") }),
-  ...LAYOUT,
+  cols: SINmax(999, RepeatBasic, (n, ar) => ({ gridTemplateColumns: ar.join(" ") })), //todo what is the bertScore distance from cols to columns?
+  columns: SINmax(999, RepeatBasic, (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
+  rows: SINmax(999, RepeatBasic, (n, ar) => ({ gridTemplateRows: ar.join(" ") })),
+  areas: SINmax(999, RepeatBasic, (n, ar) => ({ gridTemplateAreas: ar.join(" ") })),
   gap,
   //todo test this!!
   column: { gridAutoFlow: "column" },
@@ -2219,42 +2122,12 @@ const GRID = {
   denseRow: { gridAutoFlow: "dense row" },
 };
 
-function grid({ args }) {
-  const argsOut = args.map(a => GRID[a.name]?.(a) ?? GRID[a.text]);
-  return defaultContainer({ display: "grid", placeItems: "unset", placeContent: "unset" }, args, argsOut);
-}
-
-//       1  2345   6789
-// $grid(col(1,span(3))) => "{ gridColumn: 1 / span 3 }"
-//
-// $grid(colStartEnd(1,3)) => "{ gridColumn: 1 / 3 }"
-// $grid(colSpan(1,3)) => "{ gridColumn: 1 / span 3 }"
-//       1     2345   6
-// $grid(column_1_span3) => "{ gridColumn: 1 / span 3 }"
-
-// $flex
-
-// $grid(col(1,4))
-// $grid(col_1_4)
-const column = ({ args }) => {
-  const [start, end] = args.map(a => isSpan(a) ?? isBasic(a)).map(a => a.text);
-  return { gridColumn: end ? `${start} / ${end}` : start };
-};
-const row = ({ args }) => {
-  const [start, end] = args.map(a => isSpan(a) ?? isBasic(a)).map(a => a.text);
-  return { gridRow: end ? `${start} / ${end}` : start };
-};
-
-const GridItem = {
+const _GridItem = {
   ...ALIGNMENTS.placeSelf,
-  ..._LAYOUT,
-  column,
-  row,
+  ...ITEM,
+  column: SINmax(2, SpanBasic, (n, ar) => ({ gridColumn: ar.join(" / ") })), //todo test how `_` works as first or second argument.
+  row: SINmax(2, SpanBasic, (n, ar) => ({ gridRow: ar.join(" / ") })),       //todo test how `_` works as first or second argument.
 };
-function gridItem({ args }) {
-  const argsOut = args.map(a => GridItem[a.name]?.(a) ?? GridItem[a.text]);
-  return defaultItem("gridItem", args, argsOut);
-}
 
 const FLEX = {
   column: { flexDirection: "column" },
@@ -2264,38 +2137,69 @@ const FLEX = {
   wrap: { flexWrap: "wrap" },
   wrapReverse: { flexWrap: "wrap-reverse" },
   noWrap: { flexWrap: "nowrap" },
-  ...OVERFLOWS,
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.alignItems,
-  ...LAYOUT,
+  ...CONTAINER,
   gap,
 };
 
-function flex({ args }) {
-  const argsOut = args.map(a => FLEX[a.name]?.(a) ?? FLEX[a.text]);
-  return defaultContainer({ display: "flex", alignItems: "unset", placeContent: "unset" }, args, argsOut);
-}
-const FlexItem = {
-  ..._LAYOUT,
+const _FlexItem = {
+  ...ITEM,
   ...ALIGNMENTS.alignSelf,
-  basis: ({ args }) => ({ flexBasis: args.map(isBasic).map(a => a.text).join(" ") }),
-  grow: ({ args }) => ({ flexGrow: args.map(isBasic).map(a => a.text).join(" ") }),
-  shrink: ({ args }) => ({ flexShrink: args.map(isBasic).map(a => a.text).join(" ") }),
-  order: ({ args }) => ({ order: args.map(isBasic).map(a => a.text).join(" ") }),
+  basis: SIN(Basic, (n, v) => ({ flexBasis: v })),
+  grow: SIN(Basic, (n, v) => ({ flexGrow: v })),
+  shrink: SIN(Basic, (n, v) => ({ flexShrink: v })),
+  order: SIN(Basic, (n, v) => ({ [n]: v })),
   //todo safe
 };
 
-function flexItem({ args }) {
-  const argsOut = args.map(a => FlexItem[a.name]?.(a) ?? FlexItem[a.text]);
-  return defaultItem("flexItem", args, argsOut);
-}
+const BlockItem = {
+  ...ITEM,
+  floatStart: { float: "inline-start" },
+  floatEnd: { float: "inline-end" },
+};
+
+const block = TYPB(CONTAINER, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const blockItem = TYPB(BlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const lineClamp = FIRST(NumberInterpreter, block, (n, a, b) => ({ ...DEFAULTS.LineClamp, WebkitLineClamp: a, ...b }));
+const grid = TYPB(GRID, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const gridItem = TYPB(_GridItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const flex = TYPB(FLEX, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const flexItem = TYPB(_FlexItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const iBlock = TYPB(IBLOCK, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const iBlockItem = TYPB(_IBlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
 var layouts = {
+  block,
+  blockItem,
+  lineClamp,
+  flex,
+  flexItem,
+  grid,
+  gridItem,
+  iBlock,
+  iBlockItem,
+
+  Block: Umbrella(DEFAULTS.Block, block),
+  BlockItem: Umbrella(DEFAULTS.BlockItem, blockItem),
+  LineClamp: Umbrella(DEFAULTS.Block, lineClamp),
+  IBlock: Umbrella(DEFAULTS.IBlock, iBlock),
+  IBlockItem: Umbrella(DEFAULTS.BlockItem, iBlockItem),
+  Grid: Umbrella(DEFAULTS.Grid, grid),
+  GridItem: Umbrella(DEFAULTS.BlockItem, gridItem),
+  Flex: Umbrella(DEFAULTS.Flex, flex),
+  FlexItem: Umbrella(DEFAULTS.BlockItem, flexItem),
+
+  lineHeight: SIN(LengthPercentNumber, (n, v) => ({ lineHeight: v })),
+  wordSpacing: SIN(Length, (n, v) => ({ wordSpacing: v })),
+
+  hide: _ => ({ display: "none" }),
+
   order: undefined,
   float: undefined,
   gap: undefined,
-  margin: undefined, //_LAYOUT.margin, 
-  padding: undefined,// LAYOUT.padding,
+  margin: undefined,
+  padding: undefined,
   width: undefined,
   minWidth: undefined,
   maxWidth: undefined,
@@ -2328,17 +2232,6 @@ var layouts = {
   placeSelf: undefined,
   justifySelf: undefined,
   alignSelf: undefined,
-  textAlign: undefined,
-  block,
-  blockItem,
-  iBlock,
-  iBlockItem,
-  grid,
-  gridItem,
-  flex,
-  flexItem,
-  lineClamp,
-  hide: _ => ({ display: "none" }),
 };
 
 //from hex => lch
@@ -2472,11 +2365,14 @@ function makeColors(name, color) {
   };
 }
 
+const Palette = SEQ([Name, ColorPrimitive, ColorPrimitive], (n, [name, main, on]) => ({
+  ...makeColors(`--color-${name}`, main),
+  ...makeColors(`--color-on${name[0].toUpperCase() + name.slice(1)}`, on)
+}));
+
 var palette = {
-  palette: SEQ([Name, ColorPrimitive, ColorPrimitive], (n, [name, main, on]) => ({
-    ...makeColors(`--color-${name}`, main),
-    ...makeColors(`--color-on${name[0].toUpperCase() + name.slice(1)}`, on)
-  })),
+  Palette,
+
 };
 
 //ease is defined in native css as accelerating and decelerating.
@@ -2641,17 +2537,17 @@ const transition = TYPB({
   easeInOut: "ease-in-out",
   linear: "linear",
   ...CURVES,
-  steps: SIN(Number$1, (n, v) => `steps(${v})`),
-  stepsEnd: SIN(Number$1, (n, v) => `steps(${v})`),
-  stepsStart: SIN(Number$1, (n, v) => `steps(${v}, start)`),
-  stepsBoth: SIN(Number$1, (n, v) => `steps(${v}, jump-both)`),
-  stepsNone: SIN(Number$1, (n, v) => `steps(${v}, jump-none)`),
+  steps: SIN(NumberInterpreter, (n, v) => `steps(${v})`),
+  stepsEnd: SIN(NumberInterpreter, (n, v) => `steps(${v})`),
+  stepsStart: SIN(NumberInterpreter, (n, v) => `steps(${v}, start)`),
+  stepsBoth: SIN(NumberInterpreter, (n, v) => `steps(${v}, jump-both)`),
+  stepsNone: SIN(NumberInterpreter, (n, v) => `steps(${v}, jump-none)`),
   allowDiscrete: "allow-discrete",
 }, {
   duration: Time,
   delay: Time,
 }, {
-  cubicBezier: Number$1,
+  cubicBezier: NumberInterpreter,
   properties: Name,
 },
   ({ properties, duration, delay, allowDiscrete, ...timers }) => {
@@ -2660,7 +2556,7 @@ const transition = TYPB({
     let [timerName, timerValue] = Object.entries(timers)[0] ?? [];
     const res = {};
     if (timerName in CURVES) {
-      res[":root"] = { [`--transition-${timerName}`]: timerValue };
+      res[`:root /*--transition-${timerName}*/`] = { [`--transition-${timerName}`]: timerValue };
       timerValue = `var(--transition-${timerName})`;
     }
     const tail = [timerValue, duration, delay, allowDiscrete].filter(Boolean).join(" ");
@@ -2730,8 +2626,8 @@ var filterTransforms = {
   backdropFilter: undefined,
 
   transform: undefined,
-  matrix: SEQ(Array(6).fill(Number$1), transformWithFunc),
-  matrix3d: SEQ(Array(16).fill(Number$1), transformWithFunc),
+  matrix: SEQ(Array(6).fill(NumberInterpreter), transformWithFunc),
+  matrix3d: SEQ(Array(16).fill(NumberInterpreter), transformWithFunc),
   perspective,
   rotate,
   rotateX: rotate,
@@ -2744,10 +2640,10 @@ var filterTransforms = {
   scaleX,
   scaleY: scaleX,
   scaleZ: scaleX,
-  scale3d: SEQ(Array(3).fill(Number$1), transformWithFunc),
+  scale3d: SEQ(Array(3).fill(NumberInterpreter), transformWithFunc),
   skewX,
   skewY: skewX,
-  rotate3d: SEQ([Number$1, Number$1, Number$1, Angle], transformWithFunc),
+  rotate3d: SEQ([NumberInterpreter, NumberInterpreter, NumberInterpreter, Angle], transformWithFunc),
   translate: SINmax(2, LengthPercent, (name, ar) => ({ transform: `${name}(${ar.join(", ")})` })),
   scale: SINmax(2, NumberPercent, (name, ar) => ({ transform: `${name}(${ar.join(", ")})` })),
   skew: SINmax(2, AnglePercent, (name, ar) => ({ transform: `${name}(${ar.join(", ")})` })),
@@ -2934,43 +2830,88 @@ var position$1 = {
   // positionAnchor,
 };
 
-const stroke = UMBRELLA({
-  stroke: Color,
-  strokeWidth: Length,
-  strokeOpacity: Number$1, //isFraction
-  strokeLinecap: a => a.text?.match(/^(butt|round|square)$/)?.[0],
-  strokeLinejoin: a => a.text?.match(/^(miter|round|bevel)$/)?.[0],
-  strokeDasharray: CHECKNAME("dasharray", SINmax(999, LengthPercentNumber, (name, ar) => ar.join(", "))),
-  strokeDashoffset: CHECKNAME("dashoffset", SIN(LengthPercent)),
-  strokeMiterlimit: CHECKNAME("miterlimit", SIN(Number$1)),
-});
+const strokeDefaults = {
+  stroke: "unset",
+  strokeWidth: "unset",
+  strokeOpacity: "unset",
+  strokeLinecap: "unset",
+  strokeLinejoin: "unset",
+  strokeDasharray: "unset",
+  strokeDashoffset: "unset",
+  strokeMiterlimit: "unset",
+};
 
-const fill = UMBRELLA({
-  fill: Color,
-  fillOpacity: Number$1, //isFraction
-  fillRule: a => a.text?.match(/^(evenodd|nonzero)$/)?.[0],
-});
+const fillDefaults = {
+  fill: "unset",
+  fillOpacity: "unset",
+  fillRule: "unset",
+};
 
-const svgTextAlign = UMBRELLA({
-  textAnchor: a => a.text?.match(/^(start|middle|end)$/)?.[0],
-  baseline: CHECKNAME("baseline",
-    SEQopt([
-      CUSTOM_WORD("dominantBaseline", "auto|text-bottom|alphabetic|ideographic|middle|central|mathematical|hanging|text-top"),
-      CUSTOM_WORD("alignmentBaseline", "auto|baseline|before-edge|text-before-edge|middle|central|after-edge|text-after-edge|ideographic|alphabetic|hanging|mathematical"),
-      CUSTOM_WORD("baselineShift", "sub|super|baseline"),
-    ],
-      ar => ar.length == 1 ? { dominantBaseline: ar[0] } :
-        ar.length == 2 ? { dominantBaseline: ar[0], alignmentBaseline: ar[1] } :
-          { dominantBaseline: ar[0], alignmentBaseline: ar[1], baselineShift: ar[2] }
-    )),
-}, res => ({
+const svgTextDefaults = {
   textAnchor: "unset",
   dominantBaseline: "unset",
   alignmentBaseline: "unset",
   baselineShift: "unset",
-  ...res,
-  baseline: undefined,
-}));
+};
+
+// Droplet functions (pure transformers)
+const stroke = TYPB({
+  dasharray: SINmax(999, LengthPercentNumber, (name, ar) => ar.join(", ")),
+  dashoffset: SIN(LengthPercent),
+  miterlimit: SIN(NumberInterpreter),
+}, {
+  stroke: ColorUrl,
+  strokeWidth: Length,
+  strokeOpacity: NumberInterpreter,
+  strokeLinecap: a => a.text?.match(/^(butt|round|square)$/)?.[0],
+  strokeLinejoin: a => a.text?.match(/^(miter|round|bevel)$/)?.[0],
+}, {}, res => {
+  const out = {};
+  if (res.stroke) out.stroke = res.stroke;
+  if (res.strokeWidth) out.strokeWidth = res.strokeWidth;
+  if (res.strokeOpacity) out.strokeOpacity = res.strokeOpacity;
+  if (res.strokeLinecap) out.strokeLinecap = res.strokeLinecap;
+  if (res.strokeLinejoin) out.strokeLinejoin = res.strokeLinejoin;
+  if (res.dasharray) out.strokeDasharray = res.dasharray;
+  if (res.dashoffset) out.strokeDashoffset = res.dashoffset;
+  if (res.miterlimit) out.strokeMiterlimit = res.miterlimit;
+  return out;
+});
+
+const fill = TYPB({}, {
+  fill: ColorUrl,
+  fillOpacity: NumberInterpreter,
+  fillRule: a => a.text?.match(/^(evenodd|nonzero)$/)?.[0],
+}, {}, res => {
+  const out = {};
+  if (res.fill) out.fill = res.fill;
+  if (res.fillOpacity) out.fillOpacity = res.fillOpacity;
+  if (res.fillRule) out.fillRule = res.fillRule;
+  return out;
+});
+
+const svgText = TYPB({
+  baseline: SEQopt([
+    CUSTOM_WORD("dominantBaseline", "auto|text-bottom|alphabetic|ideographic|middle|central|mathematical|hanging|text-top"),
+    CUSTOM_WORD("alignmentBaseline", "auto|baseline|before-edge|text-before-edge|middle|central|after-edge|text-after-edge|ideographic|alphabetic|hanging|mathematical"),
+    CUSTOM_WORD("baselineShift", "sub|super|baseline"),
+  ], ar => ar.length == 1 ? { dominantBaseline: ar[0] } :
+    ar.length == 2 ? { dominantBaseline: ar[0], alignmentBaseline: ar[1] } :
+      { dominantBaseline: ar[0], alignmentBaseline: ar[1], baselineShift: ar[2] }
+  ),
+}, {
+  textAnchor: a => a.text?.match(/^(start|middle|end)$/)?.[0],
+}, {}, res => {
+  const out = {};
+  if (res.textAnchor) out.textAnchor = res.textAnchor;
+  if (res.baseline) Object.assign(out, res.baseline);
+  return out;
+});
+
+// Umbrella functions (with defaults)
+const Stroke = Umbrella(strokeDefaults, stroke);
+const Fill = Umbrella(fillDefaults, fill);
+const SvgText = Umbrella(svgTextDefaults, svgText);
 
 const markerStart = SIN(Url, (name, v) => ({ [name]: v }));
 const markerEnd = SIN(Url, (name, v) => ({ [name]: v }));
@@ -3294,6 +3235,14 @@ const strokeNone = {
 
 var svg = {
   stroke,
+  Stroke,
+
+  fill,
+  Fill,
+
+  svgText,
+  SvgText,
+
   strokeWidth: undefined,
   strokeLinecap: undefined,
   strokeLinejoin: undefined,
@@ -3301,12 +3250,15 @@ var svg = {
   strokeMiterlimit: undefined,
   strokeDashoffset: undefined,
   strokeOpacity: undefined,
-  strokeNone,
-  noStroke: strokeNone,
-
-  fill,
   fillOpacity: undefined,
   fillRule: undefined,
+  textAnchor: undefined,
+  dominantBaseline: undefined,
+  alignmentBaseline: undefined,
+  baselineShift: undefined,
+
+  strokeNone,
+  noStroke: strokeNone,
   fillNone: { fill: "none", fillOpacity: "unset", fillRule: "unset" },
   noFill: { fill: "none", fillOpacity: "unset", fillRule: "unset" },
 
@@ -3316,13 +3268,6 @@ var svg = {
   markerEnd,
   noMarker: { marker: "none" },
   markerNone: { marker: "none" },
-
-
-  svgText: svgTextAlign,
-  textAnchor: undefined,
-  dominantBaseline: undefined,
-  alignmentBaseline: undefined,
-  baselineShift: undefined,
 
   stopColor,
   stopOpacity,
@@ -3379,6 +3324,103 @@ var whitespace = {
   ...WHITESPACE,
 };
 
+const paragraph = TYPB({
+  indent: SIN(LengthPercent, (n, v) => ({ textIndent: v })),
+  spacing: SIN(LengthPercent, (n, v) => ({ wordSpacing: v })),
+
+  hyphens: { hyphens: "auto" },
+  shy: { hyphens: "manual" },
+
+  //todo i don't think that we need to include these settings as white-space overrides it: whiteSpaceCollapse: "unset", textWrapMode: "unset", 
+  nowrap: { whiteSpace: "nowrap" },
+  pre: { whiteSpace: "pre" },
+  preWrap: { whiteSpace: "pre-wrap" },
+  preLine: { whiteSpace: "pre-line" },
+  whiteSpaceNormal: { whiteSpace: "normal" },
+
+  preserve: { whiteSpace: "preserve" },
+  preserveBreaks: { whiteSpace: "preserve-breaks" },
+  preserveSpaces: { whiteSpace: "preserve-spaces" },
+  breakSpaces: { whiteSpace: "break-spaces" },
+  preserveNowrap: { whiteSpace: "preserve nowrap" },
+  preserveBreaksNowrap: { whiteSpace: "preserve-breaks nowrap" },
+  preserveSpacesNowrap: { whiteSpace: "preserve-spaces nowrap" },
+  breakSpacesNowrap: { whiteSpace: "break-spaces nowrap" },
+
+  anywhere: { wordBreak: "break-all", overflowWrap: "anywhere" },
+  breakWord: { wordBreak: "break-all", overflowWrap: "break-word" },
+  overflowWrapNone: { wordBreak: "none", overflowWrap: "none" },
+  //wordBreak: keep-all
+
+  start: { textAlign: "start" },
+  end: { textAlign: "end" },
+  left: { textAlign: "left" },
+  right: { textAlign: "right" },
+  center: { textAlign: "center" },
+  justify: { textAlign: "justify" },
+  lastStart: { textAlignLast: "start" },
+  lastEnd: { textAlignLast: "end" },
+  lastLeft: { textAlignLast: "left" },
+  lastRight: { textAlignLast: "right" },
+  lastCenter: { textAlignLast: "center" },
+  lastJustify: { textAlignLast: "justify" },
+
+  //exp safari  
+  hangingPunctuationFirst: { hangingPunctuation: "first" },
+  hangingPunctuationLast: { hangingPunctuation: "last" },
+  hangingPunctuationAllowEnd: { hangingPunctuation: "allow-end" },
+  hangingPunctuationForceEnd: { hangingPunctuation: "force-end" },
+  hangingPunctuationNone: { hangingPunctuation: "none" },
+
+}, {
+  lineHeight: LengthPercentNumber,      //todo this is not so good. Here we need to redo all of them.. A little too little automatic.
+}, {
+}, res => {
+  res.lineHeight &&= { lineHeight: res.lineHeight };
+  return Object.assign({}, ...Object.values(res))
+});
+
+const PARAGRAPH = {
+  lineHeight: "unset",
+  textIndent: "unset",
+  wordSpacing: "unset",
+  hyphens: "unset",
+  whiteSpace: "unset",
+  overflowWrap: "unset",
+  wordBreak: "unset",
+  textAlign: "unset",
+  textAlignLast: "unset",
+  hangingPunctuation: "unset",
+};
+const PARAGRAPHS = {
+  _: {},
+  scientific: { textAlign: "justify", textAlignLast: "justify" },
+  oldBook: { textAlign: "justify", textAlignLast: "justify" },
+};
+
+
+const Paragraph = Umbrella(PARAGRAPH,
+  FIRST(
+    WORD_IN_TABLE(PARAGRAPHS),
+    paragraph,
+    (n, first, rest) => ({ ...PARAGRAPHS[first], ...rest }))
+);
+
+var paragraph$1 = {
+  paragraph,
+  Paragraph,
+  lineHeight: undefined,
+  textIndent: undefined,
+  wordSpacing: undefined,
+  hyphens: undefined,
+  whiteSpace: undefined,
+  overflowWrap: undefined,
+  wordBreak: undefined,
+  textAlign: undefined,
+  textAlignLast: undefined,
+  hangingPunctuation: undefined,
+};
+
 const DIRECTION_WORDS = {
   normal: "normal",
   reverse: "reverse",
@@ -3417,10 +3459,10 @@ const ANIMS = {
   }, {
     duration: Time,
     delay: Time,
-    iterationCount: Number$1,
+    iterationCount: NumberInterpreter,
   }, {
-    cubicBezier: Number$1,
-    steps: Number$1,
+    cubicBezier: NumberInterpreter,
+    steps: NumberInterpreter,
   }, (res) => {
     const settings = {};
     if (res.duration) settings.duration = res.duration;
@@ -3565,9 +3607,9 @@ function animationHo(cb) {
       if (typeof settings.easing === "string") {
         animationParts.push(settings.easing);
       } else if (settings.easing.name === "cubicBezier") {
-        animationParts.push(`cubic-bezier(${settings.easing.args.map(Number$1).join(",")})`);
+        animationParts.push(`cubic-bezier(${settings.easing.args.map(NumberInterpreter).join(",")})`);
       } else if (settings.easing.name === "steps") {
-        animationParts.push(`steps(${settings.easing.args.map(Number$1).join(",")})`);
+        animationParts.push(`steps(${settings.easing.args.map(NumberInterpreter).join(",")})`);
       }
     }
     if (settings.delay) animationParts.push(settings.delay);
@@ -3614,6 +3656,7 @@ const Animations = {
   bgColor: animationHo(backgrounds.bgColor),
   color: animationHo(nativeAndMore.color),
   border: animationHo(border$1.border),
+  Border: animationHo(border$1.Border),
 };
 
 const ObjectFit = {
@@ -3638,6 +3681,7 @@ const SHORTS = {
   ...shadows,
   ...position$1,
   ...svg,
+  ...paragraph$1,
   ...whitespace,
   ...ObjectFit,
   ...Animations,
@@ -3886,6 +3930,7 @@ const clashOrStack = (function () {
         if (v == null) continue;
         if (!(k in res))
           res[k] = v;
+        //todo if ::before and ::after or >* or other atRules clash, then add /*comments to separate them*/ as transitions and @font-face does.
         else if (k in STACKABLE_PROPERTIES)
           res[k] += (STACKABLE_PROPERTIES[k] + v);
         else
@@ -3898,7 +3943,7 @@ const clashOrStack = (function () {
 
 function goRightComma(tokens, divider) {
   const args = [];
-  if (tokens[0] == ")" && tokens.shift())
+  if (tokens[0].text == ")" && tokens.shift())
     return args;
   while (tokens.length) {
     const a = goRightOperator(tokens);

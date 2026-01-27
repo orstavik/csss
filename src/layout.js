@@ -1,4 +1,4 @@
-import { RepeatBasic, SpanBasic, isBasic, Basic, toLogicalFour, TYPB, SIN, Number as NumberInterpreter, Umbrella, FIRST, Length, LengthPercentNumber, SINmax, LengthPercentUnset } from "./func.js";
+import { RepeatBasic, SpanBasic, isBasic, Basic, toLogicalFour, TYPB, SIN, NumberInterpreter, Umbrella, FIRST, Length, LengthPercentNumber, SINmax, LengthPercentUnset } from "./func.js";
 
 function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
