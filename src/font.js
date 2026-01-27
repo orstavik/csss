@@ -288,67 +288,21 @@ export default {
   Font: Umbrella(fontDefaults2, fontWithName),
 
   Typeface,
-
-  // function makeSingleDroplet(NAME, FUNC) {
-  //   return function ({ args }) {
-  //     if (args.length != 1)
-  //       throw new SyntaxError(`$${NAME} droplet only accepts one argument, but got ${args.length}: ${args.map(a => a.text).join(", ")}`);
-  //     const a = args[0];
-  //     const v = a.text == "unset" ? `var(--${NAME}, unset)` : FUNC(a)?.text;
-  //     if (v == null)
-  //       throw new SyntaxError(`Could not interpret $${NAME} argument: ${args[0].text}.`);
-  //     return { [NAME]: v };
-  //   }
-  // }
-
-  // fontSize: makeSingleDroplet("fontSize", isLength),
-  // // fontFamily: makeSingleDroplet("fontFamily", isBasic), //todo this should not be possible.
-  // // fontStyle: makeSingleDroplet("fontStyle", isBasic),
-  // // fontWeight: makeSingleDroplet("fontWeight", isBasic),
-  // // fontVariantCaps: makeSingleDroplet("fontVariantCaps", isBasic),
-  // fontWidth: makeSingleDroplet("fontWidth", isBasic),     //todo we need to make them return both props.
-  // fontStretch: makeSingleDroplet("fontStretch", isBasic), //todo we need to make them return both props.
-  // fontSynthesis: makeSingleDroplet("fontSynthesis", isBasic),
-  // fontSizeAdjust: makeSingleDroplet("fontSizeAdjust", isBasic),
-  // letterSpacing: makeSingleDroplet("letterSpacing", isBasic),
-
-
-  // //global font words
-  // ...SYNTHESIS_WORDS,
-  // uppercase: { textTransform: "uppercase" },
-  // lowercase: { textTransform: "lowercase" },
-  // capitalize: { textTransform: "capitalize" },
-  // fullWidth: { textTransform: "full-width" },
-  // noTextTransform: { textTransform: "none" },
-  // textTransform: undefined,
-
-  // italic: { fontStyle: "italic" },
-  // noStyle: { fontStyle: "normal" },
-  // bold: { fontWeight: "bold" },
-  // bolder: { fontWeight: "bolder" },
-  // lighter: { fontWeight: "lighter" },
-  // noWeight: { fontWeight: "normal" },
-  // normal: { fontStyle: "normal", fontWeight: "normal" },
-  // larger: { fontSize: "larger" },
-  // smaller: { fontSize: "smaller" },
-  // smallCaps: { fontVariantCaps: "small-caps" },
-  // allSmallCaps: { fontVariantCaps: "all-small-caps" },
-  // petiteCaps: { fontVariantCaps: "petite-caps" },
-  // allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
-  // unicase: { fontVariantCaps: "unicase" },
-  // titlingCaps: { fontVariantCaps: "titling-caps" },
-  // condensed: { fontStretch: "condensed" },
-  // expanded: { fontStretch: "expanded" },
-
-  // semiCondensed: { fontStretch: "semi-condensed", fontWidth: "semi-condensed" },
-  // semiExpanded: { fontStretch: "semi-expanded", fontWidth: "semi-expanded" },
-  // extraCondensed: { fontStretch: "extra-condensed", fontWidth: "extra-condensed" },
-  // extraExpanded: { fontStretch: "extra-expanded", fontWidth: "extra-expanded" },
-  // ultraCondensed: { fontStretch: "ultra-condensed", fontWidth: "ultra-condensed" },
-  // ultraExpanded: { fontStretch: "ultra-expanded", fontWidth: "ultra-expanded" },
-  // kerning: { fontKerning: "normal" },
-  // noKerning: { fontKerning: "none" },
-  // shy: { hyphens: "manual" },
-  // hyphens: { hyphens: "auto" },
-  // noHyphens: { hyphens: "none" },
+  fontFamily: undefined,
+  fontSize: undefined,
+  fontStyle: undefined,
+  fontWeight: undefined,
+  fontSizeAdjust: undefined,
+  letterSpacing: undefined,
+  textTransform: undefined,
+  fontWidth: undefined,
+  fontStretch: undefined,
+  fontVariantCaps: undefined,
+  fontSynthesis: undefined,
+  fontFeatureSettings: undefined,
+  fontVariationSettings: undefined,
+  WebkitFontSmoothing: undefined,
+  MozOsxFontSmoothing: undefined,
+  fontKerning: undefined,
+  hyphens: undefined,
 };
