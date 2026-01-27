@@ -456,12 +456,12 @@ export function isNumber(a) {
 }
 export function isFraction(a) {
   a = isNumber(a);
-  if (a && a.num >= 0 && a.num <= 1)
+  if (a && !Number.isInteger(a.num))
     return a;
 }
-export function isIntegerUpTo1000(a) {
+export function isInteger(a) {
   a = isNumber(a);
-  if (a && Number.isInteger(a.num) && a.num >= 0 && a.num <= 1000)
+  if (a && Number.isInteger(a.num))
     return a;
 }
 export function isNumberPercent(a) {
@@ -794,6 +794,9 @@ export const Color = a => isColor(a)?.text;
 export const Length = a => isLength(a)?.text;
 export const Name = a => isName(a)?.text;
 export const NumberInterpreter = a => isNumber(a)?.text; //todo here we likely want .num!
+export const Fraction = a => isFraction(a)?.text; //todo here we likely want .num!
+export const Integer = a => isInteger(a)?.text; //todo here we likely want .num!
+export const Quote = a => isQuote(a)?.text;
 export const Percent = a => isPercent(a)?.text;
 export const Time = a => isTime(a)?.text;
 export const Unset = a => a.text == "_" ? "unset" : undefined;

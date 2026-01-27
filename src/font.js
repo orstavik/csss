@@ -1,4 +1,4 @@
-import { extractName, extractUrl, isFraction, isIntegerUpTo1000, isLength, Length, isAngle, isQuote, SIN, Percent, Basic, FIRST, Umbrella, Word, NameUnset, SINmax } from "./func.js";
+import { extractName, Quote, Angle, Integer, Fraction, extractUrl, isFraction, isInteger, isLength, Length, isAngle, isQuote, SIN, Percent, Basic, FIRST, Umbrella, Word, NameUnset, SINmax, TYPB } from "./func.js";
 
 //The $font umbrella and $typeface cloud regulate this property cluster. $typeface also regulates @font-face{}.
 const FONT_DEFAULTS = Object.entries({
@@ -185,7 +185,7 @@ function fontImpl({ name, args }) {
       Object.assign(res, a2);
     else if (a.kind == "WORD")
       family.push(a.text);
-    else if (a2 = isIntegerUpTo1000(a))
+    else if (a2 = isInteger(a))
       res.fontWeight = a2.num;
     else if (a2 = isFraction(a))
       res.fontSizeAdjust = a2.num;
@@ -201,6 +201,33 @@ function fontImpl({ name, args }) {
     res.fontFamily = family.map(s => s.match(/[^a-z0-9_-]/gi) ? `"${s}"` : s).join(", ");
   return res;
 }
+
+const fixFontFamily = fonts => {
+  if (fonts.includes("emoji")) {
+    fonts.splice(fonts.indexOf("emoji"), 1);
+    fonts.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+  }
+  return fonts.map(s => s.match(/[^a-z0-9_-]/gi) ? `"${s}"` : s).join(", ");
+}
+
+const font = TYPB(FONT_WORDS, {
+  fontSize: Length,
+  fontSizeAdjust: Fraction,
+  fontWeight: Integer,
+  Angle
+}, {
+  fontFamily: t => Word(t) ?? Quote(t)
+}, obj => {
+  const res = {};
+  for (let [k, v] of Object.entries(obj)) {
+    if (k === "fontFamily") res.fontFamily = fixFontFamily(v);
+    else if (k === "Angle") res.fontStyle = "oblique " + v;
+    else if (k[0] === "@") res[k] = v;
+    else if (v instanceof Object) Object.assign(res, v);
+    else res[k] = v;
+  }
+  return res;
+});
 
 //100%lob
 //$font("company orange",grotesque)
@@ -220,7 +247,7 @@ function fontImpl({ name, args }) {
 
 const fontWithName = FIRST(
   NameUnset,
-  fontImpl,
+  font,
   (nameNode, nameText, fontProps) => {
     if (nameText === "unset") {
       if (!fontProps?.fontFamily) {
@@ -257,7 +284,7 @@ function Typeface({ args }) {
 }
 
 export default {
-  font: fontImpl,
+  font,
   Font: Umbrella(fontDefaults2, fontWithName),
 
   Typeface,

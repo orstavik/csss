@@ -40,12 +40,12 @@
 ```css
 @layer containerDefault {
   .\$font\(system-ui\,sans-serif\,400\,0\.5\,bold\,i\,condensed\,12px\) {
+    font-family: system-ui, sans-serif;
     font-weight: bold;
     font-size-adjust: 0.5;
     font-style: italic;
     font-width: condensed;
     font-size: 12px;
-    font-family: system-ui, sans-serif;
   }
 }
 ```
@@ -117,8 +117,8 @@
 ```css
 @layer containerDefault {
   .\$font\(serif\,hyphens\) {
-    hyphens: auto;
     font-family: serif;
+    hyphens: auto;
   }
 }
 ```
