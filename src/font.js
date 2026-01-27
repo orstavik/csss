@@ -50,7 +50,7 @@ const fontDefaults2 = {
  */
 
 //$typeface(comic,"MS+Comic+Sans",face("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2"),xxs,semiExpanded,italic,bolder)
-function face({ args }, fontFamily) {
+function face({ args }) {
 
   function featureAndVariation(args) {
     //todo this doesn't work? a.text.split instead of a.split ? 
@@ -69,16 +69,16 @@ function face({ args }, fontFamily) {
   if (!src)
     throw new SyntaxError(`The first argument of face(...) must be a quote or a URL, but got: ${args[0]}`);
   const res = {
-    fontFamily: fontFamily ??= src.slice(4, -1),
+    fontFamily: src.slice(4, -1),
     fontStyle: "normal",
-    src: `local(${fontFamily}), ${src}`,
+    src,
   };
   for (let a of args) {
     const a2 = FACE[a.name]?.(a) ?? FACE[a.text];
     if (a2) Object.assign(res, a2);
     throw new SyntaxError(`Unrecognized font face argument: ${a}`);
   }
-  return { [`@font-face /*${res.fontFamily} ${res.fontStyle}*/`]: res };
+  return res;//{ [`@font-face /*${res.fontFamily} ${res.fontStyle}*/`]: res };
 }
 
 const SYNTHESIS_WORDS = (function () {
@@ -189,9 +189,13 @@ function fontImpl({ name, args }) {
       res.fontWeight = a2.num;
     else if (a2 = isFraction(a))
       res.fontSizeAdjust = a2.num;
-    else if (a.name == "face" && (a2 = face(a, fontFaceName))) {
-      Object.assign(res, a2);
-      family.push(Object.values(a2)[0].fontFamily);
+    else if (a.name == "face" && (a2 = face(a))) {
+      if (fontFaceName) {
+        a2.fontFamily = fontFaceName;
+        a2.src = `local(${fontFaceName}), ${a2.src}`;
+      }
+      family.push(a2.fontFamily);
+      res[`@font-face /*${a2.fontFamily} ${a2.fontStyle}*/`] = a2;
     } else
       throw new SyntaxError(`Unrecognized $font argument: ${a}`);
   }
@@ -229,39 +233,21 @@ const font = TYPB(FONT_WORDS, {
   return res;
 });
 
-//100%lob
-//$font("company orange",grotesque)
-//  <h1 $bold>
-//  <div $italic ...>
-//    <p   
-//    <p $font>  //resets to last known font
-
-//lob -1, but with 4 token exact reference for portal. $type(name
-//$typeface(flow,"company orange",grotesque,condensed,italic,-10deg,uppercase,spacing(-3),700)
-//$typeface(flow)
-//   $bold
-//      $type
-
-//$type(name,...args) => creates a type with the given name and properties.
-//$type(name) => uses a type and sets the font properties to the type's properties.
-
 const fontWithName = FIRST(
   NameUnset,
   font,
-  (nameNode, nameText, fontProps) => {
-    if (nameText === "unset") {
-      if (!fontProps?.fontFamily) {
-        throw new SyntaxError(`$Font(_, ...) requires at least one font family after underscore`);
-      }
+  (nameNode, nameText, fontProps = {}) => {
+    //todo both of these rules are a little bit unnecessary? There are usecases for both, no?
+    if (nameText === "unset" && !fontProps.fontFamily)
+      throw new SyntaxError(`$Font(_, ...) requires a font family.`);
+    if (nameText !== "unset" && fontProps.fontFamily)
+      throw new SyntaxError(`$Font(${nameText}, ...) refering to a $Type(${nameText},...) cannot specify a fontFamily.`);
+
+    if (nameText === "unset")
       return fontProps;
-    }
-    if (fontProps?.fontFamily) {
-      throw new SyntaxError(`$Font(${nameText}, ...) cannot contain font families. Found font-family in arguments. Use $Font(_, fontFamily, ...) instead.`);
-    }
     const res = {};
-    for (let [k, varKey] of FONT_DEFAULTS) {
+    for (let [k, varKey] of FONT_DEFAULTS)
       res[k] = fontProps?.[k] ?? `var(--${nameText + varKey}, unset)`;
-    }
     res.fontFamily = `var(--${nameText}FontFamily, ${nameText})`;
     return res;
   }
