@@ -348,26 +348,26 @@
 
 <body class="
 $blockItem(margin(0))
-$block(padding(3rem,2rem))
+$Block(padding(3rem,2rem))
 $bg(#light)
 
-$typeface(main,Inter,sans-serif,16px,400)
-$typeface(heading,Inter,sans-serif,32px,700)
+$Typeface(main,Inter,sans-serif,16px,400)
+$Typeface(heading,Inter,sans-serif,32px,700)
 
-$palette(primary,#6366f1,#ffffff)
-$palette(secondary,#8b5cf6,#ffffff)
-$palette(accent,#ec4899,#ffffff)
-$palette(dark,#1e293b,#ffffff)
-$palette(light,#f8fafc,#1e293b)
-$palette(border,#e0e0e0,#1e293b)
-$palette(surface,#ffffff,#1e293b)
-$palette(muted,#64748b,#ffffff)
+$Palette(primary,#6366f1,#ffffff)
+$Palette(secondary,#8b5cf6,#ffffff)
+$Palette(accent,#ec4899,#ffffff)
+$Palette(dark,#1e293b,#ffffff)
+$Palette(light,#f8fafc,#1e293b)
+$Palette(border,#e0e0e0,#1e293b)
+$Palette(surface,#ffffff,#1e293b)
+$Palette(muted,#64748b,#ffffff)
 
 ||div$blockItem(inlineSize(1200px,_,95%),margin(0,auto))
-||div|h1$font(heading)$blockItem(margin(0,0,1rem,0))$color(#dark)
-||div|p$font(main,1.1rem)$blockItem(margin(0,0,3rem,0))$color(#muted)
+||div|h1$Font(heading)$blockItem(margin(0,0,1rem,0))$color(#dark)
+||div|p$Font(main) $font(1.1rem)$blockItem(margin(0,0,3rem,0))$color(#muted)
 ||div|section$blockItem(margin(0,0,4rem,0))
-||div|section|h2$font(main,1.5rem,600)$blockItem(margin(0,0,1.5rem,0))$color(#dark)
+||div|section|h2$Font(main) $font(1.5rem,600)$blockItem(margin(0,0,1.5rem,0))$color(#dark)
 ">
 
     <div>
@@ -378,16 +378,16 @@ $palette(muted,#64748b,#ffffff)
         <section>
             <h2>🔄 Basic Infinite Loops</h2>
             <div class="
-            $grid(cols(repeat(auto-fit,minmax(180px,1fr))),gap(1.5rem))
-            |$block(padding(2rem))
+            $Grid(cols(repeat(auto-fit,minmax(180px,1fr))),gap(1.5rem))
+            |$Block(padding(2rem))
             |$bg(#surface)
-            |$border(2px,solid,#border,radius(12px))
-            |$flex(contentCenter,itemsCenter,column,gap(1rem))
+            |$Border(2px,solid,#border,radius(12px))
+            |$Flex(contentCenter,itemsCenter,column,gap(1rem))
             |$blockItem(size(_,180px))
-            |$block(textCenter)
+            |$Block(textCenter)
             
             |div:first-child$fontSize(3rem)
-            |div:last-child$font(main,1rem,600)$color(#dark)
+            |div:last-child$Font(main) $font(1rem,600)$color(#dark)
             ">
                 <div>
                     <div class="spin-anim">⚙️</div>
@@ -419,11 +419,11 @@ $palette(muted,#64748b,#ffffff)
         <!-- Loading Indicators -->
         <section>
             <h2>⏳ Loading Indicators</h2>
-            <div class="$grid(cols(repeat(2,1fr)),gap(2rem))">
+            <div class="$Grid(cols(repeat(2,1fr)),gap(2rem))">
                 <!-- Loading Dots -->
                 <div
-                    class="$bg(#surface)$border(2px,solid,#border,radius(12px))$flex(contentCenter,itemsCenter,column,gap(2rem),padding(2rem))">
-                    <div class="$font(main,1.2rem,600)">Loading Dots</div>
+                    class="$bg(#surface)$Border(2px,solid,#border,radius(12px))$Flex(contentCenter,itemsCenter,column,gap(2rem),padding(2rem))">
+                    <div class="$Font(main) $font(1.2rem,600)">Loading Dots</div>
                     <div class="loading-dots">
                         <span></span>
                         <span></span>
@@ -433,24 +433,24 @@ $palette(muted,#64748b,#ffffff)
 
                 <!-- Spinning Circle -->
                 <div
-                    class="$flex(contentCenter,itemsCenter,column,gap(2rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
-                    <div class="$font(main,1.2rem,600)">Spinning Loader</div>
-                    <div class="spin-anim $blockItem(size(50px,50px))$border(4px,solid,#border,radius(50%))">
+                    class="$Flex(contentCenter,itemsCenter,column,gap(2rem),padding(2rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
+                    <div class="$Font(main) $font(1.2rem,600)">Spinning Loader</div>
+                    <div class="spin-anim $blockItem(size(50px,50px))$Border(4px,solid,#border,radius(50%))">
                     </div>
                 </div>
 
                 <!-- Progress Bar -->
-                <div class="$flex(column,gap(2rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
-                    <div class="$font(main,1.2rem,600)$block(textCenter)">Progress Bar</div>
-                    <div class="$bg(#border)$border(radius(4px))">
+                <div class="$Flex(column,gap(2rem),padding(2rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
+                    <div class="$Font(main) $font(1.2rem,600)$Block(textCenter)">Progress Bar</div>
+                    <div class="$bg(#border)$Border(radius(4px))">
                         <div class="progress-bar"></div>
                     </div>
                 </div>
 
                 <!-- Shimmer Effect -->
-                <div class="$flex(column,gap(2rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
-                    <div class="$font(main,1.2rem,600)$block(textCenter)">Shimmer Loading</div>
-                    <div class="shimmer-box $blockItem(size(_,80px))$border(radius(8px))"></div>
+                <div class="$Flex(column,gap(2rem),padding(2rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
+                    <div class="$Font(main) $font(1.2rem,600)$Block(textCenter)">Shimmer Loading</div>
+                    <div class="shimmer-box $blockItem(size(_,80px))$Border(radius(8px))"></div>
                 </div>
             </div>
         </section>
@@ -459,40 +459,40 @@ $palette(muted,#64748b,#ffffff)
         <section>
             <h2>🎮 Hover to Pause</h2>
             <div class="
-            $grid(cols(repeat(3,1fr)),gap(1.5rem))
-            @sm$grid(cols(1fr))
+            $Grid(cols(repeat(3,1fr)),gap(1.5rem))
+            @sm$Grid(cols(1fr))
             ">
                 <div class="
-                $flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))
+                $Flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))
                 $bg(linear(135deg,#667eea,#764ba2))
                 $color(#white)
-                $border(radius(12px))
+                $Border(radius(12px))
                 $blockItem(size(_,200px))
                 ">
                     <div class="spin-anim pause-on-hover $fontSize(3rem)">🎡</div>
-                    <div class="$font(main,1rem,600)">Hover to Pause</div>
+                    <div class="$Font(main) $font(1rem,600)">Hover to Pause</div>
                 </div>
 
                 <div class="
-                $flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))
+                $Flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))
                 $bg(linear(135deg,#f093fb,#f5576c))
                 $color(#white)
-                $border(radius(12px))
+                $Border(radius(12px))
                 $blockItem(size(_,200px))
                 ">
                     <div class="float-anim pause-on-hover $fontSize(3rem)">☁️</div>
-                    <div class="$font(main,1rem,600)">Hover to Pause</div>
+                    <div class="$Font(main) $font(1rem,600)">Hover to Pause</div>
                 </div>
 
                 <div class="
-                $flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))
+                $Flex(contentCenter,itemsCenter,column,gap(1rem),padding(2rem))
                 $bg(linear(135deg,#4facfe,#00f2fe))
                 $color(#white)
-                $border(radius(12px))
+                $Border(radius(12px))
                 $blockItem(size(_,200px))
                 ">
                     <div class="bounce-anim pause-on-hover $fontSize(3rem)">⚽</div>
-                    <div class="$font(main,1rem,600)">Hover to Pause</div>
+                    <div class="$Font(main) $font(1rem,600)">Hover to Pause</div>
                 </div>
             </div>
         </section>
@@ -500,19 +500,19 @@ $palette(muted,#64748b,#ffffff)
         <!-- Text Animations -->
         <section>
             <h2>📝 Animated Text Effects</h2>
-            <div class="$flex(column,gap(2rem))">
+            <div class="$Flex(column,gap(2rem))">
                 <!-- Typing Effect -->
                 <div
-                    class="$flex(contentCenter,itemsCenter,padding(3rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
-                    <div class="typing-text $font(main,1.5rem,600)">
+                    class="$Flex(contentCenter,itemsCenter,padding(3rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
+                    <div class="typing-text $Font(main) $font(1.5rem,600)">
                         Welcome to CSSS Framework...
                     </div>
                 </div>
 
                 <!-- Marquee Scroll -->
-                <div class="$block(padding(3rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
+                <div class="$Block(padding(3rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
                     <div class="marquee">
-                        <div class="marquee-content $font(main,1.5rem,600)">
+                        <div class="marquee-content $Font(main) $font(1.5rem,600)">
                             🎉 Breaking News: CSSS is awesome! • 🚀 Fast Development • 💎 Beautiful Designs • ✨ Easy to
                             Use •
                         </div>
@@ -524,50 +524,50 @@ $palette(muted,#64748b,#ffffff)
         <!-- Advanced Effects -->
         <section>
             <h2>✨ Advanced Effects</h2>
-            <div class="$grid(cols(repeat(2,1fr)),gap(2rem)) @sm$grid(cols(1fr))">
+            <div class="$Grid(cols(repeat(2,1fr)),gap(2rem)) @sm$Grid(cols(1fr))">
                 <!-- Rotating Border -->
                 <div class="rotating-border">
-                    <div class="$block(padding(2rem),textCenter)">
+                    <div class="$Block(padding(2rem),textCenter)">
                         <div class="$fontSize(3rem)$blockItem(margin(0,0,1rem,0))">🌈</div>
-                        <div class="$font(main,1.2rem,600)">Rotating Border</div>
+                        <div class="$Font(main) $font(1.2rem,600)">Rotating Border</div>
                         <p class="$blockItem(margin(0.5rem,0,0,0))$opacity(0.7)">Conic gradient animation</p>
                     </div>
                 </div>
 
                 <!-- Glowing Box -->
                 <div class="
-                $block(padding(2rem),textCenter)
+                $Block(padding(2rem),textCenter)
                 $bg(#surface)
-                $border(2px,solid,#primary,radius(12px))
+                $Border(2px,solid,#primary,radius(12px))
                 glow-anim
                 ">
                     <div class="$fontSize(3rem)$blockItem(margin(0,0,1rem,0))">💫</div>
-                    <div class="$font(main,1.2rem,600)">Glowing Effect</div>
+                    <div class="$Font(main) $font(1.2rem,600)">Glowing Effect</div>
                     <p class="$blockItem(margin(0.5rem,0,0,0))$opacity(0.7)">Pulsing box shadow</p>
                 </div>
 
                 <!-- Color Shift -->
                 <div class="
-                $block(padding(2rem),textCenter)
+                $Block(padding(2rem),textCenter)
                 $bg(linear(135deg,#667eea,#764ba2))
                 $color(#white)
-                $border(radius(12px))
+                $Border(radius(12px))
                 color-shift
                 ">
                     <div class="$fontSize(3rem)$blockItem(margin(0,0,1rem,0))">🎨</div>
-                    <div class="$font(main,1.2rem,600)">Color Shift</div>
+                    <div class="$Font(main) $font(1.2rem,600)">Color Shift</div>
                     <p class="$blockItem(margin(0.5rem,0,0,0))$opacity(0.9)">Hue rotation filter</p>
                 </div>
 
                 <!-- Swinging Element -->
                 <div class="
-                $block(padding(2rem))
+                $Block(padding(2rem))
                 $bg(#surface)
-                $border(2px,solid,#border,radius(12px))
-                $flex(contentCenter,itemsCenter,column,gap(1rem))
+                $Border(2px,solid,#border,radius(12px))
+                $Flex(contentCenter,itemsCenter,column,gap(1rem))
                 ">
                     <div class="swing-anim $fontSize(3rem)">🔔</div>
-                    <div class="$font(main,1.2rem,600)">Swing Animation</div>
+                    <div class="$Font(main) $font(1.2rem,600)">Swing Animation</div>
                     <p class="$blockItem(margin(0))$opacity(0.7)">Pendulum motion</p>
                 </div>
             </div>
@@ -576,23 +576,23 @@ $palette(muted,#64748b,#ffffff)
         <!-- Skeleton Loaders -->
         <section>
             <h2>💀 Skeleton Loaders</h2>
-            <div class="$grid(cols(repeat(3,1fr)),gap(2rem)) @sm$grid(cols(1fr))">
-                <div class="$flex(column,gap(1rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
-                    <div class="shimmer-box $blockItem(size(_,120px))$border(radius(8px))"></div>
-                    <div class="shimmer-box $blockItem(size(80%,20px))$border(radius(4px))"></div>
-                    <div class="shimmer-box $blockItem(size(60%,20px))$border(radius(4px))"></div>
+            <div class="$Grid(cols(repeat(3,1fr)),gap(2rem)) @sm$Grid(cols(1fr))">
+                <div class="$Flex(column,gap(1rem),padding(2rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
+                    <div class="shimmer-box $blockItem(size(_,120px))$Border(radius(8px))"></div>
+                    <div class="shimmer-box $blockItem(size(80%,20px))$Border(radius(4px))"></div>
+                    <div class="shimmer-box $blockItem(size(60%,20px))$Border(radius(4px))"></div>
                 </div>
 
-                <div class="$flex(column,gap(1rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
-                    <div class="shimmer-box $blockItem(size(_,120px))$border(radius(8px))"></div>
-                    <div class="shimmer-box $blockItem(size(80%,20px))$border(radius(4px))"></div>
-                    <div class="shimmer-box $blockItem(size(60%,20px))$border(radius(4px))"></div>
+                <div class="$Flex(column,gap(1rem),padding(2rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
+                    <div class="shimmer-box $blockItem(size(_,120px))$Border(radius(8px))"></div>
+                    <div class="shimmer-box $blockItem(size(80%,20px))$Border(radius(4px))"></div>
+                    <div class="shimmer-box $blockItem(size(60%,20px))$Border(radius(4px))"></div>
                 </div>
 
-                <div class="$flex(column,gap(1rem),padding(2rem))$bg(#surface)$border(2px,solid,#border,radius(12px))">
-                    <div class="shimmer-box $blockItem(size(_,120px))$border(radius(8px))"></div>
-                    <div class="shimmer-box $blockItem(size(80%,20px))$border(radius(4px))"></div>
-                    <div class="shimmer-box $blockItem(size(60%,20px))$border(radius(4px))"></div>
+                <div class="$Flex(column,gap(1rem),padding(2rem))$bg(#surface)$Border(2px,solid,#border,radius(12px))">
+                    <div class="shimmer-box $blockItem(size(_,120px))$Border(radius(8px))"></div>
+                    <div class="shimmer-box $blockItem(size(80%,20px))$Border(radius(4px))"></div>
+                    <div class="shimmer-box $blockItem(size(60%,20px))$Border(radius(4px))"></div>
                 </div>
             </div>
         </section>

@@ -1,92 +1,48 @@
 import {
-  TYPB, Umbrella, SINmax, SIN, SEQopt, CUSTOM_WORD,
+  UMBRELLA, SINmax, SIN, CHECKNAME, SEQopt, CUSTOM_WORD,
   extractName, extractUrl, extractColor,
   isNumber, isBasic,
-  LengthPercent, LengthPercentNumber, NumberInterpreter, ColorUrl, Length, Url, UrlUnset,
-} from "./func.js";
+  LengthPercent, LengthPercentNumber, Number, ColorUrl, Length, Url, UrlUnset,
+} from "../func.js";
 
-const strokeDefaults = {
-  stroke: "unset",
-  strokeWidth: "unset",
-  strokeOpacity: "unset",
-  strokeLinecap: "unset",
-  strokeLinejoin: "unset",
-  strokeDasharray: "unset",
-  strokeDashoffset: "unset",
-  strokeMiterlimit: "unset",
-};
+//todo here we need to update the methods to use TYPB + Umbrella instead. That should give us the same result.
+const stroke = UMBRELLA({
+  stroke: ColorUrl,
+  strokeWidth: Length,
+  strokeOpacity: Number, //isFraction
+  strokeLinecap: a => a.text?.match(/^(butt|round|square)$/)?.[0],
+  strokeLinejoin: a => a.text?.match(/^(miter|round|bevel)$/)?.[0],
+  strokeDasharray: CHECKNAME("dasharray", SINmax(999, LengthPercentNumber, (name, ar) => ar.join(", "))),
+  strokeDashoffset: CHECKNAME("dashoffset", SIN(LengthPercent)),
+  strokeMiterlimit: CHECKNAME("miterlimit", SIN(Number)),
+});
 
-const fillDefaults = {
-  fill: "unset",
-  fillOpacity: "unset",
-  fillRule: "unset",
-};
+const fill = UMBRELLA({
+  fill: ColorUrl,
+  fillOpacity: Number, //isFraction
+  fillRule: a => a.text?.match(/^(evenodd|nonzero)$/)?.[0],
+});
 
-const svgTextDefaults = {
+const svgTextAlign = UMBRELLA({
+  textAnchor: a => a.text?.match(/^(start|middle|end)$/)?.[0],
+  baseline: CHECKNAME("baseline",
+    SEQopt([
+      CUSTOM_WORD("dominantBaseline", "auto|text-bottom|alphabetic|ideographic|middle|central|mathematical|hanging|text-top"),
+      CUSTOM_WORD("alignmentBaseline", "auto|baseline|before-edge|text-before-edge|middle|central|after-edge|text-after-edge|ideographic|alphabetic|hanging|mathematical"),
+      CUSTOM_WORD("baselineShift", "sub|super|baseline"),
+    ],
+      ar => ar.length == 1 ? { dominantBaseline: ar[0] } :
+        ar.length == 2 ? { dominantBaseline: ar[0], alignmentBaseline: ar[1] } :
+          { dominantBaseline: ar[0], alignmentBaseline: ar[1], baselineShift: ar[2] }
+    )),
+}, res => ({
   textAnchor: "unset",
   dominantBaseline: "unset",
   alignmentBaseline: "unset",
   baselineShift: "unset",
-};
-
-// Droplet functions (pure transformers)
-const stroke = TYPB({
-  dasharray: SINmax(999, LengthPercentNumber, (name, ar) => ar.join(", ")),
-  dashoffset: SIN(LengthPercent),
-  miterlimit: SIN(NumberInterpreter),
-}, {
-  stroke: ColorUrl,
-  strokeWidth: Length,
-  strokeOpacity: NumberInterpreter,
-  strokeLinecap: a => a.text?.match(/^(butt|round|square)$/)?.[0],
-  strokeLinejoin: a => a.text?.match(/^(miter|round|bevel)$/)?.[0],
-}, {}, res => {
-  const out = {};
-  if (res.stroke) out.stroke = res.stroke;
-  if (res.strokeWidth) out.strokeWidth = res.strokeWidth;
-  if (res.strokeOpacity) out.strokeOpacity = res.strokeOpacity;
-  if (res.strokeLinecap) out.strokeLinecap = res.strokeLinecap;
-  if (res.strokeLinejoin) out.strokeLinejoin = res.strokeLinejoin;
-  if (res.dasharray) out.strokeDasharray = res.dasharray;
-  if (res.dashoffset) out.strokeDashoffset = res.dashoffset;
-  if (res.miterlimit) out.strokeMiterlimit = res.miterlimit;
-  return out;
-});
-
-const fill = TYPB({}, {
-  fill: ColorUrl,
-  fillOpacity: NumberInterpreter,
-  fillRule: a => a.text?.match(/^(evenodd|nonzero)$/)?.[0],
-}, {}, res => {
-  const out = {};
-  if (res.fill) out.fill = res.fill;
-  if (res.fillOpacity) out.fillOpacity = res.fillOpacity;
-  if (res.fillRule) out.fillRule = res.fillRule;
-  return out;
-});
-
-const svgText = TYPB({
-  baseline: SEQopt([
-    CUSTOM_WORD("dominantBaseline", "auto|text-bottom|alphabetic|ideographic|middle|central|mathematical|hanging|text-top"),
-    CUSTOM_WORD("alignmentBaseline", "auto|baseline|before-edge|text-before-edge|middle|central|after-edge|text-after-edge|ideographic|alphabetic|hanging|mathematical"),
-    CUSTOM_WORD("baselineShift", "sub|super|baseline"),
-  ], ar => ar.length == 1 ? { dominantBaseline: ar[0] } :
-    ar.length == 2 ? { dominantBaseline: ar[0], alignmentBaseline: ar[1] } :
-      { dominantBaseline: ar[0], alignmentBaseline: ar[1], baselineShift: ar[2] }
-  ),
-}, {
-  textAnchor: a => a.text?.match(/^(start|middle|end)$/)?.[0],
-}, {}, res => {
-  const out = {};
-  if (res.textAnchor) out.textAnchor = res.textAnchor;
-  if (res.baseline) Object.assign(out, res.baseline);
-  return out;
-});
-
-// Umbrella functions (with defaults)
-const Stroke = Umbrella(strokeDefaults, stroke);
-const Fill = Umbrella(fillDefaults, fill);
-const SvgText = Umbrella(svgTextDefaults, svgText);
+  ...res,
+  baseline: undefined,
+}));
 
 const markerStart = SIN(Url, (name, v) => ({ [name]: v }));
 const markerEnd = SIN(Url, (name, v) => ({ [name]: v }));
@@ -410,14 +366,6 @@ const strokeNone = {
 
 export default {
   stroke,
-  Stroke,
-
-  fill,
-  Fill,
-
-  svgText,
-  SvgText,
-
   strokeWidth: undefined,
   strokeLinecap: undefined,
   strokeLinejoin: undefined,
@@ -425,15 +373,12 @@ export default {
   strokeMiterlimit: undefined,
   strokeDashoffset: undefined,
   strokeOpacity: undefined,
-  fillOpacity: undefined,
-  fillRule: undefined,
-  textAnchor: undefined,
-  dominantBaseline: undefined,
-  alignmentBaseline: undefined,
-  baselineShift: undefined,
-
   strokeNone,
   noStroke: strokeNone,
+
+  fill,
+  fillOpacity: undefined,
+  fillRule: undefined,
   fillNone: { fill: "none", fillOpacity: "unset", fillRule: "unset" },
   noFill: { fill: "none", fillOpacity: "unset", fillRule: "unset" },
 
@@ -443,6 +388,13 @@ export default {
   markerEnd,
   noMarker: { marker: "none" },
   markerNone: { marker: "none" },
+
+
+  svgText: svgTextAlign,
+  textAnchor: undefined,
+  dominantBaseline: undefined,
+  alignmentBaseline: undefined,
+  baselineShift: undefined,
 
   stopColor,
   stopOpacity,

@@ -95,16 +95,62 @@ function interpretShort(exp) {
   }
 }
 
+const ILLEGAL_IN_CONTAINER_MODE = new Set([
+  "margin",
+  "padding",
+  "inlineSize",
+  "blockSize",
+  "width",
+  "height",
+  "size",
+  "scrollMargin",
+  "scrollPadding",
+  "textIndent",
+  "indent",
+  "snapStart",
+  "snapCenter",
+  "snapEnd",
+  "noSnap",
+  "basis",
+  "grow",
+  "shrink",
+  "order",
+  "column",
+  "row",
+  "alignTop",
+  "alignMiddle",
+  "alignBottom",
+  "alignBaseline",
+  "floatStart",
+  "floatEnd",
+]);
+
 const MAGICWORD = `$"'$`;
 export function parse(short) {
   const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
   short = short.match(/(.*?)\!*$/)[1];
   const { exp, media } = parseMediaQuery(short, MEDIA_WORDS);
   let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
-  exprList = exprList.map(parseNestedExpression);
-  exprList = exprList.map(interpretShort);
-  exprList &&= clashOrStack(exprList);
+  
   let { selector, item, grandItem } = parseSelectorPipe(sel, clazz);
+  const isContainerMode = !item && !grandItem;
+  
+  const parsedExprs = exprList.map(parseNestedExpression);
+  if (isContainerMode) {
+    for (const expr of parsedExprs) {
+      const name = expr.name ?? expr.text;
+      if (ILLEGAL_IN_CONTAINER_MODE.has(name)) {
+        throw new SyntaxError(
+          `Illegal droplet in container mode: $${name}()\n` +
+          `This droplet can only be used in item mode (with |).\n` +
+          `Example: $block|$${name}(...) or .myClass|$${name}(...)`
+        );
+      }
+    }
+  }
+  
+  exprList = parsedExprs.map(interpretShort);
+  exprList &&= clashOrStack(exprList);
   const layer = (grandItem ? "grandItems" : item ? "items" : "container") + (short.match(/^(\$|\|\$|\|\|\$)/) ? "Default" : "");
   exprList = kebabcaseKeys(exprList);
   const { atRules, mainRule: body } = extractAtRules(exprList);
@@ -167,7 +213,7 @@ const clashOrStack = (function () {
 
 function goRightComma(tokens, divider) {
   const args = [];
-  if (tokens[0].text == ")" && tokens.shift())
+  if (tokens[0] == ")" && tokens.shift())
     return args;
   while (tokens.length) {
     const a = goRightOperator(tokens)

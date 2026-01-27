@@ -1,16 +1,15 @@
-**csss:** $flex(gap(1rem))
+**csss:** |:nth-child(1)$FlexItem(grow(1))
 **css:**
 ```css
-@layer containerDefault {
-  .\$flex\(gap\(1rem\)\) {
-    display: flex;
-    align-items: unset;
-    place-content: unset;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
-    gap: 1rem;
+@layer items {
+  .\|\:nth-child\(1\)\$FlexItem\(grow\(1\)\)>:where(:nth-child(1)) {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    flex-grow: 1;
   }
 }
 ```
@@ -95,24 +94,6 @@
 }
 ```
 
-**csss:** $flex(gap(1rem),padding(1rem))
-**css:**
-```css
-@layer containerDefault {
-  .\$flex\(gap\(1rem\)\,padding\(1rem\)\) {
-    display: flex;
-    align-items: unset;
-    place-content: unset;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
-    gap: 1rem;
-    padding: 1rem;
-  }
-}
-```
-
 **csss:** |*$flexItem(margin(5px),size(150px,120px),scrollMargin(10px))
 **css:**
 ```css
@@ -122,6 +103,70 @@
     inline-size: 150px;
     block-size: 120px;
     scroll-margin: 10px;
+  }
+}
+```
+
+**csss:** |*$flexItem(basis(100px))
+**css:**
+```css
+@layer items {
+  .\|\*\$flexItem\(basis\(100px\)\)>* {
+    flex-basis: 100px;
+  }
+}
+```
+
+**csss:** |.item1$flexItem(grow(1))
+**css:**
+```css
+@layer items {
+  .\|\.item1\$flexItem\(grow\(1\)\)>:where(.item1) {
+    flex-grow: 1;
+  }
+}
+```
+
+**csss:** |.two$flexItem(order(1),selfCenter)
+**css:**
+```css
+@layer items {
+  .\|\.two\$flexItem\(order\(1\)\,selfCenter\)>:where(.two) {
+    order: 1;
+    align-self: center;
+  }
+}
+```
+
+**csss:** |.three$flexItem(order(2),selfEnd)
+**css:**
+```css
+@layer items {
+  .\|\.three\$flexItem\(order\(2\)\,selfEnd\)>:where(.three) {
+    order: 2;
+    align-self: end;
+  }
+}
+```
+
+**csss:** |.four$flexItem(selfStretch)
+**css:**
+```css
+@layer items {
+  .\|\.four\$flexItem\(selfStretch\)>:where(.four) {
+    align-self: stretch;
+  }
+}
+```
+
+**csss:** |.one$flexItem(order(3),selfStart,margin(1rem))
+**css:**
+```css
+@layer items {
+  .\|\.one\$flexItem\(order\(3\)\,selfStart\,margin\(1rem\)\)>:where(.one) {
+    order: 3;
+    align-self: start;
+    margin: 1rem;
   }
 }
 ```

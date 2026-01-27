@@ -1,4 +1,4 @@
-**csss:** $typeface(comic,"MS+Comic+Sans",face("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2"),xxs,semiExpanded,italic,bolder)
+**csss:** $Typeface(comic,"MS+Comic+Sans",face("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2"),xxs,semiExpanded,italic,bolder)
 **css:**
 ```css
 @font-face /*comic normal*/ {
@@ -8,7 +8,7 @@
 }
 
 @layer containerDefault {
-  .\$typeface\(comic\,\"MS\+Comic\+Sans\"\,face\(\"https\:\/\/cdn\.jsdelivr\.net\/npm\/\@openfonts\/comic-neue_latin\@latest\/files\/ComicNeue-Regular\.woff2\"\)\,xxs\,semiExpanded\,italic\,bolder\) {
+  .\$Typeface\(comic\,\"MS\+Comic\+Sans\"\,face\(\"https\:\/\/cdn\.jsdelivr\.net\/npm\/\@openfonts\/comic-neue_latin\@latest\/files\/ComicNeue-Regular\.woff2\"\)\,xxs\,semiExpanded\,italic\,bolder\) {
     --comicFontFamily: "MS Comic Sans", comic;
     --comicFontSize: xx-small;
     --comicFontStyle: italic;
@@ -19,11 +19,11 @@
 ```
 
 
-**csss:** $typeface(body,system-ui,sans-serif,400,0.5,bold,i,condensed,12px,uppercase)
+**csss:** $Typeface(body,system-ui,sans-serif,400,0.5,bold,i,condensed,12px,uppercase)
 **css:**
 ```css
 @layer containerDefault {
-  .\$typeface\(body\,system-ui\,sans-serif\,400\,0\.5\,bold\,i\,condensed\,12px\,uppercase\) {
+  .\$Typeface\(body\,system-ui\,sans-serif\,400\,0\.5\,bold\,i\,condensed\,12px\,uppercase\) {
     --bodyFontFamily: system-ui, sans-serif;
     --bodyFontSize: 12px;
     --bodyFontStyle: italic;
@@ -40,23 +40,12 @@
 ```css
 @layer containerDefault {
   .\$font\(system-ui\,sans-serif\,400\,0\.5\,bold\,i\,condensed\,12px\) {
-    font-family: system-ui, sans-serif, var(--system-uiFontFamily, unset);
-    font-size: 12px;
-    font-style: italic;
     font-weight: bold;
     font-size-adjust: 0.5;
-    letter-spacing: var(--system-uiLetterSpacing, unset);
-    text-transform: var(--system-uiTextTransform, unset);
+    font-style: italic;
     font-width: condensed;
-    font-variant-caps: var(--system-uiFontVariantCaps, unset);
-    font-synthesis: var(--system-uiFontSynthesis, unset);
-    font-feature-settings: var(--system-uiFontFeatureSettings, unset);
-    font-variation-settings: var(--system-uiFontVariationSettings, unset);
-    -webkit-font-smoothing: var(--system-uiWebkitFontSmoothing, unset);
-    -moz-osx-font-smoothing: var(--system-uiMozOsxFontSmoothing, unset);
-    font-kerning: var(--system-uiFontKerning, unset);
-    hyphens: var(--system-uiHyphens, unset);
-    font-stretch: condensed;
+    font-size: 12px;
+    font-family: system-ui, sans-serif;
   }
 }
 ```
@@ -66,7 +55,17 @@
 ```css
 @layer containerDefault {
   .\$font\(body\) {
-    font-family: body, var(--bodyFontFamily, unset);
+    font-family: body;
+  }
+}
+```
+
+**csss:** $Font(body)
+**css:**
+```css
+@layer containerDefault {
+  .\$Font\(body\) {
+    font-family: var(--bodyFontFamily, body);
     font-size: var(--bodyFontSize, unset);
     font-style: var(--bodyFontStyle, unset);
     font-weight: var(--bodyFontWeight, unset);
@@ -74,6 +73,7 @@
     letter-spacing: var(--bodyLetterSpacing, unset);
     text-transform: var(--bodyTextTransform, unset);
     font-width: var(--bodyFontWidth, unset);
+    font-stretch: var(--bodyFontWidth, unset);
     font-variant-caps: var(--bodyFontVariantCaps, unset);
     font-synthesis: var(--bodyFontSynthesis, unset);
     font-feature-settings: var(--bodyFontFeatureSettings, unset);
@@ -82,17 +82,32 @@
     -moz-osx-font-smoothing: var(--bodyMozOsxFontSmoothing, unset);
     font-kerning: var(--bodyFontKerning, unset);
     hyphens: var(--bodyHyphens, unset);
-    font-stretch: var(--bodyFontWidth, unset);
   }
 }
 ```
 
-**csss:** $lineHeight(1.5)
+**csss:** $Font(_,Arial,16px,bold)
 **css:**
 ```css
 @layer containerDefault {
-  .\$lineHeight\(1\.5\) {
-    line-height: 1.5;
+  .\$Font\(_\,Arial\,16px\,bold\) {
+    font-family: Arial;
+    font-size: 16px;
+    font-style: unset;
+    font-weight: bold;
+    font-size-adjust: unset;
+    letter-spacing: unset;
+    text-transform: unset;
+    font-width: unset;
+    font-stretch: unset;
+    font-variant-caps: unset;
+    font-synthesis: unset;
+    font-feature-settings: unset;
+    font-variation-settings: unset;
+    -webkit-font-smoothing: unset;
+    -moz-osx-font-smoothing: unset;
+    font-kerning: unset;
+    hyphens: unset;
   }
 }
 ```
@@ -102,43 +117,58 @@
 ```css
 @layer containerDefault {
   .\$font\(serif\,hyphens\) {
-    font-family: serif, hyphens, var(--serifFontFamily, unset);
-    font-size: var(--serifFontSize, unset);
-    font-style: var(--serifFontStyle, unset);
-    font-weight: var(--serifFontWeight, unset);
-    font-size-adjust: var(--serifFontSizeAdjust, unset);
-    letter-spacing: var(--serifLetterSpacing, unset);
-    text-transform: var(--serifTextTransform, unset);
-    font-width: var(--serifFontWidth, unset);
-    font-variant-caps: var(--serifFontVariantCaps, unset);
-    font-synthesis: var(--serifFontSynthesis, unset);
-    font-feature-settings: var(--serifFontFeatureSettings, unset);
-    font-variation-settings: var(--serifFontVariationSettings, unset);
-    -webkit-font-smoothing: var(--serifWebkitFontSmoothing, unset);
-    -moz-osx-font-smoothing: var(--serifMozOsxFontSmoothing, unset);
-    font-kerning: var(--serifFontKerning, unset);
-    hyphens: var(--serifHyphens, unset);
-    font-stretch: var(--serifFontWidth, unset);
+    hyphens: auto;
+    font-family: serif;
   }
 }
 ```
 
-**csss:** $shy
+**csss:** $font(shy)
 **css:**
 ```css
 @layer containerDefault {
-  .\$shy {
+  .\$font\(shy\) {
     hyphens: manual;
   }
 }
 ```
 
-**csss:** $noHyphens
+**csss:** $font(noHyphens)
 **css:**
 ```css
 @layer containerDefault {
-  .\$noHyphens {
+  .\$font\(noHyphens\) {
     hyphens: none;
+  }
+}
+```
+
+**csss:** $font(hyphens)
+**css:**
+```css
+@layer containerDefault {
+  .\$font\(hyphens\) {
+    hyphens: auto;
+  }
+}
+```
+
+**csss:** $font(uppercase)
+**css:**
+```css
+@layer containerDefault {
+  .\$font\(uppercase\) {
+    text-transform: uppercase;
+  }
+}
+```
+
+**csss:** $font(noTransform)
+**css:**
+```css
+@layer containerDefault {
+  .\$font\(noTransform\) {
+    text-transform: none;
   }
 }
 ```

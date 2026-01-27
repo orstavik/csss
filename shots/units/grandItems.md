@@ -3,13 +3,6 @@
 ```css
 @layer containerDefault {
   .\$flex\(gap\(1rem\)\,padding\(1rem\)\) {
-    display: flex;
-    align-items: unset;
-    place-content: unset;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     gap: 1rem;
     padding: 1rem;
   }
@@ -36,12 +29,11 @@
 }
 ```
 
-**csss:** |.item|.child$blockItem(indent(1em))
+**csss:** |.item|.child$blockItem()
 **css:**
 ```css
 @layer grandItems {
-  .\|\.item\|\.child\$blockItem\(indent\(1em\)\)>:where(.item)>:where(.child) {
-    text-indent: 1em;
+  .\|\.item\|\.child\$blockItem\(\)>:where(.item)>:where(.child) {
   }
 }
 ```
@@ -61,13 +53,6 @@
 ```css
 @layer containerDefault {
   .\$grid\(cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\) {
-    display: grid;
-    place-items: unset;
-    place-content: unset;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
@@ -84,4 +69,3 @@
   }
 }
 ```
-

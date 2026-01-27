@@ -454,6 +454,16 @@ export function isNumber(a) {
   if (a?.type === "number" && a.unit == "")
     return a;
 }
+export function isFraction(a) {
+  a = isNumber(a);
+  if (a && a.num >= 0 && a.num <= 1)
+    return a;
+}
+export function isIntegerUpTo1000(a) {
+  a = isNumber(a);
+  if (a && Number.isInteger(a.num) && a.num >= 0 && a.num <= 1000)
+    return a;
+}
 export function isNumberPercent(a) {
   a = isBasic(a);
   if (a?.type === "number" && a.unit == "" || a?.type === "percent")
@@ -662,11 +672,18 @@ const matchPrimes = (primes) => {
   };
 };
 
+function BadArgument(name, args, I, expectedType = "") {
+  args = args.map(a => a.text ?? (a.name + "/" + a.args.length));
+  args[I] = ` => ${args[I]} <= `;
+  expectedType &&= `\n${args[I]} is not a ${expectedType}`;
+  return new SyntaxError(`Bad argument ${name}/${I + 1}:  ${name}(${args.join(",")})` + expectedType);
+}
+
 export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
   singlePrimes = matchPrimes(singlePrimes);
   primes = matchPrimes(primes);
   return ({ args, name }) => {
-    if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`);
+    // if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`); //todo do we need this one? we could do this as a separate function that we wrap around the $iBlock and $border and what have you.
     const res = {};
     for (let i = 0; i < args.length; i++) {
       const a = args[i];
@@ -680,33 +697,33 @@ export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
       else if (kv = primes(a, {}))
         (res[kv[0]] ??= []).push(kv[1]);
       else
-        throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
+        throw BadArgument(name, args, i);
     }
     return post(res);
   };
 };
 
-export const UMBRELLA = (SCHEMA, POST) => {
-  const umbrella = Object.fromEntries(Object.entries(SCHEMA).map(([k]) => [k, "unset"]));
-  return ({ args, name }) => {
-    if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`);
-    const res = args.reduce((res, a, i) => {
-      for (let k in SCHEMA) {
-        if (res[k] !== "unset") continue;
-        const v = SCHEMA[k](a);
-        if (v == null) continue;
-        if (v instanceof Object)
-          return Object.assign(res, v);
-        res[k] = v;
-        return res;
-      }
-      throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-${name}(${[...args.slice(0, i).map(a => a.text), ` => ${args[i].text} <= `, ...args.slice(i + 1).map(a => a.text)].join(",")}).`);
-    }, { ...umbrella });
-    return POST ? POST(res) : res;
-  };
-};
+// export const UMBRELLA = (SCHEMA, POST) => {
+//   const umbrella = Object.fromEntries(Object.entries(SCHEMA).map(([k]) => [k, "unset"]));
+//   return ({ args, name }) => {
+//     if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`);
+//     const res = args.reduce((res, a, i) => {
+//       for (let k in SCHEMA) {
+//         if (res[k] !== "unset") continue;
+//         const v = SCHEMA[k](a);
+//         if (v == null) continue;
+//         if (v instanceof Object)
+//           return Object.assign(res, v);
+//         res[k] = v;
+//         return res;
+//       }
+//       throw BadArgument(name, args, i);
+//     }, { ...umbrella });
+//     return POST ? POST(res) : res;
+//   };
+// };
+
+export const Umbrella = (base, cb) => exp => Object.assign({}, base, cb(exp));
 
 export const SIN = (interpreter, post) => ({ args, name }) => {
   if (args.length != 1)
@@ -724,9 +741,7 @@ export const SINmax = (max, interpreter, post) => ({ args, name }) => {
     const a2 = interpreter(a);
     if (a2 != null)
       return a2;
-    args = args.map(a => a.text);
-    args[i] = ` !! ${args[i]} {{is not a ${interpreter.name}}} !! `;
-    throw new SyntaxError(`Bad argument: ${name}(${args.join(",")})`);
+    throw BadArgument(name, args, i, interpreter.name);
   }));
 };
 
@@ -737,9 +752,7 @@ export const SEQ = (interpreters, post) => ({ args, name }) => {
     const a2 = interpreter(args[i]);
     if (a2)
       return a2;
-    throw new SyntaxError(`Bad argument ${name}/${i + 1}.
-    "${args[i].text}" is not a ${interpreter.name}.
-    ${name}(${args.slice(0, i).map(a => a.text).join(",")}, => ${args[i].text} <=, ${args.slice(i + 1).map(a => a.text).join(",")}).`);
+    throw BadArgument(name, args, i, interpreter.name);
   }));
 };
 
@@ -751,9 +764,7 @@ export const SEQopt = (interpreters, post) => ({ args, name }) => {
     const a2 = interpreter(a);
     if (a2 != null)
       return a2;
-    args = args.map(a => a.text);
-    args[i] = ` !! ${args[i]} {{is not a ${interpreter.name}}} !! `;
-    throw new SyntaxError(`Bad argument: ${name}(${args.join(",")})`);
+    throw BadArgument(name, args, i, interpreter.name);
   }));
 };
 
@@ -766,21 +777,41 @@ export const CUSTOM_WORD = (NAME, WORDS, POST) => {
   return cb;
 };
 
+export const WORD_IN_TABLE = TABLE => ({ text }) => TABLE[text];
+
+export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
+  if (!args.length)
+    throw new SyntaxError(`${name} requires at least 1 argument, got 0 arguments.`)
+  const first = INTERPRETER(args[0]);
+  if (first == null)
+    throw BadArgument(name, args, 0, INTERPRETER.name);
+  const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
+  return POST ? POST(name, first, res) : first;
+};
+
 export const Angle = a => isAngle(a)?.text;
 export const Color = a => isColor(a)?.text;
 export const Length = a => isLength(a)?.text;
 export const Name = a => isName(a)?.text;
-export const Number = a => isNumber(a)?.text;
+export const NumberInterpreter = a => isNumber(a)?.text; //todo here we likely want .num!
 export const Percent = a => isPercent(a)?.text;
 export const Time = a => isTime(a)?.text;
 export const Unset = a => a.text == "_" ? "unset" : undefined;
 export const Url = a => isUrl(a)?.text;
+export const Word = a => isWord(a)?.text;
+export const Basic = a => isBasic(a)?.text; //todo this should be replaced with something more precise in the HO functions
+export const Repeat = a => isRepeat(a)?.text;
+export const Span = a => isSpan(a)?.text;
 
 export const AnglePercent = a => Angle(a) ?? Percent(a);
 export const LengthUnset = a => Length(a) ?? Unset(a);
 export const LengthPercent = a => Length(a) ?? Percent(a);
-export const LengthPercentNumber = a => Length(a) ?? Percent(a) ?? Number(a);
-export const NumberPercent = a => Number(a) ?? Percent(a);
+export const LengthPercentUnset = a => Length(a) ?? Percent(a) ?? Unset(a);
+export const LengthPercentNumber = a => Length(a) ?? Percent(a) ?? NumberInterpreter(a);
+export const NameUnset = a => Name(a) ?? Unset(a);
+export const NumberPercent = a => NumberInterpreter(a) ?? Percent(a);
 export const UrlUnset = a => Url(a) ?? Unset(a);
 export const ColorUrl = a => Color(a) ?? Url(a);
 export const ColorPrimitive = a => (a.kind === "COLOR" && (a = parseColor(a.text)).hex) ? a : undefined;
+export const RepeatBasic = a => Repeat(a) ?? Basic(a);
+export const SpanBasic = a => Span(a) ?? Basic(a);

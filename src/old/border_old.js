@@ -1,11 +1,10 @@
-import { isBasic, isColor, isLengthPercent } from "./func.js";
+import { isBasic, isColor, isLengthPercent } from "../func.js";
 
 const BorderUmbrella = cb => exp => {
   const res = cb(exp);
-  if (!res.borderStartStartRadius) res.borderRadius ??= "0";
-  if (!res.borderInlineColor && !res.borderInlineStyle && !res.borderInlineWidth) {
+  if (!res.inlineBorderColor && !res.inlineBorderStyle && !res.inlineBorderWidth) {
     const res2 = {
-      border: [res.borderWidth, res.borderStyle, res.borderColor].filter(Boolean).join(" ") || "none",
+      border: [res.borderWidth, res.borderStyle, res.borderColor].filter(Boolean).join(" "),
       ...res,
     }
     delete res2.borderColor;
@@ -13,9 +12,9 @@ const BorderUmbrella = cb => exp => {
     delete res2.borderWidth;
     return res2;
   }
-  if (!res.borderInlineStyle) res.borderStyle ??= "solid";
-  if (!res.borderInlineWidth) res.borderWidth ??= "medium";
-  if (!res.borderInlineColor) res.borderColor ??= "currentColor";
+  if (!res.inlineBorderStyle) res.borderStyle ??= "solid";
+  if (!res.inlineBorderWidth) res.borderWidth ??= "medium";
+  if (!res.inlineBorderColor) res.borderColor ??= "currentColor";
   return res;
 };
 
@@ -105,23 +104,23 @@ function border({ args: ar }) {
   const tooBig = color.length > 4 ? "color" : style.length > 4 ? "style" : width.length > 4 ? "width" : "";
   if (tooBig)
     throw new SyntaxError(`More than 4 border ${tooBig} arguments.`);
-  const res = {};
+  const res = { ...borderRadius };
   if (width.length == 1) res.borderWidth = width[0];
   if (width.length > 1) {
     res.borderInlineWidth = [width[0], width[2]].filter(Boolean).join(" ");
     res.borderBlockWidth = [width[1], width[3]].filter(Boolean).join(" ");
-  }
-  if (style.length == 1) res.borderStyle = style[0];
-  if (style.length > 1) {
-    res.borderInlineStyle = [style[0], style[2]].filter(Boolean).join(" ");
-    res.borderBlockStyle = [style[1], style[3]].filter(Boolean).join(" ");
   }
   if (color.length == 1) res.borderColor = color[0];
   if (color.length > 1) {
     res.borderInlineColor = [color[0], color[2]].filter(Boolean).join(" ");
     res.borderBlockColor = [color[1], color[3]].filter(Boolean).join(" ");
   }
-  return { ...res, ...borderRadius };
+  if (style.length == 1) res.borderStyle = style[0];
+  if (style.length > 1) {
+    res.borderInlineStyle = [style[0], style[2]].filter(Boolean).join(" ");
+    res.borderBlockStyle = [style[1], style[3]].filter(Boolean).join(" ");
+  }
+  return res;
 }
 
 export default {

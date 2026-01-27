@@ -3,13 +3,6 @@
 ```css
 @layer containerDefault {
   .\$grid\(cols\(repeat\(3\,1fr\)\)\,gap\(1rem\)\) {
-    display: grid;
-    place-items: unset;
-    place-content: unset;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
   }
@@ -21,13 +14,6 @@
 ```css
 @layer itemsDefault {
   .\|\$flex\(column\,gap\(0\.5rem\)\)>* {
-    display: flex;
-    align-items: unset;
-    place-content: unset;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     flex-direction: column;
     gap: 0.5rem;
   }
@@ -49,13 +35,6 @@
 ```css
 @layer items {
   .\|\*\$flex\(row\,gap\(0\.5rem\)\)>* {
-    display: flex;
-    align-items: unset;
-    place-content: unset;
-    word-spacing: unset;
-    line-height: unset;
-    text-align: unset;
-    text-indent: unset;
     flex-direction: row;
     gap: 0.5rem;
   }

@@ -1,4 +1,4 @@
-import { Number, Time, Name, SIN, TYPB } from "./func.js";
+import { NumberInterpreter, Time, Name, SIN, TYPB } from "./func.js";
 import * as CURVES from "./Curves.js";
 
 function cubicBezierFunction(ar) {
@@ -13,17 +13,17 @@ const transition = TYPB({
   easeInOut: "ease-in-out",
   linear: "linear",
   ...CURVES,
-  steps: SIN(Number, (n, v) => `steps(${v})`),
-  stepsEnd: SIN(Number, (n, v) => `steps(${v})`),
-  stepsStart: SIN(Number, (n, v) => `steps(${v}, start)`),
-  stepsBoth: SIN(Number, (n, v) => `steps(${v}, jump-both)`),
-  stepsNone: SIN(Number, (n, v) => `steps(${v}, jump-none)`),
+  steps: SIN(NumberInterpreter, (n, v) => `steps(${v})`),
+  stepsEnd: SIN(NumberInterpreter, (n, v) => `steps(${v})`),
+  stepsStart: SIN(NumberInterpreter, (n, v) => `steps(${v}, start)`),
+  stepsBoth: SIN(NumberInterpreter, (n, v) => `steps(${v}, jump-both)`),
+  stepsNone: SIN(NumberInterpreter, (n, v) => `steps(${v}, jump-none)`),
   allowDiscrete: "allow-discrete",
 }, {
   duration: Time,
   delay: Time,
 }, {
-  cubicBezier: Number,
+  cubicBezier: NumberInterpreter,
   properties: Name,
 },
   ({ properties, duration, delay, allowDiscrete, ...timers }) => {
@@ -32,7 +32,7 @@ const transition = TYPB({
     let [timerName, timerValue] = Object.entries(timers)[0] ?? [];
     const res = {};
     if (timerName in CURVES) {
-      res[":root"] = { [`--transition-${timerName}`]: timerValue };
+      res[`:root /*--transition-${timerName}*/`] = { [`--transition-${timerName}`]: timerValue };
       timerValue = `var(--transition-${timerName})`;
     }
     const tail = [timerValue, duration, delay, allowDiscrete].filter(Boolean).join(" ");

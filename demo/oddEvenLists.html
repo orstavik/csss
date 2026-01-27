@@ -8,63 +8,63 @@
     <script src="../src/auto.js?style=style&interval=400" type="module"></script>
 </head>
 
-<body class="$typeface(main,Inter,sans-serif,16px,400) $palette(primary,#6366f1,#ffffff) $palette(secondary,#8b5cf6,#ffffff) $palette(success,#10b981,#ffffff) $palette(warning,#f59e0b,#ffffff) $palette(danger,#ef4444,#ffffff) $palette(dark,#1e293b,#ffffff) $palette(muted,#64748b,#ffffff) $palette(light,#f8fafc,#1e293b) $palette(border,#e2e8f0,#1e293b) $block(padding(2rem)) $bg(#light) $color(#dark)">
+<body class="$Typeface(main,Inter,sans-serif,16px,400) $Palette(primary,#6366f1,#ffffff) $Palette(secondary,#8b5cf6,#ffffff) $Palette(success,#10b981,#ffffff) $Palette(warning,#f59e0b,#ffffff) $Palette(danger,#ef4444,#ffffff) $Palette(dark,#1e293b,#ffffff) $Palette(muted,#64748b,#ffffff) $Palette(light,#f8fafc,#1e293b) $Palette(border,#e2e8f0,#1e293b) $Block(padding(2rem)) $bg(#light) $color(#dark)">
 
     <div class="$blockItem(inlineSize(800px,_,95%),margin(0,auto))">
         
-        <h1 class="$font(main,2.5rem,700) $color(#dark) $blockItem(margin(0,0,2rem,0)) $block(textCenter)">
+        <h1 class="$Font(main,2.5rem,700) $color(#dark) $blockItem(margin(0,0,2rem,0)) $Block(textCenter)">
             📋 Task List
         </h1>
 
-        <ul class="$block(padding(0)) $blockItem(margin(0)) |li$flex(row,itemsCenter,gap(1rem),padding(1rem))$border(1px,solid,#border)$blockItem(margin(0,0,-1px,0))$transition(easeIn,0.2s) |li:nth-child(odd)$bg(#primaryBland) |li:nth-child(even)$bg(#white) |li:first-child$border(radius(12px,12px,0,0)) |li:last-child$border(radius(0,0,12px,12px)) |li:hover$bg(#primaryBland)">
+        <ul class="$Block(padding(0)) $blockItem(margin(0)) |li$Flex(row,itemsCenter,gap(1rem),padding(1rem))$Border(1px,solid,#border)$blockItem(margin(0,0,-1px,0))$transition(easeIn,0.2s) |li:nth-child(odd)$bg(#primaryBland) |li:nth-child(even)$bg(#white) |li:first-child$Border(radius(12px,12px,0,0)) |li:last-child$Border(radius(0,0,12px,12px)) |li:hover$bg(#primaryBland)">
             
             <li>
-                <div class="$blockItem(size(40px,40px)) $bg(#primary) $border(radius(50%)) $flex(contentCenter,itemsCenter)">
-                    <span class="$font(main,1rem,600) $color(#white)">1</span>
+                <div class="$blockItem(size(40px,40px)) $bg(#primary) $Border(radius(50%)) $Flex(contentCenter,itemsCenter)">
+                    <span class="$Font(main,1rem,600) $color(#white)">1</span>
                 </div>
-                <div class="$flex(column,gap(0.25rem))">
-                    <span class="$font(main,1.1rem,600) $color(#dark)">Complete project proposal</span>
-                    <span class="$font(main,0.9rem) $color(#muted)">Due today</span>
-                </div>
-            </li>
-
-            <li>
-                <div class="$blockItem(size(40px,40px)) $bg(#secondary) $border(radius(50%)) $flex(contentCenter,itemsCenter)">
-                    <span class="$font(main,1rem,600) $color(#white)">2</span>
-                </div>
-                <div class="$flex(column,gap(0.25rem))">
-                    <span class="$font(main,1.1rem,600) $color(#dark)">Review team feedback</span>
-                    <span class="$font(main,0.9rem) $color(#muted)">Due tomorrow</span>
+                <div class="$Flex(column,gap(0.25rem))">
+                    <span class="$Font(main,1.1rem,600) $color(#dark)">Complete project proposal</span>
+                    <span class="$Font(main,0.9rem) $color(#muted)">Due today</span>
                 </div>
             </li>
 
             <li>
-                <div class="$blockItem(size(40px,40px)) $bg(#success) $border(radius(50%)) $flex(contentCenter,itemsCenter)">
-                    <span class="$font(main,1rem,600) $color(#white)">3</span>
+                <div class="$blockItem(size(40px,40px)) $bg(#secondary) $Border(radius(50%)) $Flex(contentCenter,itemsCenter)">
+                    <span class="$Font(main,1rem,600) $color(#white)">2</span>
                 </div>
-                <div class="$flex(column,gap(0.25rem))">
-                    <span class="$font(main,1.1rem,600) $color(#dark)">Update documentation</span>
-                    <span class="$font(main,0.9rem) $color(#muted)">Due next week</span>
-                </div>
-            </li>
-
-            <li>
-                <div class="$blockItem(size(40px,40px)) $bg(#warning) $border(radius(50%)) $flex(contentCenter,itemsCenter)">
-                    <span class="$font(main,1rem,600) $color(#white)">4</span>
-                </div>
-                <div class="$flex(column,gap(0.25rem))">
-                    <span class="$font(main,1.1rem,600) $color(#dark)">Schedule client meeting</span>
-                    <span class="$font(main,0.9rem) $color(#muted)">Due Friday</span>
+                <div class="$Flex(column,gap(0.25rem))">
+                    <span class="$Font(main,1.1rem,600) $color(#dark)">Review team feedback</span>
+                    <span class="$Font(main,0.9rem) $color(#muted)">Due tomorrow</span>
                 </div>
             </li>
 
             <li>
-                <div class="$blockItem(size(40px,40px)) $bg(#danger) $border(radius(50%)) $flex(contentCenter,itemsCenter)">
-                    <span class="$font(main,1rem,600) $color(#white)">5</span>
+                <div class="$blockItem(size(40px,40px)) $bg(#success) $Border(radius(50%)) $Flex(contentCenter,itemsCenter)">
+                    <span class="$Font(main,1rem,600) $color(#white)">3</span>
                 </div>
-                <div class="$flex(column,gap(0.25rem))">
-                    <span class="$font(main,1.1rem,600) $color(#dark)">Test new features</span>
-                    <span class="$font(main,0.9rem) $color(#muted)">Due next month</span>
+                <div class="$Flex(column,gap(0.25rem))">
+                    <span class="$Font(main,1.1rem,600) $color(#dark)">Update documentation</span>
+                    <span class="$Font(main,0.9rem) $color(#muted)">Due next week</span>
+                </div>
+            </li>
+
+            <li>
+                <div class="$blockItem(size(40px,40px)) $bg(#warning) $Border(radius(50%)) $Flex(contentCenter,itemsCenter)">
+                    <span class="$Font(main,1rem,600) $color(#white)">4</span>
+                </div>
+                <div class="$Flex(column,gap(0.25rem))">
+                    <span class="$Font(main,1.1rem,600) $color(#dark)">Schedule client meeting</span>
+                    <span class="$Font(main,0.9rem) $color(#muted)">Due Friday</span>
+                </div>
+            </li>
+
+            <li>
+                <div class="$blockItem(size(40px,40px)) $bg(#danger) $Border(radius(50%)) $Flex(contentCenter,itemsCenter)">
+                    <span class="$Font(main,1rem,600) $color(#white)">5</span>
+                </div>
+                <div class="$Flex(column,gap(0.25rem))">
+                    <span class="$Font(main,1.1rem,600) $color(#dark)">Test new features</span>
+                    <span class="$Font(main,0.9rem) $color(#muted)">Due next month</span>
                 </div>
             </li>
 

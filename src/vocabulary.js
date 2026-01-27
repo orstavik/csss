@@ -11,6 +11,7 @@ import shadows from "./shadows.js";
 import position from "./position.js";
 import svg from "./svg.js";
 import whitespace from "./whitespace.js";
+import paragraph from "./paragraph.js";
 import { animationHo } from "./animations.js";
 
 const Animations = {
@@ -33,6 +34,7 @@ const Animations = {
   bgColor: animationHo(backgrounds.bgColor),
   color: animationHo(nativeAndMore.color),
   border: animationHo(border.border),
+  Border: animationHo(border.Border),
 }
 
 const ObjectFit = {
@@ -57,6 +59,7 @@ const SHORTS = {
   ...shadows,
   ...position,
   ...svg,
+  ...paragraph,
   ...whitespace,
   ...ObjectFit,
   ...Animations,
