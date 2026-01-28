@@ -120,17 +120,17 @@ function radial(type, first, { args }) {
   const colorSpace = extractColorSpace(args);
   const colorStops = extractColorStops(args, extractLengthPercent);
   first = [first, len, len2, at, colorSpace].filter(Boolean).join(" ");
-  return `${type}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})`;
+  return { backgroundImage: `${type}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})` };
 }
 
-function conic(type, { args }) {
+function conic(TYPE, { args }) {
   let angle = extractAngle(args);
   angle &&= "from " + angle;
   const at = extractAt(args);
   const colorSpace = extractColorSpace(args);
   const colorStops = extractColorStops(args, extractAnglePercent);
   const first = [angle, at, colorSpace].filter(Boolean).join(" ");
-  return `${type}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})`;
+  return { backgroundImage: `${TYPE}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})` };
 }
 
 const linear = (TYPE, ANGLE) => ({ args }) => {
@@ -161,32 +161,32 @@ const GRADIENTS = {
   repeatingLinearDownLeft: linear("repeating-linear", "to bottom left"),
   repeatingLinearDownRight: linear("repeating-linear", "to bottom right"),
 
-  radial: e => ({ backgroundImage: radial("radial", "", e) }),
-  ellipse: e => ({ backgroundImage: radial("radial", "", e) }),
-  ellipseFarthestCorner: e => ({ backgroundImage: radial("radial", "", e) }),
-  ellipseFarthestSide: e => ({ backgroundImage: radial("radial", "farthest-side", e) }),
-  ellipseClosestCorner: e => ({ backgroundImage: radial("radial", "closest-corner", e) }),
-  ellipseClosestSide: e => ({ backgroundImage: radial("radial", "closest-side", e) }),
-  circle: e => ({ backgroundImage: radial("radial", "circle", e) }),
-  circleFarthestCorner: e => ({ backgroundImage: radial("radial", "circle", e) }),
-  circleFarthestSide: e => ({ backgroundImage: radial("radial", "circle farthest-side", e) }),
-  circleClosestCorner: e => ({ backgroundImage: radial("radial", "circle closest-corner", e) }),
-  circleClosestSide: e => ({ backgroundImage: radial("radial", "circle closest-side", e) }),
+  radial: e => radial("radial", "", e),
+  ellipse: e => radial("radial", "", e),
+  ellipseFarthestCorner: e => radial("radial", "", e),
+  ellipseFarthestSide: e => radial("radial", "farthest-side", e),
+  ellipseClosestCorner: e => radial("radial", "closest-corner", e),
+  ellipseClosestSide: e => radial("radial", "closest-side", e),
+  circle: e => radial("radial", "circle", e),
+  circleFarthestCorner: e => radial("radial", "circle", e),
+  circleFarthestSide: e => radial("radial", "circle farthest-side", e),
+  circleClosestCorner: e => radial("radial", "circle closest-corner", e),
+  circleClosestSide: e => radial("radial", "circle closest-side", e),
 
-  repeatingRadial: e => ({ backgroundImage: radial("repeating-radial", "", e) }),
-  repeatingEllipse: e => ({ backgroundImage: radial("repeating-radial", "ellipse", e) }),
-  repeatingEllipseFarthestCorner: e => ({ backgroundImage: radial("repeating-radial", "", e) }),
-  repeatingEllipseFarthestSide: e => ({ backgroundImage: radial("repeating-radial", "farthest-side", e) }),
-  repeatingEllipseClosestCorner: e => ({ backgroundImage: radial("repeating-radial", "closest-corner", e) }),
-  repeatingEllipseClosestSide: e => ({ backgroundImage: radial("repeating-radial", "closest-side", e) }),
-  repeatingCircle: e => ({ backgroundImage: radial("repeating-radial", "circle", e) }),
-  repeatingCircleFarthestCorner: e => ({ backgroundImage: radial("repeating-radial", "circle", e) }),
-  repeatingCircleFarthestSide: e => ({ backgroundImage: radial("repeating-radial", "circle farthest-side", e) }),
-  repeatingCircleClosestCorner: e => ({ backgroundImage: radial("repeating-radial", "circle closest-corner", e) }),
-  repeatingCircleClosestSide: e => ({ backgroundImage: radial("repeating-radial", "circle closest-side", e) }),
+  repeatingRadial: e => radial("repeating-radial", "", e),
+  repeatingEllipse: e => radial("repeating-radial", "ellipse", e),
+  repeatingEllipseFarthestCorner: e => radial("repeating-radial", "", e),
+  repeatingEllipseFarthestSide: e => radial("repeating-radial", "farthest-side", e),
+  repeatingEllipseClosestCorner: e => radial("repeating-radial", "closest-corner", e),
+  repeatingEllipseClosestSide: e => radial("repeating-radial", "closest-side", e),
+  repeatingCircle: e => radial("repeating-radial", "circle", e),
+  repeatingCircleFarthestCorner: e => radial("repeating-radial", "circle", e),
+  repeatingCircleFarthestSide: e => radial("repeating-radial", "circle farthest-side", e),
+  repeatingCircleClosestCorner: e => radial("repeating-radial", "circle closest-corner", e),
+  repeatingCircleClosestSide: e => radial("repeating-radial", "circle closest-side", e),
 
-  conic: e => ({ backgroundImage: conic("conic", e) }),
-  repeatingConic: e => ({ backgroundImage: conic("repeating-conic", e) }),
+  conic: e => conic("conic", e),
+  repeatingConic: e => conic("repeating-conic", e),
 };
 
 
