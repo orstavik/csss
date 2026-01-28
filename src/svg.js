@@ -3,6 +3,7 @@ import {
   extractName, extractUrl, extractColor,
   isNumber, isBasic,
   LengthPercent, LengthPercentNumber, NumberInterpreter, ColorUrl, Length, Url, UrlUnset,
+  CamelWords,
 } from "./func.js";
 
 const strokeDefaults = {
@@ -66,22 +67,12 @@ const fill = TYPB({}, {
 });
 
 const svgText = TYPB({
-  baseline: SEQopt([
-    CUSTOM_WORD("dominantBaseline", "auto|text-bottom|alphabetic|ideographic|middle|central|mathematical|hanging|text-top"),
-    CUSTOM_WORD("alignmentBaseline", "auto|baseline|before-edge|text-before-edge|middle|central|after-edge|text-after-edge|ideographic|alphabetic|hanging|mathematical"),
-    CUSTOM_WORD("baselineShift", "sub|super|baseline"),
-  ], ar => ar.length == 1 ? { dominantBaseline: ar[0] } :
-    ar.length == 2 ? { dominantBaseline: ar[0], alignmentBaseline: ar[1] } :
-      { dominantBaseline: ar[0], alignmentBaseline: ar[1], baselineShift: ar[2] }
-  ),
 }, {
-  textAnchor: a => a.text?.match(/^(start|middle|end)$/)?.[0],
-}, {}, res => {
-  const out = {};
-  if (res.textAnchor) out.textAnchor = res.textAnchor;
-  if (res.baseline) Object.assign(out, res.baseline);
-  return out;
-});
+  textAnchor: CamelWords("start|middle|end"),
+  dominantBaseline: CamelWords("auto|textBottom|alphabetic|ideographic|middle|central|mathematical|hanging|textTop"),
+  alignmentBaseline: CamelWords("auto|baseline|beforeEdge|textBeforeEdge|middle|central|afterEdge|textAfterEdge|ideographic|alphabetic|hanging|mathematical"),
+  baselineShift: CamelWords("sub|super|baseline"),
+}, {});
 
 // Umbrella functions (with defaults)
 const Stroke = Umbrella(strokeDefaults, stroke);

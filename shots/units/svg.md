@@ -166,22 +166,23 @@
 }
 ```
 
-**csss:** $svgText(baseline(middle,textAfterEdge))
+**csss:** $svgText(start,middle,textAfterEdge)
 **css:**
 ```css
 @layer containerDefault {
-  .\$svgText\(baseline\(middle\,textAfterEdge\)\) {
+  .\$svgText\(start\,middle\,textAfterEdge\) {
+    text-anchor: start;
     dominant-baseline: middle;
     alignment-baseline: text-after-edge;
   }
 }
 ```
 
-**csss:** $SvgText(middle,baseline(alphabetic,textBeforeEdge))
+**csss:** $SvgText(middle,alphabetic,textBeforeEdge)
 **css:**
 ```css
 @layer containerDefault {
-  .\$SvgText\(middle\,baseline\(alphabetic\,textBeforeEdge\)\) {
+  .\$SvgText\(middle\,alphabetic\,textBeforeEdge\) {
     text-anchor: middle;
     dominant-baseline: alphabetic;
     alignment-baseline: text-before-edge;
