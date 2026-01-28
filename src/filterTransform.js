@@ -24,6 +24,7 @@ const FILTER_FUNCS = {
   sepia: SIN(NumberPercent, (n, v) => `${n}(${v})`),
   hueRotate: SIN(Angle, (n, v) => `hue-rotate(${v})`),
   dropShadow: SEQ([Color, Length, Length, LengthPercent], (n, ar) => `drop-shadow(${ar.join(" ")})`),
+  //this is done in shadows.. we need this to be used from there, as we have some more functionality that can be useful!
 };
 
 const transformWithFunc = (name, ar) => ({ transform: `${name}(${ar.join(", ")})` });
@@ -39,8 +40,8 @@ export default {
   backdropFilter: undefined,
 
   transform: undefined,
-  matrix: SEQ(Array(6).fill(NumberInterpreter), transformWithFunc),
-  matrix3d: SEQ(Array(16).fill(NumberInterpreter), transformWithFunc),
+  matrix: SINmax(6, NumberInterpreter, transformWithFunc),
+  matrix3d: SINmax(16, NumberInterpreter, transformWithFunc),
   perspective,
   rotate,
   rotateX: rotate,
@@ -49,15 +50,15 @@ export default {
   translateX,
   translateY: translateX,
   translateZ: translateX,
-  translate3d: SEQ(Array(3).fill(LengthPercent), transformWithFunc),
+  translate3d: SINmax(3, LengthPercent, transformWithFunc),
   scaleX,
   scaleY: scaleX,
   scaleZ: scaleX,
-  scale3d: SEQ(Array(3).fill(NumberInterpreter), transformWithFunc),
+  scale3d: SINmax(3, NumberInterpreter, transformWithFunc),
   skewX,
   skewY: skewX,
   rotate3d: SEQ([NumberInterpreter, NumberInterpreter, NumberInterpreter, Angle], transformWithFunc),
-  translate: SINmax(2, LengthPercent, (name, ar) => ({ transform: `${name}(${ar.join(", ")})` })),
-  scale: SINmax(2, NumberPercent, (name, ar) => ({ transform: `${name}(${ar.join(", ")})` })),
-  skew: SINmax(2, AnglePercent, (name, ar) => ({ transform: `${name}(${ar.join(", ")})` })),
+  translate: SINmax(2, LengthPercent, transformWithFunc),
+  scale: SINmax(2, NumberPercent, transformWithFunc),
+  skew: SINmax(2, AnglePercent, transformWithFunc),
 };

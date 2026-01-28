@@ -10,7 +10,6 @@ import {
   extractColor,
   makeExtractor,
   TYPB,
-  SEQ,
   SIN,
   SINmax,
 } from "./func.js";
@@ -39,9 +38,9 @@ for (let Inline of ["Left", "Right", "Center", ""]) {
     POSITION_WORDS[name] = dims.join(" ");
     AT_POSITION_WORDS[atName] = "at " + POSITION_WORDS[name];
 
-    POSITIONS_FUNCS[name] = SEQ(Array(dims.length).fill(LengthPercent),
+    POSITIONS_FUNCS[name] = SINmax(dims.length, LengthPercent,
       (name, ar) => ({ backgroundPosition: [inline, ar[0], block, ar[1]].filter(Boolean).join(" ") }));
-    AT_POSITION_FUNCS[atName] = SEQ(Array(dims.length).fill(LengthPercent),
+    AT_POSITION_FUNCS[atName] = SINmax(dims.length, LengthPercent,
       (name, ar) => `at ${[inline, ar[0], block, ar[1]].filter(Boolean).join(" ")}`);
   }
 }
@@ -239,7 +238,7 @@ const BACKGROUND_WORDS = {
 };
 
 const BACKGROUND_FUNCS = {
-  size: SEQ([LengthPercent, LengthPercent], (name, ar) => ({ backgroundSize: ar.join(" ") })),
+  size: SINmax(2, LengthPercent, (name, ar) => ({ backgroundSize: ar.join(" ") })),
   ...POSITIONS_FUNCS,
   ...GRADIENTS,
 };

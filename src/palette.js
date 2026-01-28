@@ -1,4 +1,4 @@
-import { SEQ, Name, ColorPrimitive } from "./func.js";
+import { TYPB, Name, ColorPrimitive } from "./func.js";
 import { fromLCH, fromHex6 } from "./Color.js";
 
 function makeColors(name, color) {
@@ -21,12 +21,15 @@ function makeColors(name, color) {
   };
 }
 
-const Palette = SEQ([Name, ColorPrimitive, ColorPrimitive], (n, [name, main, on]) => ({
+const Palette = TYPB({}, {
+  name: Name,
+  main: ColorPrimitive,
+  on: ColorPrimitive,
+}, {}, ({ name, main, on }) => ({
   ...makeColors(`--color-${name}`, main),
   ...makeColors(`--color-on${name[0].toUpperCase() + name.slice(1)}`, on)
 }));
 
 export default {
   Palette,
-
 };
