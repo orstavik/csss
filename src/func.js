@@ -562,27 +562,6 @@ export function extractName(args) {
   return a ?? interpretName(a);
 }
 
-function makeEvaluator(interpret) {
-  return function (a, i) {
-    const a2 = interpret(a);
-    if (a2)
-      return a2.text;
-    throw new SyntaxError(`invalid argument ${i + 1}: "${a.text}" cannot be interpreted as ${interpret.name.slice(9)}.`);
-  }
-}
-export const evaluateTime = makeEvaluator(isTime);
-export const evaluateLength = makeEvaluator(isLength);
-export const evaluateLengthPercent = makeEvaluator(isLengthPercent);
-export const evaluateAngle = makeEvaluator(isAngle);
-export const evaluateAnglePercent = makeEvaluator(isAnglePercent);
-export const evaluateNumber = makeEvaluator(isNumber);
-export const evaluateNumberPercent = makeEvaluator(isNumberPercent);
-export const evaluateUrl = makeEvaluator(isUrl);
-export const evaluateImage = makeEvaluator(interpretImage);
-export const evaluateMimeType = makeEvaluator(interpretMimeType);
-export const evaluateColor = makeEvaluator(isColor);
-export const evaluateName = makeEvaluator(interpretName);
-
 // const SpecializedNativeCssFunctions = {
 //    element: (...args) => `element(${args.join(",")})`,
 //    paint: (...args) => `paint(${args.join(",")})`,
@@ -770,7 +749,10 @@ export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
   return POST ? POST(name, first, res) : first;
 };
-
+export const Words = (WORDS) => {
+  WORDS = WORDS.split("|");
+  return a => WORDS.includes(a.text) ? a.text : undefined;
+}
 export const CamelWords = (WORDS) => {
   const lookupTable = Object.fromEntries(WORDS.split("|").map(w => [w, w.replaceAll(/[A-Z]/g, c => "-" + c.toLowerCase())]));
   return a => lookupTable[a.text];
