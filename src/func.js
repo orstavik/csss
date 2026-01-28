@@ -538,6 +538,7 @@ export function interpretImage(arg) {
   }
 }
 
+//todo this still lives in bg.js
 export function makeExtractor(cb) {
   return function (args) {
     if (!args?.length) return;
@@ -545,22 +546,10 @@ export function makeExtractor(cb) {
     return res != null && args.shift() && res.text;
   };
 }
-// export const extractTime = makeExtractor(isTime);
-// export const extractLength = makeExtractor(isLength);
 export const extractLengthPercent = makeExtractor(isLengthPercent);
 export const extractAngle = makeExtractor(isAngle);
 export const extractAnglePercent = makeExtractor(isAnglePercent);
-// export const extractNumber = makeExtractor(isNumber);
-// export const extractNumberPercent = makeExtractor(isNumberPercent);
-// export const extractUrl = makeExtractor(isUrl);
-// export const extractImage = makeExtractor(interpretImage);
-// export const extractMimeType = makeExtractor(interpretMimeType);
 export const extractColor = makeExtractor(isColor);
-export const extractWord = makeExtractor(isWord);
-export function extractName(args) {
-  const a = extractWord(args);
-  return a ?? interpretName(a);
-}
 
 // const SpecializedNativeCssFunctions = {
 //    element: (...args) => `element(${args.join(",")})`,
@@ -703,7 +692,9 @@ export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
 //   };
 // };
 
-export const Umbrella = (base, cb) => exp => Object.assign({}, base, cb(exp));
+export const Umbrella = (BASE, CB) => exp => Object.assign({}, BASE, CB(exp));
+export const CHECKNAME = (NAME, CB) => exp => NAME === exp.name ? CB(exp) : undefined;
+export const CanBeEmpty = (BASE, CB) => exp => Object.assign({}, BASE, exp.args?.length ? CB(exp) : undefined);
 
 export const SIN = (interpreter, post) => ({ args, name }) => {
   if (args.length != 1)
@@ -712,7 +703,6 @@ export const SIN = (interpreter, post) => ({ args, name }) => {
   return post ? post(name, v) : v;
 };
 
-export const CHECKNAME = (NAME, cb) => exp => NAME === exp.name ? cb(exp) : undefined;
 
 export const SINmax = (max, interpreter, post) => ({ args, name }) => {
   if (args.length < 1 || args.length > max)
