@@ -30,10 +30,20 @@ const svgTextDefaults = {
   baselineShift: "unset",
 };
 
+//todo should we make a table with some common words? 
+// It will be hard for the llm to know these words, and i am not sure we need to teach it this thing..
+// solidStroke: { "stroke-dasharray": "none" },
+// dashedStroke: { "stroke-dasharray": "5,5" },
+// dottedStroke: { "stroke-dasharray": "1,1" },
+// roundStroke: { "stroke-linecap": "round", "stroke-linejoin": "round" },
+// sharpStroke: { "stroke-linecap": "butt", "stroke-linejoin": "miter" },
+// optimizeSpeed: { "color-rendering": "optimizeSpeed", "image-rendering": "optimizeSpeed" },
+// optimizeQuality: { "color-rendering": "optimizeQuality", "image-rendering": "optimizeQuality" },
+
 const stroke = TYPB({
 }, {
   stroke: ColorUrl,
-  strokeWidth: Length,
+  strokeWidth: Length, //todo we need Integer here too, as 1,2,3,4 is valid
   strokeOpacity: NumberInterpreter,
   strokeLinecap: CamelWords("butt|round|square"),
   strokeLinejoin: CamelWords("miter|round|bevel"),
@@ -56,85 +66,40 @@ const svgText = TYPB({
   baselineShift: CamelWords("sub|super|baseline"),
 }, {});
 
-const Stroke = Umbrella(strokeDefaults, stroke);
-const Fill = Umbrella(fillDefaults, fill);
-const SvgText = Umbrella(svgTextDefaults, svgText);
-
-const markerStart = SIN(Url, (name, v) => ({ [name]: v }));
-const markerEnd = SIN(Url, (name, v) => ({ [name]: v }));
-const markerMid = SIN(Url, (name, v) => ({ [name]: v }));
-const marker = SINmax(3, UrlUnset, (name, m) =>
-  m.length == 1 ? { marker: m[0] } :
-    m.length == 2 ? { markerStart: m[0], markerEnd: m[1] } :
-      { markerStart: m[0], markerMid: m[1], markerEnd: m[2] }
-);
-
-// **csss:** $fill(url(#gradient))
-// **css:**
-// ```css
-// @layer containerDefault {
-//   .\$fill\(url\(\#gradient\)\) {
-//     fill: url(#gradient);
-//   }
-// }
-// ```
-//
-// **csss:** $marker(url(#arrow),_,_)
-// **css:**
-// ```css
-// @layer containerDefault {
-// .\$marker\(url\(\#arrow\)\,_\,_\) {
-// marker-start: url(#arrow);
-// marker-mid: unset;
-// marker-end: unset;
-// }
-// }
-// ```
-// 
-// **csss:** $markerStart(url(#arrow))
-// **css:**
-// ```css
-// @layer containerDefault {
-// .\$markerStart\(url\(\#arrow\)\) {
-// marker-start: url(#arrow);
-// }
-// }
-// ```
-
-// function createMarkerFunction(property) {
-//   return ({ args }) => {
-//     if (!args?.length) return { [property]: "none" };
-//     const marker = extractUrl(args) ?? (extractName(args) === "none" ? "none" : null);
-//     if (!marker) throw new SyntaxError(`${property}() requires url() or 'none'. Got: ${args[0]?.text || 'undefined'}`);
-//     if (args.length) throw new SyntaxError(`Unknown ${property} argument: ${args[0].text}`);
-//     return { [property]: marker };
-//   };
-// }
-
-// const markerStart = createMarkerFunction("marker-start");
-// const markerMid = createMarkerFunction("marker-mid");
-// const markerEnd = createMarkerFunction("marker-end");
-
-const strokeNone = {
-  stroke: "none",
-  strokeWidth: "unset",
-  strokeOpacity: "unset",
-  strokeLinecap: "unset",
-  strokeLinejoin: "unset",
-  strokeDasharray: "unset",
-  strokeDashoffset: "unset",
-  strokeMiterlimit: "unset",
-};
+const strokeNone = { ...strokeDefaults, stroke: "none" };
+const fillNone = { ...fillDefaults, fill: "none" };
+const svgTextNone = { ...svgTextDefaults };
 
 export default {
   stroke,
-  Stroke,
-
   fill,
-  Fill,
-
   svgText,
-  SvgText,
+
+  Stroke: Umbrella(strokeDefaults, stroke),
+  Fill: Umbrella(fillDefaults, fill),
+  SvgText: Umbrella(svgTextDefaults, svgText),
+
+  markerStart: SIN(Url, (name, v) => ({ [name]: v })),
+  markerEnd: SIN(Url, (name, v) => ({ [name]: v })),
+  markerMid: SIN(Url, (name, v) => ({ [name]: v })),
+  marker: SINmax(3, UrlUnset, (name, m) =>
+    m.length == 1 ? { marker: m[0] } :
+      m.length == 2 ? { markerStart: m[0], markerEnd: m[1] } :
+        { markerStart: m[0], markerMid: m[1], markerEnd: m[2] }
+  ),
+
+  stopColor: SIN(ColorUrl, (p, v = "currentColor") => ({ [p]: v })),
+  stopOpacity: SIN(Fraction, (p, v = "1") => ({ [p]: v })),
+  vectorEffect: SIN(CamelWords("none|nonScalingStroke|nonScalingSize|nonRotation|fixedPosition"), (p, v) => ({ [p]: v })),
+  clipRule: SIN(CamelWords("nonzero|evenodd"), (p, v) => ({ [p]: v })),
+  colorInterpolation: SIN(CamelWords("auto|sRGB|linearRGB"), (p, v) => ({ [p]: v })),
+  shapeRendering: SIN(Words("auto|optimizeSpeed|crispEdges|geometricPrecision"), (p, v) => ({ [p]: v })),
+  colorRendering: SIN(CamelWords("auto|optimizeSpeed|optimizeQuality"), (p, v) => ({ [p]: v })),
+  imageRendering: SIN(CamelWords("auto|optimizeSpeed|optimizeQuality|pixelated"), (p, v) => ({ [p]: v })),
+  maskType: SIN(CamelWords("luminance|alpha"), (p, v) => ({ [p]: v })),
+  paintOrder: SINmax(3, Words("normal|fill|stroke|markers"), (p, v = ["normal"]) => ({ [p]: v.join(" ") })),
+  lightingColor: SIN(ColorUrl, (p, v = "currentColor") => ({ [p]: v })),
+  svgOpacity: SIN(Fraction, (p, v = "1") => ({ [p]: v })),
 
   strokeWidth: undefined,
   strokeLinecap: undefined,
@@ -151,45 +116,11 @@ export default {
   baselineShift: undefined,
 
   strokeNone,
+  fillNone,
+  svgTextNone,
   noStroke: strokeNone,
-  fillNone: { fill: "none", fillOpacity: "unset", fillRule: "unset" },
-  noFill: { fill: "none", fillOpacity: "unset", fillRule: "unset" },
-
-  marker,
-  markerStart,
-  markerMid,
-  markerEnd,
+  noFill: fillNone,
+  noSvgText: svgTextNone,
   noMarker: { marker: "none" },
   markerNone: { marker: "none" },
-
-  stopColor: SIN(ColorUrl, (p, v = "currentColor") => ({ [p]: v })),
-  stopOpacity: SIN(Fraction, (p, v = "1") => ({ [p]: v })),
-
-  vectorEffect: SIN(CamelWords("none|nonScalingStroke|nonScalingSize|nonRotation|fixedPosition"), (p, v) => ({ [p]: v })),
-  clipRule: SIN(CamelWords("nonzero|evenodd"), (p, v) => ({ [p]: v })),
-  colorInterpolation: SIN(CamelWords("auto|sRGB|linearRGB"), (p, v) => ({ [p]: v })),
-  shapeRendering: SIN(Words("auto|optimizeSpeed|crispEdges|geometricPrecision"), (p, v) => ({ [p]: v })),
-  colorRendering: SIN(CamelWords("auto|optimizeSpeed|optimizeQuality"), (p, v) => ({ [p]: v })),
-  imageRendering: SIN(CamelWords("auto|optimizeSpeed|optimizeQuality|pixelated"), (p, v) => ({ [p]: v })),
-  maskType: SIN(CamelWords("luminance|alpha"), (p, v) => ({ [p]: v })),
-
-  paintOrder: SINmax(3, Words("normal|fill|stroke|markers"), (p, v = ["normal"]) => ({ [p]: v.join(" ") })),
-  lightingColor: SIN(ColorUrl, (p, v = "currentColor") => ({ [p]: v })),
-  svgOpacity: SIN(Fraction, (p, v = "1") => ({ [p]: v })),
-
-  thinStroke: { "stroke-width": "1" },
-  mediumStroke: { "stroke-width": "2" },
-  thickStroke: { "stroke-width": "3" },
-  solidStroke: { "stroke-dasharray": "none" },
-  dashedStroke: { "stroke-dasharray": "5,5" },
-  dottedStroke: { "stroke-dasharray": "1,1" },
-  roundStroke: { "stroke-linecap": "round", "stroke-linejoin": "round" },
-  sharpStroke: { "stroke-linecap": "butt", "stroke-linejoin": "miter" },
-  nonScalingStroke: { "vector-effect": "non-scaling-stroke" },
-  nonzeroFill: { "fill-rule": "nonzero" },
-  evenoddFill: { "fill-rule": "evenodd" },
-  crispEdges: { "shape-rendering": "crispEdges" },
-  geometricPrecision: { "shape-rendering": "geometricPrecision" },
-  optimizeSpeed: { "color-rendering": "optimizeSpeed", "image-rendering": "optimizeSpeed" },
-  optimizeQuality: { "color-rendering": "optimizeQuality", "image-rendering": "optimizeQuality" },
 };
