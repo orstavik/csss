@@ -1,5 +1,5 @@
 import {
-  TYPB, Umbrella, SINmax, SIN, CUSTOM_WORD,
+  TYPB, Umbrella, SINmax, SIN,
   extractName, extractUrl, extractColor,
   isNumber, isBasic,
   LengthPercent, LengthPercentNumber, NumberInterpreter, ColorUrl, Length, Url, UrlUnset,
@@ -428,8 +428,9 @@ export default {
   // maskType, //alpha, luminance is default/none.  as it doesn't inherit, we would likely not 
 
   //loners
-  maskType: CUSTOM_WORD("maskType", "alpha"),
-  colorInterpolation: CUSTOM_WORD("colorInterpolation", "sRGB|linearRGB"),
+  maskType: { "mask-type": "alpha" },
+  colorInterpolationSRGB: { "color-interpolation": "sRGB" },
+  colorInterpolationLinearRGB: { "color-interpolation": "linearRGB" },
 
 
   thinStroke: { "stroke-width": "1" },

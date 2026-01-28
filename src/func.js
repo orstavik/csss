@@ -738,32 +738,25 @@ export const CHECKNAME = (NAME, cb) => exp => NAME === exp.name ? cb(exp) : unde
 export const SINmax = (max, interpreter, post) => ({ args, name }) => {
   if (args.length < 1 || args.length > max)
     throw new SyntaxError(`${name} requires 1 to ${max} arguments, got ${args.length} arguments.`);
-  return post(name, args.map((a, i) => {
+  const res = args.map((a, i) => {
     const a2 = interpreter(a);
     if (a2 != null)
       return a2;
     throw BadArgument(name, args, i, interpreter.name);
-  }));
+  });
+  return post ? post(name, res) : res;
 };
 
 export const SEQ = (interpreters, post) => ({ args, name }) => {
   if (args.length != interpreters.length)
     throw new SyntaxError(`${name} requires ${interpreters.length} arguments, got ${args.length} arguments.`);
-  return post(name, interpreters.map((interpreter, i) => {
+  const res = interpreters.map((interpreter, i) => {
     const a2 = interpreter(args[i]);
     if (a2)
       return a2;
     throw BadArgument(name, args, i, interpreter.name);
-  }));
-};
-
-export const CUSTOM_WORD = (NAME, WORDS, POST) => {
-  const lookupTable = Object.fromEntries(WORDS.split("|").map(w => [w.replaceAll(/-([a-z])/g, c => c[1].toUpperCase()), w]));
-  const cb = POST ?
-    a => ((a.text in lookupTable) ? POST(lookupTable[a.text]) : undefined) :
-    a => lookupTable[a.text];
-  Object.defineProperty(cb, "name", { value: NAME });
-  return cb;
+  });
+  return post ? post(name, res) : res;
 };
 
 export const WORD_IN_TABLE = TABLE => ({ text }) => TABLE[text];
