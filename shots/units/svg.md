@@ -52,8 +52,8 @@
     stroke: deepskyblue;
     stroke-width: 3px;
     stroke-opacity: 0.5;
-    stroke-linecap: butt;
     stroke-linejoin: bevel;
+    stroke-linecap: butt;
     stroke-dasharray: 5px, 5%;
   }
 }

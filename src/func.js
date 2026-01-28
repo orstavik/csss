@@ -733,7 +733,7 @@ export const SIN = (interpreter, post) => ({ args, name }) => {
   return post ? post(name, v) : v;
 };
 
-export const CHECKNAME = (NAME, cb) => exp => (NAME && NAME !== exp.name) ? undefined : cb(exp);
+export const CHECKNAME = (NAME, cb) => exp => NAME === exp.name ? cb(exp) : undefined;
 
 export const SINmax = (max, interpreter, post) => ({ args, name }) => {
   if (args.length < 1 || args.length > max)
@@ -752,18 +752,6 @@ export const SEQ = (interpreters, post) => ({ args, name }) => {
   return post(name, interpreters.map((interpreter, i) => {
     const a2 = interpreter(args[i]);
     if (a2)
-      return a2;
-    throw BadArgument(name, args, i, interpreter.name);
-  }));
-};
-
-export const SEQopt = (interpreters, post) => ({ args, name }) => {
-  if (args.length < 1 || args.length > interpreters.length)
-    throw new SyntaxError(`${name} requires 1 to ${interpreters.length} arguments, got ${args.length} arguments.`);
-  return post(args.map((a, i) => {
-    const interpreter = interpreters[i];
-    const a2 = interpreter(a);
-    if (a2 != null)
       return a2;
     throw BadArgument(name, args, i, interpreter.name);
   }));

@@ -99,7 +99,7 @@ function log(a, b = Math.E) { return Math.log(a) / Math.log(b); }
 const pow = Math.pow;
 const min = Math.min;
 const max = Math.max;
-const round$1 = Math.round;
+const round = Math.round;
 const asin = Math.asin;
 const acos = Math.acos;
 const atan = Math.atan;
@@ -190,7 +190,7 @@ var Maths = {
   clamp: doMath.bind(null, sameType, clamp, updateFirst, texter.bind(null, "clamp")),
   min: doMath.bind(null, sameType, min, updateFirst, texter.bind(null, "min")),
   max: doMath.bind(null, sameType, max, updateFirst, texter.bind(null, "max")),
-  round: doMath.bind(null, sameType, round$1, updateFirst, stripCalc.bind(null, "round")),
+  round: doMath.bind(null, sameType, round, updateFirst, stripCalc.bind(null, "round")),
   sin: doMath.bind(null, singleAngleOnly, sin, toNumber, texter.bind(null, "sin")),
   cos: doMath.bind(null, singleAngleOnly, cos, toNumber, texter.bind(null, "cos")),
   tan: doMath.bind(null, singleAngleOnly, tan, toNumber, texter.bind(null, "tan")),
@@ -689,6 +689,11 @@ function isLength(a) {
   if (a?.type === "length" || (a?.num == 0 && a?.type === "number"))
     return a;
 }
+function isLengthNumber(a) {
+  a = isBasic(a);
+  if (a?.type === "length" || a?.type === "number")
+    return a;
+}
 function isTime(a) {
   a = isBasic(a);
   if (a?.num == 0 && a.type === "number")
@@ -809,10 +814,6 @@ const extractWord = makeExtractor(isWord);
 function extractName(args) {
   const a = extractWord(args);
   return a ?? interpretName(a);
-}
-function extractRadian(args) {
-  const a = extractAngle(args) || undefined;
-  return a && interpretRadian(a);
 }
 
 function makeEvaluator(interpret) {
@@ -953,7 +954,7 @@ const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
       else
         throw BadArgument(name, args, i);
     }
-    return post(res);
+    return post ? post(res) : res;
   };
 };
 
@@ -986,7 +987,7 @@ const SIN = (interpreter, post) => ({ args, name }) => {
   return post ? post(name, v) : v;
 };
 
-const CHECKNAME = (NAME, cb) => exp => (NAME && NAME !== exp.name) ? undefined : cb(exp);
+const CHECKNAME = (NAME, cb) => exp => NAME === exp.name ? cb(exp) : undefined;
 
 const SINmax = (max, interpreter, post) => ({ args, name }) => {
   if (args.length < 1 || args.length > max)
@@ -1005,18 +1006,6 @@ const SEQ = (interpreters, post) => ({ args, name }) => {
   return post(name, interpreters.map((interpreter, i) => {
     const a2 = interpreter(args[i]);
     if (a2)
-      return a2;
-    throw BadArgument(name, args, i, interpreter.name);
-  }));
-};
-
-const SEQopt = (interpreters, post) => ({ args, name }) => {
-  if (args.length < 1 || args.length > interpreters.length)
-    throw new SyntaxError(`${name} requires 1 to ${interpreters.length} arguments, got ${args.length} arguments.`);
-  return post(args.map((a, i) => {
-    const interpreter = interpreters[i];
-    const a2 = interpreter(a);
-    if (a2 != null)
       return a2;
     throw BadArgument(name, args, i, interpreter.name);
   }));
@@ -1043,6 +1032,11 @@ const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   return POST ? POST(name, first, res) : first;
 };
 
+const CamelWords = (WORDS) => {
+  const lookupTable = Object.fromEntries(WORDS.split("|").map(w => [w, w.replaceAll(/[A-Z]/g, c => "-" + c.toLowerCase())]));
+  return a => lookupTable[a.text];
+};
+
 const Angle = a => isAngle(a)?.text;
 const Color = a => isColor(a)?.text;
 const Length = a => isLength(a)?.text;
@@ -1057,6 +1051,7 @@ const Unset = a => a.text == "_" ? "unset" : undefined;
 const Url = a => isUrl(a)?.text;
 const Word = a => isWord(a)?.text;
 const Basic = a => isBasic(a)?.text; //todo this should be replaced with something more precise in the HO functions
+const Radian = a => (a = isAngle(a)) ? interpretRadian(a) : undefined;
 const Repeat = a => isRepeat(a)?.text;
 const Span = a => isSpan(a)?.text;
 const AbsoluteUrl = a => {
@@ -1414,10 +1409,7 @@ const BorderUmbrella = cb => exp => {
 //   6: blockTopRight (and 2: blockTopLeft), 
 //   7: inlineRightBottom (and 3: inlineRightTop), 
 //   8: blockBottomRight (and 4: blockBottomLeft).
-function radius(ar) {
-  ar = ar.map(isBasic).map(a => a.text);
-  if (ar.length > 8)
-    throw new SyntaxError(`max 8 arguments for borderRadius: ${ar.length}.`);
+const radius = SINmax(8, LengthPercent, (n, ar) => {
   if (ar.length === 1)
     return { borderRadius: ar[0] };
   if (ar.length === 2) {
@@ -1445,70 +1437,39 @@ function radius(ar) {
     borderEndStartRadius: bl == lb ? bl : `${bl} ${lb}`,
     borderEndEndRadius: br == rb ? br : `${br} ${rb}`,
   };
+});
+
+function inlineBlockFour(prop, ar) {
+  if (!ar)
+    return {};
+  if (ar.length > 4)
+    throw new SyntaxError(`More than 4 border ${prop} arguments.`);
+  return ar.length == 1 ?
+    { ["border" + prop]: ar[0] } :
+    {
+      ["borderInline" + prop]: [ar[0], ar[2]].filter(Boolean).join(" "),
+      ["borderBlock" + prop]: [ar[1], ar[3]].filter(Boolean).join(" "),
+    };
 }
 
-//$border(2px,4px,solid,red,blue)
-//$border(2px,solid,red)
-const STYLE_WORDS = {
-  solid: "solid",
-  dotted: "dotted",
-  dashed: "dashed",
-  double: "double",
-  groove: "groove",
-  ridge: "ridge",
-  inset: "inset",
-  outset: "outset",
-  none: "none",
-  hidden: "hidden",
-};
-const WIDTH_WORDS = {
-  thin: "thin",
-  medium: "medium",
-  thick: "thick",
-};
-const RADIUS = {
+const border = TYPB({
   radius,
   r: radius,
-};
-
-function border({ args: ar }) {
-  let borderRadius, width = [], style = [], color = [];
-  for (let a of ar) {
-    let v;
-    if (borderRadius && a.name in RADIUS)
-      throw new SyntaxError(`More than one $border radius argument: ${a.text}.`);
-    else if (v = isColor(a)?.text)
-      color.push(v);
-    else if (v = isLengthPercent(a)?.text ?? WIDTH_WORDS[a.text])
-      width.push(v);
-    else if (v = STYLE_WORDS[a.text])
-      style.push(v);
-    else if (v = RADIUS[a.name]?.(a.args))
-      borderRadius = v;
-    else
-      throw new SyntaxError(`Could not interpret $border argument: ${a.text}.`);
+},
+  {},
+  {
+    Color,
+    Width: a => LengthPercent(a) ?? CamelWords("thin|medium|thick")(a),
+    Style: CamelWords("solid|dotted|dashed|double|groove|ridge|inset|outset|none|hidden"),
+  }, obj => {
+    const res = {};
+    if (obj.Width) Object.assign(res, inlineBlockFour("Width", obj.Width));
+    if (obj.Style) Object.assign(res, inlineBlockFour("Style", obj.Style));
+    if (obj.Color) Object.assign(res, inlineBlockFour("Color", obj.Color));
+    if (obj.radius ?? obj.r) Object.assign(res, obj.radius ?? obj.r);
+    return res;
   }
-  const tooBig = color.length > 4 ? "color" : style.length > 4 ? "style" : width.length > 4 ? "width" : "";
-  if (tooBig)
-    throw new SyntaxError(`More than 4 border ${tooBig} arguments.`);
-  const res = {};
-  if (width.length == 1) res.borderWidth = width[0];
-  if (width.length > 1) {
-    res.borderInlineWidth = [width[0], width[2]].filter(Boolean).join(" ");
-    res.borderBlockWidth = [width[1], width[3]].filter(Boolean).join(" ");
-  }
-  if (style.length == 1) res.borderStyle = style[0];
-  if (style.length > 1) {
-    res.borderInlineStyle = [style[0], style[2]].filter(Boolean).join(" ");
-    res.borderBlockStyle = [style[1], style[3]].filter(Boolean).join(" ");
-  }
-  if (color.length == 1) res.borderColor = color[0];
-  if (color.length > 1) {
-    res.borderInlineColor = [color[0], color[2]].filter(Boolean).join(" ");
-    res.borderBlockColor = [color[1], color[3]].filter(Boolean).join(" ");
-  }
-  return { ...res, ...borderRadius };
-}
+);
 
 var border$1 = {
   border,
@@ -2586,7 +2547,7 @@ var filterTransforms = {
 
 //todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
 
-// Shadows are handled similarly to transitions. Or even more sematically regulated.
+// Shadows are handled similarly to transitions. Or even more semantically regulated.
 // There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 
 // Then in the $shadow(shade,angle,length,color?) to use it.
 // If the length is passed in as 
@@ -2600,8 +2561,8 @@ var filterTransforms = {
 // Ie. elements that have the same shadow in lightmode, might have different/no shadows in darkmode, and vice versa.
 
 const SHADES = {
-  ambient: { l: 0, b: 1.5, s: 1.25 },
-  edgeGlow: { l: 0, b: 3, s: -.5 },
+  ambient: { l: 1, b: 1.5, s: 1.25 },
+  edgeGlow: { l: 1, b: 3, s: -.5 },
   soft: { l: 1, b: 1, s: 0 },
   normal: { l: 1, b: 1.5, s: 0.75 },
   medium: { l: 1.5, b: 2, s: 1 },
@@ -2615,77 +2576,49 @@ const SHADES = {
   delicate: { l: 0.07, b: 0.15, s: 0.15 },
 };
 
-function round(num, places = 2) {
-  const m = 10 ** places;
-  return Math.round(num * m) / m;
-}
-
-function parseAbsoluteShadowArgs3(args) {
-  const x = extractLength(args);
-  if (!x)
-    return;
-  const y = extractLength(args);
-  const blur = extractLength(args);
-  const color = extractColor(args) ?? `var(--shadowColor, #0003)`;
-  if (args.length)
-    throw new TypeError("Unknown absolute $shadow() argument: " + args[0].text);
-  return { x, y, blur, color };
-}
-
-function parseAbsoluteShadowArgs4(args) {
-  const x = extractLength(args);
-  if (!x)
-    return;
-  const y = extractLength(args);
-  const blur = extractLength(args);
-  const spread = extractLength(args);
-  const color = extractColor(args) ?? `var(--shadowColor, #0003)`;
-  if (args.length)
-    throw new TypeError("Unknown absolute $shadow() argument: " + args[0].text);
-  return { x, y, blur, spread, color };
-}
-
-function parseNamedShadowArgs(args) {
-  const name = extractName(args);
-  if (!name)
-    throw `Unknown $shadow() argument: ${args[0].text}`;;
-  if (!(name in SHADES))
-    throw `Unknown shadow type: ${name}. Use one of: ${Object.keys(SHADES).join(", ")}`;
-  const length = args.length && (isLength(args[0]) ?? isNumber(args[0]));
-  if (length) args.shift();
-  const angle = extractRadian(args);
-  const color = extractColor(args) ?? `var(--shadowColor, #0003)`;
-  if (args.length)
-    throw new TypeError("Unknown named $shadow() argument: " + args[0].text);
-  let { num, unit } = length || { num: 5 };
-  if (!unit) {    // default length is plain number? 5 is "normal" => 0.25rem. 1 is very small => 0.05rem. 10 is large => 0.5rem.
-    num /= 20;
-    unit = "rem";
-  }
-  const type = SHADES[name];
-
-  const rad = angle ?? (Math.PI * .75); //default angle 135deg
-  const x = -round(Math.cos(rad) * type.l * num) + unit;
-  const y = round(Math.sin(rad) * type.l * num) + unit;
+//default angle 135deg
+// default length is plain number? 5 is "normal" => 0.25rem. 1 is very small => 0.05rem. 10 is large => 0.5rem.
+function calculateShadow({ type, angle = Math.PI * .75, length = { num: 5 }, color = "var(--shadowColor, #0003)" }) {
+  if (!type) throw new SyntaxError("Missing shadow name: " + Object.keys(SHADES).join("|"));
+  if (!length.unit) { length.num /= 20; length.unit = "rem"; }
+  const { num, unit } = length;
+  const round = (num, places = 2, m = 10 ** places) => Math.round(num * m) / m;
+  const x = -round(Math.cos(angle) * type.l * num) + unit;
+  const y = round(Math.sin(angle) * type.l * num) + unit;
   const blur = round(type.b * num) + unit;
   const spread = round(type.s * num) + unit;
-
   return { x, y, blur, spread, color };
 }
 
-function boxShadow(args) {
-  const { x, y, blur, spread, color } = parseAbsoluteShadowArgs4(args) ?? parseNamedShadowArgs(args);
+const IgnoreError = cb => (...args) => { try { return cb(...args); } catch (e) { } };
+const parseAbsoluteShadowArgs = IgnoreError(TYPB({}, {
+  x: Length,
+  y: Length,
+  blur: Length,
+  spread: Length,
+  color: Color,
+}, {}));
+
+const parseNamedShadowArgs = TYPB({}, {
+  type: WORD_IN_TABLE(SHADES),
+  angle: Radian,
+  length: isLengthNumber,
+  color: Color,
+}, {}, calculateShadow);
+
+function boxShadow(a) {
+  const { x, y, blur, spread, color } = parseAbsoluteShadowArgs(a) ?? parseNamedShadowArgs(a);
   return [x, y, blur, spread, color].filter(Boolean).join(" ");
 }
-function textDropShadow(args) {
-  const { x, y, blur, color } = parseAbsoluteShadowArgs3(args) ?? parseNamedShadowArgs(args);
+function textDropShadow(a) {
+  const { x, y, blur, color } = parseAbsoluteShadowArgs(a) ?? parseNamedShadowArgs(a);
   return [x, y, blur, color].filter(Boolean).join(" ");
 }
 
 var shadows = {
-  boxShadowInset: ({args}) => ({ boxShadow: "inset " + boxShadow(args) }),
-  boxShadow: ({args}) => ({ boxShadow: boxShadow(args) }),
-  textShadow: ({args}) => ({ textShadow: textDropShadow(args) }),
+  boxShadowInset: a => ({ boxShadow: "inset " + boxShadow(a) }),
+  boxShadow: a => ({ boxShadow: boxShadow(a) }),
+  textShadow: a => ({ textShadow: textDropShadow(a) }),
   dropShadow: textDropShadow,
   noBoxShadow: { boxShadow: "none" },
   noTextShadow: { textShadow: "none" },
@@ -2789,61 +2722,32 @@ const svgTextDefaults = {
   baselineShift: "unset",
 };
 
-// Droplet functions (pure transformers)
 const stroke = TYPB({
-  dasharray: SINmax(999, LengthPercentNumber, (name, ar) => ar.join(", ")),
-  dashoffset: SIN(LengthPercent),
-  miterlimit: SIN(NumberInterpreter),
 }, {
   stroke: ColorUrl,
   strokeWidth: Length,
   strokeOpacity: NumberInterpreter,
-  strokeLinecap: a => a.text?.match(/^(butt|round|square)$/)?.[0],
-  strokeLinejoin: a => a.text?.match(/^(miter|round|bevel)$/)?.[0],
-}, {}, res => {
-  const out = {};
-  if (res.stroke) out.stroke = res.stroke;
-  if (res.strokeWidth) out.strokeWidth = res.strokeWidth;
-  if (res.strokeOpacity) out.strokeOpacity = res.strokeOpacity;
-  if (res.strokeLinecap) out.strokeLinecap = res.strokeLinecap;
-  if (res.strokeLinejoin) out.strokeLinejoin = res.strokeLinejoin;
-  if (res.dasharray) out.strokeDasharray = res.dasharray;
-  if (res.dashoffset) out.strokeDashoffset = res.dashoffset;
-  if (res.miterlimit) out.strokeMiterlimit = res.miterlimit;
-  return out;
-});
+  strokeLinecap: CamelWords("butt|round|square"),
+  strokeLinejoin: CamelWords("miter|round|bevel"),
+  strokeDasharray: CHECKNAME("dasharray", SINmax(999, LengthPercentNumber, (name, ar) => ar.join(", "))),
+  strokeDashoffset: CHECKNAME("dashoffset", SIN(LengthPercent)),
+  strokeMiterlimit: CHECKNAME("miterlimit", SIN(NumberInterpreter)),
+}, {});
 
 const fill = TYPB({}, {
   fill: ColorUrl,
   fillOpacity: NumberInterpreter,
-  fillRule: a => a.text?.match(/^(evenodd|nonzero)$/)?.[0],
-}, {}, res => {
-  const out = {};
-  if (res.fill) out.fill = res.fill;
-  if (res.fillOpacity) out.fillOpacity = res.fillOpacity;
-  if (res.fillRule) out.fillRule = res.fillRule;
-  return out;
-});
+  fillRule: CamelWords("evenodd|nonzero"),
+}, {});
 
 const svgText = TYPB({
-  baseline: SEQopt([
-    CUSTOM_WORD("dominantBaseline", "auto|text-bottom|alphabetic|ideographic|middle|central|mathematical|hanging|text-top"),
-    CUSTOM_WORD("alignmentBaseline", "auto|baseline|before-edge|text-before-edge|middle|central|after-edge|text-after-edge|ideographic|alphabetic|hanging|mathematical"),
-    CUSTOM_WORD("baselineShift", "sub|super|baseline"),
-  ], ar => ar.length == 1 ? { dominantBaseline: ar[0] } :
-    ar.length == 2 ? { dominantBaseline: ar[0], alignmentBaseline: ar[1] } :
-      { dominantBaseline: ar[0], alignmentBaseline: ar[1], baselineShift: ar[2] }
-  ),
 }, {
-  textAnchor: a => a.text?.match(/^(start|middle|end)$/)?.[0],
-}, {}, res => {
-  const out = {};
-  if (res.textAnchor) out.textAnchor = res.textAnchor;
-  if (res.baseline) Object.assign(out, res.baseline);
-  return out;
-});
+  textAnchor: CamelWords("start|middle|end"),
+  dominantBaseline: CamelWords("auto|textBottom|alphabetic|ideographic|middle|central|mathematical|hanging|textTop"),
+  alignmentBaseline: CamelWords("auto|baseline|beforeEdge|textBeforeEdge|middle|central|afterEdge|textAfterEdge|ideographic|alphabetic|hanging|mathematical"),
+  baselineShift: CamelWords("sub|super|baseline"),
+}, {});
 
-// Umbrella functions (with defaults)
 const Stroke = Umbrella(strokeDefaults, stroke);
 const Fill = Umbrella(fillDefaults, fill);
 const SvgText = Umbrella(svgTextDefaults, svgText);
@@ -3141,11 +3045,7 @@ const IMAGE_RENDERING_WORDS = {
 const stopColor = createColorFunction("stop-color");
 const stopOpacity = createOpacityFunction("stop-opacity");
 const lightingColor = createColorFunction("lighting-color");
-// const baselineShift = createLengthFunction("baseline-shift", "baseline");
-// const textAnchor = createEnumFunction("text-anchor", TEXT_ANCHOR_WORDS);
 const vectorEffect = createEnumFunction("vector-effect", VECTOR_EFFECT_WORDS);
-// const dominantBaseline = createEnumFunction("dominant-baseline", DOMINANT_BASELINE_WORDS);
-// const alignmentBaseline = createEnumFunction("alignment-baseline", ALIGNMENT_BASELINE_WORDS);
 const clipRule = createEnumFunction("clip-rule", RULE_WORDS);
 // const colorInterpolation = createEnumFunction("color-interpolation", COLOR_INTERPOLATION_WORDS);
 const shapeRendering = createEnumFunction("shape-rendering", SHAPE_RENDERING_WORDS);
@@ -3234,12 +3134,6 @@ var svg = {
   nonScalingStroke: { "vector-effect": "non-scaling-stroke" },
   nonzeroFill: { "fill-rule": "nonzero" },
   evenoddFill: { "fill-rule": "evenodd" },
-  startText: { "text-anchor": "start" },
-  middleText: { "text-anchor": "middle" },
-  endText: { "text-anchor": "end" },
-  alphabeticBaseline: { "dominant-baseline": "alphabetic" },
-  middleBaseline: { "dominant-baseline": "middle" },
-  hangingBaseline: { "dominant-baseline": "hanging" },
   crispEdges: { "shape-rendering": "crispEdges" },
   geometricPrecision: { "shape-rendering": "geometricPrecision" },
   optimizeSpeed: { "color-rendering": "optimizeSpeed", "image-rendering": "optimizeSpeed" },

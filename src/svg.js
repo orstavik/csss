@@ -4,6 +4,7 @@ import {
   isNumber, isBasic,
   LengthPercent, LengthPercentNumber, NumberInterpreter, ColorUrl, Length, Url, UrlUnset,
   CamelWords,
+  CHECKNAME,
 } from "./func.js";
 
 const strokeDefaults = {
@@ -31,27 +32,16 @@ const svgTextDefaults = {
 };
 
 const stroke = TYPB({
-  dasharray: SINmax(999, LengthPercentNumber, (name, ar) => ar.join(", ")),
-  dashoffset: SIN(LengthPercent),
-  miterlimit: SIN(NumberInterpreter),
 }, {
   stroke: ColorUrl,
   strokeWidth: Length,
   strokeOpacity: NumberInterpreter,
   strokeLinecap: CamelWords("butt|round|square"),
   strokeLinejoin: CamelWords("miter|round|bevel"),
-}, {}, res => {
-  const out = {};
-  if (res.stroke) out.stroke = res.stroke;
-  if (res.strokeWidth) out.strokeWidth = res.strokeWidth;
-  if (res.strokeOpacity) out.strokeOpacity = res.strokeOpacity;
-  if (res.strokeLinecap) out.strokeLinecap = res.strokeLinecap;
-  if (res.strokeLinejoin) out.strokeLinejoin = res.strokeLinejoin;
-  if (res.dasharray) out.strokeDasharray = res.dasharray;
-  if (res.dashoffset) out.strokeDashoffset = res.dashoffset;
-  if (res.miterlimit) out.strokeMiterlimit = res.miterlimit;
-  return out;
-});
+  strokeDasharray: CHECKNAME("dasharray", SINmax(999, LengthPercentNumber, (name, ar) => ar.join(", "))),
+  strokeDashoffset: CHECKNAME("dashoffset", SIN(LengthPercent)),
+  strokeMiterlimit: CHECKNAME("miterlimit", SIN(NumberInterpreter)),
+}, {});
 
 const fill = TYPB({}, {
   fill: ColorUrl,
