@@ -1,4 +1,4 @@
-import { Color, LengthPercent, CamelWords, TYPB } from "./func.js";
+import { Color, LengthPercent, CamelWords, TYPB, SINmax } from "./func.js";
 
 const BorderUmbrella = cb => exp => {
   const res = cb(exp);
@@ -28,10 +28,7 @@ const BorderUmbrella = cb => exp => {
 //   6: blockTopRight (and 2: blockTopLeft), 
 //   7: inlineRightBottom (and 3: inlineRightTop), 
 //   8: blockBottomRight (and 4: blockBottomLeft).
-function radius({ name, args: ar }) {
-  ar = ar.map(LengthPercent);
-  if (ar.length > 8)
-    throw new SyntaxError(`max 8 arguments for borderRadius: ${ar.length}.`);
+const radius = SINmax(8, LengthPercent, (n, ar) => {
   if (ar.length === 1)
     return { borderRadius: ar[0] };
   if (ar.length === 2) {
@@ -59,9 +56,9 @@ function radius({ name, args: ar }) {
     borderEndStartRadius: bl == lb ? bl : `${bl} ${lb}`,
     borderEndEndRadius: br == rb ? br : `${br} ${rb}`,
   };
-}
+});
 
-function processUpToFour(prop, ar) {
+function inlineBlockFour(prop, ar) {
   if (!ar)
     return {};
   if (ar.length > 4)
@@ -85,9 +82,9 @@ const border = TYPB({
     Style: CamelWords("solid|dotted|dashed|double|groove|ridge|inset|outset|none|hidden"),
   }, obj => {
     const res = {};
-    if (obj.Width) Object.assign(res, processUpToFour("Width", obj.Width));
-    if (obj.Style) Object.assign(res, processUpToFour("Style", obj.Style));
-    if (obj.Color) Object.assign(res, processUpToFour("Color", obj.Color));
+    if (obj.Width) Object.assign(res, inlineBlockFour("Width", obj.Width));
+    if (obj.Style) Object.assign(res, inlineBlockFour("Style", obj.Style));
+    if (obj.Color) Object.assign(res, inlineBlockFour("Color", obj.Color));
     if (obj.radius ?? obj.r) Object.assign(res, obj.radius ?? obj.r);
     return res;
   }
