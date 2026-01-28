@@ -1,15 +1,16 @@
-**csss:** $Typeface(comic,"MS+Comic+Sans",face("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2"),xxs,semiExpanded,italic,bolder)
+**csss:** $Typeface(comic,"MS+Comic+Sans","https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2",xxs,semiExpanded,italic,bolder)
 **css:**
 ```css
-@font-face /*comic normal*/ {
-  font-family: comic;
-  font-style: normal;
-  src: local(comic), url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2");
+@font-face /*https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2*/ {
+  font-family: ComicNeue;
+  src: /*https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2*/
+local("ComicNeue"),
+url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2");
 }
 
 @layer containerDefault {
-  .\$Typeface\(comic\,\"MS\+Comic\+Sans\"\,face\(\"https\:\/\/cdn\.jsdelivr\.net\/npm\/\@openfonts\/comic-neue_latin\@latest\/files\/ComicNeue-Regular\.woff2\"\)\,xxs\,semiExpanded\,italic\,bolder\) {
-    --comicFontFamily: "MS Comic Sans", comic;
+  .\$Typeface\(comic\,\"MS\+Comic\+Sans\"\,\"https\:\/\/cdn\.jsdelivr\.net\/npm\/\@openfonts\/comic-neue_latin\@latest\/files\/ComicNeue-Regular\.woff2\"\,xxs\,semiExpanded\,italic\,bolder\) {
+    --comicFontFamily: "MS Comic Sans", ComicNeue;
     --comicFontSize: xx-small;
     --comicFontStyle: italic;
     --comicFontWeight: bolder;
@@ -40,12 +41,12 @@
 ```css
 @layer containerDefault {
   .\$font\(system-ui\,sans-serif\,400\,0\.5\,bold\,i\,condensed\,12px\) {
+    font-family: system-ui, sans-serif;
     font-weight: bold;
     font-size-adjust: 0.5;
     font-style: italic;
     font-width: condensed;
     font-size: 12px;
-    font-family: system-ui, sans-serif;
   }
 }
 ```
@@ -65,7 +66,7 @@
 ```css
 @layer containerDefault {
   .\$Font\(body\) {
-    font-family: var(--bodyFontFamily, body);
+    font-family: var(--bodyFontFamily, unset);
     font-size: var(--bodyFontSize, unset);
     font-style: var(--bodyFontStyle, unset);
     font-weight: var(--bodyFontWeight, unset);
@@ -73,7 +74,7 @@
     letter-spacing: var(--bodyLetterSpacing, unset);
     text-transform: var(--bodyTextTransform, unset);
     font-width: var(--bodyFontWidth, unset);
-    font-stretch: var(--bodyFontWidth, unset);
+    font-stretch: var(--bodyFontStretch, unset);
     font-variant-caps: var(--bodyFontVariantCaps, unset);
     font-synthesis: var(--bodyFontSynthesis, unset);
     font-feature-settings: var(--bodyFontFeatureSettings, unset);
@@ -117,8 +118,8 @@
 ```css
 @layer containerDefault {
   .\$font\(serif\,hyphens\) {
-    hyphens: auto;
     font-family: serif;
+    hyphens: auto;
   }
 }
 ```

@@ -456,12 +456,12 @@ export function isNumber(a) {
 }
 export function isFraction(a) {
   a = isNumber(a);
-  if (a && a.num >= 0 && a.num <= 1)
+  if (a && !Number.isInteger(a.num))
     return a;
 }
-export function isIntegerUpTo1000(a) {
+export function isInteger(a) {
   a = isNumber(a);
-  if (a && Number.isInteger(a.num) && a.num >= 0 && a.num <= 1000)
+  if (a && Number.isInteger(a.num))
     return a;
 }
 export function isNumberPercent(a) {
@@ -793,7 +793,10 @@ export const Angle = a => isAngle(a)?.text;
 export const Color = a => isColor(a)?.text;
 export const Length = a => isLength(a)?.text;
 export const Name = a => isName(a)?.text;
-export const NumberInterpreter = a => isNumber(a)?.text; //todo here we likely want .num!
+export const NumberInterpreter = a => isNumber(a)?.num;
+export const Fraction = a => isFraction(a)?.num;
+export const Integer = a => isInteger(a)?.num;
+export const Quote = a => isQuote(a)?.text;
 export const Percent = a => isPercent(a)?.text;
 export const Time = a => isTime(a)?.text;
 export const Unset = a => a.text == "_" ? "unset" : undefined;
@@ -802,6 +805,32 @@ export const Word = a => isWord(a)?.text;
 export const Basic = a => isBasic(a)?.text; //todo this should be replaced with something more precise in the HO functions
 export const Repeat = a => isRepeat(a)?.text;
 export const Span = a => isSpan(a)?.text;
+export const AbsoluteUrl = a => {
+  if (a.kind === "QUOTE" && a.text.match(/^["'`](https?|data):/i))
+    return new URL(a.text.slice(1, -1));
+  else if (a.name === "url" && a.args.length === 1 && (a = a.args[0].text))
+    if (a.match(/^["'`](https?|data):/i))
+      try { return new URL(a.slice(1, -1)); } catch (e) { }
+};
+// export const RelativeUrl = a => {  //todo implement, this is just a draft.
+//   class RelativeURL {
+//     constructor(url) {
+//       this.url = url;
+//       this.dots = url.match(/^[.]*/)[0];
+//       this.tstPath = new URL("http://n" + url);
+//     }
+//     interpretAgainst(url) {
+//       const otherAbs = new URL(url, this.tstPath);
+//       const dots = url.match(/^[.]*/)[0];
+//       return dots + otherAbs.pathname + otherAbs.search + otherAbs.hash;
+//     }
+//   }
+//   if (a.kind === "QUOTE" && a.text.match(/^["'`](.?.?)\//i))
+//     return new RelativeURL(a.text.slice(1, -1));
+//   else if (a.name === "url" && a.args.length === 1 && (a = a.args[0].text))
+//     if (a.match(/^["'`](.?.?)\//i))
+//       return new RelativeURL(a.slice(1, -1));
+// }
 
 export const AnglePercent = a => Angle(a) ?? Percent(a);
 export const LengthUnset = a => Length(a) ?? Unset(a);

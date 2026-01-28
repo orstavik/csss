@@ -7,7 +7,7 @@
     $Typeface(monoCode,'ui-monospace','Cascadia+Code','Source+Code+Pro',monospace,16px,400)
     $Typeface(oldStyle,'Iowan+Old+Style','Palatino+Linotype','URW+Palladio+L',P052,serif,18px,400)
     $Typeface(industrial,Bahnschrift,'DIN+Alternate','Franklin+Gothic+Medium','Nimbus+Sans+Narrow','sans-serif-condensed',sans-serif,17px,400)
-    $Typeface(comic,'MS+Comic+Sans',face('https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@0.0.2/files/comic-neue-latin-400.woff2'))
+    $Typeface(comic,'MS+Comic+Sans','https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@0.0.2/files/comic-neue-latin-400.woff2')
     $block(padding(2rem,4rem))
 ">
 
@@ -30,33 +30,33 @@
     ">
     <section
       class=" 
-      $font(transitional)
+      $Font(transitional)
 
       $block(padding(2rem))
       |:first-child$blockItem(margin(0,0,1rem,0))
       |:last-child$blockItem(margin(1.5rem,0,0,0))
       ">
-      <h2 class="$fontSize(1.75rem) $fontWeight(700)">Transitional</h2>
+      <h2 class="$font(1.75rem,700)">Transitional</h2>
       <div
         class="$bg(#f7f7f7) $Border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
         'Charter', 'Bitstream Charter', 'Sitka Text', Cambria, serif;</div>
       <div>
         <p class="">This is the base transitional font. It's a classic, highly readable serif, great
           for long-form text. It inherits all properties from the `transitional` umbrella.</p>
-        <p class="$fontWeight(600)">This bold paragraph uses a
-          <span class="$fontWeight(300)">droplet 300</span>
+        <p class="$font(600)">This bold paragraph uses a
+          <span class="$font(300)">droplet 300</span>
           to increase the font weight to 600, making it bolder than
           the base text, with an even bolder strong tag.
         </p>
-        <p class="$fontStyle(italic)">This paragraph uses an italic font, which is reset to normal inside this quote:
-          <span class="$fontStyle(normal)">"normal style here"</span>
+        <p class="$font(italic)">This paragraph uses an italic font, which is reset to normal inside this quote:
+          <span class="$font(normal)">"normal style here"</span>
         </p>.
         <p class="$font(transitional,14px,spacing(0.1em),allSmallCaps)">This demonstrates nested umbrella: a
           smaller font size, custom letter spacing, and the `all-small-caps` font variant.</p>
       </div>
     </section>
 
-    <section class="$font(neoGrotesque)">
+    <section class="$Font(neoGrotesque)">
       <h2 class="$font(neoGrotesque,lg,700) $blockItem(margin(0,0,1rem,0))">Neo-Grotesque</h2>
       <div
         class="$bg(#f7f7f7) $Border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family: 'Inter',
@@ -64,14 +64,14 @@
       <div class="$blockItem(margin(1.5rem,0,0,0))">
         <p class="">This is the base neo-grotesque font. It's a modern, clean, and versatile
           sans-serif, perfect for UI and general use.</p>
-        <p class="$italic">This paragraph uses a <span
+        <p class="$font(italic)">This paragraph uses a <span
             class="$normal">droplet</span> to set a lighter font weight (300), while the span
           tag inside it is made heavier (600).</p>
-        <p class="$smaller$bolder">This paragraph uses the `$smaller$bolder` keyword droplets.</p>
+        <p class="$font(smaller,bolder)">This paragraph uses the `$font(smaller,bolder)` keyword droplets.</p>
       </div>
     </section>
 
-    <section class="$font(monoCode)">
+    <section class="$Font(monoCode)">
       <h2 class="$font(monoCode,1.75rem,700) $blockItem(margin(0,0,1rem,0))">Monospace Code</h2>
       <div
         class="$bg(#f7f7f7) $Border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
@@ -80,7 +80,7 @@
         <p class="">This is the base monospace font, ideal for div snippets and technical text, such as:
         <div>const umbrella = "$Typeface(monoCode, ...)";</div>
         </p>
-        <p class="$noKerning">This paragraph has `$noKerning` via a droplet.</p>
+        <p class="$font(noKerning)">This paragraph has `$font(noKerning)` via a droplet.</p>
       </div>
     </section>
 
@@ -97,7 +97,7 @@
       </div>
     </section>
 
-    <section class="$font(industrial)">
+    <section class="$Font(industrial)">
       <h2 class="$font(industrial,1.75rem,700) $blockItem(margin(0,0,1rem,0))">Industrial</h2>
       <div
         class="$bg(#f7f7f7) $Border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
@@ -106,12 +106,12 @@
       <div class="$blockItem(margin(1.5rem,0,0,0))">
         <p class="">This is an "Industrial" sans-serif font. It features a condensed and efficient
           design, often seen in signage and user interfaces where space is limited.</p>
-        <p class="$expanded">This paragraph uses droplets to apply an `$expanded` font stretch,
+        <p class="$font(expanded)">This paragraph uses droplets to apply an `$font(expanded)` font stretch,
           showing how a condensed font can be made wider.</p>
       </div>
     </section>
 
-    <section class="$font(comic)">
+    <section class="$Font(comic)">
       <h2 class="$font(comic,1.75rem,700) $blockItem(margin(0,0,1rem,0))">Comic Neue</h2>
       <div
         class="$bg(#f7f7f7) $Border(radius(4px)) $block(padding(0.75rem,1rem)) $font(monoCode,sm)">font-family:
@@ -119,7 +119,7 @@
       <div class="$blockItem(margin(1.5rem,0,0,0))">
         <p class="">This is the Comic Neue font, a modern take on the classic Comic Sans. It's more refined
           and versatile, suitable for informal documents and presentations.</p>
-        <p class="$italic">This paragraph uses the `$italic` droplet keyword as droplets to enhance its appearance.</p>
+        <p class="$font(italic)">This paragraph uses the `$font(italic)` droplet keyword as droplets to enhance its appearance.</p>
       </div>
     </section>
 

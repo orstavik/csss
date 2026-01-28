@@ -1,27 +1,6 @@
-import { extractName, extractUrl, isFraction, isIntegerUpTo1000, isLength, Length, isAngle, isQuote, SIN, Percent, Basic, FIRST, Umbrella, Word, NameUnset, SINmax } from "./func.js";
+import { AbsoluteUrl, Quote, Angle, Integer, Fraction, Length, SIN, Percent, Basic, FIRST, Umbrella, Word, Name, NameUnset, SINmax, TYPB } from "./func.js";
 
-//The $font umbrella and $typeface cloud regulate this property cluster. $typeface also regulates @font-face{}.
-const FONT_DEFAULTS = Object.entries({
-  fontFamily: "FontFamily",
-  fontSize: "FontSize",
-  fontStyle: "FontStyle",
-  fontWeight: "FontWeight",
-  fontSizeAdjust: "FontSizeAdjust",
-  letterSpacing: "LetterSpacing",
-  textTransform: "TextTransform",
-  fontWidth: "FontWidth",
-  fontStretch: "FontWidth",  // fontStretch uses the same CSS variable as fontWidth
-  fontVariantCaps: "FontVariantCaps",
-  fontSynthesis: "FontSynthesis",
-  fontFeatureSettings: "FontFeatureSettings",
-  fontVariationSettings: "FontVariationSettings",
-  WebkitFontSmoothing: "WebkitFontSmoothing",
-  MozOsxFontSmoothing: "MozOsxFontSmoothing",
-  fontKerning: "FontKerning",
-  hyphens: "Hyphens",
-});
-
-const fontDefaults2 = {
+const FontDefaults = {
   fontFamily: "unset",
   fontSize: "unset",
   fontStyle: "unset",
@@ -48,39 +27,6 @@ const fontDefaults2 = {
  * text-decoration is standalone. text-shadow is standalone (in same space as colors).
  * ??candidate for font is hyphenation. Where we break the words, that could be more a font characteristic than a layout characteristic??
  */
-
-//$typeface(comic,"MS+Comic+Sans",face("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2"),xxs,semiExpanded,italic,bolder)
-function face({ args }, fontFamily) {
-
-  function featureAndVariation(args) {
-    //todo this doesn't work? a.text.split instead of a.split ? 
-    return args.map(a => a.split("=")).map(([k, v = 1]) => `"${k}" ${v}`).join(", ");
-  }
-
-  const FACE = {
-    feature: ({ args }) => ({ fontFeatureSettings: featureAndVariation(args) }),
-    variation: ({ args }) => ({ fontVariationSettings: featureAndVariation(args) }),
-    i: { fontStyle: "italic" },
-    italic: { fontStyle: "italic" },
-    ital: { fontStyle: "italic" },
-  };
-
-  let src = extractUrl(args);
-  if (!src)
-    throw new SyntaxError(`The first argument of face(...) must be a quote or a URL, but got: ${args[0]}`);
-  const res = {
-    fontFamily: fontFamily ??= src.slice(4, -1),
-    fontStyle: "normal",
-    src: `local(${fontFamily}), ${src}`,
-  };
-  for (let a of args) {
-    const a2 = FACE[a.name]?.(a) ?? FACE[a.text];
-    if (a2) Object.assign(res, a2);
-    throw new SyntaxError(`Unrecognized font face argument: ${a}`);
-  }
-  return { [`@font-face /*${res.fontFamily} ${res.fontStyle}*/`]: res };
-}
-
 const SYNTHESIS_WORDS = (function () {
   function* permutations(arr, remainder) {
     for (let i = 0; i < arr.length; i++) {
@@ -166,162 +112,122 @@ const FONT_WORDS = {
   adjust: SIN(Basic, (n, v) => ({ fontSizeAdjust: v })),
 };
 
-//todo it is a problem that we are passing in the fontFaceName here.. This means that we can't do the $font() as it would need a face thing..
-//todo the face(...) should only be allowed in the Umbrella structure. We need to extract the face() same way as we do with the $animation functions.
-function fontImpl({ name, args }) {
-  const fontFaceName = name;
-  let res = {}, family = [], emoji;
-  for (let a of args) {
-    let a2;
-    if (a.text == "emoji")
-      emoji = ['Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'];
-    else if (a2 = isQuote(a))
-      family.push(a2.text.slice(1, -1).replaceAll("+", " "));
-    else if (a2 = isLength(a))
-      res.fontSize = a2.text;
-    else if (a2 = isAngle(a))
-      res.fontStyle = "oblique " + a2.text;
-    else if (a2 = FONT_WORDS[a.text] ?? FONT_WORDS[a.name]?.(a))
-      Object.assign(res, a2);
-    else if (a.kind == "WORD")
-      family.push(a.text);
-    else if (a2 = isIntegerUpTo1000(a))
-      res.fontWeight = a2.num;
-    else if (a2 = isFraction(a))
-      res.fontSizeAdjust = a2.num;
-    else if (a.name == "face" && (a2 = face(a, fontFaceName))) {
-      Object.assign(res, a2);
-      family.push(Object.values(a2)[0].fontFamily);
-    } else
-      throw new SyntaxError(`Unrecognized $font argument: ${a}`);
+
+// @font-face {
+// font-family: "Trickster";
+// src:
+//   local("Trickster"),
+//   url("trickster-COLRv1.otf") format("opentype") tech(color-COLRv1),
+//   url("trickster-outline.otf") format("opentype"),
+//   url("trickster-outline.woff") format("woff");
+// }
+// becomes 
+// "./trickster-COLRv1.otf#family=Trickster&format=opentype&tech=color-COLRv1&src=trickster-outline.otf&format=opentype&src=trickster-outline.woff&format=woff"
+function FontFaceUrl(t) {
+  const font = AbsoluteUrl(t);
+  if (!font)
+    return;
+  const sp = new URLSearchParams(font.hash.slice(1));
+  const url = new URL("", font);
+  const res = {
+    fontFamily: font.pathname.split("/").at(-1).split(/[.-]/)[0],
+    src: [`url("${url}")`],
+  };
+  const SHORTCUTS = {
+    family: "fontFamily",
+    style: "fontStyle",
+    weight: "fontWeight",
+    stretch: "fontStretch",
+    variant: "fontVariant",
+    featureSettings: "fontFeatureSettings",
+    variationSettings: "fontVariationSettings",
+  };
+  for (let [k, v] of sp.entries()) {
+    k = SHORTCUTS[k] ?? k;
+    v = v.replaceAll("+", " ");
+    if (k === "src")
+      res.src.push(`url("${new URL(v, url)}")`);
+    else if (k === "format" || k === "tech")
+      res.src.at(-1)[k] += ` ${k}(${v})`;
+    else
+      res[k] = v
   }
-  if (emoji)
-    family.push(...emoji);
-  if (family.length)
-    res.fontFamily = family.map(s => s.match(/[^a-z0-9_-]/gi) ? `"${s}"` : s).join(", ");
+  res.src = `/*${font}*/\nlocal("${res.fontFamily}"),\n` + res.src.join(",\n");
   return res;
 }
 
-//100%lob
-//$font("company orange",grotesque)
-//  <h1 $bold>
-//  <div $italic ...>
-//    <p   
-//    <p $font>  //resets to last known font
-
-//lob -1, but with 4 token exact reference for portal. $type(name
-//$typeface(flow,"company orange",grotesque,condensed,italic,-10deg,uppercase,spacing(-3),700)
-//$typeface(flow)
-//   $bold
-//      $type
-
-//$type(name,...args) => creates a type with the given name and properties.
-//$type(name) => uses a type and sets the font properties to the type's properties.
-
-const fontWithName = FIRST(
-  NameUnset,
-  fontImpl,
-  (nameNode, nameText, fontProps) => {
-    if (nameText === "unset") {
-      if (!fontProps?.fontFamily) {
-        throw new SyntaxError(`$Font(_, ...) requires at least one font family after underscore`);
+const font = TYPB(FONT_WORDS, {
+  fontSize: Length,
+  fontSizeAdjust: Fraction,
+  fontWeight: Integer,
+  Angle,
+}, {
+  fontFamily: t => FontFaceUrl(t) ?? Word(t) ?? Quote(t)
+}, obj => {
+  const res = {};
+  for (let [k, v] of Object.entries(obj)) {
+    if (k === "fontFamily") {
+      if (v.includes("emoji")) {
+        v.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+        v = v.filter(f => f !== "emoji");
       }
-      return fontProps;
-    }
-    if (fontProps?.fontFamily) {
-      throw new SyntaxError(`$Font(${nameText}, ...) cannot contain font families. Found font-family in arguments. Use $Font(_, fontFamily, ...) instead.`);
-    }
-    const res = {};
-    for (let [k, varKey] of FONT_DEFAULTS) {
-      res[k] = fontProps?.[k] ?? `var(--${nameText + varKey}, unset)`;
-    }
-    res.fontFamily = `var(--${nameText}FontFamily, ${nameText})`;
+      res.fontFamily = v
+        .map(f => f.fontFamily ?? f)
+        .map(f => f.replaceAll("+", " "))
+        .join(", ");
+      for (let face of v.filter(f => f instanceof Object))
+        res["@font-face " + face.src.split("\n")[0]] = face;
+    } else if (k === "Angle") res.fontStyle = "oblique " + v;
+    else if (v instanceof Object) Object.assign(res, v);
+    else res[k] = v;
+  }
+  return res;
+});
+
+const Font = FIRST(NameUnset, font,
+  (_, typeName, fontProps = {}) => {
+    const res = { ...FontDefaults, ...fontProps };
+    if (typeName !== "unset")
+      for (let k in res)
+        if (res[k] === FontDefaults[k])
+          res[k] = `var(--${typeName + k[0].toUpperCase() + k.slice(1)}, unset)`;
     return res;
   }
 );
 
-function Typeface({ args }) {
-  const typeName = extractName(args);
-  if (!typeName)
-    throw new SyntaxError(`first argument is not a name: "${args[0].text}"`);
-  const tmp = fontImpl({ name: typeName, args });
-  const res = {};
-  for (let [k, varKey] of FONT_DEFAULTS) {
-    if (tmp[k] !== undefined)
-      res[`--${typeName + varKey}`] = tmp[k];
+const Typeface = FIRST(Name, font,
+  (_, typeName, tmp = {}) => {
+    const res = {};
+    for (let k in FontDefaults)
+      if (tmp[k] !== undefined)
+        res[`--${typeName + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
+    for (let k in tmp)
+      if (k.startsWith("@"))
+        res[k] = tmp[k];
+    return res;
   }
-  for (let k in tmp)
-    if (k.startsWith("@"))
-      res[k] = tmp[k];
-  return res;
-}
+)
 
 export default {
-  font: fontImpl,
-  Font: Umbrella(fontDefaults2, fontWithName),
-
+  font,
+  Font: Umbrella(FontDefaults, Font),
   Typeface,
 
-  // function makeSingleDroplet(NAME, FUNC) {
-  //   return function ({ args }) {
-  //     if (args.length != 1)
-  //       throw new SyntaxError(`$${NAME} droplet only accepts one argument, but got ${args.length}: ${args.map(a => a.text).join(", ")}`);
-  //     const a = args[0];
-  //     const v = a.text == "unset" ? `var(--${NAME}, unset)` : FUNC(a)?.text;
-  //     if (v == null)
-  //       throw new SyntaxError(`Could not interpret $${NAME} argument: ${args[0].text}.`);
-  //     return { [NAME]: v };
-  //   }
-  // }
-
-  // fontSize: makeSingleDroplet("fontSize", isLength),
-  // // fontFamily: makeSingleDroplet("fontFamily", isBasic), //todo this should not be possible.
-  // // fontStyle: makeSingleDroplet("fontStyle", isBasic),
-  // // fontWeight: makeSingleDroplet("fontWeight", isBasic),
-  // // fontVariantCaps: makeSingleDroplet("fontVariantCaps", isBasic),
-  // fontWidth: makeSingleDroplet("fontWidth", isBasic),     //todo we need to make them return both props.
-  // fontStretch: makeSingleDroplet("fontStretch", isBasic), //todo we need to make them return both props.
-  // fontSynthesis: makeSingleDroplet("fontSynthesis", isBasic),
-  // fontSizeAdjust: makeSingleDroplet("fontSizeAdjust", isBasic),
-  // letterSpacing: makeSingleDroplet("letterSpacing", isBasic),
-
-
-  // //global font words
-  // ...SYNTHESIS_WORDS,
-  // uppercase: { textTransform: "uppercase" },
-  // lowercase: { textTransform: "lowercase" },
-  // capitalize: { textTransform: "capitalize" },
-  // fullWidth: { textTransform: "full-width" },
-  // noTextTransform: { textTransform: "none" },
-  // textTransform: undefined,
-
-  // italic: { fontStyle: "italic" },
-  // noStyle: { fontStyle: "normal" },
-  // bold: { fontWeight: "bold" },
-  // bolder: { fontWeight: "bolder" },
-  // lighter: { fontWeight: "lighter" },
-  // noWeight: { fontWeight: "normal" },
-  // normal: { fontStyle: "normal", fontWeight: "normal" },
-  // larger: { fontSize: "larger" },
-  // smaller: { fontSize: "smaller" },
-  // smallCaps: { fontVariantCaps: "small-caps" },
-  // allSmallCaps: { fontVariantCaps: "all-small-caps" },
-  // petiteCaps: { fontVariantCaps: "petite-caps" },
-  // allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
-  // unicase: { fontVariantCaps: "unicase" },
-  // titlingCaps: { fontVariantCaps: "titling-caps" },
-  // condensed: { fontStretch: "condensed" },
-  // expanded: { fontStretch: "expanded" },
-
-  // semiCondensed: { fontStretch: "semi-condensed", fontWidth: "semi-condensed" },
-  // semiExpanded: { fontStretch: "semi-expanded", fontWidth: "semi-expanded" },
-  // extraCondensed: { fontStretch: "extra-condensed", fontWidth: "extra-condensed" },
-  // extraExpanded: { fontStretch: "extra-expanded", fontWidth: "extra-expanded" },
-  // ultraCondensed: { fontStretch: "ultra-condensed", fontWidth: "ultra-condensed" },
-  // ultraExpanded: { fontStretch: "ultra-expanded", fontWidth: "ultra-expanded" },
-  // kerning: { fontKerning: "normal" },
-  // noKerning: { fontKerning: "none" },
-  // shy: { hyphens: "manual" },
-  // hyphens: { hyphens: "auto" },
-  // noHyphens: { hyphens: "none" },
+  fontFamily: undefined,
+  fontSize: undefined,
+  fontStyle: undefined,
+  fontWeight: undefined,
+  fontSizeAdjust: undefined,
+  letterSpacing: undefined,
+  textTransform: undefined,
+  fontWidth: undefined,
+  fontStretch: undefined,
+  fontVariantCaps: undefined,
+  fontSynthesis: undefined,
+  fontFeatureSettings: undefined,
+  fontVariationSettings: undefined,
+  WebkitFontSmoothing: undefined,
+  MozOsxFontSmoothing: undefined,
+  fontKerning: undefined,
+  hyphens: undefined,
 };

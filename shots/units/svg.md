@@ -51,7 +51,7 @@
   .\$stroke\(\#deepskyblue\,3px\,\.5\,bevel\,butt\,dasharray\(5px\,5\%\)\) {
     stroke: deepskyblue;
     stroke-width: 3px;
-    stroke-opacity: .5;
+    stroke-opacity: 0.5;
     stroke-linecap: butt;
     stroke-linejoin: bevel;
     stroke-dasharray: 5px, 5%;
@@ -115,7 +115,7 @@
 @layer containerDefault {
   .\$fill\(\#azure\,\.5\,evenodd\) {
     fill: azure;
-    fill-opacity: .5;
+    fill-opacity: 0.5;
     fill-rule: evenodd;
   }
 }
@@ -137,7 +137,7 @@
 @layer containerDefault {
   .\$Fill\(\#azure\,\.5\,evenodd\) {
     fill: azure;
-    fill-opacity: .5;
+    fill-opacity: 0.5;
     fill-rule: evenodd;
   }
 }
