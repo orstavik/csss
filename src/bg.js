@@ -41,42 +41,42 @@ for (let Inline of ["Left", "Right", "Center", ""]) {
     POSITIONS_FUNCS[name] = SINmax(dims.length, LengthPercent,
       (name, ar) => ({ backgroundPosition: [inline, ar[0], block, ar[1]].filter(Boolean).join(" ") }));
     AT_POSITION_FUNCS[atName] = SINmax(dims.length, LengthPercent,
-      (name, ar) => `at ${[inline, ar[0], block, ar[1]].filter(Boolean).join(" ")}`);
+      (name, ar) => "at " + [inline, ar[0], block, ar[1]].filter(Boolean).join(" "));
   }
 }
 
 function interpretColorSpace(a) {
   const res = {
-    hslLonger: "hsl longer hue",
-    hslShorter: "hsl shorter hue",
-    hslIncreasing: "hsl increasing hue",
-    hslDecreasing: "hsl decreasing hue",
-    hwbLonger: "hwb longer hue",
-    hwbShorter: "hwb shorter hue",
-    hwbIncreasing: "hwb increasing hue",
-    hwbDecreasing: "hwb decreasing hue",
-    lchLonger: "lch longer hue",
-    lchShorter: "lch shorter hue",
-    lchIncreasing: "lch increasing hue",
-    lchDecreasing: "lch decreasing hue",
-    oklchLonger: "oklch longer hue",
-    oklchShorter: "oklch shorter hue",
-    oklchIncreasing: "oklch increasing hue",
-    oklchDecreasing: "oklch decreasing hue",
-    oklab: "oklab",
-    lab: "lab",
-    lch: "lch",
-    srgb: "srgb",
-    srgbLinear: "srgb-linear",
-    displayP3: "display-p3",
-    a98Rgb: "a98-rgb",
-    prophotoRgb: "prophoto-rgb",
-    rec2020: "rec2020",
-    xyz: "xyz",
-    xyzD50: "xyz-d50",
-    xyzD65: "xyz-d65",
+    hslLonger: "in hsl longer hue",
+    hslShorter: "in hsl shorter hue",
+    hslIncreasing: "in hsl increasing hue",
+    hslDecreasing: "in hsl decreasing hue",
+    hwbLonger: "in hwb longer hue",
+    hwbShorter: "in hwb shorter hue",
+    hwbIncreasing: "in hwb increasing hue",
+    hwbDecreasing: "in hwb decreasing hue",
+    lchLonger: "in lch longer hue",
+    lchShorter: "in lch shorter hue",
+    lchIncreasing: "in lch increasing hue",
+    lchDecreasing: "in lch decreasing hue",
+    oklchLonger: "in oklch longer hue",
+    oklchShorter: "in oklch shorter hue",
+    oklchIncreasing: "in oklch increasing hue",
+    oklchDecreasing: "in oklch decreasing hue",
+    oklab: "in oklab",
+    lab: "in lab",
+    lch: "in lch",
+    srgb: "in srgb",
+    srgbLinear: "in srgb-linear",
+    displayP3: "in display-p3",
+    a98Rgb: "in a98-rgb",
+    prophotoRgb: "in prophoto-rgb",
+    rec2020: "in rec2020",
+    xyz: "in xyz",
+    xyzD50: "in xyz-d50",
+    xyzD65: "in xyz-d65",
   }[a.text];
-  if (res) return { text: "in " + res };
+  if (res) return { text: res };
 }
 
 const extractColorSpace = makeExtractor(interpretColorSpace);
@@ -111,7 +111,7 @@ function extractColorStops(args, lengthOrAngleExtractor) {
   throw new SyntaxError(`gradient() functions requires at least two colors, got ${colorStops.length}.`);
 }
 
-function radial(type, first, args) {
+function radial(type, first, { args }) {
   const len = extractLengthPercent(args);
   const len2 = extractLengthPercent(args);
   if (first === "circle" && len2)
@@ -123,7 +123,7 @@ function radial(type, first, args) {
   return `${type}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})`;
 }
 
-function conic(type, args) {
+function conic(type, { args }) {
   let angle = extractAngle(args);
   angle &&= "from " + angle;
   const at = extractAt(args);
@@ -133,60 +133,60 @@ function conic(type, args) {
   return `${type}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})`;
 }
 
-function linear(type, angle, args) {
-  angle ||= extractAngle(args);
+const linear = (TYPE, ANGLE) => ({ args }) => {
+  const angle = ANGLE || extractAngle(args);
   const colorSpace = extractColorSpace(args);
   const colorStops = extractColorStops(args, extractLengthPercent);
   const first = [angle, colorSpace].filter(Boolean).join(" ");
-  return `${type}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})`;
+  return { backgroundImage: `${TYPE}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})` };
 }
 
 const GRADIENTS = {
-  linear: e => ({ backgroundImage: linear("linear", "", e.args) }),
-  linearLeft: e => ({ backgroundImage: linear("linear", "to left", e.args) }),
-  linearRight: e => ({ backgroundImage: linear("linear", "to right", e.args) }),
-  linearUp: e => ({ backgroundImage: linear("linear", "to top", e.args) }),
-  linearDown: e => ({ backgroundImage: linear("linear", "to bottom", e.args) }),
-  linearUpLeft: e => ({ backgroundImage: linear("linear", "to top left", e.args) }),
-  linearUpRight: e => ({ backgroundImage: linear("linear", "to top right", e.args) }),
-  linearDownLeft: e => ({ backgroundImage: linear("linear", "to bottom left", e.args) }),
-  linearDownRight: e => ({ backgroundImage: linear("linear", "to bottom right", e.args) }),
-  repeatingLinear: e => ({ backgroundImage: linear("repeating-linear", "", e.args) }),
-  repeatingLinearLeft: e => ({ backgroundImage: linear("repeating-linear", "to left", e.args) }),
-  repeatingLinearRight: e => ({ backgroundImage: linear("repeating-linear", "to right", e.args) }),
-  repeatingLinearUp: e => ({ backgroundImage: linear("repeating-linear", "to top", e.args) }),
-  repeatingLinearDown: e => ({ backgroundImage: linear("repeating-linear", "to bottom", e.args) }),
-  repeatingLinearUpLeft: e => ({ backgroundImage: linear("repeating-linear", "to top left", e.args) }),
-  repeatingLinearUpRight: e => ({ backgroundImage: linear("repeating-linear", "to top right", e.args) }),
-  repeatingLinearDownLeft: e => ({ backgroundImage: linear("repeating-linear", "to bottom left", e.args) }),
-  repeatingLinearDownRight: e => ({ backgroundImage: linear("repeating-linear", "to bottom right", e.args) }),
+  linear: linear("linear", ""),
+  linearLeft: linear("linear", "to left"),
+  linearRight: linear("linear", "to right"),
+  linearUp: linear("linear", "to top"),
+  linearDown: linear("linear", "to bottom"),
+  linearUpLeft: linear("linear", "to top left"),
+  linearUpRight: linear("linear", "to top right"),
+  linearDownLeft: linear("linear", "to bottom left"),
+  linearDownRight: linear("linear", "to bottom right"),
+  repeatingLinear: linear("repeating-linear", ""),
+  repeatingLinearLeft: linear("repeating-linear", "to left"),
+  repeatingLinearRight: linear("repeating-linear", "to right"),
+  repeatingLinearUp: linear("repeating-linear", "to top"),
+  repeatingLinearDown: linear("repeating-linear", "to bottom"),
+  repeatingLinearUpLeft: linear("repeating-linear", "to top left"),
+  repeatingLinearUpRight: linear("repeating-linear", "to top right"),
+  repeatingLinearDownLeft: linear("repeating-linear", "to bottom left"),
+  repeatingLinearDownRight: linear("repeating-linear", "to bottom right"),
 
-  radial: e => ({ backgroundImage: radial("radial", "", e.args) }),
-  ellipse: e => ({ backgroundImage: radial("radial", "", e.args) }),
-  ellipseFarthestCorner: e => ({ backgroundImage: radial("radial", "", e.args) }),
-  ellipseFarthestSide: e => ({ backgroundImage: radial("radial", "farthest-side", e.args) }),
-  ellipseClosestCorner: e => ({ backgroundImage: radial("radial", "closest-corner", e.args) }),
-  ellipseClosestSide: e => ({ backgroundImage: radial("radial", "closest-side", e.args) }),
-  circle: e => ({ backgroundImage: radial("radial", "circle", e.args) }),
-  circleFarthestCorner: e => ({ backgroundImage: radial("radial", "circle", e.args) }),
-  circleFarthestSide: e => ({ backgroundImage: radial("radial", "circle farthest-side", e.args) }),
-  circleClosestCorner: e => ({ backgroundImage: radial("radial", "circle closest-corner", e.args) }),
-  circleClosestSide: e => ({ backgroundImage: radial("radial", "circle closest-side", e.args) }),
+  radial: e => ({ backgroundImage: radial("radial", "", e) }),
+  ellipse: e => ({ backgroundImage: radial("radial", "", e) }),
+  ellipseFarthestCorner: e => ({ backgroundImage: radial("radial", "", e) }),
+  ellipseFarthestSide: e => ({ backgroundImage: radial("radial", "farthest-side", e) }),
+  ellipseClosestCorner: e => ({ backgroundImage: radial("radial", "closest-corner", e) }),
+  ellipseClosestSide: e => ({ backgroundImage: radial("radial", "closest-side", e) }),
+  circle: e => ({ backgroundImage: radial("radial", "circle", e) }),
+  circleFarthestCorner: e => ({ backgroundImage: radial("radial", "circle", e) }),
+  circleFarthestSide: e => ({ backgroundImage: radial("radial", "circle farthest-side", e) }),
+  circleClosestCorner: e => ({ backgroundImage: radial("radial", "circle closest-corner", e) }),
+  circleClosestSide: e => ({ backgroundImage: radial("radial", "circle closest-side", e) }),
 
-  repeatingRadial: e => ({ backgroundImage: radial("repeating-radial", "", e.args) }),
-  repeatingEllipse: e => ({ backgroundImage: radial("repeating-radial", "ellipse", e.args) }),
-  repeatingEllipseFarthestCorner: e => ({ backgroundImage: radial("repeating-radial", "", e.args) }),
-  repeatingEllipseFarthestSide: e => ({ backgroundImage: radial("repeating-radial", "farthest-side", e.args) }),
-  repeatingEllipseClosestCorner: e => ({ backgroundImage: radial("repeating-radial", "closest-corner", e.args) }),
-  repeatingEllipseClosestSide: e => ({ backgroundImage: radial("repeating-radial", "closest-side", e.args) }),
-  repeatingCircle: e => ({ backgroundImage: radial("repeating-radial", "circle", e.args) }),
-  repeatingCircleFarthestCorner: e => ({ backgroundImage: radial("repeating-radial", "circle", e.args) }),
-  repeatingCircleFarthestSide: e => ({ backgroundImage: radial("repeating-radial", "circle farthest-side", e.args) }),
-  repeatingCircleClosestCorner: e => ({ backgroundImage: radial("repeating-radial", "circle closest-corner", e.args) }),
-  repeatingCircleClosestSide: e => ({ backgroundImage: radial("repeating-radial", "circle closest-side", e.args) }),
+  repeatingRadial: e => ({ backgroundImage: radial("repeating-radial", "", e) }),
+  repeatingEllipse: e => ({ backgroundImage: radial("repeating-radial", "ellipse", e) }),
+  repeatingEllipseFarthestCorner: e => ({ backgroundImage: radial("repeating-radial", "", e) }),
+  repeatingEllipseFarthestSide: e => ({ backgroundImage: radial("repeating-radial", "farthest-side", e) }),
+  repeatingEllipseClosestCorner: e => ({ backgroundImage: radial("repeating-radial", "closest-corner", e) }),
+  repeatingEllipseClosestSide: e => ({ backgroundImage: radial("repeating-radial", "closest-side", e) }),
+  repeatingCircle: e => ({ backgroundImage: radial("repeating-radial", "circle", e) }),
+  repeatingCircleFarthestCorner: e => ({ backgroundImage: radial("repeating-radial", "circle", e) }),
+  repeatingCircleFarthestSide: e => ({ backgroundImage: radial("repeating-radial", "circle farthest-side", e) }),
+  repeatingCircleClosestCorner: e => ({ backgroundImage: radial("repeating-radial", "circle closest-corner", e) }),
+  repeatingCircleClosestSide: e => ({ backgroundImage: radial("repeating-radial", "circle closest-side", e) }),
 
-  conic: e => ({ backgroundImage: conic("conic", e.args) }),
-  repeatingConic: e => ({ backgroundImage: conic("repeating-conic", e.args) }),
+  conic: e => ({ backgroundImage: conic("conic", e) }),
+  repeatingConic: e => ({ backgroundImage: conic("repeating-conic", e) }),
 };
 
 
