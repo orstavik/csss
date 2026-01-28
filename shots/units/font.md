@@ -65,7 +65,7 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 ```css
 @layer containerDefault {
   .\$Font\(body\) {
-    font-family: var(--bodyFontFamily, body);
+    font-family: var(--bodyFontFamily, unset);
     font-size: var(--bodyFontSize, unset);
     font-style: var(--bodyFontStyle, unset);
     font-weight: var(--bodyFontWeight, unset);
@@ -73,7 +73,7 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
     letter-spacing: var(--bodyLetterSpacing, unset);
     text-transform: var(--bodyTextTransform, unset);
     font-width: var(--bodyFontWidth, unset);
-    font-stretch: var(--bodyFontWidth, unset);
+    font-stretch: var(--bodyFontStretch, unset);
     font-variant-caps: var(--bodyFontVariantCaps, unset);
     font-synthesis: var(--bodyFontSynthesis, unset);
     font-feature-settings: var(--bodyFontFeatureSettings, unset);

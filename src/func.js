@@ -805,6 +805,41 @@ export const Word = a => isWord(a)?.text;
 export const Basic = a => isBasic(a)?.text; //todo this should be replaced with something more precise in the HO functions
 export const Repeat = a => isRepeat(a)?.text;
 export const Span = a => isSpan(a)?.text;
+// export const EsUrl = a => {
+//   //if i have a quote that starts with /^(https?:|([.]{1,2})\/\/|data:)/i;
+//   //or if i have a url(),
+//   //then i will take that body and put into a new RelativeUrl object.
+//   let body;
+//   if(a.name === "url") {
+//     if(a.args.length != 1) throw new SyntaxError("url() requires exactly one argument.");
+//     body = a.args[0];
+//     const relative = body.match(/^[.]*\//)?.[0];
+//     if(relative) {
+//       const dots = relative.slice(0, -1);
+//       const base = "http://n/" + relative
+//       return dots + new URL(body, base).pathname;
+//     }
+//   }
+//   if (a.kind === "QUOTE")
+//     if(a = a.text.match()
+//     return { type: "url", text: `url(${a.text})` };
+//   if (a.name === "url") {
+//     if (a.args.length != 1) throw new SyntaxError("url() requires exactly one argument.");
+//     return { type: "url", text: `url(${isBasic(a.args[0]).text})` };
+//   }
+//   const body = a.name === "url" ? 
+//   if(a.name === "url")
+
+//   function RelativeUrl(src, baseIsh) {
+//   const relative = baseIsh.match(/^[.]*\//)?.[0];
+//   if (!relative)
+//     return new URL(src, baseIsh).url;
+//   const dots = relative.slice(0, -1);
+//   const base = "http://n/" + relative
+//   return dots + new URL(src, base).pathname;
+// }
+
+// }
 
 export const AnglePercent = a => Angle(a) ?? Percent(a);
 export const LengthUnset = a => Length(a) ?? Unset(a);

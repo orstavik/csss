@@ -1,4 +1,4 @@
-import { extractName, Quote, Angle, Integer, Fraction, Url, extractUrl, isFraction, isInteger, isLength, Length, isAngle, isQuote, SIN, Percent, Basic, FIRST, Umbrella, Word, NameUnset, SINmax, TYPB } from "./func.js";
+import { Quote, Angle, Integer, Fraction, Url, Length, SIN, Percent, Basic, FIRST, Umbrella, Word, Name, NameUnset, SINmax, TYPB } from "./func.js";
 
 /**
  * Interprets a relative URL against an absolute URL or a relative URL.
@@ -8,7 +8,7 @@ import { extractName, Quote, Angle, Integer, Fraction, Url, extractUrl, isFracti
  * @returns {string} an absolute url if the base was absolute, or a relative-to-the-relative url.
  */
 function RelativeUrl(src, baseIsh) {
-  const relative = baseIsh.match(/^[.]*\//)[0];
+  const relative = baseIsh.match(/^[.]*\//)?.[0];
   if (!relative)
     return new URL(src, baseIsh).url;
   const dots = relative.slice(0, -1);
@@ -16,28 +16,7 @@ function RelativeUrl(src, baseIsh) {
   return dots + new URL(src, base).pathname;
 }
 
-//The $font umbrella and $typeface cloud regulate this property cluster. $typeface also regulates @font-face{}.
-const FONT_DEFAULTS = Object.entries({
-  fontFamily: "FontFamily",
-  fontSize: "FontSize",
-  fontStyle: "FontStyle",
-  fontWeight: "FontWeight",
-  fontSizeAdjust: "FontSizeAdjust",
-  letterSpacing: "LetterSpacing",
-  textTransform: "TextTransform",
-  fontWidth: "FontWidth",
-  fontStretch: "FontWidth",  // fontStretch uses the same CSS variable as fontWidth
-  fontVariantCaps: "FontVariantCaps",
-  fontSynthesis: "FontSynthesis",
-  fontFeatureSettings: "FontFeatureSettings",
-  fontVariationSettings: "FontVariationSettings",
-  WebkitFontSmoothing: "WebkitFontSmoothing",
-  MozOsxFontSmoothing: "MozOsxFontSmoothing",
-  fontKerning: "FontKerning",
-  hyphens: "Hyphens",
-});
-
-const fontDefaults2 = {
+const FontDefaults = {
   fontFamily: "unset",
   fontSize: "unset",
   fontStyle: "unset",
@@ -56,8 +35,6 @@ const fontDefaults2 = {
   fontKerning: "unset",
   hyphens: "unset",
 };
-
-//$typeface(comic,"MS+Comic+Sans",face("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2"),xxs,semiExpanded,italic,bolder)
 
 /**
  * TextTransform is a semi inherited css property (inherits over inline elements, but not block elements).
@@ -151,58 +128,11 @@ const FONT_WORDS = {
   adjust: SIN(Basic, (n, v) => ({ fontSizeAdjust: v })),
 };
 
-function fontFaceProcess(face, fontFamily) {
-  return {
-    ...face,
-    fontFamily: fontFamily,
-    src: `local(${fontFamily}), ${face.src}`
-  };
-}
-
-//todo it is a problem that we are passing in the fontFaceName here.. This means that we can't do the $font() as it would need a face thing..
-//todo the face(...) should only be allowed in the Umbrella structure. We need to extract the face() same way as we do with the $animation functions.
-function fontImpl({ name, args }) {
-  const fontFaceName = name;
-  let res = {}, family = [], emoji;
-  for (let a of args) {
-    let a2;
-    if (a.text == "emoji")
-      emoji = ['Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'];
-    else if (a2 = isQuote(a))
-      family.push(a2.text.slice(1, -1).replaceAll("+", " "));
-    else if (a2 = isLength(a))
-      res.fontSize = a2.text;
-    else if (a2 = isAngle(a))
-      res.fontStyle = "oblique " + a2.text;
-    else if (a2 = FONT_WORDS[a.text] ?? FONT_WORDS[a.name]?.(a))
-      Object.assign(res, a2);
-    else if (a.kind == "WORD")
-      family.push(a.text);
-    else if (a2 = isInteger(a))
-      res.fontWeight = a2.num;
-    else if (a2 = isFraction(a))
-      res.fontSizeAdjust = a2.num;
-    else if (a.name == "face" && (a2 = face(a))) {
-      if (fontFaceName)
-        a2 = fontFaceProcess(a2, fontFaceName);
-      family.push(a2.fontFamily);
-      res[`@font-face /*${a2.fontFamily} ${a2.fontStyle}*/`] = a2;
-    } else
-      throw new SyntaxError(`Unrecognized $font argument: ${a}`);
-  }
-  if (emoji)
-    family.push(...emoji);
-  if (family.length)
-    res.fontFamily = family.map(s => s.match(/[^a-z0-9_-]/gi) ? `"${s}"` : s).join(", ");
-  return res;
-}
-
 const FontFaceShortNames = {
   family: "fontFamily",
   style: "fontStyle",
   weight: "fontWeight",
   stretch: "fontStretch",
-  unicodeRange: "unicodeRange",
   variant: "fontVariant",
   featureSettings: "fontFeatureSettings",
   variationSettings: "fontVariationSettings",
@@ -218,11 +148,13 @@ const FontFaceShortNames = {
 // }
 // becomes 
 // "./trickster-COLRv1.otf#family=Trickster&format=opentype&tech=color-COLRv1&src=trickster-outline.otf&format=opentype&src=trickster-outline.woff&format=woff"
-function processFace(font) {
+function convertToFace(font) {
   if (font.startsWith("url("))
     font = font.slice(5, -1);
   if (font[0] == '"' || font[0] == "'")
     font = font.slice(1, -1);
+  if (!font.match(/^([.]{1,2}\/|[a-z]*\:\/\/)/i))
+    return font;
 
   const url = new URL(font);
   const hash = url.hash.slice(1);
@@ -256,26 +188,6 @@ function processFace(font) {
   return res;
 }
 
-const fixFontFamily = fonts => {
-  const res = [], faces = [];
-  let emoji;
-  for (let f of fonts) {
-    if (f === "emoji")
-      emoji = true;
-    else if (f.match(/^["']([.]{1,2}\/|[a-z]*\:\/\/)/i)) {
-      const face = processFace(f);
-      res.push(face.fontFamily)
-      //todo we don't need the comment at this level? we can do that outside in the caching space?
-      faces.push({ [`@font-face /*${f}*/`]: face });
-    } else {
-      res.push(f.replaceAll("+", " "));
-    }
-  }
-  if (emoji)
-    res.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
-  return { faces, fonts: res };
-}
-
 const font = TYPB(FONT_WORDS, {
   fontSize: Length,
   fontSizeAdjust: Fraction,
@@ -287,9 +199,17 @@ const font = TYPB(FONT_WORDS, {
   const res = {};
   for (let [k, v] of Object.entries(obj)) {
     if (k === "fontFamily") {
-      const { faces, fonts } = fixFontFamily(v);
-      res.fontFamily = fonts.join(", ");
-      Object.assign(res, ...faces);
+      if (v.includes("emoji")) {
+        v.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+        v = v.filter(f => f !== "emoji");
+      }
+      const fontAndFaces = v.map(convertToFace);
+      res.fontFamily = fontAndFaces
+        .map(f => f.fontFamily ?? f)
+        .map(f => f.replaceAll("+", " "))
+        .map(f => !f.match(/^[a-z0-9_-]+$/i) ? `"${f}"` : f)
+        .join(", ");
+      fontAndFaces.forEach((f, i) => f.fontFamily && (res[`@font-face /*${v[i]}*/`] = f));
     } else if (k === "Angle") res.fontStyle = "oblique " + v;
     else if (v instanceof Object) Object.assign(res, v);
     else res[k] = v;
@@ -297,38 +217,23 @@ const font = TYPB(FONT_WORDS, {
   return res;
 });
 
-const fontWithName = FIRST(
-  NameUnset,
-  font,
-  (nameNode, nameText, fontProps = {}) => {
-    //todo both of these rules are a little bit unnecessary? There are usecases for both, no?
-    if (nameText === "unset" && !fontProps.fontFamily)
-      throw new SyntaxError(`$Font(_, ...) requires a font family.`);
-    if (nameText !== "unset" && fontProps.fontFamily)
-      throw new SyntaxError(`$Font(${nameText}, ...) refering to a $Type(${nameText},...) cannot specify a fontFamily.`);
-
-    if (nameText === "unset")
-      return fontProps;
-    const res = {};
-    for (let [k, varKey] of FONT_DEFAULTS)
-      res[k] = fontProps?.[k] ?? `var(--${nameText + varKey}, unset)`;
-    res.fontFamily = `var(--${nameText}FontFamily, ${nameText})`;
+const Font = FIRST(NameUnset, font,
+  (_, typeName, fontProps = {}) => {
+    const res = { ...FontDefaults, ...fontProps };
+    if (typeName !== "unset")
+      for (let k in res)
+        if (res[k] === FontDefaults[k])
+          res[k] = `var(--${typeName + k[0].toUpperCase() + k.slice(1)}, unset)`;
     return res;
   }
 );
 
-const Typeface = FIRST(
-  NameUnset,
-  font,
-  (nameNode, typeName, tmp = {}) => {
-    //todo both of these rules are a little bit unnecessary? There are usecases for both, no?
-    if (typeName === "unset")
-      throw new SyntaxError(`$TypeFace must have a name first argument: "${typeName}"`);
+const Typeface = FIRST(Name, font,
+  (_, typeName, tmp = {}) => {
     const res = {};
-    for (let [k, varKey] of FONT_DEFAULTS) {
+    for (let k in FontDefaults)
       if (tmp[k] !== undefined)
-        res[`--${typeName + varKey}`] = tmp[k];
-    }
+        res[`--${typeName + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
     for (let k in tmp)
       if (k.startsWith("@"))
         res[k] = tmp[k];
@@ -338,9 +243,9 @@ const Typeface = FIRST(
 
 export default {
   font,
-  Font: Umbrella(fontDefaults2, fontWithName),
-
+  Font: Umbrella(FontDefaults, Font),
   Typeface,
+
   fontFamily: undefined,
   fontSize: undefined,
   fontStyle: undefined,
