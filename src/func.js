@@ -699,7 +699,7 @@ export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
       else
         throw BadArgument(name, args, i);
     }
-    return post(res);
+    return post ? post(res) : res;
   };
 };
 

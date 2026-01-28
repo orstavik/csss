@@ -1,5 +1,5 @@
 //todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
-import { extractLength, extractColor, extractName, extractRadian, isLength, isNumber } from "./func.js";
+import { Length, Color, TYPB, extractColor, extractName, extractRadian, isLength, isNumber } from "./func.js";
 
 // Shadows are handled similarly to transitions. Or even more sematically regulated.
 // There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 
@@ -35,30 +35,14 @@ function round(num, places = 2) {
   return Math.round(num * m) / m;
 }
 
-function parseAbsoluteShadowArgs3(args) {
-  const x = extractLength(args);
-  if (!x)
-    return;
-  const y = extractLength(args);
-  const blur = extractLength(args);
-  const color = extractColor(args) ?? `var(--shadowColor, #0003)`;
-  if (args.length)
-    throw new TypeError("Unknown absolute $shadow() argument: " + args[0].text);
-  return { x, y, blur, color };
-}
-
-function parseAbsoluteShadowArgs4(args) {
-  const x = extractLength(args);
-  if (!x)
-    return;
-  const y = extractLength(args);
-  const blur = extractLength(args);
-  const spread = extractLength(args);
-  const color = extractColor(args) ?? `var(--shadowColor, #0003)`;
-  if (args.length)
-    throw new TypeError("Unknown absolute $shadow() argument: " + args[0].text);
-  return { x, y, blur, spread, color };
-}
+const IgnoreError = cb => (...args) => { try { return cb(...args); } catch (e) { } }
+const parseAbsoluteShadowArgs = IgnoreError(TYPB({}, {
+  x: Length,
+  y: Length,
+  blur: Length,
+  spread: Length,
+  color: Color,
+}, {}));
 
 function parseNamedShadowArgs(args) {
   const name = extractName(args);
@@ -89,18 +73,18 @@ function parseNamedShadowArgs(args) {
 }
 
 function boxShadow(args) {
-  const { x, y, blur, spread, color } = parseAbsoluteShadowArgs4(args) ?? parseNamedShadowArgs(args);
+  const { x, y, blur, spread, color } = parseAbsoluteShadowArgs({ args }) ?? parseNamedShadowArgs(args);
   return [x, y, blur, spread, color].filter(Boolean).join(" ");
 }
 function textDropShadow(args) {
-  const { x, y, blur, color } = parseAbsoluteShadowArgs3(args) ?? parseNamedShadowArgs(args);
+  const { x, y, blur, color } = parseAbsoluteShadowArgs({ args }) ?? parseNamedShadowArgs(args);
   return [x, y, blur, color].filter(Boolean).join(" ");
 }
 
 export default {
-  boxShadowInset: ({args}) => ({ boxShadow: "inset " + boxShadow(args) }),
-  boxShadow: ({args}) => ({ boxShadow: boxShadow(args) }),
-  textShadow: ({args}) => ({ textShadow: textDropShadow(args) }),
+  boxShadowInset: ({ args }) => ({ boxShadow: "inset " + boxShadow(args) }),
+  boxShadow: ({ args }) => ({ boxShadow: boxShadow(args) }),
+  textShadow: ({ args }) => ({ textShadow: textDropShadow(args) }),
   dropShadow: textDropShadow,
   noBoxShadow: { boxShadow: "none" },
   noTextShadow: { textShadow: "none" },
