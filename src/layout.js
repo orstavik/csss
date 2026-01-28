@@ -1,4 +1,4 @@
-import { RepeatBasic, SpanBasic, isBasic, Basic, toLogicalFour, TYPB, SIN, NumberInterpreter, Umbrella, FIRST, Length, LengthPercentNumber, SINmax, LengthPercentUnset } from "./func.js";
+import { RepeatBasic, SpanBasic, isBasic, Basic, LogicalFour, LengthPercent, TYPB, SIN, NumberInterpreter, Umbrella, FIRST, Length, LengthPercentNumber, SINmax, LengthPercentUnset } from "./func.js";
 
 function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
@@ -113,8 +113,8 @@ const OVERFLOWS = (_ => {
 })();
 
 const CONTAINER = {
-  padding: ({ args }) => toLogicalFour("padding", args),
-  scrollPadding: ({ args }) => toLogicalFour("scroll-padding", args),
+  padding: LogicalFour("padding", LengthPercent),
+  scrollPadding: LogicalFour("scroll-padding", LengthPercent),
   breakWord: { overflowWrap: "break-word" },
   breakAnywhere: { overflowWrap: "anywhere" },
   breakAll: { wordBreak: "break-all" },
@@ -124,8 +124,8 @@ const CONTAINER = {
 };
 
 const ITEM = {
-  margin: ({ args }) => toLogicalFour("margin", args),
-  scrollMargin: ({ args }) => toLogicalFour("scroll-margin", args),
+  margin: LogicalFour("margin", LengthPercent),
+  scrollMargin: LogicalFour("scroll-margin", LengthPercent),
   inlineSize: toSize.bind(null, "inlineSize"), //todo should we block this? is size(10px) enough?
   blockSize: toSize.bind(null, "blockSize"),   //todo should we block this? is size(_,10px) enough?
   size,

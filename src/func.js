@@ -341,12 +341,20 @@ const COLORS = {
   mixOklchDecreasing: args => cssColorMix([{ kind: "WORD", text: "oklch decreasing hue" }, ...args]),
 };
 
-export function toLogicalFour(NAME, ar) {
-  ar = ar.map(isBasic).map(a => a.text);
-  return ar.length === 1 ? { [NAME]: ar[0] } :
+export const LogicalFour = (NAME, INTERPRETER) => ({ args }) => {
+  if (args.length > 4)
+    throw new SyntaxError(`${NAME}() takes max 4 arguments, got ${args.length}.`);
+  if (!args.length)
+    return { [NAME]: "none" };
+  args = args.map((a, i) => {
+    if (a = INTERPRETER(a))
+      return a;
+    throw BadArgument(NAME, args, i, INTERPRETER.name);
+  });
+  return args.length === 1 ? { [NAME]: args[0] } :
     {
-      [NAME + "Block"]: ar[2] != null && ar[2] != ar[0] ? ar[0] + " " + ar[2] : ar[0],
-      [NAME + "Inline"]: ar[3] != null && ar[3] != ar[1] ? (ar[1] ?? ar[0]) + " " + ar[3] : ar[1] ?? ar[0],
+      [NAME + "Block"]: args[2] != null && args[2] != args[0] ? args[0] + " " + args[2] : args[0],
+      [NAME + "Inline"]: args[3] != null && args[3] != args[1] ? (args[1] ?? args[0]) + " " + args[3] : args[1] ?? args[0],
     };
 }
 // const NativeCssScopeUrl = (...args) => `url(${args.join(" ")})`;
@@ -602,32 +610,8 @@ const NativeCssProperties = Object.fromEntries(Object.entries(NativeCss.supporte
   return [camel, interpretNativeValue];
 }));
 
-//subdue scopes (font,fontStyle,fontWeight,... -> font { style,weight,... })
-//longest name first;
-// const keys = Object.keys(NativeCssProperties).sort((a, b) => b.length - a.length);
-// for (let k of keys)
-//   for (let s of keys.filter(x => x.startsWith(k) && x != k)) {
-//     // if (s.startsWith("border"))
-//     //   debugger
-//     NativeCssProperties[k].scope[s.slice(k.length)] = NativeCssProperties[s];
-//     delete NativeCssProperties[s];
-//   }
-
-//todo ANIMATION!!!
-// NativeCssProperties.animation.scope = ANIMATION_FUNCTIONS;
-// const ANIMATION_FUNCTIONS = {
-//   linear: (...args) => `linear(${args[0]},${args.length > 2 ? args.slice(1, -1).join(" ") + "," : ""}${args[args.length - 1]})`,
-//   ease: (...args) => `ease(${args.join(",")})`,
-//   steps: (...args) => `steps(${args.join(",")})`,
-//   cubicBezier: (...args) => `cubic-bezier(${args.join(",")})`,
-// };
-
-const UnpackedNativeCssProperties = {
-  ...NativeCssProperties,
-};
-
 export default {
-  ...UnpackedNativeCssProperties,
+  ...NativeCssProperties,
   em: NativeCssProperties.fontSize,
 };
 
@@ -679,6 +663,7 @@ export const SIN = (interpreter, post) => ({ args, name }) => {
   if (args.length != 1)
     throw new SyntaxError(`${name} requires 1 argument, got ${args.length} arguments.`);
   const v = interpreter(args[0]);
+  if (v == null) throw BadArgument(name, args, 0, interpreter.name);
   return post ? post(name, v) : v;
 };
 
