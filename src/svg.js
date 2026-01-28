@@ -1,5 +1,5 @@
 import {
-  TYPB, Umbrella, SINmax, SIN, SEQopt, CUSTOM_WORD,
+  TYPB, Umbrella, SINmax, SIN, CUSTOM_WORD,
   extractName, extractUrl, extractColor,
   isNumber, isBasic,
   LengthPercent, LengthPercentNumber, NumberInterpreter, ColorUrl, Length, Url, UrlUnset,
