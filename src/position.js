@@ -1,4 +1,4 @@
-import { CanBeEmpty, LengthPercent, WORD_IN_TABLE, TYPB } from "./func.js";
+import { LengthPercent, WORD_IN_TABLE, TYPB, Umbrella } from "./func.js";
 
 const ORIGINS = {
   left: ["left"],
@@ -36,8 +36,8 @@ const Position = TYPB({}, {
 }, {}, processPosition);
 
 export default {
-  absolute: CanBeEmpty({ position: "absolute" }, Position),
-  relative: CanBeEmpty({ position: "relative" }, Position),
-  fixed: CanBeEmpty({ position: "fixed" }, Position),
-  sticky: CanBeEmpty({ position: "sticky" }, Position),
+  absolute: Umbrella({ position: "absolute" }, Position),
+  relative: Umbrella({ position: "relative" }, Position),
+  fixed: Umbrella({ position: "fixed" }, Position),
+  sticky: Umbrella({ position: "sticky" }, Position),
 };

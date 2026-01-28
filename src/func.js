@@ -672,29 +672,8 @@ export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
   };
 };
 
-// export const UMBRELLA = (SCHEMA, POST) => {
-//   const umbrella = Object.fromEntries(Object.entries(SCHEMA).map(([k]) => [k, "unset"]));
-//   return ({ args, name }) => {
-//     if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`);
-//     const res = args.reduce((res, a, i) => {
-//       for (let k in SCHEMA) {
-//         if (res[k] !== "unset") continue;
-//         const v = SCHEMA[k](a);
-//         if (v == null) continue;
-//         if (v instanceof Object)
-//           return Object.assign(res, v);
-//         res[k] = v;
-//         return res;
-//       }
-//       throw BadArgument(name, args, i);
-//     }, { ...umbrella });
-//     return POST ? POST(res) : res;
-//   };
-// };
-
-export const Umbrella = (BASE, CB) => exp => Object.assign({}, BASE, CB(exp));
 export const CHECKNAME = (NAME, CB) => exp => NAME === exp.name ? CB(exp) : undefined;
-export const CanBeEmpty = (BASE, CB) => exp => Object.assign({}, BASE, exp.args?.length ? CB(exp) : undefined);
+export const Umbrella = (BASE, CB) => exp => Object.assign({}, BASE, exp.args?.length ? CB(exp) : undefined);
 
 export const SIN = (interpreter, post) => ({ args, name }) => {
   if (args.length != 1)
