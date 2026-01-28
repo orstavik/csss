@@ -14,6 +14,18 @@ import {
   SINmax,
 } from "./func.js";
 
+const BackgroundDefaults = {
+  background: "none",
+  backgroundImage: undefined,
+  backgroundPosition: "0% 0%",
+  backgroundRepeat: "repeat",
+  backgroundSize: "auto",
+  backgroundOrigin: "padding-box",
+  backgroundClip: "border-box",
+  backgroundBlendMode: "normal",
+  backgroundAttachment: "scroll",
+};
+
 const POSITION_WORDS = {};
 const POSITIONS_FUNCS = {
   position: SINmax(2, LengthPercent, (name, ar) => ({ backgroundPosition: ar.join(" ") })),
@@ -251,17 +263,7 @@ const bg = TYPB({ ...BACKGROUND_WORDS, ...BACKGROUND_FUNCS }, {}, { Color, Url }
     //todo check that we only get one url //todo this should be isImage
     res.Url &&= { backgroundImage: res.Url[0] }
     //todo check that we only define backgroundImage once, and all the other properties just once
-    return Object.assign({
-      background: "none",
-      backgroundImage: undefined,
-      backgroundPosition: "0% 0%",
-      backgroundRepeat: "repeat",
-      backgroundSize: "auto",
-      backgroundOrigin: "padding-box",
-      backgroundClip: "border-box",
-      backgroundBlendMode: "normal",
-      backgroundAttachment: "scroll",
-    }, ...Object.values(res));
+    return Object.assign({}, BackgroundDefaults, ...Object.values(res));
   }
 );
 
