@@ -1,7 +1,7 @@
 //todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
-import { Length, Color, TYPB, extractColor, extractName, extractRadian, isLength, isNumber } from "./func.js";
+import { Length, Color, TYPB, isLengthNumber, WORD_IN_TABLE, Radian } from "./func.js";
 
-// Shadows are handled similarly to transitions. Or even more sematically regulated.
+// Shadows are handled similarly to transitions. Or even more semantically regulated.
 // There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 
 // Then in the $shadow(shade,angle,length,color?) to use it.
 // If the length is passed in as 
@@ -15,8 +15,8 @@ import { Length, Color, TYPB, extractColor, extractName, extractRadian, isLength
 // Ie. elements that have the same shadow in lightmode, might have different/no shadows in darkmode, and vice versa.
 
 const SHADES = {
-  ambient: { l: 0, b: 1.5, s: 1.25 },
-  edgeGlow: { l: 0, b: 3, s: -.5 },
+  ambient: { l: 1, b: 1.5, s: 1.25 },
+  edgeGlow: { l: 1, b: 3, s: -.5 },
   soft: { l: 1, b: 1, s: 0 },
   normal: { l: 1, b: 1.5, s: 0.75 },
   medium: { l: 1.5, b: 2, s: 1 },
@@ -30,9 +30,18 @@ const SHADES = {
   delicate: { l: 0.07, b: 0.15, s: 0.15 },
 };
 
-function round(num, places = 2) {
-  const m = 10 ** places;
-  return Math.round(num * m) / m;
+//default angle 135deg
+// default length is plain number? 5 is "normal" => 0.25rem. 1 is very small => 0.05rem. 10 is large => 0.5rem.
+function calculateShadow({ type, angle = Math.PI * .75, length = { num: 5 }, color = "var(--shadowColor, #0003)" }) {
+  if (!type) throw new SyntaxError("Missing shadow name: " + Object.keys(SHADES).join("|"));
+  if (!length.unit) { length.num /= 20; length.unit = "rem"; }
+  const { num, unit } = length;
+  const round = (num, places = 2, m = 10 ** places) => Math.round(num * m) / m;
+  const x = -round(Math.cos(angle) * type.l * num) + unit;
+  const y = round(Math.sin(angle) * type.l * num) + unit;
+  const blur = round(type.b * num) + unit;
+  const spread = round(type.s * num) + unit;
+  return { x, y, blur, spread, color };
 }
 
 const IgnoreError = cb => (...args) => { try { return cb(...args); } catch (e) { } }
@@ -44,47 +53,26 @@ const parseAbsoluteShadowArgs = IgnoreError(TYPB({}, {
   color: Color,
 }, {}));
 
-function parseNamedShadowArgs(args) {
-  const name = extractName(args);
-  if (!name)
-    throw `Unknown $shadow() argument: ${args[0].text}`;;
-  if (!(name in SHADES))
-    throw `Unknown shadow type: ${name}. Use one of: ${Object.keys(SHADES).join(", ")}`;
-  const length = args.length && (isLength(args[0]) ?? isNumber(args[0]));
-  if (length) args.shift();
-  const angle = extractRadian(args);
-  const color = extractColor(args) ?? `var(--shadowColor, #0003)`;
-  if (args.length)
-    throw new TypeError("Unknown named $shadow() argument: " + args[0].text);
-  let { num, unit } = length || { num: 5 };
-  if (!unit) {    // default length is plain number? 5 is "normal" => 0.25rem. 1 is very small => 0.05rem. 10 is large => 0.5rem.
-    num /= 20;
-    unit = "rem";
-  }
-  const type = SHADES[name];
+const parseNamedShadowArgs = TYPB({}, {
+  type: WORD_IN_TABLE(SHADES),
+  angle: Radian,
+  length: isLengthNumber,
+  color: Color,
+}, {}, calculateShadow);
 
-  const rad = angle ?? (Math.PI * .75); //default angle 135deg
-  const x = -round(Math.cos(rad) * type.l * num) + unit;
-  const y = round(Math.sin(rad) * type.l * num) + unit;
-  const blur = round(type.b * num) + unit;
-  const spread = round(type.s * num) + unit;
-
-  return { x, y, blur, spread, color };
-}
-
-function boxShadow(args) {
-  const { x, y, blur, spread, color } = parseAbsoluteShadowArgs({ args }) ?? parseNamedShadowArgs(args);
+function boxShadow(a) {
+  const { x, y, blur, spread, color } = parseAbsoluteShadowArgs(a) ?? parseNamedShadowArgs(a);
   return [x, y, blur, spread, color].filter(Boolean).join(" ");
 }
-function textDropShadow(args) {
-  const { x, y, blur, color } = parseAbsoluteShadowArgs({ args }) ?? parseNamedShadowArgs(args);
+function textDropShadow(a) {
+  const { x, y, blur, color } = parseAbsoluteShadowArgs(a) ?? parseNamedShadowArgs(a);
   return [x, y, blur, color].filter(Boolean).join(" ");
 }
 
 export default {
-  boxShadowInset: ({ args }) => ({ boxShadow: "inset " + boxShadow(args) }),
-  boxShadow: ({ args }) => ({ boxShadow: boxShadow(args) }),
-  textShadow: ({ args }) => ({ textShadow: textDropShadow(args) }),
+  boxShadowInset: a => ({ boxShadow: "inset " + boxShadow(a) }),
+  boxShadow: a => ({ boxShadow: boxShadow(a) }),
+  textShadow: a => ({ textShadow: textDropShadow(a) }),
   dropShadow: textDropShadow,
   noBoxShadow: { boxShadow: "none" },
   noTextShadow: { textShadow: "none" },

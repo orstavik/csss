@@ -435,6 +435,11 @@ export function isLength(a) {
   if (a?.type === "length" || (a?.num == 0 && a?.type === "number"))
     return a;
 }
+export function isLengthNumber(a) {
+  a = isBasic(a);
+  if (a?.type === "length" || a?.type === "number")
+    return a;
+}
 export function isTime(a) {
   a = isBasic(a);
   if (a?.num == 0 && a.type === "number")
@@ -555,10 +560,6 @@ export const extractWord = makeExtractor(isWord);
 export function extractName(args) {
   const a = extractWord(args);
   return a ?? interpretName(a);
-}
-export function extractRadian(args) {
-  const a = extractAngle(args) || undefined;
-  return a && interpretRadian(a);
 }
 
 function makeEvaluator(interpret) {
@@ -808,6 +809,7 @@ export const Unset = a => a.text == "_" ? "unset" : undefined;
 export const Url = a => isUrl(a)?.text;
 export const Word = a => isWord(a)?.text;
 export const Basic = a => isBasic(a)?.text; //todo this should be replaced with something more precise in the HO functions
+export const Radian = a => (a = isAngle(a)) ? interpretRadian(a) : undefined;
 export const Repeat = a => isRepeat(a)?.text;
 export const Span = a => isSpan(a)?.text;
 export const AbsoluteUrl = a => {

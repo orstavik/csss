@@ -33,7 +33,7 @@
 ```css
 @layer containerDefault {
   .\$boxShadow\(ambient\,10px\,\#efa4\) {
-    box-shadow: 0px 0px 15px 12.5px #eeffaa44;
+    box-shadow: 7.07px 7.07px 15px 12.5px #eeffaa44;
   }
 }
 ```
@@ -54,6 +54,16 @@
 @layer containerDefault {
   .\$textShadow\(2px\,2px\,4px\,\#000000\) {
     text-shadow: 2px 2px 4px #000000;
+  }
+}
+```
+
+**csss:** $boxShadow(ambient,10px,90deg,#efa4)
+**css:**
+```css
+@layer containerDefault {
+  .\$boxShadow\(ambient\,10px\,90deg\,\#efa4\) {
+    box-shadow: 0px 10px 15px 12.5px #eeffaa44;
   }
 }
 ```
