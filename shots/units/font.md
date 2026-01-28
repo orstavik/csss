@@ -1,15 +1,15 @@
-**csss:** $Typeface(comic,"MS+Comic+Sans",face("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2"),xxs,semiExpanded,italic,bolder)
+**csss:** $Typeface(comic,"MS+Comic+Sans","https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2",xxs,semiExpanded,italic,bolder)
 **css:**
 ```css
-@font-face /*comic normal*/ {
-  font-family: comic;
-  font-style: normal;
-  src: local(comic), url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2");
+@font-face /*"https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2"*/ {
+  font-family: ComicNeue;
+  src: local("ComicNeue"),
+url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2");
 }
 
 @layer containerDefault {
-  .\$Typeface\(comic\,\"MS\+Comic\+Sans\"\,face\(\"https\:\/\/cdn\.jsdelivr\.net\/npm\/\@openfonts\/comic-neue_latin\@latest\/files\/ComicNeue-Regular\.woff2\"\)\,xxs\,semiExpanded\,italic\,bolder\) {
-    --comicFontFamily: "MS Comic Sans", comic;
+  .\$Typeface\(comic\,\"MS\+Comic\+Sans\"\,\"https\:\/\/cdn\.jsdelivr\.net\/npm\/\@openfonts\/comic-neue_latin\@latest\/files\/ComicNeue-Regular\.woff2\"\,xxs\,semiExpanded\,italic\,bolder\) {
+    --comicFontFamily: "MS Comic Sans", ComicNeue;
     --comicFontSize: xx-small;
     --comicFontStyle: italic;
     --comicFontWeight: bolder;

@@ -1,4 +1,20 @@
-import { extractName, Quote, Angle, Integer, Fraction, extractUrl, isFraction, isInteger, isLength, Length, isAngle, isQuote, SIN, Percent, Basic, FIRST, Umbrella, Word, NameUnset, SINmax, TYPB } from "./func.js";
+import { extractName, Quote, Angle, Integer, Fraction, Url, extractUrl, isFraction, isInteger, isLength, Length, isAngle, isQuote, SIN, Percent, Basic, FIRST, Umbrella, Word, NameUnset, SINmax, TYPB } from "./func.js";
+
+/**
+ * Interprets a relative URL against an absolute URL or a relative URL.
+ * 
+ * @param {string} src 
+ * @param {string} baseIsh 
+ * @returns {string} an absolute url if the base was absolute, or a relative-to-the-relative url.
+ */
+function RelativeUrl(src, baseIsh) {
+  const relative = baseIsh.match(/^[.]*\//)[0];
+  if (!relative)
+    return new URL(src, baseIsh).url;
+  const dots = relative.slice(0, -1);
+  const base = "http://n/" + relative
+  return dots + new URL(src, base).pathname;
+}
 
 //The $font umbrella and $typeface cloud regulate this property cluster. $typeface also regulates @font-face{}.
 const FONT_DEFAULTS = Object.entries({
@@ -41,6 +57,8 @@ const fontDefaults2 = {
   hyphens: "unset",
 };
 
+//$typeface(comic,"MS+Comic+Sans",face("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2"),xxs,semiExpanded,italic,bolder)
+
 /**
  * TextTransform is a semi inherited css property (inherits over inline elements, but not block elements).
  * The same way as shifting font family or style, caption is a family-ish trait. Would be normal to consider part of font umbrella.
@@ -48,39 +66,6 @@ const fontDefaults2 = {
  * text-decoration is standalone. text-shadow is standalone (in same space as colors).
  * ??candidate for font is hyphenation. Where we break the words, that could be more a font characteristic than a layout characteristic??
  */
-
-//$typeface(comic,"MS+Comic+Sans",face("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2"),xxs,semiExpanded,italic,bolder)
-function face({ args }) {
-
-  function featureAndVariation(args) {
-    //todo this doesn't work? a.text.split instead of a.split ? 
-    return args.map(a => a.split("=")).map(([k, v = 1]) => `"${k}" ${v}`).join(", ");
-  }
-
-  const FACE = {
-    feature: ({ args }) => ({ fontFeatureSettings: featureAndVariation(args) }),
-    variation: ({ args }) => ({ fontVariationSettings: featureAndVariation(args) }),
-    i: { fontStyle: "italic" },
-    italic: { fontStyle: "italic" },
-    ital: { fontStyle: "italic" },
-  };
-
-  let src = extractUrl(args);
-  if (!src)
-    throw new SyntaxError(`The first argument of face(...) must be a quote or a URL, but got: ${args[0]}`);
-  const res = {
-    fontFamily: src.slice(4, -1),
-    fontStyle: "normal",
-    src,
-  };
-  for (let a of args) {
-    const a2 = FACE[a.name]?.(a) ?? FACE[a.text];
-    if (a2) Object.assign(res, a2);
-    throw new SyntaxError(`Unrecognized font face argument: ${a}`);
-  }
-  return res;//{ [`@font-face /*${res.fontFamily} ${res.fontStyle}*/`]: res };
-}
-
 const SYNTHESIS_WORDS = (function () {
   function* permutations(arr, remainder) {
     for (let i = 0; i < arr.length; i++) {
@@ -212,27 +197,100 @@ function fontImpl({ name, args }) {
   return res;
 }
 
-const fixFontFamily = fonts => {
-  if (fonts.includes("emoji")) {
-    fonts.splice(fonts.indexOf("emoji"), 1);
-    fonts.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+const FontFaceShortNames = {
+  family: "fontFamily",
+  style: "fontStyle",
+  weight: "fontWeight",
+  stretch: "fontStretch",
+  unicodeRange: "unicodeRange",
+  variant: "fontVariant",
+  featureSettings: "fontFeatureSettings",
+  variationSettings: "fontVariationSettings",
+};
+
+// @font-face {
+// font-family: "Trickster";
+// src:
+//   local("Trickster"),
+//   url("trickster-COLRv1.otf") format("opentype") tech(color-COLRv1),
+//   url("trickster-outline.otf") format("opentype"),
+//   url("trickster-outline.woff") format("woff");
+// }
+// becomes 
+// "./trickster-COLRv1.otf#family=Trickster&format=opentype&tech=color-COLRv1&src=trickster-outline.otf&format=opentype&src=trickster-outline.woff&format=woff"
+function processFace(font) {
+  if (font.startsWith("url("))
+    font = font.slice(5, -1);
+  if (font[0] == '"' || font[0] == "'")
+    font = font.slice(1, -1);
+
+  const url = new URL(font);
+  const hash = url.hash.slice(1);
+  url.hash = "";
+  const sp = new URLSearchParams(hash);
+  const res = {
+    fontFamily: url.pathname.split("/").at(-1).split(/[.-]/)[0],
+    src: [{ url: url.toString() }]
+  };
+  for (let [k, v] of sp.entries()) {
+    k = FontFaceShortNames[k] ?? k;
+    v = v.replaceAll("+", " ");
+    if (k.endsWith("Settings"))
+      v = '"' + v.replace(' ', '" ');
+    if (k === "src")
+      res.src.push({ url: v });
+    else if (k === "format" || k === "tech")
+      res.src.at(-1)[k] = v;
+    else
+      res[k] = v
   }
-  return fonts.map(s => s.match(/[^a-z0-9_-]/gi) ? `"${s}"` : s).join(", ");
+
+  res.src = res.src.map(({ url, format, tech }, i, arr) => {
+    if (i) url = RelativeUrl(url, arr[0].url);
+    let res = `url("${url}")`;
+    if (format) res += ` format("${format}")`;
+    if (tech) res += ` tech("${tech}")`;
+    return res;
+  }).join(",\n");
+  res.src = `local("${res.fontFamily}"),\n${res.src}`;
+  return res;
+}
+
+const fixFontFamily = fonts => {
+  const res = [], faces = [];
+  let emoji;
+  for (let f of fonts) {
+    if (f === "emoji")
+      emoji = true;
+    else if (f.match(/^"([.]{1,2}\/|[a-z]*\:\/\/)/i)) {
+      const face = processFace(f);
+      res.push(face.fontFamily)
+      //todo we don't need the comment at this level? we can do that outside in the caching space?
+      faces.push({ [`@font-face /*${f}*/`]: face });
+    } else {
+      res.push(f.replaceAll("+", " "));
+    }
+  }
+  if (emoji)
+    res.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+  return { faces, fonts: res };
 }
 
 const font = TYPB(FONT_WORDS, {
   fontSize: Length,
   fontSizeAdjust: Fraction,
   fontWeight: Integer,
-  Angle
+  Angle,
 }, {
-  fontFamily: t => Word(t) ?? Quote(t)
+  fontFamily: t => Word(t) ?? Quote(t) ?? Url(t)
 }, obj => {
   const res = {};
   for (let [k, v] of Object.entries(obj)) {
-    if (k === "fontFamily") res.fontFamily = fixFontFamily(v);
-    else if (k === "Angle") res.fontStyle = "oblique " + v;
-    else if (k[0] === "@") res[k] = v;
+    if (k === "fontFamily") {
+      const { faces, fonts } = fixFontFamily(v);
+      res.fontFamily = fonts.join(", ");
+      Object.assign(res, ...faces);
+    } else if (k === "Angle") res.fontStyle = "oblique " + v;
     else if (v instanceof Object) Object.assign(res, v);
     else res[k] = v;
   }
@@ -263,7 +321,7 @@ function Typeface({ args }) {
   const typeName = extractName(args);
   if (!typeName)
     throw new SyntaxError(`first argument is not a name: "${args[0].text}"`);
-  const tmp = fontImpl({ name: typeName, args });
+  const tmp = font({ name: typeName, args });
   const res = {};
   for (let [k, varKey] of FONT_DEFAULTS) {
     if (tmp[k] !== undefined)
