@@ -30,7 +30,6 @@ const svgTextDefaults = {
   baselineShift: "unset",
 };
 
-// Droplet functions (pure transformers)
 const stroke = TYPB({
   dasharray: SINmax(999, LengthPercentNumber, (name, ar) => ar.join(", ")),
   dashoffset: SIN(LengthPercent),
@@ -39,8 +38,8 @@ const stroke = TYPB({
   stroke: ColorUrl,
   strokeWidth: Length,
   strokeOpacity: NumberInterpreter,
-  strokeLinecap: a => a.text?.match(/^(butt|round|square)$/)?.[0],
-  strokeLinejoin: a => a.text?.match(/^(miter|round|bevel)$/)?.[0],
+  strokeLinecap: CamelWords("butt|round|square"),
+  strokeLinejoin: CamelWords("miter|round|bevel"),
 }, {}, res => {
   const out = {};
   if (res.stroke) out.stroke = res.stroke;
@@ -57,14 +56,8 @@ const stroke = TYPB({
 const fill = TYPB({}, {
   fill: ColorUrl,
   fillOpacity: NumberInterpreter,
-  fillRule: a => a.text?.match(/^(evenodd|nonzero)$/)?.[0],
-}, {}, res => {
-  const out = {};
-  if (res.fill) out.fill = res.fill;
-  if (res.fillOpacity) out.fillOpacity = res.fillOpacity;
-  if (res.fillRule) out.fillRule = res.fillRule;
-  return out;
-});
+  fillRule: CamelWords("evenodd|nonzero"),
+}, {});
 
 const svgText = TYPB({
 }, {
@@ -74,7 +67,6 @@ const svgText = TYPB({
   baselineShift: CamelWords("sub|super|baseline"),
 }, {});
 
-// Umbrella functions (with defaults)
 const Stroke = Umbrella(strokeDefaults, stroke);
 const Fill = Umbrella(fillDefaults, fill);
 const SvgText = Umbrella(svgTextDefaults, svgText);
@@ -372,11 +364,7 @@ const IMAGE_RENDERING_WORDS = {
 const stopColor = createColorFunction("stop-color");
 const stopOpacity = createOpacityFunction("stop-opacity");
 const lightingColor = createColorFunction("lighting-color");
-// const baselineShift = createLengthFunction("baseline-shift", "baseline");
-// const textAnchor = createEnumFunction("text-anchor", TEXT_ANCHOR_WORDS);
 const vectorEffect = createEnumFunction("vector-effect", VECTOR_EFFECT_WORDS);
-// const dominantBaseline = createEnumFunction("dominant-baseline", DOMINANT_BASELINE_WORDS);
-// const alignmentBaseline = createEnumFunction("alignment-baseline", ALIGNMENT_BASELINE_WORDS);
 const clipRule = createEnumFunction("clip-rule", RULE_WORDS);
 // const colorInterpolation = createEnumFunction("color-interpolation", COLOR_INTERPOLATION_WORDS);
 const shapeRendering = createEnumFunction("shape-rendering", SHAPE_RENDERING_WORDS);
@@ -465,12 +453,6 @@ export default {
   nonScalingStroke: { "vector-effect": "non-scaling-stroke" },
   nonzeroFill: { "fill-rule": "nonzero" },
   evenoddFill: { "fill-rule": "evenodd" },
-  startText: { "text-anchor": "start" },
-  middleText: { "text-anchor": "middle" },
-  endText: { "text-anchor": "end" },
-  alphabeticBaseline: { "dominant-baseline": "alphabetic" },
-  middleBaseline: { "dominant-baseline": "middle" },
-  hangingBaseline: { "dominant-baseline": "hanging" },
   crispEdges: { "shape-rendering": "crispEdges" },
   geometricPrecision: { "shape-rendering": "geometricPrecision" },
   optimizeSpeed: { "color-rendering": "optimizeSpeed", "image-rendering": "optimizeSpeed" },
