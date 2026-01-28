@@ -262,7 +262,7 @@ const fixFontFamily = fonts => {
   for (let f of fonts) {
     if (f === "emoji")
       emoji = true;
-    else if (f.match(/^"([.]{1,2}\/|[a-z]*\:\/\/)/i)) {
+    else if (f.match(/^["']([.]{1,2}\/|[a-z]*\:\/\/)/i)) {
       const face = processFace(f);
       res.push(face.fontFamily)
       //todo we don't need the comment at this level? we can do that outside in the caching space?
@@ -317,21 +317,24 @@ const fontWithName = FIRST(
   }
 );
 
-function Typeface({ args }) {
-  const typeName = extractName(args);
-  if (!typeName)
-    throw new SyntaxError(`first argument is not a name: "${args[0].text}"`);
-  const tmp = font({ name: typeName, args });
-  const res = {};
-  for (let [k, varKey] of FONT_DEFAULTS) {
-    if (tmp[k] !== undefined)
-      res[`--${typeName + varKey}`] = tmp[k];
+const Typeface = FIRST(
+  NameUnset,
+  font,
+  (nameNode, typeName, tmp = {}) => {
+    //todo both of these rules are a little bit unnecessary? There are usecases for both, no?
+    if (typeName === "unset")
+      throw new SyntaxError(`$TypeFace must have a name first argument: "${typeName}"`);
+    const res = {};
+    for (let [k, varKey] of FONT_DEFAULTS) {
+      if (tmp[k] !== undefined)
+        res[`--${typeName + varKey}`] = tmp[k];
+    }
+    for (let k in tmp)
+      if (k.startsWith("@"))
+        res[k] = tmp[k];
+    return res;
   }
-  for (let k in tmp)
-    if (k.startsWith("@"))
-      res[k] = tmp[k];
-  return res;
-}
+)
 
 export default {
   font,
