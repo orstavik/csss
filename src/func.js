@@ -545,16 +545,16 @@ export function makeExtractor(cb) {
     return res != null && args.shift() && res.text;
   };
 }
-export const extractTime = makeExtractor(isTime);
-export const extractLength = makeExtractor(isLength);
+// export const extractTime = makeExtractor(isTime);
+// export const extractLength = makeExtractor(isLength);
 export const extractLengthPercent = makeExtractor(isLengthPercent);
 export const extractAngle = makeExtractor(isAngle);
 export const extractAnglePercent = makeExtractor(isAnglePercent);
-export const extractNumber = makeExtractor(isNumber);
-export const extractNumberPercent = makeExtractor(isNumberPercent);
-export const extractUrl = makeExtractor(isUrl);
-export const extractImage = makeExtractor(interpretImage);
-export const extractMimeType = makeExtractor(interpretMimeType);
+// export const extractNumber = makeExtractor(isNumber);
+// export const extractNumberPercent = makeExtractor(isNumberPercent);
+// export const extractUrl = makeExtractor(isUrl);
+// export const extractImage = makeExtractor(interpretImage);
+// export const extractMimeType = makeExtractor(interpretMimeType);
 export const extractColor = makeExtractor(isColor);
 export const extractWord = makeExtractor(isWord);
 export function extractName(args) {
