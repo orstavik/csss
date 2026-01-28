@@ -789,6 +789,11 @@ export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   return POST ? POST(name, first, res) : first;
 };
 
+export const CamelWords = (WORDS) => {
+  const lookupTable = Object.fromEntries(WORDS.split("|").map(w => [w, w.replaceAll(/[A-Z]/g, c => "-" + c.toLowerCase())]));
+  return a => lookupTable[a.text];
+};
+
 export const Angle = a => isAngle(a)?.text;
 export const Color = a => isColor(a)?.text;
 export const Length = a => isLength(a)?.text;

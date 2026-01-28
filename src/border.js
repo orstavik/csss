@@ -1,4 +1,4 @@
-import { isBasic, isColor, isLengthPercent } from "./func.js";
+import { Color, LengthPercent, CamelWords, TYPB } from "./func.js";
 
 const BorderUmbrella = cb => exp => {
   const res = cb(exp);
@@ -28,8 +28,8 @@ const BorderUmbrella = cb => exp => {
 //   6: blockTopRight (and 2: blockTopLeft), 
 //   7: inlineRightBottom (and 3: inlineRightTop), 
 //   8: blockBottomRight (and 4: blockBottomLeft).
-function radius(ar) {
-  ar = ar.map(isBasic).map(a => a.text);
+function radius({ name, args: ar }) {
+  ar = ar.map(LengthPercent);
   if (ar.length > 8)
     throw new SyntaxError(`max 8 arguments for borderRadius: ${ar.length}.`);
   if (ar.length === 1)
@@ -61,68 +61,37 @@ function radius(ar) {
   };
 }
 
-//$border(2px,4px,solid,red,blue)
-//$border(2px,solid,red)
-const STYLE_WORDS = {
-  solid: "solid",
-  dotted: "dotted",
-  dashed: "dashed",
-  double: "double",
-  groove: "groove",
-  ridge: "ridge",
-  inset: "inset",
-  outset: "outset",
-  none: "none",
-  hidden: "hidden",
-};
-const WIDTH_WORDS = {
-  thin: "thin",
-  medium: "medium",
-  thick: "thick",
-};
-const RADIUS = {
+function processUpToFour(prop, ar) {
+  if (!ar)
+    return {};
+  if (ar.length > 4)
+    throw new SyntaxError(`More than 4 border ${prop} arguments.`);
+  return ar.length == 1 ?
+    { ["border" + prop]: ar[0] } :
+    {
+      ["borderInline" + prop]: [ar[0], ar[2]].filter(Boolean).join(" "),
+      ["borderBlock" + prop]: [ar[1], ar[3]].filter(Boolean).join(" "),
+    };
+}
+
+const border = TYPB({
   radius,
   r: radius,
-};
-
-function border({ args: ar }) {
-  let borderRadius, width = [], style = [], color = [];
-  for (let a of ar) {
-    let v;
-    if (borderRadius && a.name in RADIUS)
-      throw new SyntaxError(`More than one $border radius argument: ${a.text}.`);
-    else if (v = isColor(a)?.text)
-      color.push(v);
-    else if (v = isLengthPercent(a)?.text ?? WIDTH_WORDS[a.text])
-      width.push(v);
-    else if (v = STYLE_WORDS[a.text])
-      style.push(v);
-    else if (v = RADIUS[a.name]?.(a.args))
-      borderRadius = v;
-    else
-      throw new SyntaxError(`Could not interpret $border argument: ${a.text}.`);
+},
+  {},
+  {
+    Color,
+    Width: a => LengthPercent(a) ?? CamelWords("thin|medium|thick")(a),
+    Style: CamelWords("solid|dotted|dashed|double|groove|ridge|inset|outset|none|hidden"),
+  }, obj => {
+    const res = {};
+    if (obj.Width) Object.assign(res, processUpToFour("Width", obj.Width));
+    if (obj.Style) Object.assign(res, processUpToFour("Style", obj.Style));
+    if (obj.Color) Object.assign(res, processUpToFour("Color", obj.Color));
+    if (obj.radius ?? obj.r) Object.assign(res, obj.radius ?? obj.r);
+    return res;
   }
-  const tooBig = color.length > 4 ? "color" : style.length > 4 ? "style" : width.length > 4 ? "width" : "";
-  if (tooBig)
-    throw new SyntaxError(`More than 4 border ${tooBig} arguments.`);
-  const res = {};
-  if (width.length == 1) res.borderWidth = width[0];
-  if (width.length > 1) {
-    res.borderInlineWidth = [width[0], width[2]].filter(Boolean).join(" ");
-    res.borderBlockWidth = [width[1], width[3]].filter(Boolean).join(" ");
-  }
-  if (style.length == 1) res.borderStyle = style[0];
-  if (style.length > 1) {
-    res.borderInlineStyle = [style[0], style[2]].filter(Boolean).join(" ");
-    res.borderBlockStyle = [style[1], style[3]].filter(Boolean).join(" ");
-  }
-  if (color.length == 1) res.borderColor = color[0];
-  if (color.length > 1) {
-    res.borderInlineColor = [color[0], color[2]].filter(Boolean).join(" ");
-    res.borderBlockColor = [color[1], color[3]].filter(Boolean).join(" ");
-  }
-  return { ...res, ...borderRadius };
-}
+);
 
 export default {
   border,
