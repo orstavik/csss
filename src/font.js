@@ -1,20 +1,4 @@
-import { Quote, Angle, Integer, Fraction, Url, Length, SIN, Percent, Basic, FIRST, Umbrella, Word, Name, NameUnset, SINmax, TYPB } from "./func.js";
-
-/**
- * Interprets a relative URL against an absolute URL or a relative URL.
- * 
- * @param {string} src 
- * @param {string} baseIsh 
- * @returns {string} an absolute url if the base was absolute, or a relative-to-the-relative url.
- */
-function RelativeUrl(src, baseIsh) {
-  const relative = baseIsh.match(/^[.]*\//)?.[0];
-  if (!relative)
-    return new URL(src, baseIsh).url;
-  const dots = relative.slice(0, -1);
-  const base = "http://n/" + relative
-  return dots + new URL(src, base).pathname;
-}
+import { AbsoluteUrl, Quote, Angle, Integer, Fraction, Length, SIN, Percent, Basic, FIRST, Umbrella, Word, Name, NameUnset, SINmax, TYPB } from "./func.js";
 
 const FontDefaults = {
   fontFamily: "unset",
@@ -128,15 +112,6 @@ const FONT_WORDS = {
   adjust: SIN(Basic, (n, v) => ({ fontSizeAdjust: v })),
 };
 
-const FontFaceShortNames = {
-  family: "fontFamily",
-  style: "fontStyle",
-  weight: "fontWeight",
-  stretch: "fontStretch",
-  variant: "fontVariant",
-  featureSettings: "fontFeatureSettings",
-  variationSettings: "fontVariationSettings",
-};
 
 // @font-face {
 // font-family: "Trickster";
@@ -148,43 +123,36 @@ const FontFaceShortNames = {
 // }
 // becomes 
 // "./trickster-COLRv1.otf#family=Trickster&format=opentype&tech=color-COLRv1&src=trickster-outline.otf&format=opentype&src=trickster-outline.woff&format=woff"
-function convertToFace(font) {
-  if (font.startsWith("url("))
-    font = font.slice(5, -1);
-  if (font[0] == '"' || font[0] == "'")
-    font = font.slice(1, -1);
-  if (!font.match(/^([.]{1,2}\/|[a-z]*\:\/\/)/i))
-    return font;
-
-  const url = new URL(font);
-  const hash = url.hash.slice(1);
-  url.hash = "";
-  const sp = new URLSearchParams(hash);
+function FontFaceUrl(t) {
+  const font = AbsoluteUrl(t);
+  if (!font)
+    return;
+  const sp = new URLSearchParams(font.hash.slice(1));
+  const url = new URL("", font);
   const res = {
-    fontFamily: url.pathname.split("/").at(-1).split(/[.-]/)[0],
-    src: [{ url: url.toString() }]
+    fontFamily: font.pathname.split("/").at(-1).split(/[.-]/)[0],
+    src: [`url("${url}")`],
+  };
+  const SHORTCUTS = {
+    family: "fontFamily",
+    style: "fontStyle",
+    weight: "fontWeight",
+    stretch: "fontStretch",
+    variant: "fontVariant",
+    featureSettings: "fontFeatureSettings",
+    variationSettings: "fontVariationSettings",
   };
   for (let [k, v] of sp.entries()) {
-    k = FontFaceShortNames[k] ?? k;
+    k = SHORTCUTS[k] ?? k;
     v = v.replaceAll("+", " ");
-    if (k.endsWith("Settings"))
-      v = '"' + v.replace(' ', '" ');
     if (k === "src")
-      res.src.push({ url: v });
+      res.src.push(`url("${new URL(v, url)}")`);
     else if (k === "format" || k === "tech")
-      res.src.at(-1)[k] = v;
+      res.src.at(-1)[k] += ` ${k}(${v})`;
     else
       res[k] = v
   }
-
-  res.src = res.src.map(({ url, format, tech }, i, arr) => {
-    if (i) url = RelativeUrl(url, arr[0].url);
-    let res = `url("${url}")`;
-    if (format) res += ` format("${format}")`;
-    if (tech) res += ` tech("${tech}")`;
-    return res;
-  }).join(",\n");
-  res.src = `local("${res.fontFamily}"),\n${res.src}`;
+  res.src = `/*${font}*/\nlocal("${res.fontFamily}"),\n` + res.src.join(",\n");
   return res;
 }
 
@@ -194,7 +162,7 @@ const font = TYPB(FONT_WORDS, {
   fontWeight: Integer,
   Angle,
 }, {
-  fontFamily: t => Word(t) ?? Quote(t) ?? Url(t)
+  fontFamily: t => FontFaceUrl(t) ?? Word(t) ?? Quote(t)
 }, obj => {
   const res = {};
   for (let [k, v] of Object.entries(obj)) {
@@ -203,13 +171,12 @@ const font = TYPB(FONT_WORDS, {
         v.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
         v = v.filter(f => f !== "emoji");
       }
-      const fontAndFaces = v.map(convertToFace);
-      res.fontFamily = fontAndFaces
+      res.fontFamily = v
         .map(f => f.fontFamily ?? f)
         .map(f => f.replaceAll("+", " "))
-        .map(f => !f.match(/^[a-z0-9_-]+$/i) ? `"${f}"` : f)
         .join(", ");
-      fontAndFaces.forEach((f, i) => f.fontFamily && (res[`@font-face /*${v[i]}*/`] = f));
+      for (let face of v.filter(f => f instanceof Object))
+        res["@font-face " + face.src.split("\n")[0]] = face;
     } else if (k === "Angle") res.fontStyle = "oblique " + v;
     else if (v instanceof Object) Object.assign(res, v);
     else res[k] = v;
