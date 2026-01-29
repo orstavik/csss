@@ -13,7 +13,7 @@
 ```css
 @layer containerDefault {
   .\$filter\(dropShadow\(\#red\,5px\,5px\,5px\)\,url\(\"https\:\/\/example\.com\/filter\"\)\,\"\#anotherFilter\"\) {
-    filter: drop-shadow(red 5px 5px 5px) url("https://example.com/filter") url("#anotherFilter");
+    filter: drop-shadow(5px 5px 5px red) url("https://example.com/filter") url("#anotherFilter");
   }
 }
 ```

@@ -639,7 +639,6 @@ export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
   };
 };
 
-export const CHECKNAME = (NAME, CB) => exp => NAME === exp.name ? CB(exp) : undefined;
 export const Umbrella = (BASE, CB) => exp => Object.assign({}, BASE, exp.args?.length ? CB(exp) : undefined);
 
 export const SIN = (interpreter, post) => ({ args, name }) => {
@@ -663,18 +662,6 @@ export const SINmax = (max, interpreter, post) => ({ args, name }) => {
   return post ? post(name, res) : res;
 };
 
-export const SEQ = (interpreters, post) => ({ args, name }) => {
-  if (args.length != interpreters.length)
-    throw new SyntaxError(`${name} requires ${interpreters.length} arguments, got ${args.length} arguments.`);
-  const res = interpreters.map((interpreter, i) => {
-    const a2 = interpreter(args[i]);
-    if (a2)
-      return a2;
-    throw BadArgument(name, args, i, interpreter.name);
-  });
-  return post ? post(name, res) : res;
-};
-
 function parseSignature(SIG) {
   const [NAME, ARITY] = SIG.split("/");
   if (ARITY == undefined || ARITY == "")
@@ -686,15 +673,13 @@ function parseSignature(SIG) {
 
 export const Sequence = (SIG, INTERPRETERS, POST) => {
   const { NAME, MIN = INTERPRETERS.length, MAX = INTERPRETERS.length } = parseSignature(SIG);
-  while (INTERPRETERS.length < MAX)
-    INTERPRETERS.push(INTERPRETERS.at(-1));
   return ({ args, name }) => {
     if (NAME !== name)
       return;
     if (args.length < MIN || args.length > MAX)
       throw new SyntaxError(`${name}() requires ${MIN} to ${MAX} arguments, got ${args.length}.`);
     const res = args.map((a, i) => {
-      const a2 = INTERPRETERS[i](a);
+      const a2 = (INTERPRETERS[i] ??= INTERPRETERS.at(-1))(a);
       if (a2)
         return a2;
       throw BadArgument(name, args, i, INTERPRETERS[i].name);

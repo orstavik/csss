@@ -1,17 +1,5 @@
-import {
-  SINmax,
-  SIN,
-  SEQ,
-  Angle,
-  AnglePercent,
-  Color,
-  Length,
-  LengthPercent,
-  NumberPercent,
-  NumberInterpreter,
-  Url,
-  TYPB,
-} from "./func.js";
+import shadow from "./shadows.js";
+import { SINmax, SIN, Sequence, Angle, AnglePercent, Length, LengthPercent, NumberPercent, NumberInterpreter, Url, TYPB, } from "./func.js";
 
 const FILTER_FUNCS = {
   blur: SIN(Length, (n, v) => `${n}(${v})`),
@@ -23,16 +11,16 @@ const FILTER_FUNCS = {
   saturate: SIN(NumberPercent, (n, v) => `${n}(${v})`),
   sepia: SIN(NumberPercent, (n, v) => `${n}(${v})`),
   hueRotate: SIN(Angle, (n, v) => `hue-rotate(${v})`),
-  dropShadow: SEQ([Color, Length, Length, LengthPercent], (n, ar) => `drop-shadow(${ar.join(" ")})`),
-  //this is done in shadows.. we need this to be used from there, as we have some more functionality that can be useful!
+  dropShadow: e => `drop-shadow(${shadow.dropShadow(e)})`,
 };
 
 const transformWithFunc = (name, ar) => ({ transform: `${name}(${ar.join(", ")})` });
-const rotate = SIN(Angle, (name, v) => ({ transform: `${name}(${v})` }));
-const translateX = SIN(LengthPercent, (name, v) => ({ transform: `${name}(${v})` }));
-const scaleX = SIN(NumberPercent, (name, v) => ({ transform: `${name}(${v})` }));
-const skewX = SIN(AnglePercent, (name, v) => ({ transform: `${name}(${v})` }));
-const perspective = SIN(Length, (name, v) => ({ transform: `${name}(${v})` }));
+const transformWithFuncOne = (name, v) => ({ transform: `${name}(${v})` });
+const rotate = SIN(Angle, transformWithFuncOne);
+const translateX = SIN(LengthPercent, transformWithFuncOne);
+const scaleX = SIN(NumberPercent, transformWithFuncOne);
+const skewX = SIN(AnglePercent, transformWithFuncOne);
+const perspective = SIN(Length, transformWithFuncOne);
 
 export default {
   filter: TYPB(FILTER_FUNCS, {}, { Url }, obj => ({ filter: Object.values(obj).flat().join(" ") })),
@@ -57,7 +45,7 @@ export default {
   scale3d: SINmax(3, NumberInterpreter, transformWithFunc),
   skewX,
   skewY: skewX,
-  rotate3d: SEQ([NumberInterpreter, NumberInterpreter, NumberInterpreter, Angle], transformWithFunc),
+  rotate3d: Sequence("rotate3d/4", [NumberInterpreter, NumberInterpreter, NumberInterpreter, Angle], transformWithFunc),
   translate: SINmax(2, LengthPercent, transformWithFunc),
   scale: SINmax(2, NumberPercent, transformWithFunc),
   skew: SINmax(2, AnglePercent, transformWithFunc),

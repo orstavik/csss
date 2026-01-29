@@ -1,9 +1,5 @@
 import {
-  TYPB, Umbrella, SINmax, SIN,
-  LengthPercent, LengthPercentNumber, NumberInterpreter, ColorUrl, Length, Url, UrlUnset,
-  CamelWords,
-  Words, Fraction,
-  CHECKNAME,
+  TYPB, Umbrella, SINmax, SIN, LengthPercent, LengthPercentNumber, NumberInterpreter, ColorUrl, Length, Url, UrlUnset, CamelWords, Words, Fraction, Sequence,
 } from "./func.js";
 
 const strokeDefaults = {
@@ -47,9 +43,9 @@ const stroke = TYPB({
   strokeOpacity: NumberInterpreter,
   strokeLinecap: CamelWords("butt|round|square"),
   strokeLinejoin: CamelWords("miter|round|bevel"),
-  strokeDasharray: CHECKNAME("dasharray", SINmax(999, LengthPercentNumber, (name, ar) => ar.join(", "))),
-  strokeDashoffset: CHECKNAME("dashoffset", SIN(LengthPercent)),
-  strokeMiterlimit: CHECKNAME("miterlimit", SIN(NumberInterpreter)),
+  strokeDasharray: Sequence("dasharray/2-", [LengthPercentNumber], (name, ar) => ar.join(", ")),
+  strokeDashoffset: Sequence("dashoffset", [LengthPercent], (name, ar) => ar[0]),
+  strokeMiterlimit: Sequence("miterlimit", [NumberInterpreter], (name, ar) => ar[0]),
 }, {});
 
 const fill = TYPB({}, {
