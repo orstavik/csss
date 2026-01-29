@@ -1,6 +1,6 @@
 import { TYPB, Color, Length, Umbrella, WORD_IN_TABLE } from "./func.js";
 
-const DefaultTextDecoration = { textDecoration: "unset", textDecorationSkipInk: "auto" };
+const DefaultTextDecoration = { textDecoration: "none", textDecorationSkipInk: "auto" };
 
 const textDecoration = TYPB({}, {
   textDecorationSkipInk: WORD_IN_TABLE({ noSkipInk: "none" }),

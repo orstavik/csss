@@ -73,7 +73,7 @@ export default {
   boxShadowInset: a => ({ boxShadow: "inset " + boxShadow(a) }),
   boxShadow: a => ({ boxShadow: boxShadow(a) }),
   textShadow: a => ({ textShadow: textDropShadow(a) }),
-  dropShadow: textDropShadow,
+  dropShadow: a => `drop-shadow(${textDropShadow(a)})`,
   noBoxShadow: { boxShadow: "none" },
   noTextShadow: { textShadow: "none" },
 };

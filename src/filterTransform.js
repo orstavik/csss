@@ -11,7 +11,7 @@ const FILTER_FUNCS = {
   saturate: SIN(NumberPercent, (n, v) => `${n}(${v})`),
   sepia: SIN(NumberPercent, (n, v) => `${n}(${v})`),
   hueRotate: SIN(Angle, (n, v) => `hue-rotate(${v})`),
-  dropShadow: e => `drop-shadow(${shadow.dropShadow(e)})`,
+  dropShadow: shadow.dropShadow,
 };
 
 const transformWithFunc = (name, ar) => ({ transform: `${name}(${ar.join(", ")})` });
