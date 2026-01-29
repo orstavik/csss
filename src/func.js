@@ -619,7 +619,6 @@ export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
   singlePrimes = matchPrimes(singlePrimes);
   primes = matchPrimes(primes);
   return ({ args, name }) => {
-    // if (!args?.length) throw new SyntaxError(`${name} requires at least one argument.`); //todo do we need this one? we could do this as a separate function that we wrap around the $iBlock and $border and what have you.
     const res = {};
     for (let i = 0; i < args.length; i++) {
       const a = args[i];

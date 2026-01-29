@@ -34,8 +34,7 @@ const svgTextDefaults = {
 // optimizeSpeed: { "color-rendering": "optimizeSpeed", "image-rendering": "optimizeSpeed" },
 // optimizeQuality: { "color-rendering": "optimizeQuality", "image-rendering": "optimizeQuality" },
 
-const stroke = TYPB({
-}, {
+const stroke = TYPB({}, {
   stroke: ColorUrl,
   strokeWidth: Length, //todo we need Integer here too, as 1,2,3,4 is valid
   strokeOpacity: NumberInterpreter, //todo and this should be a Fraction? Or a Percent?
@@ -52,8 +51,7 @@ const fill = TYPB({}, {
   fillRule: CamelWords("evenodd|nonzero"),
 }, {});
 
-const svgText = TYPB({
-}, {
+const svgText = TYPB({}, {
   textAnchor: CamelWords("start|middle|end"),
   dominantBaseline: CamelWords("auto|textBottom|alphabetic|ideographic|middle|central|mathematical|hanging|textTop"),
   alignmentBaseline: CamelWords("auto|baseline|beforeEdge|textBeforeEdge|middle|central|afterEdge|textAfterEdge|ideographic|alphabetic|hanging|mathematical"),
