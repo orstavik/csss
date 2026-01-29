@@ -68,6 +68,10 @@ const LinearDirections = WORD_IN_TABLE({
   downLeft: "to bottom left",
   downRight: "to bottom right",
 });
+const ColorStopAnglePercent = CHECKNAME("(", SEQOPT([Color, AnglePercent, AnglePercent], (_, res) => res.join(" ")));
+const ColorStopLengthPercent = CHECKNAME("(", SEQOPT([Color, LengthPercent, LengthPercent], (_, res) => res.join(" ")));
+const AtPosition = CamelWords("top|bottom|left|right|center|xStart|xEnd|yStart|yEnd|blockStart|blockEnd|inlineStart|inlineEnd");
+const FarthestClosest = CamelWords("farthestCorner|farthestSide|closestCorner|closestSide");
 
 const POSITION_WORDS = {};
 const POSITIONS_FUNCS = {
@@ -100,7 +104,6 @@ for (let Inline of ["Left", "Right", "Center", ""]) {
   }
 }
 
-const ColorStopAnglePercent = CHECKNAME("(", SEQOPT([Color, AnglePercent, AnglePercent], (_, res) => res.join(" ")));
 const conic2 = TYPB({}, {
   at: CHECKNAME("at", SINmax(2, e => LengthPercent(e) ?? AtPosition(e), (n, res) => "at " + res.join(" "))),
   angle: Angle,
@@ -112,7 +115,6 @@ const conic2 = TYPB({}, {
   const first = [angle, at, ColorSpace].filter(Boolean).join(" ");
   return [first, ...colorStops].filter(Boolean).join(", ")
 })
-const ColorStopLengthPercent = CHECKNAME("(", SEQOPT([Color, LengthPercent, LengthPercent], (_, res) => res.join(" ")));
 
 const linear = TYPB({}, {
   angle: e => Angle(e) ?? LinearDirections(e),
@@ -124,29 +126,28 @@ const linear = TYPB({}, {
   return [first, ...colorStops].filter(Boolean).join(", ")
 });
 
-const AtPosition = e => CamelWords("top|bottom|left|right|center|xStart|xEnd|yStart|yEnd|blockStart|blockEnd|inlineStart|inlineEnd")(e);
 
 const radial = TYPB({}, {
   at: CHECKNAME("at", SINmax(2, e => LengthPercent(e) ?? AtPosition(e), (n, res) => "at " + res.join(" "))),
   ColorSpace,
-  size2: CamelWords("farthestCorner|farthestSide|closestCorner|closestSide"),
+  FarthestClosest,
 }, {
   colorStops: e => Color(e) ?? ColorStopLengthPercent(e),
   size: LengthPercent,
-}, ({ size, size2, at, ColorSpace, colorStops = [] }) => {
+}, ({ size, FarthestClosest, at, ColorSpace, colorStops = [] }) => {
   if (size?.length > 2)
     throw new SyntaxError(`radial() size cannot be more than two values: ${size}`);
   size &&= size.join(" ");
-  if (size && size2)
-    throw new SyntaxError(`radial() size specified twice: ${size} AND ${size2}`);
-  const first = [size, size2, at, ColorSpace].filter(Boolean).join(" ");
+  if (size && FarthestClosest)
+    throw new SyntaxError(`radial() size specified twice: ${size} AND ${FarthestClosest}`);
+  const first = [size, FarthestClosest, at, ColorSpace].filter(Boolean).join(" ");
   return [first, ...colorStops].filter(Boolean).join(", ")
 });
 
 const circle = TYPB({}, {
   at: CHECKNAME("at", SINmax(2, e => LengthPercent(e) ?? AtPosition(e), (n, res) => "at " + res.join(" "))),
   ColorSpace,
-  size: e => LengthPercent(e) ?? CamelWords("farthestCorner|farthestSide|closestCorner|closestSide")(e),
+  size: e => LengthPercent(e) ?? FarthestClosest(e),
 }, {
   colorStops: e => Color(e) ?? ColorStopLengthPercent(e),
 }, ({ size, at, ColorSpace, colorStops = [] }) =>
@@ -165,8 +166,6 @@ const GRADIENTS = {
 
   conic: e => ({ backgroundImage: `conic-gradient(${conic2(e)})` }),
   repeatingConic: e => ({ backgroundImage: `repeating-conic-gradient(${conic2(e)})` }),
-  // conic: conic("conic"),
-  // repeatingConic: conic("repeating-conic"),
 };
 
 
