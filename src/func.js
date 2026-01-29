@@ -673,7 +673,7 @@ function parseSignature(SIG) {
 export const Sequence = (SIG, INTERPRETERS, POST) => {
   const { NAME, MIN = INTERPRETERS.length, MAX = INTERPRETERS.length } = parseSignature(SIG);
   return ({ args, name }) => {
-    if (NAME !== name)
+    if (NAME && NAME !== name)
       return;
     if (args.length < MIN || args.length > MAX)
       throw new SyntaxError(`${name}() requires ${MIN} to ${MAX} arguments, got ${args.length}.`);

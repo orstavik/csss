@@ -40,7 +40,7 @@ const stroke = TYPB({
 }, {
   stroke: ColorUrl,
   strokeWidth: Length, //todo we need Integer here too, as 1,2,3,4 is valid
-  strokeOpacity: NumberInterpreter,
+  strokeOpacity: NumberInterpreter, //todo and this should be a Fraction? Or a Percent?
   strokeLinecap: CamelWords("butt|round|square"),
   strokeLinejoin: CamelWords("miter|round|bevel"),
   strokeDasharray: Sequence("dasharray/2-", [LengthPercentNumber], (name, ar) => ar.join(", ")),
