@@ -675,8 +675,6 @@ export const Sequence = (SIG, INTERPRETERS, POST) => {
   }
 };
 
-export const WORD_IN_TABLE = TABLE => ({ text }) => TABLE[text];
-
 export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   if (!args.length)
     throw new SyntaxError(`${name} requires at least 1 argument, got 0 arguments.`)
@@ -686,6 +684,7 @@ export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
   return POST ? POST(name, first, res) : first;
 };
+export const WORD_IN_TABLE = TABLE => ({ text }) => TABLE[text];
 export const CamelWords = (WORDS) => {
   const lookupTable = Object.fromEntries(WORDS.split("|").map(w => [w, w.replaceAll(/[A-Z]/g, c => "-" + c.toLowerCase())]));
   return a => lookupTable[a.text];
