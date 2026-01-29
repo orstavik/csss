@@ -1,8 +1,8 @@
-**csss:** $bg(size(10%,20%),10%,11%,#green)
+**csss:** $bg(size(10%,20%),10%,11%,#green,local,colorBurn)
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(size\(10\%\,20\%\)\,10\%\,11\%\,\#green\) {
+  .\$bg\(size\(10\%\,20\%\)\,10\%\,11\%\,\#green\,local\,colorBurn\) {
     background: none;
     background-image: unset;
     background-position: 10% 11%;
@@ -10,22 +10,22 @@
     background-size: 10% 20%;
     background-origin: padding-box;
     background-clip: border-box;
-    background-blend-mode: normal;
-    background-attachment: scroll;
+    background-blend-mode: color-burn;
+    background-attachment: local;
     background-color: green;
   }
 }
 ```
 
-**csss:** $bg(linear(90deg,(#red),#green))
+**csss:** $bg(repeatX,linear(90deg,(#red),#green))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(linear\(90deg\,\(\#red\)\,\#green\)\) {
+  .\$bg\(repeatX\,linear\(90deg\,\(\#red\)\,\#green\)\) {
     background: none;
     background-image: linear-gradient(90deg, red, green);
     background-position: 0% 0%;
-    background-repeat: repeat;
+    background-repeat: repeat-x;
     background-size: auto;
     background-origin: padding-box;
     background-clip: border-box;
@@ -125,16 +125,16 @@
 }
 ```
 
-**csss:** $bg(ellipse(#green,#purple))
+**csss:** $bg(cover,ellipse(#green,#purple))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(ellipse\(\#green\,\#purple\)\) {
+  .\$bg\(cover\,ellipse\(\#green\,\#purple\)\) {
     background: none;
     background-image: radial-gradient(green, purple);
     background-position: 0% 0%;
     background-repeat: repeat;
-    background-size: auto;
+    background-size: cover;
     background-origin: padding-box;
     background-clip: border-box;
     background-blend-mode: normal;

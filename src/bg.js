@@ -10,6 +10,7 @@ import {
   WORD_IN_TABLE,
   CHECKNAME,
   CamelWords,
+  Words,
   Angle,
   AnglePercent,
   SEQOPT,
@@ -74,7 +75,7 @@ const ColorStopLengthPercent = CHECKNAME("(", SEQOPT([Color, LengthPercent, Leng
 const AtPosition = CamelWords("top|bottom|left|right|center|xStart|xEnd|yStart|yEnd|blockStart|blockEnd|inlineStart|inlineEnd");
 const FarthestClosest = CamelWords("farthestCorner|farthestSide|closestCorner|closestSide");
 
-const POSITIONS = CamelWords("left|center|right|top|bottom|xStart|xEnd|yStart|yEnd|blockStart|blockEnd|inlineStart|inlineEnd");
+const BgPositions = CamelWords("left|center|right|top|bottom|xStart|xEnd|yStart|yEnd|blockStart|blockEnd|inlineStart|inlineEnd");
 
 const conic = TYPB({}, {
   at: CHECKNAME("at", SINmax(2, e => LengthPercent(e) ?? AtPosition(e), (n, res) => "at " + res.join(" "))),
@@ -125,58 +126,10 @@ const circle = TYPB({}, {
 }, ({ size, at, ColorSpace, colorStops = [] }) =>
   ["circle", size, at, ColorSpace].filter(Boolean).join(" ") + ", " + colorStops.join(", "));
 
-
-const BACKGROUND_WORDS = {
-  repeat: { backgroundRepeat: "repeat" },
-  repeatX: { backgroundRepeat: "repeat-x" },
-  repeatY: { backgroundRepeat: "repeat-y" },
-  space: { backgroundRepeat: "space" },
-  round: { backgroundRepeat: "round" },
-  noRepeat: { backgroundRepeat: "no-repeat" },
-
-  cover: { backgroundSize: "cover" },
-  contain: { backgroundSize: "contain" },
-
-  contentBox: { backgroundOrigin: "content-box" },
-  borderBox: { backgroundOrigin: "border-box" },
-
-  clipPaddingBox: { backgroundClip: "padding-box" },
-  clipContentBox: { backgroundClip: "content-box" },
-  clipText: { backgroundClip: "text" },
-  clipBorderArea: { backgroundClip: "border-area" },
-
-  multiply: { backgroundBlendMode: "multiply" },
-  screen: { backgroundBlendMode: "screen" },
-  overlay: { backgroundBlendMode: "overlay" },
-  darken: { backgroundBlendMode: "darken" },
-  lighten: { backgroundBlendMode: "lighten" },
-  colorDodge: { backgroundBlendMode: "color-dodge" },
-  colorBurn: { backgroundBlendMode: "color-burn" },
-  hardLight: { backgroundBlendMode: "hard-light" },
-  softLight: { backgroundBlendMode: "soft-light" },
-  difference: { backgroundBlendMode: "difference" },
-  exclusion: { backgroundBlendMode: "exclusion" },
-  hue: { backgroundBlendMode: "hue" },
-  saturation: { backgroundBlendMode: "saturation" },
-  color: { backgroundBlendMode: "color" },
-  luminosity: { backgroundBlendMode: "luminosity" },
-
-  fixed: { backgroundAttachment: "fixed" },
-  scroll: { backgroundAttachment: "scroll" },
-  local: { backgroundAttachment: "local" },
-  scrollLocal: { backgroundAttachment: "scroll local" },
-  localScroll: { backgroundAttachment: "local scroll" },
-  fixedLocal: { backgroundAttachment: "fixed local" },
-  scrollFixed: { backgroundAttachment: "scroll fixed" },
-  fixedScroll: { backgroundAttachment: "fixed scroll" },
-  localFixed: { backgroundAttachment: "local fixed" },
-};
-
 const Auto = ({ text }) => text === "auto" ? "auto" : undefined;
 
 const bg = TYPB({
-  ...BACKGROUND_WORDS,
-  size: SINmax(2, e => LengthPercent(e) ?? Auto(e), (name, ar) => ({ backgroundSize: ar.join(" ") })),
+  size: SINmax(2, e => LengthPercent(e) ?? Auto(e), (name, ar) => ar.join(" ")),
   linear,
   ellipse: radial,
   radial,
@@ -185,12 +138,19 @@ const bg = TYPB({
   repeatingLinear: linear,
   repeatingEllipse: radial,
   repeatingRadial: radial,
+
   repeatingCircle: circle,
   repeatingConic: conic,
-}, {}, {
-  Color, Url, positions: POSITIONS, positionValues: LengthPercent
+}, {
+  backgroundRepeat: CamelWords("repeat|repeatX|repeatY|space|round|noRepeat"),
+  backgroundSize: Words("cover|contain"),
+  backgroundOrigin: WORD_IN_TABLE({ originBorderBox: "borderBox", originPaddingBox: "paddingBox", originContentBox: "contentBox" }),
+  backgroundClip: CamelWords("borderBox|paddingBox|contentBox|text|borderArea"),
+  backgroundAttachment: Words("fixed|scroll|local"),
+  backgroundBlendMode: CamelWords("multiply|screen|overlay|darken|lighten|colorDodge|colorBurn|hardLight|softLight|difference|exclusion|hue|saturation|color|luminosity"),
+}, {
+  Color, Url, positions: BgPositions, positionValues: LengthPercent
 },
-
   res => {
     if (res.positionValues?.length > 2)
       throw new SyntaxError(`background-position has max 2 values: ${res.positionValues}`);
@@ -264,27 +224,6 @@ const bg = TYPB({
   }
 );
 
-// function bgColorOrImage(args) {
-//   const img = interpretImage(args[0]);  //isColor => linear-gradient on top level
-//isUrl => becomes a url() on top level
-//   if (img)
-//     return args.shift(), img.text;
-//   const color = isColor(args[0]);
-//   if (color)
-//     return args.shift(), `linear-gradient(${color.text})`;
-//   throw new SyntaxError(`$bg must include either a color or url: ${color.text}.`);
-// }
-// const bg = ({ name, args }) => initiateBackground(args);
-// function bg({ args: argsIn }) {
-//   const { res, args } = initiateBackground(argsIn);
-//   if (!args.length)
-//     throw new SyntaxError(`Missing background main argument: color, image, or gradient.`);
-//   res.backgroundImage = cb(args);
-//   if (args.length)
-//     throw new SyntaxError(`Could not interpret $bg() argument: ${args[0].text}.`);
-//   return res;
-// }
-
 export default {
   background: undefined,
   backgroundColor: undefined,
@@ -297,5 +236,6 @@ export default {
   backgroundBlendMode: undefined,
   backgroundAttachment: undefined,
   bgColor: SIN(Color, (n, v) => ({ backgroundColor: v })),
+  //todo this hack should now be manageable from the animation point of view..
   bg: Umbrella(BackgroundDefaults, bg),
 };
