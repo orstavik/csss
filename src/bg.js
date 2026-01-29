@@ -75,30 +75,8 @@ const AtPosition = CamelWords("top|bottom|left|right|center|xStart|xEnd|yStart|y
 const FarthestClosest = CamelWords("farthestCorner|farthestSide|closestCorner|closestSide");
 
 const POSITIONS = CamelWords("left|center|right|top|bottom|xStart|xEnd|yStart|yEnd|blockStart|blockEnd|inlineStart|inlineEnd");
-// const POSITION_WORDS = {};
-// const POSITIONS_FUNCS = {
-//   position: SINmax(2, LengthPercent, (name, ar) => ({ backgroundPosition: ar.join(" ") })),
-// };
 
-// for (let Inline of ["Left", "Right", "Center", ""]) {
-//   const inline = Inline.toLowerCase();
-//   for (let Block of ["Top", "Bottom", "Center", ""]) {
-//     const block = Block.toLowerCase();
-//     if (block === inline) continue;
-//     //todo center center is not accepted? what does a single Center mean?
-//     //todo with nothing, then we have position: ... and `at ...`
-//     const name = inline + Block;
-//     if (name in POSITION_WORDS) continue;
-//     const atName = "at" + Inline + Block;
-//     const dims = [inline, block].filter(Boolean);
-//     POSITION_WORDS[name] = dims.join(" ");
-
-//     POSITIONS_FUNCS[name] = SINmax(dims.length, LengthPercent,
-//       (name, ar) => ({ backgroundPosition: [inline, ar[0], block, ar[1]].filter(Boolean).join(" ") }));
-//   }
-// }
-
-const conic2 = TYPB({}, {
+const conic = TYPB({}, {
   at: CHECKNAME("at", SINmax(2, e => LengthPercent(e) ?? AtPosition(e), (n, res) => "at " + res.join(" "))),
   angle: Angle,
   ColorSpace,
@@ -145,11 +123,10 @@ const circle = TYPB({}, {
 }, {
   colorStops: e => Color(e) ?? ColorStopLengthPercent(e),
 }, ({ size, at, ColorSpace, colorStops = [] }) =>
-  [size, at, ColorSpace].filter(Boolean).join(" ") + ", " + colorStops.join(", "));
+  ["circle", size, at, ColorSpace].filter(Boolean).join(" ") + ", " + colorStops.join(", "));
 
 
 const BACKGROUND_WORDS = {
-  // ...POSITION_WORDS,
   repeat: { backgroundRepeat: "repeat" },
   repeatX: { backgroundRepeat: "repeat-x" },
   repeatY: { backgroundRepeat: "repeat-y" },
@@ -196,25 +173,21 @@ const BACKGROUND_WORDS = {
 };
 
 const Auto = ({ text }) => text === "auto" ? "auto" : undefined;
-const BACKGROUND_FUNCS = {
-  size: SINmax(2, e => LengthPercent(e) ?? Auto(e), (name, ar) => ({ backgroundSize: ar.join(" ") })),
-  // ...POSITIONS_FUNCS,
-  // positions: SINmax(2, POSITIONS),
-  // positionValues: SINmax(2, LengthPercent),
 
-  linear: linear,
+const bg = TYPB({
+  ...BACKGROUND_WORDS,
+  size: SINmax(2, e => LengthPercent(e) ?? Auto(e), (name, ar) => ({ backgroundSize: ar.join(" ") })),
+  linear,
   ellipse: radial,
-  radial: radial,
+  radial,
+  circle,
+  conic,
   repeatingLinear: linear,
   repeatingEllipse: radial,
   repeatingRadial: radial,
-  circle: circle,
   repeatingCircle: circle,
-  conic: conic2,
-  repeatingConic: conic2,
-};
-
-const bg = TYPB({ ...BACKGROUND_WORDS, ...BACKGROUND_FUNCS }, {}, {
+  repeatingConic: conic,
+}, {}, {
   Color, Url, positions: POSITIONS, positionValues: LengthPercent
 },
 
@@ -243,7 +216,7 @@ const bg = TYPB({ ...BACKGROUND_WORDS, ...BACKGROUND_FUNCS }, {}, {
       delete res.radial;
     }
     if (res.circle) {
-      res.backgroundImage = `radial-gradient(circle ${res.circle})`;
+      res.backgroundImage = `radial-gradient(${res.circle})`;
       delete res.circle;
     }
     if (res.conic) {
@@ -263,7 +236,7 @@ const bg = TYPB({ ...BACKGROUND_WORDS, ...BACKGROUND_FUNCS }, {}, {
       delete res.repeatingRadial;
     }
     if (res.repeatingCircle) {
-      res.backgroundImage = `repeating-radial-gradient(circle ${res.repeatingCircle})`;
+      res.backgroundImage = `repeating-radial-gradient(${res.repeatingCircle})`;
       delete res.repeatingCircle;
     }
     if (res.repeatingConic) {
