@@ -1,4 +1,4 @@
-import { Color, LengthPercent, Url, TYPB, SIN, SINmax, WORD_IN_TABLE, CHECKNAME, CamelWords, Words, Angle, AnglePercent, Sequence, Umbrella, } from "./func.js";
+import { Color, LengthPercent, Url, TYPB, SIN, WORD_IN_TABLE, CamelWords, Words, Angle, AnglePercent, Sequence, Umbrella, } from "./func.js";
 //todo isImage, interpretImage,
 
 const BackgroundDefaults = {
