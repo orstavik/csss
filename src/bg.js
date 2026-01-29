@@ -4,11 +4,6 @@ import {
   Url,
   //todo isImage
   // interpretImage,
-  extractLengthPercent,
-  extractAnglePercent,
-  extractAngle,
-  extractColor,
-  makeExtractor,
   TYPB,
   SIN,
   SINmax,
@@ -31,6 +26,48 @@ const BackgroundDefaults = {
   backgroundBlendMode: "normal",
   backgroundAttachment: "scroll",
 };
+
+const ColorSpace = WORD_IN_TABLE({
+  hslLonger: "in hsl longer hue",
+  hslShorter: "in hsl shorter hue",
+  hslIncreasing: "in hsl increasing hue",
+  hslDecreasing: "in hsl decreasing hue",
+  hwbLonger: "in hwb longer hue",
+  hwbShorter: "in hwb shorter hue",
+  hwbIncreasing: "in hwb increasing hue",
+  hwbDecreasing: "in hwb decreasing hue",
+  lchLonger: "in lch longer hue",
+  lchShorter: "in lch shorter hue",
+  lchIncreasing: "in lch increasing hue",
+  lchDecreasing: "in lch decreasing hue",
+  oklchLonger: "in oklch longer hue",
+  oklchShorter: "in oklch shorter hue",
+  oklchIncreasing: "in oklch increasing hue",
+  oklchDecreasing: "in oklch decreasing hue",
+  oklab: "in oklab",
+  lab: "in lab",
+  lch: "in lch",
+  srgb: "in srgb",
+  srgbLinear: "in srgb-linear",
+  displayP3: "in display-p3",
+  a98Rgb: "in a98-rgb",
+  prophotoRgb: "in prophoto-rgb",
+  rec2020: "in rec2020",
+  xyz: "in xyz",
+  xyzD50: "in xyz-d50",
+  xyzD65: "in xyz-d65",
+});
+
+const LinearDirections = WORD_IN_TABLE({
+  left: "to left",
+  right: "to right",
+  up: "to top",
+  down: "to bottom",
+  upLeft: "to top left",
+  upRight: "to top right",
+  downLeft: "to bottom left",
+  downRight: "to bottom right",
+});
 
 const POSITION_WORDS = {};
 const POSITIONS_FUNCS = {
@@ -63,116 +100,27 @@ for (let Inline of ["Left", "Right", "Center", ""]) {
   }
 }
 
-const ColorSpace = {
-  hslLonger: "in hsl longer hue",
-  hslShorter: "in hsl shorter hue",
-  hslIncreasing: "in hsl increasing hue",
-  hslDecreasing: "in hsl decreasing hue",
-  hwbLonger: "in hwb longer hue",
-  hwbShorter: "in hwb shorter hue",
-  hwbIncreasing: "in hwb increasing hue",
-  hwbDecreasing: "in hwb decreasing hue",
-  lchLonger: "in lch longer hue",
-  lchShorter: "in lch shorter hue",
-  lchIncreasing: "in lch increasing hue",
-  lchDecreasing: "in lch decreasing hue",
-  oklchLonger: "in oklch longer hue",
-  oklchShorter: "in oklch shorter hue",
-  oklchIncreasing: "in oklch increasing hue",
-  oklchDecreasing: "in oklch decreasing hue",
-  oklab: "in oklab",
-  lab: "in lab",
-  lch: "in lch",
-  srgb: "in srgb",
-  srgbLinear: "in srgb-linear",
-  displayP3: "in display-p3",
-  a98Rgb: "in a98-rgb",
-  prophotoRgb: "in prophoto-rgb",
-  rec2020: "in rec2020",
-  xyz: "in xyz",
-  xyzD50: "in xyz-d50",
-  xyzD65: "in xyz-d65",
-};
-
-function interpretColorSpace(a) {
-  const res = ColorSpace[a.text];
-  if (res) return { text: res };
-}
-
-const extractColorSpace = makeExtractor(interpretColorSpace);
-
-const extractAt = makeExtractor(a => {
-  const a2 = AT_POSITION_WORDS[a.text] ??
-    AT_POSITION_FUNCS[a.name]?.(a);
-  return a2 && { text: a2 };
-});
-
-//"Mdn: Including two stop positions is equivalent to declaring two color stops with the same color at the two positions."
-function extractColorStop(args, lengthOrAngleExtractor) {
-  const color = extractColor(args);
-  if (!color) return;
-  const len1 = args.length && lengthOrAngleExtractor(args);
-  if (!len1) return color;
-  const len2 = args.length && lengthOrAngleExtractor(args);
-  if (!len2) return color + " " + len1;
-  return color + " " + len1 + " " + len2;
-}
-
-function extractColorStops(args, lengthOrAngleExtractor) {
-  const colorStops = [];
-  while (args.length) {
-    const cs = extractColorStop(args, lengthOrAngleExtractor);
-    if (!cs)
-      throw new SyntaxError(`invalid color stop argument: ${args[0]}`);
-    colorStops.push(cs);
-  }
-  if (colorStops.length > 1)
-    return colorStops;
-  throw new SyntaxError(`gradient() functions requires at least two colors, got ${colorStops.length}.`);
-}
-
-const conic = (TYPE) => ({ args }) => {
-  let angle = extractAngle(args);
-  angle &&= "from " + angle;
-  const at = extractAt(args);
-  const colorSpace = extractColorSpace(args);
-  const colorStops = extractColorStops(args, extractAnglePercent);
-  const first = [angle, at, colorSpace].filter(Boolean).join(" ");
-  return { backgroundImage: `${TYPE}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})` };
-}
-
 const ColorStopAnglePercent = CHECKNAME("(", SEQOPT([Color, AnglePercent, AnglePercent], (_, res) => res.join(" ")));
 const conic2 = TYPB({}, {
   at: CHECKNAME("at", SINmax(2, e => LengthPercent(e) ?? AtPosition(e), (n, res) => "at " + res.join(" "))),
   angle: Angle,
-  colorSpace: WORD_IN_TABLE(ColorSpace),
+  ColorSpace,
 }, {
   colorStops: e => Color(e) ?? AnglePercent(e) ?? ColorStopAnglePercent(e),
-}, ({ angle, at, colorSpace, colorStops = [] }) => {
+}, ({ angle, at, ColorSpace, colorStops = [] }) => {
   angle &&= "from " + angle;
-  const first = [angle, at, colorSpace].filter(Boolean).join(" ");
+  const first = [angle, at, ColorSpace].filter(Boolean).join(" ");
   return [first, ...colorStops].filter(Boolean).join(", ")
 })
 const ColorStopLengthPercent = CHECKNAME("(", SEQOPT([Color, LengthPercent, LengthPercent], (_, res) => res.join(" ")));
 
-const LinearDirections = WORD_IN_TABLE({
-  left: "to left",
-  right: "to right",
-  up: "to top",
-  down: "to bottom",
-  upLeft: "to top left",
-  upRight: "to top right",
-  downLeft: "to bottom left",
-  downRight: "to bottom right",
-});
-
 const linear = TYPB({}, {
   angle: e => Angle(e) ?? LinearDirections(e),
-  colorSpace: WORD_IN_TABLE(ColorSpace),
+  ColorSpace,
 }, {
   colorStops: e => Color(e) ?? ColorStopLengthPercent(e),
-}, ({ angle, colorSpace, colorStops = [] }) => {
-  const first = [angle, colorSpace].filter(Boolean).join(" ");
+}, ({ angle, ColorSpace, colorStops = [] }) => {
+  const first = [angle, ColorSpace].filter(Boolean).join(" ");
   return [first, ...colorStops].filter(Boolean).join(", ")
 });
 
@@ -180,29 +128,29 @@ const AtPosition = e => CamelWords("top|bottom|left|right|center|xStart|xEnd|ySt
 
 const radial = TYPB({}, {
   at: CHECKNAME("at", SINmax(2, e => LengthPercent(e) ?? AtPosition(e), (n, res) => "at " + res.join(" "))),
-  colorSpace: WORD_IN_TABLE(ColorSpace),
+  ColorSpace,
   size2: CamelWords("farthestCorner|farthestSide|closestCorner|closestSide"),
 }, {
   colorStops: e => Color(e) ?? ColorStopLengthPercent(e),
   size: LengthPercent,
-}, ({ size, size2, at, colorSpace, colorStops = [] }) => {
+}, ({ size, size2, at, ColorSpace, colorStops = [] }) => {
   if (size?.length > 2)
     throw new SyntaxError(`radial() size cannot be more than two values: ${size}`);
   size &&= size.join(" ");
   if (size && size2)
     throw new SyntaxError(`radial() size specified twice: ${size} AND ${size2}`);
-  const first = [size, size2, at, colorSpace].filter(Boolean).join(" ");
+  const first = [size, size2, at, ColorSpace].filter(Boolean).join(" ");
   return [first, ...colorStops].filter(Boolean).join(", ")
 });
 
 const circle = TYPB({}, {
   at: CHECKNAME("at", SINmax(2, e => LengthPercent(e) ?? AtPosition(e), (n, res) => "at " + res.join(" "))),
-  colorSpace: WORD_IN_TABLE(ColorSpace),
+  ColorSpace,
   size: e => LengthPercent(e) ?? CamelWords("farthestCorner|farthestSide|closestCorner|closestSide")(e),
 }, {
   colorStops: e => Color(e) ?? ColorStopLengthPercent(e),
-}, ({ size, at, colorSpace, colorStops = [] }) =>
-  [size, at, colorSpace].filter(Boolean).join(" ") + ", " + colorStops.join(", "));
+}, ({ size, at, ColorSpace, colorStops = [] }) =>
+  [size, at, ColorSpace].filter(Boolean).join(" ") + ", " + colorStops.join(", "));
 
 
 const GRADIENTS = {
