@@ -1,4 +1,4 @@
-import { Color, LengthPercent, Url, TYPB, SIN, SINmax, WORD_IN_TABLE, CHECKNAME, CamelWords, Words, Angle, AnglePercent, SEQOPT, Umbrella, } from "./func.js";
+import { Color, LengthPercent, Url, TYPB, SIN, SINmax, WORD_IN_TABLE, CHECKNAME, CamelWords, Words, Angle, AnglePercent, Sequence, Umbrella, } from "./func.js";
 //todo isImage, interpretImage,
 
 const BackgroundDefaults = {
@@ -54,32 +54,42 @@ const LinearDirections = WORD_IN_TABLE({
   downLeft: "to bottom left",
   downRight: "to bottom right",
 });
-const ColorStopAnglePercent = CHECKNAME("(", SEQOPT([Color, AnglePercent, AnglePercent], (_, res) => res.join(" ")));
-const ColorStopLengthPercent = CHECKNAME("(", SEQOPT([Color, LengthPercent, LengthPercent], (_, res) => res.join(" ")));
-const AtPosition = CamelWords("top|bottom|left|right|center|xStart|xEnd|yStart|yEnd|blockStart|blockEnd|inlineStart|inlineEnd");
-const FarthestClosest = CamelWords("farthestCorner|farthestSide|closestCorner|closestSide");
+const AngleOrLinearDirection = e => Angle(e) ?? LinearDirections(e);
+const ColorStopAnglePercentTuple = Sequence("(/1-3", [Color, AnglePercent], (_, res) => res.join(" "));
+const ColorStopAnglePercent = e => Color(e) ?? ColorStopAnglePercentTuple(e);
 
+const ColorStopLengthPercentTuple = Sequence("(/1-3", [Color, LengthPercent], (_, res) => res.join(" "));
+const ColorStopLengthPercent = e => Color(e) ?? ColorStopLengthPercentTuple(e);
+const AtPosition = CamelWords("top|bottom|left|right|center|xStart|xEnd|yStart|yEnd|blockStart|blockEnd|inlineStart|inlineEnd");
+const LengthPercentAtPosition = e => LengthPercent(e) ?? AtPosition(e);
+
+const FarthestClosest = CamelWords("farthestCorner|farthestSide|closestCorner|closestSide");
+const LengthPercentOrFarthestClosest = e => LengthPercent(e) ?? FarthestClosest(e);
 const BgPositions = CamelWords("left|center|right|top|bottom|xStart|xEnd|yStart|yEnd|blockStart|blockEnd|inlineStart|inlineEnd");
 
 const conic = TYPB({}, {
-  at: CHECKNAME("at", SINmax(2, e => LengthPercent(e) ?? AtPosition(e), (n, res) => "at " + res.join(" "))),
-  angle: Angle,
+  at: Sequence("at/1-2", [LengthPercentAtPosition], (n, res) => "at " + res.join(" ")),
+  Angle,
   ColorSpace,
 }, {
-  colorStops: e => Color(e) ?? AnglePercent(e) ?? ColorStopAnglePercent(e),
-}, ({ angle, at, ColorSpace, colorStops = [] }) => {
-  angle &&= "from " + angle;
-  const first = [angle, at, ColorSpace].filter(Boolean).join(" ");
+  colorStops: ColorStopAnglePercent,
+}, ({ Angle, at, ColorSpace, colorStops }) => {
+  if (!colorStops)
+    throw new SyntaxError(`conic() must have at least one color stop`);
+  Angle &&= "from " + Angle;
+  const first = [Angle, at, ColorSpace].filter(Boolean).join(" ");
   return [first, ...colorStops].filter(Boolean).join(", ")
 })
 
 const linear = TYPB({}, {
-  angle: e => Angle(e) ?? LinearDirections(e),
+  AngleOrLinearDirection,
   ColorSpace,
 }, {
-  colorStops: e => Color(e) ?? ColorStopLengthPercent(e),
-}, ({ angle, ColorSpace, colorStops = [] }) => {
-  const first = [angle, ColorSpace].filter(Boolean).join(" ");
+  colorStops: ColorStopLengthPercent,
+}, ({ AngleOrLinearDirection, ColorSpace, colorStops }) => {
+  if (!colorStops)
+    throw new SyntaxError(`linear() must have at least one color stop`);
+  const first = [AngleOrLinearDirection, ColorSpace].filter(Boolean).join(" ");
   return [first, ...colorStops].filter(Boolean).join(", ")
 });
 
@@ -89,9 +99,11 @@ const radial = TYPB({}, {
   ColorSpace,
   FarthestClosest,
 }, {
-  colorStops: e => Color(e) ?? ColorStopLengthPercent(e),
+  colorStops: ColorStopLengthPercent,
   size: LengthPercent,
-}, ({ size, FarthestClosest, at, ColorSpace, colorStops = [] }) => {
+}, ({ size, FarthestClosest, at, ColorSpace, colorStops }) => {
+  if (!colorStops)
+    throw new SyntaxError(`radial() must have at least one color stop`);
   if (size?.length > 2)
     throw new SyntaxError(`radial() size cannot be more than two values: ${size}`);
   size &&= size.join(" ");
@@ -104,11 +116,14 @@ const radial = TYPB({}, {
 const circle = TYPB({}, {
   at: CHECKNAME("at", SINmax(2, e => LengthPercent(e) ?? AtPosition(e), (n, res) => "at " + res.join(" "))),
   ColorSpace,
-  size: e => LengthPercent(e) ?? FarthestClosest(e),
+  size: LengthPercentOrFarthestClosest,
 }, {
-  colorStops: e => Color(e) ?? ColorStopLengthPercent(e),
-}, ({ size, at, ColorSpace, colorStops = [] }) =>
-  ["circle", size, at, ColorSpace].filter(Boolean).join(" ") + ", " + colorStops.join(", "));
+  colorStops: ColorStopLengthPercent,
+}, ({ size, at, ColorSpace, colorStops }) => {
+  if (!colorStops)
+    throw new SyntaxError(`circle() must have at least one color stop`);
+  return ["circle", size, at, ColorSpace].filter(Boolean).join(" ") + ", " + colorStops.join(", ")
+});
 
 const Auto = ({ text }) => text === "auto" ? "auto" : undefined;
 
