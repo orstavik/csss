@@ -1,6 +1,4 @@
-import {
-  TYPB, Umbrella, Sequence, SIN, LengthPercent, LengthPercentNumber, NumberInterpreter, ColorUrl, Length, Url, UrlUnset, CamelWords, Words, Fraction, 
-} from "./func.js";
+import { TYPB, Umbrella, Sequence, SIN, LengthPercent, LengthPercentNumber, NumberInterpreter, ColorUrl, Length, Url, UrlUnset, CamelWords, Fraction, WORD_IN_TABLE, } from "./func.js";
 
 const strokeDefaults = {
   stroke: "unset",
@@ -89,11 +87,11 @@ export default {
   vectorEffect: SIN(CamelWords("none|nonScalingStroke|nonScalingSize|nonRotation|fixedPosition"), (p, v) => ({ [p]: v })),
   clipRule: SIN(CamelWords("nonzero|evenodd"), (p, v) => ({ [p]: v })),
   colorInterpolation: SIN(CamelWords("auto|sRGB|linearRGB"), (p, v) => ({ [p]: v })),
-  shapeRendering: SIN(Words("auto|optimizeSpeed|crispEdges|geometricPrecision"), (p, v) => ({ [p]: v })),
+  shapeRendering: SIN(WORD_IN_TABLE({ auto: "auto", optimizeSpeed: "optimizeSpeed", crispEdges: "crispEdges", geometricPrecision: "geometricPrecision" }), (p, v) => ({ [p]: v })),
   colorRendering: SIN(CamelWords("auto|optimizeSpeed|optimizeQuality"), (p, v) => ({ [p]: v })),
   imageRendering: SIN(CamelWords("auto|optimizeSpeed|optimizeQuality|pixelated"), (p, v) => ({ [p]: v })),
   maskType: SIN(CamelWords("luminance|alpha"), (p, v) => ({ [p]: v })),
-  paintOrder: Sequence("paintOrder/0-4", [Words("normal|fill|stroke|markers")], (p, v = ["normal"]) => ({ [p]: v.join(" ") })),
+  paintOrder: Sequence("paintOrder/0-4", [CamelWords("normal|fill|stroke|markers")], (p, v = ["normal"]) => ({ [p]: v.join(" ") })),
   lightingColor: SIN(ColorUrl, (p, v = "currentColor") => ({ [p]: v })),
   svgOpacity: SIN(Fraction, (p, v = "1") => ({ [p]: v })),
 

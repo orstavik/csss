@@ -1,4 +1,4 @@
-import { Color, LengthPercent, CamelWords, TYPB, SINmax } from "./func.js";
+import { Color, LengthPercent, CamelWords, TYPB, Sequence } from "./func.js";
 
 const BorderUmbrella = cb => exp => {
   const res = cb(exp);
@@ -28,7 +28,7 @@ const BorderUmbrella = cb => exp => {
 //   6: blockTopRight (and 2: blockTopLeft), 
 //   7: inlineRightBottom (and 3: inlineRightTop), 
 //   8: blockBottomRight (and 4: blockBottomLeft).
-const radius = SINmax(8, LengthPercent, (n, ar) => {
+const radius = Sequence("/1-8", [LengthPercent], (n, ar) => {
   if (ar.length === 1)
     return { borderRadius: ar[0] };
   if (ar.length === 2) {

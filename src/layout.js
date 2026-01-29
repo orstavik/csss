@@ -1,4 +1,4 @@
-import { RepeatBasic, SpanBasic, isBasic, Basic, LogicalFour, LengthPercent, TYPB, SIN, NumberInterpreter, Umbrella, FIRST, Length, LengthPercentNumber, SINmax, LengthPercentUnset } from "./func.js";
+import { Sequence, RepeatBasic, SpanBasic, isBasic, Basic, LogicalFour, LengthPercent, TYPB, SIN, NumberInterpreter, Umbrella, FIRST, Length, LengthPercentNumber, LengthPercentUnset } from "./func.js";
 
 function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
@@ -146,7 +146,7 @@ const ITEM = {
   // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
 
-const gap = SINmax(2, LengthPercentUnset, (n, ar) => {
+const gap = Sequence("/1-2", [LengthPercentUnset], (n, ar) => {
   if (ar[0] == ar[1] || ar.length == 1) return { gap: ar[0] };
   if (ar[1] == "unset") return { rowGap: ar[0] };
   if (ar[0] == "unset") return { columnGap: ar[1] };
@@ -208,10 +208,11 @@ const GRID = {
   ...CONTAINER,
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.placeItems,
-  cols: SINmax(999, RepeatBasic, (n, ar) => ({ gridTemplateColumns: ar.join(" ") })), //todo what is the bertScore distance from cols to columns?
-  columns: SINmax(999, RepeatBasic, (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
-  rows: SINmax(999, RepeatBasic, (n, ar) => ({ gridTemplateRows: ar.join(" ") })),
-  areas: SINmax(999, RepeatBasic, (n, ar) => ({ gridTemplateAreas: ar.join(" ") })),
+  //todo what is the bertScore distance from cols to columns?
+  cols: Sequence("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
+  columns: Sequence("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
+  rows: Sequence("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateRows: ar.join(" ") })),
+  areas: Sequence("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateAreas: ar.join(" ") })),
   gap,
   //todo test this!!
   column: { gridAutoFlow: "column" },
@@ -223,8 +224,8 @@ const GRID = {
 const _GridItem = {
   ...ALIGNMENTS.placeSelf,
   ...ITEM,
-  column: SINmax(2, SpanBasic, (n, ar) => ({ gridColumn: ar.join(" / ") })), //todo test how `_` works as first or second argument.
-  row: SINmax(2, SpanBasic, (n, ar) => ({ gridRow: ar.join(" / ") })),       //todo test how `_` works as first or second argument.
+  column: Sequence("/1-2", [SpanBasic], (n, ar) => ({ gridColumn: ar.join(" / ") })), //todo test how `_` works as first or second argument.
+  row: Sequence("/1-2", [SpanBasic], (n, ar) => ({ gridRow: ar.join(" / ") })),       //todo test how `_` works as first or second argument.
 };
 
 const FLEX = {

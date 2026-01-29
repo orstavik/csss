@@ -1,4 +1,4 @@
-import { Color, LengthPercent, Url, TYPB, SIN, WORD_IN_TABLE, CamelWords, Words, Angle, AnglePercent, Sequence, Umbrella, } from "./func.js";
+import { Color, LengthPercent, Url, TYPB, SIN, WORD_IN_TABLE, CamelWords, Angle, AnglePercent, Sequence, Umbrella, } from "./func.js";
 //todo isImage, interpretImage,
 
 const BackgroundDefaults = {
@@ -142,10 +142,10 @@ const bg = TYPB({
   repeatingConic: conic,
 }, {
   backgroundRepeat: CamelWords("repeat|repeatX|repeatY|space|round|noRepeat"),
-  backgroundSize: Words("cover|contain"),
+  backgroundSize: CamelWords("cover|contain"),
   backgroundOrigin: WORD_IN_TABLE({ originBorderBox: "borderBox", originPaddingBox: "paddingBox", originContentBox: "contentBox" }),
   backgroundClip: CamelWords("borderBox|paddingBox|contentBox|text|borderArea"),
-  backgroundAttachment: Words("fixed|scroll|local"),
+  backgroundAttachment: CamelWords("fixed|scroll|local"),
   backgroundBlendMode: CamelWords("multiply|screen|overlay|darken|lighten|colorDodge|colorBurn|hardLight|softLight|difference|exclusion|hue|saturation|color|luminosity"),
 }, {
   Color, Url, positions: BgPositions, positionValues: LengthPercent

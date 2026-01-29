@@ -1,4 +1,4 @@
-import { Sequence, AbsoluteUrl, Quote, Angle, Integer, Fraction, Length, SIN, Percent, Basic, FIRST, Umbrella, Word, Name, NameUnset, SINmax, TYPB } from "./func.js";
+import { Sequence, AbsoluteUrl, Quote, Angle, Integer, Fraction, Length, SIN, Percent, Basic, FIRST, Umbrella, Word, Name, NameUnset, TYPB } from "./func.js";
 
 const FontDefaults = {
   fontFamily: "unset",

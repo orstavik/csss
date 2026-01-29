@@ -649,18 +649,6 @@ export const SIN = (interpreter, post) => ({ args, name }) => {
   return post ? post(name, v) : v;
 };
 
-export const SINmax = (max, interpreter, post) => ({ args, name }) => {
-  if (args.length < 1 || args.length > max)
-    throw new SyntaxError(`${name} requires 1 to ${max} arguments, got ${args.length} arguments.`);
-  const res = args.map((a, i) => {
-    const a2 = interpreter(a);
-    if (a2 != null)
-      return a2;
-    throw BadArgument(name, args, i, interpreter.name);
-  });
-  return post ? post(name, res) : res;
-};
-
 function parseSignature(SIG) {
   const [NAME, ARITY] = SIG.split("/");
   if (ARITY == undefined || ARITY == "")
@@ -698,10 +686,6 @@ export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
   return POST ? POST(name, first, res) : first;
 };
-export const Words = (WORDS) => {
-  WORDS = WORDS.split("|");
-  return a => WORDS.includes(a.text) ? a.text : undefined;
-}
 export const CamelWords = (WORDS) => {
   const lookupTable = Object.fromEntries(WORDS.split("|").map(w => [w, w.replaceAll(/[A-Z]/g, c => "-" + c.toLowerCase())]));
   return a => lookupTable[a.text];
