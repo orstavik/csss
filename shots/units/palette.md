@@ -101,7 +101,7 @@
 @layer containerDefault {
   .\$bg\(\#primary\) {
     background: none;
-    background-image: linear-gradient(var(--color-primary));
+    background-image: unset;
     background-position: 0% 0%;
     background-repeat: repeat;
     background-size: auto;
@@ -109,6 +109,7 @@
     background-clip: border-box;
     background-blend-mode: normal;
     background-attachment: scroll;
+    background-color: var(--color-primary);
   }
 }
 ```
@@ -119,7 +120,7 @@
 @layer containerDefault {
   .\$bg\(\#primary\#50\) {
     background: none;
-    background-image: linear-gradient(color-mix(in oklab, var(--color-primary), var(--color-primary1) 50%));
+    background-image: unset;
     background-position: 0% 0%;
     background-repeat: repeat;
     background-size: auto;
@@ -127,6 +128,7 @@
     background-clip: border-box;
     background-blend-mode: normal;
     background-attachment: scroll;
+    background-color: color-mix(in oklab, var(--color-primary), var(--color-primary1) 50%);
   }
 }
 ```
@@ -137,7 +139,7 @@
 @layer containerDefault {
   .\$bg\(\#primary\#20\#a50\) {
     background: none;
-    background-image: linear-gradient(color-mix(in oklab, color-mix(in oklab, var(--color-primary), var(--color-primary1) 20%), transparent 50%));
+    background-image: unset;
     background-position: 0% 0%;
     background-repeat: repeat;
     background-size: auto;
@@ -145,6 +147,7 @@
     background-clip: border-box;
     background-blend-mode: normal;
     background-attachment: scroll;
+    background-color: color-mix(in oklab, color-mix(in oklab, var(--color-primary), var(--color-primary1) 20%), transparent 50%);
   }
 }
 ```

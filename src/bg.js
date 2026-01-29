@@ -13,11 +13,12 @@ import {
   Angle,
   AnglePercent,
   SEQOPT,
+  Umbrella,
 } from "./func.js";
 
 const BackgroundDefaults = {
   background: "none",
-  backgroundImage: undefined,
+  backgroundImage: "unset",
   backgroundPosition: "0% 0%",
   backgroundRepeat: "repeat",
   backgroundSize: "auto",
@@ -73,36 +74,29 @@ const ColorStopLengthPercent = CHECKNAME("(", SEQOPT([Color, LengthPercent, Leng
 const AtPosition = CamelWords("top|bottom|left|right|center|xStart|xEnd|yStart|yEnd|blockStart|blockEnd|inlineStart|inlineEnd");
 const FarthestClosest = CamelWords("farthestCorner|farthestSide|closestCorner|closestSide");
 
-const POSITION_WORDS = {};
-const POSITIONS_FUNCS = {
-  position: SINmax(2, LengthPercent, (name, ar) => ({ backgroundPosition: ar.join(" ") })),
-};
+const POSITIONS = CamelWords("left|center|right|top|bottom|xStart|xEnd|yStart|yEnd|blockStart|blockEnd|inlineStart|inlineEnd");
+// const POSITION_WORDS = {};
+// const POSITIONS_FUNCS = {
+//   position: SINmax(2, LengthPercent, (name, ar) => ({ backgroundPosition: ar.join(" ") })),
+// };
 
-const AT_POSITION_WORDS = {};
-const AT_POSITION_FUNCS = {
-  at: SINmax(2, LengthPercent, (name, ar) => "at " + ar.join(" ")),
-};
+// for (let Inline of ["Left", "Right", "Center", ""]) {
+//   const inline = Inline.toLowerCase();
+//   for (let Block of ["Top", "Bottom", "Center", ""]) {
+//     const block = Block.toLowerCase();
+//     if (block === inline) continue;
+//     //todo center center is not accepted? what does a single Center mean?
+//     //todo with nothing, then we have position: ... and `at ...`
+//     const name = inline + Block;
+//     if (name in POSITION_WORDS) continue;
+//     const atName = "at" + Inline + Block;
+//     const dims = [inline, block].filter(Boolean);
+//     POSITION_WORDS[name] = dims.join(" ");
 
-for (let Inline of ["Left", "Right", "Center", ""]) {
-  const inline = Inline.toLowerCase();
-  for (let Block of ["Top", "Bottom", "Center", ""]) {
-    const block = Block.toLowerCase();
-    if (block === inline) continue;
-    //todo center center is not accepted? what does a single Center mean?
-    //todo with nothing, then we have position: ... and `at ...`
-    const name = inline + Block;
-    if (name in POSITION_WORDS) continue;
-    const atName = "at" + Inline + Block;
-    const dims = [inline, block].filter(Boolean);
-    POSITION_WORDS[name] = dims.join(" ");
-    AT_POSITION_WORDS[atName] = "at " + POSITION_WORDS[name];
-
-    POSITIONS_FUNCS[name] = SINmax(dims.length, LengthPercent,
-      (name, ar) => ({ backgroundPosition: [inline, ar[0], block, ar[1]].filter(Boolean).join(" ") }));
-    AT_POSITION_FUNCS[atName] = SINmax(dims.length, LengthPercent,
-      (name, ar) => "at " + [inline, ar[0], block, ar[1]].filter(Boolean).join(" "));
-  }
-}
+//     POSITIONS_FUNCS[name] = SINmax(dims.length, LengthPercent,
+//       (name, ar) => ({ backgroundPosition: [inline, ar[0], block, ar[1]].filter(Boolean).join(" ") }));
+//   }
+// }
 
 const conic2 = TYPB({}, {
   at: CHECKNAME("at", SINmax(2, e => LengthPercent(e) ?? AtPosition(e), (n, res) => "at " + res.join(" "))),
@@ -154,23 +148,8 @@ const circle = TYPB({}, {
   [size, at, ColorSpace].filter(Boolean).join(" ") + ", " + colorStops.join(", "));
 
 
-const GRADIENTS = {
-  linear: e => ({ backgroundImage: `linear-gradient(${linear(e)})` }),
-  ellipse: e => ({ backgroundImage: `radial-gradient(${radial(e)})` }),
-  radial: e => ({ backgroundImage: `radial-gradient(${radial(e)})` }),
-  repeatingLinear: e => ({ backgroundImage: `repeating-linear-gradient(${linear(e)})` }),
-  repeatingEllipse: e => ({ backgroundImage: `repeating-radial-gradient(${radial(e)})` }),
-  repeatingRadial: e => ({ backgroundImage: `repeating-radial-gradient(${radial(e)})` }),
-  circle: e => ({ backgroundImage: `radial-gradient(circle ${circle(e)})` }),
-  repeatingCircle: e => ({ backgroundImage: `repeating-radial-gradient(circle ${circle(e)})` }),
-
-  conic: e => ({ backgroundImage: `conic-gradient(${conic2(e)})` }),
-  repeatingConic: e => ({ backgroundImage: `repeating-conic-gradient(${conic2(e)})` }),
-};
-
-
 const BACKGROUND_WORDS = {
-  ...POSITION_WORDS,
+  // ...POSITION_WORDS,
   repeat: { backgroundRepeat: "repeat" },
   repeatX: { backgroundRepeat: "repeat-x" },
   repeatY: { backgroundRepeat: "repeat-y" },
@@ -216,21 +195,99 @@ const BACKGROUND_WORDS = {
   localFixed: { backgroundAttachment: "local fixed" },
 };
 
+const Auto = ({ text }) => text === "auto" ? "auto" : undefined;
 const BACKGROUND_FUNCS = {
-  size: SINmax(2, LengthPercent, (name, ar) => ({ backgroundSize: ar.join(" ") })),
-  ...POSITIONS_FUNCS,
-  ...GRADIENTS,
+  size: SINmax(2, e => LengthPercent(e) ?? Auto(e), (name, ar) => ({ backgroundSize: ar.join(" ") })),
+  // ...POSITIONS_FUNCS,
+  // positions: SINmax(2, POSITIONS),
+  // positionValues: SINmax(2, LengthPercent),
+
+  linear: linear,
+  ellipse: radial,
+  radial: radial,
+  repeatingLinear: linear,
+  repeatingEllipse: radial,
+  repeatingRadial: radial,
+  circle: circle,
+  repeatingCircle: circle,
+  conic: conic2,
+  repeatingConic: conic2,
 };
 
-const bg = TYPB({ ...BACKGROUND_WORDS, ...BACKGROUND_FUNCS }, {}, { Color, Url },
+const bg = TYPB({ ...BACKGROUND_WORDS, ...BACKGROUND_FUNCS }, {}, {
+  Color, Url, positions: POSITIONS, positionValues: LengthPercent
+},
 
   res => {
-    //todo check that we only get one color
-    res.Color &&= { backgroundImage: `linear-gradient(${res.Color.join(", ")})` }
+    if (res.positionValues?.length > 2)
+      throw new SyntaxError(`background-position has max 2 values: ${res.positionValues}`);
+    if (res.positions?.length > 2)
+      throw new SyntaxError(`background-position has max 2 directions: ${res.positions}`);
+    if (res.positions || res.positionValues) {
+      const [a, c] = res.positions ?? [];
+      const [b, d] = res.positionValues ?? [];
+      res.backgroundPosition = [a, b, c, d].filter(Boolean).join(" ");
+      delete res.positions;
+      delete res.positionValues;
+    }
+    if (res.linear) {
+      res.backgroundImage = `linear-gradient(${res.linear})`;
+      delete res.linear;
+    }
+    if (res.ellipse) {
+      res.backgroundImage = `radial-gradient(${res.ellipse})`;
+      delete res.ellipse;
+    }
+    if (res.radial) {
+      res.backgroundImage = `radial-gradient(${res.radial})`;
+      delete res.radial;
+    }
+    if (res.circle) {
+      res.backgroundImage = `radial-gradient(circle ${res.circle})`;
+      delete res.circle;
+    }
+    if (res.conic) {
+      res.backgroundImage = `conic-gradient(${res.conic})`;
+      delete res.conic;
+    }
+    if (res.repeatingLinear) {
+      res.backgroundImage = `repeating-linear-gradient(${res.repeatingLinear})`;
+      delete res.repeatingLinear;
+    }
+    if (res.repeatingEllipse) {
+      res.backgroundImage = `repeating-radial-gradient(${res.repeatingEllipse})`;
+      delete res.repeatingEllipse;
+    }
+    if (res.repeatingRadial) {
+      res.backgroundImage = `repeating-radial-gradient(${res.repeatingRadial})`;
+      delete res.repeatingRadial;
+    }
+    if (res.repeatingCircle) {
+      res.backgroundImage = `repeating-radial-gradient(circle ${res.repeatingCircle})`;
+      delete res.repeatingCircle;
+    }
+    if (res.repeatingConic) {
+      res.backgroundImage = `repeating-conic-gradient(${res.repeatingConic})`;
+      delete res.repeatingConic;
+    }
+    if (res.size) {
+      res.backgroundSize = res.size.backgroundSize;
+      delete res.size;
+    }
+    if (res.Color) {
+      if (res.Color.length == 1)
+        res.backgroundColor = res.Color[0];
+      else
+        res.backgroundImage = `linear-gradient(${res.Color.join(", ")})`;
+      delete res.Color;
+    }
     //todo check that we only get one url //todo this should be isImage
-    res.Url &&= { backgroundImage: res.Url[0] }
+    if (res.Url) {
+      res.backgroundImage = res.Url[0];
+      delete res.Url;
+    }
     //todo check that we only define backgroundImage once, and all the other properties just once
-    return Object.assign({}, BackgroundDefaults, ...Object.values(res));
+    return res;
   }
 );
 
@@ -267,5 +324,5 @@ export default {
   backgroundBlendMode: undefined,
   backgroundAttachment: undefined,
   bgColor: SIN(Color, (n, v) => ({ backgroundColor: v })),
-  bg
+  bg: Umbrella(BackgroundDefaults, bg),
 };

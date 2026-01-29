@@ -224,7 +224,7 @@
 @layer containerDefault {
   .\$bg\(\#oklch\(70\%\,0\.15\,180\+30\)\) {
     background: none;
-    background-image: linear-gradient(oklch(70% 0.15 210));
+    background-image: unset;
     background-position: 0% 0%;
     background-repeat: repeat;
     background-size: auto;
@@ -232,6 +232,7 @@
     background-clip: border-box;
     background-blend-mode: normal;
     background-attachment: scroll;
+    background-color: oklch(70% 0.15 210);
   }
 }
 ```
@@ -242,7 +243,7 @@
 @layer containerDefault {
   .\$bg\(\#lab\(50\%\*1\.5\,10\,-20\)\) {
     background: none;
-    background-image: linear-gradient(lab(75% 10 -20));
+    background-image: unset;
     background-position: 0% 0%;
     background-repeat: repeat;
     background-size: auto;
@@ -250,6 +251,7 @@
     background-clip: border-box;
     background-blend-mode: normal;
     background-attachment: scroll;
+    background-color: lab(75% 10 -20);
   }
 }
 ```

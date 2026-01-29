@@ -1,3 +1,22 @@
+**csss:** $bg(size(10%,20%),10%,11%,#green)
+**css:**
+```css
+@layer containerDefault {
+  .\$bg\(size\(10\%\,20\%\)\,10\%\,11\%\,\#green\) {
+    background: none;
+    background-image: unset;
+    background-position: 10% 11%;
+    background-repeat: repeat;
+    background-size: 10% 20%;
+    background-origin: padding-box;
+    background-clip: border-box;
+    background-blend-mode: normal;
+    background-attachment: scroll;
+    background-color: green;
+  }
+}
+```
+
 **csss:** $bg(linear(90deg,(#red),#green))
 **css:**
 ```css
@@ -484,11 +503,11 @@
 }
 ```
 
-**csss:** $bg(leftTop(20px,10px),ellipse(10em,40%,#red,#blue))
+**csss:** $bg(left,top,20px,10px,ellipse(10em,40%,#red,#blue))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(leftTop\(20px\,10px\)\,ellipse\(10em\,40\%\,\#red\,\#blue\)\) {
+  .\$bg\(left\,top\,20px\,10px\,ellipse\(10em\,40\%\,\#red\,\#blue\)\) {
     background: none;
     background-image: radial-gradient(10em 40%, red, blue);
     background-position: left 20px top 10px;
@@ -584,24 +603,6 @@
     background-position: 0% 0%;
     background-repeat: repeat;
     background-size: auto;
-    background-origin: padding-box;
-    background-clip: border-box;
-    background-blend-mode: normal;
-    background-attachment: scroll;
-  }
-}
-```
-
-**csss:** $bg(size(10%,20%),position(10%,11%),#green)
-**css:**
-```css
-@layer containerDefault {
-  .\$bg\(size\(10\%\,20\%\)\,position\(10\%\,11\%\)\,\#green\) {
-    background: none;
-    background-image: linear-gradient(green);
-    background-position: 10% 11%;
-    background-repeat: repeat;
-    background-size: 10% 20%;
     background-origin: padding-box;
     background-clip: border-box;
     background-blend-mode: normal;
