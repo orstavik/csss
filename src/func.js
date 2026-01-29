@@ -492,10 +492,6 @@ export function isName(a) {
 }
 
 //interprets returns STRINGS
-export function interpretName(a) {
-  if (a.kind === "WORD" && a.text[0].match(/[a-zA-Z0-9-]/))
-    return a.text;
-}
 export function interpretRadian(a) {
   if (a?.num == 0 && a.type === "number")
     return 0;
@@ -545,19 +541,6 @@ export function interpretImage(arg) {
     return `image-set(${set.join(", ")})`;
   }
 }
-
-//todo this still lives in bg.js
-export function makeExtractor(cb) {
-  return function (args) {
-    if (!args?.length) return;
-    const res = cb(args[0]);
-    return res != null && args.shift() && res.text;
-  };
-}
-export const extractLengthPercent = makeExtractor(isLengthPercent);
-export const extractAngle = makeExtractor(isAngle);
-export const extractAnglePercent = makeExtractor(isAnglePercent);
-export const extractColor = makeExtractor(isColor);
 
 // const SpecializedNativeCssFunctions = {
 //    element: (...args) => `element(${args.join(",")})`,

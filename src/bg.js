@@ -1,21 +1,5 @@
-import {
-  Color,
-  LengthPercent,
-  Url,
-  //todo isImage
-  // interpretImage,
-  TYPB,
-  SIN,
-  SINmax,
-  WORD_IN_TABLE,
-  CHECKNAME,
-  CamelWords,
-  Words,
-  Angle,
-  AnglePercent,
-  SEQOPT,
-  Umbrella,
-} from "./func.js";
+import { Color, LengthPercent, Url, TYPB, SIN, SINmax, WORD_IN_TABLE, CHECKNAME, CamelWords, Words, Angle, AnglePercent, SEQOPT, Umbrella, } from "./func.js";
+//todo isImage, interpretImage,
 
 const BackgroundDefaults = {
   background: "none",
@@ -204,7 +188,7 @@ const bg = TYPB({
       delete res.repeatingConic;
     }
     if (res.size) {
-      res.backgroundSize = res.size.backgroundSize;
+      res.backgroundSize = res.size;
       delete res.size;
     }
     if (res.Color) {
