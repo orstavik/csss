@@ -649,7 +649,6 @@ export const SIN = (interpreter, post) => ({ args, name }) => {
   return post ? post(name, v) : v;
 };
 
-
 export const SINmax = (max, interpreter, post) => ({ args, name }) => {
   if (args.length < 1 || args.length > max)
     throw new SyntaxError(`${name} requires 1 to ${max} arguments, got ${args.length} arguments.`);

@@ -1,4 +1,4 @@
-import { AbsoluteUrl, Quote, Angle, Integer, Fraction, Length, SIN, Percent, Basic, FIRST, Umbrella, Word, Name, NameUnset, SINmax, TYPB } from "./func.js";
+import { Sequence, AbsoluteUrl, Quote, Angle, Integer, Fraction, Length, SIN, Percent, Basic, FIRST, Umbrella, Word, Name, NameUnset, SINmax, TYPB } from "./func.js";
 
 const FontDefaults = {
   fontFamily: "unset",
@@ -106,7 +106,7 @@ const FONT_WORDS = {
   xxl: { fontSize: "xx-large" },
   xxxl: { fontSize: "xxx-large" },
 
-  variant: SINmax(5, Word, (n, v) => ({ fontVariant: v })), //todo: more specific parsing?
+  variant: Sequence("variant/1-5", [Word], (n, v) => ({ fontVariant: v.join(" ") })), //todo: more specific parsing?
   width: SIN(Percent, (n, v) => ({ fontWidth: v })),
   spacing: SIN(Length, (n, v) => ({ letterSpacing: v })), //"_" => "normal". This should be LengthNormal? where we do "_" as "normal"?
   adjust: SIN(Basic, (n, v) => ({ fontSizeAdjust: v })),

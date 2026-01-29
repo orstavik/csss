@@ -1,5 +1,5 @@
 import {
-  TYPB, Umbrella, SINmax, SIN, LengthPercent, LengthPercentNumber, NumberInterpreter, ColorUrl, Length, Url, UrlUnset, CamelWords, Words, Fraction, Sequence,
+  TYPB, Umbrella, Sequence, SIN, LengthPercent, LengthPercentNumber, NumberInterpreter, ColorUrl, Length, Url, UrlUnset, CamelWords, Words, Fraction, 
 } from "./func.js";
 
 const strokeDefaults = {
@@ -78,7 +78,7 @@ export default {
   markerStart: SIN(Url, (name, v) => ({ [name]: v })),
   markerEnd: SIN(Url, (name, v) => ({ [name]: v })),
   markerMid: SIN(Url, (name, v) => ({ [name]: v })),
-  marker: SINmax(3, UrlUnset, (name, m) =>
+  marker: Sequence("marker/1-3", [UrlUnset], (name, m) =>
     m.length == 1 ? { marker: m[0] } :
       m.length == 2 ? { markerStart: m[0], markerEnd: m[1] } :
         { markerStart: m[0], markerMid: m[1], markerEnd: m[2] }
@@ -93,7 +93,7 @@ export default {
   colorRendering: SIN(CamelWords("auto|optimizeSpeed|optimizeQuality"), (p, v) => ({ [p]: v })),
   imageRendering: SIN(CamelWords("auto|optimizeSpeed|optimizeQuality|pixelated"), (p, v) => ({ [p]: v })),
   maskType: SIN(CamelWords("luminance|alpha"), (p, v) => ({ [p]: v })),
-  paintOrder: SINmax(3, Words("normal|fill|stroke|markers"), (p, v = ["normal"]) => ({ [p]: v.join(" ") })),
+  paintOrder: Sequence("paintOrder/0-4", [Words("normal|fill|stroke|markers")], (p, v = ["normal"]) => ({ [p]: v.join(" ") })),
   lightingColor: SIN(ColorUrl, (p, v = "currentColor") => ({ [p]: v })),
   svgOpacity: SIN(Fraction, (p, v = "1") => ({ [p]: v })),
 

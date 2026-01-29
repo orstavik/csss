@@ -1,5 +1,5 @@
 import shadow from "./shadows.js";
-import { SINmax, SIN, Sequence, Angle, AnglePercent, Length, LengthPercent, NumberPercent, NumberInterpreter, Url, TYPB, } from "./func.js";
+import { SIN, Sequence, Angle, AnglePercent, Length, LengthPercent, NumberPercent, NumberInterpreter, Url, TYPB, } from "./func.js";
 
 const FILTER_FUNCS = {
   blur: SIN(Length, (n, v) => `${n}(${v})`),
@@ -28,8 +28,8 @@ export default {
   backdropFilter: undefined,
 
   transform: undefined,
-  matrix: SINmax(6, NumberInterpreter, transformWithFunc),
-  matrix3d: SINmax(16, NumberInterpreter, transformWithFunc),
+  matrix: Sequence("matrix/6", [NumberInterpreter], transformWithFunc),
+  matrix3d: Sequence("matrix3d/16", [NumberInterpreter], transformWithFunc),
   perspective,
   rotate,
   rotateX: rotate,
@@ -38,15 +38,15 @@ export default {
   translateX,
   translateY: translateX,
   translateZ: translateX,
-  translate3d: SINmax(3, LengthPercent, transformWithFunc),
+  translate3d: Sequence("translate3d/3", [LengthPercent], transformWithFunc),
   scaleX,
   scaleY: scaleX,
   scaleZ: scaleX,
-  scale3d: SINmax(3, NumberInterpreter, transformWithFunc),
+  scale3d: Sequence("scale3d/3", [NumberInterpreter], transformWithFunc),
   skewX,
   skewY: skewX,
   rotate3d: Sequence("rotate3d/4", [NumberInterpreter, NumberInterpreter, NumberInterpreter, Angle], transformWithFunc),
-  translate: SINmax(2, LengthPercent, transformWithFunc),
-  scale: SINmax(2, NumberPercent, transformWithFunc),
-  skew: SINmax(2, AnglePercent, transformWithFunc),
+  translate: Sequence("translate/1-2", [LengthPercent], transformWithFunc),
+  scale: Sequence("scale/1-2", [NumberPercent], transformWithFunc),
+  skew: Sequence("skew/1-2", [AnglePercent], transformWithFunc),
 };
