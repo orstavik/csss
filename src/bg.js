@@ -12,6 +12,11 @@ import {
   TYPB,
   SIN,
   SINmax,
+  WORD_IN_TABLE,
+  CHECKNAME,
+  CamelWords,
+  Angle,
+  SEQOPT,
 } from "./func.js";
 
 const BackgroundDefaults = {
@@ -57,37 +62,39 @@ for (let Inline of ["Left", "Right", "Center", ""]) {
   }
 }
 
+const ColorSpace = {
+  hslLonger: "in hsl longer hue",
+  hslShorter: "in hsl shorter hue",
+  hslIncreasing: "in hsl increasing hue",
+  hslDecreasing: "in hsl decreasing hue",
+  hwbLonger: "in hwb longer hue",
+  hwbShorter: "in hwb shorter hue",
+  hwbIncreasing: "in hwb increasing hue",
+  hwbDecreasing: "in hwb decreasing hue",
+  lchLonger: "in lch longer hue",
+  lchShorter: "in lch shorter hue",
+  lchIncreasing: "in lch increasing hue",
+  lchDecreasing: "in lch decreasing hue",
+  oklchLonger: "in oklch longer hue",
+  oklchShorter: "in oklch shorter hue",
+  oklchIncreasing: "in oklch increasing hue",
+  oklchDecreasing: "in oklch decreasing hue",
+  oklab: "in oklab",
+  lab: "in lab",
+  lch: "in lch",
+  srgb: "in srgb",
+  srgbLinear: "in srgb-linear",
+  displayP3: "in display-p3",
+  a98Rgb: "in a98-rgb",
+  prophotoRgb: "in prophoto-rgb",
+  rec2020: "in rec2020",
+  xyz: "in xyz",
+  xyzD50: "in xyz-d50",
+  xyzD65: "in xyz-d65",
+};
+
 function interpretColorSpace(a) {
-  const res = {
-    hslLonger: "in hsl longer hue",
-    hslShorter: "in hsl shorter hue",
-    hslIncreasing: "in hsl increasing hue",
-    hslDecreasing: "in hsl decreasing hue",
-    hwbLonger: "in hwb longer hue",
-    hwbShorter: "in hwb shorter hue",
-    hwbIncreasing: "in hwb increasing hue",
-    hwbDecreasing: "in hwb decreasing hue",
-    lchLonger: "in lch longer hue",
-    lchShorter: "in lch shorter hue",
-    lchIncreasing: "in lch increasing hue",
-    lchDecreasing: "in lch decreasing hue",
-    oklchLonger: "in oklch longer hue",
-    oklchShorter: "in oklch shorter hue",
-    oklchIncreasing: "in oklch increasing hue",
-    oklchDecreasing: "in oklch decreasing hue",
-    oklab: "in oklab",
-    lab: "in lab",
-    lch: "in lch",
-    srgb: "in srgb",
-    srgbLinear: "in srgb-linear",
-    displayP3: "in display-p3",
-    a98Rgb: "in a98-rgb",
-    prophotoRgb: "in prophoto-rgb",
-    rec2020: "in rec2020",
-    xyz: "in xyz",
-    xyzD50: "in xyz-d50",
-    xyzD65: "in xyz-d65",
-  }[a.text];
+  const res = ColorSpace[a.text];
   if (res) return { text: res };
 }
 
@@ -123,18 +130,6 @@ function extractColorStops(args, lengthOrAngleExtractor) {
   throw new SyntaxError(`gradient() functions requires at least two colors, got ${colorStops.length}.`);
 }
 
-const radial = (TYPE, FIRST) => ({ args }) => {
-  const len = extractLengthPercent(args);
-  const len2 = extractLengthPercent(args);
-  if (FIRST === "circle" && len2)
-    throw new SyntaxError(`radial(circle) can only have one length argument (radius), got two: ${len.text} and ${len2.text}`);
-  const at = extractAt(args);
-  const colorSpace = extractColorSpace(args);
-  const colorStops = extractColorStops(args, extractLengthPercent);
-  const first = [FIRST, len, len2, at, colorSpace].filter(Boolean).join(" ");
-  return { backgroundImage: `${TYPE}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})` };
-}
-
 const conic = (TYPE) => ({ args }) => {
   let angle = extractAngle(args);
   angle &&= "from " + angle;
@@ -145,57 +140,67 @@ const conic = (TYPE) => ({ args }) => {
   return { backgroundImage: `${TYPE}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})` };
 }
 
-const linear = (TYPE, ANGLE) => ({ args }) => {
-  const angle = ANGLE || extractAngle(args);
-  const colorSpace = extractColorSpace(args);
-  const colorStops = extractColorStops(args, extractLengthPercent);
+const ColorStopLengthPercent = CHECKNAME("(", SEQOPT([Color, LengthPercent, LengthPercent], (_, res) => res.join(" ")));
+
+const LinearDirections = WORD_IN_TABLE({
+  left: "to left",
+  right: "to right",
+  up: "to top",
+  down: "to bottom",
+  upLeft: "to top left",
+  upRight: "to top right",
+  downLeft: "to bottom left",
+  downRight: "to bottom right",
+});
+
+const linear = TYPB({}, {
+  angle: e => Angle(e) ?? LinearDirections(e),
+  colorSpace: WORD_IN_TABLE(ColorSpace),
+}, {
+  colorStops: e => Color(e) ?? ColorStopLengthPercent(e),
+}, ({ angle, colorSpace, colorStops = [] }) => {
   const first = [angle, colorSpace].filter(Boolean).join(" ");
-  return { backgroundImage: `${TYPE}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})` };
-}
+  return [first, ...colorStops].filter(Boolean).join(", ")
+});
+
+const AtPosition = e => CamelWords("top|bottom|left|right|center|xStart|xEnd|yStart|yEnd|blockStart|blockEnd|inlineStart|inlineEnd")(e);
+
+const radial = TYPB({}, {
+  at: CHECKNAME("at", SINmax(2, e => LengthPercent(e) ?? AtPosition(e), (n, res) => "at " + res.join(" "))),
+  colorSpace: WORD_IN_TABLE(ColorSpace),
+  size2: CamelWords("farthestCorner|farthestSide|closestCorner|closestSide"),
+}, {
+  colorStops: e => Color(e) ?? ColorStopLengthPercent(e),
+  size: LengthPercent,
+}, ({ size, size2, at, colorSpace, colorStops = [] }) => {
+  if (size?.length > 2)
+    throw new SyntaxError(`radial() size cannot be more than two values: ${size}`);
+  size &&= size.join(" ");
+  if (size && size2)
+    throw new SyntaxError(`radial() size specified twice: ${size} AND ${size2}`);
+  const first = [size, size2, at, colorSpace].filter(Boolean).join(" ");
+  return [first, ...colorStops].filter(Boolean).join(", ")
+});
+
+const circle = TYPB({}, {
+  at: CHECKNAME("at", SINmax(2, e => LengthPercent(e) ?? AtPosition(e), (n, res) => "at " + res.join(" "))),
+  colorSpace: WORD_IN_TABLE(ColorSpace),
+  size: e => LengthPercent(e) ?? CamelWords("farthestCorner|farthestSide|closestCorner|closestSide")(e),
+}, {
+  colorStops: e => Color(e) ?? ColorStopLengthPercent(e),
+}, ({ size, at, colorSpace, colorStops = [] }) =>
+  [size, at, colorSpace].filter(Boolean).join(" ") + ", " + colorStops.join(", "));
+
 
 const GRADIENTS = {
-  linear: linear("linear", ""),
-  linearLeft: linear("linear", "to left"),
-  linearRight: linear("linear", "to right"),
-  linearUp: linear("linear", "to top"),
-  linearDown: linear("linear", "to bottom"),
-  linearUpLeft: linear("linear", "to top left"),
-  linearUpRight: linear("linear", "to top right"),
-  linearDownLeft: linear("linear", "to bottom left"),
-  linearDownRight: linear("linear", "to bottom right"),
-  repeatingLinear: linear("repeating-linear", ""),
-  repeatingLinearLeft: linear("repeating-linear", "to left"),
-  repeatingLinearRight: linear("repeating-linear", "to right"),
-  repeatingLinearUp: linear("repeating-linear", "to top"),
-  repeatingLinearDown: linear("repeating-linear", "to bottom"),
-  repeatingLinearUpLeft: linear("repeating-linear", "to top left"),
-  repeatingLinearUpRight: linear("repeating-linear", "to top right"),
-  repeatingLinearDownLeft: linear("repeating-linear", "to bottom left"),
-  repeatingLinearDownRight: linear("repeating-linear", "to bottom right"),
-
-  radial: radial("radial", ""),
-  ellipse: radial("radial", ""),
-  ellipseFarthestCorner: radial("radial", ""),
-  ellipseFarthestSide: radial("radial", "farthest-side"),
-  ellipseClosestCorner: radial("radial", "closest-corner"),
-  ellipseClosestSide: radial("radial", "closest-side"),
-  circle: radial("radial", "circle"),
-  circleFarthestCorner: radial("radial", "circle"),
-  circleFarthestSide: radial("radial", "circle farthest-side"),
-  circleClosestCorner: radial("radial", "circle closest-corner"),
-  circleClosestSide: radial("radial", "circle closest-side"),
-
-  repeatingRadial: radial("repeating-radial", ""),
-  repeatingEllipse: radial("repeating-radial", "ellipse"),
-  repeatingEllipseFarthestCorner: radial("repeating-radial", ""),
-  repeatingEllipseFarthestSide: radial("repeating-radial", "farthest-side"),
-  repeatingEllipseClosestCorner: radial("repeating-radial", "closest-corner"),
-  repeatingEllipseClosestSide: radial("repeating-radial", "closest-side"),
-  repeatingCircle: radial("repeating-radial", "circle"),
-  repeatingCircleFarthestCorner: radial("repeating-radial", "circle"),
-  repeatingCircleFarthestSide: radial("repeating-radial", "circle farthest-side"),
-  repeatingCircleClosestCorner: radial("repeating-radial", "circle closest-corner"),
-  repeatingCircleClosestSide: radial("repeating-radial", "circle closest-side"),
+  linear: e => ({ backgroundImage: `linear-gradient(${linear(e)})` }),
+  ellipse: e => ({ backgroundImage: `radial-gradient(${radial(e)})` }),
+  radial: e => ({ backgroundImage: `radial-gradient(${radial(e)})` }),
+  repeatingLinear: e => ({ backgroundImage: `repeating-linear-gradient(${linear(e)})` }),
+  repeatingEllipse: e => ({ backgroundImage: `repeating-radial-gradient(${radial(e)})` }),
+  repeatingRadial: e => ({ backgroundImage: `repeating-radial-gradient(${radial(e)})` }),
+  circle: e => ({ backgroundImage: `radial-gradient(circle ${circle(e)})` }),
+  repeatingCircle: e => ({ backgroundImage: `repeating-radial-gradient(circle ${circle(e)})` }),
 
   conic: conic("conic"),
   repeatingConic: conic("repeating-conic"),

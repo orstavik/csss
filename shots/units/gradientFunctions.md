@@ -1,8 +1,8 @@
-**csss:** $bg(linear(90deg,#red,#green))
+**csss:** $bg(linear(90deg,(#red),#green))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(linear\(90deg\,\#red\,\#green\)\) {
+  .\$bg\(linear\(90deg\,\(\#red\)\,\#green\)\) {
     background: none;
     background-image: linear-gradient(90deg, red, green);
     background-position: 0% 0%;
@@ -16,11 +16,11 @@
 }
 ```
 
-**csss:** $bg(linearRight(#blue,#yellow))
+**csss:** $bg(linear(right,#blue,#yellow))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(linearRight\(\#blue\,\#yellow\)\) {
+  .\$bg\(linear\(right\,\#blue\,\#yellow\)\) {
     background: none;
     background-image: linear-gradient(to right, blue, yellow);
     background-position: 0% 0%;
@@ -52,11 +52,11 @@
 }
 ```
 
-**csss:** $bg(linearDownRight(#cyan,#magenta,#yellow))
+**csss:** $bg(linear(downRight,#cyan,#magenta,#yellow))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(linearDownRight\(\#cyan\,\#magenta\,\#yellow\)\) {
+  .\$bg\(linear\(downRight\,\#cyan\,\#magenta\,\#yellow\)\) {
     background: none;
     background-image: linear-gradient(to bottom right, cyan, magenta, yellow);
     background-position: 0% 0%;
@@ -70,11 +70,11 @@
 }
 ```
 
-**csss:** $bg(linear(45deg,#red,0%,#blue,100%))
+**csss:** $bg(linear(45deg,(#red,0%),(#blue,100%)))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(linear\(45deg\,\#red\,0\%\,\#blue\,100\%\)\) {
+  .\$bg\(linear\(45deg\,\(\#red\,0\%\)\,\(\#blue\,100\%\)\)\) {
     background: none;
     background-image: linear-gradient(45deg, red 0%, blue 100%);
     background-position: 0% 0%;
@@ -124,11 +124,11 @@
 }
 ```
 
-**csss:** $bg(ellipse(atCenter,#orange,#cyan))
+**csss:** $bg(ellipse(at(center),#orange,#cyan))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(ellipse\(atCenter\,\#orange\,\#cyan\)\) {
+  .\$bg\(ellipse\(at\(center\)\,\#orange\,\#cyan\)\) {
     background: none;
     background-image: radial-gradient(at center, orange, cyan);
     background-position: 0% 0%;
@@ -232,11 +232,11 @@
 }
 ```
 
-**csss:** $bg(repeatingLinear(45deg,#red,10%,#blue,20%))
+**csss:** $bg(repeatingLinear(45deg,(#red,10%),(#blue,20%)))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(repeatingLinear\(45deg\,\#red\,10\%\,\#blue\,20\%\)\) {
+  .\$bg\(repeatingLinear\(45deg\,\(\#red\,10\%\)\,\(\#blue\,20\%\)\)\) {
     background: none;
     background-image: repeating-linear-gradient(45deg, red 10%, blue 20%);
     background-position: 0% 0%;
@@ -250,11 +250,11 @@
 }
 ```
 
-**csss:** $bg(repeatingCircle(#green,5%,#yellow,15%))
+**csss:** $bg(repeatingCircle((#green,5%),(#yellow,15%)))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(repeatingCircle\(\#green\,5\%\,\#yellow\,15\%\)\) {
+  .\$bg\(repeatingCircle\(\(\#green\,5\%\)\,\(\#yellow\,15\%\)\)\) {
     background: none;
     background-image: repeating-radial-gradient(circle, green 5%, yellow 15%);
     background-position: 0% 0%;
@@ -340,11 +340,11 @@
 }
 ```
 
-**csss:** $bg(ellipse(10em,40%,atCenter,#red,#blue))
+**csss:** $bg(ellipse(10em,40%,at(center),#red,#blue))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(ellipse\(10em\,40\%\,atCenter\,\#red\,\#blue\)\) {
+  .\$bg\(ellipse\(10em\,40\%\,at\(center\)\,\#red\,\#blue\)\) {
     background: none;
     background-image: radial-gradient(10em 40% at center, red, blue);
     background-position: 0% 0%;
@@ -358,11 +358,11 @@
 }
 ```
 
-**csss:** $bg(ellipseClosestSide(#red,20%,#blue))
+**csss:** $bg(ellipse(closestSide,(#red,20%),#blue))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(ellipseClosestSide\(\#red\,20\%\,\#blue\)\) {
+  .\$bg\(ellipse\(closestSide\,\(\#red\,20\%\)\,\#blue\)\) {
     background: none;
     background-image: radial-gradient(closest-side, red 20%, blue);
     background-position: 0% 0%;
@@ -394,11 +394,11 @@
 }
 ```
 
-**csss:** $bg(ellipse(50%,30%,at(25%,75%),#green,30%,#red,80%))
+**csss:** $bg(ellipse(50%,30%,at(25%,75%),(#green,30%),(#red,80%)))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(ellipse\(50\%\,30\%\,at\(25\%\,75\%\)\,\#green\,30\%\,\#red\,80\%\)\) {
+  .\$bg\(ellipse\(50\%\,30\%\,at\(25\%\,75\%\)\,\(\#green\,30\%\)\,\(\#red\,80\%\)\)\) {
     background: none;
     background-image: radial-gradient(50% 30% at 25% 75%, green 30%, red 80%);
     background-position: 0% 0%;
@@ -466,11 +466,11 @@
 }
 ```
 
-**csss:** $bg(circleClosestCorner(atLeftTop,#red,#blue))
+**csss:** $bg(circle(closestCorner,at(left,top),#red,#blue))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(circleClosestCorner\(atLeftTop\,\#red\,\#blue\)\) {
+  .\$bg\(circle\(closestCorner\,at\(left\,top\)\,\#red\,\#blue\)\) {
     background: none;
     background-image: radial-gradient(circle closest-corner at left top, red, blue);
     background-position: 0% 0%;
@@ -502,11 +502,11 @@
 }
 ```
 
-**csss:** $bg(circle(10px,atLeftTop,#blue,45%,#pink,90%))
+**csss:** $bg(circle(10px,at(left,top),(#blue,45%),(#pink,90%)))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(circle\(10px\,atLeftTop\,\#blue\,45\%\,\#pink\,90\%\)\) {
+  .\$bg\(circle\(10px\,at\(left\,top\)\,\(\#blue\,45\%\)\,\(\#pink\,90\%\)\)\) {
     background: none;
     background-image: radial-gradient(circle 10px at left top, blue 45%, pink 90%);
     background-position: 0% 0%;
@@ -520,11 +520,11 @@
 }
 ```
 
-**csss:** $bg(radial(atCenter,#blue,#green))
+**csss:** $bg(radial(at(center),#blue,#green))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(radial\(atCenter\,\#blue\,\#green\)\) {
+  .\$bg\(radial\(at\(center\)\,\#blue\,\#green\)\) {
     background: none;
     background-image: radial-gradient(at center, blue, green);
     background-position: 0% 0%;

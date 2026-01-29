@@ -692,6 +692,18 @@ export const SEQ = (interpreters, post) => ({ args, name }) => {
   return post ? post(name, res) : res;
 };
 
+export const SEQOPT = (interpreters, post) => ({ args, name }) => {
+  if (args.length < 1 || args.length > interpreters.length)
+    throw new SyntaxError(`${name}() requires 1 to ${interpreters.length} arguments, got ${args.length}.`);
+  const res = args.map((a, i) => {
+    const a2 = interpreters[i](a);
+    if (a2)
+      return a2;
+    throw BadArgument(name, args, i, interpreters[i].name);
+  });
+  return post ? post(name, res) : res;
+};
+
 export const WORD_IN_TABLE = TABLE => ({ text }) => TABLE[text];
 
 export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
