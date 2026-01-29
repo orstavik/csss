@@ -268,11 +268,11 @@
 }
 ```
 
-**csss:** $bg(repeatingConic(#purple,0deg,#orange,45deg))
+**csss:** $bg(repeatingConic((#purple,0deg),(#orange,45deg)))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(repeatingConic\(\#purple\,0deg\,\#orange\,45deg\)\) {
+  .\$bg\(repeatingConic\(\(\#purple\,0deg\)\,\(\#orange\,45deg\)\)\) {
     background: none;
     background-image: repeating-conic-gradient(purple 0deg, orange 45deg);
     background-position: 0% 0%;
@@ -322,11 +322,11 @@
 }
 ```
 
-**csss:** $bg(conic(45deg,atLeftTop,#red,#blue))
+**csss:** $bg(conic(45deg,at(left,top),#red,#blue))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(conic\(45deg\,atLeftTop\,\#red\,\#blue\)\) {
+  .\$bg\(conic\(45deg\,at\(left\,top\)\,\#red\,\#blue\)\) {
     background: none;
     background-image: conic-gradient(from 45deg at left top, red, blue);
     background-position: 0% 0%;
@@ -412,11 +412,11 @@
 }
 ```
 
-**csss:** $bg(conic(0.2turn,at(30%,80%),#yellow,10%,20%,#pink,50%,95%))
+**csss:** $bg(conic(0.2turn,at(30%,80%),(#yellow,10%,20%),(#pink,50%,95%)))
 **css:**
 ```css
 @layer containerDefault {
-  .\$bg\(conic\(0\.2turn\,at\(30\%\,80\%\)\,\#yellow\,10\%\,20\%\,\#pink\,50\%\,95\%\)\) {
+  .\$bg\(conic\(0\.2turn\,at\(30\%\,80\%\)\,\(\#yellow\,10\%\,20\%\)\,\(\#pink\,50\%\,95\%\)\)\) {
     background: none;
     background-image: conic-gradient(from 0.2turn at 30% 80%, yellow 10% 20%, pink 50% 95%);
     background-position: 0% 0%;

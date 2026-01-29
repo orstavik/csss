@@ -16,6 +16,7 @@ import {
   CHECKNAME,
   CamelWords,
   Angle,
+  AnglePercent,
   SEQOPT,
 } from "./func.js";
 
@@ -140,6 +141,18 @@ const conic = (TYPE) => ({ args }) => {
   return { backgroundImage: `${TYPE}-gradient(${[first, ...colorStops].filter(Boolean).join(", ")})` };
 }
 
+const ColorStopAnglePercent = CHECKNAME("(", SEQOPT([Color, AnglePercent, AnglePercent], (_, res) => res.join(" ")));
+const conic2 = TYPB({}, {
+  at: CHECKNAME("at", SINmax(2, e => LengthPercent(e) ?? AtPosition(e), (n, res) => "at " + res.join(" "))),
+  angle: Angle,
+  colorSpace: WORD_IN_TABLE(ColorSpace),
+}, {
+  colorStops: e => Color(e) ?? AnglePercent(e) ?? ColorStopAnglePercent(e),
+}, ({ angle, at, colorSpace, colorStops = [] }) => {
+  angle &&= "from " + angle;
+  const first = [angle, at, colorSpace].filter(Boolean).join(" ");
+  return [first, ...colorStops].filter(Boolean).join(", ")
+})
 const ColorStopLengthPercent = CHECKNAME("(", SEQOPT([Color, LengthPercent, LengthPercent], (_, res) => res.join(" ")));
 
 const LinearDirections = WORD_IN_TABLE({
@@ -202,8 +215,10 @@ const GRADIENTS = {
   circle: e => ({ backgroundImage: `radial-gradient(circle ${circle(e)})` }),
   repeatingCircle: e => ({ backgroundImage: `repeating-radial-gradient(circle ${circle(e)})` }),
 
-  conic: conic("conic"),
-  repeatingConic: conic("repeating-conic"),
+  conic: e => ({ backgroundImage: `conic-gradient(${conic2(e)})` }),
+  repeatingConic: e => ({ backgroundImage: `repeating-conic-gradient(${conic2(e)})` }),
+  // conic: conic("conic"),
+  // repeatingConic: conic("repeating-conic"),
 };
 
 
