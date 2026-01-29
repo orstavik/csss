@@ -675,16 +675,32 @@ export const SEQ = (interpreters, post) => ({ args, name }) => {
   return post ? post(name, res) : res;
 };
 
-export const SEQOPT = (interpreters, post) => ({ args, name }) => {
-  if (args.length < 1 || args.length > interpreters.length)
-    throw new SyntaxError(`${name}() requires 1 to ${interpreters.length} arguments, got ${args.length}.`);
-  const res = args.map((a, i) => {
-    const a2 = interpreters[i](a);
-    if (a2)
-      return a2;
-    throw BadArgument(name, args, i, interpreters[i].name);
-  });
-  return post ? post(name, res) : res;
+function parseSignature(SIG) {
+  const [NAME, ARITY] = SIG.split("/");
+  if (ARITY == undefined || ARITY == "")
+    return { NAME };
+  let [MIN, MAX = MIN] = ARITY.split("-");
+  if (MAX === "") MAX = Infinity;
+  return { NAME, MIN: Number(MIN), MAX: Number(MAX) };
+}
+
+export const Sequence = (SIG, INTERPRETERS, POST) => {
+  const { NAME, MIN = INTERPRETERS.length, MAX = INTERPRETERS.length } = parseSignature(SIG);
+  while (INTERPRETERS.length < MAX)
+    INTERPRETERS.push(INTERPRETERS.at(-1));
+  return ({ args, name }) => {
+    if (NAME !== name)
+      return;
+    if (args.length < MIN || args.length > MAX)
+      throw new SyntaxError(`${name}() requires ${MIN} to ${MAX} arguments, got ${args.length}.`);
+    const res = args.map((a, i) => {
+      const a2 = INTERPRETERS[i](a);
+      if (a2)
+        return a2;
+      throw BadArgument(name, args, i, INTERPRETERS[i].name);
+    });
+    return POST ? POST(name, res) : res;
+  }
 };
 
 export const WORD_IN_TABLE = TABLE => ({ text }) => TABLE[text];
