@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font — CSSS demo</title>
+    <script src="../../../auto.js?style=style&interval=400" type="module"></script>
+</head>
+
+<body class="
+$Block(padding(0))$blockItem(margin(0))
+
+$Typeface(main,Inter,sans-serif,16px,400)
+
+$Typeface(display,'Display+Font','https://cdn.jsdelivr.net/npm/@fontsource/roboto@5.0.8/files/roboto-latin-400-normal.woff2',lg,bold)
+$Typeface(title,'Title','https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2#family=ComicDisplay&weight=700&style=italic')
+$Typeface(caption,'Caption','https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2#family=ComicCaption&stretch=condensed')
+
+$bg(#fff)$color(#1a1a1a)
+">
+
+    <header class="
+    $Flex(contentBetween,itemsCenter,padding(1.5rem,2rem))
+    |h1$Font(heading,1.25rem,700)$color(#1a1a1a)
+    |nav$Flex(row,gap(1.5rem))
+    |nav|a$Font(main,0.95rem,500)$noTextDecoration$color(#1a1a1a)$opacity(0.8)
+    |nav|a:hover$opacity(1)
+    ">
+        <h1>Font</h1>
+        <nav>
+            <a href="#typeface">$Typeface</a>
+            <a href="#font">$font</a>
+            <a href="#umbrella">$Font</a>
+            <a href="#webfonts">Web fonts</a>
+        </nav>
+    </header>
+
+    <main class="
+    $Block(padding(2rem,4rem))
+    |section$blockItem(margin(0,0,3rem,0))
+    |section|h2$blockItem(margin(0,0,1rem,0))
+    |section|p$blockItem(margin(0,0,0.5rem,0))
+    |section|div$Block(padding(1rem))$Border(radius(8px))
+
+    ">
+
+        <section id="typeface">
+            <h2>$Typeface — umbrella definition</h2>
+            <p>Define a named typeface (family, size, weight, etc.) for reuse with $Font(name).</p>
+            <div class="
+            $Block(padding(1.25rem))
+            |:first-child$Font(main,1.1rem,600)$color(#1a1a1a)
+            |:last-child$Font(main,1rem)$color(#1a1a1a)$opacity(0.85)
+
+            $bg(#f8f8f8)$Border(radius(8px))
+            ">
+                <div>$Typeface(main, Inter, sans-serif, 16px, 400)</div>
+                <p>This body uses the <code>main</code> typeface. Headings use <code>heading</code>.</p>
+            </div>
+        </section>
+
+        <section id="font">
+            <h2>$font — direct properties</h2>
+            <p>Set font-family, size, weight, style, etc. directly.</p>
+            <div class="
+            $Block(padding(1.25rem))
+            |p$Font(main,1rem)
+            |p|span$font(700)
+            |p|em$font(italic)
+
+            $bg(#f0f7ff)$Border(radius(8px))
+            ">
+                <p>Plain text, <span>$font(700)</span> bold, <em>$font(italic)</em> italic.</p>
+            </div>
+        </section>
+
+        <section id="umbrella">
+            <h2>$Font(name) — apply umbrella</h2>
+            <p>Apply a typeface defined with $Typeface by name.</p>
+            <div class="
+            $Flex(column,gap(1rem))
+            |div$Font(heading,1.25rem,700)$color(#1a1a1a)
+            |p$Font(main,1rem)$color(#1a1a1a)$opacity(0.85)
+
+            $bg(#f8f8f8)$Border(radius(8px))$Block(padding(1.25rem))
+            ">
+                <div>$Font(heading) — heading typeface</div>
+                <p>$Font(main) — main typeface. Droplets like $font(600) override within scope.</p>
+            </div>
+        </section>
+
+        <section id="webfonts">
+            <h2>Web fonts &amp; @font-face settings</h2>
+            <p>Load fonts from URLs and set @font-face descriptors (family, weight, style, stretch, featureSettings) via URL hash.</p>
+            <div class="
+            $Flex(column,gap(1.25rem))
+            |div$Font(display)$color(#1a1a1a)
+            |div$Font(title)$color(#1a1a1a)
+            |div$Font(caption)$color(#1a1a1a)
+
+            $bg(#f0f7ff)$Border(radius(8px))$Block(padding(1.25rem))
+            ">
+                <div>$Font(display) — Roboto from CDN (lg, bold)</div>
+                <div>$Font(title) — ComicDisplay (#family=&amp;weight=700&amp;style=italic)</div>
+                <div>$Font(caption) — ComicCaption (#family=&amp;stretch=condensed)</div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palette — CSSS demo</title>
+    <script src="../../../auto.js?style=style&interval=400" type="module"></script>
+</head>
+
+<body class="
+$Block(padding(0))$blockItem(margin(0))
+$bg(#fff)$color(#1a1a1a)
+
+$Palette(primary,#indigo,#ffffff)
+$Palette(secondary,#blueviolet,#ffffff)
+$Palette(accent,#deeppink,#ffffff)
+">
+
+    <header class="
+    $Flex(contentBetween,itemsCenter,padding(1.5rem,2rem))
+    |h1$font(1.25rem,700)$color(#1a1a1a)
+    |nav$Flex(row,gap(1.5rem))
+    |nav|a$font(0.95rem,500)$noTextDecoration$color(#1a1a1a)$opacity(0.8)
+    |nav|a:hover$opacity(1)
+    ">
+        <h1>Palette</h1>
+        <nav>
+            <a href="#palette">$Palette</a>
+            <a href="#usage">#name</a>
+        </nav>
+    </header>
+
+    <main class="
+    $Block(padding(2rem,4rem))
+    |section$blockItem(margin(0,0,3rem,0))
+    |section|h2$blockItem(margin(0,0,1rem,0))
+    |section|p$blockItem(margin(0,0,1rem,0))
+
+    |section|h2$font(1.5rem,700)$color(#1a1a1a)
+    |section|p$font(1rem)$color(#1a1a1a)$opacity(0.8)$paragraph(1.6)
+    ">
+
+        <section id="palette">
+            <h2>$Palette(name, color, onColor)</h2>
+            <p>Defines CSS variables: --color-{name}, --color-on{Name}, and variants (Pop, Accent, Bland, Neutral).</p>
+            <div class="
+            $Grid(cols(repeat(3,1fr)),gap(1.5rem))
+            |div$Flex(contentCenter,itemsCenter,padding(1.5rem))$font(0.95rem,600)
+
+            |div:first-child$bg(#primary)$color(#onPrimary)
+            |div:nth-child(2)$bg(#secondary)$color(#onSecondary)
+            |div:last-child$bg(#accent)$color(#onAccent)
+            ">
+                <div>#primary</div>
+                <div>#secondary</div>
+                <div>#accent</div>
+            </div>
+        </section>
+
+        <section id="usage">
+            <h2>Using palette colors</h2>
+            <p>Use #name in $bg(), $color(), $Border(), etc.</p>
+            <div class="
+            $Flex(row,gap(1rem),padding(1.5rem))
+            |button$Block(padding(0.75rem,1.5rem))$font(0.9rem,600)$cursor(pointer)$Border(none,radius(8px))$transition(easeIn,0.2s)
+
+            |button:first-child$bg(#primary)$color(#onPrimary)
+            |button:first-child:hover$opacity(0.9)
+            |button:nth-child(2)$bg(#secondary)$color(#onSecondary)
+            |button:nth-child(2):hover$opacity(0.9)
+            |button:last-child$bg(#accent)$color(#onAccent)
+            |button:last-child:hover$opacity(0.9)
+            ">
+                <button>Primary</button>
+                <button>Secondary</button>
+                <button>Accent</button>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

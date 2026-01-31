@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flex — CSSS demo</title>
+    <script src="../../../auto.js?style=style&interval=400" type="module"></script>
+</head>
+
+<body class="
+$Block(padding(0))$blockItem(margin(0))
+$bg(#fff)$color(#1a1a1a)
+">
+
+    <header class="
+    $Flex(contentBetween,itemsCenter,padding(1.5rem,2rem))
+    |h1$font(1.25rem,700)$color(#1a1a1a)
+    |nav$Flex(row,gap(1.5rem))
+    |nav|a$font(0.95rem,500)$noTextDecoration$color(#1a1a1a)$opacity(0.8)
+    |nav|a:hover$opacity(1)
+    ">
+        <h1>Flex</h1>
+        <nav>
+            <a href="#flex">$Flex</a>
+            <a href="#item">$flexItem</a>
+        </nav>
+    </header>
+
+    <main class="
+    $Block(padding(2rem,4rem))
+    |section$blockItem(margin(0,0,3rem,0))
+    |section|h2$blockItem(margin(0,0,1rem,0))
+    |section|p$blockItem(margin(0,0,1rem,0))
+
+    |section|h2$font(1.5rem,700)$color(#1a1a1a)
+    |section|p$font(1rem)$color(#1a1a1a)$opacity(0.8)$paragraph(1.6)
+    ">
+
+        <section id="flex">
+            <h2>$Flex — direction, wrap, align, gap</h2>
+            <p>row, column, wrap, contentCenter, itemsCenter, gap(), padding().</p>
+            <div class="
+            $Flex(row,wrap,gap(1rem),padding(1.5rem))
+            |div$Block(padding(1rem))$font(0.9rem,600)$color(#1a1a1a)
+
+            $bg(#f8f8f8)$Border(radius(12px))
+            |div$flexItem(shrink(0))$bg(#e0e0e0)$Border(radius(8px))
+            ">
+                <div>A</div>
+                <div>B</div>
+                <div>C</div>
+                <div>D</div>
+            </div>
+        </section>
+
+        <section id="item">
+            <h2>$flexItem — grow, shrink, basis</h2>
+            <p>grow(), shrink(), basis() for item sizing.</p>
+            <div class="
+            $Flex(row,gap(0.5rem),padding(1.5rem))
+            |div$Flex(contentCenter,itemsCenter,padding(1rem))$font(0.9rem,600)$color(#fff)
+
+            $bg(#f0f0f0)$Border(radius(12px))
+            |div:first-child$flexItem(grow(1))$bg(#indigo)
+            |div:nth-child(2)$flexItem(grow(2))$bg(#blueviolet)
+            |div:last-child$flexItem(grow(1))$bg(#deeppink)
+            ">
+                <div>grow(1)</div>
+                <div>grow(2)</div>
+                <div>grow(1)</div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
