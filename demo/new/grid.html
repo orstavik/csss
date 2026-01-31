@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid — CSSS demo</title>
+    <script src="../../../auto.js?style=style&interval=400" type="module"></script>
+</head>
+
+<body class="
+$Block(padding(0))$blockItem(margin(0))
+$bg(#fff)$color(#1a1a1a)
+">
+
+    <header class="
+    $Flex(contentBetween,itemsCenter,padding(1.5rem,2rem))
+    |h1$font(1.25rem,700)$color(#1a1a1a)
+    |nav$Flex(row,gap(1.5rem))
+    |nav|a$font(0.95rem,500)$noTextDecoration$color(#1a1a1a)$opacity(0.8)
+    |nav|a:hover$opacity(1)
+    ">
+        <h1>Grid</h1>
+        <nav>
+            <a href="#grid">$Grid</a>
+            <a href="#item">$gridItem</a>
+        </nav>
+    </header>
+
+    <main class="
+    $Block(padding(2rem,4rem))
+    |section$blockItem(margin(0,0,3rem,0))
+    |section|h2$blockItem(margin(0,0,1rem,0))
+    |section|p$blockItem(margin(0,0,1rem,0))
+
+    |section|h2$font(1.5rem,700)$color(#1a1a1a)
+        |section|p$font(1rem)$color(#1a1a1a)$opacity(0.8)$paragraph(1.6)
+    ">
+
+        <section id="grid">
+            <h2>$Grid — template and placement</h2>
+            <p>cols(), rows(), gap(), contentCenter, itemsCenter, etc.</p>
+            <div class="
+            $Grid(cols(repeat(3,1fr)),gap(1.5rem),padding(1.5rem))
+            |div$Block(padding(1.25rem))$font(0.95rem)$color(#1a1a1a)
+
+            $bg(#f8f8f8)$Border(radius(12px))
+            |div$bg(#fff)$Border(radius(8px))$boxShadow(0,2px,8px,#rgba(0,0,0,0.06))
+            ">
+                <div>1</div>
+                <div>2</div>
+                <div>3</div>
+            </div>
+        </section>
+
+        <section id="item">
+            <h2>$gridItem / $GridItem — column/row span</h2>
+            <p>column(), row(), span() for placement.</p>
+            <div class="
+            $Grid(cols(repeat(4,1fr)),rows(auto,auto),gap(0.75rem),padding(1.5rem))
+            |div$Flex(contentCenter,itemsCenter,padding(1rem))$font(0.9rem,600)$color(#1a1a1a)
+
+            $bg(#f0f0f0)$Border(radius(12px))
+            |div$bg(#e0e0e0)$Border(radius(6px))
+            |:first-child$gridItem(column(1,span(2)))
+            |:nth-child(2)$gridItem(column(3,span(2)))
+            |:nth-child(3)$gridItem(column(1,4))
+            ">
+                <div>col 1–2</div>
+                <div>col 3–4</div>
+                <div>col 1–4</div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

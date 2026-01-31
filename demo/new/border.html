@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Border — CSSS demo</title>
+    <script src="../../../auto.js?style=style&interval=400" type="module"></script>
+</head>
+
+<body class="
+$Block(padding(0))$blockItem(margin(0))
+$bg(#fff)$color(#1a1a1a)
+">
+
+    <header class="
+    $Flex(contentBetween,itemsCenter,padding(1.5rem,2rem))
+    |h1$font(1.25rem,700)$color(#1a1a1a)
+    |nav$Flex(row,gap(1.5rem))
+    |nav|a$font(0.95rem,500)$noTextDecoration$color(#1a1a1a)$opacity(0.8)
+    |nav|a:hover$opacity(1)
+    ">
+        <h1>Border</h1>
+        <nav>
+            <a href="#border">$border</a>
+            <a href="#radius">$Border + radius</a>
+        </nav>
+    </header>
+
+    <main class="
+    $Block(padding(2rem,4rem))
+    |section$blockItem(margin(0,0,3rem,0))
+    |section|h2$blockItem(margin(0,0,1rem,0))
+    |section|p$blockItem(margin(0,0,1rem,0))
+    |section|div$Block(padding(1rem))
+
+    |section|h2$font(1.5rem,700)$color(#1a1a1a)
+    |section|p$font(1rem)$color(#1a1a1a)$opacity(0.8)$paragraph(1.6)
+    ">
+
+        <section id="border">
+            <h2>$border — width, style, color</h2>
+            <p>Shorthand: width, style, color. $Border adds default radius.</p>
+            <div class="
+            $Grid(cols(repeat(3,1fr)),gap(1.5rem))
+            |div$Block(padding(1.5rem))$font(0.9rem,500)$color(#1a1a1a)
+
+            |div:first-child$Border(1px,solid,#ddd)
+            |div:nth-child(2)$Border(2px,dashed,#6366f1)
+            |div:last-child$Border(3px,dotted,#ec4899)
+            ">
+                <div>$Border(1px, solid, #ddd)</div>
+                <div>$Border(2px, dashed, #6366f1)</div>
+                <div>$Border(3px, dotted, #ec4899)</div>
+            </div>
+        </section>
+
+        <section id="radius">
+            <h2>$Border + radius()</h2>
+            <p>Logical radius with radius(…) or shorthand r().</p>
+            <div class="
+            $Flex(row,gap(1.5rem))
+            |div$Block(padding(1.5rem))$font(0.9rem,500)$color(#fff)
+
+            |div:first-child$Border(2px,solid,#indigo,radius(8px))$bg(#rgba(75,0,130,0.2))
+            |div:nth-child(2)$Border(4px,dashed,#blueviolet,r(24px))$bg(#rgba(138,43,226,0.2))
+            |div:last-child$Border(2px,dotted,#deeppink,radius(8px,24px,8px,24px))$bg(#rgba(255,20,147,0.2))
+            ">
+                <div>$Border(…, radius(8px))</div>
+                <div>$Border(…, r(24px))</div>
+                <div>$Border(…, radius(8px,24px,8px,24px))</div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

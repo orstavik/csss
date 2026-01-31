@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block — CSSS demo</title>
+    <script src="../../src/auto.js?style=style&interval=400" type="module"></script>
+</head>
+
+<body class="
+$Block(padding(0))$blockItem(margin(0))
+$bg(#fff)$color(#1a1a1a)
+">
+
+    <header class="
+    $Flex(contentBetween,itemsCenter,padding(1.5rem,2rem))
+    |h1$font(1.25rem,700)$color(#1a1a1a)
+    |nav$Flex(row,gap(1.5rem))
+    |nav|a$font(0.95rem,500)$noTextDecoration$color(#1a1a1a)$opacity(0.8)
+    |nav|a:hover$opacity(1)
+    ">
+        <h1>Block</h1>
+        <nav>
+            <a href="#block">$Block</a>
+            <a href="#item">$blockItem</a>
+        </nav>
+    </header>
+
+    <main class="
+    $Block(padding(2rem,4rem))
+    |section$blockItem(margin(0,0,3rem,0))
+    |section|h2$blockItem(margin(0,0,1rem,0))
+    |section|p$blockItem(margin(0,0,1rem,0))
+
+    |section|h2$font(1.5rem,700)$color(#1a1a1a)
+    |section|p$font(1rem)$color(#1a1a1a)$opacity(0.8)$paragraph(1.6)
+    ">
+
+        <section id="block">
+            <h2>$Block — overflow, padding, text</h2>
+            <p>overflowHidden, overflowScroll, padding(), textCenter, etc.</p>
+            <div class="
+            $Flex(row,gap(1.5rem))
+            |div$Block(padding(1rem))$font(0.9rem)$color(#1a1a1a)
+
+            |div:first-child$blockItem(inlineSize(200px))$block(overflowHidden)$bg(#f8f8f8)$Border(radius(8px))
+            |div:first-child|div$blockItem(margin(0))
+            |div:nth-child(2)$blockItem(inlineSize(200px))$block(overflowScroll)$bg(#f8f8f8)$Border(radius(8px))
+            |div:nth-child(2)|div$blockItem(margin(0))
+            |div:last-child$paragraph(center)$blockItem(inlineSize(200px))$bg(#f8f8f8)$Border(radius(8px))
+            ">
+                <div>
+                    <div>$block(overflowHidden) — long content is clipped.</div>
+                </div>
+                <div>
+                    <div>$block(overflowScroll) — scroll when needed.</div>
+                </div>
+                <div>$paragraph(center)</div>
+            </div>
+        </section>
+
+        <section id="item">
+            <h2>$blockItem — size, margin, padding</h2>
+            <p>inlineSize(), blockSize(), margin(), padding().</p>
+            <div class="
+            $Block(padding(1.5rem))
+            |div$font(0.9rem)$color(#1a1a1a)
+
+            $bg(#f0f0f0)$Border(radius(12px))
+            |div$blockItem(inlineSize(280px))$blockItem(blockSize(80px))$blockItem(margin(0,0,0.5rem,0))$Flex(contentCenter,itemsCenter)$bg(#fff)$Border(radius(8px))
+            ">
+                <div>$blockItem(inlineSize(280px), blockSize(80px))</div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
