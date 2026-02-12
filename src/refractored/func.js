@@ -1,0 +1,842 @@
+/**
+ * Core CSSS function library.
+ *
+ * This module provides all the building blocks used by individual short modules:
+ *
+ * - **Value Interpreters** (is* functions): validate and interpret parsed tokens
+ *   into typed CSS values (isLength, isColor, isAngle, etc.).
+ *
+ * - **Value Extractors** (capitalized exports): extract text/num from typed tokens
+ *   (Length, Color, Angle, NumberInterpreter, etc.).
+ *
+ * - **Function Builders** (TYPB, Umbrella, Sequence, SIN, FIRST): higher-order
+ *   functions that assemble short handlers from interpreters and post-processors.
+ *
+ * - **Color System**: WEBCOLORS table, color parsing, color-mix, and native CSS
+ *   color function support (rgb, hsl, oklab, oklch, etc.).
+ *
+ * - **Composite Interpreters**: combinations like LengthPercent, ColorUrl,
+ *   AnglePercent, etc.
+ *
+ * - **Native CSS Properties**: auto-generated property handlers from browser
+ *   CSS.supports() data.
+ *
+ * Grouped exports:
+ * - `ValueTypes`: all value extractors and interpreters.
+ * - `FunctionTypes`: all function builders (TYPB, Umbrella, Sequence, SIN).
+ */
+import Maths from "./funcMath.js";
+import NativeCss from "./nativeCss.js";
+
+// --- Web color table ---
+
+//colors
+export const WEBCOLORS = {
+  aliceblue: "f0f8ff",
+  antiquewhite: "faebd7",
+  aqua: "00ffff",
+  aquamarine: "7fffd4",
+  azure: "f0ffff",
+  beige: "f5f5dc",
+  bisque: "ffe4c4",
+  black: "000000",
+  blanchedalmond: "ffebcd",
+  blue: "0000ff",
+  blueviolet: "8a2be2",
+  brown: "a52a2a",
+  burlywood: "deb887",
+  cadetblue: "5f9ea0",
+  chartreuse: "7fff00",
+  chocolate: "d2691e",
+  coral: "ff7f50",
+  cornflowerblue: "6495ed",
+  cornsilk: "fff8dc",
+  crimson: "dc143c",
+  cyan: "00ffff",
+  darkblue: "00008b",
+  darkcyan: "008b8b",
+  darkgoldenrod: "b8860b",
+  darkgray: "a9a9a9",
+  darkgreen: "006400",
+  darkgrey: "a9a9a9",
+  darkkhaki: "bdb76b",
+  darkmagenta: "8b008b",
+  darkolivegreen: "556b2f",
+  darkorange: "ff8c00",
+  darkorchid: "9932cc",
+  darkred: "8b0000",
+  darksalmon: "e9967a",
+  darkseagreen: "8fbc8f",
+  darkslateblue: "483d8b",
+  darkslategray: "2f4f4f",
+  darkslategrey: "2f4f4f",
+  darkturquoise: "00ced1",
+  darkviolet: "9400d3",
+  deeppink: "ff1493",
+  deepskyblue: "00bfff",
+  dimgray: "696969",
+  dimgrey: "696969",
+  dodgerblue: "1e90ff",
+  firebrick: "b22222",
+  floralwhite: "fffaf0",
+  forestgreen: "228b22",
+  fuchsia: "ff00ff",
+  gainsboro: "dcdcdc",
+  ghostwhite: "f8f8ff",
+  gold: "ffd700",
+  goldenrod: "daa520",
+  gray: "808080",
+  green: "008000",
+  greenyellow: "adff2f",
+  grey: "808080",
+  honeydew: "f0fff0",
+  hotpink: "ff69b4",
+  indianred: "cd5c5c",
+  indigo: "4b0082",
+  ivory: "fffff0",
+  khaki: "f0e68c",
+  lavender: "e6e6fa",
+  lavenderblush: "fff0f5",
+  lawngreen: "7cfc00",
+  lemonchiffon: "fffacd",
+  lightblue: "add8e6",
+  lightcoral: "f08080",
+  lightcyan: "e0ffff",
+  lightgoldenrodyellow: "fafad2",
+  lightgray: "d3d3d3",
+  lightgreen: "90ee90",
+  lightgrey: "d3d3d3",
+  lightpink: "ffb6c1",
+  lightsalmon: "ffa07a",
+  lightseagreen: "20b2aa",
+  lightskyblue: "87cefa",
+  lightslategray: "778899",
+  lightslategrey: "778899",
+  lightsteelblue: "b0c4de",
+  lightyellow: "ffffe0",
+  lime: "00ff00",
+  limegreen: "32cd32",
+  linen: "faf0e6",
+  magenta: "ff00ff",
+  maroon: "800000",
+  mediumaquamarine: "66cdaa",
+  mediumblue: "0000cd",
+  mediumorchid: "ba55d3",
+  mediumpurple: "9370db",
+  mediumseagreen: "3cb371",
+  mediumslateblue: "7b68ee",
+  mediumspringgreen: "00fa9a",
+  mediumturquoise: "48d1cc",
+  mediumvioletred: "c71585",
+  midnightblue: "191970",
+  mintcream: "f5fffa",
+  mistyrose: "ffe4e1",
+  moccasin: "ffe4b5",
+  navajowhite: "ffdead",
+  navy: "000080",
+  oldlace: "fdf5e6",
+  olive: "808000",
+  olivedrab: "6b8e23",
+  orange: "ffa500",
+  orangered: "ff4500",
+  orchid: "da70d6",
+  palegoldenrod: "eee8aa",
+  palegreen: "98fb98",
+  paleturquoise: "afeeee",
+  palevioletred: "db7093",
+  papayawhip: "ffefd5",
+  peachpuff: "ffdab9",
+  peru: "cd853f",
+  pink: "ffc0cb",
+  plum: "dda0dd",
+  powderblue: "b0e0e6",
+  purple: "800080",
+  red: "ff0000",
+  rosybrown: "bc8f8f",
+  royalblue: "4169e1",
+  saddlebrown: "8b4513",
+  salmon: "fa8072",
+  sandybrown: "f4a460",
+  seagreen: "2e8b57",
+  seashell: "fff5ee",
+  sienna: "a0522d",
+  silver: "c0c0c0",
+  skyblue: "87ceeb",
+  slateblue: "6a5acd",
+  slategray: "708090",
+  slategrey: "708090",
+  snow: "fffafa",
+  springgreen: "00ff7f",
+  steelblue: "4682b4",
+  tan: "d2b48c",
+  teal: "008080",
+  thistle: "d8bfd8",
+  tomato: "ff6347",
+  turquoise: "40e0d0",
+  violet: "ee82ee",
+  wheat: "f5deb3",
+  white: "ffffff",
+  whitesmoke: "f5f5f5",
+  yellow: "ffff00",
+  yellowgreen: "9acd32",
+};
+
+// --- Native CSS color functions ---
+
+function nativeCssColorFunction(name, args) {
+  if (args.length < 3 || args.length > 5)
+    throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
+  args = args.map(a => isColor(a) ?? isBasic(a));
+  const from = args[0].type === "color";
+  const txts = args.map(a => a.text);
+  if (args.length - from === 4) txts.splice(-1, 0, "/");
+  if (from) txts.unshift("from");
+  return `${name}(${txts.join(" ")})`;
+}
+
+function nativeCssColorSpaceFunction(space, args) {
+  if (args.length < 3 || args.length > 5)
+    throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
+  args = args.map(a => isColor(a) ?? isBasic(a));
+  const from = args[0].type === "color";
+  const txts = args.map(a => a.text);
+  if (args.length - from === 4) txts.splice(-1, 0, "/");
+  if (from) txts.unshift("from");
+  txts.unshift(space);
+  return `color(${txts.join(" ")})`;
+}
+
+function cssColorMix([space, one, two, percent]) {
+  space = space == "_" ? "oklab" : isBasic(space).text;
+  one = isColor(one).text;
+  two = isColor(two).text;
+  two += " " + (percent ? isBasic(percent).text : "50%");
+  return `color-mix(in ${[space, one, two].join(", ")})`;
+}
+
+// --- Color hash parsing ---
+
+//#123 => hash(123) => #123
+//#primary#30 => hash(primary,30)
+//#primary#30#a80 => hash(primary,30,a80)
+//#primary#brown33#50
+function hash(oneTwo) {
+  let [one, two] = oneTwo.map(isColor);
+  if (two.vector == "") {
+    let left = oneTwo[0], i = 1;
+    while (left.name === "#hash") {
+      left = left.args[0];
+      i++;
+    }
+    const vector = left.kind == "COLOR" && isColor(left).vector;
+    if (!vector)
+      throw new SyntaxError(`First color ${left.text} is not a color vector, while ${two.text} is a relative color vector.`);
+    if (two.percent >= 100)
+      return `var(--color-${vector})`;
+    return `color-mix(in oklab, ${one.text}, var(--color-${vector + i}) ${two.percent}%)`;
+  }
+  if (two.percent >= 100)
+    return two.hue ?? two.text;
+  return `color-mix(in oklab, ${one.text}, ${two.hue ?? two.text} ${two.percent}%)`;
+}
+
+function rgb(rgb) { return rgbaImpl("rgb", rgb); }
+function rgba(rgba) { return rgbaImpl("rgba", rgba); }
+function rgbaImpl(name, rgba) {
+  if (name.length != rgba.length)
+    throw new SyntaxError(`${name}() requires exactly ${name.length} arguments.`);
+  rgba = rgba.map(isBasic);
+  let hex = "";
+  for (let i = 0; i < rgba.length; i++) {
+    const c = rgba[i];
+    let num = c.num;
+    if (num == null)
+      break;
+    if (c.type == "percent")
+      num *= 2.55;
+    else if (c.type == "number" && i == 3)
+      num *= 255;
+    else if (c.type != "number")
+      throw new SyntaxError(`Expected number or percent, got ${c.type}: ${c.text}`);
+    hex += Math.min(Math.max(0, Math.round(num)), 255).toString(16).padStart(2, '0');
+  }
+  return hex.length === rgba.length * 2 ? "#" + hex :
+    name + "(" + rgba.map(c => c.text).join(", ") + ")";
+}
+
+// --- Color parsing ---
+
+const CRX = new RegExp("^#(?:" +
+  [
+    "(transparent)",
+    "a(\\d\\d)",
+    "([0-9a-f]{6})([0-9a-f]{2})?",
+    "([0-9a-f]{3})([0-9a-f]{1})?",
+    "(" + Object.keys(WEBCOLORS).join("|") + ")(\\d\\d)?",
+    "(.*?)(\\d\\d)?",
+  ].join("|") +
+  ")$", "i");
+
+function parseColor(txt) {
+  let [, transparent, alpha, c6, c8 = "", c3, c4 = "", name, p = 100, vector, vp = 100] = txt.match(CRX);
+  if (transparent)
+    return {
+      type: "color",
+      text: "transparent",
+      hue: "transparent",
+      percent: 0
+    };
+  if (alpha)
+    return {
+      type: "color",
+      text: "transparent",
+      hue: "transparent",
+      percent: 100 - parseInt(alpha)
+    };
+  if (c3) {
+    c6 = c3.split("").map(c => c + c).join('');
+    c8 = c4 + c4;
+  }
+  if (c6)
+    return {
+      type: "color",
+      text: "#" + c6 + c8,
+      hue: "#" + c6,
+      hex: c6,
+      percent: c8 ? (parseInt(c8, 16) / 255 * 100).toFixed(2) : 100,
+    };
+  if (name) {
+    const percent = parseInt(p);
+    const hex = WEBCOLORS[name];
+    return {
+      type: "color",
+      text: percent == 100 ? name :
+        "#" + hex + Math.round(percent / 100 * 255).toString(16).padStart(2, '0'),
+      hue: name,
+      hex,
+      percent
+    };
+  }
+  if (vector && vp == 100)
+    return {
+      type: "color",
+      text: `var(--color-${vector})`,
+      vector,
+      percent: 100
+    };
+
+  const percent = parseInt(vp);
+  return {
+    type: "color",
+    text: `color-mix(in oklab, transparent, var(--color-${vector}) ${percent}%)`,
+    vector,
+    percent
+  };
+}
+
+// --- Color function registry ---
+
+const COLORS = {
+  hash,
+  rgb: rgb,
+  rgba: rgba,
+  hsl: nativeCssColorFunction.bind(null, "hsl"),
+  hsla: nativeCssColorFunction.bind(null, "hsla"),
+  hwb: nativeCssColorFunction.bind(null, "hwb"),
+  lab: nativeCssColorFunction.bind(null, "lab"),
+  lch: nativeCssColorFunction.bind(null, "lch"),
+  oklab: nativeCssColorFunction.bind(null, "oklab"),
+  oklch: nativeCssColorFunction.bind(null, "oklch"),
+
+  srgb: nativeCssColorSpaceFunction.bind(null, "srgb"),
+  srgbLinear: nativeCssColorSpaceFunction.bind(null, "srgb-linear"),
+  displayP3: nativeCssColorSpaceFunction.bind(null, "display-p3"),
+  a98Rgb: nativeCssColorSpaceFunction.bind(null, "a98-rgb"),
+  prophotoRgb: nativeCssColorSpaceFunction.bind(null, "prophoto-rgb"),
+  rec2020: nativeCssColorSpaceFunction.bind(null, "rec2020"),
+  xyz: nativeCssColorSpaceFunction.bind(null, "xyz"),
+  xyzD50: nativeCssColorSpaceFunction.bind(null, "xyz-d50"),
+  xyzD65: nativeCssColorSpaceFunction.bind(null, "xyz-d65"),
+  color: nativeCssColorSpaceFunction.bind(null, "srgb"),
+
+  mix: cssColorMix.bind(null),
+  mixHslLonger: args => cssColorMix([{ kind: "WORD", text: "hsl longer hue" }, ...args]),
+  mixHslShorter: args => cssColorMix([{ kind: "WORD", text: "hsl shorter hue" }, ...args]),
+  mixHslIncreasing: args => cssColorMix([{ kind: "WORD", text: "hsl increasing hue" }, ...args]),
+  mixHslDecreasing: args => cssColorMix([{ kind: "WORD", text: "hsl decreasing hue" }, ...args]),
+  mixHwbLonger: args => cssColorMix([{ kind: "WORD", text: "hwb longer hue" }, ...args]),
+  mixHwbShorter: args => cssColorMix([{ kind: "WORD", text: "hwb shorter hue" }, ...args]),
+  mixHwbIncreasing: args => cssColorMix([{ kind: "WORD", text: "hwb increasing hue" }, ...args]),
+  mixHwbDecreasing: args => cssColorMix([{ kind: "WORD", text: "hwb decreasing hue" }, ...args]),
+  mixLchLonger: args => cssColorMix([{ kind: "WORD", text: "lch longer hue" }, ...args]),
+  mixLchShorter: args => cssColorMix([{ kind: "WORD", text: "lch shorter hue" }, ...args]),
+  mixLchIncreasing: args => cssColorMix([{ kind: "WORD", text: "lch increasing hue" }, ...args]),
+  mixLchDecreasing: args => cssColorMix([{ kind: "WORD", text: "lch decreasing hue" }, ...args]),
+  mixOklchLonger: args => cssColorMix([{ kind: "WORD", text: "oklch longer hue" }, ...args]),
+  mixOklchShorter: args => cssColorMix([{ kind: "WORD", text: "oklch shorter hue" }, ...args]),
+  mixOklchIncreasing: args => cssColorMix([{ kind: "WORD", text: "oklch increasing hue" }, ...args]),
+  mixOklchDecreasing: args => cssColorMix([{ kind: "WORD", text: "oklch decreasing hue" }, ...args]),
+};
+
+// --- Logical four-value helper ---
+
+export const LogicalFour = (NAME, INTERPRETER) => ({ args }) => {
+  if (args.length > 4)
+    throw new SyntaxError(`${NAME}() takes max 4 arguments, got ${args.length}.`);
+  if (!args.length)
+    return { [NAME]: "none" };
+  args = args.map((a, i) => {
+    if (a = INTERPRETER(a))
+      return a;
+    throw BadArgument(NAME, args, i, INTERPRETER.name);
+  });
+  return args.length === 1 ? { [NAME]: args[0] } :
+    {
+      [NAME + "Block"]: args[2] != null && args[2] != args[0] ? args[0] + " " + args[2] : args[0],
+      [NAME + "Inline"]: args[3] != null && args[3] != args[1] ? (args[1] ?? args[0]) + " " + args[3] : args[1] ?? args[0],
+    };
+}
+// const NativeCssScopeUrl = (...args) => `url(${args.join(" ")})`;
+// const NativeCssScopeAttrCounter = {
+//   counter: (...args) => `counter(${args.join(",")})`,
+//   counters: (...args) => `counters(${args.join(",")})`,
+//   attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
+// };
+
+// --- Value type checkers (is* functions) ---
+
+export function isBasic(arg) {
+  if (arg.kind == "VAR")
+    arg.text = `var(${arg.text})`;
+  if (arg.kind !== "EXP")
+    return arg;
+  if (arg.name in Maths)
+    return Maths[arg.name](arg.name, arg.args.map(isBasic));
+}
+export function isWord(a) {
+  if (a.kind === "WORD")
+    return a;
+}
+export function isColor(a) {
+  if (a.kind === "COLOR")
+    return parseColor(a.text);
+  //todo the color must be a color or a variable.
+  const key = a.name?.slice(1);
+  if (key in COLORS)
+    return { type: "color", text: COLORS[a.name?.slice(1)]?.(a.args) };
+}
+export function isMinmax(a) {
+  if (a.name === "minmax")
+    return { type: "length", text: `minmax(${a.args.map(isBasic).map(t => t.text).join(", ")})` };
+}
+export function isRepeat(a) {
+  if (a.name === "repeat")
+    return { type: "length", text: `repeat(${a.args.map(a => isMinmax(a) ?? isBasic(a)).map(t => t.text).join(", ")})` };
+}
+export function isSpan(a) {
+  if (a.name === "span")
+    return { type: a.type, text: "span " + isBasic(a.args[0]).text };
+}
+export function isUrl(a) {
+  if (a.kind === "QUOTE")
+    return { type: "url", text: `url(${a.text})` };
+  if (a.name === "url") {
+    if (a.args.length != 1) throw new SyntaxError("url() requires exactly one argument.");
+    return { type: "url", text: `url(${isBasic(a.args[0]).text})` };
+  }
+}
+export function isAngle(a) {
+  a = isBasic(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "angle", text: "0deg", unit: "deg", num: 0 };
+  if (a?.type === "angle")
+    return a;
+}
+export function isAnglePercent(a) {
+  a = isBasic(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "angle", text: "0deg", unit: "deg", num: 0 };
+  if (a?.type === "angle" || a?.type === "percent")
+    return a;
+}
+export function isLengthPercent(a) {
+  a = isBasic(a);
+  if (a?.type === "length" || a?.type === "percent" || (a?.num == 0 && a?.type === "number"))
+    return a;
+}
+export function isLengthPercentNumber(a) {
+  a = isBasic(a);
+  if (a?.type === "length" || a?.type === "percent" || a?.type === "number")
+    return a;
+}
+export function isPercent(a) {
+  a = isBasic(a);
+  if (a?.type === "percent")
+    return a;
+}
+export function isZero(a) {
+  a = isBasic(a);
+  if (a?.text === "0")
+    return a;
+}
+export function isLength(a) {
+  a = isBasic(a);
+  if (a?.type === "length" || (a?.num == 0 && a?.type === "number"))
+    return a;
+}
+export function isLengthNumber(a) {
+  a = isBasic(a);
+  if (a?.type === "length" || a?.type === "number")
+    return a;
+}
+export function isTime(a) {
+  a = isBasic(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "time", text: "0s", unit: "s", num: 0 };
+  if (a?.type === "time")
+    return a;
+}
+export function isResolution(a) {
+  a = isBasic(a);
+  if (a?.num == 0 && a.type === "number")
+    return { type: "resolution", text: "0x", unit: "x", num: 0 };
+  if (a?.type === "resolution")
+    return a;
+}
+export function isNumber(a) {
+  a = isBasic(a);
+  if (a?.type === "number" && a.unit == "")
+    return a;
+}
+export function isFraction(a) {
+  a = isNumber(a);
+  if (a && !Number.isInteger(a.num))
+    return a;
+}
+export function isInteger(a) {
+  a = isNumber(a);
+  if (a && Number.isInteger(a.num))
+    return a;
+}
+export function isNumberPercent(a) {
+  a = isBasic(a);
+  if (a?.type === "number" && a.unit == "" || a?.type === "percent")
+    return a;
+}
+export function isQuote(a) {
+  if (a.kind === "QUOTE")
+    return a;
+}
+export function isName(a) {
+  if (a.kind === "WORD" && a.text[0].match(/[a-zA-Z0-9-]/))
+    return a;
+}
+
+// --- Value extractors (text/num from typed tokens) ---
+
+//interprets returns STRINGS
+export function interpretRadian(a) {
+  if (a?.num == 0 && a.type === "number")
+    return 0;
+  if (a?.type !== "angle")
+    return;
+  if (a.unit === "rad")
+    return a.num;
+  if (a.unit === "deg")
+    return a.num * (Math.PI / 180);
+  if (a.unit === "grad")
+    return a.num * (Math.PI / 200);
+  if (a.unit === "turn")
+    return a.num * (2 * Math.PI);
+}
+export function interpretMimeType(a) {
+  const MIME = {
+    image: "image/*",
+    imageJpeg: "image/jpeg",
+    imagePng: "image/png",
+    imageGif: "image/gif",
+    imageWebp: "image/webp",
+    imageAvif: "image/avif",
+    imageSvgXml: "image/svg+xml",
+  };
+  if (a.text in MIME)
+    return `type(${MIME[a.text]})`;
+}
+
+export function interpretImage(arg) {
+  const url = isUrl(arg);
+  if (url) return url;
+  if (arg.name == "imageSet") {
+    const set = [];
+    const args = arg.args.slice();
+    while (args.length) {
+      const url = isUrl(a);
+      if (!url)
+        throw new SyntaxError("imageSet() sequences must start with a url.");
+      args.shift();
+      let type = args.length && interpretMimeType(args[0]);
+      let resolution = args.length && isResolution(args[0]);
+      type ||= args.length && interpretMimeType(args[0]);
+      type && args.shift();
+      resolution && args.shift();
+      set.push([url.text, type, resolution].filter(Boolean).join(" "));
+    }
+    return `image-set(${set.join(", ")})`;
+  }
+}
+
+// const SpecializedNativeCssFunctions = {
+//    element: (...args) => `element(${args.join(",")})`,
+//    paint: (...args) => `paint(${args.join(",")})`,
+//    env: (...args) => `env(${args.join(",")})`,   //todo handle as css vars.
+//    path: (...args) => `path(${args.join(",")})`,
+//    imageSet: (...args) => `image-set(${args.join(",")})`,
+// };
+
+const INTERPRETERS = {
+  number: isNumber,
+  zero: isZero,
+  length: isLength,
+  percent: isPercent,
+  angle: isAngle,
+  time: isTime,
+  resolution: isResolution,
+  color: isColor,
+  url: isUrl,
+  repeat: isRepeat,
+  minmax: isMinmax,
+  span: isSpan,
+  image: interpretImage,
+  quote: isQuote,
+  basic: isBasic,
+};
+
+// --- Native CSS property handlers ---
+
+const NativeCssProperties = Object.fromEntries(Object.entries(NativeCss.supported).map(([kebab, types]) => {
+  let camel = kebab.replace(/-([a-z])/g, g => g[1].toUpperCase());
+  function fixBorderNames(originalCamel) {
+    const m = originalCamel.match(/^(border)(.+)(Style|Width|Color|Radius)$/);
+    return m ? m[1] + m[3] + m[2] : originalCamel;
+  }
+  camel = fixBorderNames(camel);
+  const functions = [isBasic, ...types.map(t => INTERPRETERS[t]).filter(Boolean)].reverse();
+
+  function interpretNativeValue({ args, name }) {
+    const argsOut = args.map(a => {
+      let result;
+      for (const cb of functions)
+        if (result = cb(a))
+          return result;
+      if (a.name)
+        throw new SyntaxError(`Could not interpret to ${camel}(${a.name}(...)).`);
+      return a;
+    });
+    return { [camel]: argsOut.map(t => t.text).join(" ") };
+  }
+  Object.defineProperty(interpretNativeValue, 'name', { value: camel });
+  return [camel, interpretNativeValue];
+}));
+
+export default {
+  ...NativeCssProperties,
+  em: NativeCssProperties.fontSize,
+};
+
+// --- Function builders (higher-order short constructors) ---
+
+const matchPrimes = (primes) => {
+  primes = Object.entries(primes);
+  return (a, res) => {
+    for (let [k, v] of primes)
+      if (!(k in res))
+        if ((v = v(a)) !== undefined)
+          return [k, v];
+  };
+};
+
+function BadArgument(name, args, I, expectedType = "") {
+  args = args.map(a => a.text ?? (a.name + "/" + a.args.length));
+  args[I] = ` => ${args[I]} <= `;
+  expectedType &&= `\n${args[I]} is not a ${expectedType}`;
+  return new SyntaxError(`Bad argument ${name}/${I + 1}:  ${name}(${args.join(",")})` + expectedType);
+}
+
+export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
+  singlePrimes = matchPrimes(singlePrimes);
+  primes = matchPrimes(primes);
+  return ({ args, name }) => {
+    const res = {};
+    for (let i = 0; i < args.length; i++) {
+      const a = args[i];
+      let kv;
+      if (a.name in wes)
+        res[a.name] = wes[a.name](a);
+      else if (a.text in wes)
+        res[a.text] = wes[a.text];
+      else if (kv = singlePrimes(a, res))
+        res[kv[0]] = kv[1];
+      else if (kv = primes(a, {}))
+        (res[kv[0]] ??= []).push(kv[1]);
+      else
+        throw BadArgument(name, args, i);
+    }
+    return post ? post(res) : res;
+  };
+};
+
+export const Umbrella = (BASE, CB) => exp => Object.assign({}, BASE, exp.args?.length ? CB(exp) : undefined);
+
+export const SIN = (interpreter, post) => ({ args, name }) => {
+  if (args.length != 1)
+    throw new SyntaxError(`${name} requires 1 argument, got ${args.length} arguments.`);
+  const v = interpreter(args[0]);
+  if (v == null) throw BadArgument(name, args, 0, interpreter.name);
+  return post ? post(name, v) : v;
+};
+
+function parseSignature(SIG) {
+  const [NAME, ARITY] = SIG.split("/");
+  if (ARITY == undefined || ARITY == "")
+    return { NAME };
+  let [MIN, MAX = MIN] = ARITY.split("-");
+  if (MAX === "") MAX = Infinity;
+  return { NAME, MIN: Number(MIN), MAX: Number(MAX) };
+}
+
+export const Sequence = (SIG, INTERPRETERS, POST) => {
+  const { NAME, MIN = INTERPRETERS.length, MAX = INTERPRETERS.length } = parseSignature(SIG);
+  return ({ args, name }) => {
+    if (NAME && NAME !== name)
+      return;
+    if (args.length < MIN || args.length > MAX)
+      throw new SyntaxError(`${name}() requires ${MIN} to ${MAX} arguments, got ${args.length}.`);
+    const res = args.map((a, i) => {
+      const a2 = (INTERPRETERS[i] ??= INTERPRETERS.at(-1))(a);
+      if (a2)
+        return a2;
+      throw BadArgument(name, args, i, INTERPRETERS[i].name);
+    });
+    return POST ? POST(name, res) : res;
+  }
+};
+
+export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
+  if (!args.length)
+    throw new SyntaxError(`${name} requires at least 1 argument, got 0 arguments.`)
+  const first = INTERPRETER(args[0]);
+  if (first == null)
+    throw BadArgument(name, args, 0, INTERPRETER.name);
+  const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
+  return POST ? POST(name, first, res) : first;
+};
+export const WORD_IN_TABLE = TABLE => ({ text }) => TABLE[text];
+export const CamelWords = (WORDS) => {
+  const lookupTable = Object.fromEntries(WORDS.split("|").map(w => [w, w.replaceAll(/[A-Z]/g, c => "-" + c.toLowerCase())]));
+  return a => lookupTable[a.text];
+};
+
+export const Angle = a => isAngle(a)?.text;
+export const Color = a => isColor(a)?.text;
+export const Length = a => isLength(a)?.text;
+export const Name = a => isName(a)?.text;
+export const NumberInterpreter = a => isNumber(a)?.num;
+export const Fraction = a => isFraction(a)?.num;
+export const Integer = a => isInteger(a)?.num;
+export const Quote = a => isQuote(a)?.text;
+export const Percent = a => isPercent(a)?.text;
+export const Time = a => isTime(a)?.text;
+export const Unset = a => a.text == "_" ? "unset" : undefined;
+export const Url = a => isUrl(a)?.text;
+export const Word = a => isWord(a)?.text;
+export const Basic = a => isBasic(a)?.text; //todo this should be replaced with something more precise in the HO functions
+export const Radian = a => (a = isAngle(a)) ? interpretRadian(a) : undefined;
+export const Repeat = a => isRepeat(a)?.text;
+export const Span = a => isSpan(a)?.text;
+export const AbsoluteUrl = a => {
+  if (a.kind === "QUOTE" && a.text.match(/^["'`](https?|data):/i))
+    return new URL(a.text.slice(1, -1));
+  else if (a.name === "url" && a.args.length === 1 && (a = a.args[0].text))
+    if (a.match(/^["'`](https?|data):/i))
+      try { return new URL(a.slice(1, -1)); } catch (e) { }
+};
+// export const RelativeUrl = a => {  //todo implement, this is just a draft.
+//   class RelativeURL {
+//     constructor(url) {
+//       this.url = url;
+//       this.dots = url.match(/^[.]*/)[0];
+//       this.tstPath = new URL("http://n" + url);
+//     }
+//     interpretAgainst(url) {
+//       const otherAbs = new URL(url, this.tstPath);
+//       const dots = url.match(/^[.]*/)[0];
+//       return dots + otherAbs.pathname + otherAbs.search + otherAbs.hash;
+//     }
+//   }
+//   if (a.kind === "QUOTE" && a.text.match(/^["'`](.?.?)\//i))
+//     return new RelativeURL(a.text.slice(1, -1));
+//   else if (a.name === "url" && a.args.length === 1 && (a = a.args[0].text))
+//     if (a.match(/^["'`](.?.?)\//i))
+//       return new RelativeURL(a.slice(1, -1));
+// }
+
+// --- Composite value extractors ---
+
+export const AnglePercent = a => Angle(a) ?? Percent(a);
+export const LengthUnset = a => Length(a) ?? Unset(a);
+export const LengthPercent = a => Length(a) ?? Percent(a);
+export const LengthPercentUnset = a => Length(a) ?? Percent(a) ?? Unset(a);
+export const LengthPercentNumber = a => Length(a) ?? Percent(a) ?? NumberInterpreter(a);
+export const NameUnset = a => Name(a) ?? Unset(a);
+export const NumberPercent = a => NumberInterpreter(a) ?? Percent(a);
+export const UrlUnset = a => Url(a) ?? Unset(a);
+export const ColorUrl = a => Color(a) ?? Url(a);
+export const ColorPrimitive = a => (a.kind === "COLOR" && (a = parseColor(a.text)).hex) ? a : undefined;
+export const RepeatBasic = a => Repeat(a) ?? Basic(a);
+export const SpanBasic = a => Span(a) ?? Basic(a);
+
+// --- Grouped exports for structured imports ---
+
+export const ValueTypes = {
+  AnglePercent,
+  LengthUnset,
+  LengthPercent,
+  LengthPercentUnset,
+  LengthPercentNumber,
+  NameUnset,
+  NumberPercent,
+  UrlUnset,
+  ColorUrl,
+  ColorPrimitive,
+  RepeatBasic,
+  SpanBasic,
+  Angle,
+  Color,
+  Length,
+  Name,
+  NumberInterpreter,
+  Fraction,
+  Integer,
+  Quote,
+  Percent,
+  Time,
+  Unset,
+  Url,
+  Word,
+  Basic,
+  Radian,
+  Repeat,
+  Span,
+  AbsoluteUrl,
+  CamelWords,
+  WORD_IN_TABLE,
+};
+
+export const FunctionTypes = {
+  TYPB,
+  Umbrella,
+  Sequence,
+  SIN,
+  FIRST,
+};
+
