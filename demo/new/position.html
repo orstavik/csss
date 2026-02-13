@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Position — CSSS demo</title>
+    <script src="../../../auto.js?style=style&interval=400" type="module"></script>
+</head>
+
+<body class="
+$Block(padding(0))$blockItem(margin(0))
+$bg(#fff)$color(#1a1a1a)
+">
+
+    <header class="
+    $Flex(contentBetween,itemsCenter,padding(1.5rem,2rem))
+    |h1$font(1.25rem,700)$color(#1a1a1a)
+    |nav$Flex(row,gap(1.5rem))
+    |nav|a$font(0.95rem,500)$noTextDecoration$color(#1a1a1a)$opacity(0.8)
+    |nav|a:hover$opacity(1)
+    ">
+        <h1>Position</h1>
+        <nav>
+            <a href="#relative">$relative</a>
+            <a href="#absolute">$absolute</a>
+            <a href="#fixed">$fixed</a>
+        </nav>
+    </header>
+
+    <main class="
+    $Block(padding(2rem,4rem))
+    |section$blockItem(margin(0,0,3rem,0))
+    |section|h2$blockItem(margin(0,0,1rem,0))
+    |section|p$blockItem(margin(0,0,1rem,0))
+
+    |section|h2$font(1.5rem,700)$color(#1a1a1a)
+        |section|p$font(1rem)$color(#1a1a1a)$opacity(0.8)$paragraph(1.6)
+    ">
+
+        <section id="relative">
+            <h2>$relative — with inset</h2>
+            <p>position: relative; optional start/end/top/bottom offsets.</p>
+            <div class="
+            $blockItem(inlineSize(100%,_,120px))$relative$bg(#f0f0f0)$Border(radius(12px))
+            |div$absolute(top,50%)$blockItem(margin(0))$font(0.9rem,600)$color(#1a1a1a)
+
+            |div$relative(start,1rem,5%)$Block(padding(0.5rem,1rem))$bg(#fff)$Border(radius(6px))$boxShadow(0,2px,6px,#rgba(0,0,0,0.08))
+            ">
+                <div>$relative(start, 1rem, 5%) — offset from start/top</div>
+            </div>
+        </section>
+
+        <section id="absolute">
+            <h2>$absolute — inside a relative parent</h2>
+            <p>position: absolute; top/right/bottom/left or logical insets.</p>
+            <div class="
+            $relative$blockItem(inlineSize(100%,_,140px))$bg(#f8f8f8)$Border(radius(12px))
+            |div$Block(padding(0.75rem,1rem))$font(0.85rem,600)$color(#fff)
+
+            |div:first-child$absolute(rightTop,0.5rem,0.5rem)$bg(#6366f1)$Border(radius(6px))
+            |div:last-child$absolute(leftBottom,0.5rem,0.5rem)$bg(#8b5cf6)$Border(radius(6px))
+            ">
+                <div>$absolute(rightTop, 0.5rem, 0.5rem)</div>
+                <div>$absolute(leftBottom, 0.5rem, 0.5rem)</div>
+            </div>
+        </section>
+
+        <section id="fixed">
+            <h2>$fixed</h2>
+            <p>position: fixed; e.g. rightBottom(0,0) for a corner badge.</p>
+            <div class="
+            $blockItem(inlineSize(100%,_,80px))$bg(#f0f0f0)$Border(radius(12px))$Flex(contentCenter,itemsCenter)
+            |span$font(0.9rem)$color(#1a1a1a)$opacity(0.7)
+            ">
+                <span>Fixed elements use $fixed(…) — e.g. $fixed(rightBottom, 0, 0).</span>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
