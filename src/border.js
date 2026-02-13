@@ -1,4 +1,6 @@
-import { Color, LengthPercent, CamelWords, TYPB, Sequence } from "./func.js";
+import { ValueTypes, FunctionTypes } from "./func.js";
+const { TYPB, Sequence } = FunctionTypes;
+const { Color, LengthPercent, CamelWords } = ValueTypes;
 
 const BorderUmbrella = cb => exp => {
   const res = cb(exp);

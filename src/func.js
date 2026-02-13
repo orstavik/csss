@@ -341,7 +341,7 @@ const COLORS = {
   mixOklchDecreasing: args => cssColorMix([{ kind: "WORD", text: "oklch decreasing hue" }, ...args]),
 };
 
-export const LogicalFour = (NAME, INTERPRETER) => ({ args }) => {
+const LogicalFour = (NAME, INTERPRETER) => ({ args }) => {
   if (args.length > 4)
     throw new SyntaxError(`${NAME}() takes max 4 arguments, got ${args.length}.`);
   if (!args.length)
@@ -615,7 +615,7 @@ function BadArgument(name, args, I, expectedType = "") {
   return new SyntaxError(`Bad argument ${name}/${I + 1}:  ${name}(${args.join(",")})` + expectedType);
 }
 
-export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
+const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
   singlePrimes = matchPrimes(singlePrimes);
   primes = matchPrimes(primes);
   return ({ args, name }) => {
@@ -638,9 +638,9 @@ export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
   };
 };
 
-export const Umbrella = (BASE, CB) => exp => Object.assign({}, BASE, exp.args?.length ? CB(exp) : undefined);
+const Umbrella = (BASE, CB) => exp => Object.assign({}, BASE, exp.args?.length ? CB(exp) : undefined);
 
-export const SIN = (interpreter, post) => ({ args, name }) => {
+const SIN = (interpreter, post) => ({ args, name }) => {
   if (args.length != 1)
     throw new SyntaxError(`${name} requires 1 argument, got ${args.length} arguments.`);
   const v = interpreter(args[0]);
@@ -657,7 +657,7 @@ function parseSignature(SIG) {
   return { NAME, MIN: Number(MIN), MAX: Number(MAX) };
 }
 
-export const Sequence = (SIG, INTERPRETERS, POST) => {
+const Sequence = (SIG, INTERPRETERS, POST) => {
   const { NAME, MIN = INTERPRETERS.length, MAX = INTERPRETERS.length } = parseSignature(SIG);
   return ({ args, name }) => {
     if (NAME && NAME !== name)
@@ -674,7 +674,7 @@ export const Sequence = (SIG, INTERPRETERS, POST) => {
   }
 };
 
-export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
+const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   if (!args.length)
     throw new SyntaxError(`${name} requires at least 1 argument, got 0 arguments.`)
   const first = INTERPRETER(args[0]);
@@ -683,36 +683,7 @@ export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
   return POST ? POST(name, first, res) : first;
 };
-export const WORD_IN_TABLE = TABLE => ({ text }) => TABLE[text];
-export const CamelWords = (WORDS) => {
-  const lookupTable = Object.fromEntries(WORDS.split("|").map(w => [w, w.replaceAll(/[A-Z]/g, c => "-" + c.toLowerCase())]));
-  return a => lookupTable[a.text];
-};
 
-export const Angle = a => isAngle(a)?.text;
-export const Color = a => isColor(a)?.text;
-export const Length = a => isLength(a)?.text;
-export const Name = a => isName(a)?.text;
-export const NumberInterpreter = a => isNumber(a)?.num;
-export const Fraction = a => isFraction(a)?.num;
-export const Integer = a => isInteger(a)?.num;
-export const Quote = a => isQuote(a)?.text;
-export const Percent = a => isPercent(a)?.text;
-export const Time = a => isTime(a)?.text;
-export const Unset = a => a.text == "_" ? "unset" : undefined;
-export const Url = a => isUrl(a)?.text;
-export const Word = a => isWord(a)?.text;
-export const Basic = a => isBasic(a)?.text; //todo this should be replaced with something more precise in the HO functions
-export const Radian = a => (a = isAngle(a)) ? interpretRadian(a) : undefined;
-export const Repeat = a => isRepeat(a)?.text;
-export const Span = a => isSpan(a)?.text;
-export const AbsoluteUrl = a => {
-  if (a.kind === "QUOTE" && a.text.match(/^["'`](https?|data):/i))
-    return new URL(a.text.slice(1, -1));
-  else if (a.name === "url" && a.args.length === 1 && (a = a.args[0].text))
-    if (a.match(/^["'`](https?|data):/i))
-      try { return new URL(a.slice(1, -1)); } catch (e) { }
-};
 // export const RelativeUrl = a => {  //todo implement, this is just a draft.
 //   class RelativeURL {
 //     constructor(url) {
@@ -733,33 +704,49 @@ export const AbsoluteUrl = a => {
 //       return new RelativeURL(a.slice(1, -1));
 // }
 
-export const AnglePercent = a => Angle(a) ?? Percent(a);
-export const LengthUnset = a => Length(a) ?? Unset(a);
-export const LengthPercent = a => Length(a) ?? Percent(a);
-export const LengthPercentUnset = a => Length(a) ?? Percent(a) ?? Unset(a);
-export const LengthPercentNumber = a => Length(a) ?? Percent(a) ?? NumberInterpreter(a);
-export const NameUnset = a => Name(a) ?? Unset(a);
-export const NumberPercent = a => NumberInterpreter(a) ?? Percent(a);
-export const UrlUnset = a => Url(a) ?? Unset(a);
-export const ColorUrl = a => Color(a) ?? Url(a);
-export const ColorPrimitive = a => (a.kind === "COLOR" && (a = parseColor(a.text)).hex) ? a : undefined;
-export const RepeatBasic = a => Repeat(a) ?? Basic(a);
-export const SpanBasic = a => Span(a) ?? Basic(a);
-
+const Angle = a => isAngle(a)?.text;
+const Color = a => isColor(a)?.text;
+const Length = a => isLength(a)?.text;
+const Name = a => isName(a)?.text;
+const NumberInterpreter = a => isNumber(a)?.num;
+const Fraction = a => isFraction(a)?.num;
+const Integer = a => isInteger(a)?.num;
+const Quote = a => isQuote(a)?.text;
+const Percent = a => isPercent(a)?.text;
+const Time = a => isTime(a)?.text;
+const Unset = a => a.text == "_" ? "unset" : undefined;
+const Url = a => isUrl(a)?.text;
+const Word = a => isWord(a)?.text;
+const Basic = a => isBasic(a)?.text; //todo this should be replaced with something more precise in the HO functions
+const Radian = a => (a = isAngle(a)) ? interpretRadian(a) : undefined;
+const Repeat = a => isRepeat(a)?.text;
+const Span = a => isSpan(a)?.text;
+const AbsoluteUrl = a => {
+  if (a.kind === "QUOTE" && a.text.match(/^["'`](https?|data):/i))
+    return new URL(a.text.slice(1, -1));
+  else if (a.name === "url" && a.args.length === 1 && (a = a.args[0].text))
+    if (a.match(/^["'`](https?|data):/i))
+      try { return new URL(a.slice(1, -1)); } catch (e) { }
+};
+const AnglePercent = a => Angle(a) ?? Percent(a);
+const LengthUnset = a => Length(a) ?? Unset(a);
+const LengthPercent = a => Length(a) ?? Percent(a);
+const LengthPercentUnset = a => Length(a) ?? Percent(a) ?? Unset(a);
+const LengthPercentNumber = a => Length(a) ?? Percent(a) ?? NumberInterpreter(a);
+const NameUnset = a => Name(a) ?? Unset(a);
+const NumberPercent = a => NumberInterpreter(a) ?? Percent(a);
+const UrlUnset = a => Url(a) ?? Unset(a);
+const ColorUrl = a => Color(a) ?? Url(a);
+const ColorPrimitive = a => (a.kind === "COLOR" && (a = parseColor(a.text)).hex) ? a : undefined;
+const RepeatBasic = a => Repeat(a) ?? Basic(a);
+const SpanBasic = a => Span(a) ?? Basic(a);
+const CamelWords = WORDS => {
+  const lookupTable = Object.fromEntries(WORDS.split("|").map(w => [w, w.replaceAll(/[A-Z]/g, c => "-" + c.toLowerCase())]));
+  return a => lookupTable[a.text];
+};
+const WordToValue = TABLE => a => TABLE[a.text];
 
 export const ValueTypes = {
-  AnglePercent,
-  LengthUnset,
-  LengthPercent,
-  LengthPercentUnset,
-  LengthPercentNumber,
-  NameUnset,
-  NumberPercent,
-  UrlUnset,
-  ColorUrl,
-  ColorPrimitive,
-  RepeatBasic,
-  SpanBasic,
   Angle,
   Color,
   Length,
@@ -777,9 +764,21 @@ export const ValueTypes = {
   Radian,
   Repeat,
   Span,
+  AnglePercent,
+  LengthUnset,
+  LengthPercent,
+  LengthPercentUnset,
+  LengthPercentNumber,
+  NameUnset,
+  NumberPercent,
+  UrlUnset,
+  ColorUrl,
+  ColorPrimitive,
+  RepeatBasic,
+  SpanBasic,
   AbsoluteUrl,
   CamelWords,
-  wordInTable,
+  WordToValue,
 };
 
 export const FunctionTypes = {
@@ -788,4 +787,5 @@ export const FunctionTypes = {
   Sequence,
   SIN,
   FIRST,
+  LogicalFour,
 };

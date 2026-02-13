@@ -1,4 +1,6 @@
-import { Color, LengthPercent, Url, TYPB, SIN, WORD_IN_TABLE, CamelWords, Angle, AnglePercent, Sequence, Umbrella, } from "./func.js";
+import { ValueTypes, FunctionTypes } from "./func.js";
+const { Angle, Color, LengthPercent, Url, CamelWords, WordToValue, AnglePercent } = ValueTypes;
+const { TYPB, Umbrella, Sequence, SIN } = FunctionTypes;
 //todo isImage, interpretImage,
 
 const BackgroundDefaults = {
@@ -13,7 +15,7 @@ const BackgroundDefaults = {
   backgroundAttachment: "scroll",
 };
 
-const ColorSpace = WORD_IN_TABLE({
+const ColorSpace = WordToValue({
   hslLonger: "in hsl longer hue",
   hslShorter: "in hsl shorter hue",
   hslIncreasing: "in hsl increasing hue",
@@ -44,7 +46,7 @@ const ColorSpace = WORD_IN_TABLE({
   xyzD65: "in xyz-d65",
 });
 
-const LinearDirections = WORD_IN_TABLE({
+const LinearDirections = WordToValue({
   left: "to left",
   right: "to right",
   up: "to top",
@@ -143,7 +145,7 @@ const bg = TYPB({
 }, {
   backgroundRepeat: CamelWords("repeat|repeatX|repeatY|space|round|noRepeat"),
   backgroundSize: CamelWords("cover|contain"),
-  backgroundOrigin: WORD_IN_TABLE({ originBorderBox: "borderBox", originPaddingBox: "paddingBox", originContentBox: "contentBox" }),
+  backgroundOrigin: WordToValue({ originBorderBox: "borderBox", originPaddingBox: "paddingBox", originContentBox: "contentBox" }),
   backgroundClip: CamelWords("borderBox|paddingBox|contentBox|text|borderArea"),
   backgroundAttachment: CamelWords("fixed|scroll|local"),
   backgroundBlendMode: CamelWords("multiply|screen|overlay|darken|lighten|colorDodge|colorBurn|hardLight|softLight|difference|exclusion|hue|saturation|color|luminosity"),

@@ -1,7 +1,8 @@
 //todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
-import { Length, Color, TYPB, isLengthNumber, WORD_IN_TABLE, Radian } from "./func.js";
 
-// Shadows are handled similarly to transitions. Or even more semantically regulated.
+import { ValueTypes, FunctionTypes, isLengthNumber } from "./func.js";
+const { TYPB } = FunctionTypes;
+const { Color, Length, Radian, WordToValue } = ValueTypes;// Shadows are handled similarly to transitions. Or even more semantically regulated.
 // There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 
 // Then in the $shadow(shade,angle,length,color?) to use it.
 // If the length is passed in as 
@@ -54,7 +55,7 @@ const parseAbsoluteShadowArgs = IgnoreError(TYPB({}, {
 }, {}));
 
 const parseNamedShadowArgs = TYPB({}, {
-  type: WORD_IN_TABLE(SHADES),
+  type: WordToValue(SHADES),
   angle: Radian,
   length: isLengthNumber,
   color: Color,

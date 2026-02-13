@@ -1,5 +1,7 @@
 import shadow from "./shadows.js";
-import { SIN, Sequence, Angle, AnglePercent, Length, LengthPercent, NumberPercent, NumberInterpreter, Url, TYPB, } from "./func.js";
+import { ValueTypes, FunctionTypes } from "./func.js";
+const { TYPB, Sequence, SIN } = FunctionTypes;
+const { Angle, Length, NumberInterpreter, Url, AnglePercent, LengthPercent, NumberPercent } = ValueTypes;
 
 const FILTER_FUNCS = {
   blur: SIN(Length, (n, v) => `${n}(${v})`),

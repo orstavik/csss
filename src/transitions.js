@@ -1,4 +1,7 @@
-import { NumberInterpreter, Time, Name, SIN, TYPB } from "./func.js";
+import { ValueTypes, FunctionTypes } from "./func.js";
+const { TYPB, SIN } = FunctionTypes;
+const { Name, NumberInterpreter, Time } = ValueTypes;
+
 import * as CURVES from "./Curves.js";
 
 function cubicBezierFunction(ar) {

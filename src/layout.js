@@ -1,4 +1,6 @@
-import { Sequence, RepeatBasic, SpanBasic, isBasic, Basic, LogicalFour, LengthPercent, TYPB, SIN, NumberInterpreter, Umbrella, FIRST, Length, LengthPercentNumber, LengthPercentUnset } from "./func.js";
+import { ValueTypes, FunctionTypes, isBasic } from "./func.js";
+const { TYPB, Umbrella, Sequence, SIN, FIRST, LogicalFour } = FunctionTypes;
+const { Length, NumberInterpreter, Basic, LengthPercent, LengthPercentUnset, LengthPercentNumber, RepeatBasic, SpanBasic } = ValueTypes;
 
 function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)

@@ -1,6 +1,7 @@
-import { NumberInterpreter, Time, isBasic, TYPB } from "./func.js";
+import { ValueTypes, FunctionTypes } from "./func.js";
+const { NumberInterpreter, Time } = ValueTypes;
+const { TYPB } = FunctionTypes;
 import * as CURVES from "./Curves.js";
-import Maths from "./funcMath.js";
 
 const DIRECTION_WORDS = {
   normal: "normal",

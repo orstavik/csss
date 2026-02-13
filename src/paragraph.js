@@ -1,4 +1,6 @@
-import { LengthPercentNumber, LengthPercent, TYPB, SIN, Umbrella, FIRST, WORD_IN_TABLE } from "./func.js";
+import { ValueTypes, FunctionTypes } from "./func.js";
+const { LengthPercentNumber, LengthPercent, WordToValue } = ValueTypes;
+const { TYPB, SIN, Umbrella, FIRST } = FunctionTypes;
 
 const paragraph = TYPB({
   indent: SIN(LengthPercent, (n, v) => ({ textIndent: v })),
@@ -77,7 +79,7 @@ const PARAGRAPHS = {
 
 const Paragraph = Umbrella(PARAGRAPH,
   FIRST(
-    WORD_IN_TABLE(PARAGRAPHS),
+    WordToValue(PARAGRAPHS),
     paragraph,
     (n, first, rest) => ({ ...PARAGRAPHS[first], ...rest }))
 );

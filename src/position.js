@@ -1,5 +1,7 @@
-import { LengthPercent, WORD_IN_TABLE, TYPB, Umbrella } from "./func.js";
 
+import { ValueTypes, FunctionTypes } from "./func.js";
+const { TYPB, Umbrella } = FunctionTypes;
+const { WordToValue, LengthPercent } = ValueTypes;
 const ORIGINS = {
   left: ["left"],
   right: ["right"],
@@ -30,7 +32,7 @@ function processPosition({ origin = ["left", "top"], one = 0, two = 0 }) {
 }
 
 const Position = TYPB({}, {
-  origin: WORD_IN_TABLE(ORIGINS),
+  origin: WordToValue(ORIGINS),
   one: LengthPercent,
   two: LengthPercent,
 }, {}, processPosition);
