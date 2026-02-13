@@ -1,0 +1,63 @@
+/**
+ * Native CSS property analysis module.
+ *
+ * At load time, queries the browser's CSS.supports() API against every
+ * known CSS property (from MDN browser-compat-data) to build a map of
+ * supported properties and their accepted value types.
+ *
+ * Export map:
+ * - default export: `{ supported, unsupported }` where:
+ *   - `supported`: object mapping camelCase property names to arrays of
+ *     accepted type strings ("length", "color", "number", etc.).
+ *   - `unsupported`: properties not supported in the current browser.
+ */
+
+const Types = {
+  number: "1",
+  zero: "0",
+  length: "1px",
+  percent: "1%",
+  angle: "1deg",
+  time: "1s",
+  resolution: "1dppx",
+  frequency: "1Hz",
+  color: "#123",
+  fr: "1fr",  // always correlate with minmax
+  repeat: "repeat(2,1fr)",
+  url: "url('link')",
+  counter: "counter(my-counter)",
+  counters: "counters(my-counter, '.')",
+  span: "span 2",
+  filter: "blur()",
+  transform: "translateX(0)",
+  gradient: "linear-gradient(white, black)",
+  //attr: "attr(data-my-attr)", //is supported for all props, for some reason, but only works in content.
+};
+
+function isSupported(k) {
+  return CSS.supports(k, "unset") &&
+    Object.entries(Types).map(([type, tst]) => CSS.supports(k, tst) && type).filter(Boolean);
+}
+
+function longhands(obj) {
+  const keys = Object.keys(obj).sort((a, b) => b.length - a.length);
+  const longs = keys.filter((k, i) => keys.findIndex(x => x.startsWith(k)) === i);
+  longs.push("color", "content");//todo patches for the long hand filter
+  return longs.sort();
+}
+
+async function analyzeNativeCssProps() {
+  const SPEC = await (await fetch("https://cdn.jsdelivr.net/npm/@mdn/browser-compat-data")).json();
+  const supported = {};
+  const unsupported = {};
+  for (let k of longhands(SPEC.css.properties)) {
+    const types = isSupported(k);
+    types ?
+      supported[k] = types : //mergeTypes(types)
+      unsupported[k] = SPEC.css.properties[k];
+  }
+  supported.content.push("attr");
+  return { supported, unsupported };
+}
+const NativeCss = await analyzeNativeCssProps();
+export default NativeCss;
