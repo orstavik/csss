@@ -20,7 +20,7 @@ import {
 
 const {
   LengthPercent,
-  WORD_IN_TABLE: WordInTable,
+  WordInTable,
 } = ValueTypes;
 
 const {
@@ -31,7 +31,7 @@ const {
 // --- Origin keyword mappings ---
 
 /** Maps direction keywords to arrays of CSS property names for positioning. */
-const ORIGINS = {
+const Origins = {
   left: ["left"],
   right: ["right"],
   top: ["top"],
@@ -64,7 +64,7 @@ function processPosition({ origin = ["left", "top"], one = 0, two = 0 }) {
 }
 
 const Position = FunctionBasedOnValueTypes({}, {
-  origin: WordInTable(ORIGINS),
+  origin: WordInTable(Origins),
   one: LengthPercent,
   two: LengthPercent,
 }, {}, processPosition);

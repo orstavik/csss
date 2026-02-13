@@ -7,8 +7,8 @@
  * to their handler functions or preset objects.
  *
  * Export map:
- * - `SHORTS`: merged object of all short handlers/presets from every module.
- * - `MEDIA_WORDS`: lookup of media query keywords to CSS media feature strings.
+ * - `Shorts`: merged object of all short handlers/presets from every module.
+ * - `MediaWords`: lookup of media query keywords to CSS media feature strings.
  */
 import nativeAndMore from "./func.js";
 import backgrounds from "./bg.js";
@@ -64,7 +64,7 @@ const ObjectFit = {
 
 // --- Merged short registry ---
 
-const SHORTS = {
+const Shorts = {
   ...nativeAndMore,
   ...backgrounds,
   ...fonts,
@@ -85,7 +85,7 @@ const SHORTS = {
 
 // --- Media query keyword mappings ---
 
-const MEDIA_WORDS = {
+const MediaWords = {
   progressive: "scan: progressive",
   interlace: "scan: interlace",
   dim: "light-level: dim",
@@ -162,7 +162,7 @@ const MEDIA_WORDS = {
 //   "overflow-inline": "overflow-x",
 // };
 
-export { SHORTS, MEDIA_WORDS };
+export { Shorts, MediaWords };
 
 
 /*

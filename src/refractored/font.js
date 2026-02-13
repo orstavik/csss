@@ -70,7 +70,7 @@ const FontDefaults = {
  * text-decoration is standalone. text-shadow is standalone (in same space as colors).
  * ??candidate for font is hyphenation. Where we break the words, that could be more a font characteristic than a layout characteristic??
  */
-const SYNTHESIS_WORDS = (function () {
+const SynthesisWords = (function () {
   function* permutations(arr, remainder) {
     for (let i = 0; i < arr.length; i++) {
       const x = arr[i];
@@ -92,7 +92,7 @@ const SYNTHESIS_WORDS = (function () {
 })();
 
 const FONT_WORDS = {
-  ...SYNTHESIS_WORDS,
+  ...SynthesisWords,
   uppercase: { textTransform: "uppercase" },
   lowercase: { textTransform: "lowercase" },
   capitalize: { textTransform: "capitalize" },

@@ -12,7 +12,7 @@
  *   layer precedence.
  * - `extractShortSelector(rule)`: extracts the original short selector from a CSS rule.
  */
-import { SHORTS, MEDIA_WORDS } from "./vocabulary.js";
+import { Shorts, MediaWords } from "./vocabulary.js";
 
 /**
  * If you have a cssRules object, then you need to do:
@@ -99,7 +99,7 @@ function serializeCssBlock(name, body, depth = 0) {
 
 function interpretShort(exp) {
   try {
-    const cb = SHORTS[exp.name ?? exp.text];
+    const cb = Shorts[exp.name ?? exp.text];
     if (!cb) throw new ReferenceError(exp.name);
     return cb instanceof Function ? cb(exp) : cb;
   } catch (e) {
@@ -109,7 +109,7 @@ function interpretShort(exp) {
   }
 }
 
-const ILLEGAL_IN_CONTAINER_MODE = new Set([
+const IllegalInContainerMode = new Set([
   "margin",
   "padding",
   "inlineSize",
@@ -139,21 +139,21 @@ const ILLEGAL_IN_CONTAINER_MODE = new Set([
   "floatEnd",
 ]);
 
-const SELECTOR_PLACEHOLDER = `$"'$`;
+const SelectorPlaceholder = `$"'$`;
 export function parse(short) {
   const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
   short = short.match(/(.*?)\!*$/)[1];
-  const { exp, media } = parseMediaQuery(short, MEDIA_WORDS);
+  const { exp, media } = parseMediaQuery(short, MediaWords);
   let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
-  
+
   let { selector, item, grandItem } = parseSelectorPipe(sel, clazz);
   const isContainerMode = !item && !grandItem;
-  
+
   const parsedExprs = exprList.map(parseNestedExpression);
   if (isContainerMode) {
     for (const expr of parsedExprs) {
       const name = expr.name ?? expr.text;
-      if (ILLEGAL_IN_CONTAINER_MODE.has(name)) {
+      if (IllegalInContainerMode.has(name)) {
         throw new SyntaxError(
           `Illegal droplet in container mode: $${name}()\n` +
           `This droplet can only be used in item mode (with |).\n` +
@@ -162,7 +162,7 @@ export function parse(short) {
       }
     }
   }
-  
+
   exprList = parsedExprs.map(interpretShort);
   exprList &&= mergeOrStackProperties(exprList);
   const layer = (grandItem ? "grandItems" : item ? "items" : "container") + (short.match(/^(\$|\|\$|\|\|\$)/) ? "Default" : "");
@@ -179,7 +179,7 @@ export function parse(short) {
 }
 
 const mergeOrStackProperties = (function () {
-  const STACKABLE_PROPERTIES = {
+  const StackableProperties = {
     background: ", ",
     backgroundImage: ", ",
     backgroundPosition: ", ",
@@ -215,8 +215,8 @@ const mergeOrStackProperties = (function () {
         if (!(k in res))
           res[k] = v;
         //todo if ::before and ::after or >* or other atRules clash, then add /*comments to separate them*/ as transitions and @font-face does.
-        else if (k in STACKABLE_PROPERTIES)
-          res[k] += (STACKABLE_PROPERTIES[k] + v);
+        else if (k in StackableProperties)
+          res[k] += (StackableProperties[k] + v);
         else
           throw new SyntaxError(`CSS$ clash: ${k} = ${res[k]}  AND = ${v}.`);
       }
@@ -242,9 +242,9 @@ function parseArgumentList(tokens, divider) {
 }
 
 function operatorPriority(a, name, b) {
-  const PRI = { "**": 1, "*": 2, "/": 2, "+": 3, "-": 3, "??": 4, };
-  const leftPri = PRI[a.name] ?? 0;
-  const rightPri = PRI[name] ?? 10;
+  const Priority = { "**": 1, "*": 2, "/": 2, "+": 3, "-": 3, "??": 4, };
+  const leftPri = Priority[a.name] ?? 0;
+  const rightPri = Priority[name] ?? 10;
   if (leftPri <= rightPri)
     return { kind: "EXP", name, args: [a, b] };
   a.args[1] = { kind: "EXP", name, args: [a.args[1], b] };
@@ -317,11 +317,11 @@ function parseSelectorPipe(str, clazz) {
 
   const levels = str.split("|").map(parseSelectorComma).map((selectors, i) => {
     return i === 0 ?
-      selectors.map(sel => sel.replace(SELECTOR_PLACEHOLDER, clazz)) :
+      selectors.map(sel => sel.replace(SelectorPlaceholder, clazz)) :
       selectors.map(sel => {
-        if (!sel.startsWith(SELECTOR_PLACEHOLDER))
+        if (!sel.startsWith(SelectorPlaceholder))
           throw new SyntaxError("Item selector can't have ancestor expression: " + sel);
-        return sel === SELECTOR_PLACEHOLDER ? "*" : sel.slice(SELECTOR_PLACEHOLDER.length);
+        return sel === SelectorPlaceholder ? "*" : sel.slice(SelectorPlaceholder.length);
       });
   });
   return {
@@ -359,7 +359,7 @@ class Selector {
 
   static interpret(select) {
     if (!select.length)
-      return SELECTOR_PLACEHOLDER;
+      return SelectorPlaceholder;
     select = select.map(s => s == ">>" ? " " : s);
     if (select[0].match(/^[>+~\s]$/))
       select.unshift("*");
@@ -392,7 +392,7 @@ class Selector {
     tail &&= `:has(${tail})`;
     body += tail;
     body &&= `:where(${body})`;
-    return head + SELECTOR_PLACEHOLDER + body;
+    return head + SelectorPlaceholder + body;
   }
 }
 
@@ -477,40 +477,40 @@ function parseMediaQuery(str, register) {
 
 //https://developer.mozilla.org/en-US/docs/Web/CSS/length#browser_compatibility
 //check if we support all lengths.
-export const TYPES = {
-  LENGTHS: "px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex",
-  PERCENT: "%",
-  ANGLES: "deg|grad|rad|turn",
-  TIMES: "s|ms",
-  FR: "fr",
+export const Types = {
+  Lengths: "px|em|rem|vw|vh|vmin|vmax|cm|mm|Q|in|pt|pc|ch|ex",
+  Percent: "%",
+  Angles: "deg|grad|rad|turn",
+  Times: "s|ms",
+  Fr: "fr",
 
-  COLOR_NAMES: "aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen",
-  COLOR_FUNCTIONS: "rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch",
-  // MATH: "min|max|clamp|round|ceil|floor|abs|sin|cos|tan|asin|acos|atan|atan2|sqrt|log2|log10|exp|pow",
-  // OTHER_FUNCTIONS: "url|attr|var|env|counter|counters|rect|repeat|minmax",
+  ColorNames: "aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen",
+  ColorFunctions: "rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch",
+  // Math: "min|max|clamp|round|ceil|floor|abs|sin|cos|tan|asin|acos|atan|atan2|sqrt|log2|log10|exp|pow",
+  // OtherFunctions: "url|attr|var|env|counter|counters|rect|repeat|minmax",
 };
 
-const NUMBER = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${TYPES.LENGTHS})|(${TYPES.ANGLES})|(${TYPES.TIMES})|(${TYPES.PERCENT})|(${TYPES.FR}))?`;
+const NumberToken = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${Types.Lengths})|(${Types.Angles})|(${Types.Times})|(${Types.Percent})|(${Types.Fr}))?`;
 
 
 const tokenize = (_ => {
-  const QUOTE = /([`'"])(\\.|(?!\2).)*?\2/.source;
-  const VAR = /--[a-zA-Z][a-zA-Z0-9_]*/.source;
-  const WORD = /[._a-zA-Z][._%a-zA-Z0-9+<-]*/.source;
-  const NUMBER_WORDS = /e|pi|infinity|NaN/.source; //todo not added yet.
-  const COLOR = `#[a-zA-Z0-9_]+`;
-  const OPERATOR = /\?\?|\*\*|[*/+-]/.source;
-  const CPP = /[,()]/.source;
+  const Quote = /([`'"])(\\.|(?!\2).)*?\2/.source;
+  const Var = /--[a-zA-Z][a-zA-Z0-9_]*/.source;
+  const Word = /[._a-zA-Z][._%a-zA-Z0-9+<-]*/.source;
+  const NumberWords = /e|pi|infinity|NaN/.source; //todo not added yet.
+  const Color = `#[a-zA-Z0-9_]+`;
+  const Operator = /\?\?|\*\*|[*/+-]/.source;
+  const Cpp = /[,()]/.source;
 
-  const TOKENS = new RegExp([
-    QUOTE,
+  const Tokens = new RegExp([
+    Quote,
     "\\s+",
-    NUMBER,
-    VAR,
-    WORD,
-    COLOR,
-    OPERATOR,
-    CPP,
+    NumberToken,
+    Var,
+    Word,
+    Color,
+    Operator,
+    Cpp,
     ".+"
   ].map(x => `(${x})`)
     .join("|"),
@@ -518,7 +518,7 @@ const tokenize = (_ => {
 
   return function tokenize(input) {
     const out = [];
-    for (let m; (m = TOKENS.exec(input));) {
+    for (let m; (m = Tokens.exec(input));) {
       const [text, _, q, quote, ws, n, num, length, angle, time, percent, fr, vari, word, c, op, cpp] = m;
       if (ws) continue;
       else if (num) {

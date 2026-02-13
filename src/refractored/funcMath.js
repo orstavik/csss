@@ -15,7 +15,7 @@
  *   implementations (e.g., "+", "-", "sin", "clamp").
  */
 
-const FACTORS = {
+const Factors = {
   // Times
   s_ms: 1000,
   ms_s: 1 / 1000,
@@ -83,8 +83,8 @@ function computableNumbers(args) {
       nums.push(a.num);
     else if (a.unit == (firstUnit ??= a.unit))
       nums.push(a.num);
-    else if (FACTORS[firstUnit + "_" + a.type])
-      nums.push(a.num * FACTORS[firstUnit + "_" + a.type]);
+    else if (Factors[firstUnit + "_" + a.type])
+      nums.push(a.num * Factors[firstUnit + "_" + a.type]);
     else
       return; //incomputable
   }

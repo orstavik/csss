@@ -8,7 +8,7 @@
  * - ValueTypes: Length, Color, Radian, WordInTable.
  * - isLengthNumber: validates length or plain number arguments.
  *
- * Shadow types (SHADES): define relative factors for offset, blur, and spread
+ * Shadow types (Shades): define relative factors for offset, blur, and spread
  * that scale with a user-provided length value.
  *
  * Export map:
@@ -25,7 +25,7 @@ import {
 const {
   Length,
   Color,
-  WORD_IN_TABLE: WordInTable,
+  WordInTable,
   Radian,
 } = ValueTypes;
 
@@ -34,7 +34,7 @@ const {
 } = FunctionTypes;
 
 // Shadows are handled similarly to transitions. Or even more semantically regulated.
-// There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 
+// There are say 10 different types of Shades. They specify a lengthFactor, blurFactor, spreadFactor. 
 // Then in the $shadow(shade,angle,length,color?) to use it.
 // If the length is passed in as 
 // 
@@ -49,7 +49,7 @@ const {
 // --- Shadow type presets ---
 
 /** Named shadow presets: each defines lengthFactor, blurFactor, and spreadFactor. */
-const SHADES = {
+const Shades = {
   ambient: { lengthFactor: 1, blurFactor: 1.5, spreadFactor: 1.25 },
   edgeGlow: { lengthFactor: 1, blurFactor: 3, spreadFactor: -.5 },
   soft: { lengthFactor: 1, blurFactor: 1, spreadFactor: 0 },
@@ -71,7 +71,7 @@ const SHADES = {
 // default length is plain number? 5 is "normal" => 0.25rem. 1 is very small => 0.05rem. 10 is large => 0.5rem.
 /** Computes x/y/blur/spread/color from named shadow parameters. */
 function calculateShadow({ type, angle = Math.PI * .75, length = { num: 5 }, color = "var(--shadowColor, #0003)" }) {
-  if (!type) throw new SyntaxError("Missing shadow name: " + Object.keys(SHADES).join("|"));
+  if (!type) throw new SyntaxError("Missing shadow name: " + Object.keys(Shades).join("|"));
   if (!length.unit) { length.num /= 20; length.unit = "rem"; }
   const { num, unit } = length;
   const round = (num, places = 2, m = 10 ** places) => Math.round(num * m) / m;
@@ -94,7 +94,7 @@ const parseAbsoluteShadowArgs = suppressErrors(FunctionBasedOnValueTypes({}, {
 }, {}));
 
 const parseNamedShadowArgs = FunctionBasedOnValueTypes({}, {
-  type: WordInTable(SHADES),
+  type: WordInTable(Shades),
   angle: Radian,
   length: isLengthNumber,
   color: Color,

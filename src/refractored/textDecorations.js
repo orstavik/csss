@@ -22,7 +22,7 @@ import {
 const {
   Color,
   Length,
-  WORD_IN_TABLE: WordInTable,
+  WordInTable,
 } = ValueTypes;
 
 const {

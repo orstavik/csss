@@ -30,26 +30,26 @@ const {
 
 import * as CURVES from "./Curves.js";
 
-const DIRECTION_WORDS = {
+const DirectionWords = {
   normal: "normal",
   reverse: "reverse",
   alternate: "alternate",
   alternateReverse: "alternate-reverse",
 };
 
-const FILL_MODE_WORDS = {
+const FillModeWords = {
   forwards: "forwards",
   backwards: "backwards",
   both: "both",
   none: "none",
 };
 
-const PLAY_STATE_WORDS = {
+const PlayStateWords = {
   running: "running",
   paused: "paused",
 };
 
-const EASING_WORDS = {
+const EasingWords = {
   ease: "ease",
   linear: "linear",
   easeIn: "ease-in",
@@ -58,13 +58,13 @@ const EASING_WORDS = {
   ...CURVES,
 };
 
-const ANIMATION_HANDLERS = {
+const AnimationHandlers = {
   animation: FunctionBasedOnValueTypes({
     infinite: "infinite",
-    ...EASING_WORDS,
-    ...DIRECTION_WORDS,
-    ...FILL_MODE_WORDS,
-    ...PLAY_STATE_WORDS,
+    ...EasingWords,
+    ...DirectionWords,
+    ...FillModeWords,
+    ...PlayStateWords,
   }, {
     duration: Time,
     delay: Time,
@@ -79,32 +79,32 @@ const ANIMATION_HANDLERS = {
     if (res.iterationCount) settings.iterationCount = res.iterationCount;
     if (res.infinite) settings.iterationCount = "infinite";
     // Handle direction
-    for (let key in DIRECTION_WORDS) {
+    for (let key in DirectionWords) {
       if (res[key]) {
-        settings.direction = DIRECTION_WORDS[key];
+        settings.direction = DirectionWords[key];
         break;
       }
     }
     // Handle fillMode
-    for (let key in FILL_MODE_WORDS) {
+    for (let key in FillModeWords) {
       if (res[key]) {
-        settings.fillMode = FILL_MODE_WORDS[key];
+        settings.fillMode = FillModeWords[key];
         break;
       }
     }
 
     // Handle playState
-    for (let key in PLAY_STATE_WORDS) {
+    for (let key in PlayStateWords) {
       if (res[key]) {
-        settings.playState = PLAY_STATE_WORDS[key];
+        settings.playState = PlayStateWords[key];
         break;
       }
     }
 
     // Handle easing
-    for (let key in EASING_WORDS) {
+    for (let key in EasingWords) {
       if (res[key]) {
-        settings.easing = EASING_WORDS[key];
+        settings.easing = EasingWords[key];
         break;
       }
     }
@@ -176,7 +176,7 @@ const ANIMATION_HANDLERS = {
 export function wrapWithAnimationSupport(cb) {
   return ({ name, args }) => {
     // Find where animation functions start (check both .name for EXP and .text for WORD)
-    const i = args.findIndex(a => (a.name in ANIMATION_HANDLERS) || (a.text in ANIMATION_HANDLERS));
+    const i = args.findIndex(a => (a.name in AnimationHandlers) || (a.text in AnimationHandlers));
     if (i === -1)
       return cb({ name, args });
 
@@ -194,10 +194,10 @@ export function wrapWithAnimationSupport(cb) {
     // Process each animation step
     for (let anim of animationArgs) {
       let extraSettings, stepKey, nextArgs;
-      if (anim.text in ANIMATION_HANDLERS)
-        ({ settings: extraSettings, stepKey, nextArgs } = ANIMATION_HANDLERS[anim.text]);
-      else if (anim.name in ANIMATION_HANDLERS)
-        ({ settings: extraSettings, stepKey, nextArgs } = ANIMATION_HANDLERS[anim.name](anim));
+      if (anim.text in AnimationHandlers)
+        ({ settings: extraSettings, stepKey, nextArgs } = AnimationHandlers[anim.text]);
+      else if (anim.name in AnimationHandlers)
+        ({ settings: extraSettings, stepKey, nextArgs } = AnimationHandlers[anim.name](anim));
       else
         throw new SyntaxError(`Not a valid animation argument: ${animName}. Remember, all animation arguments must come after other arguments for every property.`);
 

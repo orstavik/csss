@@ -593,7 +593,7 @@ export function interpretImage(arg) {
 //    imageSet: (...args) => `image-set(${args.join(",")})`,
 // };
 
-const INTERPRETERS = {
+const Interpreters = {
   number: isNumber,
   zero: isZero,
   length: isLength,
@@ -620,7 +620,7 @@ const NativeCssProperties = Object.fromEntries(Object.entries(NativeCss.supporte
     return m ? m[1] + m[3] + m[2] : originalCamel;
   }
   camel = fixBorderNames(camel);
-  const functions = [isBasic, ...types.map(t => INTERPRETERS[t]).filter(Boolean)].reverse();
+  const functions = [isBasic, ...types.map(t => Interpreters[t]).filter(Boolean)].reverse();
 
   function interpretNativeValue({ args, name }) {
     const argsOut = args.map(a => {
@@ -685,7 +685,7 @@ export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
   };
 };
 
-export const Umbrella = (BASE, CB) => exp => Object.assign({}, BASE, exp.args?.length ? CB(exp) : undefined);
+export const Umbrella = (Base, CB) => exp => Object.assign({}, Base, exp.args?.length ? CB(exp) : undefined);
 
 export const SIN = (interpreter, post) => ({ args, name }) => {
   if (args.length != 1)
@@ -704,18 +704,18 @@ function parseSignature(SIG) {
   return { NAME, MIN: Number(MIN), MAX: Number(MAX) };
 }
 
-export const Sequence = (SIG, INTERPRETERS, POST) => {
-  const { NAME, MIN = INTERPRETERS.length, MAX = INTERPRETERS.length } = parseSignature(SIG);
+export const Sequence = (SIG, Interpreters, POST) => {
+  const { NAME, MIN = Interpreters.length, MAX = Interpreters.length } = parseSignature(SIG);
   return ({ args, name }) => {
     if (NAME && NAME !== name)
       return;
     if (args.length < MIN || args.length > MAX)
       throw new SyntaxError(`${name}() requires ${MIN} to ${MAX} arguments, got ${args.length}.`);
     const res = args.map((a, i) => {
-      const a2 = (INTERPRETERS[i] ??= INTERPRETERS.at(-1))(a);
+      const a2 = (Interpreters[i] ??= Interpreters.at(-1))(a);
       if (a2)
         return a2;
-      throw BadArgument(name, args, i, INTERPRETERS[i].name);
+      throw BadArgument(name, args, i, Interpreters[i].name);
     });
     return POST ? POST(name, res) : res;
   }
@@ -730,7 +730,7 @@ export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
   return POST ? POST(name, first, res) : first;
 };
-export const WORD_IN_TABLE = TABLE => ({ text }) => TABLE[text];
+export const WordInTable = TABLE => ({ text }) => TABLE[text];
 export const CamelWords = (WORDS) => {
   const lookupTable = Object.fromEntries(WORDS.split("|").map(w => [w, w.replaceAll(/[A-Z]/g, c => "-" + c.toLowerCase())]));
   return a => lookupTable[a.text];
@@ -829,7 +829,7 @@ export const ValueTypes = {
   Span,
   AbsoluteUrl,
   CamelWords,
-  WORD_IN_TABLE,
+  WordInTable,
 };
 
 export const FunctionTypes = {

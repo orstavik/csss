@@ -7,7 +7,7 @@
  *   each returns a `{ whiteSpace: "..." }` object.
  */
 
-const WHITESPACE = {
+const Whitespace = {
   nowrap: { whiteSpace: "nowrap" },
   preWrap: { whiteSpace: "pre-wrap" },
   preLine: { whiteSpace: "pre-line" },
@@ -17,5 +17,5 @@ const WHITESPACE = {
 };
 
 export default {
-  ...WHITESPACE,
+  ...Whitespace,
 };

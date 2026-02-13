@@ -12,7 +12,7 @@
  *   - `unsupported`: properties not supported in the current browser.
  */
 
-const TYPES = {
+const Types = {
   number: "1",
   zero: "0",
   length: "1px",
@@ -36,7 +36,7 @@ const TYPES = {
 
 function isSupported(k) {
   return CSS.supports(k, "unset") &&
-    Object.entries(TYPES).map(([type, tst]) => CSS.supports(k, tst) && type).filter(Boolean);
+    Object.entries(Types).map(([type, tst]) => CSS.supports(k, tst) && type).filter(Boolean);
 }
 
 function longhands(obj) {

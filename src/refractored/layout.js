@@ -17,7 +17,7 @@
  * - Parsers: block, blockItem, lineClamp, flex, flexItem, grid, gridItem,
  *   iBlock, iBlockItem.
  * - Umbrellas: Block, BlockItem, LineClamp, Grid, GridItem, Flex, FlexItem,
- *   IBlock, IBlockItem (using DEFAULTS).
+ *   IBlock, IBlockItem (using Defaults).
  * - Single-property helpers: lineHeight, wordSpacing, hide.
  * - Reserved layout-related longhand properties.
  */
@@ -81,19 +81,19 @@ function size({ args }) {
 }
 
 const ALIGNMENTS = (_ => {
-  const POSITIONS = "|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd";
-  const SPACE = "|Around|Between|Evenly";
-  const BASELINE = "|Baseline|First|Last";
-  const LEFTRIGHT = "|Left|Right|SafeLeft|SafeRight|UnsafeLeft|UnsafeRight";
-  const SELFSTARTEND = "|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd";
-  const LEGACY = "|Legacy|LegacyLeft|LegacyRight|LegacyCenter";
+  const Positions = "|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd";
+  const Space = "|Around|Between|Evenly";
+  const Baseline = "|Baseline|First|Last";
+  const LeftRight = "|Left|Right|SafeLeft|SafeRight|UnsafeLeft|UnsafeRight";
+  const SelfStartEnd = "|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd";
+  const Legacy = "|Legacy|LegacyLeft|LegacyRight|LegacyCenter";
 
-  const AlignContent = "Normal|Stretch" + POSITIONS + SPACE + BASELINE;
-  const JustifyContent = "Normal|Stretch" + POSITIONS + SPACE + LEFTRIGHT;
-  const AlignItems = "Normal|Stretch|AnchorCenter" + POSITIONS + BASELINE + SELFSTARTEND;
-  const JustifyItems = "Normal|Stretch|AnchorCenter" + POSITIONS + BASELINE + SELFSTARTEND + LEFTRIGHT + LEGACY;
-  const AlignSelf = "Auto|Normal|Stretch|AnchorCenter" + POSITIONS + BASELINE + SELFSTARTEND;
-  const JustifySelf = "Auto|Normal|Stretch|AnchorCenter" + POSITIONS + BASELINE + SELFSTARTEND + LEFTRIGHT;
+  const AlignContent = "Normal|Stretch" + Positions + Space + Baseline;
+  const JustifyContent = "Normal|Stretch" + Positions + Space + LeftRight;
+  const AlignItems = "Normal|Stretch|AnchorCenter" + Positions + Baseline + SelfStartEnd;
+  const JustifyItems = "Normal|Stretch|AnchorCenter" + Positions + Baseline + SelfStartEnd + LeftRight + Legacy;
+  const AlignSelf = "Auto|Normal|Stretch|AnchorCenter" + Positions + Baseline + SelfStartEnd;
+  const JustifySelf = "Auto|Normal|Stretch|AnchorCenter" + Positions + Baseline + SelfStartEnd + LeftRight;
 
   function lowSpaceKebab(str) {
     return str
@@ -127,8 +127,8 @@ const ALIGNMENTS = (_ => {
 })();
 
 //todo overflows
-const OVERFLOWS = (_ => {
-  const SETTINGS = {
+const Overflows = (_ => {
+  const Settings = {
     Visible: { overflow: "visible" },
     Hidden: { overflow: "hidden" },
     Clip: { overflow: "clip" },
@@ -140,9 +140,9 @@ const OVERFLOWS = (_ => {
     ScrollSnapMandatory: { overflow: "scroll", scrollSnapType: "both mandatory" },
   };
   const res = {};
-  for (let [A, a] of Object.entries(SETTINGS)) {
+  for (let [A, a] of Object.entries(Settings)) {
     res["overflow" + A] = a;
-    for (let [B, b] of Object.entries(SETTINGS)) {
+    for (let [B, b] of Object.entries(Settings)) {
       if (A == B) continue;
       res["overflow" + A + B] = {
         overflowBlock: a.overflow,
@@ -159,7 +159,7 @@ const OVERFLOWS = (_ => {
   return res;
 })();
 
-const CONTAINER_WORDS = {
+const ContainerWords = {
   padding: LogicalFour("padding", LengthPercent),
   scrollPadding: LogicalFour("scroll-padding", LengthPercent),
   breakWord: { overflowWrap: "break-word" },
@@ -167,10 +167,10 @@ const CONTAINER_WORDS = {
   breakAll: { wordBreak: "break-all" },
   keepAll: { wordBreak: "keep-all" },
   snapStop: { scrollSnapStop: "always" },
-  ...OVERFLOWS,
+  ...Overflows,
 };
 
-const ITEM_WORDS = {
+const ItemWords = {
   margin: LogicalFour("margin", LengthPercent),
   scrollMargin: LogicalFour("scroll-margin", LengthPercent),
   inlineSize: parseSize.bind(null, "inlineSize"), //todo should we block this? is size(10px) enough?
@@ -200,7 +200,7 @@ const gap = SequentialFunction("/1-2", [LengthPercentUnset], (n, ar) => {
   return { gap: ar.join(" ") };
 });
 
-export const DEFAULTS = {
+export const Defaults = {
   Block: {
     display: "block",
     //todo this is NOT as easy as I thought..
@@ -235,12 +235,12 @@ export const DEFAULTS = {
   },
 };
 
-const IBLOCK_WORDS = {
-  ...CONTAINER_WORDS,
+const IblockWords = {
+  ...ContainerWords,
 };
 
-const IBLOCK_ITEM_WORDS = {
-  ...ITEM_WORDS,
+const IblockItemWords = {
+  ...ItemWords,
   alignTop: { verticalAlign: "top" },
   alignMiddle: { verticalAlign: "middle" },
   alignBottom: { verticalAlign: "bottom" },
@@ -251,8 +251,8 @@ const IBLOCK_ITEM_WORDS = {
   alignSub: { verticalAlign: "sub" },
 };
 
-const GRID_WORDS = {
-  ...CONTAINER_WORDS,
+const GridWords = {
+  ...ContainerWords,
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.placeItems,
   //todo what is the bertScore distance from cols to columns?
@@ -268,14 +268,14 @@ const GRID_WORDS = {
   denseRow: { gridAutoFlow: "dense row" },
 };
 
-const GRID_ITEM_WORDS = {
+const GridItemWords = {
   ...ALIGNMENTS.placeSelf,
-  ...ITEM_WORDS,
+  ...ItemWords,
   column: SequentialFunction("/1-2", [SpanBasic], (n, ar) => ({ gridColumn: ar.join(" / ") })), //todo test how `_` works as first or second argument.
   row: SequentialFunction("/1-2", [SpanBasic], (n, ar) => ({ gridRow: ar.join(" / ") })),       //todo test how `_` works as first or second argument.
 };
 
-const FLEX_WORDS = {
+const FlexWords = {
   column: { flexDirection: "column" },
   columnReverse: { flexDirection: "column-reverse" },
   rowReverse: { flexDirection: "row-reverse" },
@@ -285,12 +285,12 @@ const FLEX_WORDS = {
   noWrap: { flexWrap: "nowrap" },
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.alignItems,
-  ...CONTAINER_WORDS,
+  ...ContainerWords,
   gap,
 };
 
-const FLEX_ITEM_WORDS = {
-  ...ITEM_WORDS,
+const FlexItemWords = {
+  ...ItemWords,
   ...ALIGNMENTS.alignSelf,
   basis: SingleArgumentFunction(Basic, (n, v) => ({ flexBasis: v })),
   grow: SingleArgumentFunction(Basic, (n, v) => ({ flexGrow: v })),
@@ -300,20 +300,20 @@ const FLEX_ITEM_WORDS = {
 };
 
 const BlockItem = {
-  ...ITEM_WORDS,
+  ...ItemWords,
   floatStart: { float: "inline-start" },
   floatEnd: { float: "inline-end" },
 }
 
-const block = FunctionBasedOnValueTypes(CONTAINER_WORDS, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const block = FunctionBasedOnValueTypes(ContainerWords, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const blockItem = FunctionBasedOnValueTypes(BlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const lineClamp = ParseFirstThenRest(NumberInterpreter, block, (n, a, b) => ({ ...DEFAULTS.LineClamp, WebkitLineClamp: a, ...b }));
-const grid = FunctionBasedOnValueTypes(GRID_WORDS, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const gridItem = FunctionBasedOnValueTypes(GRID_ITEM_WORDS, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const flex = FunctionBasedOnValueTypes(FLEX_WORDS, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const flexItem = FunctionBasedOnValueTypes(FLEX_ITEM_WORDS, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const iBlock = FunctionBasedOnValueTypes(IBLOCK_WORDS, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const iBlockItem = FunctionBasedOnValueTypes(IBLOCK_ITEM_WORDS, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const lineClamp = ParseFirstThenRest(NumberInterpreter, block, (n, a, b) => ({ ...Defaults.LineClamp, WebkitLineClamp: a, ...b }));
+const grid = FunctionBasedOnValueTypes(GridWords, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const gridItem = FunctionBasedOnValueTypes(GridItemWords, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const flex = FunctionBasedOnValueTypes(FlexWords, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const flexItem = FunctionBasedOnValueTypes(FlexItemWords, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const iBlock = FunctionBasedOnValueTypes(IblockWords, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const iBlockItem = FunctionBasedOnValueTypes(IblockItemWords, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
 /**
  * Export map:
@@ -335,15 +335,15 @@ export default {
   iBlock,
   iBlockItem,
 
-  Block: FunctionWithDefaultValues(DEFAULTS.Block, block),
-  BlockItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, blockItem),
-  LineClamp: FunctionWithDefaultValues(DEFAULTS.Block, lineClamp),
-  IBlock: FunctionWithDefaultValues(DEFAULTS.IBlock, iBlock),
-  IBlockItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, iBlockItem),
-  Grid: FunctionWithDefaultValues(DEFAULTS.Grid, grid),
-  GridItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, gridItem),
-  Flex: FunctionWithDefaultValues(DEFAULTS.Flex, flex),
-  FlexItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, flexItem),
+  Block: FunctionWithDefaultValues(Defaults.Block, block),
+  BlockItem: FunctionWithDefaultValues(Defaults.BlockItem, blockItem),
+  LineClamp: FunctionWithDefaultValues(Defaults.Block, lineClamp),
+  IBlock: FunctionWithDefaultValues(Defaults.IBlock, iBlock),
+  IBlockItem: FunctionWithDefaultValues(Defaults.BlockItem, iBlockItem),
+  Grid: FunctionWithDefaultValues(Defaults.Grid, grid),
+  GridItem: FunctionWithDefaultValues(Defaults.BlockItem, gridItem),
+  Flex: FunctionWithDefaultValues(Defaults.Flex, flex),
+  FlexItem: FunctionWithDefaultValues(Defaults.BlockItem, flexItem),
 
   lineHeight: SingleArgumentFunction(LengthPercentNumber, (n, v) => ({ lineHeight: v })),
   wordSpacing: SingleArgumentFunction(Length, (n, v) => ({ wordSpacing: v })),

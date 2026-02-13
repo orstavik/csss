@@ -18,14 +18,14 @@
  */
 
 /**
- * Samples a cubic-bezier curve into a discrete lookup table.
+ * Samples a cubic-Bezier curve into a discrete lookup table.
  *
  * @param {[number, number, number, number]} controlPoints [x1, y1, x2, y2]
  * @param {number} [sampleSize=240]   Number of x-samples to generate in [0,1]
  * @param {number} [precision=5]      Subdivision precision along the curve
  * @returns {number[]}                Array of y-values for x in [0,1]
  */
-function cubicBezier([x1, y1, x2, y2], sampleSize = 240, precision = 5) {
+function CubicBezier([x1, y1, x2, y2], sampleSize = 240, precision = 5) {
   if (![x1, y1, x2, y2].every(Number.isFinite))
     throw new TypeError("Control points must be finite numbers.");
   if (precision < 3)
@@ -52,7 +52,7 @@ function cubicBezier([x1, y1, x2, y2], sampleSize = 240, precision = 5) {
   }
   if (res[sampleSize - 2] == undefined) {
     debugger
-    return cubicBezier([x1, y1, x2, y2], sampleSize, precision * 2);
+    return CubicBezier([x1, y1, x2, y2], sampleSize, precision * 2);
   }
   return res;
 }
@@ -77,7 +77,7 @@ function bounce(count, firstHeight, decay = 0.7, width = 120) {
 
   const pointSet = steps.flatMap(({ time, height }) => {
     const halfSize = Math.round(time * .5 * width * overshootScale);
-    const half = cubicBezier([0, 0, .58, 1], halfSize).map(y => y * height);
+    const half = CubicBezier([0, 0, .58, 1], halfSize).map(y => y * height);
     return [half, half.slice().reverse().slice(1)];
   });
   overshoot && pointSet.shift();
@@ -118,16 +118,16 @@ function inverse(ar) {
   return ar.map(y => 1 - y).reverse();
 }
 
-const BEZIER = {
+const Bezier = {
   slowIn: [.3, 0, 1, 1],   // gentle "ease-in"
   easeIn: [.42, 0, 1, 1],
   quickIn: [.55, 0, 1, 1], // stronger "ease-in"
 };
-for (let [k, v] of Object.entries(BEZIER))
-  BEZIER[k.replace("In", "Out")] = v.map(n => 1 - n);
+for (let [k, v] of Object.entries(Bezier))
+  Bezier[k.replace("In", "Out")] = v.map(n => 1 - n);
 
 
-const _easeBack = join(cubicBezier(BEZIER.easeIn, 28), sineWaveEase(1, .075, 10).map(y => 1 - y));
+const _easeBack = join(CubicBezier(Bezier.easeIn, 28), sineWaveEase(1, .075, 10).map(y => 1 - y));
 const backInEaseOut = cssLinear(inverse(_easeBack));
 const easeInBackOut = cssLinear(_easeBack);
 const backInOut = cssLinear(join(
@@ -136,7 +136,7 @@ const backInOut = cssLinear(join(
   sineWaveEase(1, .14, 20).map(y => 1 - y)
 ));
 
-const _easeInBounceOut = join(cubicBezier(BEZIER.easeIn, 70), bounce(3, .18, 0.33, 40).map(y => 1 - y));
+const _easeInBounceOut = join(CubicBezier(Bezier.easeIn, 70), bounce(3, .18, 0.33, 40).map(y => 1 - y));
 const easeInBounceOut = cssLinear(_easeInBounceOut);
 const bounceInEaseOut = cssLinear(inverse(_easeInBounceOut));
 const _bounceInOut = join(
@@ -145,7 +145,7 @@ const _bounceInOut = join(
 );
 const bounceInOut = cssLinear(_bounceInOut);
 const _easeInSpringOut = join(
-  cubicBezier(BEZIER.easeIn, 70),
+  CubicBezier(Bezier.easeIn, 70),
   sineWaveEase(2, .1, 40).map(y => 1 - y)
 );
 const easeInSpringOut = cssLinear(_easeInSpringOut);
@@ -161,7 +161,7 @@ const wobble = cssLinear(join(
 ));
 
 export {
-  backInEaseOut, 
+  backInEaseOut,
   easeInBackOut,
   backInOut,
   easeInBounceOut,

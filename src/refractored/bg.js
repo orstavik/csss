@@ -40,7 +40,7 @@ const {
   Color,
   LengthPercent,
   Url,
-  WORD_IN_TABLE: WordInTable,
+  WordInTable,
   CamelWords,
   Angle,
   AnglePercent,

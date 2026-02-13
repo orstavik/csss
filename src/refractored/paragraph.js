@@ -23,7 +23,7 @@ import {
 const {
   LengthPercentNumber,
   LengthPercent,
-  WORD_IN_TABLE: WordInTable,
+  WordInTable,
 } = ValueTypes;
 
 const {
