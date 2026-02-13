@@ -1,5 +1,5 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest: FIRST } = FunctionTypes;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest } = FunctionTypes;
 const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, NameUnset, AbsoluteUrl } = ValueTypes;
 
 const FontDefaults = {
@@ -186,7 +186,7 @@ const font = FunctionBasedOnValueTypes(FONT_WORDS, {
   return res;
 });
 
-const Font = FIRST(NameUnset, font,
+const Font = ParseFirstThenRest(NameUnset, font,
   (_, typeName, fontProps = {}) => {
     const res = { ...FontDefaults, ...fontProps };
     if (typeName !== "unset")
@@ -197,7 +197,7 @@ const Font = FIRST(NameUnset, font,
   }
 );
 
-const Typeface = FIRST(Name, font,
+const Typeface = ParseFirstThenRest(Name, font,
   (_, typeName, tmp = {}) => {
     const res = {};
     for (let k in FontDefaults)

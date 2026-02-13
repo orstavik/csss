@@ -1,6 +1,6 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
 const { LengthPercentNumber, LengthPercent, WordToValue } = ValueTypes;
-const { FunctionBasedOnValueTypes, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest: FIRST } = FunctionTypes;
+const { FunctionBasedOnValueTypes, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest } = FunctionTypes;
 
 const paragraph = FunctionBasedOnValueTypes({
   indent: SingleArgumentFunction(LengthPercent, (n, v) => ({ textIndent: v })),
@@ -78,7 +78,7 @@ const PARAGRAPHS = {
 
 
 const Paragraph = FunctionWithDefaultValues(PARAGRAPH,
-  FIRST(
+  ParseFirstThenRest(
     WordToValue(PARAGRAPHS),
     paragraph,
     (n, first, rest) => ({ ...PARAGRAPHS[first], ...rest }))
