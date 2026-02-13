@@ -38,7 +38,7 @@ $color(#1a1a1a)
     |section|div$Block(padding(1rem))
 
     |section|h2$font(1.5rem,700)$color(#1a1a1a)
-    |section|p$font(1rem)$color(#1a1a1a)$opacity(0.8)$lineHeight(1.6)
+    |section|p$font(1rem)$color(#1a1a1a)$opacity(0.8)$paragraph(1.5)
     ">
 
         <section id="color">
@@ -75,12 +75,12 @@ $color(#1a1a1a)
             <h2>$radial — radial gradient</h2>
             <p>Shape, position, color stops.</p>
             <div class="
-            $blockItem(inlineSize(100%,_,280px))$Block(padding(2rem))$Flex(contentCenter,itemsCenter)
+            $blockItem(inlineSize(100%,_,280px))$Flex(contentCenter,itemsCenter,padding(2rem))
             |div$font(1rem,600)$color(#1a1a1a)
 
-            $bg(radial(circle,center,#f0f0f0,#ccc))$Border(radius(12px))
+            $bg(circle(#f0f0f0,#ccc))$Border(radius(12px))
             ">
-                <div>$bg(radial(circle, center, #f0f0f0, #ccc))</div>
+                <div>$bg(circle(#f0f0f0, #ccc))</div>
             </div>
         </section>
     </main>
