@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background — CSSS demo</title>
+    <script src="../../../auto.js?style=style&interval=400" type="module"></script>
+</head>
+
+<body class="
+$Block(padding(0))$blockItem(margin(0))
+$color(#1a1a1a)
+">
+
+    <header class="
+    $Flex(contentBetween,itemsCenter,padding(1.5rem,2rem))
+    |h1$font(1.25rem,700)$color(#1a1a1a)
+    |nav$Flex(row,gap(1.5rem))
+    |nav|a$font(0.95rem,500)$noTextDecoration$color(#1a1a1a)$opacity(0.8)
+    |nav|a:hover$opacity(1)
+
+    $bg(#fff)
+    ">
+        <h1>Background</h1>
+        <nav>
+            <a href="#color">$bgColor</a>
+            <a href="#linear">$linear</a>
+            <a href="#radial">$radial</a>
+        </nav>
+    </header>
+
+    <main class="
+    $Block(padding(2rem,4rem))
+    |section$blockItem(margin(0,0,3rem,0))
+    |section|h2$blockItem(margin(0,0,1rem,0))
+    |section|p$blockItem(margin(0,0,1rem,0))
+    |section|div$Block(padding(1rem))
+
+    |section|h2$font(1.5rem,700)$color(#1a1a1a)
+    |section|p$font(1rem)$color(#1a1a1a)$opacity(0.8)$paragraph(1.5)
+    ">
+
+        <section id="color">
+            <h2>$bgColor — solid color</h2>
+            <p>Background color only. Combine with $bg() for gradients or images.</p>
+            <div class="
+            $Grid(cols(repeat(3,1fr)),gap(1.5rem))
+            |div$Block(padding(2rem))$font(0.95rem,600)$color(#fff)
+
+            |div:first-child$bgColor(#6366f1)
+            |div:nth-child(2)$bgColor(#8b5cf6)
+            |div:last-child$bgColor(#ec4899)
+            ">
+                <div>$bgColor(#6366f1)</div>
+                <div>$bgColor(#8b5cf6)</div>
+                <div>$bgColor(#ec4899)</div>
+            </div>
+        </section>
+
+        <section id="linear">
+            <h2>$linear — linear gradient</h2>
+            <p>Angle or side, color stops, optional position/size.</p>
+            <div class="
+            $blockItem(inlineSize(100%,_,400px))$Block(padding(2rem))
+            |div$font(1.1rem,600)$color(#fff)
+
+            $bg(linear(135deg,#6366f1,#8b5cf6))$Border(radius(12px))
+            ">
+                <div>$bg(linear(135deg, #6366f1, #8b5cf6))</div>
+            </div>
+        </section>
+
+        <section id="radial">
+            <h2>$radial — radial gradient</h2>
+            <p>Shape, position, color stops.</p>
+            <div class="
+            $blockItem(inlineSize(100%,_,280px))$Flex(contentCenter,itemsCenter,padding(2rem))
+            |div$font(1rem,600)$color(#1a1a1a)
+
+            $bg(circle(#f0f0f0,#ccc))$Border(radius(12px))
+            ">
+                <div>$bg(circle(#f0f0f0, #ccc))</div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
