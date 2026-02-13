@@ -1,6 +1,6 @@
 import shadow from "./shadows.js";
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes: TYPB, SequentialFunction: Sequence, SingleArgumentFunction: SIN } = FunctionTypes;
+const { FunctionBasedOnValueTypes, SequentialFunction: Sequence, SingleArgumentFunction: SIN } = FunctionTypes;
 const { Angle, Length, NumberInterpreter, Url, AnglePercent, LengthPercent, NumberPercent } = ValueTypes;
 
 const FILTER_FUNCS = {
@@ -25,8 +25,8 @@ const skewX = SIN(AnglePercent, transformWithFuncOne);
 const perspective = SIN(Length, transformWithFuncOne);
 
 export default {
-  filter: TYPB(FILTER_FUNCS, {}, { Url }, obj => ({ filter: Object.values(obj).flat().join(" ") })),
-  backdrop: TYPB(FILTER_FUNCS, {}, { Url }, obj => ({ backdropFilter: Object.values(obj).flat().join(" ") })),
+  filter: FunctionBasedOnValueTypes(FILTER_FUNCS, {}, { Url }, obj => ({ filter: Object.values(obj).flat().join(" ") })),
+  backdrop: FunctionBasedOnValueTypes(FILTER_FUNCS, {}, { Url }, obj => ({ backdropFilter: Object.values(obj).flat().join(" ") })),
   backdropFilter: undefined,
 
   transform: undefined,

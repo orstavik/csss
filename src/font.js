@@ -1,5 +1,5 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes: TYPB, FunctionWithDefaultValues: Umbrella, SequentialFunction: Sequence, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST } = FunctionTypes;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction: Sequence, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST } = FunctionTypes;
 const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, NameUnset, AbsoluteUrl } = ValueTypes;
 
 const FontDefaults = {
@@ -158,7 +158,7 @@ function FontFaceUrl(t) {
   return res;
 }
 
-const font = TYPB(FONT_WORDS, {
+const font = FunctionBasedOnValueTypes(FONT_WORDS, {
   fontSize: Length,
   fontSizeAdjust: Fraction,
   fontWeight: Integer,
@@ -212,7 +212,7 @@ const Typeface = FIRST(Name, font,
 
 export default {
   font,
-  Font: Umbrella(FontDefaults, Font),
+  Font: FunctionWithDefaultValues(FontDefaults, Font),
   Typeface,
 
   fontFamily: undefined,

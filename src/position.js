@@ -1,6 +1,6 @@
 
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes: TYPB, FunctionWithDefaultValues: Umbrella } = FunctionTypes;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues } = FunctionTypes;
 const { WordToValue, LengthPercent } = ValueTypes;
 const ORIGINS = {
   left: ["left"],
@@ -31,15 +31,15 @@ function processPosition({ origin = ["left", "top"], one = 0, two = 0 }) {
     { [origin[0]]: one, [origin[1]]: two };
 }
 
-const Position = TYPB({}, {
+const Position = FunctionBasedOnValueTypes({}, {
   origin: WordToValue(ORIGINS),
   one: LengthPercent,
   two: LengthPercent,
 }, {}, processPosition);
 
 export default {
-  absolute: Umbrella({ position: "absolute" }, Position),
-  relative: Umbrella({ position: "relative" }, Position),
-  fixed: Umbrella({ position: "fixed" }, Position),
-  sticky: Umbrella({ position: "sticky" }, Position),
+  absolute: FunctionWithDefaultValues({ position: "absolute" }, Position),
+  relative: FunctionWithDefaultValues({ position: "relative" }, Position),
+  fixed: FunctionWithDefaultValues({ position: "fixed" }, Position),
+  sticky: FunctionWithDefaultValues({ position: "sticky" }, Position),
 };

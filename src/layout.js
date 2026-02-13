@@ -1,5 +1,5 @@
 import { ValueTypes, FunctionTypes, isBasic } from "./func.js";
-const { FunctionBasedOnValueTypes: TYPB, FunctionWithDefaultValues: Umbrella, SequentialFunction: Sequence, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST, LogicalFour } = FunctionTypes;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction: Sequence, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST, LogicalFour } = FunctionTypes;
 const { Length, NumberInterpreter, Basic, LengthPercent, LengthPercentUnset, LengthPercentNumber, RepeatBasic, SpanBasic } = ValueTypes;
 
 function toSize(NAME, { args }) {
@@ -260,15 +260,15 @@ const BlockItem = {
   floatEnd: { float: "inline-end" },
 }
 
-const block = TYPB(CONTAINER, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const blockItem = TYPB(BlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const block = FunctionBasedOnValueTypes(CONTAINER, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const blockItem = FunctionBasedOnValueTypes(BlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const lineClamp = FIRST(NumberInterpreter, block, (n, a, b) => ({ ...DEFAULTS.LineClamp, WebkitLineClamp: a, ...b }));
-const grid = TYPB(GRID, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const gridItem = TYPB(_GridItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const flex = TYPB(FLEX, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const flexItem = TYPB(_FlexItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const iBlock = TYPB(IBLOCK, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const iBlockItem = TYPB(_IBlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const grid = FunctionBasedOnValueTypes(GRID, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const gridItem = FunctionBasedOnValueTypes(_GridItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const flex = FunctionBasedOnValueTypes(FLEX, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const flexItem = FunctionBasedOnValueTypes(_FlexItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const iBlock = FunctionBasedOnValueTypes(IBLOCK, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const iBlockItem = FunctionBasedOnValueTypes(_IBlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
 export default {
   block,
@@ -281,15 +281,15 @@ export default {
   iBlock,
   iBlockItem,
 
-  Block: Umbrella(DEFAULTS.Block, block),
-  BlockItem: Umbrella(DEFAULTS.BlockItem, blockItem),
-  LineClamp: Umbrella(DEFAULTS.Block, lineClamp),
-  IBlock: Umbrella(DEFAULTS.IBlock, iBlock),
-  IBlockItem: Umbrella(DEFAULTS.BlockItem, iBlockItem),
-  Grid: Umbrella(DEFAULTS.Grid, grid),
-  GridItem: Umbrella(DEFAULTS.BlockItem, gridItem),
-  Flex: Umbrella(DEFAULTS.Flex, flex),
-  FlexItem: Umbrella(DEFAULTS.BlockItem, flexItem),
+  Block: FunctionWithDefaultValues(DEFAULTS.Block, block),
+  BlockItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, blockItem),
+  LineClamp: FunctionWithDefaultValues(DEFAULTS.Block, lineClamp),
+  IBlock: FunctionWithDefaultValues(DEFAULTS.IBlock, iBlock),
+  IBlockItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, iBlockItem),
+  Grid: FunctionWithDefaultValues(DEFAULTS.Grid, grid),
+  GridItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, gridItem),
+  Flex: FunctionWithDefaultValues(DEFAULTS.Flex, flex),
+  FlexItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, flexItem),
 
   lineHeight: SIN(LengthPercentNumber, (n, v) => ({ lineHeight: v })),
   wordSpacing: SIN(Length, (n, v) => ({ wordSpacing: v })),

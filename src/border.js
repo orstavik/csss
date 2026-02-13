@@ -1,8 +1,8 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes: TYPB, SequentialFunction: Sequence } = FunctionTypes;
+const { FunctionBasedOnValueTypes, SequentialFunction: Sequence } = FunctionTypes;
 const { Color, LengthPercent, CamelWords } = ValueTypes;
 
-const BorderUmbrella = cb => exp => {
+const BorderFunctionWithDefaultValues = cb => exp => {
   const res = cb(exp);
   if (!res.borderStartStartRadius) res.borderRadius ??= "0";
   if (!res.borderInlineColor && !res.borderInlineStyle && !res.borderInlineWidth) {
@@ -73,7 +73,7 @@ function inlineBlockFour(prop, ar) {
     };
 }
 
-const border = TYPB({
+const border = FunctionBasedOnValueTypes({
   radius,
   r: radius,
 },
@@ -94,7 +94,7 @@ const border = TYPB({
 
 export default {
   border,
-  Border: BorderUmbrella(border),
+  Border: BorderFunctionWithDefaultValues(border),
   noBorder: { border: "none" },
 
   borderStyle: undefined,

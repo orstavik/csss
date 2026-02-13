@@ -1,5 +1,5 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes: TYPB, SingleArgumentFunction: SIN } = FunctionTypes;
+const { FunctionBasedOnValueTypes, SingleArgumentFunction: SIN } = FunctionTypes;
 const { Name, NumberInterpreter, Time } = ValueTypes;
 
 import * as CURVES from "./Curves.js";
@@ -9,7 +9,7 @@ function cubicBezierFunction(ar) {
   return `cubic-bezier(${ar.join(",")})`;
 }
 
-const transition = TYPB({
+const transition = FunctionBasedOnValueTypes({
   ease: "ease",
   easeIn: "ease-in",
   easeOut: "ease-out",

@@ -1,6 +1,6 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
 const { Angle, Color, LengthPercent, Url, CamelWords, WordToValue, AnglePercent } = ValueTypes;
-const { FunctionBasedOnValueTypes: TYPB, FunctionWithDefaultValues: Umbrella, SequentialFunction: Sequence, SingleArgumentFunction: SIN } = FunctionTypes;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction: Sequence, SingleArgumentFunction: SIN } = FunctionTypes;
 //todo isImage, interpretImage,
 
 const BackgroundDefaults = {
@@ -71,7 +71,7 @@ const LengthPercentOrFarthestClosest = e => LengthPercent(e) ?? FarthestClosest(
 const BgPositions = CamelWords("left|center|right|top|bottom|xStart|xEnd|yStart|yEnd|blockStart|blockEnd|inlineStart|inlineEnd");
 const At = Sequence("at/1-2", [LengthPercentAtPosition], (n, res) => "at " + res.join(" "));
 
-const conic = TYPB({}, {
+const conic = FunctionBasedOnValueTypes({}, {
   At,
   Angle,
   ColorSpace,
@@ -85,7 +85,7 @@ const conic = TYPB({}, {
   return [first, ...colorStops].filter(Boolean).join(", ")
 })
 
-const linear = TYPB({}, {
+const linear = FunctionBasedOnValueTypes({}, {
   AngleOrLinearDirection,
   ColorSpace,
 }, {
@@ -98,7 +98,7 @@ const linear = TYPB({}, {
 });
 
 
-const radial = TYPB({}, {
+const radial = FunctionBasedOnValueTypes({}, {
   At,
   ColorSpace,
   FarthestClosest,
@@ -117,7 +117,7 @@ const radial = TYPB({}, {
   return [first, ...colorStops].filter(Boolean).join(", ")
 });
 
-const circle = TYPB({}, {
+const circle = FunctionBasedOnValueTypes({}, {
   At,
   ColorSpace,
   size: LengthPercentOrFarthestClosest,
@@ -129,7 +129,7 @@ const circle = TYPB({}, {
   return ["circle", size, At, ColorSpace].filter(Boolean).join(" ") + ", " + colorStops.join(", ")
 });
 
-const bg = TYPB({
+const bg = FunctionBasedOnValueTypes({
   size: Sequence("size/1-2", [LengthPercentAuto], (name, ar) => ar.join(" ")),
   linear,
   ellipse: radial,
@@ -238,5 +238,5 @@ export default {
   backgroundAttachment: undefined,
   bgColor: SIN(Color, (n, v) => ({ backgroundColor: v })),
   //todo this hack should now be manageable from the animation point of view..
-  bg: Umbrella(BackgroundDefaults, bg),
+  bg: FunctionWithDefaultValues(BackgroundDefaults, bg),
 };

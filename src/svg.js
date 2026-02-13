@@ -1,6 +1,6 @@
 
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes: TYPB, FunctionWithDefaultValues: Umbrella, SequentialFunction: Sequence, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST } = FunctionTypes;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction: Sequence, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST } = FunctionTypes;
 const { Angle, Color, Length, Name, NumberInterpreter, Fraction, Integer, Quote, Percent, Time, Unset, Url, Word, Basic, Radian, Repeat, Span, AnglePercent, LengthUnset, LengthPercent, LengthPercentUnset, LengthPercentNumber, NameUnset, NumberPercent, UrlUnset, ColorUrl, ColorPrimitive, RepeatBasic, SpanBasic, AbsoluteUrl, CamelWords, WordToValue, } = ValueTypes; const strokeDefaults = {
   stroke: "unset",
   strokeWidth: "unset",
@@ -35,7 +35,7 @@ const svgTextDefaults = {
 // optimizeSpeed: { "color-rendering": "optimizeSpeed", "image-rendering": "optimizeSpeed" },
 // optimizeQuality: { "color-rendering": "optimizeQuality", "image-rendering": "optimizeQuality" },
 
-const stroke = TYPB({}, {
+const stroke = FunctionBasedOnValueTypes({}, {
   stroke: ColorUrl,
   strokeWidth: Length, //todo we need Integer here too, as 1,2,3,4 is valid
   strokeOpacity: NumberInterpreter, //todo and this should be a Fraction? Or a Percent?
@@ -46,13 +46,13 @@ const stroke = TYPB({}, {
   strokeMiterlimit: Sequence("miterlimit", [NumberInterpreter], (name, ar) => ar[0]),
 }, {});
 
-const fill = TYPB({}, {
+const fill = FunctionBasedOnValueTypes({}, {
   fill: ColorUrl,
   fillOpacity: NumberInterpreter,
   fillRule: CamelWords("evenodd|nonzero"),
 }, {});
 
-const svgText = TYPB({}, {
+const svgText = FunctionBasedOnValueTypes({}, {
   textAnchor: CamelWords("start|middle|end"),
   dominantBaseline: CamelWords("auto|textBottom|alphabetic|ideographic|middle|central|mathematical|hanging|textTop"),
   alignmentBaseline: CamelWords("auto|baseline|beforeEdge|textBeforeEdge|middle|central|afterEdge|textAfterEdge|ideographic|alphabetic|hanging|mathematical"),
@@ -68,9 +68,9 @@ export default {
   fill,
   svgText,
 
-  Stroke: Umbrella(strokeDefaults, stroke),
-  Fill: Umbrella(fillDefaults, fill),
-  SvgText: Umbrella(svgTextDefaults, svgText),
+  Stroke: FunctionWithDefaultValues(strokeDefaults, stroke),
+  Fill: FunctionWithDefaultValues(fillDefaults, fill),
+  SvgText: FunctionWithDefaultValues(svgTextDefaults, svgText),
 
   markerStart: SIN(Url, (name, v) => ({ [name]: v })),
   markerEnd: SIN(Url, (name, v) => ({ [name]: v })),

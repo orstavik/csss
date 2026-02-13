@@ -1,6 +1,6 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
 const { NumberInterpreter, Time } = ValueTypes;
-const { FunctionBasedOnValueTypes: TYPB } = FunctionTypes;
+const { FunctionBasedOnValueTypes } = FunctionTypes;
 import * as CURVES from "./Curves.js";
 
 const DIRECTION_WORDS = {
@@ -32,7 +32,7 @@ const EASING_WORDS = {
 };
 
 const ANIMS = {
-  animation: TYPB({
+  animation: FunctionBasedOnValueTypes({
     infinite: "infinite",
     ...EASING_WORDS,
     ...DIRECTION_WORDS,
