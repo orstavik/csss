@@ -745,3 +745,47 @@ export const ColorUrl = a => Color(a) ?? Url(a);
 export const ColorPrimitive = a => (a.kind === "COLOR" && (a = parseColor(a.text)).hex) ? a : undefined;
 export const RepeatBasic = a => Repeat(a) ?? Basic(a);
 export const SpanBasic = a => Span(a) ?? Basic(a);
+
+
+export const ValueTypes = {
+  AnglePercent,
+  LengthUnset,
+  LengthPercent,
+  LengthPercentUnset,
+  LengthPercentNumber,
+  NameUnset,
+  NumberPercent,
+  UrlUnset,
+  ColorUrl,
+  ColorPrimitive,
+  RepeatBasic,
+  SpanBasic,
+  Angle,
+  Color,
+  Length,
+  Name,
+  NumberInterpreter,
+  Fraction,
+  Integer,
+  Quote,
+  Percent,
+  Time,
+  Unset,
+  Url,
+  Word,
+  Basic,
+  Radian,
+  Repeat,
+  Span,
+  AbsoluteUrl,
+  CamelWords,
+  wordInTable,
+};
+
+export const FunctionTypes = {
+  TYPB,
+  Umbrella,
+  Sequence,
+  SIN,
+  FIRST,
+};
