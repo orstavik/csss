@@ -1,6 +1,7 @@
 //todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
 
-import { ValueTypes, FunctionTypes, isLengthNumber } from "./func.js";
+import { ValueTypes, FunctionTypes, Interpreters } from "./func.js";
+const { lengthNumber: isLengthNumber } = Interpreters;
 const { FunctionBasedOnValueTypes } = FunctionTypes;
 const { Color, Length, Radian, WordToValue } = ValueTypes;// Shadows are handled similarly to transitions. Or even more semantically regulated.
 // There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 

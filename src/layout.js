@@ -1,4 +1,5 @@
-import { ValueTypes, FunctionTypes, isBasic } from "./func.js";
+import { ValueTypes, FunctionTypes, Interpreters } from "./func.js";
+const { basic: isBasic } = Interpreters;
 const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest, LogicalFour } = FunctionTypes;
 const { Length, NumberInterpreter, Basic, LengthPercent, LengthPercentUnset, LengthPercentNumber, RepeatBasic, SpanBasic } = ValueTypes;
 
