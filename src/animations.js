@@ -22,7 +22,7 @@ const PLAY_STATE_WORDS = {
   paused: "paused",
 };
 
-const EASING_WORDS = {
+const EASingleArgumentFunctionG_WORDS = {
   ease: "ease",
   linear: "linear",
   easeIn: "ease-in",
@@ -34,7 +34,7 @@ const EASING_WORDS = {
 const ANIMS = {
   animation: FunctionBasedOnValueTypes({
     infinite: "infinite",
-    ...EASING_WORDS,
+    ...EASingleArgumentFunctionG_WORDS,
     ...DIRECTION_WORDS,
     ...FILL_MODE_WORDS,
     ...PLAY_STATE_WORDS,
@@ -75,9 +75,9 @@ const ANIMS = {
     }
 
     // Handle easing
-    for (let key in EASING_WORDS) {
+    for (let key in EASingleArgumentFunctionG_WORDS) {
       if (res[key]) {
-        settings.easing = EASING_WORDS[key];
+        settings.easing = EASingleArgumentFunctionG_WORDS[key];
         break;
       }
     }

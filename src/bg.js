@@ -1,6 +1,6 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
 const { Angle, Color, LengthPercent, Url, CamelWords, WordToValue, AnglePercent } = ValueTypes;
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction: SIN } = FunctionTypes;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction } = FunctionTypes;
 //todo isImage, interpretImage,
 
 const BackgroundDefaults = {
@@ -236,7 +236,7 @@ export default {
   backgroundClip: undefined,
   backgroundBlendMode: undefined,
   backgroundAttachment: undefined,
-  bgColor: SIN(Color, (n, v) => ({ backgroundColor: v })),
+  bgColor: SingleArgumentFunction(Color, (n, v) => ({ backgroundColor: v })),
   //todo this hack should now be manageable from the animation point of view..
   bg: FunctionWithDefaultValues(BackgroundDefaults, bg),
 };

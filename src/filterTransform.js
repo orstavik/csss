@@ -1,28 +1,28 @@
 import shadow from "./shadows.js";
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, SequentialFunction, SingleArgumentFunction: SIN } = FunctionTypes;
+const { FunctionBasedOnValueTypes, SequentialFunction, SingleArgumentFunction } = FunctionTypes;
 const { Angle, Length, NumberInterpreter, Url, AnglePercent, LengthPercent, NumberPercent } = ValueTypes;
 
 const FILTER_FUNCS = {
-  blur: SIN(Length, (n, v) => `${n}(${v})`),
-  brightness: SIN(NumberPercent, (n, v) => `${n}(${v})`),
-  contrast: SIN(NumberPercent, (n, v) => `${n}(${v})`),
-  grayscale: SIN(NumberPercent, (n, v) => `${n}(${v})`),
-  invert: SIN(NumberPercent, (n, v) => `${n}(${v})`),
-  opacity: SIN(NumberPercent, (n, v) => `${n}(${v})`),
-  saturate: SIN(NumberPercent, (n, v) => `${n}(${v})`),
-  sepia: SIN(NumberPercent, (n, v) => `${n}(${v})`),
-  hueRotate: SIN(Angle, (n, v) => `hue-rotate(${v})`),
+  blur: SingleArgumentFunction(Length, (n, v) => `${n}(${v})`),
+  brightness: SingleArgumentFunction(NumberPercent, (n, v) => `${n}(${v})`),
+  contrast: SingleArgumentFunction(NumberPercent, (n, v) => `${n}(${v})`),
+  grayscale: SingleArgumentFunction(NumberPercent, (n, v) => `${n}(${v})`),
+  invert: SingleArgumentFunction(NumberPercent, (n, v) => `${n}(${v})`),
+  opacity: SingleArgumentFunction(NumberPercent, (n, v) => `${n}(${v})`),
+  saturate: SingleArgumentFunction(NumberPercent, (n, v) => `${n}(${v})`),
+  sepia: SingleArgumentFunction(NumberPercent, (n, v) => `${n}(${v})`),
+  hueRotate: SingleArgumentFunction(Angle, (n, v) => `hue-rotate(${v})`),
   dropShadow: shadow.dropShadow,
 };
 
 const transformWithFunc = (name, ar) => ({ transform: `${name}(${ar.join(", ")})` });
 const transformWithFuncOne = (name, v) => ({ transform: `${name}(${v})` });
-const rotate = SIN(Angle, transformWithFuncOne);
-const translateX = SIN(LengthPercent, transformWithFuncOne);
-const scaleX = SIN(NumberPercent, transformWithFuncOne);
-const skewX = SIN(AnglePercent, transformWithFuncOne);
-const perspective = SIN(Length, transformWithFuncOne);
+const rotate = SingleArgumentFunction(Angle, transformWithFuncOne);
+const translateX = SingleArgumentFunction(LengthPercent, transformWithFuncOne);
+const scaleX = SingleArgumentFunction(NumberPercent, transformWithFuncOne);
+const skewX = SingleArgumentFunction(AnglePercent, transformWithFuncOne);
+const perspective = SingleArgumentFunction(Length, transformWithFuncOne);
 
 export default {
   filter: FunctionBasedOnValueTypes(FILTER_FUNCS, {}, { Url }, obj => ({ filter: Object.values(obj).flat().join(" ") })),

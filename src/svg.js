@@ -1,6 +1,6 @@
 
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST } = FunctionTypes;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest: FIRST } = FunctionTypes;
 const { Angle, Color, Length, Name, NumberInterpreter, Fraction, Integer, Quote, Percent, Time, Unset, Url, Word, Basic, Radian, Repeat, Span, AnglePercent, LengthUnset, LengthPercent, LengthPercentUnset, LengthPercentNumber, NameUnset, NumberPercent, UrlUnset, ColorUrl, ColorPrimitive, RepeatBasic, SpanBasic, AbsoluteUrl, CamelWords, WordToValue, } = ValueTypes; const strokeDefaults = {
   stroke: "unset",
   strokeWidth: "unset",
@@ -72,27 +72,27 @@ export default {
   Fill: FunctionWithDefaultValues(fillDefaults, fill),
   SvgText: FunctionWithDefaultValues(svgTextDefaults, svgText),
 
-  markerStart: SIN(Url, (name, v) => ({ [name]: v })),
-  markerEnd: SIN(Url, (name, v) => ({ [name]: v })),
-  markerMid: SIN(Url, (name, v) => ({ [name]: v })),
+  markerStart: SingleArgumentFunction(Url, (name, v) => ({ [name]: v })),
+  markerEnd: SingleArgumentFunction(Url, (name, v) => ({ [name]: v })),
+  markerMid: SingleArgumentFunction(Url, (name, v) => ({ [name]: v })),
   marker: SequentialFunction("marker/1-3", [UrlUnset], (name, m) =>
     m.length == 1 ? { marker: m[0] } :
       m.length == 2 ? { markerStart: m[0], markerEnd: m[1] } :
         { markerStart: m[0], markerMid: m[1], markerEnd: m[2] }
   ),
 
-  stopColor: SIN(ColorUrl, (p, v = "currentColor") => ({ [p]: v })),
-  stopOpacity: SIN(Fraction, (p, v = "1") => ({ [p]: v })),
-  vectorEffect: SIN(CamelWords("none|nonScalingStroke|nonScalingSize|nonRotation|fixedPosition"), (p, v) => ({ [p]: v })),
-  clipRule: SIN(CamelWords("nonzero|evenodd"), (p, v) => ({ [p]: v })),
-  colorInterpolation: SIN(CamelWords("auto|sRGB|linearRGB"), (p, v) => ({ [p]: v })),
-  shapeRendering: SIN(WordToValue({ auto: "auto", optimizeSpeed: "optimizeSpeed", crispEdges: "crispEdges", geometricPrecision: "geometricPrecision" }), (p, v) => ({ [p]: v })),
-  colorRendering: SIN(CamelWords("auto|optimizeSpeed|optimizeQuality"), (p, v) => ({ [p]: v })),
-  imageRendering: SIN(CamelWords("auto|optimizeSpeed|optimizeQuality|pixelated"), (p, v) => ({ [p]: v })),
-  maskType: SIN(CamelWords("luminance|alpha"), (p, v) => ({ [p]: v })),
+  stopColor: SingleArgumentFunction(ColorUrl, (p, v = "currentColor") => ({ [p]: v })),
+  stopOpacity: SingleArgumentFunction(Fraction, (p, v = "1") => ({ [p]: v })),
+  vectorEffect: SingleArgumentFunction(CamelWords("none|nonScalingStroke|nonScalingSize|nonRotation|fixedPosition"), (p, v) => ({ [p]: v })),
+  clipRule: SingleArgumentFunction(CamelWords("nonzero|evenodd"), (p, v) => ({ [p]: v })),
+  colorInterpolation: SingleArgumentFunction(CamelWords("auto|sRGB|linearRGB"), (p, v) => ({ [p]: v })),
+  shapeRendering: SingleArgumentFunction(WordToValue({ auto: "auto", optimizeSpeed: "optimizeSpeed", crispEdges: "crispEdges", geometricPrecision: "geometricPrecision" }), (p, v) => ({ [p]: v })),
+  colorRendering: SingleArgumentFunction(CamelWords("auto|optimizeSpeed|optimizeQuality"), (p, v) => ({ [p]: v })),
+  imageRendering: SingleArgumentFunction(CamelWords("auto|optimizeSpeed|optimizeQuality|pixelated"), (p, v) => ({ [p]: v })),
+  maskType: SingleArgumentFunction(CamelWords("luminance|alpha"), (p, v) => ({ [p]: v })),
   paintOrder: SequentialFunction("paintOrder/0-4", [CamelWords("normal|fill|stroke|markers")], (p, v = ["normal"]) => ({ [p]: v.join(" ") })),
-  lightingColor: SIN(ColorUrl, (p, v = "currentColor") => ({ [p]: v })),
-  svgOpacity: SIN(Fraction, (p, v = "1") => ({ [p]: v })),
+  lightingColor: SingleArgumentFunction(ColorUrl, (p, v = "currentColor") => ({ [p]: v })),
+  svgOpacity: SingleArgumentFunction(Fraction, (p, v = "1") => ({ [p]: v })),
 
   strokeWidth: undefined,
   strokeLinecap: undefined,

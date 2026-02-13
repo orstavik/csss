@@ -1,5 +1,5 @@
 import { ValueTypes, FunctionTypes, isBasic } from "./func.js";
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST, LogicalFour } = FunctionTypes;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest: FIRST, LogicalFour } = FunctionTypes;
 const { Length, NumberInterpreter, Basic, LengthPercent, LengthPercentUnset, LengthPercentNumber, RepeatBasic, SpanBasic } = ValueTypes;
 
 function toSize(NAME, { args }) {
@@ -247,10 +247,10 @@ const FLEX = {
 const _FlexItem = {
   ...ITEM,
   ...ALIGNMENTS.alignSelf,
-  basis: SIN(Basic, (n, v) => ({ flexBasis: v })),
-  grow: SIN(Basic, (n, v) => ({ flexGrow: v })),
-  shrink: SIN(Basic, (n, v) => ({ flexShrink: v })),
-  order: SIN(Basic, (n, v) => ({ [n]: v })),
+  basis: SingleArgumentFunction(Basic, (n, v) => ({ flexBasis: v })),
+  grow: SingleArgumentFunction(Basic, (n, v) => ({ flexGrow: v })),
+  shrink: SingleArgumentFunction(Basic, (n, v) => ({ flexShrink: v })),
+  order: SingleArgumentFunction(Basic, (n, v) => ({ [n]: v })),
   //todo safe
 };
 
@@ -291,8 +291,8 @@ export default {
   Flex: FunctionWithDefaultValues(DEFAULTS.Flex, flex),
   FlexItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, flexItem),
 
-  lineHeight: SIN(LengthPercentNumber, (n, v) => ({ lineHeight: v })),
-  wordSpacing: SIN(Length, (n, v) => ({ wordSpacing: v })),
+  lineHeight: SingleArgumentFunction(LengthPercentNumber, (n, v) => ({ lineHeight: v })),
+  wordSpacing: SingleArgumentFunction(Length, (n, v) => ({ wordSpacing: v })),
 
   hide: _ => ({ display: "none" }),
 

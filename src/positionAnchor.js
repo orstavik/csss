@@ -5,7 +5,7 @@
 
 
 
-import { SIN } from "./func";
+import { SingleArgumentFunction } from "./func";
 
 // ~sibling container~ {
 //   anchor-name: --some-name-never-declared;
@@ -25,5 +25,5 @@ import { SIN } from "./func";
 
 export default {
   //i think that we need special rules to tackle "0" and turn into top/bottom or left/right
-  positionAnchor: SIN(Name, (p, v) => ({ [p]: `--${v}` }))
+  positionAnchor: SingleArgumentFunction(Name, (p, v) => ({ [p]: `--${v}` }))
 };

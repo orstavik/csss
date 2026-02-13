@@ -1,5 +1,5 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, SingleArgumentFunction: SIN } = FunctionTypes;
+const { FunctionBasedOnValueTypes, SingleArgumentFunction } = FunctionTypes;
 const { Name, NumberInterpreter, Time } = ValueTypes;
 
 import * as CURVES from "./Curves.js";
@@ -16,11 +16,11 @@ const transition = FunctionBasedOnValueTypes({
   easeInOut: "ease-in-out",
   linear: "linear",
   ...CURVES,
-  steps: SIN(NumberInterpreter, (n, v) => `steps(${v})`),
-  stepsEnd: SIN(NumberInterpreter, (n, v) => `steps(${v})`),
-  stepsStart: SIN(NumberInterpreter, (n, v) => `steps(${v}, start)`),
-  stepsBoth: SIN(NumberInterpreter, (n, v) => `steps(${v}, jump-both)`),
-  stepsNone: SIN(NumberInterpreter, (n, v) => `steps(${v}, jump-none)`),
+  steps: SingleArgumentFunction(NumberInterpreter, (n, v) => `steps(${v})`),
+  stepsEnd: SingleArgumentFunction(NumberInterpreter, (n, v) => `steps(${v})`),
+  stepsStart: SingleArgumentFunction(NumberInterpreter, (n, v) => `steps(${v}, start)`),
+  stepsBoth: SingleArgumentFunction(NumberInterpreter, (n, v) => `steps(${v}, jump-both)`),
+  stepsNone: SingleArgumentFunction(NumberInterpreter, (n, v) => `steps(${v}, jump-none)`),
   allowDiscrete: "allow-discrete",
 }, {
   duration: Time,

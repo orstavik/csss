@@ -1,10 +1,10 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
 const { LengthPercentNumber, LengthPercent, WordToValue } = ValueTypes;
-const { FunctionBasedOnValueTypes, SingleArgumentFunction: SIN, FunctionWithDefaultValues, ParseFirstThenRest: FIRST } = FunctionTypes;
+const { FunctionBasedOnValueTypes, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest: FIRST } = FunctionTypes;
 
 const paragraph = FunctionBasedOnValueTypes({
-  indent: SIN(LengthPercent, (n, v) => ({ textIndent: v })),
-  spacing: SIN(LengthPercent, (n, v) => ({ wordSpacing: v })),
+  indent: SingleArgumentFunction(LengthPercent, (n, v) => ({ textIndent: v })),
+  spacing: SingleArgumentFunction(LengthPercent, (n, v) => ({ wordSpacing: v })),
 
   hyphens: { hyphens: "auto" },
   shy: { hyphens: "manual" },
