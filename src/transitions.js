@@ -1,5 +1,5 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { TYPB, SIN } = FunctionTypes;
+const { FunctionBasedOnValueTypes: TYPB, SingleArgumentFunction: SIN } = FunctionTypes;
 const { Name, NumberInterpreter, Time } = ValueTypes;
 
 import * as CURVES from "./Curves.js";

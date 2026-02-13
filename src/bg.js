@@ -1,6 +1,6 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
 const { Angle, Color, LengthPercent, Url, CamelWords, WordToValue, AnglePercent } = ValueTypes;
-const { TYPB, Umbrella, Sequence, SIN } = FunctionTypes;
+const { FunctionBasedOnValueTypes: TYPB, FunctionWithDefaultValues: Umbrella, SequentialFunction: Sequence, SingleArgumentFunction: SIN } = FunctionTypes;
 //todo isImage, interpretImage,
 
 const BackgroundDefaults = {

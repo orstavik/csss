@@ -1,5 +1,5 @@
 import { ValueTypes, FunctionTypes, isBasic } from "./func.js";
-const { TYPB, Umbrella, Sequence, SIN, FIRST, LogicalFour } = FunctionTypes;
+const { FunctionBasedOnValueTypes: TYPB, FunctionWithDefaultValues: Umbrella, SequentialFunction: Sequence, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST, LogicalFour } = FunctionTypes;
 const { Length, NumberInterpreter, Basic, LengthPercent, LengthPercentUnset, LengthPercentNumber, RepeatBasic, SpanBasic } = ValueTypes;
 
 function toSize(NAME, { args }) {

@@ -1,6 +1,6 @@
 import shadow from "./shadows.js";
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { TYPB, Sequence, SIN } = FunctionTypes;
+const { FunctionBasedOnValueTypes: TYPB, SequentialFunction: Sequence, SingleArgumentFunction: SIN } = FunctionTypes;
 const { Angle, Length, NumberInterpreter, Url, AnglePercent, LengthPercent, NumberPercent } = ValueTypes;
 
 const FILTER_FUNCS = {

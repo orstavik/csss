@@ -1,5 +1,5 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { TYPB, Sequence } = FunctionTypes;
+const { FunctionBasedOnValueTypes: TYPB, SequentialFunction: Sequence } = FunctionTypes;
 const { Color, LengthPercent, CamelWords } = ValueTypes;
 
 const BorderUmbrella = cb => exp => {

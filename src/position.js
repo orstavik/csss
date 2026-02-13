@@ -1,6 +1,6 @@
 
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { TYPB, Umbrella } = FunctionTypes;
+const { FunctionBasedOnValueTypes: TYPB, FunctionWithDefaultValues: Umbrella } = FunctionTypes;
 const { WordToValue, LengthPercent } = ValueTypes;
 const ORIGINS = {
   left: ["left"],

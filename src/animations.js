@@ -1,6 +1,6 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
 const { NumberInterpreter, Time } = ValueTypes;
-const { TYPB } = FunctionTypes;
+const { FunctionBasedOnValueTypes: TYPB } = FunctionTypes;
 import * as CURVES from "./Curves.js";
 
 const DIRECTION_WORDS = {

@@ -1,6 +1,6 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
 import { fromLCH, fromHex6 } from "./Color.js";
-const { TYPB } = FunctionTypes;
+const { FunctionBasedOnValueTypes: TYPB } = FunctionTypes;
 const { Name, ColorPrimitive } = ValueTypes;
 
 function makeColors(name, color) {

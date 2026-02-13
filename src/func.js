@@ -615,7 +615,7 @@ function BadArgument(name, args, I, expectedType = "") {
   return new SyntaxError(`Bad argument ${name}/${I + 1}:  ${name}(${args.join(",")})` + expectedType);
 }
 
-const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
+const FunctionBasedOnValueTypes = (wes = {}, singlePrimes = {}, primes = {}, post) => {
   singlePrimes = matchPrimes(singlePrimes);
   primes = matchPrimes(primes);
   return ({ args, name }) => {
@@ -638,9 +638,9 @@ const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
   };
 };
 
-const Umbrella = (BASE, CB) => exp => Object.assign({}, BASE, exp.args?.length ? CB(exp) : undefined);
+const FunctionWithDefaultValues = (BASE, CB) => exp => Object.assign({}, BASE, exp.args?.length ? CB(exp) : undefined);
 
-const SIN = (interpreter, post) => ({ args, name }) => {
+const SingleArgumentFunction = (interpreter, post) => ({ args, name }) => {
   if (args.length != 1)
     throw new SyntaxError(`${name} requires 1 argument, got ${args.length} arguments.`);
   const v = interpreter(args[0]);
@@ -657,7 +657,7 @@ function parseSignature(SIG) {
   return { NAME, MIN: Number(MIN), MAX: Number(MAX) };
 }
 
-const Sequence = (SIG, INTERPRETERS, POST) => {
+const SequentialFunction = (SIG, INTERPRETERS, POST) => {
   const { NAME, MIN = INTERPRETERS.length, MAX = INTERPRETERS.length } = parseSignature(SIG);
   return ({ args, name }) => {
     if (NAME && NAME !== name)
@@ -674,7 +674,7 @@ const Sequence = (SIG, INTERPRETERS, POST) => {
   }
 };
 
-const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
+const ParseFirstThenRest = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   if (!args.length)
     throw new SyntaxError(`${name} requires at least 1 argument, got 0 arguments.`)
   const first = INTERPRETER(args[0]);
@@ -782,10 +782,10 @@ export const ValueTypes = {
 };
 
 export const FunctionTypes = {
-  TYPB,
-  Umbrella,
-  Sequence,
-  SIN,
-  FIRST,
+  FunctionBasedOnValueTypes,
+  FunctionWithDefaultValues,
+  SequentialFunction,
+  SingleArgumentFunction,
+  ParseFirstThenRest,
   LogicalFour,
 };

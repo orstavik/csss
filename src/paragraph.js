@@ -1,6 +1,6 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
 const { LengthPercentNumber, LengthPercent, WordToValue } = ValueTypes;
-const { TYPB, SIN, Umbrella, FIRST } = FunctionTypes;
+const { FunctionBasedOnValueTypes: TYPB, SingleArgumentFunction: SIN, FunctionWithDefaultValues: Umbrella, ParseFirstThenRest: FIRST } = FunctionTypes;
 
 const paragraph = TYPB({
   indent: SIN(LengthPercent, (n, v) => ({ textIndent: v })),
