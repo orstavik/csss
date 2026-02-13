@@ -3,13 +3,14 @@
   import runTests from "/shots/mdTester.js";
 
   function test({ csss, css }) {
-    const key = csss.value, b = css.value;
-    const actual = CSSS.parse(key);
+    const statement = csss.value, expected = css.value;
+    const res = statement.split(/\s+/g).map(CSSS.parse).flat();
+    const actual = res.map(({ cssText }) => cssText).join("\n\n");
     return {
-      key,
-      actual: actual.map(({ cssText }) => cssText).reverse().join("\n\n"),
-      expected: b
+      key: statement,
+      actual,
+      expected: expected
     };
   }
-  runTests("animations,bg,border,block,blockItem,iBlock,iBlockItem,filter,flex,flexItem,gap,grid,gridItem,grandItems,nestedItems,colorSpaces,how2UseGradientColors,gradientFunctions,font,margin,textDecoration,shadows,position,transitions,transforms,objectFit,backdropFilters,calcVar,palette,svg,paragraph", test);
+  runTests("animations,bg,border,block,iBlock,iBlockItem,filter,flex,flexItem,gap,grid,gridItem,grandItems,nestedItems,colorSpaces,how2UseGradientColors,gradientFunctions,font,margin,textDecoration,shadows,position,transitions,transforms,objectFit,backdropFilters,calcVar,palette,svg,paragraph", test);
 </script>
