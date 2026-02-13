@@ -1,7 +1,9 @@
 //todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
-import { Length, Color, TYPB, isLengthNumber, WORD_IN_TABLE, Radian } from "./func.js";
 
-// Shadows are handled similarly to transitions. Or even more semantically regulated.
+import { ValueTypes, FunctionTypes, Interpreters } from "./func.js";
+const { lengthNumber: isLengthNumber } = Interpreters;
+const { FunctionBasedOnValueTypes, Either } = FunctionTypes;
+const { Color, Length, Radian, WordToValue } = ValueTypes;// Shadows are handled similarly to transitions. Or even more semantically regulated.
 // There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 
 // Then in the $shadow(shade,angle,length,color?) to use it.
 // If the length is passed in as 
@@ -44,28 +46,27 @@ function calculateShadow({ type, angle = Math.PI * .75, length = { num: 5 }, col
   return { x, y, blur, spread, color };
 }
 
-const IgnoreError = cb => (...args) => { try { return cb(...args); } catch (e) { } }
-const parseAbsoluteShadowArgs = IgnoreError(TYPB({}, {
+const parseAbsoluteShadowArgs = FunctionBasedOnValueTypes({}, {
   x: Length,
   y: Length,
   blur: Length,
   spread: Length,
   color: Color,
-}, {}));
-
-const parseNamedShadowArgs = TYPB({}, {
-  type: WORD_IN_TABLE(SHADES),
+}, {});
+const parseNamedShadowArgs = FunctionBasedOnValueTypes({}, {
+  type: WordToValue(SHADES),
   angle: Radian,
   length: isLengthNumber,
   color: Color,
 }, {}, calculateShadow);
+const Shadow = Either(parseAbsoluteShadowArgs, parseNamedShadowArgs);
 
 function boxShadow(a) {
-  const { x, y, blur, spread, color } = parseAbsoluteShadowArgs(a) ?? parseNamedShadowArgs(a);
+  const { x, y, blur, spread, color } = Shadow(a);
   return [x, y, blur, spread, color].filter(Boolean).join(" ");
 }
 function textDropShadow(a) {
-  const { x, y, blur, color } = parseAbsoluteShadowArgs(a) ?? parseNamedShadowArgs(a);
+  const { x, y, blur, color } = Shadow(a);
   return [x, y, blur, color].filter(Boolean).join(" ");
 }
 

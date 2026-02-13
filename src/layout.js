@@ -1,4 +1,7 @@
-import { Sequence, RepeatBasic, SpanBasic, isBasic, Basic, LogicalFour, LengthPercent, TYPB, SIN, NumberInterpreter, Umbrella, FIRST, Length, LengthPercentNumber, LengthPercentUnset } from "./func.js";
+import { ValueTypes, FunctionTypes, Interpreters } from "./func.js";
+const { basic: isBasic } = Interpreters;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest, LogicalFour } = FunctionTypes;
+const { Length, NumberInterpreter, Basic, LengthPercent, LengthPercentUnset, LengthPercentNumber, RepeatBasic, SpanBasic } = ValueTypes;
 
 function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
@@ -146,7 +149,7 @@ const ITEM = {
   // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
 
-const gap = Sequence("/1-2", [LengthPercentUnset], (n, ar) => {
+const gap = SequentialFunction("/1-2", [LengthPercentUnset], (n, ar) => {
   if (ar[0] == ar[1] || ar.length == 1) return { gap: ar[0] };
   if (ar[1] == "unset") return { rowGap: ar[0] };
   if (ar[0] == "unset") return { columnGap: ar[1] };
@@ -209,10 +212,10 @@ const GRID = {
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.placeItems,
   //todo what is the bertScore distance from cols to columns?
-  cols: Sequence("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
-  columns: Sequence("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
-  rows: Sequence("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateRows: ar.join(" ") })),
-  areas: Sequence("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateAreas: ar.join(" ") })),
+  cols: SequentialFunction("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
+  columns: SequentialFunction("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
+  rows: SequentialFunction("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateRows: ar.join(" ") })),
+  areas: SequentialFunction("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateAreas: ar.join(" ") })),
   gap,
   //todo test this!!
   column: { gridAutoFlow: "column" },
@@ -224,8 +227,8 @@ const GRID = {
 const _GridItem = {
   ...ALIGNMENTS.placeSelf,
   ...ITEM,
-  column: Sequence("/1-2", [SpanBasic], (n, ar) => ({ gridColumn: ar.join(" / ") })), //todo test how `_` works as first or second argument.
-  row: Sequence("/1-2", [SpanBasic], (n, ar) => ({ gridRow: ar.join(" / ") })),       //todo test how `_` works as first or second argument.
+  column: SequentialFunction("/1-2", [SpanBasic], (n, ar) => ({ gridColumn: ar.join(" / ") })), //todo test how `_` works as first or second argument.
+  row: SequentialFunction("/1-2", [SpanBasic], (n, ar) => ({ gridRow: ar.join(" / ") })),       //todo test how `_` works as first or second argument.
 };
 
 const FLEX = {
@@ -245,10 +248,10 @@ const FLEX = {
 const _FlexItem = {
   ...ITEM,
   ...ALIGNMENTS.alignSelf,
-  basis: SIN(Basic, (n, v) => ({ flexBasis: v })),
-  grow: SIN(Basic, (n, v) => ({ flexGrow: v })),
-  shrink: SIN(Basic, (n, v) => ({ flexShrink: v })),
-  order: SIN(Basic, (n, v) => ({ [n]: v })),
+  basis: SingleArgumentFunction(Basic, (n, v) => ({ flexBasis: v })),
+  grow: SingleArgumentFunction(Basic, (n, v) => ({ flexGrow: v })),
+  shrink: SingleArgumentFunction(Basic, (n, v) => ({ flexShrink: v })),
+  order: SingleArgumentFunction(Basic, (n, v) => ({ [n]: v })),
   //todo safe
 };
 
@@ -258,15 +261,15 @@ const BlockItem = {
   floatEnd: { float: "inline-end" },
 }
 
-const block = TYPB(CONTAINER, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const blockItem = TYPB(BlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const lineClamp = FIRST(NumberInterpreter, block, (n, a, b) => ({ ...DEFAULTS.LineClamp, WebkitLineClamp: a, ...b }));
-const grid = TYPB(GRID, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const gridItem = TYPB(_GridItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const flex = TYPB(FLEX, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const flexItem = TYPB(_FlexItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const iBlock = TYPB(IBLOCK, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const iBlockItem = TYPB(_IBlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const block = FunctionBasedOnValueTypes(CONTAINER, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const blockItem = FunctionBasedOnValueTypes(BlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const lineClamp = ParseFirstThenRest(NumberInterpreter, block, (n, a, b) => ({ ...DEFAULTS.LineClamp, WebkitLineClamp: a, ...b }));
+const grid = FunctionBasedOnValueTypes(GRID, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const gridItem = FunctionBasedOnValueTypes(_GridItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const flex = FunctionBasedOnValueTypes(FLEX, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const flexItem = FunctionBasedOnValueTypes(_FlexItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const iBlock = FunctionBasedOnValueTypes(IBLOCK, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const iBlockItem = FunctionBasedOnValueTypes(_IBlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
 export default {
   block,
@@ -279,18 +282,18 @@ export default {
   iBlock,
   iBlockItem,
 
-  Block: Umbrella(DEFAULTS.Block, block),
-  BlockItem: Umbrella(DEFAULTS.BlockItem, blockItem),
-  LineClamp: Umbrella(DEFAULTS.Block, lineClamp),
-  IBlock: Umbrella(DEFAULTS.IBlock, iBlock),
-  IBlockItem: Umbrella(DEFAULTS.BlockItem, iBlockItem),
-  Grid: Umbrella(DEFAULTS.Grid, grid),
-  GridItem: Umbrella(DEFAULTS.BlockItem, gridItem),
-  Flex: Umbrella(DEFAULTS.Flex, flex),
-  FlexItem: Umbrella(DEFAULTS.BlockItem, flexItem),
+  Block: FunctionWithDefaultValues(DEFAULTS.Block, block),
+  BlockItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, blockItem),
+  LineClamp: FunctionWithDefaultValues(DEFAULTS.Block, lineClamp),
+  IBlock: FunctionWithDefaultValues(DEFAULTS.IBlock, iBlock),
+  IBlockItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, iBlockItem),
+  Grid: FunctionWithDefaultValues(DEFAULTS.Grid, grid),
+  GridItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, gridItem),
+  Flex: FunctionWithDefaultValues(DEFAULTS.Flex, flex),
+  FlexItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, flexItem),
 
-  lineHeight: SIN(LengthPercentNumber, (n, v) => ({ lineHeight: v })),
-  wordSpacing: SIN(Length, (n, v) => ({ wordSpacing: v })),
+  lineHeight: SingleArgumentFunction(LengthPercentNumber, (n, v) => ({ lineHeight: v })),
+  wordSpacing: SingleArgumentFunction(Length, (n, v) => ({ wordSpacing: v })),
 
   hide: _ => ({ display: "none" }),
 

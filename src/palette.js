@@ -1,5 +1,7 @@
-import { TYPB, Name, ColorPrimitive } from "./func.js";
+import { ValueTypes, FunctionTypes } from "./func.js";
 import { fromLCH, fromHex6 } from "./Color.js";
+const { FunctionBasedOnValueTypes } = FunctionTypes;
+const { Name, ColorPrimitive } = ValueTypes;
 
 function makeColors(name, color) {
   const round = (num, places = 3) => Math.round(num * 10 ** places) / (10 ** places);
@@ -21,7 +23,7 @@ function makeColors(name, color) {
   };
 }
 
-const Palette = TYPB({}, {
+const Palette = FunctionBasedOnValueTypes({}, {
   name: Name,
   main: ColorPrimitive,
   on: ColorPrimitive,

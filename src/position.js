@@ -1,5 +1,7 @@
-import { LengthPercent, WORD_IN_TABLE, TYPB, Umbrella } from "./func.js";
 
+import { ValueTypes, FunctionTypes } from "./func.js";
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues } = FunctionTypes;
+const { WordToValue, LengthPercent } = ValueTypes;
 const ORIGINS = {
   left: ["left"],
   right: ["right"],
@@ -29,15 +31,15 @@ function processPosition({ origin = ["left", "top"], one = 0, two = 0 }) {
     { [origin[0]]: one, [origin[1]]: two };
 }
 
-const Position = TYPB({}, {
-  origin: WORD_IN_TABLE(ORIGINS),
+const Position = FunctionBasedOnValueTypes({}, {
+  origin: WordToValue(ORIGINS),
   one: LengthPercent,
   two: LengthPercent,
 }, {}, processPosition);
 
 export default {
-  absolute: Umbrella({ position: "absolute" }, Position),
-  relative: Umbrella({ position: "relative" }, Position),
-  fixed: Umbrella({ position: "fixed" }, Position),
-  sticky: Umbrella({ position: "sticky" }, Position),
+  absolute: FunctionWithDefaultValues({ position: "absolute" }, Position),
+  relative: FunctionWithDefaultValues({ position: "relative" }, Position),
+  fixed: FunctionWithDefaultValues({ position: "fixed" }, Position),
+  sticky: FunctionWithDefaultValues({ position: "sticky" }, Position),
 };

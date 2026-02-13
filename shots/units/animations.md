@@ -86,9 +86,9 @@
 **csss:** $opacity(1,from(0.3))$scale(1.2,from(0.8))$translateY(0px,from(30px))
 **css:**
 ```css
-@keyframes translateY-from30px {
+@keyframes opacity-from0\.3 {
   0% {
-    transform: translateY(30px);
+    opacity: 0.3;
   }
 }
 
@@ -98,9 +98,9 @@
   }
 }
 
-@keyframes opacity-from0\.3 {
+@keyframes translateY-from30px {
   0% {
-    opacity: 0.3;
+    transform: translateY(30px);
   }
 }
 

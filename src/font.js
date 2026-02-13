@@ -1,4 +1,6 @@
-import { Sequence, AbsoluteUrl, Quote, Angle, Integer, Fraction, Length, SIN, Percent, Basic, FIRST, Umbrella, Word, Name, NameUnset, TYPB } from "./func.js";
+import { ValueTypes, FunctionTypes } from "./func.js";
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest } = FunctionTypes;
+const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, NameUnset, AbsoluteUrl } = ValueTypes;
 
 const FontDefaults = {
   fontFamily: "unset",
@@ -106,10 +108,10 @@ const FONT_WORDS = {
   xxl: { fontSize: "xx-large" },
   xxxl: { fontSize: "xxx-large" },
 
-  variant: Sequence("variant/1-5", [Word], (n, v) => ({ fontVariant: v.join(" ") })), //todo: more specific parsing?
-  width: SIN(Percent, (n, v) => ({ fontWidth: v })),
-  spacing: SIN(Length, (n, v) => ({ letterSpacing: v })), //"_" => "normal". This should be LengthNormal? where we do "_" as "normal"?
-  adjust: SIN(Basic, (n, v) => ({ fontSizeAdjust: v })),
+  variant: SequentialFunction("variant/1-5", [Word], (n, v) => ({ fontVariant: v.join(" ") })), //todo: more specific parsing?
+  width: SingleArgumentFunction(Percent, (n, v) => ({ fontWidth: v })),
+  spacing: SingleArgumentFunction(Length, (n, v) => ({ letterSpacing: v })), //"_" => "normal". This should be LengthNormal? where we do "_" as "normal"?
+  adjust: SingleArgumentFunction(Basic, (n, v) => ({ fontSizeAdjust: v })),
 };
 
 
@@ -156,7 +158,7 @@ function FontFaceUrl(t) {
   return res;
 }
 
-const font = TYPB(FONT_WORDS, {
+const font = FunctionBasedOnValueTypes(FONT_WORDS, {
   fontSize: Length,
   fontSizeAdjust: Fraction,
   fontWeight: Integer,
@@ -184,7 +186,7 @@ const font = TYPB(FONT_WORDS, {
   return res;
 });
 
-const Font = FIRST(NameUnset, font,
+const Font = ParseFirstThenRest(NameUnset, font,
   (_, typeName, fontProps = {}) => {
     const res = { ...FontDefaults, ...fontProps };
     if (typeName !== "unset")
@@ -195,7 +197,7 @@ const Font = FIRST(NameUnset, font,
   }
 );
 
-const Typeface = FIRST(Name, font,
+const Typeface = ParseFirstThenRest(Name, font,
   (_, typeName, tmp = {}) => {
     const res = {};
     for (let k in FontDefaults)
@@ -210,7 +212,7 @@ const Typeface = FIRST(Name, font,
 
 export default {
   font,
-  Font: Umbrella(FontDefaults, Font),
+  Font: FunctionWithDefaultValues(FontDefaults, Font),
   Typeface,
 
   fontFamily: undefined,

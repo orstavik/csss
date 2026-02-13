@@ -1,8 +1,10 @@
-import { LengthPercentNumber, LengthPercent, TYPB, SIN, Umbrella, FIRST, WORD_IN_TABLE } from "./func.js";
+import { ValueTypes, FunctionTypes } from "./func.js";
+const { LengthPercentNumber, LengthPercent, WordToValue } = ValueTypes;
+const { FunctionBasedOnValueTypes, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest } = FunctionTypes;
 
-const paragraph = TYPB({
-  indent: SIN(LengthPercent, (n, v) => ({ textIndent: v })),
-  spacing: SIN(LengthPercent, (n, v) => ({ wordSpacing: v })),
+const paragraph = FunctionBasedOnValueTypes({
+  indent: SingleArgumentFunction(LengthPercent, (n, v) => ({ textIndent: v })),
+  spacing: SingleArgumentFunction(LengthPercent, (n, v) => ({ wordSpacing: v })),
 
   hyphens: { hyphens: "auto" },
   shy: { hyphens: "manual" },
@@ -75,9 +77,9 @@ const PARAGRAPHS = {
 };
 
 
-const Paragraph = Umbrella(PARAGRAPH,
-  FIRST(
-    WORD_IN_TABLE(PARAGRAPHS),
+const Paragraph = FunctionWithDefaultValues(PARAGRAPH,
+  ParseFirstThenRest(
+    WordToValue(PARAGRAPHS),
     paragraph,
     (n, first, rest) => ({ ...PARAGRAPHS[first], ...rest }))
 );

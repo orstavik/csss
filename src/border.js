@@ -1,6 +1,8 @@
-import { Color, LengthPercent, CamelWords, TYPB, Sequence } from "./func.js";
+import { ValueTypes, FunctionTypes } from "./func.js";
+const { FunctionBasedOnValueTypes, SequentialFunction } = FunctionTypes;
+const { Color, LengthPercent, CamelWords } = ValueTypes;
 
-const BorderUmbrella = cb => exp => {
+const BorderFunctionWithDefaultValues = cb => exp => {
   const res = cb(exp);
   if (!res.borderStartStartRadius) res.borderRadius ??= "0";
   if (!res.borderInlineColor && !res.borderInlineStyle && !res.borderInlineWidth) {
@@ -28,7 +30,7 @@ const BorderUmbrella = cb => exp => {
 //   6: blockTopRight (and 2: blockTopLeft), 
 //   7: inlineRightBottom (and 3: inlineRightTop), 
 //   8: blockBottomRight (and 4: blockBottomLeft).
-const radius = Sequence("/1-8", [LengthPercent], (n, ar) => {
+const radius = SequentialFunction("/1-8", [LengthPercent], (n, ar) => {
   if (ar.length === 1)
     return { borderRadius: ar[0] };
   if (ar.length === 2) {
@@ -71,7 +73,7 @@ function inlineBlockFour(prop, ar) {
     };
 }
 
-const border = TYPB({
+const border = FunctionBasedOnValueTypes({
   radius,
   r: radius,
 },
@@ -92,7 +94,7 @@ const border = TYPB({
 
 export default {
   border,
-  Border: BorderUmbrella(border),
+  Border: BorderFunctionWithDefaultValues(border),
   noBorder: { border: "none" },
 
   borderStyle: undefined,

@@ -1,4 +1,3 @@
-
 const WHITESPACE = {
   nowrap: { whiteSpace: "nowrap" },
   preWrap: { whiteSpace: "pre-wrap" },

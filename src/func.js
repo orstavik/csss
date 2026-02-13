@@ -341,22 +341,6 @@ const COLORS = {
   mixOklchDecreasing: args => cssColorMix([{ kind: "WORD", text: "oklch decreasing hue" }, ...args]),
 };
 
-export const LogicalFour = (NAME, INTERPRETER) => ({ args }) => {
-  if (args.length > 4)
-    throw new SyntaxError(`${NAME}() takes max 4 arguments, got ${args.length}.`);
-  if (!args.length)
-    return { [NAME]: "none" };
-  args = args.map((a, i) => {
-    if (a = INTERPRETER(a))
-      return a;
-    throw BadArgument(NAME, args, i, INTERPRETER.name);
-  });
-  return args.length === 1 ? { [NAME]: args[0] } :
-    {
-      [NAME + "Block"]: args[2] != null && args[2] != args[0] ? args[0] + " " + args[2] : args[0],
-      [NAME + "Inline"]: args[3] != null && args[3] != args[1] ? (args[1] ?? args[0]) + " " + args[3] : args[1] ?? args[0],
-    };
-}
 // const NativeCssScopeUrl = (...args) => `url(${args.join(" ")})`;
 // const NativeCssScopeAttrCounter = {
 //   counter: (...args) => `counter(${args.join(",")})`,
@@ -364,7 +348,7 @@ export const LogicalFour = (NAME, INTERPRETER) => ({ args }) => {
 //   attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
 // };
 
-export function isBasic(arg) {
+function isBasic(arg) {
   if (arg.kind == "VAR")
     arg.text = `var(${arg.text})`;
   if (arg.kind !== "EXP")
@@ -372,11 +356,11 @@ export function isBasic(arg) {
   if (arg.name in Maths)
     return Maths[arg.name](arg.name, arg.args.map(isBasic));
 }
-export function isWord(a) {
+function isWord(a) {
   if (a.kind === "WORD")
     return a;
 }
-export function isColor(a) {
+function isColor(a) {
   if (a.kind === "COLOR")
     return parseColor(a.text);
   //todo the color must be a color or a variable.
@@ -384,19 +368,19 @@ export function isColor(a) {
   if (key in COLORS)
     return { type: "color", text: COLORS[a.name?.slice(1)]?.(a.args) };
 }
-export function isMinmax(a) {
+function isMinmax(a) {
   if (a.name === "minmax")
     return { type: "length", text: `minmax(${a.args.map(isBasic).map(t => t.text).join(", ")})` };
 }
-export function isRepeat(a) {
+function isRepeat(a) {
   if (a.name === "repeat")
     return { type: "length", text: `repeat(${a.args.map(a => isMinmax(a) ?? isBasic(a)).map(t => t.text).join(", ")})` };
 }
-export function isSpan(a) {
+function isSpan(a) {
   if (a.name === "span")
     return { type: a.type, text: "span " + isBasic(a.args[0]).text };
 }
-export function isUrl(a) {
+function isUrl(a) {
   if (a.kind === "QUOTE")
     return { type: "url", text: `url(${a.text})` };
   if (a.name === "url") {
@@ -404,92 +388,115 @@ export function isUrl(a) {
     return { type: "url", text: `url(${isBasic(a.args[0]).text})` };
   }
 }
-export function isAngle(a) {
+function isAngle(a) {
   a = isBasic(a);
   if (a?.num == 0 && a.type === "number")
     return { type: "angle", text: "0deg", unit: "deg", num: 0 };
   if (a?.type === "angle")
     return a;
 }
-export function isAnglePercent(a) {
+function isAnglePercent(a) {
   a = isBasic(a);
   if (a?.num == 0 && a.type === "number")
     return { type: "angle", text: "0deg", unit: "deg", num: 0 };
   if (a?.type === "angle" || a?.type === "percent")
     return a;
 }
-export function isLengthPercent(a) {
+function isLengthPercent(a) {
   a = isBasic(a);
   if (a?.type === "length" || a?.type === "percent" || (a?.num == 0 && a?.type === "number"))
     return a;
 }
-export function isLengthPercentNumber(a) {
+function isLengthPercentNumber(a) {
   a = isBasic(a);
   if (a?.type === "length" || a?.type === "percent" || a?.type === "number")
     return a;
 }
-export function isPercent(a) {
+function isPercent(a) {
   a = isBasic(a);
   if (a?.type === "percent")
     return a;
 }
-export function isZero(a) {
+function isZero(a) {
   a = isBasic(a);
   if (a?.text === "0")
     return a;
 }
-export function isLength(a) {
+function isLength(a) {
   a = isBasic(a);
   if (a?.type === "length" || (a?.num == 0 && a?.type === "number"))
     return a;
 }
-export function isLengthNumber(a) {
+function isLengthNumber(a) {
   a = isBasic(a);
   if (a?.type === "length" || a?.type === "number")
     return a;
 }
-export function isTime(a) {
+function isTime(a) {
   a = isBasic(a);
   if (a?.num == 0 && a.type === "number")
     return { type: "time", text: "0s", unit: "s", num: 0 };
   if (a?.type === "time")
     return a;
 }
-export function isResolution(a) {
+function isResolution(a) {
   a = isBasic(a);
   if (a?.num == 0 && a.type === "number")
     return { type: "resolution", text: "0x", unit: "x", num: 0 };
   if (a?.type === "resolution")
     return a;
 }
-export function isNumber(a) {
+function isNumber(a) {
   a = isBasic(a);
   if (a?.type === "number" && a.unit == "")
     return a;
 }
-export function isFraction(a) {
+function isFraction(a) {
   a = isNumber(a);
   if (a && !Number.isInteger(a.num))
     return a;
 }
-export function isInteger(a) {
+function isInteger(a) {
   a = isNumber(a);
   if (a && Number.isInteger(a.num))
     return a;
 }
-export function isNumberPercent(a) {
+function isNumberPercent(a) {
   a = isBasic(a);
   if (a?.type === "number" && a.unit == "" || a?.type === "percent")
     return a;
 }
-export function isQuote(a) {
+function isQuote(a) {
   if (a.kind === "QUOTE")
     return a;
 }
-export function isName(a) {
+function isName(a) {
   if (a.kind === "WORD" && a.text[0].match(/[a-zA-Z0-9-]/))
     return a;
 }
+
+export const Interpreters = {
+  number: isNumber,
+  zero: isZero,
+  length: isLength,
+  percent: isPercent,
+  angle: isAngle,
+  time: isTime,
+  resolution: isResolution,
+  color: isColor,
+  url: isUrl,
+  repeat: isRepeat,
+  minmax: isMinmax,
+  span: isSpan,
+  image: interpretImage,
+  quote: isQuote,
+  basic: isBasic,
+  lengthNumber: isLengthNumber,
+  lengthPercent: isLengthPercent,
+  lengthPercentNumber: isLengthPercentNumber,
+  anglePercent: isAnglePercent,
+  numberPercent: isNumberPercent,
+};
 
 //interprets returns STRINGS
 export function interpretRadian(a) {
@@ -550,24 +557,6 @@ export function interpretImage(arg) {
 //    imageSet: (...args) => `image-set(${args.join(",")})`,
 // };
 
-const INTERPRETERS = {
-  number: isNumber,
-  zero: isZero,
-  length: isLength,
-  percent: isPercent,
-  angle: isAngle,
-  time: isTime,
-  resolution: isResolution,
-  color: isColor,
-  url: isUrl,
-  repeat: isRepeat,
-  minmax: isMinmax,
-  span: isSpan,
-  image: interpretImage,
-  quote: isQuote,
-  basic: isBasic,
-};
-
 const NativeCssProperties = Object.fromEntries(Object.entries(NativeCss.supported).map(([kebab, types]) => {
   let camel = kebab.replace(/-([a-z])/g, g => g[1].toUpperCase());
   function fixBorderNames(originalCamel) {
@@ -575,7 +564,7 @@ const NativeCssProperties = Object.fromEntries(Object.entries(NativeCss.supporte
     return m ? m[1] + m[3] + m[2] : originalCamel;
   }
   camel = fixBorderNames(camel);
-  const functions = [isBasic, ...types.map(t => INTERPRETERS[t]).filter(Boolean)].reverse();
+  const functions = [isBasic, ...types.map(t => Interpreters[t]).filter(Boolean)].reverse();
 
   function interpretNativeValue({ args, name }) {
     const argsOut = args.map(a => {
@@ -615,7 +604,24 @@ function BadArgument(name, args, I, expectedType = "") {
   return new SyntaxError(`Bad argument ${name}/${I + 1}:  ${name}(${args.join(",")})` + expectedType);
 }
 
-export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
+const LogicalFour = (NAME, INTERPRETER) => ({ args }) => {
+  if (args.length > 4)
+    throw new SyntaxError(`${NAME}() takes max 4 arguments, got ${args.length}.`);
+  if (!args.length)
+    return { [NAME]: "none" };
+  args = args.map((a, i) => {
+    if (a = INTERPRETER(a))
+      return a;
+    throw BadArgument(NAME, args, i, INTERPRETER.name);
+  });
+  return args.length === 1 ? { [NAME]: args[0] } :
+    {
+      [NAME + "Block"]: args[2] != null && args[2] != args[0] ? args[0] + " " + args[2] : args[0],
+      [NAME + "Inline"]: args[3] != null && args[3] != args[1] ? (args[1] ?? args[0]) + " " + args[3] : args[1] ?? args[0],
+    };
+}
+
+const FunctionBasedOnValueTypes = (wes = {}, singlePrimes = {}, primes = {}, post) => {
   singlePrimes = matchPrimes(singlePrimes);
   primes = matchPrimes(primes);
   return ({ args, name }) => {
@@ -638,9 +644,9 @@ export const TYPB = (wes = {}, singlePrimes = {}, primes = {}, post) => {
   };
 };
 
-export const Umbrella = (BASE, CB) => exp => Object.assign({}, BASE, exp.args?.length ? CB(exp) : undefined);
+const FunctionWithDefaultValues = (BASE, CB) => exp => Object.assign({}, BASE, exp.args?.length ? CB(exp) : undefined);
 
-export const SIN = (interpreter, post) => ({ args, name }) => {
+const SingleArgumentFunction = (interpreter, post) => ({ args, name }) => {
   if (args.length != 1)
     throw new SyntaxError(`${name} requires 1 argument, got ${args.length} arguments.`);
   const v = interpreter(args[0]);
@@ -657,7 +663,7 @@ function parseSignature(SIG) {
   return { NAME, MIN: Number(MIN), MAX: Number(MAX) };
 }
 
-export const Sequence = (SIG, INTERPRETERS, POST) => {
+const SequentialFunction = (SIG, INTERPRETERS, POST) => {
   const { NAME, MIN = INTERPRETERS.length, MAX = INTERPRETERS.length } = parseSignature(SIG);
   return ({ args, name }) => {
     if (NAME && NAME !== name)
@@ -674,7 +680,7 @@ export const Sequence = (SIG, INTERPRETERS, POST) => {
   }
 };
 
-export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
+const ParseFirstThenRest = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   if (!args.length)
     throw new SyntaxError(`${name} requires at least 1 argument, got 0 arguments.`)
   const first = INTERPRETER(args[0]);
@@ -683,36 +689,16 @@ export const FIRST = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
   return POST ? POST(name, first, res) : first;
 };
-export const WORD_IN_TABLE = TABLE => ({ text }) => TABLE[text];
-export const CamelWords = (WORDS) => {
-  const lookupTable = Object.fromEntries(WORDS.split("|").map(w => [w, w.replaceAll(/[A-Z]/g, c => "-" + c.toLowerCase())]));
-  return a => lookupTable[a.text];
+
+const Either = (...cbs) => (...args) => {
+  let errors;
+  for (const cb of cbs) {
+    try { return cb(...args); }
+    catch (e) { (errors ??= []).push(e); }
+  }
+  throw new SyntaxError("Couldn't do neither:\n" + errors.map(e => "  " + e.message).join("\n"));
 };
 
-export const Angle = a => isAngle(a)?.text;
-export const Color = a => isColor(a)?.text;
-export const Length = a => isLength(a)?.text;
-export const Name = a => isName(a)?.text;
-export const NumberInterpreter = a => isNumber(a)?.num;
-export const Fraction = a => isFraction(a)?.num;
-export const Integer = a => isInteger(a)?.num;
-export const Quote = a => isQuote(a)?.text;
-export const Percent = a => isPercent(a)?.text;
-export const Time = a => isTime(a)?.text;
-export const Unset = a => a.text == "_" ? "unset" : undefined;
-export const Url = a => isUrl(a)?.text;
-export const Word = a => isWord(a)?.text;
-export const Basic = a => isBasic(a)?.text; //todo this should be replaced with something more precise in the HO functions
-export const Radian = a => (a = isAngle(a)) ? interpretRadian(a) : undefined;
-export const Repeat = a => isRepeat(a)?.text;
-export const Span = a => isSpan(a)?.text;
-export const AbsoluteUrl = a => {
-  if (a.kind === "QUOTE" && a.text.match(/^["'`](https?|data):/i))
-    return new URL(a.text.slice(1, -1));
-  else if (a.name === "url" && a.args.length === 1 && (a = a.args[0].text))
-    if (a.match(/^["'`](https?|data):/i))
-      try { return new URL(a.slice(1, -1)); } catch (e) { }
-};
 // export const RelativeUrl = a => {  //todo implement, this is just a draft.
 //   class RelativeURL {
 //     constructor(url) {
@@ -733,15 +719,89 @@ export const AbsoluteUrl = a => {
 //       return new RelativeURL(a.slice(1, -1));
 // }
 
-export const AnglePercent = a => Angle(a) ?? Percent(a);
-export const LengthUnset = a => Length(a) ?? Unset(a);
-export const LengthPercent = a => Length(a) ?? Percent(a);
-export const LengthPercentUnset = a => Length(a) ?? Percent(a) ?? Unset(a);
-export const LengthPercentNumber = a => Length(a) ?? Percent(a) ?? NumberInterpreter(a);
-export const NameUnset = a => Name(a) ?? Unset(a);
-export const NumberPercent = a => NumberInterpreter(a) ?? Percent(a);
-export const UrlUnset = a => Url(a) ?? Unset(a);
-export const ColorUrl = a => Color(a) ?? Url(a);
-export const ColorPrimitive = a => (a.kind === "COLOR" && (a = parseColor(a.text)).hex) ? a : undefined;
-export const RepeatBasic = a => Repeat(a) ?? Basic(a);
-export const SpanBasic = a => Span(a) ?? Basic(a);
+const Angle = a => isAngle(a)?.text;
+const Color = a => isColor(a)?.text;
+const Length = a => isLength(a)?.text;
+const Name = a => isName(a)?.text;
+const NumberInterpreter = a => isNumber(a)?.num;
+const Fraction = a => isFraction(a)?.num;
+const Integer = a => isInteger(a)?.num;
+const Quote = a => isQuote(a)?.text;
+const Percent = a => isPercent(a)?.text;
+const Time = a => isTime(a)?.text;
+const Unset = a => a.text == "_" ? "unset" : undefined;
+const Url = a => isUrl(a)?.text;
+const Word = a => isWord(a)?.text;
+const Basic = a => isBasic(a)?.text; //todo this should be replaced with something more precise in the HO functions
+const Radian = a => (a = isAngle(a)) ? interpretRadian(a) : undefined;
+const Repeat = a => isRepeat(a)?.text;
+const Span = a => isSpan(a)?.text;
+const AbsoluteUrl = a => {
+  if (a.kind === "QUOTE" && a.text.match(/^["'`](https?|data):/i))
+    return new URL(a.text.slice(1, -1));
+  else if (a.name === "url" && a.args.length === 1 && (a = a.args[0].text))
+    if (a.match(/^["'`](https?|data):/i))
+      try { return new URL(a.slice(1, -1)); } catch (e) { }
+};
+const AnglePercent = a => Angle(a) ?? Percent(a);
+const LengthUnset = a => Length(a) ?? Unset(a);
+const LengthPercent = a => Length(a) ?? Percent(a);
+const LengthPercentUnset = a => Length(a) ?? Percent(a) ?? Unset(a);
+const LengthPercentNumber = a => Length(a) ?? Percent(a) ?? NumberInterpreter(a);
+const NameUnset = a => Name(a) ?? Unset(a);
+const NumberPercent = a => NumberInterpreter(a) ?? Percent(a);
+const UrlUnset = a => Url(a) ?? Unset(a);
+const ColorUrl = a => Color(a) ?? Url(a);
+const ColorPrimitive = a => (a.kind === "COLOR" && (a = parseColor(a.text)).hex) ? a : undefined;
+const RepeatBasic = a => Repeat(a) ?? Basic(a);
+const SpanBasic = a => Span(a) ?? Basic(a);
+const CamelWords = WORDS => {
+  const lookupTable = Object.fromEntries(WORDS.split("|").map(w => [w, w.replaceAll(/[A-Z]/g, c => "-" + c.toLowerCase())]));
+  return a => lookupTable[a.text];
+};
+const WordToValue = TABLE => a => TABLE[a.text];
+
+export const ValueTypes = {
+  Angle,
+  Color,
+  Length,
+  Name,
+  NumberInterpreter,
+  Fraction,
+  Integer,
+  Quote,
+  Percent,
+  Time,
+  Unset,
+  Url,
+  Word,
+  Basic,
+  Radian,
+  Repeat,
+  Span,
+  AnglePercent,
+  LengthUnset,
+  LengthPercent,
+  LengthPercentUnset,
+  LengthPercentNumber,
+  NameUnset,
+  NumberPercent,
+  UrlUnset,
+  ColorUrl,
+  ColorPrimitive,
+  RepeatBasic,
+  SpanBasic,
+  AbsoluteUrl,
+  CamelWords,
+  WordToValue,
+};
+
+export const FunctionTypes = {
+  FunctionBasedOnValueTypes,
+  FunctionWithDefaultValues,
+  SequentialFunction,
+  SingleArgumentFunction,
+  ParseFirstThenRest,
+  LogicalFour,
+  Either,
+};

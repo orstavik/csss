@@ -1,4 +1,4 @@
-import { SHORTS, MEDIA_WORDS } from "./vocabulary.js";
+import { SHORTS, MEDIA_WORDS } from "../vocabulary.js";
 
 /**
  * If you have a cssRules object, then you need to do:
