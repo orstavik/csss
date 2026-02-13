@@ -1,6 +1,6 @@
 
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction: Sequence, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST } = FunctionTypes;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST } = FunctionTypes;
 const { Angle, Color, Length, Name, NumberInterpreter, Fraction, Integer, Quote, Percent, Time, Unset, Url, Word, Basic, Radian, Repeat, Span, AnglePercent, LengthUnset, LengthPercent, LengthPercentUnset, LengthPercentNumber, NameUnset, NumberPercent, UrlUnset, ColorUrl, ColorPrimitive, RepeatBasic, SpanBasic, AbsoluteUrl, CamelWords, WordToValue, } = ValueTypes; const DefaultTextDecoration = { textDecoration: "none", textDecorationSkipInk: "auto" };
 
 const textDecoration = FunctionBasedOnValueTypes({}, {

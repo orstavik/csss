@@ -1,6 +1,6 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
 const { Angle, Color, LengthPercent, Url, CamelWords, WordToValue, AnglePercent } = ValueTypes;
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction: Sequence, SingleArgumentFunction: SIN } = FunctionTypes;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction: SIN } = FunctionTypes;
 //todo isImage, interpretImage,
 
 const BackgroundDefaults = {
@@ -57,10 +57,10 @@ const LinearDirections = WordToValue({
   downRight: "to bottom right",
 });
 const AngleOrLinearDirection = e => Angle(e) ?? LinearDirections(e);
-const ColorStopAnglePercentTuple = Sequence("(/1-3", [Color, AnglePercent], (_, res) => res.join(" "));
+const ColorStopAnglePercentTuple = SequentialFunction("(/1-3", [Color, AnglePercent], (_, res) => res.join(" "));
 const ColorStopAnglePercent = e => Color(e) ?? ColorStopAnglePercentTuple(e);
 
-const ColorStopLengthPercentTuple = Sequence("(/1-3", [Color, LengthPercent], (_, res) => res.join(" "));
+const ColorStopLengthPercentTuple = SequentialFunction("(/1-3", [Color, LengthPercent], (_, res) => res.join(" "));
 const ColorStopLengthPercent = e => Color(e) ?? ColorStopLengthPercentTuple(e);
 const AtPosition = CamelWords("top|bottom|left|right|center|xStart|xEnd|yStart|yEnd|blockStart|blockEnd|inlineStart|inlineEnd");
 const LengthPercentAtPosition = e => LengthPercent(e) ?? AtPosition(e);
@@ -69,7 +69,7 @@ const LengthPercentAuto = e => e.text === "auto" ? "auto" : LengthPercent(e);
 const FarthestClosest = CamelWords("farthestCorner|farthestSide|closestCorner|closestSide");
 const LengthPercentOrFarthestClosest = e => LengthPercent(e) ?? FarthestClosest(e);
 const BgPositions = CamelWords("left|center|right|top|bottom|xStart|xEnd|yStart|yEnd|blockStart|blockEnd|inlineStart|inlineEnd");
-const At = Sequence("at/1-2", [LengthPercentAtPosition], (n, res) => "at " + res.join(" "));
+const At = SequentialFunction("at/1-2", [LengthPercentAtPosition], (n, res) => "at " + res.join(" "));
 
 const conic = FunctionBasedOnValueTypes({}, {
   At,
@@ -130,7 +130,7 @@ const circle = FunctionBasedOnValueTypes({}, {
 });
 
 const bg = FunctionBasedOnValueTypes({
-  size: Sequence("size/1-2", [LengthPercentAuto], (name, ar) => ar.join(" ")),
+  size: SequentialFunction("size/1-2", [LengthPercentAuto], (name, ar) => ar.join(" ")),
   linear,
   ellipse: radial,
   radial,

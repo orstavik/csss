@@ -1,6 +1,6 @@
 
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction: Sequence, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST } = FunctionTypes;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST } = FunctionTypes;
 const { Angle, Color, Length, Name, NumberInterpreter, Fraction, Integer, Quote, Percent, Time, Unset, Url, Word, Basic, Radian, Repeat, Span, AnglePercent, LengthUnset, LengthPercent, LengthPercentUnset, LengthPercentNumber, NameUnset, NumberPercent, UrlUnset, ColorUrl, ColorPrimitive, RepeatBasic, SpanBasic, AbsoluteUrl, CamelWords, WordToValue, } = ValueTypes; const strokeDefaults = {
   stroke: "unset",
   strokeWidth: "unset",
@@ -41,9 +41,9 @@ const stroke = FunctionBasedOnValueTypes({}, {
   strokeOpacity: NumberInterpreter, //todo and this should be a Fraction? Or a Percent?
   strokeLinecap: CamelWords("butt|round|square"),
   strokeLinejoin: CamelWords("miter|round|bevel"),
-  strokeDasharray: Sequence("dasharray/2-", [LengthPercentNumber], (name, ar) => ar.join(", ")),
-  strokeDashoffset: Sequence("dashoffset", [LengthPercent], (name, ar) => ar[0]),
-  strokeMiterlimit: Sequence("miterlimit", [NumberInterpreter], (name, ar) => ar[0]),
+  strokeDasharray: SequentialFunction("dasharray/2-", [LengthPercentNumber], (name, ar) => ar.join(", ")),
+  strokeDashoffset: SequentialFunction("dashoffset", [LengthPercent], (name, ar) => ar[0]),
+  strokeMiterlimit: SequentialFunction("miterlimit", [NumberInterpreter], (name, ar) => ar[0]),
 }, {});
 
 const fill = FunctionBasedOnValueTypes({}, {
@@ -75,7 +75,7 @@ export default {
   markerStart: SIN(Url, (name, v) => ({ [name]: v })),
   markerEnd: SIN(Url, (name, v) => ({ [name]: v })),
   markerMid: SIN(Url, (name, v) => ({ [name]: v })),
-  marker: Sequence("marker/1-3", [UrlUnset], (name, m) =>
+  marker: SequentialFunction("marker/1-3", [UrlUnset], (name, m) =>
     m.length == 1 ? { marker: m[0] } :
       m.length == 2 ? { markerStart: m[0], markerEnd: m[1] } :
         { markerStart: m[0], markerMid: m[1], markerEnd: m[2] }
@@ -90,7 +90,7 @@ export default {
   colorRendering: SIN(CamelWords("auto|optimizeSpeed|optimizeQuality"), (p, v) => ({ [p]: v })),
   imageRendering: SIN(CamelWords("auto|optimizeSpeed|optimizeQuality|pixelated"), (p, v) => ({ [p]: v })),
   maskType: SIN(CamelWords("luminance|alpha"), (p, v) => ({ [p]: v })),
-  paintOrder: Sequence("paintOrder/0-4", [CamelWords("normal|fill|stroke|markers")], (p, v = ["normal"]) => ({ [p]: v.join(" ") })),
+  paintOrder: SequentialFunction("paintOrder/0-4", [CamelWords("normal|fill|stroke|markers")], (p, v = ["normal"]) => ({ [p]: v.join(" ") })),
   lightingColor: SIN(ColorUrl, (p, v = "currentColor") => ({ [p]: v })),
   svgOpacity: SIN(Fraction, (p, v = "1") => ({ [p]: v })),
 

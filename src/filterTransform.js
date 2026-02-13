@@ -1,6 +1,6 @@
 import shadow from "./shadows.js";
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, SequentialFunction: Sequence, SingleArgumentFunction: SIN } = FunctionTypes;
+const { FunctionBasedOnValueTypes, SequentialFunction, SingleArgumentFunction: SIN } = FunctionTypes;
 const { Angle, Length, NumberInterpreter, Url, AnglePercent, LengthPercent, NumberPercent } = ValueTypes;
 
 const FILTER_FUNCS = {
@@ -30,8 +30,8 @@ export default {
   backdropFilter: undefined,
 
   transform: undefined,
-  matrix: Sequence("matrix/6", [NumberInterpreter], transformWithFunc),
-  matrix3d: Sequence("matrix3d/16", [NumberInterpreter], transformWithFunc),
+  matrix: SequentialFunction("matrix/6", [NumberInterpreter], transformWithFunc),
+  matrix3d: SequentialFunction("matrix3d/16", [NumberInterpreter], transformWithFunc),
   perspective,
   rotate,
   rotateX: rotate,
@@ -40,15 +40,15 @@ export default {
   translateX,
   translateY: translateX,
   translateZ: translateX,
-  translate3d: Sequence("translate3d/3", [LengthPercent], transformWithFunc),
+  translate3d: SequentialFunction("translate3d/3", [LengthPercent], transformWithFunc),
   scaleX,
   scaleY: scaleX,
   scaleZ: scaleX,
-  scale3d: Sequence("scale3d/3", [NumberInterpreter], transformWithFunc),
+  scale3d: SequentialFunction("scale3d/3", [NumberInterpreter], transformWithFunc),
   skewX,
   skewY: skewX,
-  rotate3d: Sequence("rotate3d/4", [NumberInterpreter, NumberInterpreter, NumberInterpreter, Angle], transformWithFunc),
-  translate: Sequence("translate/1-2", [LengthPercent], transformWithFunc),
-  scale: Sequence("scale/1-2", [NumberPercent], transformWithFunc),
-  skew: Sequence("skew/1-2", [AnglePercent], transformWithFunc),
+  rotate3d: SequentialFunction("rotate3d/4", [NumberInterpreter, NumberInterpreter, NumberInterpreter, Angle], transformWithFunc),
+  translate: SequentialFunction("translate/1-2", [LengthPercent], transformWithFunc),
+  scale: SequentialFunction("scale/1-2", [NumberPercent], transformWithFunc),
+  skew: SequentialFunction("skew/1-2", [AnglePercent], transformWithFunc),
 };

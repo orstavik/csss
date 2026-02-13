@@ -1,5 +1,5 @@
 import { ValueTypes, FunctionTypes, isBasic } from "./func.js";
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction: Sequence, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST, LogicalFour } = FunctionTypes;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST, LogicalFour } = FunctionTypes;
 const { Length, NumberInterpreter, Basic, LengthPercent, LengthPercentUnset, LengthPercentNumber, RepeatBasic, SpanBasic } = ValueTypes;
 
 function toSize(NAME, { args }) {
@@ -148,7 +148,7 @@ const ITEM = {
   // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
 
-const gap = Sequence("/1-2", [LengthPercentUnset], (n, ar) => {
+const gap = SequentialFunction("/1-2", [LengthPercentUnset], (n, ar) => {
   if (ar[0] == ar[1] || ar.length == 1) return { gap: ar[0] };
   if (ar[1] == "unset") return { rowGap: ar[0] };
   if (ar[0] == "unset") return { columnGap: ar[1] };
@@ -211,10 +211,10 @@ const GRID = {
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.placeItems,
   //todo what is the bertScore distance from cols to columns?
-  cols: Sequence("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
-  columns: Sequence("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
-  rows: Sequence("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateRows: ar.join(" ") })),
-  areas: Sequence("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateAreas: ar.join(" ") })),
+  cols: SequentialFunction("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
+  columns: SequentialFunction("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
+  rows: SequentialFunction("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateRows: ar.join(" ") })),
+  areas: SequentialFunction("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateAreas: ar.join(" ") })),
   gap,
   //todo test this!!
   column: { gridAutoFlow: "column" },
@@ -226,8 +226,8 @@ const GRID = {
 const _GridItem = {
   ...ALIGNMENTS.placeSelf,
   ...ITEM,
-  column: Sequence("/1-2", [SpanBasic], (n, ar) => ({ gridColumn: ar.join(" / ") })), //todo test how `_` works as first or second argument.
-  row: Sequence("/1-2", [SpanBasic], (n, ar) => ({ gridRow: ar.join(" / ") })),       //todo test how `_` works as first or second argument.
+  column: SequentialFunction("/1-2", [SpanBasic], (n, ar) => ({ gridColumn: ar.join(" / ") })), //todo test how `_` works as first or second argument.
+  row: SequentialFunction("/1-2", [SpanBasic], (n, ar) => ({ gridRow: ar.join(" / ") })),       //todo test how `_` works as first or second argument.
 };
 
 const FLEX = {

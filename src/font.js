@@ -1,5 +1,5 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction: Sequence, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST } = FunctionTypes;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction: SIN, ParseFirstThenRest: FIRST } = FunctionTypes;
 const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, NameUnset, AbsoluteUrl } = ValueTypes;
 
 const FontDefaults = {
@@ -108,7 +108,7 @@ const FONT_WORDS = {
   xxl: { fontSize: "xx-large" },
   xxxl: { fontSize: "xxx-large" },
 
-  variant: Sequence("variant/1-5", [Word], (n, v) => ({ fontVariant: v.join(" ") })), //todo: more specific parsing?
+  variant: SequentialFunction("variant/1-5", [Word], (n, v) => ({ fontVariant: v.join(" ") })), //todo: more specific parsing?
   width: SIN(Percent, (n, v) => ({ fontWidth: v })),
   spacing: SIN(Length, (n, v) => ({ letterSpacing: v })), //"_" => "normal". This should be LengthNormal? where we do "_" as "normal"?
   adjust: SIN(Basic, (n, v) => ({ fontSizeAdjust: v })),

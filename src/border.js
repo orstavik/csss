@@ -1,5 +1,5 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, SequentialFunction: Sequence } = FunctionTypes;
+const { FunctionBasedOnValueTypes, SequentialFunction } = FunctionTypes;
 const { Color, LengthPercent, CamelWords } = ValueTypes;
 
 const BorderFunctionWithDefaultValues = cb => exp => {
@@ -30,7 +30,7 @@ const BorderFunctionWithDefaultValues = cb => exp => {
 //   6: blockTopRight (and 2: blockTopLeft), 
 //   7: inlineRightBottom (and 3: inlineRightTop), 
 //   8: blockBottomRight (and 4: blockBottomLeft).
-const radius = Sequence("/1-8", [LengthPercent], (n, ar) => {
+const radius = SequentialFunction("/1-8", [LengthPercent], (n, ar) => {
   if (ar.length === 1)
     return { borderRadius: ar[0] };
   if (ar.length === 2) {
