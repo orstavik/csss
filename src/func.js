@@ -690,6 +690,15 @@ const ParseFirstThenRest = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   return POST ? POST(name, first, res) : first;
 };
 
+const Either = (...cbs) => (...args) => {
+  let errors;
+  for (const cb of cbs) {
+    try { return cb(...args); }
+    catch (e) { (errors ??= []).push(e); }
+  }
+  throw new SyntaxError("Couldn't do neither:\n" + errors.map(e => "  " + e.message).join("\n"));
+};
+
 // export const RelativeUrl = a => {  //todo implement, this is just a draft.
 //   class RelativeURL {
 //     constructor(url) {
@@ -794,4 +803,5 @@ export const FunctionTypes = {
   SingleArgumentFunction,
   ParseFirstThenRest,
   LogicalFour,
+  Either,
 };
