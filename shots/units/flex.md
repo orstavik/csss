@@ -405,3 +405,133 @@
   }
 }
 ```
+
+---
+
+**csss:**
+$Flex(column,gap(1rem),padding(1.5rem))
+|$FlexItem(grow(1))
+**css:**
+```css
+@layer containerDefault {
+  .\$Flex\(column\,gap\(1rem\)\,padding\(1\.5rem\)\) {
+    display: flex;
+    align-items: unset;
+    place-content: unset;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+}
+
+@layer itemsDefault {
+  .\|\$FlexItem\(grow\(1\)\)>* {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    flex-grow: 1;
+  }
+}
+```
+
+**csss:**
+$Flex(row,wrap,contentStart,gap(1rem),padding(1rem))
+|*$FlexItem(basis(200px))
+|:nth-child(1)$FlexItem(grow(2))
+**css:**
+```css
+@layer containerDefault {
+  .\$Flex\(row\,wrap\,contentStart\,gap\(1rem\)\,padding\(1rem\)\) {
+    display: flex;
+    align-items: unset;
+    place-content: start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+  }
+}
+
+@layer items {
+  .\|\*\$FlexItem\(basis\(200px\)\)>* {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    flex-basis: 200px;
+  }
+}
+
+@layer items {
+  .\|\:nth-child\(1\)\$FlexItem\(grow\(2\)\)>:where(:nth-child(1)) {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    flex-grow: 2;
+  }
+}
+```
+
+**csss:**
+$Flex(column,gap(0.5rem),padding(1rem))
+|.header$FlexItem(selfStretch)
+|.body$FlexItem(grow(1),selfStretch)
+|.footer$FlexItem(selfEnd)
+**css:**
+```css
+@layer containerDefault {
+  .\$Flex\(column\,gap\(0\.5rem\)\,padding\(1rem\)\) {
+    display: flex;
+    align-items: unset;
+    place-content: unset;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+}
+
+@layer items {
+  .\|\.header\$FlexItem\(selfStretch\)>:where(.header) {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    align-self: stretch;
+  }
+}
+
+@layer items {
+  .\|\.body\$FlexItem\(grow\(1\)\,selfStretch\)>:where(.body) {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    flex-grow: 1;
+    align-self: stretch;
+  }
+}
+
+@layer items {
+  .\|\.footer\$FlexItem\(selfEnd\)>:where(.footer) {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    align-self: end;
+  }
+}
+```

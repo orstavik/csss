@@ -65,3 +65,57 @@
   }
 }
 ```
+
+---
+
+**csss:**
+$relative
+|.badge$absolute(rightTop,0,0)$zIndex(10)
+**css:**
+```css
+@layer containerDefault {
+  .\$relative {
+    position: relative;
+  }
+}
+@layer items {
+  .\|\.badge\$absolute\(rightTop\,0\,0\)\$zIndex\(10\)>:where(.badge) {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
+  }
+}
+```
+
+**csss:**
+$Block(padding(1rem))$relative
+|.overlay$absolute(0,0)$zIndex(5)
+|.content$absolute(top,50%)$zIndex(10)
+**css:**
+```css
+@layer containerDefault {
+  .\$Block\(padding\(1rem\)\)\$relative {
+    display: block;
+    padding: 1rem;
+    position: relative;
+  }
+}
+
+@layer items {
+  .\|\.overlay\$absolute\(0\,0\)\$zIndex\(5\)>:where(.overlay) {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 5;
+  }
+}
+
+@layer items {
+  .\|\.content\$absolute\(top\,50\%\)\$zIndex\(10\)>:where(.content) {
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+  }
+}
+```

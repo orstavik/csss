@@ -302,3 +302,148 @@
   }
 }
 ```
+
+---
+
+**csss:**
+$Grid(cols(repeat(3,1fr)),gap(1rem),padding(1rem))
+|$GridItem(column(1,span(3)))
+**css:**
+```css
+@layer containerDefault {
+  .\$Grid\(cols\(repeat\(3\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
+    display: grid;
+    place-items: unset;
+    place-content: unset;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding: 1rem;
+  }
+}
+
+@layer itemsDefault {
+  .\|\$GridItem\(column\(1\,span\(3\)\)\)>* {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    grid-column: 1 / span 3;
+  }
+}
+```
+
+**csss:**
+$Grid(cols(repeat(3,1fr)),rows(auto,1fr,auto),gap(1rem),padding(1.5rem))
+|.header$GridItem(column(1,span(3)))
+|.sidebar$GridItem(row(2,span(1)),column(1))
+|.main$GridItem(row(2),column(2,span(2)),selfStretchStart)
+|.footer$GridItem(column(1,span(3)))
+**css:**
+```css
+@layer containerDefault {
+  .\$Grid\(cols\(repeat\(3\,1fr\)\)\,rows\(auto\,1fr\,auto\)\,gap\(1rem\)\,padding\(1\.5rem\)\) {
+    display: grid;
+    place-items: unset;
+    place-content: unset;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto 1fr auto;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+}
+
+@layer items {
+  .\|\.header\$GridItem\(column\(1\,span\(3\)\)\)>:where(.header) {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    grid-column: 1 / span 3;
+  }
+}
+
+@layer items {
+  .\|\.sidebar\$GridItem\(row\(2\,span\(1\)\)\,column\(1\)\)>:where(.sidebar) {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    grid-row: 2 / span 1;
+    grid-column: 1;
+  }
+}
+
+@layer items {
+  .\|\.main\$GridItem\(row\(2\)\,column\(2\,span\(2\)\)\,selfStretchStart\)>:where(.main) {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    grid-row: 2;
+    grid-column: 2 / span 2;
+    place-self: stretch start;
+  }
+}
+
+@layer items {
+  .\|\.footer\$GridItem\(column\(1\,span\(3\)\)\)>:where(.footer) {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    grid-column: 1 / span 3;
+  }
+}
+```
+
+**csss:**
+$Grid(cols(repeat(2,1fr)),gap(1.5rem),padding(1rem),contentCenter)
+|*$GridItem(selfCenter)
+|:nth-child(1)$GridItem(column(1,span(2)))
+**css:**
+```css
+@layer containerDefault {
+  .\$Grid\(cols\(repeat\(2\,1fr\)\)\,gap\(1\.5rem\)\,padding\(1rem\)\,contentCenter\) {
+    display: grid;
+    place-items: unset;
+    place-content: center;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+}
+
+@layer items {
+  .\|\*\$GridItem\(selfCenter\)>* {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    place-self: center;
+  }
+}
+
+@layer items {
+  .\|\:nth-child\(1\)\$GridItem\(column\(1\,span\(2\)\)\)>:where(:nth-child(1)) {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    grid-column: 1 / span 2;
+  }
+}
+```

@@ -33,7 +33,7 @@ function size({ args }) {
       ...toSize("inlineSize", { args: args.slice(0, 3) }),
       ...toSize("blockSize", { args: args.slice(3) })
     };
-  throw new SyntaxError(`$size() accepts only 1, 2 or 4 arguments, got ${args.length}.`);
+  throw new SyntaxError(`$size() accepts only 1, 2 or 6 arguments, got ${args.length}.`);
 }
 
 const ALIGNMENTS = (_ => {

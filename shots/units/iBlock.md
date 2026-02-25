@@ -84,3 +84,68 @@
   }
 }
 ```
+
+---
+
+**csss:**
+$IBlock()$paragraph(center)
+|*$IBlockItem(margin(0,0,0.5rem),alignMiddle)
+**css:**
+```css
+@layer containerDefault {
+  .\$IBlock\(\)\$paragraph\(center\) {
+    display: inline-block;
+    text-align: center;
+  }
+}
+
+@layer items {
+  .\|\*\$IBlockItem\(margin\(0\,0\,0\.5rem\)\,alignMiddle\)>* {
+    inline-size: unset;
+    block-size: unset;
+    margin-block: 0 0.5rem;
+    margin-inline: 0;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    vertical-align: middle;
+  }
+}
+```
+
+**csss:**
+$IBlock(overflowHidden)
+|*$IBlockItem(inlineSize(200px),alignTop)
+|img:first-of-type$IBlockItem(inlineSize(100%),alignMiddle)
+**css:**
+```css
+@layer containerDefault {
+  .\$IBlock\(overflowHidden\) {
+    display: inline-block;
+    overflow: hidden;
+  }
+}
+
+@layer items {
+  .\|\*\$IBlockItem\(inlineSize\(200px\)\,alignTop\)>* {
+    inline-size: 200px;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    vertical-align: top;
+  }
+}
+
+@layer items {
+  .\|img\:first-of-type\$IBlockItem\(inlineSize\(100\%\)\,alignMiddle\)>:where(img:first-of-type) {
+    inline-size: 100%;
+    block-size: unset;
+    margin-block: unset;
+    margin-inline: unset;
+    scroll-margin: unset;
+    scroll-snap-align: unset;
+    vertical-align: middle;
+  }
+}
+```
