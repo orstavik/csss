@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Updating Style Sheet</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 2rem; max-width: 800px; margin: 0 auto; }
+    .suite { margin-bottom: 1.5rem; padding: 1rem; border: 1px solid #ddd; border-radius: 4px; }
+    .suite h3 { margin-top: 0; color: #333; }
+    .case { padding: 0.5rem; margin: 0.4rem 0; background: #f9fafb; border-left: 3px solid #ddd; font-size: 0.9em; }
+    .case.pass { border-left-color: #22c55e; }
+    .case.fail { border-left-color: #ef4444; }
+    .pass { color: #22c55e; font-weight: bold; }
+    .fail { color: #ef4444; font-weight: bold; }
+    .summary { font-size: 1.2rem; font-weight: bold; margin-top: 2rem; padding: 1rem; background: #f3f4f6; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Updating StyleSheet Tests</h1>
+  <p>Dedupe prevention and rule insertion into a live <code>CSSStyleSheet</code>.</p>
+  <div id="out"></div>
+
+  <script type="module">
+    import * as CSSS from "./csss.js";
+
+    const root = document.getElementById('out');
+    let pass = 0, fail = 0;
+
+    const tmpSheet = () => {
+      const s = Object.assign(document.createElement('style'), { id: 'csss-' + Date.now() });
+      document.head.appendChild(s);
+      return s.sheet;
+    };
+
+    const insertAll = (sheet, shorts, seen = new Set()) =>
+      shorts.flatMap(s => {
+        if (seen.has(s)) return [];
+        seen.add(s);
+        return CSSS.parse(s).map(({ cssText }) => {
+          sheet.insertRule(cssText, sheet.cssRules.length);
+          return cssText;
+        });
+      });
+
+    const snapshot = sheet => [...sheet.cssRules].map(r => r.cssText);
+
+    const suite = title => {
+      const el = document.createElement('div');
+      el.className = 'suite';
+      el.innerHTML = `<h3>${title}</h3>`;
+      root.appendChild(el);
+      return (label, ok, detail = '') => {
+        el.insertAdjacentHTML('beforeend', `
+          <div class="case ${ok ? 'pass' : 'fail'}">
+            <span class="${ok ? 'pass' : 'fail'}">${ok ? '✓' : '✗'}</span>
+            <strong>${label}</strong>
+            ${detail ? `<span style="color:#555"> — ${detail}</span>` : ''}
+          </div>`);
+        ok ? pass++ : fail++;
+      };
+    };
+
+    {
+      const t = suite('1 · Basic insertion');
+      const sheet = tmpSheet();
+      const shorts = ['$block(padding(1rem))', '$flex(gap(1rem))', '$grid(cols(1fr,1fr))'];
+      insertAll(sheet, shorts);
+      const n = sheet.cssRules.length;
+      t('Rules added',        n > 0,             `${n} inserted`);
+      t('One rule per short', n === shorts.length, `expected ${shorts.length}, got ${n}`);
+      sheet.ownerNode.remove();
+    }
+
+    {
+      const t = suite('2 · Dedupe — exact duplicate shorts');
+      const sheet = tmpSheet();
+      const seen = new Set();
+      insertAll(sheet, ['$block(padding(1rem))', '$flex(gap(1rem))',
+                        '$block(padding(1rem))', '$flex(gap(1rem))'], seen);
+      const n = sheet.cssRules.length;
+      t('Duplicates skipped',     n === 2,      `expected 2, got ${n}`);
+      t('Seen set stays minimal', seen.size === 2, `set size ${seen.size}`);
+      sheet.ownerNode.remove();
+    }
+
+    {
+      const t = suite('3 · Different values are not duplicates');
+      const sheet = tmpSheet();
+      insertAll(sheet, ['$block(padding(1rem))', '$block(padding(2rem))',
+                        '$block(padding(1rem))'], new Set());
+      const n = sheet.cssRules.length;
+      t('Two distinct rules inserted', n === 2, `expected 2, got ${n}`);
+      sheet.ownerNode.remove();
+    }
+
+    {
+      const t = suite('4 · Repeated insertions without errors');
+      const sheet = tmpSheet();
+      let threw = false;
+      try {
+        insertAll(sheet, Array.from({ length: 20 }, (_, i) => `$block(padding(${i + 1}px))`));
+      } catch (e) { threw = true; console.error(e); }
+      t('No errors thrown', !threw);
+      t('All 20 rules present', sheet.cssRules.length === 20, `got ${sheet.cssRules.length}`);
+      sheet.ownerNode.remove();
+    }
+    const total = pass + fail;
+    const pct   = total ? ((pass / total) * 100).toFixed(1) : '0.0';
+    root.insertAdjacentHTML('beforeend', `
+      <div class="summary">
+        Test Summary —
+        <span class="pass">✓ ${pass}</span> /
+        <span class="fail">✗ ${fail}</span>
+        (${pct}%)
+      </div>`);
+    console.log(`Updating StyleSheet Tests: ${pass}/${total} (${pct}%)`);
+  </script>
+</body>
+</html>
