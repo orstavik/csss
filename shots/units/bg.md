@@ -1,3 +1,4 @@
+**description:** Sets background-color to green and applies a white-to-transparent gradient.
 **csss:** $bgColor(#green)$bg(#white,#transparent)
 **css:**
 ```css
@@ -17,6 +18,7 @@
 }
 ```
 
+**description:** Layers two image backgrounds with blend modes over a directional linear gradient.
 **csssUNTESTED:** $bg(--picjpg,size(30%),noRepeat,center,luminosity)$bg(--picjpg,size(30%),noRepeat,left,overlay)$linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,topRight,size(70%,70%))
 **cssUNTESTED:**
 ```css

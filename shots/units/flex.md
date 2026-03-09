@@ -1,3 +1,4 @@
+**description:** Sets flex column direction with gap and padding.
 **csss:** $flex(column,gap(0.5rem),padding(1rem))
 **css:**
 ```css
@@ -10,6 +11,33 @@
 }
 ```
 
+**description:** Reverses row direction with gap and padding.
+**csss:** $flex(rowReverse,gap(0.5rem),padding(1rem))
+**css:**
+```css
+@layer containerDefault {
+  .\$flex\(rowReverse\,gap\(0\.5rem\)\,padding\(1rem\)\) {
+    flex-direction: row-reverse;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+}
+```
+
+**description:** Sets explicit row direction with gap and padding.
+**csss:** $flex(row,gap(1rem),padding(1rem))
+**css:**
+```css
+@layer containerDefault {
+  .\$flex\(row\,gap\(1rem\)\,padding\(1rem\)\) {
+    flex-direction: row;
+    gap: 1rem;
+    padding: 1rem;
+  }
+}
+```
+
+**description:** Full display:flex reset with column direction, gap and padding.
 **csss:** $Flex(column,gap(0.5rem),padding(1rem))
 **css:**
 ```css
@@ -25,18 +53,7 @@
 }
 ```
 
-**csss:** $flex(rowReverse,gap(0.5rem),padding(1rem))
-**css:**
-```css
-@layer containerDefault {
-  .\$flex\(rowReverse\,gap\(0\.5rem\)\,padding\(1rem\)\) {
-    flex-direction: row-reverse;
-    gap: 0.5rem;
-    padding: 1rem;
-  }
-}
-```
-
+**description:** Enables flex wrapping with gap and padding.
 **csss:** $flex(wrap,gap(0.5rem),padding(1rem))
 **css:**
 ```css
@@ -49,6 +66,19 @@
 }
 ```
 
+**description:** Wraps flex items with separate row and column gap.
+**csss:** $flex(wrap,gap(1rem,2rem))
+**css:**
+```css
+@layer containerDefault {
+  .\$flex\(wrap\,gap\(1rem\,2rem\)\) {
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+  }
+}
+```
+
+**description:** Aligns content and items to start with wrap, gap and padding.
 **csss:** $flex(contentStart,itemsStart,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
@@ -63,7 +93,7 @@
 }
 ```
 
-
+**description:** Places content start on block axis, end on inline axis.
 **csss:** $flex(contentStartEnd,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
@@ -77,6 +107,7 @@
 }
 ```
 
+**description:** Stretches content on block axis, normal on inline axis.
 **csss:** $flex(contentStretchNormal,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
@@ -90,6 +121,7 @@
 }
 ```
 
+**description:** Normal block content with space-between inline distribution.
 **csss:** $flex(contentNormalBetween,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
@@ -103,6 +135,7 @@
 }
 ```
 
+**description:** Centers content and stretches items with wrap.
 **csss:** $flex(contentCenter,itemsStretch,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
@@ -117,6 +150,7 @@
 }
 ```
 
+**description:** Distributes content with space-between/stretch and aligns items to start.
 **csss:** $flex(contentBetweenStretch,itemsStart,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
@@ -131,6 +165,7 @@
 }
 ```
 
+**description:** Stretches all flex items with wrap, gap and padding.
 **csss:** $flex(itemsStretch,gap(1rem),padding(1rem),wrap)
 **css:**
 ```css
@@ -144,6 +179,7 @@
 }
 ```
 
+**description:** Sets 2rem gap with 1rem padding on flex container.
 **csss:** $flex(gap(2rem),padding(1rem))
 **css:**
 ```css
@@ -155,17 +191,7 @@
 }
 ```
 
-**csss:** $flex(overflowScroll,padding(1rem))
-**css:**
-```css
-@layer containerDefault {
-  .\$flex\(overflowScroll\,padding\(1rem\)\) {
-    overflow: scroll;
-    padding: 1rem;
-  }
-}
-```
-
+**description:** Sets 1rem gap with 1rem padding on flex container.
 **csss:** $flex(gap(1rem),padding(1rem))
 **css:**
 ```css
@@ -177,6 +203,7 @@
 }
 ```
 
+**description:** Sets 1rem gap only on flex container.
 **csss:** $flex(gap(1rem))
 **css:**
 ```css
@@ -187,18 +214,7 @@
 }
 ```
 
-**csss:** $flex(row,gap(1rem),padding(1rem))
-**css:**
-```css
-@layer containerDefault {
-  .\$flex\(row\,gap\(1rem\)\,padding\(1rem\)\) {
-    flex-direction: row;
-    gap: 1rem;
-    padding: 1rem;
-  }
-}
-```
-
+**description:** Sets 0.5rem gap on flex container.
 **csss:** $flex(gap(0.5rem))
 **css:**
 ```css
@@ -209,7 +225,19 @@
 }
 ```
 
+**description:** Enables scrolling on a flex container with padding.
+**csss:** $flex(overflowScroll,padding(1rem))
+**css:**
+```css
+@layer containerDefault {
+  .\$flex\(overflowScroll\,padding\(1rem\)\) {
+    overflow: scroll;
+    padding: 1rem;
+  }
+}
+```
 
+**description:** Resets all FlexItem defaults and sets flex-grow on 1st child.
 **csss:** |:nth-child(1)$FlexItem(grow(1))
 **css:**
 ```css
@@ -226,6 +254,7 @@
 }
 ```
 
+**description:** Sets flex-grow to 1 on the 1st child.
 **csss:** |:nth-child(1)$flexItem(grow(1))
 **css:**
 ```css
@@ -236,6 +265,7 @@
 }
 ```
 
+**description:** Sets flex-grow to 2 on the 2nd child.
 **csss:** |:nth-child(2)$flexItem(grow(2))
 **css:**
 ```css
@@ -246,6 +276,7 @@
 }
 ```
 
+**description:** Sets flex-shrink to 0.5 on the 3rd child.
 **csss:** |:nth-child(3)$flexItem(shrink(0.5))
 **css:**
 ```css
@@ -256,6 +287,7 @@
 }
 ```
 
+**description:** Sets flex-basis to 100px on the 4th child.
 **csss:** |:nth-child(4)$flexItem(basis(100px))
 **css:**
 ```css
@@ -266,6 +298,29 @@
 }
 ```
 
+**description:** Sets flex-basis to 100px on all children.
+**csss:** |*$flexItem(basis(100px))
+**css:**
+```css
+@layer items {
+  .\|\*\$flexItem\(basis\(100px\)\)>* {
+    flex-basis: 100px;
+  }
+}
+```
+
+**description:** Sets flex-grow to 1 on .item1 child.
+**csss:** |.item1$flexItem(grow(1))
+**css:**
+```css
+@layer items {
+  .\|\.item1\$flexItem\(grow\(1\)\)>:where(.item1) {
+    flex-grow: 1;
+  }
+}
+```
+
+**description:** Aligns 1st child to start.
 **csss:** |:nth-child(1)$flexItem(selfStart)
 **css:**
 ```css
@@ -276,6 +331,7 @@
 }
 ```
 
+**description:** Aligns 2nd child to center.
 **csss:** |:nth-child(2)$flexItem(selfCenter)
 **css:**
 ```css
@@ -286,6 +342,7 @@
 }
 ```
 
+**description:** Aligns 3rd child to end.
 **csss:** |:nth-child(3)$flexItem(selfEnd)
 **css:**
 ```css
@@ -296,6 +353,7 @@
 }
 ```
 
+**description:** Stretches 4th child to fill cross axis.
 **csss:** |:nth-child(4)$flexItem(selfStretch)
 **css:**
 ```css
@@ -306,6 +364,55 @@
 }
 ```
 
+**description:** Stretches .four child across the cross axis.
+**csss:** |.four$flexItem(selfStretch)
+**css:**
+```css
+@layer items {
+  .\|\.four\$flexItem\(selfStretch\)>:where(.four) {
+    align-self: stretch;
+  }
+}
+```
+
+**description:** Reorders .two to position 1 and centers it.
+**csss:** |.two$flexItem(order(1),selfCenter)
+**css:**
+```css
+@layer items {
+  .\|\.two\$flexItem\(order\(1\)\,selfCenter\)>:where(.two) {
+    order: 1;
+    align-self: center;
+  }
+}
+```
+
+**description:** Reorders .three to position 2 and aligns to end.
+**csss:** |.three$flexItem(order(2),selfEnd)
+**css:**
+```css
+@layer items {
+  .\|\.three\$flexItem\(order\(2\)\,selfEnd\)>:where(.three) {
+    order: 2;
+    align-self: end;
+  }
+}
+```
+
+**description:** Reorders .one to position 3, aligns to start, and adds 1rem margin.
+**csss:** |.one$flexItem(order(3),selfStart,margin(1rem))
+**css:**
+```css
+@layer items {
+  .\|\.one\$flexItem\(order\(3\)\,selfStart\,margin\(1rem\)\)>:where(.one) {
+    order: 3;
+    align-self: start;
+    margin: 1rem;
+  }
+}
+```
+
+**description:** Sets margin, fixed size and scroll-margin on all flex children.
 **csss:** |*$flexItem(margin(5px),size(150px,120px),scrollMargin(10px))
 **css:**
 ```css
@@ -319,82 +426,7 @@
 }
 ```
 
-**csss:** |*$flexItem(basis(100px))
-**css:**
-```css
-@layer items {
-  .\|\*\$flexItem\(basis\(100px\)\)>* {
-    flex-basis: 100px;
-  }
-}
-```
-
-**csss:** |.item1$flexItem(grow(1))
-**css:**
-```css
-@layer items {
-  .\|\.item1\$flexItem\(grow\(1\)\)>:where(.item1) {
-    flex-grow: 1;
-  }
-}
-```
-
-**csss:** |.two$flexItem(order(1),selfCenter)
-**css:**
-```css
-@layer items {
-  .\|\.two\$flexItem\(order\(1\)\,selfCenter\)>:where(.two) {
-    order: 1;
-    align-self: center;
-  }
-}
-```
-
-**csss:** |.three$flexItem(order(2),selfEnd)
-**css:**
-```css
-@layer items {
-  .\|\.three\$flexItem\(order\(2\)\,selfEnd\)>:where(.three) {
-    order: 2;
-    align-self: end;
-  }
-}
-```
-
-**csss:** |.four$flexItem(selfStretch)
-**css:**
-```css
-@layer items {
-  .\|\.four\$flexItem\(selfStretch\)>:where(.four) {
-    align-self: stretch;
-  }
-}
-```
-
-**csss:** |.one$flexItem(order(3),selfStart,margin(1rem))
-**css:**
-```css
-@layer items {
-  .\|\.one\$flexItem\(order\(3\)\,selfStart\,margin\(1rem\)\)>:where(.one) {
-    order: 3;
-    align-self: start;
-    margin: 1rem;
-  }
-}
-```
-
-
-**csss:** $flex(wrap,gap(1rem,2rem))
-**css:**
-```css
-@layer containerDefault {
-  .\$flex\(wrap\,gap\(1rem\,2rem\)\) {
-    flex-wrap: wrap;
-    gap: 1rem 2rem;
-  }
-}
-```
-
+**description:** Grid with 2-column layout and asymmetric row/column gap.
 **csss:** $grid(cols(repeat(2,1fr)),gap(1rem,0.5rem))
 **css:**
 ```css

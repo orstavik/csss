@@ -1,3 +1,4 @@
+**description:** Applies dotted overline, underline and line-through in green with no skip-ink.
 **csss:** $textDecoration(dotted,over,under,through,#green,2px,noSkipInk)
 **css:**
 ```css
@@ -9,6 +10,7 @@
 }
 ```
 
+**description:** Applies dashed red overline with auto skip-ink.
 **csss:** $textDecoration(dashed,over,#red)
 **css:**
 ```css
@@ -20,6 +22,7 @@
 }
 ```
 
+**description:** Removes all text decoration from the element.
 **csss:** $textDecorationNone
 **css:**
 ```css

@@ -1,3 +1,4 @@
+**description:** Defines a "comic" typeface with web font URL, size, stretch, style and weight.
 **csss:** $Typeface(comic,"MS+Comic+Sans","https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2",xxs,semiExpanded,italic,bolder)
 **css:**
 ```css
@@ -19,7 +20,7 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 }
 ```
 
-
+**description:** Defines a "body" typeface using system fonts with full style overrides.
 **csss:** $Typeface(body,system-ui,sans-serif,400,0.5,bold,i,condensed,12px,uppercase)
 **css:**
 ```css
@@ -36,6 +37,7 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 }
 ```
 
+**description:** Sets font-family, weight, size-adjust, style, width and size directly.
 **csss:** $font(system-ui,sans-serif,400,0.5,bold,i,condensed,12px)
 **css:**
 ```css
@@ -51,6 +53,7 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 }
 ```
 
+**description:** Sets font-family to a named "body" font.
 **csss:** $font(body)
 **css:**
 ```css
@@ -61,6 +64,19 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 }
 ```
 
+**description:** Sets serif font family with auto hyphenation.
+**csss:** $font(serif,hyphens)
+**css:**
+```css
+@layer containerDefault {
+  .\$font\(serif\,hyphens\) {
+    font-family: serif;
+    hyphens: auto;
+  }
+}
+```
+
+**description:** Applies all "body" typeface variables to font properties.
 **csss:** $Font(body)
 **css:**
 ```css
@@ -87,6 +103,7 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 }
 ```
 
+**description:** Resets all font properties and overrides family, size and weight.
 **csss:** $Font(_,Arial,16px,bold)
 **css:**
 ```css
@@ -113,17 +130,7 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 }
 ```
 
-**csss:** $font(serif,hyphens)
-**css:**
-```css
-@layer containerDefault {
-  .\$font\(serif\,hyphens\) {
-    font-family: serif;
-    hyphens: auto;
-  }
-}
-```
-
+**description:** Enables manual hyphenation (soft hyphens only).
 **csss:** $font(shy)
 **css:**
 ```css
@@ -134,6 +141,7 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 }
 ```
 
+**description:** Disables all hyphenation.
 **csss:** $font(noHyphens)
 **css:**
 ```css
@@ -144,6 +152,7 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 }
 ```
 
+**description:** Enables automatic hyphenation via font.
 **csss:** $font(hyphens)
 **css:**
 ```css
@@ -154,6 +163,7 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 }
 ```
 
+**description:** Transforms text to uppercase.
 **csss:** $font(uppercase)
 **css:**
 ```css
@@ -164,6 +174,7 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 }
 ```
 
+**description:** Removes any text transformation.
 **csss:** $font(noTransform)
 **css:**
 ```css

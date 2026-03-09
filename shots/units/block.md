@@ -1,3 +1,4 @@
+**description:** Hides overflowing content on a block container.
 **csss:** $block(overflowHidden)
 **css:**
 ```css
@@ -8,26 +9,7 @@
 }
 ```
 
-**csss:** $blockItem(inlineSize(200px))
-**css:**
-```css
-@layer containerDefault {
-  .\$blockItem\(inlineSize\(200px\)\) {
-    inline-size: 200px;
-  }
-}
-```
-
-**csss:** $blockItem(blockSize(50px))
-**css:**
-```css
-@layer containerDefault {
-  .\$blockItem\(blockSize\(50px\)\) {
-    block-size: 50px;
-  }
-}
-```
-
+**description:** Enables scrolling for overflowing block content.
 **csss:** $block(overflowScroll)
 **css:**
 ```css
@@ -38,6 +20,7 @@
 }
 ```
 
+**description:** Hides block overflow but allows inline scrolling.
 **csss:** $block(overflowHiddenScroll)
 **css:**
 ```css
@@ -49,6 +32,19 @@
 }
 ```
 
+**description:** Sets auto overflow with centered text alignment.
+**csss:** $block(overflowAuto)$paragraph(center)
+**css:**
+```css
+@layer containerDefault {
+  .\$block\(overflowAuto\)\$paragraph\(center\) {
+    overflow: auto;
+    text-align: center;
+  }
+}
+```
+
+**description:** Enables word breaking at overflow boundaries.
 **csss:** $block(breakWord)
 **css:**
 ```css
@@ -59,6 +55,7 @@
 }
 ```
 
+**description:** Breaks words at any character to prevent overflow.
 **csss:** $block(breakAll)
 **css:**
 ```css
@@ -69,6 +66,7 @@
 }
 ```
 
+**description:** Clamps text to 3 visible lines with overflow hidden (uppercase variant).
 **csss:** $LineClamp(3)
 **css:**
 ```css
@@ -82,6 +80,7 @@
 }
 ```
 
+**description:** Clamps text to 3 visible lines with overflow hidden.
 **csss:** $lineClamp(3)
 **css:**
 ```css
@@ -95,17 +94,7 @@
 }
 ```
 
-**csss:** $block(overflowAuto)$paragraph(center)
-**css:**
-```css
-@layer containerDefault {
-  .\$block\(overflowAuto\)\$paragraph\(center\) {
-    overflow: auto;
-    text-align: center;
-  }
-}
-```
-
+**description:** Adds 1.5rem padding to a block container.
 **csss:** 
 $block(padding(1.5rem))
 |*$blockItem(margin(1rem,0,0.5rem))
@@ -124,6 +113,54 @@ $block(padding(1.5rem))
 }
 ```
 
+**description:** Sets inline-size to 200px on a block item.
+**csss:** $blockItem(inlineSize(200px))
+**css:**
+```css
+@layer containerDefault {
+  .\$blockItem\(inlineSize\(200px\)\) {
+    inline-size: 200px;
+  }
+}
+```
+
+**description:** Sets block-size to 50px on a block item.
+**csss:** $blockItem(blockSize(50px))
+**css:**
+```css
+@layer containerDefault {
+  .\$blockItem\(blockSize\(50px\)\) {
+    block-size: 50px;
+  }
+}
+```
+
+**description:** Sets explicit inline-size and block-size on a block item.
+**csss:** $blockItem(size(60px,100px))
+**css:**
+```css
+@layer containerDefault {
+  .\$blockItem\(size\(60px\,100px\)\) {
+    inline-size: 60px;
+    block-size: 100px;
+  }
+}
+```
+
+**description:** Caps max inline-size at 600px with unset min and default.
+**csss:** $blockItem(inlineSize(_,_,600px))
+**css:**
+```css
+@layer containerDefault {
+  .\$blockItem\(inlineSize\(_\,_\,600px\)\) {
+    min-inline-size: unset;
+    inline-size: unset;
+    max-inline-size: 600px;
+  }
+}
+```
+
+**description:** Resets all BlockItem defaults and sets margin on all children.
 **csss:** |*$BlockItem(margin(0,0,1rem))
 **css:**
 ```css
@@ -139,6 +176,7 @@ $block(padding(1.5rem))
 }
 ```
 
+**description:** Sets block-start margin to 2rem with zero elsewhere.
 **csss:** $blockItem(margin(2rem,0,0,0))
 **css:**
 ```css
@@ -150,41 +188,19 @@ $block(padding(1.5rem))
 }
 ```
 
-**csss:** |.start$blockItem(floatStart,margin(0.5rem,0,0,0))
+**description:** Sets 0.5rem block and 1rem inline margins on all children.
+**csss:** |*$blockItem(margin(0.5rem,1rem))
 **css:**
 ```css
 @layer items {
-  .\|\.start\$blockItem\(floatStart\,margin\(0\.5rem\,0\,0\,0\)\)>:where(.start) {
-    float: inline-start;
-    margin-block: 0.5rem 0;
-    margin-inline: 0;
+  .\|\*\$blockItem\(margin\(0\.5rem\,1rem\)\)>* {
+    margin-block: 0.5rem;
+    margin-inline: 1rem;
   }
 }
 ```
 
-**csss:** |.end$blockItem(floatEnd,margin(0.5rem,0,0,0))
-**css:**
-```css
-@layer items {
-  .\|\.end\$blockItem\(floatEnd\,margin\(0\.5rem\,0\,0\,0\)\)>:where(.end) {
-    float: inline-end;
-    margin-block: 0.5rem 0;
-    margin-inline: 0;
-  }
-}
-```
-
-**csss:** $blockItem(size(60px,100px))
-**css:**
-```css
-@layer containerDefault {
-  .\$blockItem\(size\(60px\,100px\)\) {
-    inline-size: 60px;
-    block-size: 100px;
-  }
-}
-```
-
+**description:** Adds 1rem bottom margin on all children with 2em text indent.
 **csss:** |*$blockItem(margin(0,0,1rem))$paragraph(indent(2em))
 **css:**
 ```css
@@ -197,6 +213,7 @@ $block(padding(1.5rem))
 }
 ```
 
+**description:** Sets bottom margin on .title children with no text indent.
 **csss:** |.title$blockItem(margin(0,0,2rem))$paragraph(indent(0))
 **css:**
 ```css
@@ -209,6 +226,7 @@ $block(padding(1.5rem))
 }
 ```
 
+**description:** Sets bottom margin on .subtitle children with 1em indent.
 **csss:** |.subtitle$blockItem(margin(0,0,1.5rem))$paragraph(indent(1em))
 **css:**
 ```css
@@ -221,29 +239,81 @@ $block(padding(1.5rem))
 }
 ```
 
-**csss:** $blockItem(inlineSize(_,_,600px))
-**css:**
-```css
-@layer containerDefault {
-  .\$blockItem\(inlineSize\(_\,_\,600px\)\) {
-    min-inline-size: unset;
-    inline-size: unset;
-    max-inline-size: 600px;
-  }
-}
-```
-
-**csss:** |*$blockItem(margin(0.5rem,1rem))
+**description:** Adds 1rem bottom margin to paragraph children.
+**csss:** |p$blockItem(margin(0,0,1rem))
 **css:**
 ```css
 @layer items {
-  .\|\*\$blockItem\(margin\(0\.5rem\,1rem\)\)>* {
-    margin-block: 0.5rem;
-    margin-inline: 1rem;
+  .\|p\$blockItem\(margin\(0\,0\,1rem\)\)>:where(p) {
+    margin-block: 0 1rem;
+    margin-inline: 0;
   }
 }
 ```
 
+**description:** Adds 0.5rem bottom margin to h4 children.
+**csss:** |h4$blockItem(margin(0,0,0.5rem))
+**css:**
+```css
+@layer items {
+  .\|h4\$blockItem\(margin\(0\,0\,0\.5rem\)\)>:where(h4) {
+    margin-block: 0 0.5rem;
+    margin-inline: 0;
+  }
+}
+```
+
+**description:** Adds 2rem bottom margin to .intro children.
+**csss:** |.intro$blockItem(margin(0,0,2rem))
+**css:**
+```css
+@layer items {
+  .\|\.intro\$blockItem\(margin\(0\,0\,2rem\)\)>:where(.intro) {
+    margin-block: 0 2rem;
+    margin-inline: 0;
+  }
+}
+```
+
+**description:** Adds 1rem bottom margin to .content children.
+**csss:** |.content$blockItem(margin(0,0,1rem))
+**css:**
+```css
+@layer items {
+  .\|\.content\$blockItem\(margin\(0\,0\,1rem\)\)>:where(.content) {
+    margin-block: 0 1rem;
+    margin-inline: 0;
+  }
+}
+```
+
+**description:** Floats .start child to inline-start with margin.
+**csss:** |.start$blockItem(floatStart,margin(0.5rem,0,0,0))
+**css:**
+```css
+@layer items {
+  .\|\.start\$blockItem\(floatStart\,margin\(0\.5rem\,0\,0\,0\)\)>:where(.start) {
+    float: inline-start;
+    margin-block: 0.5rem 0;
+    margin-inline: 0;
+  }
+}
+```
+
+**description:** Floats .end child to inline-end with margin.
+**csss:** |.end$blockItem(floatEnd,margin(0.5rem,0,0,0))
+**css:**
+```css
+@layer items {
+  .\|\.end\$blockItem\(floatEnd\,margin\(0\.5rem\,0\,0\,0\)\)>:where(.end) {
+    float: inline-end;
+    margin-block: 0.5rem 0;
+    margin-inline: 0;
+  }
+}
+```
+
+**description:** Floats .box child to inline-start with asymmetric margins.
 **csss:** |.box$blockItem(floatStart,margin(0,1rem,1rem,0))
 **css:**
 ```css
@@ -256,50 +326,7 @@ $block(padding(1.5rem))
 }
 ```
 
-**csss:** |p$blockItem(margin(0,0,1rem))
-**css:**
-```css
-@layer items {
-  .\|p\$blockItem\(margin\(0\,0\,1rem\)\)>:where(p) {
-    margin-block: 0 1rem;
-    margin-inline: 0;
-  }
-}
-```
-
-**csss:** |h4$blockItem(margin(0,0,0.5rem))
-**css:**
-```css
-@layer items {
-  .\|h4\$blockItem\(margin\(0\,0\,0\.5rem\)\)>:where(h4) {
-    margin-block: 0 0.5rem;
-    margin-inline: 0;
-  }
-}
-```
-
-**csss:** |.intro$blockItem(margin(0,0,2rem))
-**css:**
-```css
-@layer items {
-  .\|\.intro\$blockItem\(margin\(0\,0\,2rem\)\)>:where(.intro) {
-    margin-block: 0 2rem;
-    margin-inline: 0;
-  }
-}
-```
-
-**csss:** |.content$blockItem(margin(0,0,1rem))
-**css:**
-```css
-@layer items {
-  .\|\.content\$blockItem\(margin\(0\,0\,1rem\)\)>:where(.content) {
-    margin-block: 0 1rem;
-    margin-inline: 0;
-  }
-}
-```
-
+**description:** Floats .note child to inline-end with surrounding margins.
 **csss:** |.note$blockItem(floatEnd,margin(0,0,1rem,1rem))
 **css:**
 ```css

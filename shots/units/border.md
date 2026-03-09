@@ -1,3 +1,5 @@
+
+**description:** Sets 1px solid border with radius reset to 0.
 **csss:** $Border(1px,solid)
 **css:**
 ```css
@@ -9,6 +11,7 @@
 }
 ```
 
+**description:** Sets asymmetric widths, dotted style, dual colors and 4-corner radius.
 **csss:** $Border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))
 **css:**
 ```css
@@ -27,6 +30,34 @@
 }
 ```
 
+**description:** Sets 2px solid red border with simple 2-value radius.
+**csss:** $Border(2px,solid,#red,r(2px,4px))
+**css:**
+```css
+@layer containerDefault {
+  .\$Border\(2px\,solid\,\#red\,r\(2px\,4px\)\) {
+    border: 2px solid red;
+    border-start-start-radius: 4px 2px;
+    border-start-end-radius: 4px 2px;
+    border-end-end-radius: 4px 2px;
+    border-end-start-radius: 4px 2px;
+  }
+}
+```
+
+**description:** Sets border to none with 20px uniform radius.
+**csss:** $Border(r(20px))
+**css:**
+```css
+@layer containerDefault {
+  .\$Border\(r\(20px\)\) {
+    border: none;
+    border-radius: 20px;
+  }
+}
+```
+
+**description:** Sets asymmetric widths, dotted style, dual colors and 4-corner radius.
 **csss:** $border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))
 **css:**
 ```css
@@ -45,20 +76,7 @@
 }
 ```
 
-**csss:** $Border(2px,solid,#red,r(2px,4px))
-**css:**
-```css
-@layer containerDefault {
-  .\$Border\(2px\,solid\,\#red\,r\(2px\,4px\)\) {
-    border: 2px solid red;
-    border-start-start-radius: 4px 2px;
-    border-start-end-radius: 4px 2px;
-    border-end-end-radius: 4px 2px;
-    border-end-start-radius: 4px 2px;
-  }
-}
-```
-
+**description:** Sets 2px solid red border with 2-value radius without reset.
 **csss:** $border(2px,solid,#red,r(2px,4px))
 **css:**
 ```css
@@ -75,6 +93,7 @@
 }
 ```
 
+**description:** Sets complex border with split styles, 3 colors and 7-value radius.
 **csss:** $border(2px,dotted,dashed,#red,#blue,#white,r(0,1px,2px,3px,4px,5px,6px))
 **css:**
 ```css
@@ -93,17 +112,7 @@
 }
 ```
 
-**csss:** $Border(r(20px))
-**css:**
-```css
-@layer containerDefault {
-  .\$Border\(r\(20px\)\) {
-    border: none;
-    border-radius: 20px;
-  }
-}
-```
-
+**description:** Removes all borders from the element.
 **csss:** $noBorder
 **css:**
 ```css

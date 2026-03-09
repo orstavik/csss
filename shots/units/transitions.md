@@ -1,3 +1,4 @@
+**description:** Applies bounceInOut easing to margin and color transitions over 2s.
 **csss:** $transition(bounceInOut,2s,margin,color)
 **css:**
 ```css
@@ -12,46 +13,7 @@
 }
 ```
 
-**csss:** $transition(easeIn,2s)
-**css:**
-```css
-@layer containerDefault {
-  .\$transition\(easeIn\,2s\) {
-    transition: ease-in 2s;
-  }
-}
-```
-
-**csss:** $transition(steps(5))
-**css:**
-```css
-@layer containerDefault {
-  .\$transition\(steps\(5\)\) {
-    transition: steps(5);
-  }
-}
-```
-
-**csss:** $transition(stepsEnd(5))
-**css:**
-```css
-@layer containerDefault {
-  .\$transition\(stepsEnd\(5\)\) {
-    transition: steps(5);
-  }
-}
-```
-
-**csss:** $transition(stepsBoth(5))
-**css:**
-```css
-@layer containerDefault {
-  .\$transition\(stepsBoth\(5\)\) {
-    transition: steps(5, jump-both);
-  }
-}
-```
-
+**description:** Applies backInOut easing to transform and opacity with 1s duration and 1s delay.
 **csss:** $transition(backInOut,1s,1s,transform,opacity)
 **css:**
 ```css
@@ -66,6 +28,51 @@
 }
 ```
 
+**description:** Applies ease-in timing function with 2s duration.
+**csss:** $transition(easeIn,2s)
+**css:**
+```css
+@layer containerDefault {
+  .\$transition\(easeIn\,2s\) {
+    transition: ease-in 2s;
+  }
+}
+```
+
+**description:** Creates a 5-step transition (default jump-end).
+**csss:** $transition(steps(5))
+**css:**
+```css
+@layer containerDefault {
+  .\$transition\(steps\(5\)\) {
+    transition: steps(5);
+  }
+}
+```
+
+**description:** Creates a 5-step transition with jump-end timing.
+**csss:** $transition(stepsEnd(5))
+**css:**
+```css
+@layer containerDefault {
+  .\$transition\(stepsEnd\(5\)\) {
+    transition: steps(5);
+  }
+}
+```
+
+**description:** Creates a 5-step transition with jump-both timing.
+**csss:** $transition(stepsBoth(5))
+**css:**
+```css
+@layer containerDefault {
+  .\$transition\(stepsBoth\(5\)\) {
+    transition: steps(5, jump-both);
+  }
+}
+```
+
+**description:** Combines two custom easing functions for different properties in one rule.
 **csss:** $transition(backInOut,1s,1s,transform,opacity)$transition(bounceInOut,2s,margin,color)
 **css:**
 ```css

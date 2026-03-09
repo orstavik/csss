@@ -1,3 +1,4 @@
+**description:** Sets 1rem block margin and zero inline margin on all children.
 **csss:** |*$blockItem(margin(1rem,0))
 **css:**
 ```css
@@ -9,6 +10,7 @@
 }
 ```
 
+**description:** Applies uniform 1rem margin on all flex children.
 **csss:** |*$flexItem(margin(1rem))
 **css:**
 ```css
@@ -19,6 +21,7 @@
 }
 ```
 
+**description:** Applies 2rem bottom margin on .a flex child.
 **csss:** |.a$flexItem(margin(0,0,2rem))
 **css:**
 ```css

@@ -1,3 +1,4 @@
+**description:** Creates 3-column grid with 1rem gap as outer container.
 **csss:** $grid(cols(repeat(3,1fr)),gap(1rem))
 **css:**
 ```css
@@ -9,6 +10,7 @@
 }
 ```
 
+**description:** Applies flex column with 0.5rem gap to all default children.
 **csss:** |$flex(column,gap(0.5rem))
 **css:**
 ```css
@@ -20,6 +22,7 @@
 }
 ```
 
+**description:** Adds 0.5rem margin on all grandchildren via default layer.
 **csss:** ||$blockItem(margin(0.5rem))
 **css:**
 ```css
@@ -30,6 +33,7 @@
 }
 ```
 
+**description:** Applies flex row with 0.5rem gap to all direct children.
 **csss:** |*$flex(row,gap(0.5rem))
 **css:**
 ```css
@@ -41,6 +45,7 @@
 }
 ```
 
+**description:** Adds 1rem margin on all grandchildren (wildcard default).
 **csss:** ||*$blockItem(margin(1rem))
 **css:**
 ```css

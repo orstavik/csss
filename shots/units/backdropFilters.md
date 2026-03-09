@@ -1,3 +1,4 @@
+**description:** Applies a 5px backdrop blur effect.
 **csss:** $backdrop(blur(5px))
 **css:**
 ```css
@@ -8,6 +9,7 @@
 }
 ```
 
+**description:** Applies backdrop brightness reduction with an SVG filter reference.
 **csss:** $backdrop(brightness(0.5),"common-filters.svg#filter")
 **css:**
 ```css
