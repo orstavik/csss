@@ -534,10 +534,9 @@ export function interpretImage(arg) {
     const set = [];
     const args = arg.args.slice();
     while (args.length) {
-      const url = isUrl(a);
+      const url = isUrl(args.shift());
       if (!url)
         throw new SyntaxError("imageSet() sequences must start with a url.");
-      args.shift();
       let type = args.length && interpretMimeType(args[0]);
       let resolution = args.length && isResolution(args[0]);
       type ||= args.length && interpretMimeType(args[0]);

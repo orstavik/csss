@@ -122,7 +122,7 @@ function sameType(args) {
   }, null);
 }
 function illegalDividend(a, b) {
-  if (b.type != "number") throw "Dividend must be a plain number.";
+  if (b.type != "number") throw "Divisor must be a plain number.";
   if (b.num == 0) throw "Divide by zero.";
 }
 function singleArgumentOnly(args) {
