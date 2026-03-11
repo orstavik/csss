@@ -2,10 +2,8 @@
 **csss:** $relative
 **css:**
 ```css
-@layer containerDefault {
-  .\$relative {
-    position: relative;
-  }
+.\$relative {
+  position: relative;
 }
 ```
 
@@ -13,12 +11,10 @@
 **csss:** $relative(start,10px+2em,5%)
 **css:**
 ```css
-@layer containerDefault {
-  .\$relative\(start\,10px\+2em\,5\%\) {
-    position: relative;
-    inset-inline-start: calc(10px + 2em);
-    inset-block-start: 5%;
-  }
+.\$relative\(start\,10px\+2em\,5\%\) {
+  position: relative;
+  inset-inline-start: calc(10px + 2em);
+  inset-block-start: 5%;
 }
 ```
 
@@ -26,11 +22,9 @@
 **csss:** $absolute(top,40%)
 **css:**
 ```css
-@layer containerDefault {
-  .\$absolute\(top\,40\%\) {
-    position: absolute;
-    top: 40%;
-  }
+.\$absolute\(top\,40\%\) {
+  position: absolute;
+  top: 40%;
 }
 ```
 
@@ -38,12 +32,10 @@
 **csss:** $absolute(0,0)
 **css:**
 ```css
-@layer containerDefault {
-  .\$absolute\(0\,0\) {
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
+.\$absolute\(0\,0\) {
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 ```
 
@@ -51,12 +43,10 @@
 **csss:** $fixed(rightBottom,0,0)
 **css:**
 ```css
-@layer containerDefault {
-  .\$fixed\(rightBottom\,0\,0\) {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-  }
+.\$fixed\(rightBottom\,0\,0\) {
+  position: fixed;
+  right: 0;
+  bottom: 0;
 }
 ```
 
@@ -64,9 +54,7 @@
 **csss:** $zIndex(10)
 **css:**
 ```css
-@layer containerDefault {
-  .\$zIndex\(10\) {
-    z-index: 10;
-  }
+.\$zIndex\(10\) {
+  z-index: 10;
 }
 ```

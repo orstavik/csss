@@ -4,11 +4,9 @@ $IBlock — reset defaults
 **csss:** $IBlock()$paragraph(center)
 **css:**
 ```css
-@layer containerDefault {
-  .\$IBlock\(\)\$paragraph\(center\) {
-    display: inline-block;
-    text-align: center;
-  }
+.\$IBlock\(\)\$paragraph\(center\) {
+  display: inline-block;
+  text-align: center;
 }
 ```
 
@@ -18,10 +16,8 @@ $iBlock — container
 **csss:** $iBlock()$paragraph(center)
 **css:**
 ```css
-@layer containerDefault {
-  .\$iBlock\(\)\$paragraph\(center\) {
-    text-align: center;
-  }
+.\$iBlock\(\)\$paragraph\(center\) {
+  text-align: center;
 }
 ```
 
@@ -29,10 +25,8 @@ $iBlock — container
 **csss:** $iBlock(overflowHidden)
 **css:**
 ```css
-@layer containerDefault {
-  .\$iBlock\(overflowHidden\) {
-    overflow: hidden;
-  }
+.\$iBlock\(overflowHidden\) {
+  overflow: hidden;
 }
 ```
 
@@ -42,11 +36,9 @@ $iBlockItem — margin
 **csss:** |*$iBlockItem(margin(1rem,0,0.5rem))
 **css:**
 ```css
-@layer items {
-  .\|\*\$iBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
-    margin-block: 1rem 0.5rem;
-    margin-inline: 0;
-  }
+.\|\*\$iBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
+  margin-block: 1rem 0.5rem;
+  margin-inline: 0;
 }
 ```
 
@@ -56,15 +48,13 @@ $IBlockItem — reset defaults
 **csss:** |*$IBlockItem(margin(1rem,0,0.5rem))
 **css:**
 ```css
-@layer items {
-  .\|\*\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
-    inline-size: unset;
-    block-size: unset;
-    margin-block: 1rem 0.5rem;
-    margin-inline: 0;
-    scroll-margin: unset;
-    scroll-snap-align: unset;
-  }
+.\|\*\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
+  inline-size: unset;
+  block-size: unset;
+  margin-block: 1rem 0.5rem;
+  margin-inline: 0;
+  scroll-margin: unset;
+  scroll-snap-align: unset;
 }
 ```
 
@@ -74,10 +64,8 @@ $iBlockItem — vertical alignment
 **csss:** |*$iBlockItem(alignMiddle)
 **css:**
 ```css
-@layer items {
-  .\|\*\$iBlockItem\(alignMiddle\)>* {
-    vertical-align: middle;
-  }
+.\|\*\$iBlockItem\(alignMiddle\)>* {
+  vertical-align: middle;
 }
 ```
 
@@ -85,10 +73,8 @@ $iBlockItem — vertical alignment
 **csss:** |*$iBlockItem(alignTop)
 **css:**
 ```css
-@layer items {
-  .\|\*\$iBlockItem\(alignTop\)>* {
-    vertical-align: top;
-  }
+.\|\*\$iBlockItem\(alignTop\)>* {
+  vertical-align: top;
 }
 ```
 
@@ -98,9 +84,7 @@ $iBlockItem — size
 **csss:** |*$iBlockItem(inlineSize(200px))
 **css:**
 ```css
-@layer items {
-  .\|\*\$iBlockItem\(inlineSize\(200px\)\)>* {
-    inline-size: 200px;
-  }
+.\|\*\$iBlockItem\(inlineSize\(200px\)\)>* {
+  inline-size: 200px;
 }
 ```
