@@ -2,13 +2,19 @@
   import * as CSSS from "/src/csss.js";
   import runTests from "/shots/mdTester.js";
 
+  function stripLayers(css) {
+    return css.replace(/@layer[^{]+\{([\s\S]*?)\n\}/g, (_, inner) =>
+      inner.replace(/^  /gm, "").trim()
+    ).trim();
+  }
+
   function test({ csss, css }) {
     const statement = csss.value, expected = css.value;
     const res = statement.split(/\s+/g).map(CSSS.parse).flat();
-    const actual = res.map(({ cssText }) => cssText).join("\n\n");
+    const actual = res.map(({ cssText }) => stripLayers(cssText)).join("\n\n");
     return {
       key: statement,
-      actual,
+      actual: actual,
       expected: expected
     };
   }

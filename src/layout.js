@@ -33,7 +33,7 @@ function size({ args }) {
       ...toSize("inlineSize", { args: args.slice(0, 3) }),
       ...toSize("blockSize", { args: args.slice(3) })
     };
-  throw new SyntaxError(`$size() accepts only 1, 2 or 4 arguments, got ${args.length}.`);
+  throw new SyntaxError(`$size() accepts only 1, 2 or 6 arguments, got ${args.length}.`);
 }
 
 const ALIGNMENTS = (_ => {
@@ -108,8 +108,8 @@ const OVERFLOWS = (_ => {
         res["overflow" + A + B].scrollSnapType = "both" + (A.endsWith("Mandatory") || B.endsWith("Mandatory") ? " mandatory" : "");
       else if (a.scrollSnapType)
         res["overflow" + A + B].scrollSnapType = a.scrollSnapType.replace("both", "block")
-      else if (B.scrollSnapType)
-        res["overflow" + A + B].scrollSnapType = a.scrollSnapType.replace("both", "inline");
+      else if (b.scrollSnapType)
+        res["overflow" + A + B].scrollSnapType = b.scrollSnapType.replace("both", "inline");
     }
   }
   return res;
