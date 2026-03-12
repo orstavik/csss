@@ -1,3 +1,7 @@
+# Block Layout System
+
+## Block Container - Overflow Control
+
 **description:** Hides overflowing content on a block container.
 **csss:** $block(overflowHidden)
 **css:**
@@ -36,6 +40,32 @@
 }
 ```
 
+**description:** Block with hidden overflow, text clamping and asymmetric padding.
+**csss:** $block(overflowHidden,padding(2rem,1rem))$lineClamp(2)
+**css:**
+```css
+.\$block\(overflowHidden\,padding\(2rem\,1rem\)\)\$lineClamp\(2\) {
+  overflow: hidden;
+  padding-block: 2rem;
+  padding-inline: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow-block: hidden;
+}
+```
+
+**description:** Scrollable block with break-word and constrained sizing.
+**csss:** $block(overflowScroll,breakWord,padding(1.5rem))
+**css:**
+```css
+.\$block\(overflowScroll\,breakWord\,padding\(1\.5rem\)\) {
+  overflow: scroll;
+  overflow-wrap: break-word;
+  padding: 1.5rem;
+}
+```
+
 **description:** Enables word breaking at overflow boundaries.
 **csss:** $block(breakWord)
 **css:**
@@ -53,6 +83,8 @@
   word-break: break-all;
 }
 ```
+
+## Block Container - Text Clamping
 
 **description:** Clamps text to 3 visible lines with overflow hidden (uppercase variant).
 **csss:** $LineClamp(3)
@@ -77,6 +109,8 @@
   overflow-block: hidden;
 }
 ```
+
+## Block Container - Spacing & Sizing
 
 **description:** Adds 1.5rem padding to a block container.
 **csss:** 
@@ -133,6 +167,8 @@ $block(padding(1.5rem))
 }
 ```
 
+## Block Items - Reset & Structure
+
 **description:** Resets all BlockItem defaults and sets margin on all children.
 **csss:** |*$BlockItem(margin(0,0,1rem))
 **css:**
@@ -166,6 +202,8 @@ $block(padding(1.5rem))
   margin-inline: 1rem;
 }
 ```
+
+## Block Items - Margin Examples
 
 **description:** Adds 1rem bottom margin on all children with 2em text indent.
 **csss:** |*$blockItem(margin(0,0,1rem))$paragraph(indent(2em))
@@ -239,7 +277,7 @@ $block(padding(1.5rem))
   margin-inline: 0;
 }
 ```
-
+## Block Items - Float Positioning
 **description:** Floats .start child to inline-start with margin.
 **csss:** |.start$blockItem(floatStart,margin(0.5rem,0,0,0))
 **css:**

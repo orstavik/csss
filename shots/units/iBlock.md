@@ -1,4 +1,6 @@
-$IBlock — reset defaults
+# Inline-Block Layout System
+
+## IBlock - Reset Defaults
 
 **description:** Full display:inline-block reset with centered text.
 **csss:** $IBlock()$paragraph(center)
@@ -10,7 +12,7 @@ $IBlock — reset defaults
 }
 ```
 
-$iBlock — container
+## iBlock - Container
 
 **description:** Sets centered text on an inline-block container.
 **csss:** $iBlock()$paragraph(center)
@@ -30,7 +32,7 @@ $iBlock — container
 }
 ```
 
-$iBlockItem — margin
+## iBlockItem - Margin
 
 **description:** Sets block margin on all inline-block children.
 **csss:** |*$iBlockItem(margin(1rem,0,0.5rem))
@@ -42,7 +44,7 @@ $iBlockItem — margin
 }
 ```
 
-$IBlockItem — reset defaults
+## IBlockItem - Reset Defaults
 
 **description:** Resets all IBlockItem defaults and sets margin on all children.
 **csss:** |*$IBlockItem(margin(1rem,0,0.5rem))
@@ -58,7 +60,7 @@ $IBlockItem — reset defaults
 }
 ```
 
-$iBlockItem — vertical alignment
+## iBlockItem - Vertical Alignment
 
 **description:** Vertically aligns all children to middle.
 **csss:** |*$iBlockItem(alignMiddle)
@@ -78,7 +80,7 @@ $iBlockItem — vertical alignment
 }
 ```
 
-$iBlockItem — size
+## iBlockItem - Size
 
 **description:** Sets inline-size to 200px on all inline-block children.
 **csss:** |*$iBlockItem(inlineSize(200px))
