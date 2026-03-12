@@ -1,3 +1,7 @@
+# Transform System
+
+## 2D Transforms - Basic
+
 **description:** Rotates the element 45 degrees clockwise.
 **csss:** $rotate(45deg)
 **css:**
@@ -25,6 +29,8 @@
 }
 ```
 
+## 2D Transforms - Chained
+
 **description:** Translates and rotates the element in a single transform.
 **csss:** $translate(10px,5%)$rotate(15deg)
 **css:**
@@ -43,11 +49,40 @@
 }
 ```
 
+## 3D Transforms
+
 **description:** Chains 3D scale, rotate and translate transforms together.
 **csss:** $scale3d(1,2,3)$rotate3d(1,2,3,15deg)$translate3d(10px,5%,10px)
 **css:**
 ```css
 .\$scale3d\(1\,2\,3\)\$rotate3d\(1\,2\,3\,15deg\)\$translate3d\(10px\,5\%\,10px\) {
   transform: scale3d(1, 2, 3) rotate3d(1, 2, 3, 15deg) translate3d(10px, 5%, 10px);
+}
+```
+
+## Complex Transform Combinations
+
+**description:** Centered absolute element with scale and rotation.
+**csss:** $absolute(50%,50%)$translate(-50%,-50%)$scale(1.2)$rotate(45deg)$zIndex(10)
+**css:**
+```css
+.\$absolute\(50\%\,50\%\)\$translate\(-50\%\,-50\%\)\$scale\(1\.2\)\$rotate\(45deg\)\$zIndex\(10\) {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(1.2) rotate(45deg);
+  z-index: 10;
+}
+```
+
+**description:** Fixed overlay with 3D transforms.
+**csss:** $fixed(rightBottom,0,0)$translate3d(0,0,100px)$rotateY(180deg)
+**css:**
+```css
+.\$fixed\(rightBottom\,0\,0\)\$translate3d\(0\,0\,100px\)\$rotateY\(180deg\) {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  transform: translate3d(0, 0, 100px) rotateY(180deg);
 }
 ```

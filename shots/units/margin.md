@@ -1,3 +1,7 @@
+# Margin & Spacing System
+
+## Block Item Margins
+
 **description:** Sets 1rem block margin and zero inline margin on all children.
 **csss:** |*$blockItem(margin(1rem,0))
 **css:**
@@ -7,6 +11,8 @@
   margin-inline: 0;
 }
 ```
+
+## Flex Item Margins
 
 **description:** Applies uniform 1rem margin on all flex children.
 **csss:** |*$flexItem(margin(1rem))
@@ -24,5 +30,29 @@
 .\|\.a\$flexItem\(margin\(0\,0\,2rem\)\)>:where(.a) {
   margin-block: 0 2rem;
   margin-inline: 0;
+}
+```
+
+## Complex Margin Patterns
+
+**description:** Responsive margins with overflow control on flex items.
+**csss:** |*$flexItem(margin(1rem,0.5rem))$block(overflowHidden)
+**css:**
+```css
+.\|\*\$flexItem\(margin\(1rem\,0\.5rem\)\)\$block\(overflowHidden\)>* {
+  margin-block: 1rem;
+  margin-inline: 0.5rem;
+  overflow: hidden;
+}
+```
+
+**description:** Grid item with centered margins and constrained size.
+**csss:** |.featured$gridItem(margin(2rem,0),selfCenter)
+**css:**
+```css
+.\|\.featured\$gridItem\(margin\(2rem\,0\)\,selfCenter\)>:where(.featured) {
+  margin-block: 2rem;
+  margin-inline: 0;
+  place-self: center;
 }
 ```

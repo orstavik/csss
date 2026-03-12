@@ -1,3 +1,7 @@
+# Grid Layout System
+
+## Basic Grid Setup
+
 **description:** Defines 2-column grid with auto rows, 1rem gap and padding.
 **csss:** $grid(cols(1fr,2fr),rows(auto),gap(1rem),padding(1rem))
 **css:**
@@ -48,6 +52,30 @@
 }
 ```
 
+**description:** 4-column grid with block-scroll and inline-hidden overflow.
+**csss:** $grid(cols(repeat(4,1fr)),overflowScrollHidden,gap(1rem))
+**css:**
+```css
+.\$grid\(cols\(repeat\(4\,1fr\)\)\,overflowScrollHidden\,gap\(1rem\)\) {
+  grid-template-columns: repeat(4, 1fr);
+  overflow-block: scroll;
+  overflow-inline: hidden;
+  gap: 1rem;
+}
+```
+
+**description:** 2-column grid with asymmetric row/column gap.
+**csss:** $grid(cols(repeat(2,1fr)),gap(1rem,0.5rem))
+**css:**
+```css
+.\$grid\(cols\(repeat\(2\,1fr\)\)\,gap\(1rem\,0\.5rem\)\) {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem 0.5rem;
+}
+```
+
+## Grid Content Alignment
+
 **description:** Centers grid content with 2-column repeat, gap and padding.
 **csss:** $grid(contentCenter,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
 **css:**
@@ -84,6 +112,8 @@
   place-content: start center;
 }
 ```
+
+## Grid Item Alignment
 
 **description:** Centers content and stretches items in a 2-column grid.
 **csss:** $grid(contentCenter,itemsStretch,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
@@ -123,17 +153,7 @@
 }
 ```
 
-**description:** 4-column grid with block-scroll and inline-hidden overflow.
-**csss:** $grid(cols(repeat(4,1fr)),overflowScrollHidden,gap(1rem))
-**css:**
-```css
-.\$grid\(cols\(repeat\(4\,1fr\)\)\,overflowScrollHidden\,gap\(1rem\)\) {
-  grid-template-columns: repeat(4, 1fr);
-  overflow-block: scroll;
-  overflow-inline: hidden;
-  gap: 1rem;
-}
-```
+## Grid Item Positioning
 
 **description:** Resets all GridItem defaults and spans 1st child across 3 columns.
 **csss:** |:nth-child(1)$GridItem(column(1,span(3)))
@@ -207,6 +227,8 @@
 }
 ```
 
+## Grid Item Self-Alignment
+
 **description:** Stretches/starts .c child at column 1 spanning 2 rows from row 2.
 **csss:** |.c$gridItem(selfStretchStart,column(1),row(2,span(2)))
 **css:**
@@ -256,6 +278,8 @@
 }
 ```
 
+## Gap Examples (Cross-Reference)
+
 **description:** Flex wrap with separate row and column gap values.
 **csss:** $flex(wrap,gap(1rem,2rem))
 **css:**
@@ -263,15 +287,5 @@
 .\$flex\(wrap\,gap\(1rem\,2rem\)\) {
   flex-wrap: wrap;
   gap: 1rem 2rem;
-}
-```
-
-**description:** 2-column grid with asymmetric row/column gap.
-**csss:** $grid(cols(repeat(2,1fr)),gap(1rem,0.5rem))
-**css:**
-```css
-.\$grid\(cols\(repeat\(2\,1fr\)\)\,gap\(1rem\,0\.5rem\)\) {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem 0.5rem;
 }
 ```

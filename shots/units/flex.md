@@ -1,3 +1,7 @@
+# Flex Layout System
+
+## Flex Container - Basic Setup
+
 **description:** Sets flex column direction with gap and padding.
 **csss:** $flex(column,gap(0.5rem),padding(1rem))
 **css:**
@@ -65,6 +69,8 @@
   gap: 1rem 2rem;
 }
 ```
+
+## Flex Container - Content & Item Alignment
 
 **description:** Aligns content and items to start with wrap, gap and padding.
 **csss:** $flex(contentStart,itemsStart,gap(1rem),padding(1rem),wrap)
@@ -153,6 +159,8 @@
 }
 ```
 
+## Flex Container - Gap & Spacing
+
 **description:** Sets 2rem gap with 1rem padding on flex container.
 **csss:** $flex(gap(2rem),padding(1rem))
 **css:**
@@ -200,6 +208,33 @@
   padding: 1rem;
 }
 ```
+
+**description:** Column flex with overflow control, asymmetric gaps and padding.
+**csss:** $flex(column,overflowHidden,gap(1.5rem,0.5rem),padding(1rem))
+**css:**
+```css
+.\$flex\(column\,overflowHidden\,gap\(1\.5rem\,0\.5rem\)\,padding\(1rem\)\) {
+  flex-direction: column;
+  overflow: hidden;
+  gap: 1.5rem 0.5rem;
+  padding: 1rem;
+}
+```
+
+**description:** Row-reverse flex with scroll overflow and content distribution.
+**csss:** $flex(rowReverse,overflowAuto,contentNormalBetween,gap(1rem),padding(1rem))
+**css:**
+```css
+.\$flex\(rowReverse\,overflowAuto\,contentNormalBetween\,gap\(1rem\)\,padding\(1rem\)\) {
+  flex-direction: row-reverse;
+  overflow: auto;
+  place-content: normal space-between;
+  gap: 1rem;
+  padding: 1rem;
+}
+```
+
+## Flex Items - Reset & Structure
 
 **description:** Resets all FlexItem defaults and sets flex-grow on 1st child.
 **csss:** |:nth-child(1)$FlexItem(grow(1))
@@ -269,7 +304,7 @@
   flex-grow: 1;
 }
 ```
-
+## Flex Items - Self-Alignment
 **description:** Aligns 1st child to start.
 **csss:** |:nth-child(1)$flexItem(selfStart)
 **css:**
@@ -357,6 +392,8 @@
   scroll-margin: 10px;
 }
 ```
+
+## Cross-Reference Examples
 
 **description:** Grid with 2-column layout and asymmetric row/column gap.
 **csss:** $grid(cols(repeat(2,1fr)),gap(1rem,0.5rem))
