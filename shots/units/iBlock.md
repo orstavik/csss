@@ -12,19 +12,16 @@ $IBlock — reset defaults
 
 $iBlock — container
 
-**description:** Sets centered text on an inline-block container.
-**csss:** $iBlock()$paragraph(center)
+**description:** Sets centered text or hides overflow on an inline-block container.
+**csss:**
+$iBlock()$paragraph(center)
+$iBlock(overflowHidden)
 **css:**
 ```css
 .\$iBlock\(\)\$paragraph\(center\) {
   text-align: center;
 }
-```
 
-**description:** Hides overflow on an inline-block container.
-**csss:** $iBlock(overflowHidden)
-**css:**
-```css
 .\$iBlock\(overflowHidden\) {
   overflow: hidden;
 }
@@ -32,20 +29,10 @@ $iBlock — container
 
 $iBlockItem — margin
 
-**description:** Sets block margin on all inline-block children.
-**csss:** |*$iBlockItem(margin(1rem,0,0.5rem))
-**css:**
-```css
-.\|\*\$iBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
-  margin-block: 1rem 0.5rem;
-  margin-inline: 0;
-}
-```
-
-$IBlockItem — reset defaults
-
-**description:** Resets all IBlockItem defaults and sets margin on all children.
-**csss:** |*$IBlockItem(margin(1rem,0,0.5rem))
+**description:** Resets defaults and sets margins on inline-block children.
+**csss:**
+|*$IBlockItem(margin(1rem,0,0.5rem))
+|*$iBlockItem(margin(1rem,0,0.5rem))
 **css:**
 ```css
 .\|\*\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
@@ -56,34 +43,30 @@ $IBlockItem — reset defaults
   scroll-margin: unset;
   scroll-snap-align: unset;
 }
+
+.\|\*\$iBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
+  margin-block: 1rem 0.5rem;
+  margin-inline: 0;
+}
 ```
 
-$iBlockItem — vertical alignment
+$iBlockItem — vertical alignment and size
 
-**description:** Vertically aligns all children to middle.
-**csss:** |*$iBlockItem(alignMiddle)
+**description:** Sets vertical alignment or specific sizing on inline-block children.
+**csss:**
+|*$iBlockItem(alignMiddle)
+|*$iBlockItem(alignTop)
+|*$iBlockItem(inlineSize(200px))
 **css:**
 ```css
 .\|\*\$iBlockItem\(alignMiddle\)>* {
   vertical-align: middle;
 }
-```
 
-**description:** Vertically aligns all children to top.
-**csss:** |*$iBlockItem(alignTop)
-**css:**
-```css
 .\|\*\$iBlockItem\(alignTop\)>* {
   vertical-align: top;
 }
-```
 
-$iBlockItem — size
-
-**description:** Sets inline-size to 200px on all inline-block children.
-**csss:** |*$iBlockItem(inlineSize(200px))
-**css:**
-```css
 .\|\*\$iBlockItem\(inlineSize\(200px\)\)>* {
   inline-size: 200px;
 }

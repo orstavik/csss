@@ -78,8 +78,8 @@
 }
 ```
 
-**description:** Adds 1.5rem padding to a block container.
-**csss:** 
+**description:** Block container with padding and child item margin.
+**csss:**
 $block(padding(1.5rem))
 |*$blockItem(margin(1rem,0,0.5rem))
 **css:**
@@ -94,7 +94,7 @@ $block(padding(1.5rem))
 }
 ```
 
-**description:** Sets inline-size to 200px on a block item.
+**description:** Sets inline-size on a block item.
 **csss:** $blockItem(inlineSize(200px))
 **css:**
 ```css
@@ -103,7 +103,7 @@ $block(padding(1.5rem))
 }
 ```
 
-**description:** Sets block-size to 50px on a block item.
+**description:** Sets block-size on a block item.
 **csss:** $blockItem(blockSize(50px))
 **css:**
 ```css
@@ -122,7 +122,7 @@ $block(padding(1.5rem))
 }
 ```
 
-**description:** Caps max inline-size at 600px with unset min and default.
+**description:** Caps max inline-size with unset min and default.
 **csss:** $blockItem(inlineSize(_,_,600px))
 **css:**
 ```css
@@ -147,7 +147,7 @@ $block(padding(1.5rem))
 }
 ```
 
-**description:** Sets block-start margin to 2rem with zero elsewhere.
+**description:** Sets block-start margin with zero elsewhere.
 **csss:** $blockItem(margin(2rem,0,0,0))
 **css:**
 ```css
@@ -157,7 +157,7 @@ $block(padding(1.5rem))
 }
 ```
 
-**description:** Sets 0.5rem block and 1rem inline margins on all children.
+**description:** Sets block and inline margins on all children.
 **csss:** |*$blockItem(margin(0.5rem,1rem))
 **css:**
 ```css
@@ -167,8 +167,11 @@ $block(padding(1.5rem))
 }
 ```
 
-**description:** Adds 1rem bottom margin on all children with 2em text indent.
-**csss:** |*$blockItem(margin(0,0,1rem))$paragraph(indent(2em))
+**description:** Adds bottom margin on all children with text indent.
+**csss:**
+|*$blockItem(margin(0,0,1rem))$paragraph(indent(2em))
+|.title$blockItem(margin(0,0,2rem))$paragraph(indent(0))
+|.subtitle$blockItem(margin(0,0,1.5rem))$paragraph(indent(1em))
 **css:**
 ```css
 .\|\*\$blockItem\(margin\(0\,0\,1rem\)\)\$paragraph\(indent\(2em\)\)>* {
@@ -176,23 +179,13 @@ $block(padding(1.5rem))
   margin-inline: 0;
   text-indent: 2em;
 }
-```
 
-**description:** Sets bottom margin on .title children with no text indent.
-**csss:** |.title$blockItem(margin(0,0,2rem))$paragraph(indent(0))
-**css:**
-```css
 .\|\.title\$blockItem\(margin\(0\,0\,2rem\)\)\$paragraph\(indent\(0\)\)>:where(.title) {
   margin-block: 0 2rem;
   margin-inline: 0;
   text-indent: 0;
 }
-```
 
-**description:** Sets bottom margin on .subtitle children with 1em indent.
-**csss:** |.subtitle$blockItem(margin(0,0,1.5rem))$paragraph(indent(1em))
-**css:**
-```css
 .\|\.subtitle\$blockItem\(margin\(0\,0\,1\.5rem\)\)\$paragraph\(indent\(1em\)\)>:where(.subtitle) {
   margin-block: 0 1.5rem;
   margin-inline: 0;
@@ -200,48 +193,39 @@ $block(padding(1.5rem))
 }
 ```
 
-**description:** Adds 1rem bottom margin to paragraph children.
-**csss:** |p$blockItem(margin(0,0,1rem))
+**description:** Sets bottom margin on element-specific children.
+**csss:**
+|p$blockItem(margin(0,0,1rem))
+|h4$blockItem(margin(0,0,0.5rem))
+|.intro$blockItem(margin(0,0,2rem))
+|.content$blockItem(margin(0,0,1rem))
 **css:**
 ```css
 .\|p\$blockItem\(margin\(0\,0\,1rem\)\)>:where(p) {
   margin-block: 0 1rem;
   margin-inline: 0;
 }
-```
 
-**description:** Adds 0.5rem bottom margin to h4 children.
-**csss:** |h4$blockItem(margin(0,0,0.5rem))
-**css:**
-```css
 .\|h4\$blockItem\(margin\(0\,0\,0\.5rem\)\)>:where(h4) {
   margin-block: 0 0.5rem;
   margin-inline: 0;
 }
-```
 
-**description:** Adds 2rem bottom margin to .intro children.
-**csss:** |.intro$blockItem(margin(0,0,2rem))
-**css:**
-```css
 .\|\.intro\$blockItem\(margin\(0\,0\,2rem\)\)>:where(.intro) {
   margin-block: 0 2rem;
   margin-inline: 0;
 }
-```
 
-**description:** Adds 1rem bottom margin to .content children.
-**csss:** |.content$blockItem(margin(0,0,1rem))
-**css:**
-```css
 .\|\.content\$blockItem\(margin\(0\,0\,1rem\)\)>:where(.content) {
   margin-block: 0 1rem;
   margin-inline: 0;
 }
 ```
 
-**description:** Floats .start child to inline-start with margin.
-**csss:** |.start$blockItem(floatStart,margin(0.5rem,0,0,0))
+**description:** Floats children to inline-start or inline-end with margin.
+**csss:**
+|.start$blockItem(floatStart,margin(0.5rem,0,0,0))
+|.end$blockItem(floatEnd,margin(0.5rem,0,0,0))
 **css:**
 ```css
 .\|\.start\$blockItem\(floatStart\,margin\(0\.5rem\,0\,0\,0\)\)>:where(.start) {
@@ -249,12 +233,7 @@ $block(padding(1.5rem))
   margin-block: 0.5rem 0;
   margin-inline: 0;
 }
-```
 
-**description:** Floats .end child to inline-end with margin.
-**csss:** |.end$blockItem(floatEnd,margin(0.5rem,0,0,0))
-**css:**
-```css
 .\|\.end\$blockItem\(floatEnd\,margin\(0\.5rem\,0\,0\,0\)\)>:where(.end) {
   float: inline-end;
   margin-block: 0.5rem 0;
@@ -262,8 +241,10 @@ $block(padding(1.5rem))
 }
 ```
 
-**description:** Floats .box child to inline-start with asymmetric margins.
-**csss:** |.box$blockItem(floatStart,margin(0,1rem,1rem,0))
+**description:** Floats children with asymmetric margin spacing.
+**csss:**
+|.box$blockItem(floatStart,margin(0,1rem,1rem,0))
+|.note$blockItem(floatEnd,margin(0,0,1rem,1rem))
 **css:**
 ```css
 .\|\.box\$blockItem\(floatStart\,margin\(0\,1rem\,1rem\,0\)\)>:where(.box) {
@@ -271,12 +252,7 @@ $block(padding(1.5rem))
   margin-block: 0 1rem;
   margin-inline: 1rem 0;
 }
-```
 
-**description:** Floats .note child to inline-end with surrounding margins.
-**csss:** |.note$blockItem(floatEnd,margin(0,0,1rem,1rem))
-**css:**
-```css
 .\|\.note\$blockItem\(floatEnd\,margin\(0\,0\,1rem\,1rem\)\)>:where(.note) {
   float: inline-end;
   margin-block: 0 1rem;
