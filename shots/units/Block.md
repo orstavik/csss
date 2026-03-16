@@ -45,9 +45,9 @@ $Block(padding(2rem),breakWord)
 |p$blockItem(margin(0,0,1rem))
 |pre$blockItem(margin(0,0,1rem))
 
-**description:** A Block layout for a product detail page with a constrained max-width of 800px, a full-bleed hero image block at the top with no bottom margin, and evenly spaced descriptive sections stacked below it.
+**description:** A Block layout for a product detail page with a constrained max-width of 800px, a full-bleed hero image block at the top with no bottom margin, and evenly spaced descriptive sections stacked below it, with overflow clipped so hero images never bleed outside the container.
 **csss:**
-$Block(padding(1.5rem))
+$Block(padding(1.5rem),overflowClip)
 |*$BlockItem(margin(0,0,1.5rem),inlineSize(_,_,800px))
 |.hero$blockItem(margin(0,0,0))
 |.description$blockItem(margin(0,0,1.5rem))
@@ -87,13 +87,13 @@ $Block(padding(1.5rem))
 |.entry$blockItem(margin(0,0,1rem))
 |.sub-line$blockItem(margin(0,0,0.5rem))
 
-**description:** A Block layout for a news article with a 600px centered content column, a flush top header with no leading margin, inline pullquotes floating to the end side with a left margin, and consistent paragraph spacing throughout the body.
+**description:** A Block layout for a news article with a 600px centered content column, a flush top header with no leading margin, inline pullquotes floating to the end side with a left margin, and paragraphs clearing the end-side float so they always sit below pulled quotes.
 **csss:**
 $Block(padding(1.5rem))
 |*$BlockItem(margin(0,0,1.5rem),inlineSize(_,_,600px))
 |.header$blockItem(margin(0,0,0))
 |.pullquote$blockItem(floatEnd,margin(0,0,1.5rem,1.5rem))
-|.paragraph$blockItem(margin(0,0,1.5rem))
+|.paragraph$blockItem(clearEnd,margin(0,0,1.5rem))
 
 **description:** A Block layout for a settings or preferences panel with form groups separated by visible top margins, items stacked flush to the container edges with zero inline padding, and the last item in each group carrying no trailing margin.
 **csss:**
@@ -137,24 +137,25 @@ $Block(padding(1.5rem))
 |.footer$blockItem(margin(0,0,0))
 |.footer-content$blockItem(floatEnd,margin(0))
 
-**description:** A Block layout for a compact dashboard widget with no outer padding, tightly packed rows with only 0.25rem vertical gaps, widget header blocks with a slightly larger bottom margin to separate them from their data rows, and no trailing margin on the last child.
+**description:** A Block layout for a compact dashboard widget with no outer padding, tightly packed rows with only 0.25rem vertical gaps, widget header blocks with a slightly larger bottom margin to separate them from their data rows, and a permanent scrollbar so the layout never shifts when content changes.
 **csss:**
-$Block(padding(0),overflowAuto)
+$Block(padding(0),overflowScroll)
 |*$BlockItem(margin(0.25rem,0))
 |.widget-header$blockItem(margin(0,0,0.5rem))
 |.data-row$blockItem(blockSize(2.5rem),margin(0,0,0))
 
-**description:** A full-screen vertical slideshow where each slide fills the viewport height and snaps mandatorily into place, with scroll padding and scroll margin offsetting a fixed 3.5rem top navigation bar.
+**description:** A full-screen vertical slideshow where each slide fills the viewport height and snaps mandatorily into place, with scroll padding and scroll margin offsetting a fixed 3.5rem top navigation bar, and an intro spacer that is explicitly opted out of snapping.
 **csss:**
 $Block(padding(0),overflowSnapMandatory,scrollPadding(3.5rem,0))
 |*$BlockItem(blockSize(100vh),snapStart,scrollMargin(3.5rem,0,0),margin(0))
+|.intro$blockItem(noSnap)
 
-**description:** A long-form article where major section headings softly snap into view when scrolling stops, using scroll margin to keep each section from hiding behind a sticky header.
+**description:** A long-form article where major section headings softly snap into view when scrolling stops, using scroll margin to keep each section from hiding behind a sticky header, and snapStop ensures the scroll always comes to rest exactly on a heading.
 **csss:**
 $Block(padding(2rem),overflowSnap,scrollPadding(2rem,0))
 |*$BlockItem(margin(0,0,2rem))
-|h2$blockItem(snapStart,scrollMargin(2rem,0,0))
-|h3$blockItem(snapStart,scrollMargin(2rem,0,0))
+|h2$blockItem(snapStart,snapStop,scrollMargin(2rem,0,0))
+|h3$blockItem(snapStart,snapStop,scrollMargin(2rem,0,0))
 
 **description:** A tall sidebar panel that scrolls vertically when content overflows but clips any content that spills horizontally, keeping the layout clean without a horizontal scrollbar.
 **csss:**
@@ -182,7 +183,7 @@ $Block(padding(1rem),breakAnywhere)
 |*$BlockItem(margin(0,0,0.25rem))
 |.log-entry$blockItem(inlineSize(100%),margin(0,0,0.5rem))
 
-**description:** A square thumbnail gallery where each item is a fixed 10rem by 10rem block centered horizontally with auto inline margins, suitable for avatars, icons, or product swatches stacked in a single column.
+**description:** A square thumbnail gallery where each item is a fixed 10rem by 10rem block centered horizontally with auto inline margins, and each thumbnail snaps to center as the user scrolls through the stack.
 **csss:**
-$Block(padding(1.5rem))
-|*$BlockItem(size(10rem,10rem),margin(0.5rem,auto))
+$Block(padding(1.5rem),overflowSnap)
+|*$BlockItem(size(10rem,10rem),snapCenter,margin(0.5rem,auto))
