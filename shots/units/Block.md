@@ -143,3 +143,46 @@ $Block(padding(0),overflowAuto)
 |*$BlockItem(margin(0.25rem,0))
 |.widget-header$blockItem(margin(0,0,0.5rem))
 |.data-row$blockItem(blockSize(2.5rem),margin(0,0,0))
+
+**description:** A full-screen vertical slideshow where each slide fills the viewport height and snaps mandatorily into place, with scroll padding and scroll margin offsetting a fixed 3.5rem top navigation bar.
+**csss:**
+$Block(padding(0),overflowSnapMandatory,scrollPadding(3.5rem,0))
+|*$BlockItem(blockSize(100vh),snapStart,scrollMargin(3.5rem,0,0),margin(0))
+
+**description:** A long-form article where major section headings softly snap into view when scrolling stops, using scroll margin to keep each section from hiding behind a sticky header.
+**csss:**
+$Block(padding(2rem),overflowSnap,scrollPadding(2rem,0))
+|*$BlockItem(margin(0,0,2rem))
+|h2$blockItem(snapStart,scrollMargin(2rem,0,0))
+|h3$blockItem(snapStart,scrollMargin(2rem,0,0))
+
+**description:** A tall sidebar panel that scrolls vertically when content overflows but clips any content that spills horizontally, keeping the layout clean without a horizontal scrollbar.
+**csss:**
+$Block(padding(1rem),overflowAutoHidden)
+|*$BlockItem(margin(0,0,0.5rem))
+|.group-header$blockItem(margin(1.5rem,0,0.5rem))
+
+**description:** A block layout with a start-side figure and an end-side aside that float beside the body text, and a footer that clears both floats to always sit below all floated content.
+**csss:**
+$Block(padding(1.5rem),overflowHidden)
+|*$BlockItem(margin(0,0,1rem))
+|.figure$blockItem(floatStart,inlineSize(40%),margin(0,1.5rem,1rem,0))
+|.aside$blockItem(floatEnd,inlineSize(30%),margin(0,0,1rem,1.5rem))
+|.footer$blockItem(clear,margin(2rem,0,0))
+
+**description:** A content block for East Asian text where words must never be broken mid-word at line ends, giving natural CJK line-breaking with generous paragraph spacing.
+**csss:**
+$Block(padding(1.5rem),keepAll)
+|*$BlockItem(margin(0,0,1.25rem))
+|h2$blockItem(margin(0,0,1.75rem))
+
+**description:** A debug log or hash-display panel where every character is an eligible break point so that long unbreakable strings like SHA hashes or minified code never overflow their container.
+**csss:**
+$Block(padding(1rem),breakAnywhere)
+|*$BlockItem(margin(0,0,0.25rem))
+|.log-entry$blockItem(inlineSize(100%),margin(0,0,0.5rem))
+
+**description:** A square thumbnail gallery where each item is a fixed 10rem by 10rem block centered horizontally with auto inline margins, suitable for avatars, icons, or product swatches stacked in a single column.
+**csss:**
+$Block(padding(1.5rem))
+|*$BlockItem(size(10rem,10rem),margin(0.5rem,auto))
