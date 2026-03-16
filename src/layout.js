@@ -259,6 +259,10 @@ const BlockItem = {
   ...ITEM,
   floatStart: { float: "inline-start" },
   floatEnd: { float: "inline-end" },
+  clearStart: { clear: "inline-start" },
+  clearEnd: { clear: "inline-end" },
+  clear: { clear: "both" },
+  clearNone: { clear: "none" },
 }
 
 const block = FunctionBasedOnValueTypes(CONTAINER, {}, {}, res => Object.assign({}, ...Object.values(res)));
