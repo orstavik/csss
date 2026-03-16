@@ -17,7 +17,7 @@ $BlockItem(inlineSize(_,_,600px))
 |.box$blockItem(floatStart,margin(0,1rem,1rem,0))
 |p$blockItem(margin(0,0,1rem))
 |h4$blockItem(margin(0,0,0.5rem))
-|.intro$blockItem(margin(0,0,2rem))
+|.intro$blockItem(clearStart,margin(0,0,2rem))
 |.content$blockItem(margin(0,0,1rem))
 |.note$blockItem(floatEnd,margin(0,0,1rem,1rem))
 
@@ -37,7 +37,7 @@ $Block(padding(1.5rem))
 
 **description:** A Block layout for a documentation page with wide outer padding, generous bottom margins on section-level elements, and tighter margins on paragraphs and code blocks to group related content visually within each section.
 **csss:**
-$Block(padding(2rem))
+$Block(padding(2rem),breakWord)
 |*$BlockItem(margin(0,0,1.5rem))
 |h1$blockItem(margin(0,0,3rem))
 |h2$blockItem(margin(0,0,2rem))
@@ -55,7 +55,7 @@ $Block(padding(1.5rem))
 
 **description:** A Block layout for a sidebar navigation panel with no inline padding, compact vertical spacing between nav items, and extra top margin on group headings to create clear visual clusters without decorative separators.
 **csss:**
-$Block(padding(1.5rem,0))
+$Block(padding(1.5rem,0),overflowAuto)
 |*$BlockItem(margin(0.25rem,0))
 |.nav-group$blockItem(margin(1.5rem,0,0))
 
@@ -74,7 +74,7 @@ $Block(padding(1.5rem))
 
 **description:** A Block layout for a legal or terms-of-service document with a tight reading width of 700px, major numbered sections receiving extra top margin for separation, and nested sub-items indented with a left margin to indicate hierarchy.
 **csss:**
-$Block(padding(1.5rem))
+$Block(padding(1.5rem),breakWord)
 |*$BlockItem(margin(0,0,1.5rem),inlineSize(_,_,700px))
 |.section$blockItem(margin(1.5rem,0,0))
 |.sub-item$blockItem(margin(0,0,0,1.5rem))
@@ -92,7 +92,7 @@ $Block(padding(1.5rem))
 $Block(padding(1.5rem))
 |*$BlockItem(margin(0,0,1.5rem),inlineSize(_,_,600px))
 |.header$blockItem(margin(0,0,0))
-|.pullquote$blockItem(margin(0,0,0,1.5rem))
+|.pullquote$blockItem(floatEnd,margin(0,0,1.5rem,1.5rem))
 |.paragraph$blockItem(margin(0,0,1.5rem))
 
 **description:** A Block layout for a settings or preferences panel with form groups separated by visible top margins, items stacked flush to the container edges with zero inline padding, and the last item in each group carrying no trailing margin.
@@ -125,7 +125,8 @@ $Block(padding(1.5rem,5vw))
 $Block(padding(1.5rem))
 |*$BlockItem(margin(0,0,1.5rem))
 |.title$blockItem(margin(0,0,2rem))
-|.ingredients$blockItem(margin(0,0,1.5rem))
+|.metadata$blockItem(floatStart,margin(0,1.5rem,1rem,0))
+|.ingredients$blockItem(clearStart,margin(0,0,1.5rem))
 |.steps$blockItem(margin(0,0,1.5rem))
 
 **description:** A Block layout for an email newsletter column capped at 600px with centered alignment, alternating section blocks that use top margin to space content rhythmically, and a footer block whose inner content floats to the end side.
@@ -138,7 +139,7 @@ $Block(padding(1.5rem))
 
 **description:** A Block layout for a compact dashboard widget with no outer padding, tightly packed rows with only 0.25rem vertical gaps, widget header blocks with a slightly larger bottom margin to separate them from their data rows, and no trailing margin on the last child.
 **csss:**
-$Block(padding(0))
+$Block(padding(0),overflowAuto)
 |*$BlockItem(margin(0.25rem,0))
 |.widget-header$blockItem(margin(0,0,0.5rem))
-|.data-row$blockItem(margin(0,0,0))
+|.data-row$blockItem(blockSize(2.5rem),margin(0,0,0))
