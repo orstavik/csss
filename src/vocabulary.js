@@ -2,7 +2,7 @@ import nativeAndMore from "./func.js";
 import backgrounds from "./bg.js";
 import border from "./border.js";
 import fonts from "./font.js";
-import layouts from "./layout2.js";
+import layouts from "./layout.js";
 import box from "./box.js";
 import palette from "./palette.js";
 import transitions from "./transitions.js";
