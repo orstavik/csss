@@ -192,12 +192,12 @@
 ```
 
 **description:** Enables scrolling on a flex container with padding.
-**csss:** $flex(overflowScroll,padding(1rem))
+**csss:** $flex(padding(1rem))$box(overflowScroll)
 **css:**
 ```css
-.\$flex\(overflowScroll\,padding\(1rem\)\) {
-  overflow: scroll;
+.\$flex\(padding\(1rem\)\)\$box\(overflowScroll\) {
   padding: 1rem;
+  overflow: scroll;
 }
 ```
 
@@ -206,12 +206,8 @@
 **css:**
 ```css
 .\|\:nth-child\(1\)\$FlexItem\(grow\(1\)\)>:where(:nth-child(1)) {
-  inline-size: unset;
-  block-size: unset;
   margin-block: unset;
   margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
   flex-grow: 1;
 }
 ```
@@ -347,23 +343,13 @@
 ```
 
 **description:** Sets margin, fixed size and scroll-margin on all flex children.
-**csss:** |*$flexItem(margin(5px))$boxItem(size(150px,120px),scrollMargin(10px))
+**csss:** |*$flexItem(margin(5px))$box(size(150px,120px))$boxItem(scrollMargin(10px))
 **css:**
 ```css
-.\|\*\$flexItem\(margin\(5px\)\)\$boxItem\(size\(150px\,120px\)\,scrollMargin\(10px\)\)>* {
+.\|\*\$flexItem\(margin\(5px\)\)\$box\(size\(150px\,120px\)\)\$boxItem\(scrollMargin\(10px\)\)>* {
   margin: 5px;
   inline-size: 150px;
   block-size: 120px;
   scroll-margin: 10px;
-}
-```
-
-**description:** Grid with 2-column layout and asymmetric row/column gap.
-**csss:** $grid(cols(repeat(2,1fr)),gap(1rem,0.5rem))
-**css:**
-```css
-.\$grid\(cols\(repeat\(2\,1fr\)\)\,gap\(1rem\,0\.5rem\)\) {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem 0.5rem;
 }
 ```

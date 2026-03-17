@@ -129,9 +129,9 @@
 ```css
 .\$grid\(cols\(repeat\(4\,1fr\)\)\,gap\(1rem\)\)\$box\(overflowScrollHidden\) {
   grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
   overflow-block: scroll;
   overflow-inline: hidden;
-  gap: 1rem;
 }
 ```
 
@@ -140,12 +140,8 @@
 **css:**
 ```css
 .\|\:nth-child\(1\)\$GridItem\(column\(1\,span\(3\)\)\)>:where(:nth-child(1)) {
-  inline-size: unset;
-  block-size: unset;
   margin-block: unset;
   margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
   grid-column: 1 / span 3;
 }
 ```
