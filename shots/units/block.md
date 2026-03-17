@@ -1,5 +1,5 @@
 **description:** Hides overflowing content on a block container.
-**csss:** $block(overflowHidden)
+**csss:** $block()$box(overflowHidden)
 **css:**
 ```css
 .\$block\(overflowHidden\) {
@@ -8,7 +8,7 @@
 ```
 
 **description:** Enables scrolling for overflowing block content.
-**csss:** $block(overflowScroll)
+**csss:** $block()$box(overflowScroll)
 **css:**
 ```css
 .\$block\(overflowScroll\) {
@@ -17,7 +17,7 @@
 ```
 
 **description:** Hides block overflow but allows inline scrolling.
-**csss:** $block(overflowHiddenScroll)
+**csss:** $block()$box(overflowHiddenScroll)
 **css:**
 ```css
 .\$block\(overflowHiddenScroll\) {
@@ -27,7 +27,7 @@
 ```
 
 **description:** Sets auto overflow with centered text alignment.
-**csss:** $block(overflowAuto)$paragraph(center)
+**csss:** $block()$box(overflowAuto)$paragraph(center)
 **css:**
 ```css
 .\$block\(overflowAuto\)\$paragraph\(center\) {
@@ -95,7 +95,7 @@ $block(padding(1.5rem))
 ```
 
 **description:** Sets inline-size to 200px on a block item.
-**csss:** $blockItem(inlineSize(200px))
+**csss:** $blockItem()$boxItem(inlineSize(200px))
 **css:**
 ```css
 .\$blockItem\(inlineSize\(200px\)\) {
@@ -104,7 +104,7 @@ $block(padding(1.5rem))
 ```
 
 **description:** Sets block-size to 50px on a block item.
-**csss:** $blockItem(blockSize(50px))
+**csss:** $blockItem()$boxItem(blockSize(50px))
 **css:**
 ```css
 .\$blockItem\(blockSize\(50px\)\) {
@@ -113,7 +113,7 @@ $block(padding(1.5rem))
 ```
 
 **description:** Sets explicit inline-size and block-size on a block item.
-**csss:** $blockItem(size(60px,100px))
+**csss:** $blockItem()$boxItem(size(60px,100px))
 **css:**
 ```css
 .\$blockItem\(size\(60px\,100px\)\) {
@@ -123,7 +123,7 @@ $block(padding(1.5rem))
 ```
 
 **description:** Caps max inline-size at 600px with unset min and default.
-**csss:** $blockItem(inlineSize(_,_,600px))
+**csss:** $blockItem()$boxItem(inlineSize(_,_,600px))
 **css:**
 ```css
 .\$blockItem\(inlineSize\(_\,_\,600px\)\) {

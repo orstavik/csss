@@ -142,20 +142,20 @@ $Block(padding(1.5rem))
 $Block(padding(0),overflowScroll)
 |*$BlockItem(margin(0.25rem,0))
 |.widget-header$blockItem(margin(0,0,0.5rem))
-|.data-row$blockItem(blockSize(2.5rem),margin(0,0,0))
+|.data-row$boxItem(blockSize(2.5rem),margin(0,0,0))
 
 **description:** A full-screen vertical slideshow where each slide fills the viewport height and snaps mandatorily into place, with scroll padding and scroll margin offsetting a fixed 3.5rem top navigation bar, and an intro spacer that is explicitly opted out of snapping.
 **csss:**
-$Block(padding(0),overflowSnapMandatory,scrollPadding(3.5rem,0))
-|*$BlockItem(blockSize(100vh),snapStart,scrollMargin(3.5rem,0,0),margin(0))
-|.intro$blockItem(noSnap)
+$Block(padding(0))$Box(overflowSnapMandatory,scrollPadding(3.5rem,0))
+|*$BlockItem(margin(0))$BoxItem(blockSize(100vh),snapStart,scrollMargin(3.5rem,0,0))
+|.intro$blockItem()$boxItem(noSnap)
 
 **description:** A long-form article where major section headings softly snap into view when scrolling stops, using scroll margin to keep each section from hiding behind a sticky header, and snapStop ensures the scroll always comes to rest exactly on a heading.
 **csss:**
-$Block(padding(2rem),overflowSnap,scrollPadding(2rem,0))
+$Block(padding(2rem))$Box(overflowSnap,scrollPadding(2rem,0))
 |*$BlockItem(margin(0,0,2rem))
-|h2$blockItem(snapStart,snapStop,scrollMargin(2rem,0,0))
-|h3$blockItem(snapStart,snapStop,scrollMargin(2rem,0,0))
+|h2$blockItem()$boxItem(snapStart,snapStop,scrollMargin(2rem,0,0))
+|h3$blockItem()$boxItem(snapStart,snapStop,scrollMargin(2rem,0,0))
 
 **description:** A tall sidebar panel that scrolls vertically when content overflows but clips any content that spills horizontally, keeping the layout clean without a horizontal scrollbar.
 **csss:**
@@ -181,9 +181,9 @@ $Block(padding(1.5rem),keepAll)
 **csss:**
 $Block(padding(1rem),breakAnywhere)
 |*$BlockItem(margin(0,0,0.25rem))
-|.log-entry$blockItem(inlineSize(100%),margin(0,0,0.5rem))
+|.log-entry$boxItem(inlineSize(100%),margin(0,0,0.5rem))
 
 **description:** A square thumbnail gallery where each item is a fixed 10rem by 10rem block centered horizontally with auto inline margins, and each thumbnail snaps to center as the user scrolls through the stack.
 **csss:**
 $Block(padding(1.5rem),overflowSnap)
-|*$BlockItem(size(10rem,10rem),snapCenter,margin(0.5rem,auto))
+|*$BlockItem(margin(0.5rem,auto))$BoxItem(size(10rem,10rem),snapCenter)
