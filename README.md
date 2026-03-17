@@ -95,6 +95,16 @@ csss/
 
 CSSS works in modern browsers that support CSS Custom Properties and other modern CSS features.
 
+## Testing
+
+To run the automated unit tests without installing NPM packages in the repository, you can use `npx` with `http-server` and `puppeteer`. The tests load `/test/units/index.html` and compare the console logs against `/test/units/expected.json`.
+
+Run this single-line command from the root of the repository:
+
+```bash
+npx http-server -p 3003 --cors & HTTP_PID=$! && npx -y -p puppeteer node test/units/auto_test.js 3003; kill $HTTP_PID
+```
+
 ## Documentation
 
 For a comprehensive reference of all properties and syntax patterns, see the CSS$ Properties Reference.

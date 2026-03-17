@@ -33,7 +33,7 @@ function printDiff({ key, actual, expected, type }) {
 
 export default async function runTests(paths, test) {
   if (!location.hash) location.hash = paths;
-  const tests = location.hash.slice(1).split(",").map(p => p + ".md");
+  const tests = location.hash.slice(1).split(",").map(p => "/shots/units/" + p + ".md");
   for (let file of tests) {
     console.warn(`Testing ${file}`);
     const txt = await (await fetch(file)).text();
