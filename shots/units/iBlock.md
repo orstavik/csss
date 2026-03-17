@@ -22,7 +22,7 @@ $iBlock — container
 ```
 
 **description:** Hides overflow on an inline-block container.
-**csss:** $iBlock(overflowHidden)
+**csss:** $iBlock()$box(overflowHidden)
 **css:**
 ```css
 .\$iBlock\(overflowHidden\) {

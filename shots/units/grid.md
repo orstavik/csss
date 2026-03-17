@@ -124,10 +124,10 @@
 ```
 
 **description:** 4-column grid with block-scroll and inline-hidden overflow.
-**csss:** $grid(cols(repeat(4,1fr)),overflowScrollHidden,gap(1rem))
+**csss:** $grid(cols(repeat(4,1fr)),gap(1rem))$box(overflowScrollHidden)
 **css:**
 ```css
-.\$grid\(cols\(repeat\(4\,1fr\)\)\,overflowScrollHidden\,gap\(1rem\)\) {
+.\$grid\(cols\(repeat\(4\,1fr\)\)\,gap\(1rem\)\)\$box\(overflowScrollHidden\) {
   grid-template-columns: repeat(4, 1fr);
   overflow-block: scroll;
   overflow-inline: hidden;

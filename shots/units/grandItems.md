@@ -55,7 +55,7 @@
 ```
 
 **description:** Sets 50x50px size on all grid grandchildren.
-**csss:** |*|*$gridItem(size(50px,50px))
+**csss:** |*|*$boxItem(size(50px,50px))
 **css:**
 ```css
 .\|\*\|\*\$gridItem\(size\(50px\,50px\)\)>*>* {

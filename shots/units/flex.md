@@ -347,10 +347,10 @@
 ```
 
 **description:** Sets margin, fixed size and scroll-margin on all flex children.
-**csss:** |*$flexItem(margin(5px),size(150px,120px),scrollMargin(10px))
+**csss:** |*$flexItem(margin(5px))$boxItem(size(150px,120px),scrollMargin(10px))
 **css:**
 ```css
-.\|\*\$flexItem\(margin\(5px\)\,size\(150px\,120px\)\,scrollMargin\(10px\)\)>* {
+.\|\*\$flexItem\(margin\(5px\)\)\$boxItem\(size\(150px\,120px\)\,scrollMargin\(10px\)\)>* {
   margin: 5px;
   inline-size: 150px;
   block-size: 120px;
