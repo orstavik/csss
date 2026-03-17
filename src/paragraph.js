@@ -25,16 +25,17 @@ const paragraph = FunctionBasedOnValueTypes({
   preserveSpacesNowrap: { whiteSpace: "preserve-spaces nowrap" },
   breakSpacesNowrap: { whiteSpace: "break-spaces nowrap" },
 
-  //todo fix the text wrapping combos.
-  anywhere: { wordBreak: "break-all", overflowWrap: "anywhere" },
-  // breakAnywhere: { overflowWrap: "anywhere" },
-  breakWord: { wordBreak: "break-all", overflowWrap: "break-word" },
-  breakAll: { wordBreak: "break-all" },
-  // breakWord: { overflowWrap: "break-word" },
-  overflowWrapNone: { wordBreak: "none", overflowWrap: "none" },
+  breakWord: { wordBreak: "normal", overflowWrap: "break-word" },
+  breakAnywhere: { wordBreak: "normal", overflowWrap: "anywhere" },
+  breakLongWords: { wordBreak: "keep-all", overflowWrap: "break-word" },
+  breakNone: { wordBreak: "keep-all", overflowWrap: "normal" },
+  breakAll: { wordBreak: "break-all", overflowWrap: "normal" },
+  breakNormal: { wordBreak: "normal", overflowWrap: "normal" },
 
-  keepAll: { wordBreak: "keep-all" },
-  //wordBreak: keep-all
+  lineBreakLoose: { lineBreak: "loose" },
+  lineBreakStrict: { lineBreak: "strict" },
+  lineBreakAnywhere: { lineBreak: "anywhere" },
+  lineBreakNormal: { lineBreak: "normal" },
 
   start: { textAlign: "start" },
   end: { textAlign: "end" },
@@ -72,6 +73,7 @@ const PARAGRAPH = {
   whiteSpace: "unset",
   overflowWrap: "unset",
   wordBreak: "unset",
+  lineBreak: "unset",
   textAlign: "unset",
   textAlignLast: "unset",
   hangingPunctuation: "unset",
@@ -100,6 +102,7 @@ export default {
   whiteSpace: undefined,
   overflowWrap: undefined,
   wordBreak: undefined,
+  lineBreak: undefined,
   textAlign: undefined,
   textAlignLast: undefined,
   hangingPunctuation: undefined,
