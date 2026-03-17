@@ -21,7 +21,7 @@
 **csss:** .comment$paragraph(preWrap,breakWord,spacing(0.1em),1.5)
 **css:**
 ```css
-\.comment.\.comment\$paragraph\(preWrap\,breakWord\,spacing\(0\.1em\)\,1\.5\) {
+.\.comment\$paragraph\(preWrap\,breakWord\,spacing\(0\.1em\)\,1\.5\):where(.comment) {
   white-space: pre-wrap;
   word-break: normal;
   overflow-wrap: break-word;
@@ -53,7 +53,7 @@
 **csss:** |:first-child$paragraph(breakAll,spacing(0),1.2)
 **css:**
 ```css
-.\|\:first-child\$paragraph\(breakAll\,spacing\(0\)\,1\.2\)>:first-child {
+.\|\:first-child\$paragraph\(breakAll\,spacing\(0\)\,1\.2\)>:where(:first-child) {
   word-break: break-all;
   overflow-wrap: normal;
   word-spacing: 0;
