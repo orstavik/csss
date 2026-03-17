@@ -1,56 +1,38 @@
 **description:** Hides overflowing content on a block container.
-**csss:** $block(overflowHidden)
+**csss:** $box(overflowHidden)
 **css:**
 ```css
-.\$block\(overflowHidden\) {
+.\$box\(overflowHidden\) {
   overflow: hidden;
 }
 ```
 
 **description:** Enables scrolling for overflowing block content.
-**csss:** $block(overflowScroll)
+**csss:** $box(overflowScroll)
 **css:**
 ```css
-.\$block\(overflowScroll\) {
+.\$box\(overflowScroll\) {
   overflow: scroll;
 }
 ```
 
 **description:** Hides block overflow but allows inline scrolling.
-**csss:** $block(overflowHiddenScroll)
+**csss:** $box(overflowHiddenScroll)
 **css:**
 ```css
-.\$block\(overflowHiddenScroll\) {
+.\$box\(overflowHiddenScroll\) {
   overflow-block: hidden;
   overflow-inline: scroll;
 }
 ```
 
 **description:** Sets auto overflow with centered text alignment.
-**csss:** $block(overflowAuto)$paragraph(center)
+**csss:** $box(overflowAuto)$paragraph(center)
 **css:**
 ```css
-.\$block\(overflowAuto\)\$paragraph\(center\) {
+.\$box\(overflowAuto\)\$paragraph\(center\) {
   overflow: auto;
   text-align: center;
-}
-```
-
-**description:** Enables word breaking at overflow boundaries.
-**csss:** $block(breakWord)
-**css:**
-```css
-.\$block\(breakWord\) {
-  overflow-wrap: break-word;
-}
-```
-
-**description:** Breaks words at any character to prevent overflow.
-**csss:** $block(breakAll)
-**css:**
-```css
-.\$block\(breakAll\) {
-  word-break: break-all;
 }
 ```
 
@@ -95,38 +77,38 @@ $block(padding(1.5rem))
 ```
 
 **description:** Sets inline-size to 200px on a block item.
-**csss:** $blockItem(inlineSize(200px))
+**csss:** $box(inlineSize(200px))
 **css:**
 ```css
-.\$blockItem\(inlineSize\(200px\)\) {
+.\$box\(inlineSize\(200px\)\) {
   inline-size: 200px;
 }
 ```
 
 **description:** Sets block-size to 50px on a block item.
-**csss:** $blockItem(blockSize(50px))
+**csss:** $box(blockSize(50px))
 **css:**
 ```css
-.\$blockItem\(blockSize\(50px\)\) {
+.\$box\(blockSize\(50px\)\) {
   block-size: 50px;
 }
 ```
 
 **description:** Sets explicit inline-size and block-size on a block item.
-**csss:** $blockItem(size(60px,100px))
+**csss:** $box(size(60px,100px))
 **css:**
 ```css
-.\$blockItem\(size\(60px\,100px\)\) {
+.\$box\(size\(60px\,100px\)\) {
   inline-size: 60px;
   block-size: 100px;
 }
 ```
 
 **description:** Caps max inline-size at 600px with unset min and default.
-**csss:** $blockItem(inlineSize(_,_,600px))
+**csss:** $box(inlineSize(_,_,600px))
 **css:**
 ```css
-.\$blockItem\(inlineSize\(_\,_\,600px\)\) {
+.\$box\(inlineSize\(_\,_\,600px\)\) {
   min-inline-size: unset;
   inline-size: unset;
   max-inline-size: 600px;
@@ -138,12 +120,8 @@ $block(padding(1.5rem))
 **css:**
 ```css
 .\|\*\$BlockItem\(margin\(0\,0\,1rem\)\)>* {
-  inline-size: unset;
-  block-size: unset;
   margin-block: 0 1rem;
   margin-inline: 0;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
 }
 ```
 

@@ -25,9 +25,15 @@ const paragraph = FunctionBasedOnValueTypes({
   preserveSpacesNowrap: { whiteSpace: "preserve-spaces nowrap" },
   breakSpacesNowrap: { whiteSpace: "break-spaces nowrap" },
 
+  //todo fix the text wrapping combos.
   anywhere: { wordBreak: "break-all", overflowWrap: "anywhere" },
+  // breakAnywhere: { overflowWrap: "anywhere" },
   breakWord: { wordBreak: "break-all", overflowWrap: "break-word" },
+  breakAll: { wordBreak: "break-all" },
+  // breakWord: { overflowWrap: "break-word" },
   overflowWrapNone: { wordBreak: "none", overflowWrap: "none" },
+
+  keepAll: { wordBreak: "keep-all" },
   //wordBreak: keep-all
 
   start: { textAlign: "start" },

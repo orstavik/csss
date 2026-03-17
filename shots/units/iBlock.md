@@ -1,10 +1,10 @@
 $IBlock — reset defaults
 
 **description:** Full display:inline-block reset with centered text.
-**csss:** $IBlock()$paragraph(center)
+**csss:** $IBlock$paragraph(center)
 **css:**
 ```css
-.\$IBlock\(\)\$paragraph\(center\) {
+.\$IBlock\$paragraph\(center\) {
   display: inline-block;
   text-align: center;
 }
@@ -13,19 +13,19 @@ $IBlock — reset defaults
 $iBlock — container
 
 **description:** Sets centered text on an inline-block container.
-**csss:** $iBlock()$paragraph(center)
+**csss:** $paragraph(center)
 **css:**
 ```css
-.\$iBlock\(\)\$paragraph\(center\) {
+.\$paragraph\(center\) {
   text-align: center;
 }
 ```
 
 **description:** Hides overflow on an inline-block container.
-**csss:** $iBlock(overflowHidden)
+**csss:** $box(overflowHidden)
 **css:**
 ```css
-.\$iBlock\(overflowHidden\) {
+.\$box\(overflowHidden\) {
   overflow: hidden;
 }
 ```
@@ -49,12 +49,8 @@ $IBlockItem — reset defaults
 **css:**
 ```css
 .\|\*\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
-  inline-size: unset;
-  block-size: unset;
   margin-block: 1rem 0.5rem;
   margin-inline: 0;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
 }
 ```
 
@@ -81,10 +77,18 @@ $iBlockItem — vertical alignment
 $iBlockItem — size
 
 **description:** Sets inline-size to 200px on all inline-block children.
-**csss:** |*$iBlockItem(inlineSize(200px))
+**csss:** |*$Box(size(200px))
 **css:**
 ```css
-.\|\*\$iBlockItem\(inlineSize\(200px\)\)>* {
+.\|\*\$Box\(size\(200px\)\)>* {
   inline-size: 200px;
+  block-size: unset;
+  min-inline-size: unset;
+  max-inline-size: unset;
+  min-block-size: unset;
+  max-block-size: unset;
+  overflow: unset;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
 }
 ```
