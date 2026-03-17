@@ -1,20 +1,27 @@
-**description:** Styles a highly legible blog paragraph with justified text, a slight indent for new paragraphs, hyphenation enabled, and a comfortable 1.6 line height.
-**csss:** $paragraph(1.6,justify,indent(1.5em),hyphens)
+**description:** Creates a highly legible blog paragraph using a preset. Resets all inherited styles and applies full justification, a comfortable line-height, hyphenation, and a slight indent for new paragraphs.
+**csss:** $Paragraph(_,1.6,justify,indent(1.5em),hyphens)
 **css:**
 ```css
-.\$paragraph\(1\.6\,justify\,indent\(1\.5em\)\,hyphens\) {
+.\$Paragraph\(_\,1\.6\,justify\,indent\(1\.5em\)\,hyphens\) {
   line-height: 1.6;
-  text-align: justify;
   text-indent: 1.5em;
+  word-spacing: unset;
   hyphens: auto;
+  white-space: unset;
+  overflow-wrap: unset;
+  word-break: unset;
+  line-break: unset;
+  text-align: justify;
+  text-align-last: unset;
+  hanging-punctuation: unset;
 }
 ```
 
-**description:** Formats user-generated comments or markdown content by preserving whitespace formatting (newlines and spaces) while ensuring that long continuous strings like URLs will wrap to prevent container overflow.
-**csss:** $paragraph(preWrap,breakWord,spacing(0.1em),1.5)
+**description:** Formats user-generated comments or markdown blocks by targeting a specific class. Additively applies whitespace preservation, safe wrapping for long URLs, and custom line-height.
+**csss:** .comment$paragraph(preWrap,breakWord,spacing(0.1em),1.5)
 **css:**
 ```css
-.\$paragraph\(preWrap\,breakWord\,spacing\(0\.1em\)\,1\.5\) {
+\.comment.\.comment\$paragraph\(preWrap\,breakWord\,spacing\(0\.1em\)\,1\.5\) {
   white-space: pre-wrap;
   word-break: normal;
   overflow-wrap: break-word;
@@ -23,24 +30,30 @@
 }
 ```
 
-**description:** Sets strict typographic rules for formal, mixed-language documents (like legal text with CJK characters), preventing word breaks within CJK text but allowing long English strings to break, while strictly controlling punctuation at the start and end of lines.
-**csss:** $paragraph(breakLongWords,lineBreakStrict,hangingPunctuationFirst,1.8)
+**description:** Sets strict typographic rules for formal, mixed-language documents (like legal text with CJK). Resets all paragraph defaults, preventing word breaks within CJK text but allowing long strings to break, while controlling line-breaking and punctuation.
+**csss:** $Paragraph(_,breakLongWords,lineBreakStrict,hangingPunctuationFirst,1.8)
 **css:**
 ```css
-.\$paragraph\(breakLongWords\,lineBreakStrict\,hangingPunctuationFirst\,1\.8\) {
-  word-break: keep-all;
-  overflow-wrap: break-word;
-  line-break: strict;
-  hanging-punctuation: first;
+.\$Paragraph\(_\,breakLongWords\,lineBreakStrict\,hangingPunctuationFirst\,1\.8\) {
   line-height: 1.8;
+  text-indent: unset;
+  word-spacing: unset;
+  hyphens: unset;
+  white-space: unset;
+  overflow-wrap: break-word;
+  word-break: keep-all;
+  line-break: strict;
+  text-align: unset;
+  text-align-last: unset;
+  hanging-punctuation: first;
 }
 ```
 
-**description:** Styles a terminal output, hash, or hexadecimal dump by aggressively breaking words at the exact edge of the box regardless of boundaries, using a tight line height and zero word spacing.
-**csss:** $paragraph(breakAll,spacing(0),1.2)
+**description:** Styles the first child in a container (like a terminal output or hash dump block). Additively forces aggressive word-breaking at the box edge, tight line height, and zero spacing.
+**csss:** |:first-child$paragraph(breakAll,spacing(0),1.2)
 **css:**
 ```css
-.\$paragraph\(breakAll\,spacing\(0\)\,1\.2\) {
+.\|\:first-child\$paragraph\(breakAll\,spacing\(0\)\,1\.2\)>:first-child {
   word-break: break-all;
   overflow-wrap: normal;
   word-spacing: 0;
@@ -48,7 +61,7 @@
 }
 ```
 
-**description:** Resets all paragraph inheritance defaults for nested elements, forcing a left-aligned, nowrap block with strict line-breaking rules and no indent.
+**description:** Resets paragraph inheritance defaults for nested elements using a universal child selector. Forces a left-aligned, nowrap block with strict line-breaking rules and absolutely no indent.
 **csss:** |*$Paragraph(_,left,nowrap,indent(0),lineBreakNormal)
 **css:**
 ```css
@@ -64,16 +77,5 @@
   text-align: left;
   text-align-last: unset;
   hanging-punctuation: unset;
-}
-```
-
-**description:** Styles a blockquote or scientific abstract where the text block is fully justified, but the very last line is specifically aligned to the start (left for LTR) to prevent unnatural stretching of the final few words.
-**csss:** $paragraph(justify,lastStart,1.5)
-**css:**
-```css
-.\$paragraph\(justify\,lastStart\,1\.5\) {
-  text-align: justify;
-  text-align-last: start;
-  line-height: 1.5;
 }
 ```
