@@ -2,6 +2,8 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 
+console.log("Starting auto_test.js...");
+
 (async () => {
   const expectedPath = path.join(__dirname, 'expected.json');
   const expectedLogs = JSON.parse(fs.readFileSync(expectedPath, 'utf8'));

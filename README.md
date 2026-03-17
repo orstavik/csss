@@ -102,7 +102,7 @@ To run the automated unit tests without installing NPM packages in the repositor
 Run this single-line command from the root of the repository:
 
 ```bash
-npx http-server -p 3003 --cors & HTTP_PID=$! && npx -y -p puppeteer node test/units/auto_test.js 3003; kill $HTTP_PID
+npm install --no-save puppeteer && npx http-server -p 3066 --cors & HTTP_PID=$! && node test/units/auto_test.js 3066; kill $HTTP_PID
 ```
 
 ## Documentation
