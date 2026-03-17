@@ -36,24 +36,6 @@
 }
 ```
 
-**description:** Enables word breaking at overflow boundaries.
-**csss:** $block(breakWord)
-**css:**
-```css
-.\$block\(breakWord\) {
-  overflow-wrap: break-word;
-}
-```
-
-**description:** Breaks words at any character to prevent overflow.
-**csss:** $block(breakAll)
-**css:**
-```css
-.\$block\(breakAll\) {
-  word-break: break-all;
-}
-```
-
 **description:** Clamps text to 3 visible lines with overflow hidden (uppercase variant).
 **csss:** $LineClamp(3)
 **css:**

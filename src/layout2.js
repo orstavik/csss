@@ -1,7 +1,6 @@
-import { ValueTypes, FunctionTypes, Interpreters } from "./func.js";
-const { basic: isBasic } = Interpreters;
+import { ValueTypes, FunctionTypes } from "./func.js";
 const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest, LogicalFour } = FunctionTypes;
-const { Length, NumberInterpreter, Basic, LengthPercent, LengthPercentUnset, LengthPercentNumber, RepeatBasic, SpanBasic } = ValueTypes;
+const { NumberInterpreter, Basic, LengthPercent, LengthPercentUnset, RepeatBasic, SpanBasic } = ValueTypes;
 
 const ALIGNMENTS = (_ => {
   const POSITIONS = "|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd";
@@ -51,10 +50,6 @@ const ALIGNMENTS = (_ => {
 
 const CONTAINER = {
   padding: LogicalFour("padding", LengthPercent),
-  breakWord: { overflowWrap: "break-word" },
-  breakAnywhere: { overflowWrap: "anywhere" },
-  breakAll: { wordBreak: "break-all" },
-  keepAll: { wordBreak: "keep-all" },
 };
 
 const ITEM = {
@@ -71,6 +66,8 @@ const gap = SequentialFunction("/1-2", [LengthPercentUnset], (n, ar) => {
 export const DEFAULTS = {
   Block: {
     display: "block",
+    //todo this is NOT as easy as I thought..
+    //">* /*blockItem*/": BlockItemDefaults,    //the BlockItem defaults are always set by the Block.
   },
   BlockItem: {
     marginBlock: "unset",
@@ -78,7 +75,7 @@ export const DEFAULTS = {
   },
   LineClamp: {
     display: "-webkit-box",
-    WebkitLineClamp: 3,
+    WebkitLineClamp: 3, //3 is always set/overwritten
     WebkitBoxOrient: "vertical",
     overflowBlock: "hidden",
   },
@@ -117,11 +114,13 @@ const GRID = {
   ...CONTAINER,
   ...ALIGNMENTS.placeContent,
   ...ALIGNMENTS.placeItems,
+  //todo what is the bertScore distance from cols to columns?
   cols: SequentialFunction("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
   columns: SequentialFunction("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
   rows: SequentialFunction("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateRows: ar.join(" ") })),
   areas: SequentialFunction("/1-", [RepeatBasic], (n, ar) => ({ gridTemplateAreas: ar.join(" ") })),
   gap,
+  //todo test this!!
   column: { gridAutoFlow: "column" },
   dense: { gridAutoFlow: "dense row" },
   denseColumn: { gridAutoFlow: "dense column" },
@@ -131,8 +130,8 @@ const GRID = {
 const _GridItem = {
   ...ALIGNMENTS.placeSelf,
   ...ITEM,
-  column: SequentialFunction("/1-2", [SpanBasic], (n, ar) => ({ gridColumn: ar.join(" / ") })),
-  row: SequentialFunction("/1-2", [SpanBasic], (n, ar) => ({ gridRow: ar.join(" / ") })),
+  column: SequentialFunction("/1-2", [SpanBasic], (n, ar) => ({ gridColumn: ar.join(" / ") })), //todo test how `_` works as first or second argument.
+  row: SequentialFunction("/1-2", [SpanBasic], (n, ar) => ({ gridRow: ar.join(" / ") })),       //todo test how `_` works as first or second argument.
 };
 
 const FLEX = {
@@ -156,6 +155,7 @@ const _FlexItem = {
   grow: SingleArgumentFunction(Basic, (n, v) => ({ flexGrow: v })),
   shrink: SingleArgumentFunction(Basic, (n, v) => ({ flexShrink: v })),
   order: SingleArgumentFunction(Basic, (n, v) => ({ [n]: v })),
+  //todo safe
 };
 
 const BlockItem = {
@@ -199,9 +199,6 @@ export default {
   Flex: FunctionWithDefaultValues(DEFAULTS.Flex, flex),
   FlexItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, flexItem),
 
-  lineHeight: SingleArgumentFunction(LengthPercentNumber, (n, v) => ({ lineHeight: v })),
-  wordSpacing: SingleArgumentFunction(Length, (n, v) => ({ wordSpacing: v })),
-
   hide: _ => ({ display: "none" }),
 
   order: undefined,
@@ -209,7 +206,6 @@ export default {
   gap: undefined,
   margin: undefined,
   padding: undefined,
-
   placeContent: undefined,
   justifyContent: undefined,
   alignContent: undefined,

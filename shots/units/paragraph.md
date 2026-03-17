@@ -32,6 +32,25 @@
 }
 ```
 
+**description:** Enables word breaking at overflow boundaries.
+**csss:** $paragraph(breakWord)
+**css:**
+```css
+.\$paragraph\(breakWord\) {
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+```
+
+**description:** Breaks words at any character to prevent overflow.
+**csss:** $paragraph(breakAll)
+**css:**
+```css
+.\$paragraph\(breakAll\) {
+  word-break: break-all;
+}
+```
+
 
 **description:** Prevents paragraph text from wrapping.
 **csss:** $paragraph(nowrap)
