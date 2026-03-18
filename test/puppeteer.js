@@ -1,4 +1,7 @@
-const ms = require('ms');
+//(npx http-server -p 3066 --cors -s & HTTP_PID=$!; 
+// trap "kill -- -$HTTP_PID 2>/dev/null" EXIT; while ! curl -s http://127.0.0.1:3066 > /dev/null; do sleep 1; done;
+// npx --no -p puppeteer node test/puppeteer.js 3066 "/test/index.html")
+
 const puppeteer = require('puppeteer');
 
 (async () => {
