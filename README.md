@@ -4,14 +4,17 @@ A lightweight CSS preprocessor that enables writing concise, expressive CSS dire
 
 ## Testing
 
-1. start a local server in terminal A in the repository root directory: 
+1. start a local server in the repository root directory: 
 ```bash
 npx http-server -p 3003 --cors
 ```
+To view the test in a browser: (http://127.0.0.1:3003/test)[http://127.0.0.1:3003/test]
 
-2. run the automated tests in terminal B in the repository root directory: 
+2. run automated tests in the repository root directory: 
 ```bash
-npx --no -p puppeteer node test/puppeteer.js 3069 "/test/index.html"`
+(npx http-server -p 3066 --cors -s & HTTP_PID=$!; trap "kill -- -$HTTP_PID 2>/dev/null" EXIT; while ! curl -s http://127.0.0.1:3066 > /dev/null; do sleep 1; done; npx --no -p puppeteer node test/puppeteer.js 3066 "/test/index.html")
 ```
 
-3. To view the test in a browser: (http://127.0.0.1:3003/test)[http://127.0.0.1:3003/test]
+* ✅ test passed
+* 🟦 test passed, but with whitespace differences
+* ❌ test failed
