@@ -72,12 +72,13 @@ $IBlock(padding(1rem))$paragraph(center)
 
 **description:** An inline media row with centered text and mixed top and middle alignment.
 **csss:**
-$iBlock(padding(0.5rem))$paragraph(center)
+$IBlock(padding(0.5rem))$paragraph(center)
 |.lead$iBlockItem(alignTop,margin(0,1rem,1rem,0))
 |.cta$iBlockItem(alignMiddle)
 **css:**
 ```css
-.\$iBlock\(padding\(0\.5rem\)\)\$paragraph\(center\) {
+.\$IBlock\(padding\(0\.5rem\)\)\$paragraph\(center\) {
+  display: inline-block;
   padding: 0.5rem;
   text-align: center;
 }

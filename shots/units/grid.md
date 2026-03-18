@@ -1,7 +1,7 @@
 **description:** A two-column Grid shell with a spanning lead item.
 **csss:**
 $Grid(cols(1fr,2fr),rows(auto),gap(1rem),padding(1rem))
-|:nth-child(1)$GridItem(column(1,span(2)))
+|:nth-child(1)$gridItem(column(1,span(2)))
 **css:**
 ```css
 .\$Grid\(cols\(1fr\,2fr\)\,rows\(auto\)\,gap\(1rem\)\,padding\(1rem\)\) {
@@ -14,7 +14,7 @@ $Grid(cols(1fr,2fr),rows(auto),gap(1rem),padding(1rem))
   padding: 1rem;
 }
 
-.\|\:nth-child\(1\)\$GridItem\(column\(1\,span\(2\)\)\)>:where(:nth-child(1)) {
+.\|\:nth-child\(1\)\$gridItem\(column\(1\,span\(2\)\)\)>:where(:nth-child(1)) {
   grid-column: 1 / span 2;
 }
 ```
@@ -22,7 +22,7 @@ $Grid(cols(1fr,2fr),rows(auto),gap(1rem),padding(1rem))
 **description:** A column-flow Grid board with a tall spanning item.
 **csss:**
 $Grid(rows(repeat(3,1fr)),column,gap(0.5rem),padding(1rem))
-|:nth-child(2)$GridItem(row(1,span(2)))
+|:nth-child(2)$gridItem(row(1,span(2)))
 **css:**
 ```css
 .\$Grid\(rows\(repeat\(3\,1fr\)\)\,column\,gap\(0\.5rem\)\,padding\(1rem\)\) {
@@ -32,13 +32,7 @@ $Grid(rows(repeat(3,1fr)),column,gap(0.5rem),padding(1rem))
   padding: 1rem;
 }
 
-.\|\:nth-child\(2\)\$GridItem\(row\(1\,span\(2\)\)\)>:where(:nth-child(2)) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
+.\|\:nth-child\(2\)\$gridItem\(row\(1\,span\(2\)\)\)>:where(:nth-child(2)) {
   grid-row: 1 / span 2;
 }
 ```
@@ -77,8 +71,8 @@ $Grid(contentCenter,itemsStretch,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
 **description:** A two-column Grid editorial layout with placed items.
 **csss:**
 $Grid(contentStartEnd,itemsStretchStart,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
-|:nth-child(1)$GridItem(column(1,1))
-|:nth-child(2)$GridItem(row(2,span(2)),column(2))
+|:nth-child(1)$gridItem(column(1,1))
+|:nth-child(2)$gridItem(row(2,span(2)),column(2))
 **css:**
 ```css
 .\$Grid\(contentStartEnd\,itemsStretchStart\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
@@ -89,11 +83,11 @@ $Grid(contentStartEnd,itemsStretchStart,cols(repeat(2,1fr)),gap(1rem),padding(1r
   padding: 1rem;
 }
 
-.\|\:nth-child\(1\)\$GridItem\(column\(1\,1\)\)>:where(:nth-child(1)) {
+.\|\:nth-child\(1\)\$gridItem\(column\(1\,1\)\)>:where(:nth-child(1)) {
   grid-column: 1 / 1;
 }
 
-.\|\:nth-child\(2\)\$GridItem\(row\(2\,span\(2\)\)\,column\(2\)\)>:where(:nth-child(2)) {
+.\|\:nth-child\(2\)\$gridItem\(row\(2\,span\(2\)\)\,column\(2\)\)>:where(:nth-child(2)) {
   grid-row: 2 / span 2;
   grid-column: 2;
 }
@@ -102,9 +96,9 @@ $Grid(contentStartEnd,itemsStretchStart,cols(repeat(2,1fr)),gap(1rem),padding(1r
 **description:** A collage Grid with a wide featured panel, a centered highlight tile, and a tall supporting column.
 **csss:**
 $Grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),padding(1rem))
-|.a$GridItem(column(1,span(2)),row(1))
-|.b$GridItem(selfCenter,column(3),row(2))
-|.c$GridItem(selfStretchStart,column(1),row(2,span(2)))
+|.a$gridItem(column(1,span(2)),row(1))
+|.b$gridItem(selfCenter,column(3),row(2))
+|.c$gridItem(selfStretchStart,column(1),row(2,span(2)))
 **css:**
 ```css
 .\$Grid\(cols\(repeat\(3\,1fr\)\)\,rows\(repeat\(3\,80px\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
@@ -117,24 +111,18 @@ $Grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),padding(1rem))
   padding: 1rem;
 }
 
-.\|\.a\$GridItem\(column\(1\,span\(2\)\)\,row\(1\)\)>:where(.a) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
+.\|\.a\$gridItem\(column\(1\,span\(2\)\)\,row\(1\)\)>:where(.a) {
   grid-column: 1 / span 2;
   grid-row: 1;
 }
 
-.\|\.b\$GridItem\(selfCenter\,column\(3\)\,row\(2\)\)>:where(.b) {
+.\|\.b\$gridItem\(selfCenter\,column\(3\)\,row\(2\)\)>:where(.b) {
   place-self: center;
   grid-column: 3;
   grid-row: 2;
 }
 
-.\|\.c\$GridItem\(selfStretchStart\,column\(1\)\,row\(2\,span\(2\)\)\)>:where(.c) {
+.\|\.c\$gridItem\(selfStretchStart\,column\(1\)\,row\(2\,span\(2\)\)\)>:where(.c) {
   place-self: stretch start;
   grid-column: 1;
   grid-row: 2 / span 2;
@@ -144,7 +132,7 @@ $Grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),padding(1rem))
 **description:** A scrollable Grid gallery with a wide first item.
 **csss:**
 $Grid(cols(repeat(4,1fr)),overflowScrollHidden,gap(1rem))
-|:nth-child(1)$GridItem(column(1,span(3)))
+|:nth-child(1)$gridItem(column(1,span(3)))
 **css:**
 ```css
 .\$Grid\(cols\(repeat\(4\,1fr\)\)\,overflowScrollHidden\,gap\(1rem\)\) {
@@ -153,13 +141,7 @@ $Grid(cols(repeat(4,1fr)),overflowScrollHidden,gap(1rem))
   overflow-inline: hidden;
   gap: 1rem;
 }
-.\|\:nth-child\(1\)\$GridItem\(column\(1\,span\(3\)\)\)>:where(:nth-child(1)) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
+.\|\:nth-child\(1\)\$gridItem\(column\(1\,span\(3\)\)\)>:where(:nth-child(1)) {
   grid-column: 1 / span 3;
 }
 ```
