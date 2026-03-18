@@ -1,40 +1,6 @@
-import { ValueTypes, FunctionTypes, Interpreters } from "./func.js";
-const { basic: isBasic } = Interpreters;
+import { ValueTypes, FunctionTypes } from "./func.js";
 const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest, LogicalFour } = FunctionTypes;
-const { Length, NumberInterpreter, Basic, LengthPercent, LengthPercentUnset, LengthPercentNumber, RepeatBasic, SpanBasic } = ValueTypes;
-
-function toSize(NAME, { args }) {
-  if (args.length != 1 && args.length != 3)
-    throw new SyntaxError(`$${NAME}() accepts only 1 or 3 arguments, got ${args.length}.`);
-  args = args.map(a =>
-    a.text == "_" ? "unset" :
-      isBasic(a).text
-  );
-  if (args.length === 1)
-    return { [NAME]: args[0] };
-  const NAME2 = NAME[0].toUpperCase() + NAME.slice(1);
-  return {
-    ["min" + NAME2]: args[0],
-    [NAME]: args[1],
-    ["max" + NAME2]: args[2]
-  };
-}
-
-function size({ args }) {
-  if (args.length == 1)
-    return toSize("inlineSize", { args });
-  if (args.length == 2)
-    return {
-      ...toSize("inlineSize", { args: [args[0]] }),
-      ...toSize("blockSize", { args: [args[1]] })
-    };
-  if (args.length == 6)
-    return {
-      ...toSize("inlineSize", { args: args.slice(0, 3) }),
-      ...toSize("blockSize", { args: args.slice(3) })
-    };
-  throw new SyntaxError(`$size() accepts only 1, 2 or 6 arguments, got ${args.length}.`);
-}
+const { NumberInterpreter, Basic, LengthPercent, LengthPercentUnset, RepeatBasic, SpanBasic } = ValueTypes;
 
 const ALIGNMENTS = (_ => {
   const POSITIONS = "|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd";
@@ -82,71 +48,12 @@ const ALIGNMENTS = (_ => {
   }
 })();
 
-//todo overflows
-const OVERFLOWS = (_ => {
-  const SETTINGS = {
-    Visible: { overflow: "visible" },
-    Hidden: { overflow: "hidden" },
-    Clip: { overflow: "clip" },
-    Auto: { overflow: "auto" },
-    Scroll: { overflow: "scroll" },
-    Snap: { overflow: "auto", scrollSnapType: "both" },
-    SnapMandatory: { overflow: "auto", scrollSnapType: "both mandatory" },
-    ScrollSnap: { overflow: "scroll", scrollSnapType: "both" },
-    ScrollSnapMandatory: { overflow: "scroll", scrollSnapType: "both mandatory" },
-  };
-  const res = {};
-  for (let [A, a] of Object.entries(SETTINGS)) {
-    res["overflow" + A] = a;
-    for (let [B, b] of Object.entries(SETTINGS)) {
-      if (A == B) continue;
-      res["overflow" + A + B] = {
-        overflowBlock: a.overflow,
-        overflowInline: b.overflow,
-      };
-      if (a.scrollSnapType && b.scrollSnapType)
-        res["overflow" + A + B].scrollSnapType = "both" + (A.endsWith("Mandatory") || B.endsWith("Mandatory") ? " mandatory" : "");
-      else if (a.scrollSnapType)
-        res["overflow" + A + B].scrollSnapType = a.scrollSnapType.replace("both", "block")
-      else if (b.scrollSnapType)
-        res["overflow" + A + B].scrollSnapType = b.scrollSnapType.replace("both", "inline");
-    }
-  }
-  return res;
-})();
-
 const CONTAINER = {
   padding: LogicalFour("padding", LengthPercent),
-  scrollPadding: LogicalFour("scroll-padding", LengthPercent),
-  breakWord: { overflowWrap: "break-word" },
-  breakAnywhere: { overflowWrap: "anywhere" },
-  breakAll: { wordBreak: "break-all" },
-  keepAll: { wordBreak: "keep-all" },
-  snapStop: { scrollSnapStop: "always" },
-  ...OVERFLOWS,
 };
 
 const ITEM = {
   margin: LogicalFour("margin", LengthPercent),
-  scrollMargin: LogicalFour("scroll-margin", LengthPercent),
-  inlineSize: toSize.bind(null, "inlineSize"), //todo should we block this? is size(10px) enough?
-  blockSize: toSize.bind(null, "blockSize"),   //todo should we block this? is size(_,10px) enough?
-  size,
-  // w: AllFunctions.width,
-  // h: AllFunctions.height,
-  // width: AllFunctions.width,
-  // height: AllFunctions.height,
-  snapStart: { scrollSnapAlign: "start" },
-  snapStartCenter: { scrollSnapAlign: "start center" },
-  snapStartEnd: { scrollSnapAlign: "start end" },
-  snapCenter: { scrollSnapAlign: "center" },
-  snapCenterStart: { scrollSnapAlign: "center start" },
-  snapCenterEnd: { scrollSnapAlign: "center end" },
-  snapEnd: { scrollSnapAlign: "end" },
-  snapEndStart: { scrollSnapAlign: "end start" },
-  snapEndCenter: { scrollSnapAlign: "end center" },
-  noSnap: { scrollSnapAlign: "none" },
-  // verticalAlign: AllFunctions.verticalAlign, //todo is this allowed for grid and flex?
 };
 
 const gap = SequentialFunction("/1-2", [LengthPercentUnset], (n, ar) => {
@@ -163,16 +70,12 @@ export const DEFAULTS = {
     //">* /*blockItem*/": BlockItemDefaults,    //the BlockItem defaults are always set by the Block.
   },
   BlockItem: {
-    inlineSize: "unset",
-    blockSize: "unset",
     marginBlock: "unset",
     marginInline: "unset",
-    scrollMargin: "unset",
-    scrollSnapAlign: "unset",
   },
   LineClamp: {
     display: "-webkit-box",
-    WebkitLineClamp: 3, //this is always overwritten
+    WebkitLineClamp: 3, //3 is always set/overwritten
     WebkitBoxOrient: "vertical",
     overflowBlock: "hidden",
   },
@@ -259,6 +162,10 @@ const BlockItem = {
   ...ITEM,
   floatStart: { float: "inline-start" },
   floatEnd: { float: "inline-end" },
+  clearStart: { clear: "inline-start" },
+  clearEnd: { clear: "inline-end" },
+  clear: { clear: "both" },
+  clearNone: { clear: "none" },
 }
 
 const block = FunctionBasedOnValueTypes(CONTAINER, {}, {}, res => Object.assign({}, ...Object.values(res)));
@@ -292,9 +199,6 @@ export default {
   Flex: FunctionWithDefaultValues(DEFAULTS.Flex, flex),
   FlexItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, flexItem),
 
-  lineHeight: SingleArgumentFunction(LengthPercentNumber, (n, v) => ({ lineHeight: v })),
-  wordSpacing: SingleArgumentFunction(Length, (n, v) => ({ wordSpacing: v })),
-
   hide: _ => ({ display: "none" }),
 
   order: undefined,
@@ -302,29 +206,6 @@ export default {
   gap: undefined,
   margin: undefined,
   padding: undefined,
-  width: undefined,
-  minWidth: undefined,
-  maxWidth: undefined,
-  height: undefined,
-  minHeight: undefined,
-  maxHeight: undefined,
-  inlineSize: undefined,
-  minInlineSize: undefined,
-  maxInlineSize: undefined,
-  blockSize: undefined,
-  minBlockSize: undefined,
-  maxBlockSize: undefined,
-  overflow: undefined,
-  overflowX: undefined,
-  overflowY: undefined,
-  overflowBlock: undefined,
-  overflowInline: undefined,
-  scrollSnapType: undefined,
-  scrollSnapAlign: undefined,
-  scrollSnapStop: undefined,
-  scrollPadding: undefined,
-  scrollMargin: undefined,
-
   placeContent: undefined,
   justifyContent: undefined,
   alignContent: undefined,

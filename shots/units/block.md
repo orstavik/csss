@@ -115,8 +115,6 @@ $Block(padding(1.5rem))
   block-size: unset;
   margin-block: 0 1rem;
   margin-inline: 0;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
 }
 ```
 

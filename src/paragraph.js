@@ -18,17 +18,22 @@ const paragraph = FunctionBasedOnValueTypes({
 
   preserve: { whiteSpace: "preserve" },
   preserveBreaks: { whiteSpace: "preserve-breaks" },
-  preserveSpaces: { whiteSpace: "preserve-spaces" },
   breakSpaces: { whiteSpace: "break-spaces" },
   preserveNowrap: { whiteSpace: "preserve nowrap" },
   preserveBreaksNowrap: { whiteSpace: "preserve-breaks nowrap" },
-  preserveSpacesNowrap: { whiteSpace: "preserve-spaces nowrap" },
   breakSpacesNowrap: { whiteSpace: "break-spaces nowrap" },
 
-  anywhere: { wordBreak: "break-all", overflowWrap: "anywhere" },
-  breakWord: { wordBreak: "break-all", overflowWrap: "break-word" },
-  overflowWrapNone: { wordBreak: "none", overflowWrap: "none" },
-  //wordBreak: keep-all
+  breakWord: { wordBreak: "normal", overflowWrap: "break-word" },
+  breakAnywhere: { wordBreak: "normal", overflowWrap: "anywhere" },
+  breakLongWords: { wordBreak: "keep-all", overflowWrap: "break-word" },
+  breakNone: { wordBreak: "keep-all", overflowWrap: "normal" },
+  breakAll: { wordBreak: "break-all", overflowWrap: "normal" },
+  breakNormal: { wordBreak: "normal", overflowWrap: "normal" },
+
+  lineBreakLoose: { lineBreak: "loose" },
+  lineBreakStrict: { lineBreak: "strict" },
+  lineBreakAnywhere: { lineBreak: "anywhere" },
+  lineBreakNormal: { lineBreak: "normal" },
 
   start: { textAlign: "start" },
   end: { textAlign: "end" },
@@ -66,6 +71,7 @@ const PARAGRAPH = {
   whiteSpace: "unset",
   overflowWrap: "unset",
   wordBreak: "unset",
+  lineBreak: "unset",
   textAlign: "unset",
   textAlignLast: "unset",
   hangingPunctuation: "unset",
@@ -81,7 +87,7 @@ const Paragraph = FunctionWithDefaultValues(PARAGRAPH,
   ParseFirstThenRest(
     WordToValue(PARAGRAPHS),
     paragraph,
-    (n, first, rest) => ({ ...PARAGRAPHS[first], ...rest }))
+    (n, first, rest) => ({ ...first, ...rest }))
 );
 
 export default {
@@ -94,6 +100,7 @@ export default {
   whiteSpace: undefined,
   overflowWrap: undefined,
   wordBreak: undefined,
+  lineBreak: undefined,
   textAlign: undefined,
   textAlignLast: undefined,
   hangingPunctuation: undefined,
