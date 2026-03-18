@@ -100,10 +100,10 @@
 ```
 
 **description:** Sets typography for poetry or lyrics block. Keeps spaces and lines as authored by preserving formatting and breaks. It uses a specific selector to target the poetry class.
-**csss:** .poetry$paragraph(preserveSpaces,1.4,center)
+**csss:** .poetry$paragraph(preserve,1.4,center)
 **css:**
 ```css
-.\.poetry\$paragraph\(preserveSpaces\,1\.4\,center\):where(.poetry) {
+.\.poetry\$paragraph\(preserve\,1\.4\,center\):where(.poetry) {
   white-space: preserve;
   line-height: 1.4;
   text-align: center;
@@ -133,7 +133,7 @@
 **csss:** :hover$paragraph(breakSpaces,spacing(-0.05em),1.5)
 **css:**
 ```css
-.\:hover\$paragraph\(breakSpaces\,spacing\(-0\.05em\)\,1\.5\):hover {
+.\:hover\$paragraph\(breakSpaces\,spacing\(-0\.05em\)\,1\.5\):where(:hover) {
   white-space: break-spaces;
   word-spacing: -0.05em;
   line-height: 1.5;
