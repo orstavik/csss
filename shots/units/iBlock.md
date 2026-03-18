@@ -1,7 +1,7 @@
 **description:** An IBlock badge row with centered text, padding, and even spacing.
 **csss:**
 $IBlock(padding(0.5rem))$paragraph(center)
-|*$iBlockItem(margin(1rem,0,0.5rem))
+|$IBlockItem(margin(1rem,0,0.5rem))
 **css:**
 ```css
 .\$IBlock\(padding\(0\.5rem\)\)\$paragraph\(center\) {
@@ -10,16 +10,20 @@ $IBlock(padding(0.5rem))$paragraph(center)
   text-align: center;
 }
 
-.\|\*\$iBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
+.\|\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
+  inline-size: unset;
+  block-size: unset;
   margin-block: 1rem 0.5rem;
   margin-inline: 0;
+  scroll-margin: unset;
+  scroll-snap-align: unset;
 }
 ```
 
 **description:** An IBlock stat row with hidden overflow, padding, and shared spacing.
 **csss:**
 $IBlock(overflowHidden,padding(0.5rem))
-|*$IBlockItem(margin(1rem,0,0.5rem))
+|$IBlockItem(margin(1rem,0,0.5rem))
 **css:**
 ```css
 .\$IBlock\(overflowHidden\,padding\(0\.5rem\)\) {
@@ -28,7 +32,7 @@ $IBlock(overflowHidden,padding(0.5rem))
   padding: 0.5rem;
 }
 
-.\|\*\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
+.\|\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
   inline-size: unset;
   block-size: unset;
   margin-block: 1rem 0.5rem;
@@ -41,7 +45,7 @@ $IBlock(overflowHidden,padding(0.5rem))
 **description:** An IBlock card row with padding, fixed width, and mixed alignment, where edge items can opt into top alignment.
 **csss:**
 $IBlock(padding(1rem))$paragraph(center)
-|*$IBlockItem(inlineSize(200px),alignMiddle)
+|$IBlockItem(inlineSize(200px),alignMiddle)
 |.edge$iBlockItem(alignTop)
 **css:**
 ```css
@@ -51,7 +55,7 @@ $IBlock(padding(1rem))$paragraph(center)
   text-align: center;
 }
 
-.\|\*\$IBlockItem\(inlineSize\(200px\)\,alignMiddle\)>* {
+.\|\$IBlockItem\(inlineSize\(200px\)\,alignMiddle\)>* {
   inline-size: 200px;
   block-size: unset;
   margin-block: unset;
@@ -92,7 +96,7 @@ $iBlock(padding(0.5rem))$paragraph(center)
 **description:** An IBlock metadata row with padding, shared spacing, plus width and alignment overrides on selected items.
 **csss:**
 $IBlock(padding(0.75rem))$paragraph(center)
-|*$IBlockItem(margin(0.5rem,1rem),alignMiddle)
+|$IBlockItem(margin(0.5rem,1rem),alignMiddle)
 |.card$iBlockItem(inlineSize(240px))
 |.meta$iBlockItem(inlineSize(120px),alignTop)
 **css:**
@@ -103,7 +107,7 @@ $IBlock(padding(0.75rem))$paragraph(center)
   text-align: center;
 }
 
-.\|\*\$IBlockItem\(margin\(0\.5rem\,1rem\)\,alignMiddle\)>* {
+.\|\$IBlockItem\(margin\(0\.5rem\,1rem\)\,alignMiddle\)>* {
   inline-size: unset;
   block-size: unset;
   margin-block: 0.5rem;

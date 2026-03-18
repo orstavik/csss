@@ -61,7 +61,7 @@ $Flex(row,gap(1rem),padding(1rem))$relative
 **csss:**
 $Grid(cols(240px,1fr),gap(2rem),padding(1rem))
 |.sidebar$GridItem(column(1),row(1))$sticky(top,1rem)$zIndex(2)
-|.content$gridItem(column(2),row(1))
+|.content$GridItem(column(2),row(1))
 **css:**
 ```css
 .\$Grid\(cols\(240px\,1fr\)\,gap\(2rem\)\,padding\(1rem\)\) {
@@ -87,7 +87,13 @@ $Grid(cols(240px,1fr),gap(2rem),padding(1rem))
   z-index: 2;
 }
 
-.\|\.content\$gridItem\(column\(2\)\,row\(1\)\)>:where(.content) {
+.\|\.content\$GridItem\(column\(2\)\,row\(1\)\)>:where(.content) {
+  inline-size: unset;
+  block-size: unset;
+  margin-block: unset;
+  margin-inline: unset;
+  scroll-margin: unset;
+  scroll-snap-align: unset;
   grid-column: 2;
   grid-row: 1;
 }
