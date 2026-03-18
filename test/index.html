@@ -1,6 +1,6 @@
 <script type="module">
   import * as CSSS from "/src/csss.js";
-  import runTests from "/shots/mdTester.js";
+  import runTests from "./mdTester.js";
 
   function stripLayers(css) {
     return css.replace(/@layer[^{]+\{([\s\S]*?)\n\}/g, (_, inner) =>

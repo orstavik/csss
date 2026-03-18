@@ -18,11 +18,9 @@ const paragraph = FunctionBasedOnValueTypes({
 
   preserve: { whiteSpace: "preserve" },
   preserveBreaks: { whiteSpace: "preserve-breaks" },
-  preserveSpaces: { whiteSpace: "preserve-spaces" },
   breakSpaces: { whiteSpace: "break-spaces" },
   preserveNowrap: { whiteSpace: "preserve nowrap" },
   preserveBreaksNowrap: { whiteSpace: "preserve-breaks nowrap" },
-  preserveSpacesNowrap: { whiteSpace: "preserve-spaces nowrap" },
   breakSpacesNowrap: { whiteSpace: "break-spaces nowrap" },
 
   breakWord: { wordBreak: "normal", overflowWrap: "break-word" },
@@ -89,7 +87,7 @@ const Paragraph = FunctionWithDefaultValues(PARAGRAPH,
   ParseFirstThenRest(
     WordToValue(PARAGRAPHS),
     paragraph,
-    (n, first, rest) => ({ ...PARAGRAPHS[first], ...rest }))
+    (n, first, rest) => ({ ...first, ...rest }))
 );
 
 export default {

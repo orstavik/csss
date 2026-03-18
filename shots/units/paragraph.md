@@ -79,3 +79,82 @@
   hanging-punctuation: unset;
 }
 ```
+
+**description:** Styles a scientific document preset. Sets specific paragraph alignment defaults with a predefined style `scientific`. Resets inherited line height, white space and more.
+**csss:** $Paragraph(scientific,1.7,shy,hangingPunctuationAllowEnd)
+**css:**
+```css
+.\$Paragraph\(scientific\,1\.7\,shy\,hangingPunctuationAllowEnd\) {
+  line-height: 1.7;
+  text-indent: unset;
+  word-spacing: unset;
+  hyphens: manual;
+  white-space: unset;
+  overflow-wrap: unset;
+  word-break: unset;
+  line-break: unset;
+  text-align: justify;
+  text-align-last: justify;
+  hanging-punctuation: allow-end;
+}
+```
+
+**description:** Sets typography for poetry or lyrics block. Keeps spaces and lines as authored by preserving formatting and breaks. It uses a specific selector to target the poetry class.
+**csss:** .poetry$paragraph(preserve,1.4,center)
+**css:**
+```css
+.\.poetry\$paragraph\(preserve\,1\.4\,center\):where(.poetry) {
+  white-space: preserve;
+  line-height: 1.4;
+  text-align: center;
+}
+```
+
+**description:** Renders a caption underneath an image or table. Uses an old book preset, with smaller line-height, text alignment justified, and hanging punctuation on both start and end.
+**csss:** $Paragraph(oldBook,1.3,lastCenter,hangingPunctuationForceEnd,indent(1rem))
+**css:**
+```css
+.\$Paragraph\(oldBook\,1\.3\,lastCenter\,hangingPunctuationForceEnd\,indent\(1rem\)\) {
+  line-height: 1.3;
+  text-indent: 1rem;
+  word-spacing: unset;
+  hyphens: unset;
+  white-space: unset;
+  overflow-wrap: unset;
+  word-break: unset;
+  line-break: unset;
+  text-align: justify;
+  text-align-last: center;
+  hanging-punctuation: force-end;
+}
+```
+
+**description:** Renders hover styles for a summary card description, where text might overflow and should break appropriately, slightly tightening word spacing.
+**csss:** :hover$paragraph(breakSpaces,spacing(-0.05em),1.5)
+**css:**
+```css
+.\:hover\$paragraph\(breakSpaces\,spacing\(-0\.05em\)\,1\.5\):where(:hover) {
+  white-space: break-spaces;
+  word-spacing: -0.05em;
+  line-height: 1.5;
+}
+```
+
+**description:** A dense code block reset. Disables hyphens, enforces pre formatting, preserves spaces and breaks, and ensures normal word breaking. Resets all the defaults.
+**csss:** $Paragraph(_,pre,breakNormal,indent(0),shy)
+**css:**
+```css
+.\$Paragraph\(_\,pre\,breakNormal\,indent\(0\)\,shy\) {
+  line-height: unset;
+  text-indent: 0;
+  word-spacing: unset;
+  hyphens: manual;
+  white-space: pre;
+  overflow-wrap: normal;
+  word-break: normal;
+  line-break: unset;
+  text-align: unset;
+  text-align-last: unset;
+  hanging-punctuation: unset;
+}
+```
