@@ -21,8 +21,8 @@ $Flex(column,gap(0.5rem),padding(1rem))
 **description:** A reversed Flex action bar with mixed growth.
 **csss:**
 $flex(rowReverse,gap(0.5rem),padding(1rem))
-|:nth-child(1)$FlexItem(grow(1))
-|:nth-child(2)$FlexItem(grow(2))
+|:nth-child(1)$flexItem(grow(1))
+|:nth-child(2)$flexItem(grow(2))
 **css:**
 ```css
 .\$flex\(rowReverse\,gap\(0\.5rem\)\,padding\(1rem\)\) {
@@ -31,23 +31,11 @@ $flex(rowReverse,gap(0.5rem),padding(1rem))
   padding: 1rem;
 }
 
-.\|\:nth-child\(1\)\$FlexItem\(grow\(1\)\)>:where(:nth-child(1)) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
+.\|\:nth-child\(1\)\$flexItem\(grow\(1\)\)>:where(:nth-child(1)) {
   flex-grow: 1;
 }
 
-.\|\:nth-child\(2\)\$FlexItem\(grow\(2\)\)>:where(:nth-child(2)) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
+.\|\:nth-child\(2\)\$flexItem\(grow\(2\)\)>:where(:nth-child(2)) {
   flex-grow: 2;
 }
 ```
@@ -76,9 +64,11 @@ $flex(wrap,gap(1rem,2rem))
 **description:** A wrapping Flex toolbar where key actions are reordered and aligned differently once the row starts to fill up.
 **csss:**
 $Flex(contentStart,itemsStart,gap(1rem),padding(1rem),wrap)
-|.two$FlexItem(order(1),selfCenter)
-|.three$FlexItem(order(2),selfEnd)
-|.one$FlexItem(order(3),selfStart,margin(1rem))
+|$FlexItem(order(3),selfStart,margin(1rem))
+|.one$flexItem(order(3),selfStart,margin(1rem))
+|.two$flexItem(order(1),selfCenter)
+|.three$flexItem(order(2),selfEnd)
+
 **css:**
 ```css
 .\$Flex\(contentStart\,itemsStart\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
@@ -90,29 +80,7 @@ $Flex(contentStart,itemsStart,gap(1rem),padding(1rem),wrap)
   flex-wrap: wrap;
 }
 
-.\|\.two\$FlexItem\(order\(1\)\,selfCenter\)>:where(.two) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
-  order: 1;
-  align-self: center;
-}
-
-.\|\.three\$FlexItem\(order\(2\)\,selfEnd\)>:where(.three) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
-  order: 2;
-  align-self: end;
-}
-
-.\|\.one\$FlexItem\(order\(3\)\,selfStart\,margin\(1rem\)\)>:where(.one) {
+.\|\$FlexItem\(order\(3\)\,selfStart\,margin\(1rem\)\)>* {
   inline-size: unset;
   block-size: unset;
   margin-block: unset;
@@ -123,12 +91,28 @@ $Flex(contentStart,itemsStart,gap(1rem),padding(1rem),wrap)
   align-self: start;
   margin: 1rem;
 }
+
+.\|\.two\$flexItem\(order\(1\)\,selfCenter\)>:where(.two) {
+  order: 1;
+  align-self: center;
+}
+
+.\|\.three\$flexItem\(order\(2\)\,selfEnd\)>:where(.three) {
+  order: 2;
+  align-self: end;
+}
+
+.\|\.one\$flexItem\(order\(3\)\,selfStart\,margin\(1rem\)\)>:where(.one) {
+  order: 3;
+  align-self: start;
+  margin: 1rem;
+}
 ```
 
 **description:** A centered Flex row with a stretched featured item.
 **csss:**
 $Flex(contentCenter,itemsStretch,gap(1rem),padding(1rem),wrap)
-|.four$FlexItem(selfStretch)
+|.featured$FlexItem(selfStretch)
 **css:**
 ```css
 .\$Flex\(contentCenter\,itemsStretch\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
@@ -140,7 +124,7 @@ $Flex(contentCenter,itemsStretch,gap(1rem),padding(1rem),wrap)
   flex-wrap: wrap;
 }
 
-.\|\.four\$FlexItem\(selfStretch\)>:where(.four) {
+.\|\.featured\$FlexItem\(selfStretch\)>:where(.featured) {
   inline-size: unset;
   block-size: unset;
   margin-block: unset;
@@ -154,9 +138,9 @@ $Flex(contentCenter,itemsStretch,gap(1rem),padding(1rem),wrap)
 **description:** A scrollable Flex control strip with mixed item sizing.
 **csss:**
 $Flex(overflowScroll,gap(1rem),padding(1rem))
-|:nth-child(1)$FlexItem(grow(1))
-|:nth-child(2)$FlexItem(selfCenter)
-|:nth-child(3)$FlexItem(shrink(0.5))
+|:nth-child(1)$flexItem(grow(1))
+|:nth-child(2)$flexItem(selfCenter)
+|:nth-child(3)$flexItem(shrink(0.5))
 **css:**
 ```css
 .\$Flex\(overflowScroll\,gap\(1rem\)\,padding\(1rem\)\) {
@@ -168,33 +152,15 @@ $Flex(overflowScroll,gap(1rem),padding(1rem))
   padding: 1rem;
 }
 
-.\|\:nth-child\(1\)\$FlexItem\(grow\(1\)\)>:where(:nth-child(1)) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
+.\|\:nth-child\(1\)\$flexItem\(grow\(1\)\)>:where(:nth-child(1)) {
   flex-grow: 1;
 }
 
-.\|\:nth-child\(2\)\$FlexItem\(selfCenter\)>:where(:nth-child(2)) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
+.\|\:nth-child\(2\)\$flexItem\(selfCenter\)>:where(:nth-child(2)) {
   align-self: center;
 }
 
-.\|\:nth-child\(3\)\$FlexItem\(shrink\(0\.5\)\)>:where(:nth-child(3)) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
+.\|\:nth-child\(3\)\$flexItem\(shrink\(0\.5\)\)>:where(:nth-child(3)) {
   flex-shrink: 0.5;
 }
 ```
@@ -202,10 +168,10 @@ $Flex(overflowScroll,gap(1rem),padding(1rem))
 **description:** A Flex comparison row with a flexible lead item, supporting items aligned independently, and a note moved later in the visual order.
 **csss:**
 $Flex(row,gap(1rem),padding(1rem),wrap)
-|:nth-child(1)$FlexItem(basis(200px),grow(1))
-|:nth-child(2)$FlexItem(selfCenter)
-|:nth-child(3)$FlexItem(selfEnd)
-|.note$FlexItem(order(4),margin(1rem))
+|:nth-child(1)$flexItem(basis(200px),grow(1))
+|:nth-child(2)$flexItem(selfCenter)
+|:nth-child(3)$flexItem(selfEnd)
+|.note$flexItem(order(4),margin(1rem))
 **css:**
 ```css
 .\$Flex\(row\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
@@ -218,44 +184,20 @@ $Flex(row,gap(1rem),padding(1rem),wrap)
   flex-wrap: wrap;
 }
 
-.\|\:nth-child\(1\)\$FlexItem\(basis\(200px\)\,grow\(1\)\)>:where(:nth-child(1)) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
+.\|\:nth-child\(1\)\$flexItem\(basis\(200px\)\,grow\(1\)\)>:where(:nth-child(1)) {
   flex-basis: 200px;
   flex-grow: 1;
 }
 
-.\|\:nth-child\(2\)\$FlexItem\(selfCenter\)>:where(:nth-child(2)) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
+.\|\:nth-child\(2\)\$flexItem\(selfCenter\)>:where(:nth-child(2)) {
   align-self: center;
 }
 
-.\|\:nth-child\(3\)\$FlexItem\(selfEnd\)>:where(:nth-child(3)) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
+.\|\:nth-child\(3\)\$flexItem\(selfEnd\)>:where(:nth-child(3)) {
   align-self: end;
 }
 
-.\|\.note\$FlexItem\(order\(4\)\,margin\(1rem\)\)>:where(.note) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
+.\|\.note\$flexItem\(order\(4\)\,margin\(1rem\)\)>:where(.note) {
   order: 4;
   margin: 1rem;
 }
