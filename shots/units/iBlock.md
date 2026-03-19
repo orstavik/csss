@@ -1,86 +1,61 @@
-$IBlock — reset defaults
-
-**description:** Full display:inline-block reset with centered text.
-**csss:** $IBlock$paragraph(center)
+**description:** An IBlock badge row with centered text, padding, and even spacing.
+**csss:**
+$IBlock(padding(0.5rem))$paragraph(center)
+|$IBlockItem(margin(1rem,0,0.5rem))
 **css:**
 ```css
-.\$IBlock\$paragraph\(center\) {
+.\$IBlock\(padding\(0\.5rem\)\)\$paragraph\(center\) {
   display: inline-block;
+  padding: 0.5rem;
   text-align: center;
+}
+
+.\|\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
+  float: unset;
+  clear: unset;
+  margin-block: 1rem 0.5rem;
+  margin-inline: 0;
 }
 ```
 
-$iBlock — container
-
-**description:** Sets centered text on an inline-block container.
-**csss:** $paragraph(center)
+**description:** An IBlock stat row with hidden overflow, padding, and shared spacing.
+**csss:**
+$IBlock(padding(0.5rem))$box(overflowHidden)
+|$IBlockItem(margin(1rem,0,0.5rem))
 **css:**
 ```css
-.\$paragraph\(center\) {
-  text-align: center;
-}
-```
-
-**description:** Hides overflow on an inline-block container.
-**csss:** $box(overflowHidden)
-**css:**
-```css
-.\$box\(overflowHidden\) {
+.\$IBlock\(padding\(0\.5rem\)\)\$box\(overflowHidden\) {
+  display: inline-block;
+  padding: 0.5rem;
   overflow: hidden;
 }
-```
 
-$iBlockItem — margin
-
-**description:** Sets block margin on all inline-block children.
-**csss:** |*$iBlockItem(margin(1rem,0,0.5rem))
-**css:**
-```css
-.\|\*\$iBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
+.\|\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
+  float: unset;
+  clear: unset;
   margin-block: 1rem 0.5rem;
   margin-inline: 0;
 }
 ```
 
-$IBlockItem — reset defaults
-
-**description:** Resets all IBlockItem defaults and sets margin on all children.
-**csss:** |*$IBlockItem(margin(1rem,0,0.5rem))
+**description:** An IBlock card row with padding, fixed width, and mixed alignment, where edge items can opt into top alignment.
+**csss:**
+$IBlock(padding(1rem))$paragraph(center)
+|$IBlockItem(alignMiddle)$Box(inlineSize(200px))
+|.edge$iBlockItem(alignTop)
 **css:**
 ```css
-.\|\*\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
-  margin-block: 1rem 0.5rem;
-  margin-inline: 0;
+.\$IBlock\(padding\(1rem\)\)\$paragraph\(center\) {
+  display: inline-block;
+  padding: 1rem;
+  text-align: center;
 }
-```
 
-$iBlockItem — vertical alignment
-
-**description:** Vertically aligns all children to middle.
-**csss:** |*$iBlockItem(alignMiddle)
-**css:**
-```css
-.\|\*\$iBlockItem\(alignMiddle\)>* {
+.\|\$IBlockItem\(alignMiddle\)\$Box\(inlineSize\(200px\)\)>* {
+  margin: unset;
+  float: unset;
+  clear: unset;
   vertical-align: middle;
-}
-```
-
-**description:** Vertically aligns all children to top.
-**csss:** |*$iBlockItem(alignTop)
-**css:**
-```css
-.\|\*\$iBlockItem\(alignTop\)>* {
-  vertical-align: top;
-}
-```
-
-$iBlockItem — size
-
-**description:** Sets inline-size to 200px on all inline-block children.
-**csss:** |*$Box(size(200px))
-**css:**
-```css
-.\|\*\$Box\(size\(200px\)\)>* {
   inline-size: 200px;
   block-size: unset;
   min-inline-size: unset;
@@ -90,5 +65,65 @@ $iBlockItem — size
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+}
+
+.\|\.edge\$iBlockItem\(alignTop\)>:where(.edge) {
+  vertical-align: top;
+}
+```
+
+**description:** An inline media row with centered text and mixed top and middle alignment.
+**csss:**
+$IBlock(padding(0.5rem))$paragraph(center)
+|.lead$iBlockItem(alignTop,margin(0,1rem,1rem,0))
+|.cta$iBlockItem(alignMiddle)
+**css:**
+```css
+.\$IBlock\(padding\(0\.5rem\)\)\$paragraph\(center\) {
+  display: inline-block;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.\|\.lead\$iBlockItem\(alignTop\,margin\(0\,1rem\,1rem\,0\)\)>:where(.lead) {
+  vertical-align: top;
+  margin-block: 0 1rem;
+  margin-inline: 1rem 0;
+}
+
+.\|\.cta\$iBlockItem\(alignMiddle\)>:where(.cta) {
+  vertical-align: middle;
+}
+```
+
+**description:** An IBlock metadata row with padding, shared spacing, plus width and alignment overrides on selected items.
+**csss:**
+$IBlock(padding(0.75rem))$paragraph(center)
+|$IBlockItem(margin(0.5rem,1rem),alignMiddle)
+|.card$box(inlineSize(240px))
+|.meta$iBlockItem(alignTop)$box(inlineSize(120px))
+**css:**
+```css
+.\$IBlock\(padding\(0\.75rem\)\)\$paragraph\(center\) {
+  display: inline-block;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.\|\$IBlockItem\(margin\(0\.5rem\,1rem\)\,alignMiddle\)>* {
+  float: unset;
+  clear: unset;
+  margin-block: 0.5rem;
+  margin-inline: 1rem;
+  vertical-align: middle;
+}
+
+.\|\.card\$box\(inlineSize\(240px\)\)>:where(.card) {
+  inline-size: 240px;
+}
+
+.\|\.meta\$iBlockItem\(alignTop\)\$box\(inlineSize\(120px\)\)>:where(.meta) {
+  vertical-align: top;
+  inline-size: 120px;
 }
 ```

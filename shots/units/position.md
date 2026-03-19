@@ -1,60 +1,145 @@
-**description:** Sets position to relative without any offset.
-**csss:** $relative
+**description:** A relative Block card with a badge and close button pinned into opposite top corners.
+**csss:**
+$Block(padding(1.5rem))$relative
+|.badge$absolute(endTop,1rem,1rem)$zIndex(2)
+|.close$absolute(startTop,1rem,1rem)
 **css:**
 ```css
-.\$relative {
+.\$Block\(padding\(1\.5rem\)\)\$relative {
+  display: block;
+  padding: 1.5rem;
   position: relative;
+}
+
+.\|\.badge\$absolute\(endTop\,1rem\,1rem\)\$zIndex\(2\)>:where(.badge) {
+  position: absolute;
+  inset-inline-end: 1rem;
+  top: 1rem;
+  z-index: 2;
+}
+
+.\|\.close\$absolute\(startTop\,1rem\,1rem\)>:where(.close) {
+  position: absolute;
+  inset-inline-start: 1rem;
+  top: 1rem;
 }
 ```
 
-**description:** Offsets a relative element using logical inline/block start with calc expression.
-**csss:** $relative(start,10px+2em,5%)
+**description:** A relative Flex toolbar with a dropdown anchored below the row and a help action fixed to the viewport corner.
+**csss:**
+$Flex(row,gap(1rem),padding(1rem))$relative
+|.menu$absolute(endTop,1rem,100%)$zIndex(4)
+|.help$fixed(endBottom,1rem,1rem)$zIndex(10)
 **css:**
 ```css
-.\$relative\(start\,10px\+2em\,5\%\) {
+.\$Flex\(row\,gap\(1rem\)\,padding\(1rem\)\)\$relative {
+  display: flex;
+  padding: 1rem;
+  align-items: unset;
+  place-content: unset;
+  flex-direction: row;
+  gap: 1rem;
   position: relative;
+}
+
+.\|\.menu\$absolute\(endTop\,1rem\,100\%\)\$zIndex\(4\)>:where(.menu) {
+  position: absolute;
+  inset-inline-end: 1rem;
+  top: 100%;
+  z-index: 4;
+}
+
+.\|\.help\$fixed\(endBottom\,1rem\,1rem\)\$zIndex\(10\)>:where(.help) {
+  position: fixed;
+  inset-inline-end: 1rem;
+  bottom: 1rem;
+  z-index: 10;
+}
+```
+
+**description:** A Grid docs layout with a sticky sidebar that stays pinned while the main content remains in its own column.
+**csss:**
+$Grid(cols(240px,1fr),gap(2rem),padding(1rem))
+|.sidebar$GridItem(column(1),row(1))$sticky(top,1rem)$zIndex(2)
+|.content$GridItem(column(2),row(1))
+**css:**
+```css
+.\$Grid\(cols\(240px\,1fr\)\,gap\(2rem\)\,padding\(1rem\)\) {
+  display: grid;
+  padding: 1rem;
+  place-items: unset;
+  place-content: unset;
+  grid-template-columns: 240px 1fr;
+  gap: 2rem;
+}
+
+.\|\.sidebar\$GridItem\(column\(1\)\,row\(1\)\)\$sticky\(top\,1rem\)\$zIndex\(2\)>:where(.sidebar) {
+  margin: unset;
+  grid-column: 1;
+  grid-row: 1;
+  position: sticky;
+  top: 1rem;
+  z-index: 2;
+}
+
+.\|\.content\$GridItem\(column\(2\)\,row\(1\)\)>:where(.content) {
+  margin: unset;
+  grid-column: 2;
+  grid-row: 1;
+}
+```
+
+**description:** A relative Block panel with bottom-anchored utility items placed on opposite inline sides.
+**csss:**
+$Block(padding(2rem))$relative
+|.note$absolute(startBottom,1rem,1rem)
+|.toast$absolute(endBottom,1rem,1rem)$zIndex(3)
+**css:**
+```css
+.\$Block\(padding\(2rem\)\)\$relative {
+  display: block;
+  padding: 2rem;
+  position: relative;
+}
+
+.\|\.note\$absolute\(startBottom\,1rem\,1rem\)>:where(.note) {
+  position: absolute;
+  inset-inline-start: 1rem;
+  bottom: 1rem;
+}
+
+.\|\.toast\$absolute\(endBottom\,1rem\,1rem\)\$zIndex\(3\)>:where(.toast) {
+  position: absolute;
+  inset-inline-end: 1rem;
+  bottom: 1rem;
+  z-index: 3;
+}
+```
+
+**description:** A relative Block callout with one child placed by calc from logical start and another snapped to the origin corner.
+**csss:**
+$Block(padding(1rem))$box(overflowHidden)$relative
+|.callout$absolute(start,10px+2em,5%)$zIndex(2)
+|.origin$absolute(0,0)
+**css:**
+```css
+.\$Block\(padding\(1rem\)\)\$box\(overflowHidden\)\$relative {
+  display: block;
+  padding: 1rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.\|\.callout\$absolute\(start\,10px\+2em\,5\%\)\$zIndex\(2\)>:where(.callout) {
+  position: absolute;
   inset-inline-start: calc(10px + 2em);
   inset-block-start: 5%;
+  z-index: 2;
 }
-```
 
-**description:** Positions element absolutely anchored to top at 40%.
-**csss:** $absolute(top,40%)
-**css:**
-```css
-.\$absolute\(top\,40\%\) {
-  position: absolute;
-  top: 40%;
-}
-```
-
-**description:** Positions element absolutely at left:0 top:0.
-**csss:** $absolute(0,0)
-**css:**
-```css
-.\$absolute\(0\,0\) {
+.\|\.origin\$absolute\(0\,0\)>:where(.origin) {
   position: absolute;
   left: 0;
   top: 0;
-}
-```
-
-**description:** Fixes element to the bottom-right corner of the viewport.
-**csss:** $fixed(rightBottom,0,0)
-**css:**
-```css
-.\$fixed\(rightBottom\,0\,0\) {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-}
-```
-
-**description:** Sets the stacking order z-index to 10.
-**csss:** $zIndex(10)
-**css:**
-```css
-.\$zIndex\(10\) {
-  z-index: 10;
 }
 ```

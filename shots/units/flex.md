@@ -1,355 +1,243 @@
-**description:** Sets flex column direction with gap and padding.
-**csss:** $flex(column,gap(0.5rem),padding(1rem))
-**css:**
-```css
-.\$flex\(column\,gap\(0\.5rem\)\,padding\(1rem\)\) {
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem;
-}
-```
-
-**description:** Reverses row direction with gap and padding.
-**csss:** $flex(rowReverse,gap(0.5rem),padding(1rem))
-**css:**
-```css
-.\$flex\(rowReverse\,gap\(0\.5rem\)\,padding\(1rem\)\) {
-  flex-direction: row-reverse;
-  gap: 0.5rem;
-  padding: 1rem;
-}
-```
-
-**description:** Sets explicit row direction with gap and padding.
-**csss:** $flex(row,gap(1rem),padding(1rem))
-**css:**
-```css
-.\$flex\(row\,gap\(1rem\)\,padding\(1rem\)\) {
-  flex-direction: row;
-  gap: 1rem;
-  padding: 1rem;
-}
-```
-
-**description:** Full display:flex reset with column direction, gap and padding.
-**csss:** $Flex(column,gap(0.5rem),padding(1rem))
+**description:** A vertical Flex settings panel with shared item basis.
+**csss:**
+$Flex(column,gap(0.5rem),padding(1rem))
+|$FlexItem(basis(100px))
 **css:**
 ```css
 .\$Flex\(column\,gap\(0\.5rem\)\,padding\(1rem\)\) {
   display: flex;
+  padding: 1rem;
   align-items: unset;
   place-content: unset;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.\|\$FlexItem\(basis\(100px\)\)>* {
+  margin: unset;
+  flex-basis: 100px;
+}
+```
+
+**description:** A reversed Flex action bar with mixed growth.
+**csss:**
+$Flex(rowReverse,gap(0.5rem),padding(1rem))
+|:nth-child(1)$flexItem(grow(1))
+|:nth-child(2)$flexItem(grow(2))
+**css:**
+```css
+.\$Flex\(rowReverse\,gap\(0\.5rem\)\,padding\(1rem\)\) {
+  display: flex;
   padding: 1rem;
-}
-```
-
-**description:** Enables flex wrapping with gap and padding.
-**csss:** $flex(wrap,gap(0.5rem),padding(1rem))
-**css:**
-```css
-.\$flex\(wrap\,gap\(0\.5rem\)\,padding\(1rem\)\) {
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding: 1rem;
-}
-```
-
-**description:** Wraps flex items with separate row and column gap.
-**csss:** $flex(wrap,gap(1rem,2rem))
-**css:**
-```css
-.\$flex\(wrap\,gap\(1rem\,2rem\)\) {
-  flex-wrap: wrap;
-  gap: 1rem 2rem;
-}
-```
-
-**description:** Aligns content and items to start with wrap, gap and padding.
-**csss:** $flex(contentStart,itemsStart,gap(1rem),padding(1rem),wrap)
-**css:**
-```css
-.\$flex\(contentStart\,itemsStart\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
-  place-content: start;
-  align-items: start;
-  gap: 1rem;
-  padding: 1rem;
-  flex-wrap: wrap;
-}
-```
-
-**description:** Places content start on block axis, end on inline axis.
-**csss:** $flex(contentStartEnd,gap(1rem),padding(1rem),wrap)
-**css:**
-```css
-.\$flex\(contentStartEnd\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
-  place-content: start end;
-  gap: 1rem;
-  padding: 1rem;
-  flex-wrap: wrap;
-}
-```
-
-**description:** Stretches content on block axis, normal on inline axis.
-**csss:** $flex(contentStretchNormal,gap(1rem),padding(1rem),wrap)
-**css:**
-```css
-.\$flex\(contentStretchNormal\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
-  place-content: stretch normal;
-  gap: 1rem;
-  padding: 1rem;
-  flex-wrap: wrap;
-}
-```
-
-**description:** Normal block content with space-between inline distribution.
-**csss:** $flex(contentNormalBetween,gap(1rem),padding(1rem),wrap)
-**css:**
-```css
-.\$flex\(contentNormalBetween\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
-  place-content: normal space-between;
-  gap: 1rem;
-  padding: 1rem;
-  flex-wrap: wrap;
-}
-```
-
-**description:** Centers content and stretches items with wrap.
-**csss:** $flex(contentCenter,itemsStretch,gap(1rem),padding(1rem),wrap)
-**css:**
-```css
-.\$flex\(contentCenter\,itemsStretch\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
-  place-content: center;
-  align-items: stretch;
-  gap: 1rem;
-  padding: 1rem;
-  flex-wrap: wrap;
-}
-```
-
-**description:** Distributes content with space-between/stretch and aligns items to start.
-**csss:** $flex(contentBetweenStretch,itemsStart,gap(1rem),padding(1rem),wrap)
-**css:**
-```css
-.\$flex\(contentBetweenStretch\,itemsStart\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
-  place-content: space-between stretch;
-  align-items: start;
-  gap: 1rem;
-  padding: 1rem;
-  flex-wrap: wrap;
-}
-```
-
-**description:** Stretches all flex items with wrap, gap and padding.
-**csss:** $flex(itemsStretch,gap(1rem),padding(1rem),wrap)
-**css:**
-```css
-.\$flex\(itemsStretch\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
-  align-items: stretch;
-  gap: 1rem;
-  padding: 1rem;
-  flex-wrap: wrap;
-}
-```
-
-**description:** Sets 2rem gap with 1rem padding on flex container.
-**csss:** $flex(gap(2rem),padding(1rem))
-**css:**
-```css
-.\$flex\(gap\(2rem\)\,padding\(1rem\)\) {
-  gap: 2rem;
-  padding: 1rem;
-}
-```
-
-**description:** Sets 1rem gap with 1rem padding on flex container.
-**csss:** $flex(gap(1rem),padding(1rem))
-**css:**
-```css
-.\$flex\(gap\(1rem\)\,padding\(1rem\)\) {
-  gap: 1rem;
-  padding: 1rem;
-}
-```
-
-**description:** Sets 1rem gap only on flex container.
-**csss:** $flex(gap(1rem))
-**css:**
-```css
-.\$flex\(gap\(1rem\)\) {
-  gap: 1rem;
-}
-```
-
-**description:** Sets 0.5rem gap on flex container.
-**csss:** $flex(gap(0.5rem))
-**css:**
-```css
-.\$flex\(gap\(0\.5rem\)\) {
+  align-items: unset;
+  place-content: unset;
+  flex-direction: row-reverse;
   gap: 0.5rem;
 }
-```
 
-**description:** Enables scrolling on a flex container with padding.
-**csss:** $flex(padding(1rem))$box(overflowScroll)
-**css:**
-```css
-.\$flex\(padding\(1rem\)\)\$box\(overflowScroll\) {
-  padding: 1rem;
-  overflow: scroll;
-}
-```
-
-**description:** Resets all FlexItem defaults and sets flex-grow on 1st child.
-**csss:** |:nth-child(1)$FlexItem(grow(1))
-**css:**
-```css
-.\|\:nth-child\(1\)\$FlexItem\(grow\(1\)\)>:where(:nth-child(1)) {
-  margin-block: unset;
-  margin-inline: unset;
-  flex-grow: 1;
-}
-```
-
-**description:** Sets flex-grow to 1 on the 1st child.
-**csss:** |:nth-child(1)$flexItem(grow(1))
-**css:**
-```css
 .\|\:nth-child\(1\)\$flexItem\(grow\(1\)\)>:where(:nth-child(1)) {
   flex-grow: 1;
 }
-```
 
-**description:** Sets flex-grow to 2 on the 2nd child.
-**csss:** |:nth-child(2)$flexItem(grow(2))
-**css:**
-```css
 .\|\:nth-child\(2\)\$flexItem\(grow\(2\)\)>:where(:nth-child(2)) {
   flex-grow: 2;
 }
 ```
 
-**description:** Sets flex-shrink to 0.5 on the 3rd child.
-**csss:** |:nth-child(3)$flexItem(shrink(0.5))
+**description:** A wrapping Flex card grid with fixed tile sizing.
+**csss:**
+$Flex(wrap,gap(1rem,2rem))
+|$FlexItem(margin(5px,1rem))$Box(size(150px,120px))$BoxItem(scrollMargin(10px))
 **css:**
 ```css
-.\|\:nth-child\(3\)\$flexItem\(shrink\(0\.5\)\)>:where(:nth-child(3)) {
-  flex-shrink: 0.5;
+.\$Flex\(wrap\,gap\(1rem\,2rem\)\) {
+  display: flex;
+  padding: unset;
+  align-items: unset;
+  place-content: unset;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+}
+
+.\|\$FlexItem\(margin\(5px\,1rem\)\)\$Box\(size\(150px\,120px\)\)\$BoxItem\(scrollMargin\(10px\)\)>* {
+  margin-block: 5px;
+  margin-inline: 1rem;
+  inline-size: 150px;
+  block-size: 120px;
+  min-inline-size: unset;
+  max-inline-size: unset;
+  min-block-size: unset;
+  max-block-size: unset;
+  overflow: unset;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
+  scroll-margin: 10px;
+  scroll-snap-align: unset;
+  scroll-snap-stop: unset;
 }
 ```
 
-**description:** Sets flex-basis to 100px on the 4th child.
-**csss:** |:nth-child(4)$flexItem(basis(100px))
-**css:**
-```css
-.\|\:nth-child\(4\)\$flexItem\(basis\(100px\)\)>:where(:nth-child(4)) {
-  flex-basis: 100px;
-}
-```
+**description:** A wrapping Flex toolbar where key actions are reordered and aligned differently once the row starts to fill up.
+**csss:**
+$Flex(contentStart,itemsStart,gap(1rem),padding(1rem),wrap)
+|$FlexItem(order(3),selfStart,margin(1rem))
+|.one$flexItem(order(3),selfStart,margin(1rem))
+|.two$flexItem(order(1),selfCenter)
+|.three$flexItem(order(2),selfEnd)
 
-**description:** Sets flex-basis to 100px on all children.
-**csss:** |*$flexItem(basis(100px))
 **css:**
 ```css
-.\|\*\$flexItem\(basis\(100px\)\)>* {
-  flex-basis: 100px;
+.\$Flex\(contentStart\,itemsStart\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
+  display: flex;
+  padding: 1rem;
+  align-items: start;
+  place-content: start;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
-```
 
-**description:** Sets flex-grow to 1 on .item1 child.
-**csss:** |.item1$flexItem(grow(1))
-**css:**
-```css
-.\|\.item1\$flexItem\(grow\(1\)\)>:where(.item1) {
-  flex-grow: 1;
-}
-```
-
-**description:** Aligns 1st child to start.
-**csss:** |:nth-child(1)$flexItem(selfStart)
-**css:**
-```css
-.\|\:nth-child\(1\)\$flexItem\(selfStart\)>:where(:nth-child(1)) {
+.\|\$FlexItem\(order\(3\)\,selfStart\,margin\(1rem\)\)>* {
+  margin: 1rem;
+  order: 3;
   align-self: start;
 }
-```
 
-**description:** Aligns 2nd child to center.
-**csss:** |:nth-child(2)$flexItem(selfCenter)
-**css:**
-```css
-.\|\:nth-child\(2\)\$flexItem\(selfCenter\)>:where(:nth-child(2)) {
-  align-self: center;
+.\|\.one\$flexItem\(order\(3\)\,selfStart\,margin\(1rem\)\)>:where(.one) {
+  order: 3;
+  align-self: start;
+  margin: 1rem;
 }
-```
 
-**description:** Aligns 3rd child to end.
-**csss:** |:nth-child(3)$flexItem(selfEnd)
-**css:**
-```css
-.\|\:nth-child\(3\)\$flexItem\(selfEnd\)>:where(:nth-child(3)) {
-  align-self: end;
-}
-```
-
-**description:** Stretches 4th child to fill cross axis.
-**csss:** |:nth-child(4)$flexItem(selfStretch)
-**css:**
-```css
-.\|\:nth-child\(4\)\$flexItem\(selfStretch\)>:where(:nth-child(4)) {
-  align-self: stretch;
-}
-```
-
-**description:** Stretches .four child across the cross axis.
-**csss:** |.four$flexItem(selfStretch)
-**css:**
-```css
-.\|\.four\$flexItem\(selfStretch\)>:where(.four) {
-  align-self: stretch;
-}
-```
-
-**description:** Reorders .two to position 1 and centers it.
-**csss:** |.two$flexItem(order(1),selfCenter)
-**css:**
-```css
 .\|\.two\$flexItem\(order\(1\)\,selfCenter\)>:where(.two) {
   order: 1;
   align-self: center;
 }
-```
 
-**description:** Reorders .three to position 2 and aligns to end.
-**csss:** |.three$flexItem(order(2),selfEnd)
-**css:**
-```css
 .\|\.three\$flexItem\(order\(2\)\,selfEnd\)>:where(.three) {
   order: 2;
   align-self: end;
 }
 ```
 
-**description:** Reorders .one to position 3, aligns to start, and adds 1rem margin.
-**csss:** |.one$flexItem(order(3),selfStart,margin(1rem))
+**description:** A centered Flex row with a stretched featured item.
+**csss:**
+$Flex(contentCenter,itemsStretch,gap(1rem),padding(1rem),wrap)
+|.featured$FlexItem(selfStretch)
 **css:**
 ```css
-.\|\.one\$flexItem\(order\(3\)\,selfStart\,margin\(1rem\)\)>:where(.one) {
-  order: 3;
-  align-self: start;
+.\$Flex\(contentCenter\,itemsStretch\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
+  display: flex;
+  padding: 1rem;
+  align-items: stretch;
+  place-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.\|\.featured\$FlexItem\(selfStretch\)>:where(.featured) {
+  margin: unset;
+  align-self: stretch;
+}
+```
+
+**description:** A scrollable Flex control strip with mixed item sizing.
+**csss:**
+$Flex(gap(1rem),padding(1rem))$box(overflowScroll)
+|:nth-child(1)$flexItem(grow(1))
+|:nth-child(2)$flexItem(selfCenter)
+|:nth-child(3)$flexItem(shrink(0.5))
+**css:**
+```css
+.\$Flex\(gap\(1rem\)\,padding\(1rem\)\)\$box\(overflowScroll\) {
+  display: flex;
+  padding: 1rem;
+  align-items: unset;
+  place-content: unset;
+  gap: 1rem;
+  overflow: scroll;
+}
+
+.\|\:nth-child\(1\)\$flexItem\(grow\(1\)\)>:where(:nth-child(1)) {
+  flex-grow: 1;
+}
+
+.\|\:nth-child\(2\)\$flexItem\(selfCenter\)>:where(:nth-child(2)) {
+  align-self: center;
+}
+
+.\|\:nth-child\(3\)\$flexItem\(shrink\(0\.5\)\)>:where(:nth-child(3)) {
+  flex-shrink: 0.5;
+}
+```
+
+**description:** A Flex comparison row with a flexible lead item, supporting items aligned independently, and a note moved later in the visual order.
+**csss:**
+$Flex(row,gap(1rem),padding(1rem),wrap)
+|:nth-child(1)$flexItem(basis(200px),grow(1))
+|:nth-child(2)$flexItem(selfCenter)
+|:nth-child(3)$flexItem(selfEnd)
+|.note$flexItem(order(4),margin(1rem))
+**css:**
+```css
+.\$Flex\(row\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
+  display: flex;
+  padding: 1rem;
+  align-items: unset;
+  place-content: unset;
+  flex-direction: row;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.\|\:nth-child\(1\)\$flexItem\(basis\(200px\)\,grow\(1\)\)>:where(:nth-child(1)) {
+  flex-basis: 200px;
+  flex-grow: 1;
+}
+
+.\|\:nth-child\(2\)\$flexItem\(selfCenter\)>:where(:nth-child(2)) {
+  align-self: center;
+}
+
+.\|\:nth-child\(3\)\$flexItem\(selfEnd\)>:where(:nth-child(3)) {
+  align-self: end;
+}
+
+.\|\.note\$flexItem\(order\(4\)\,margin\(1rem\)\)>:where(.note) {
+  order: 4;
   margin: 1rem;
 }
 ```
 
-**description:** Sets margin, fixed size and scroll-margin on all flex children.
-**csss:** |*$flexItem(margin(5px))$box(size(150px,120px))$boxItem(scrollMargin(10px))
+**description:** A Flex inheritance example with parent item defaults and targeted child overrides.
+**csss:**
+$Flex(gap(1rem),padding(1rem),wrap)
+|$FlexItem(basis(180px),grow(1),margin(0.5rem))
+|.wide$flexItem(basis(280px),grow(2))
+|.pin$flexItem(order(5),selfEnd)
 **css:**
 ```css
-.\|\*\$flexItem\(margin\(5px\)\)\$box\(size\(150px\,120px\)\)\$boxItem\(scrollMargin\(10px\)\)>* {
-  margin: 5px;
-  inline-size: 150px;
-  block-size: 120px;
-  scroll-margin: 10px;
+.\$Flex\(gap\(1rem\)\,padding\(1rem\)\,wrap\) {
+  display: flex;
+  padding: 1rem;
+  align-items: unset;
+  place-content: unset;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.\|\$FlexItem\(basis\(180px\)\,grow\(1\)\,margin\(0\.5rem\)\)>* {
+  margin: 0.5rem;
+  flex-basis: 180px;
+  flex-grow: 1;
+}
+
+.\|\.wide\$flexItem\(basis\(280px\)\,grow\(2\)\)>:where(.wide) {
+  flex-basis: 280px;
+  flex-grow: 2;
+}
+
+.\|\.pin\$flexItem\(order\(5\)\,selfEnd\)>:where(.pin) {
+  order: 5;
+  align-self: end;
 }
 ```

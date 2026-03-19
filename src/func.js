@@ -643,7 +643,15 @@ const FunctionBasedOnValueTypes = (wes = {}, singlePrimes = {}, primes = {}, pos
   };
 };
 
-const FunctionWithDefaultValues = (BASE, CB) => exp => Object.assign({}, BASE, exp.args?.length ? CB(exp) : undefined);
+function assignAndStripBaseWhenInlineBlock(base, adjustment) {
+  const res = { ...base, ...adjustment };
+  for (let p in res)
+    if (p + "Block" in res && p + "Inline" in res)
+      delete res[p];
+  return res;
+}
+
+const FunctionWithDefaultValues = (BASE, CB) => exp => exp.args?.length ? assignAndStripBaseWhenInlineBlock(BASE, CB(exp)) : { ...BASE };
 
 const SingleArgumentFunction = (interpreter, post) => ({ args, name }) => {
   if (args.length != 1)

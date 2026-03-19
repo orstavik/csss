@@ -66,31 +66,40 @@ const gap = SequentialFunction("/1-2", [LengthPercentUnset], (n, ar) => {
 export const DEFAULTS = {
   Block: {
     display: "block",
+    padding: "unset",
     //todo this is NOT as easy as I thought..
-    //">* /*blockItem*/": BlockItemDefaults,    //the BlockItem defaults are always set by the Block.
+    //">* /*blockItem*/": BlockItemDefaults,    //the BlockItem defaults should always be set by the Block.
   },
   BlockItem: {
-    marginBlock: "unset",
-    marginInline: "unset",
+    margin: "unset",
+    float: "unset",
+    clear: "unset",
   },
   LineClamp: {
     display: "-webkit-box",
+    padding: "unset",
     WebkitLineClamp: 3, //3 is always set/overwritten
     WebkitBoxOrient: "vertical",
     overflowBlock: "hidden",
   },
+  IBlock: {
+    display: "inline-block",
+    padding: "unset",
+  },
   Flex: {
     display: "flex",
+    padding: "unset",
     alignItems: "unset",
     placeContent: "unset",
   },
   Grid: {
     display: "grid",
+    padding: "unset",
     placeItems: "unset",
     placeContent: "unset",
   },
-  IBlock: {
-    display: "inline-block",
+  FlexGridItem: {
+    margin: "unset",
   },
 };
 
@@ -195,9 +204,9 @@ export default {
   IBlock: FunctionWithDefaultValues(DEFAULTS.IBlock, iBlock),
   IBlockItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, iBlockItem),
   Grid: FunctionWithDefaultValues(DEFAULTS.Grid, grid),
-  GridItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, gridItem),
+  GridItem: FunctionWithDefaultValues(DEFAULTS.FlexGridItem, gridItem),
   Flex: FunctionWithDefaultValues(DEFAULTS.Flex, flex),
-  FlexItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, flexItem),
+  FlexItem: FunctionWithDefaultValues(DEFAULTS.FlexGridItem, flexItem),
 
   hide: _ => ({ display: "none" }),
 
