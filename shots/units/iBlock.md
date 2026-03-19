@@ -13,6 +13,7 @@ $IBlock(padding(0.5rem))$paragraph(center)
 .\|\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
   float: unset;
   clear: unset;
+  vertical-align: unset;
   margin-block: 1rem 0.5rem;
   margin-inline: 0;
 }
@@ -33,6 +34,7 @@ $IBlock(padding(0.5rem))$box(overflowHidden)
 .\|\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
   float: unset;
   clear: unset;
+  vertical-align: unset;
   margin-block: 1rem 0.5rem;
   margin-inline: 0;
 }
@@ -113,9 +115,9 @@ $IBlock(padding(0.75rem))$paragraph(center)
 .\|\$IBlockItem\(margin\(0\.5rem\,1rem\)\,alignMiddle\)>* {
   float: unset;
   clear: unset;
+  vertical-align: middle;
   margin-block: 0.5rem;
   margin-inline: 1rem;
-  vertical-align: middle;
 }
 
 .\|\.card\$box\(inlineSize\(240px\)\)>:where(.card) {
