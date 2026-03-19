@@ -10,12 +10,20 @@ $Flex(column,gap(0.5rem),padding(1rem))
   align-items: unset;
   place-content: unset;
   flex-direction: column;
+  flex-wrap: unset;
   gap: 0.5rem;
 }
 
 .\|\$FlexItem\(basis\(100px\)\)>* {
   margin: unset;
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
   flex-basis: 100px;
+  flex-grow: unset;
+  flex-shrink: unset;
+  align-self: unset;
+  order: unset;
 }
 ```
 
@@ -32,6 +40,7 @@ $Flex(rowReverse,gap(0.5rem),padding(1rem))
   align-items: unset;
   place-content: unset;
   flex-direction: row-reverse;
+  flex-wrap: unset;
   gap: 0.5rem;
 }
 
@@ -55,11 +64,20 @@ $Flex(wrap,gap(1rem,2rem))
   padding: unset;
   align-items: unset;
   place-content: unset;
+  flex-direction: unset;
   flex-wrap: wrap;
   gap: 1rem 2rem;
 }
 
 .\|\$FlexItem\(margin\(5px\,1rem\)\)\$Box\(size\(150px\,120px\)\)\$BoxItem\(scrollMargin\(10px\)\)>* {
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
+  flex-basis: unset;
+  flex-grow: unset;
+  flex-shrink: unset;
+  align-self: unset;
+  order: unset;
   margin-block: 5px;
   margin-inline: 1rem;
   inline-size: 150px;
@@ -92,14 +110,21 @@ $Flex(contentStart,itemsStart,gap(1rem),padding(1rem),wrap)
   padding: 1rem;
   align-items: start;
   place-content: start;
-  gap: 1rem;
+  flex-direction: unset;
   flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .\|\$FlexItem\(order\(3\)\,selfStart\,margin\(1rem\)\)>* {
   margin: 1rem;
-  order: 3;
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
+  flex-basis: unset;
+  flex-grow: unset;
+  flex-shrink: unset;
   align-self: start;
+  order: 3;
 }
 
 .\|\.one\$flexItem\(order\(3\)\,selfStart\,margin\(1rem\)\)>:where(.one) {
@@ -130,13 +155,21 @@ $Flex(contentCenter,itemsStretch,gap(1rem),padding(1rem),wrap)
   padding: 1rem;
   align-items: stretch;
   place-content: center;
-  gap: 1rem;
+  flex-direction: unset;
   flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .\|\.featured\$FlexItem\(selfStretch\)>:where(.featured) {
   margin: unset;
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
+  flex-basis: unset;
+  flex-grow: unset;
+  flex-shrink: unset;
   align-self: stretch;
+  order: unset;
 }
 ```
 
@@ -153,6 +186,8 @@ $Flex(gap(1rem),padding(1rem))$box(overflowScroll)
   padding: 1rem;
   align-items: unset;
   place-content: unset;
+  flex-direction: unset;
+  flex-wrap: unset;
   gap: 1rem;
   overflow: scroll;
 }
@@ -185,8 +220,8 @@ $Flex(row,gap(1rem),padding(1rem),wrap)
   align-items: unset;
   place-content: unset;
   flex-direction: row;
-  gap: 1rem;
   flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .\|\:nth-child\(1\)\$flexItem\(basis\(200px\)\,grow\(1\)\)>:where(:nth-child(1)) {
@@ -221,14 +256,21 @@ $Flex(gap(1rem),padding(1rem),wrap)
   padding: 1rem;
   align-items: unset;
   place-content: unset;
-  gap: 1rem;
+  flex-direction: unset;
   flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .\|\$FlexItem\(basis\(180px\)\,grow\(1\)\,margin\(0\.5rem\)\)>* {
   margin: 0.5rem;
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
   flex-basis: 180px;
   flex-grow: 1;
+  flex-shrink: unset;
+  align-self: unset;
+  order: unset;
 }
 
 .\|\.wide\$flexItem\(basis\(280px\)\,grow\(2\)\)>:where(.wide) {

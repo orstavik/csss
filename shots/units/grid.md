@@ -11,7 +11,9 @@ $Grid(cols(1fr,2fr),rows(auto),gap(1rem),padding(1rem))
   place-content: unset;
   grid-template-columns: 1fr 2fr;
   grid-template-rows: auto;
+  grid-template-areas: unset;
   gap: 1rem;
+  grid-auto-flow: unset;
 }
 
 .\|\:nth-child\(1\)\$gridItem\(column\(1\,span\(2\)\)\)>:where(:nth-child(1)) {
@@ -30,9 +32,11 @@ $Grid(rows(repeat(3,1fr)),column,gap(0.5rem),padding(1rem))
   padding: 1rem;
   place-items: unset;
   place-content: unset;
+  grid-template-columns: unset;
   grid-template-rows: repeat(3, 1fr);
-  grid-auto-flow: column;
+  grid-template-areas: unset;
   gap: 0.5rem;
+  grid-auto-flow: column;
 }
 
 .\|\:nth-child\(2\)\$gridItem\(row\(1\,span\(2\)\)\)>:where(:nth-child(2)) {
@@ -53,18 +57,30 @@ $Grid(contentCenter,itemsStretch,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
   place-items: stretch;
   place-content: center;
   grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: unset;
+  grid-template-areas: unset;
   gap: 1rem;
+  grid-auto-flow: unset;
 }
 
 .\|\.hero\$GridItem\(column\(1\,span\(2\)\)\,margin\(1rem\)\)>:where(.hero) {
   margin: 1rem;
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
   grid-column: 1 / span 2;
+  grid-row: unset;
+  place-self: unset;
 }
 
 .\|\.aside\$GridItem\(selfStartEnd\,row\(2\)\)>:where(.aside) {
   margin: unset;
-  place-self: start end;
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
+  grid-column: unset;
   grid-row: 2;
+  place-self: start end;
 }
 ```
 
@@ -81,7 +97,10 @@ $Grid(contentStartEnd,itemsStretchStart,cols(repeat(2,1fr)),gap(1rem),padding(1r
   place-items: stretch start;
   place-content: start end;
   grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: unset;
+  grid-template-areas: unset;
   gap: 1rem;
+  grid-auto-flow: unset;
 }
 
 .\|\:nth-child\(1\)\$gridItem\(column\(1\,1\)\)>:where(:nth-child(1)) {
@@ -109,7 +128,9 @@ $Grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),padding(1rem))
   place-content: unset;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 80px);
+  grid-template-areas: unset;
   gap: 1rem;
+  grid-auto-flow: unset;
 }
 
 .\|\.a\$gridItem\(column\(1\,span\(2\)\)\,row\(1\)\)>:where(.a) {
@@ -142,7 +163,10 @@ $Grid(cols(repeat(4,1fr)),gap(1rem))$box(overflowScrollHidden)
   place-items: unset;
   place-content: unset;
   grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: unset;
+  grid-template-areas: unset;
   gap: 1rem;
+  grid-auto-flow: unset;
   overflow: scroll hidden;
 }
 

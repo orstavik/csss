@@ -38,6 +38,7 @@ $Flex(row,gap(1rem),padding(1rem))$relative
   align-items: unset;
   place-content: unset;
   flex-direction: row;
+  flex-wrap: unset;
   gap: 1rem;
   position: relative;
 }
@@ -70,13 +71,20 @@ $Grid(cols(240px,1fr),gap(2rem),padding(1rem))
   place-items: unset;
   place-content: unset;
   grid-template-columns: 240px 1fr;
+  grid-template-rows: unset;
+  grid-template-areas: unset;
   gap: 2rem;
+  grid-auto-flow: unset;
 }
 
 .\|\.sidebar\$GridItem\(column\(1\)\,row\(1\)\)\$sticky\(top\,1rem\)\$zIndex\(2\)>:where(.sidebar) {
   margin: unset;
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
   grid-column: 1;
   grid-row: 1;
+  place-self: unset;
   position: sticky;
   top: 1rem;
   z-index: 2;
@@ -84,8 +92,12 @@ $Grid(cols(240px,1fr),gap(2rem),padding(1rem))
 
 .\|\.content\$GridItem\(column\(2\)\,row\(1\)\)>:where(.content) {
   margin: unset;
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
   grid-column: 2;
   grid-row: 1;
+  place-self: unset;
 }
 ```
 

@@ -21,6 +21,7 @@ $Block(padding(1rem))$Box(overflowHidden)
 .\|\$BlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
   float: unset;
   clear: unset;
+  vertical-align: unset;
   margin-block: 1rem 0.5rem;
   margin-inline: 0;
 }
@@ -81,6 +82,7 @@ $Box(overflowHiddenScroll)$paragraph(breakWord)
 .\|\$BlockItem\(margin\(0\.5rem\,1rem\)\)>* {
   float: unset;
   clear: unset;
+  vertical-align: unset;
   margin-block: 0.5rem;
   margin-inline: 1rem;
 }
@@ -151,6 +153,7 @@ $Block(padding(1.5rem))
 .\|\$BlockItem\(margin\(0\,0\,1rem\)\)>* {
   float: unset;
   clear: unset;
+  vertical-align: unset;
   margin-block: 0 1rem;
   margin-inline: 0;
 }
@@ -172,6 +175,7 @@ $Block(padding(1.5rem))
 .\|\$BlockItem\(margin\(0\,0\,1rem\)\)\$Paragraph\(_\,indent\(2em\)\)>* {
   float: unset;
   clear: unset;
+  vertical-align: unset;
   margin-block: 0 1rem;
   margin-inline: 0;
   line-height: unset;
@@ -217,6 +221,7 @@ $Block(padding(1rem))
 .\|\$BlockItem\(margin\(0\,0\,1rem\)\)>* {
   float: unset;
   clear: unset;
+  vertical-align: unset;
   margin-block: 0 1rem;
   margin-inline: 0;
 }

@@ -74,6 +74,7 @@ export const DEFAULTS = {
     margin: "unset",
     float: "unset",
     clear: "unset",
+    verticalAlign: "unset",
   },
   LineClamp: {
     display: "-webkit-box",
@@ -91,32 +92,41 @@ export const DEFAULTS = {
     padding: "unset",
     alignItems: "unset",
     placeContent: "unset",
+    flexDirection: "unset",
+    flexWrap: "unset",
+    gap: "unset",
   },
   Grid: {
     display: "grid",
     padding: "unset",
     placeItems: "unset",
     placeContent: "unset",
+    gridTemplateColumns: "unset",
+    gridTemplateRows: "unset",
+    gridTemplateAreas: "unset",
+    gap: "unset",
+    gridAutoFlow: "unset",
   },
-  FlexGridItem: {
-    margin: "unset",
-  },
+};
+
+DEFAULTS.FlexItem = {
+  ...DEFAULTS.BlockItem,
+  flexBasis: "unset",
+  flexGrow: "unset",
+  flexShrink: "unset",
+  alignSelf: "unset",
+  order: "unset",
+};
+
+DEFAULTS.GridItem = {
+  ...DEFAULTS.BlockItem,
+  gridColumn: "unset",
+  gridRow: "unset",
+  placeSelf: "unset",
 };
 
 const IBLOCK = {
   ...CONTAINER,
-};
-
-const _IBlockItem = {
-  ...ITEM,
-  alignTop: { verticalAlign: "top" },
-  alignMiddle: { verticalAlign: "middle" },
-  alignBottom: { verticalAlign: "bottom" },
-  alignBaseline: { verticalAlign: "baseline" },
-  alignTextTop: { verticalAlign: "text-top" },
-  alignTextBottom: { verticalAlign: "text-bottom" },
-  alignSuper: { verticalAlign: "super" },
-  alignSub: { verticalAlign: "sub" },
 };
 
 const GRID = {
@@ -175,7 +185,19 @@ const BlockItem = {
   clearEnd: { clear: "inline-end" },
   clear: { clear: "both" },
   clearNone: { clear: "none" },
+  alignTop: { verticalAlign: "top" },
+  alignMiddle: { verticalAlign: "middle" },
+  alignBottom: { verticalAlign: "bottom" },
+  alignBaseline: { verticalAlign: "baseline" },
+  alignTextTop: { verticalAlign: "text-top" },
+  alignTextBottom: { verticalAlign: "text-bottom" },
+  alignSuper: { verticalAlign: "super" },
+  alignSub: { verticalAlign: "sub" },
 }
+
+const _IBlockItem = {
+  ...BlockItem,
+};
 
 const block = FunctionBasedOnValueTypes(CONTAINER, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const blockItem = FunctionBasedOnValueTypes(BlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
@@ -200,13 +222,13 @@ export default {
 
   Block: FunctionWithDefaultValues(DEFAULTS.Block, block),
   BlockItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, blockItem),
-  LineClamp: FunctionWithDefaultValues(DEFAULTS.Block, lineClamp),
+  LineClamp: FunctionWithDefaultValues(DEFAULTS.LineClamp, lineClamp),
   IBlock: FunctionWithDefaultValues(DEFAULTS.IBlock, iBlock),
   IBlockItem: FunctionWithDefaultValues(DEFAULTS.BlockItem, iBlockItem),
   Grid: FunctionWithDefaultValues(DEFAULTS.Grid, grid),
-  GridItem: FunctionWithDefaultValues(DEFAULTS.FlexGridItem, gridItem),
+  GridItem: FunctionWithDefaultValues(DEFAULTS.GridItem, gridItem),
   Flex: FunctionWithDefaultValues(DEFAULTS.Flex, flex),
-  FlexItem: FunctionWithDefaultValues(DEFAULTS.FlexGridItem, flexItem),
+  FlexItem: FunctionWithDefaultValues(DEFAULTS.FlexItem, flexItem),
 
   hide: _ => ({ display: "none" }),
 
