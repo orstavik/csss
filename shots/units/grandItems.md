@@ -55,10 +55,10 @@
 ```
 
 **description:** Sets 50x50px size on all grid grandchildren.
-**csss:** |*|*$box(size(50px,50px))
+**csss:** |*|*$box(inline(50px),block(50px))
 **css:**
 ```css
-.\|\*\|\*\$box\(size\(50px\,50px\)\)>*>* {
+.\|\*\|\*\$box\(inline\(50px\)\,block\(50px\)\)>*>* {
   inline-size: 50px;
   block-size: 50px;
 }

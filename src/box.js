@@ -20,22 +20,6 @@ function toSize(NAME, { args }) {
   };
 }
 
-function size({ args }) {
-  if (args.length == 1)
-    return toSize("inlineSize", { args });
-  if (args.length == 2)
-    return {
-      ...toSize("inlineSize", { args: [args[0]] }),
-      ...toSize("blockSize", { args: [args[1]] })
-    };
-  if (args.length == 6)
-    return {
-      ...toSize("inlineSize", { args: args.slice(0, 3) }),
-      ...toSize("blockSize", { args: args.slice(3) })
-    };
-  throw new SyntaxError(`$size() accepts only 1, 2 or 6 arguments, got ${args.length}.`);
-}
-
 const OVERFLOWS = (_ => {
   const SETTINGS = {
     Visible: { overflow: "visible" },
@@ -66,9 +50,8 @@ const OVERFLOWS = (_ => {
 })();
 
 const BOX = {
-  inlineSize: toSize.bind(null, "inlineSize"),
-  blockSize: toSize.bind(null, "blockSize"),
-  size,
+  inline: toSize.bind(null, "inlineSize"),
+  block: toSize.bind(null, "blockSize"),
   scrollPadding: LogicalFour("scroll-padding", LengthPercent),
   ...OVERFLOWS,
 };

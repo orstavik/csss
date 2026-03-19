@@ -53,7 +53,7 @@
 ✅ |.item|.child$blockItem()", source: http://127.0.0.1:3060/test/mdTester.js (19)
 ✅ ||$blockItem(margin(2rem))", source: http://127.0.0.1:3060/test/mdTester.js (19)
 ✅ $grid(cols(repeat(2,1fr)),gap(1rem))", source: http://127.0.0.1:3060/test/mdTester.js (19)
-✅ |*|*$box(size(50px,50px))", source: http://127.0.0.1:3060/test/mdTester.js (19)
+✅ |*|*$box(inline(50px),block(50px))", source: http://127.0.0.1:3060/test/mdTester.js (19)
 ✅ $grid(cols(repeat(3,1fr)),gap(1rem))", source: http://127.0.0.1:3060/test/mdTester.js (19)
 ✅ |$flex(column,gap(0.5rem))", source: http://127.0.0.1:3060/test/mdTester.js (19)
 ✅ ||$blockItem(margin(0.5rem))", source: http://127.0.0.1:3060/test/mdTester.js (19)

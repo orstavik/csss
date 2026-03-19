@@ -43,7 +43,7 @@ $IBlock(padding(0.5rem))$box(overflowHidden)
 **description:** An IBlock card row with padding, fixed width, and mixed alignment, where edge items can opt into top alignment.
 **csss:**
 $IBlock(padding(1rem))$paragraph(center)
-|$IBlockItem(alignMiddle)$Box(inlineSize(200px))
+|$IBlockItem(alignMiddle)$Box(inline(200px))
 |.edge$iBlockItem(alignTop)
 **css:**
 ```css
@@ -53,7 +53,7 @@ $IBlock(padding(1rem))$paragraph(center)
   text-align: center;
 }
 
-.\|\$IBlockItem\(alignMiddle\)\$Box\(inlineSize\(200px\)\)>* {
+.\|\$IBlockItem\(alignMiddle\)\$Box\(inline\(200px\)\)>* {
   margin: unset;
   float: unset;
   clear: unset;
@@ -102,8 +102,8 @@ $IBlock(padding(0.5rem))$paragraph(center)
 **csss:**
 $IBlock(padding(0.75rem))$paragraph(center)
 |$IBlockItem(margin(0.5rem,1rem),alignMiddle)
-|.card$box(inlineSize(240px))
-|.meta$iBlockItem(alignTop)$box(inlineSize(120px))
+|.card$box(inline(240px))
+|.meta$iBlockItem(alignTop)$box(inline(120px))
 **css:**
 ```css
 .\$IBlock\(padding\(0\.75rem\)\)\$paragraph\(center\) {
@@ -120,11 +120,11 @@ $IBlock(padding(0.75rem))$paragraph(center)
   margin-inline: 1rem;
 }
 
-.\|\.card\$box\(inlineSize\(240px\)\)>:where(.card) {
+.\|\.card\$box\(inline\(240px\)\)>:where(.card) {
   inline-size: 240px;
 }
 
-.\|\.meta\$iBlockItem\(alignTop\)\$box\(inlineSize\(120px\)\)>:where(.meta) {
+.\|\.meta\$iBlockItem\(alignTop\)\$box\(inline\(120px\)\)>:where(.meta) {
   vertical-align: top;
   inline-size: 120px;
 }

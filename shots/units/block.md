@@ -30,7 +30,7 @@ $Block(padding(1rem))$Box(overflowHidden)
 **description:** A scrolling Block media list with fixed-size items.
 **csss:**
 $block(padding(1.5rem))$Box(overflowScroll)
-|$Box(size(60px,100px))
+|$Box(inline(60px),block(100px))
 **css:**
 ```css
 .\$block\(padding\(1\.5rem\)\)\$Box\(overflowScroll\) {
@@ -46,7 +46,7 @@ $block(padding(1.5rem))$Box(overflowScroll)
   scroll-snap-type: unset;
 }
 
-.\|\$Box\(size\(60px\,100px\)\)>* {
+.\|\$Box\(inline\(60px\)\,block\(100px\)\)>* {
   inline-size: 60px;
   block-size: 100px;
   min-inline-size: unset;
@@ -91,7 +91,7 @@ $Box(overflowHiddenScroll)$paragraph(breakWord)
 **description:** A centered Block reading panel with capped line length.
 **csss:**
 $Block$box(overflowAuto)$Paragraph(_,center)
-|$Box(inlineSize(_,_,600px))
+|$Box(inline(_,_,600px))
 **css:**
 ```css
 .\$Block\$box\(overflowAuto\)\$Paragraph\(_\,center\) {
@@ -111,7 +111,7 @@ $Block$box(overflowAuto)$Paragraph(_,center)
   hanging-punctuation: unset;
 }
 
-.\|\$Box\(inlineSize\(_\,_\,600px\)\)>* {
+.\|\$Box\(inline\(_\,_\,600px\)\)>* {
   inline-size: unset;
   block-size: unset;
   min-inline-size: unset;
