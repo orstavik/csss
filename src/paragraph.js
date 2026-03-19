@@ -77,9 +77,84 @@ const PARAGRAPH = {
   hangingPunctuation: "unset",
 };
 const PARAGRAPHS = {
-  _: {},
-  scientific: { textAlign: "justify", textAlignLast: "justify" },
-  oldBook: { textAlign: "justify", textAlignLast: "justify" },
+  _: PARAGRAPH,
+  body: {
+    ...PARAGRAPH,
+    lineHeight: "1.5",
+    hyphens: "auto",
+    overflowWrap: "break-word",
+    textAlign: "start",
+  },
+  legible: {
+    ...PARAGRAPH,
+    lineHeight: "1.6",
+    wordSpacing: "0.05em",
+    hyphens: "none",
+    overflowWrap: "break-word",
+    textAlign: "start",
+  },
+  journal: {
+    ...PARAGRAPH,
+    lineHeight: "1.5",
+    hyphens: "auto",
+    lineBreak: "strict",
+    textAlign: "justify",
+  },
+  novel: {
+    ...PARAGRAPH,
+    lineHeight: "1.5",
+    textIndent: "1.5em",
+    hyphens: "auto",
+    textAlign: "justify",
+    hangingPunctuation: "last"
+  },
+  display: {
+    ...PARAGRAPH,
+    lineHeight: "1.1",
+    hyphens: "none",
+    overflowWrap: "break-word",
+    textAlign: "start",
+    hangingPunctuation: "first"
+  },
+  caption: {
+    ...PARAGRAPH,
+    lineHeight: "1.3",
+    hyphens: "none",
+    overflowWrap: "break-word",
+    textAlign: "center",
+  },
+  tabular: {
+    ...PARAGRAPH,
+    lineHeight: "1.3",
+    hyphens: "none",
+    whiteSpace: "nowrap",
+    wordBreak: "normal",
+    textAlign: "end",
+  },
+  interactive: {
+    ...PARAGRAPH,
+    lineHeight: "1",
+    hyphens: "none",
+    whiteSpace: "nowrap",
+    textAlign: "center",
+  },
+  terminal: {
+    ...PARAGRAPH,
+    lineHeight: "1.4",
+    hyphens: "none",
+    whiteSpace: "pre-wrap",
+    overflowWrap: "anywhere",
+    wordBreak: "break-all",
+    textAlign: "start",
+  },
+  compound: {
+    ...PARAGRAPH,
+    lineHeight: "1.5",
+    hyphens: "auto",
+    overflowWrap: "anywhere",
+    wordBreak: "break-word",
+    textAlign: "start",
+  }
 };
 
 

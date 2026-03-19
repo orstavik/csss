@@ -80,11 +80,11 @@
 }
 ```
 
-**description:** Styles a scientific document preset. Sets specific paragraph alignment defaults with a predefined style `scientific`. Resets inherited line height, white space and more.
-**csss:** $Paragraph(scientific,1.7,shy,hangingPunctuationAllowEnd)
+**description:** Styles a journal document preset. Sets specific paragraph alignment defaults with a predefined style `journal`. Resets inherited line height, white space and more.
+**csss:** $Paragraph(journal,1.7,shy,hangingPunctuationAllowEnd)
 **css:**
 ```css
-.\$Paragraph\(scientific\,1\.7\,shy\,hangingPunctuationAllowEnd\) {
+.\$Paragraph\(journal\,1\.7\,shy\,hangingPunctuationAllowEnd\) {
   line-height: 1.7;
   text-indent: unset;
   word-spacing: unset;
@@ -92,9 +92,9 @@
   white-space: unset;
   overflow-wrap: unset;
   word-break: unset;
-  line-break: unset;
+  line-break: strict;
   text-align: justify;
-  text-align-last: justify;
+  text-align-last: unset;
   hanging-punctuation: allow-end;
 }
 ```
@@ -110,15 +110,15 @@
 }
 ```
 
-**description:** Renders a caption underneath an image or table. Uses an old book preset, with smaller line-height, text alignment justified, and hanging punctuation on both start and end.
-**csss:** $Paragraph(oldBook,1.3,lastCenter,hangingPunctuationForceEnd,indent(1rem))
+**description:** Renders a classic prose format using a novel preset, with smaller line-height, text alignment justified, and hanging punctuation on both start and end.
+**csss:** $Paragraph(novel,1.3,lastCenter,hangingPunctuationForceEnd,indent(1rem))
 **css:**
 ```css
-.\$Paragraph\(oldBook\,1\.3\,lastCenter\,hangingPunctuationForceEnd\,indent\(1rem\)\) {
+.\$Paragraph\(novel\,1\.3\,lastCenter\,hangingPunctuationForceEnd\,indent\(1rem\)\) {
   line-height: 1.3;
   text-indent: 1rem;
   word-spacing: unset;
-  hyphens: unset;
+  hyphens: auto;
   white-space: unset;
   overflow-wrap: unset;
   word-break: unset;
