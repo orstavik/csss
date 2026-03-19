@@ -12,7 +12,18 @@ To view the test in a browser: (http://127.0.0.1:3003/test)[http://127.0.0.1:300
 
 2. run automated tests in the repository root directory: 
 ```bash
-(npx http-server -p 3066 --cors -s & HTTP_PID=$!; trap "kill -- -$HTTP_PID 2>/dev/null" EXIT; while ! curl -s http://127.0.0.1:3066 > /dev/null; do sleep 1; done; npx --no -p puppeteer node test/puppeteer.js 3066 "/test/index.html")
+TEST_FILE="test/tests.html"; PORT=3060;
+npx http-server -p $PORT --cors -s & \
+HTTP_PID=$!; \
+while ! curl -s http://127.0.0.1:$PORT > /dev/null; do sleep 1; done; \
+google-chrome --headless=new --user-data-dir=$PWD/temp-profile --enable-logging --v=1 \
+  --log-file=$PWD/temp-profile/chrome.log --virtual-time-budget=5000 \
+  "http://127.0.0.1:$PORT/$TEST_FILE" > /dev/null 2>&1; \
+touch "$TEST_FILE.actual"; \
+grep -E -o '(❌|✅|🟦).*' temp-profile/chrome.log > "$TEST_FILE.actual"; \
+diff "$TEST_FILE.actual" ${TEST_FILE}.log && echo "✅AS EXPECTED"; \
+kill -9 $HTTP_PID; \
+rm -rf temp-profile
 ```
 
 * ✅ test passed
