@@ -158,3 +158,192 @@
   hanging-punctuation: unset;
 }
 ```
+**description:** Styles standard web copy using the body baseline. Ensures safe word breaks and automatic hyphenation for clean reading, with no additional tweaks.
+**csss:** $Paragraph(body)
+**css:**
+```css
+.\$Paragraph\(body\) {
+  line-height: 1.5;
+  text-indent: unset;
+  word-spacing: unset;
+  hyphens: auto;
+  white-space: unset;
+  overflow-wrap: break-word;
+  word-break: unset;
+  line-break: unset;
+  text-align: start;
+  text-align-last: unset;
+  hanging-punctuation: unset;
+}
+```
+
+**description:** Sets up a high-legibility text block for accessibility, but adds a tweak to fully justify the text and strictly control line breaks.
+**csss:** $Paragraph(legible,justify,lineBreakStrict)
+**css:**
+```css
+.\$Paragraph\(legible\,justify\,lineBreakStrict\) {
+  line-height: 1.6;
+  text-indent: unset;
+  word-spacing: 0.05em;
+  hyphens: none;
+  white-space: unset;
+  overflow-wrap: break-word;
+  word-break: unset;
+  line-break: strict;
+  text-align: justify;
+  text-align-last: unset;
+  hanging-punctuation: unset;
+}
+```
+
+**description:** Applies the dense journal format for formal text, overriding the default strict line breaking to normal to accommodate specific language requirements.
+**csss:** $Paragraph(journal,lineBreakNormal)
+**css:**
+```css
+.\$Paragraph\(journal\,lineBreakNormal\) {
+  line-height: 1.5;
+  text-indent: unset;
+  word-spacing: unset;
+  hyphens: auto;
+  white-space: unset;
+  overflow-wrap: unset;
+  word-break: unset;
+  line-break: normal;
+  text-align: justify;
+  text-align-last: unset;
+  hanging-punctuation: unset;
+}
+```
+
+**description:** Styles classic prose layout with an indent, using the novel baseline without any additional overrides.
+**csss:** $Paragraph(novel)
+**css:**
+```css
+.\$Paragraph\(novel\) {
+  line-height: 1.5;
+  text-indent: 1.5em;
+  word-spacing: unset;
+  hyphens: auto;
+  white-space: unset;
+  overflow-wrap: unset;
+  word-break: unset;
+  line-break: unset;
+  text-align: justify;
+  text-align-last: unset;
+  hanging-punctuation: last;
+}
+```
+
+**description:** Sets up a hero display text block. Uses the display baseline but explicitly centers the text and removes the hanging punctuation on the first line.
+**csss:** $Paragraph(display,center,hangingPunctuationNone)
+**css:**
+```css
+.\$Paragraph\(display\,center\,hangingPunctuationNone\) {
+  line-height: 1.1;
+  text-indent: unset;
+  word-spacing: unset;
+  hyphens: none;
+  white-space: unset;
+  overflow-wrap: break-word;
+  word-break: unset;
+  line-break: unset;
+  text-align: center;
+  text-align-last: unset;
+  hanging-punctuation: none;
+}
+```
+
+**description:** Formats a short image caption centrally aligned without any hyphens using the caption baseline.
+**csss:** $Paragraph(caption)
+**css:**
+```css
+.\$Paragraph\(caption\) {
+  line-height: 1.3;
+  text-indent: unset;
+  word-spacing: unset;
+  hyphens: none;
+  white-space: unset;
+  overflow-wrap: break-word;
+  word-break: unset;
+  line-break: unset;
+  text-align: center;
+  text-align-last: unset;
+  hanging-punctuation: unset;
+}
+```
+
+**description:** Ensures numbers align to the end edge and never wrap, using the tabular baseline without any tweaks.
+**csss:** $Paragraph(tabular)
+**css:**
+```css
+.\$Paragraph\(tabular\) {
+  line-height: 1.3;
+  text-indent: unset;
+  word-spacing: unset;
+  hyphens: none;
+  white-space: nowrap;
+  overflow-wrap: unset;
+  word-break: normal;
+  line-break: unset;
+  text-align: end;
+  text-align-last: unset;
+  hanging-punctuation: unset;
+}
+```
+
+**description:** Formats a button label using the interactive baseline. Adds a slight word-spacing increase for button legibility and forces it to start-align instead of center.
+**csss:** $Paragraph(interactive,spacing(0.02em),start)
+**css:**
+```css
+.\$Paragraph\(interactive\,spacing\(0\.02em\)\,start\) {
+  line-height: 1;
+  text-indent: unset;
+  word-spacing: 0.02em;
+  hyphens: none;
+  white-space: nowrap;
+  overflow-wrap: unset;
+  word-break: unset;
+  line-break: unset;
+  text-align: start;
+  text-align-last: unset;
+  hanging-punctuation: unset;
+}
+```
+
+**description:** Styles a terminal log block using the terminal baseline. Adjusts the white-space rule from pre-wrap to pre to ensure strict formatting preservation on massive logs.
+**csss:** $Paragraph(terminal,pre)
+**css:**
+```css
+.\$Paragraph\(terminal\,pre\) {
+  line-height: 1.4;
+  text-indent: unset;
+  word-spacing: unset;
+  hyphens: none;
+  white-space: pre;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+  line-break: unset;
+  text-align: start;
+  text-align-last: unset;
+  hanging-punctuation: unset;
+}
+```
+
+**description:** Prepares a text block for aggressive breaking on long compound words, using the compound baseline.
+**csss:** $Paragraph(compound)
+**css:**
+```css
+.\$Paragraph\(compound\) {
+  line-height: 1.5;
+  text-indent: unset;
+  word-spacing: unset;
+  hyphens: auto;
+  white-space: unset;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-break: unset;
+  text-align: start;
+  text-align-last: unset;
+  hanging-punctuation: unset;
+}
+```
