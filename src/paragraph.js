@@ -78,8 +78,136 @@ const PARAGRAPH = {
 };
 const PARAGRAPHS = {
   _: {},
-  scientific: { textAlign: "justify", textAlignLast: "justify" },
-  oldBook: { textAlign: "justify", textAlignLast: "justify" },
+  body: {
+    lineHeight: "1.5",
+    textIndent: "unset",
+    wordSpacing: "unset",
+    hyphens: "auto",
+    whiteSpace: "unset",
+    overflowWrap: "break-word",
+    wordBreak: "unset",
+    lineBreak: "unset",
+    textAlign: "start",
+    textAlignLast: "unset",
+    hangingPunctuation: "unset"
+  },
+  legible: {
+    lineHeight: "1.6",
+    textIndent: "unset",
+    wordSpacing: "0.05em",
+    hyphens: "none",
+    whiteSpace: "unset",
+    overflowWrap: "break-word",
+    wordBreak: "unset",
+    lineBreak: "unset",
+    textAlign: "start",
+    textAlignLast: "unset",
+    hangingPunctuation: "unset"
+  },
+  journal: {
+    lineHeight: "1.5",
+    textIndent: "unset",
+    wordSpacing: "unset",
+    hyphens: "auto",
+    whiteSpace: "unset",
+    overflowWrap: "unset",
+    wordBreak: "unset",
+    lineBreak: "strict",
+    textAlign: "justify",
+    textAlignLast: "unset",
+    hangingPunctuation: "unset"
+  },
+  novel: {
+    lineHeight: "1.5",
+    textIndent: "1.5em",
+    wordSpacing: "unset",
+    hyphens: "auto",
+    whiteSpace: "unset",
+    overflowWrap: "unset",
+    wordBreak: "unset",
+    lineBreak: "unset",
+    textAlign: "justify",
+    textAlignLast: "unset",
+    hangingPunctuation: "last"
+  },
+  display: {
+    lineHeight: "1.1",
+    textIndent: "unset",
+    wordSpacing: "unset",
+    hyphens: "none",
+    whiteSpace: "unset",
+    overflowWrap: "break-word",
+    wordBreak: "unset",
+    lineBreak: "unset",
+    textAlign: "start",
+    textAlignLast: "unset",
+    hangingPunctuation: "first"
+  },
+  caption: {
+    lineHeight: "1.3",
+    textIndent: "unset",
+    wordSpacing: "unset",
+    hyphens: "none",
+    whiteSpace: "unset",
+    overflowWrap: "break-word",
+    wordBreak: "unset",
+    lineBreak: "unset",
+    textAlign: "center",
+    textAlignLast: "unset",
+    hangingPunctuation: "unset"
+  },
+  tabular: {
+    lineHeight: "1.3",
+    textIndent: "unset",
+    wordSpacing: "unset",
+    hyphens: "none",
+    whiteSpace: "nowrap",
+    overflowWrap: "unset",
+    wordBreak: "normal",
+    lineBreak: "unset",
+    textAlign: "end",
+    textAlignLast: "unset",
+    hangingPunctuation: "unset"
+  },
+  interactive: {
+    lineHeight: "1",
+    textIndent: "unset",
+    wordSpacing: "unset",
+    hyphens: "none",
+    whiteSpace: "nowrap",
+    overflowWrap: "unset",
+    wordBreak: "unset",
+    lineBreak: "unset",
+    textAlign: "center",
+    textAlignLast: "unset",
+    hangingPunctuation: "unset"
+  },
+  terminal: {
+    lineHeight: "1.4",
+    textIndent: "unset",
+    wordSpacing: "unset",
+    hyphens: "none",
+    whiteSpace: "pre-wrap",
+    overflowWrap: "anywhere",
+    wordBreak: "break-all",
+    lineBreak: "unset",
+    textAlign: "start",
+    textAlignLast: "unset",
+    hangingPunctuation: "unset"
+  },
+  compound: {
+    lineHeight: "1.5",
+    textIndent: "unset",
+    wordSpacing: "unset",
+    hyphens: "auto",
+    whiteSpace: "unset",
+    overflowWrap: "anywhere",
+    wordBreak: "break-word",
+    lineBreak: "unset",
+    textAlign: "start",
+    textAlignLast: "unset",
+    hangingPunctuation: "unset"
+  }
 };
 
 
