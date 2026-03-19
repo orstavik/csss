@@ -34,11 +34,11 @@ $Flex(row,gap(1rem),padding(1rem))$relative
 ```css
 .\$Flex\(row\,gap\(1rem\)\,padding\(1rem\)\)\$relative {
   display: flex;
+  padding: 1rem;
   align-items: unset;
   place-content: unset;
   flex-direction: row;
   gap: 1rem;
-  padding: 1rem;
   position: relative;
 }
 
@@ -66,20 +66,15 @@ $Grid(cols(240px,1fr),gap(2rem),padding(1rem))
 ```css
 .\$Grid\(cols\(240px\,1fr\)\,gap\(2rem\)\,padding\(1rem\)\) {
   display: grid;
+  padding: 1rem;
   place-items: unset;
   place-content: unset;
   grid-template-columns: 240px 1fr;
   gap: 2rem;
-  padding: 1rem;
 }
 
 .\|\.sidebar\$GridItem\(column\(1\)\,row\(1\)\)\$sticky\(top\,1rem\)\$zIndex\(2\)>:where(.sidebar) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
+  margin: unset;
   grid-column: 1;
   grid-row: 1;
   position: sticky;
@@ -88,12 +83,7 @@ $Grid(cols(240px,1fr),gap(2rem),padding(1rem))
 }
 
 .\|\.content\$GridItem\(column\(2\)\,row\(1\)\)>:where(.content) {
-  inline-size: unset;
-  block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
+  margin: unset;
   grid-column: 2;
   grid-row: 1;
 }
@@ -128,15 +118,15 @@ $Block(padding(2rem))$relative
 
 **description:** A relative Block callout with one child placed by calc from logical start and another snapped to the origin corner.
 **csss:**
-$Block(overflowHidden,padding(1rem))$relative
+$Block(padding(1rem))$box(overflowHidden)$relative
 |.callout$absolute(start,10px+2em,5%)$zIndex(2)
 |.origin$absolute(0,0)
 **css:**
 ```css
-.\$Block\(overflowHidden\,padding\(1rem\)\)\$relative {
+.\$Block\(padding\(1rem\)\)\$box\(overflowHidden\)\$relative {
   display: block;
-  overflow: hidden;
   padding: 1rem;
+  overflow: hidden;
   position: relative;
 }
 

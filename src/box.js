@@ -53,10 +53,7 @@ const OVERFLOWS = (_ => {
     res["overflow" + A] = a;
     for (let [B, b] of Object.entries(SETTINGS)) {
       if (A == B) continue;
-      res["overflow" + A + B] = {
-        overflowBlock: a.overflow,
-        overflowInline: b.overflow,
-      };
+      res["overflow" + A + B] = { overflow: a.overflow + " " + b.overflow };
       if (a.scrollSnapType && b.scrollSnapType)
         res["overflow" + A + B].scrollSnapType = "both" + (A.endsWith("Mandatory") || B.endsWith("Mandatory") ? " mandatory" : "");
       else if (a.scrollSnapType)

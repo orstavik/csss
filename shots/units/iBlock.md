@@ -11,41 +11,37 @@ $IBlock(padding(0.5rem))$paragraph(center)
 }
 
 .\|\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
-  inline-size: unset;
-  block-size: unset;
+  float: unset;
+  clear: unset;
   margin-block: 1rem 0.5rem;
   margin-inline: 0;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
 }
 ```
 
 **description:** An IBlock stat row with hidden overflow, padding, and shared spacing.
 **csss:**
-$IBlock(overflowHidden,padding(0.5rem))
+$IBlock(padding(0.5rem))$box(overflowHidden)
 |$IBlockItem(margin(1rem,0,0.5rem))
 **css:**
 ```css
-.\$IBlock\(overflowHidden\,padding\(0\.5rem\)\) {
+.\$IBlock\(padding\(0\.5rem\)\)\$box\(overflowHidden\) {
   display: inline-block;
-  overflow: hidden;
   padding: 0.5rem;
+  overflow: hidden;
 }
 
 .\|\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
-  inline-size: unset;
-  block-size: unset;
+  float: unset;
+  clear: unset;
   margin-block: 1rem 0.5rem;
   margin-inline: 0;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
 }
 ```
 
 **description:** An IBlock card row with padding, fixed width, and mixed alignment, where edge items can opt into top alignment.
 **csss:**
 $IBlock(padding(1rem))$paragraph(center)
-|$IBlockItem(inlineSize(200px),alignMiddle)
+|$IBlockItem(alignMiddle)$Box(inlineSize(200px))
 |.edge$iBlockItem(alignTop)
 **css:**
 ```css
@@ -55,14 +51,20 @@ $IBlock(padding(1rem))$paragraph(center)
   text-align: center;
 }
 
-.\|\$IBlockItem\(inlineSize\(200px\)\,alignMiddle\)>* {
+.\|\$IBlockItem\(alignMiddle\)\$Box\(inlineSize\(200px\)\)>* {
+  margin: unset;
+  float: unset;
+  clear: unset;
+  vertical-align: middle;
   inline-size: 200px;
   block-size: unset;
-  margin-block: unset;
-  margin-inline: unset;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
-  vertical-align: middle;
+  min-inline-size: unset;
+  max-inline-size: unset;
+  min-block-size: unset;
+  max-block-size: unset;
+  overflow: unset;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
 }
 
 .\|\.edge\$iBlockItem\(alignTop\)>:where(.edge) {
@@ -98,8 +100,8 @@ $IBlock(padding(0.5rem))$paragraph(center)
 **csss:**
 $IBlock(padding(0.75rem))$paragraph(center)
 |$IBlockItem(margin(0.5rem,1rem),alignMiddle)
-|.card$iBlockItem(inlineSize(240px))
-|.meta$iBlockItem(inlineSize(120px),alignTop)
+|.card$box(inlineSize(240px))
+|.meta$iBlockItem(alignTop)$box(inlineSize(120px))
 **css:**
 ```css
 .\$IBlock\(padding\(0\.75rem\)\)\$paragraph\(center\) {
@@ -109,21 +111,19 @@ $IBlock(padding(0.75rem))$paragraph(center)
 }
 
 .\|\$IBlockItem\(margin\(0\.5rem\,1rem\)\,alignMiddle\)>* {
-  inline-size: unset;
-  block-size: unset;
+  float: unset;
+  clear: unset;
   margin-block: 0.5rem;
   margin-inline: 1rem;
-  scroll-margin: unset;
-  scroll-snap-align: unset;
   vertical-align: middle;
 }
 
-.\|\.card\$iBlockItem\(inlineSize\(240px\)\)>:where(.card) {
+.\|\.card\$box\(inlineSize\(240px\)\)>:where(.card) {
   inline-size: 240px;
 }
 
-.\|\.meta\$iBlockItem\(inlineSize\(120px\)\,alignTop\)>:where(.meta) {
-  inline-size: 120px;
+.\|\.meta\$iBlockItem\(alignTop\)\$box\(inlineSize\(120px\)\)>:where(.meta) {
   vertical-align: top;
+  inline-size: 120px;
 }
 ```
