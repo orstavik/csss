@@ -1,6 +1,9 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
+import { ReverseFunctionTypes, ReverseValueTypes } from "./reverse.js";
 const { Angle, Color, LengthPercent, Url, CamelWords, WordToValue, AnglePercent } = ValueTypes;
 const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction } = FunctionTypes;
+const { ReverseFunctionBasedOnValueTypes, ReverseSingleArgumentFunction, ReverseFunctionWithDefaultValues } = ReverseFunctionTypes;
+const { ReverseCamelWords, ReverseWordToValue } = ReverseValueTypes;
 //todo isImage, interpretImage,
 
 const BackgroundDefaults = {
@@ -225,7 +228,51 @@ const bg = FunctionBasedOnValueTypes({
   }
 );
 
+const wesBg = {
+  backgroundRepeat: ReverseCamelWords("repeat|repeatX|repeatY|space|round|noRepeat"),
+  backgroundSize: ReverseCamelWords("cover|contain"),
+  backgroundOrigin: ReverseWordToValue({ originBorderBox: "borderBox", originPaddingBox: "paddingBox", originContentBox: "contentBox" }),
+  backgroundClip: ReverseCamelWords("borderBox|paddingBox|contentBox|text|borderArea"),
+  backgroundAttachment: ReverseCamelWords("fixed|scroll|local"),
+  backgroundBlendMode: ReverseCamelWords("multiply|screen|overlay|darken|lighten|colorDodge|colorBurn|hardLight|softLight|difference|exclusion|hue|saturation|color|luminosity"),
+};
+
+const reverseBgInner = (style) => {
+  let args = [];
+
+  if (style.backgroundColor) {
+    args.push(style.backgroundColor);
+    delete style.backgroundColor;
+  }
+  if (style.backgroundImage && style.backgroundImage !== "unset") {
+    // For simplicity we just return the raw image string
+    args.push(style.backgroundImage);
+    delete style.backgroundImage;
+  }
+
+  for (let prop in wesBg) {
+    if (prop in style && style[prop] !== "unset") {
+      let arg = wesBg[prop](style[prop]);
+      if (arg) args.push(arg);
+      delete style[prop];
+    }
+  }
+
+  if (style.backgroundPosition && style.backgroundPosition !== "0% 0%") {
+    args.push(...style.backgroundPosition.split(" "));
+    delete style.backgroundPosition;
+  }
+
+  return args;
+};
+
+export const _reverse = {
+  bgColor: ReverseSingleArgumentFunction("backgroundColor", (v) => v),
+  bg: ReverseFunctionWithDefaultValues(BackgroundDefaults, reverseBgInner, "bg", "Bg"),
+};
+
 export default {
+  _reverse,
   background: undefined,
   backgroundColor: undefined,
   backgroundImage: undefined,
