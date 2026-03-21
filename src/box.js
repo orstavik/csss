@@ -1,6 +1,8 @@
 import { ValueTypes, FunctionTypes, Interpreters } from "./func.js";
+import { ReverseFunctionTypes, createWes } from "./reverse.js";
 const { basic: isBasic } = Interpreters;
 const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, LogicalFour } = FunctionTypes;
+const { ReverseFunctionBasedOnValueTypes, ReverseLogicalFour, ReverseFunctionWithDefaultValues } = ReverseFunctionTypes;
 const { LengthPercent } = ValueTypes;
 
 function toSize(NAME, { args }) {
@@ -49,12 +51,46 @@ const OVERFLOWS = (_ => {
   return res;
 })();
 
+const reverseToSize = (NAME) => (style) => {
+  const NAME2 = NAME[0].toUpperCase() + NAME.slice(1);
+  const min = style["min" + NAME2];
+  const mid = style[NAME];
+  const max = style["max" + NAME2];
+
+  if (min === undefined && mid === undefined && max === undefined) return undefined;
+
+  if (min !== undefined || max !== undefined) {
+    const minVal = min ?? "unset";
+    const midVal = mid ?? "unset";
+    const maxVal = max ?? "unset";
+    delete style["min" + NAME2];
+    delete style[NAME];
+    delete style["max" + NAME2];
+    return [minVal, midVal, maxVal].map(v => v === "unset" ? "_" : v);
+  } else {
+    delete style[NAME];
+    return [mid === "unset" ? "_" : mid];
+  }
+};
+
 const BOX = {
   inline: toSize.bind(null, "inlineSize"),
   block: toSize.bind(null, "blockSize"),
   scrollPadding: LogicalFour("scroll-padding", LengthPercent),
   ...OVERFLOWS,
 };
+
+function createWes(sources) {
+  let wes = {};
+  for (let src of sources) {
+    for (let [k, v] of Object.entries(src)) {
+      if (typeof v === "function") continue;
+      if (v?.args) continue; // forward functions
+      wes[k] = v;
+    }
+  }
+  return wes;
+}
 
 const BOX_ITEM = {
   scrollMargin: LogicalFour("scroll-margin", LengthPercent),
@@ -69,6 +105,19 @@ const BOX_ITEM = {
   snapEndCenter: { scrollSnapAlign: "end center" },
   noSnap: { scrollSnapAlign: "none" },
   snapStop: { scrollSnapStop: "always" },
+};
+
+const wesBox = createWes([BOX]);
+const wesBoxItem = createWes([BOX_ITEM]);
+
+const REVERSE_BOX = {
+  scrollPadding: ReverseLogicalFour("scroll-padding"),
+  inline: reverseToSize("inlineSize"),
+  block: reverseToSize("blockSize"),
+};
+
+const REVERSE_BOX_ITEM = {
+  scrollMargin: ReverseLogicalFour("scroll-margin"),
 };
 
 const DEFAULTS = {
@@ -93,7 +142,16 @@ const DEFAULTS = {
 const box = FunctionBasedOnValueTypes(BOX, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const boxItem = FunctionBasedOnValueTypes(BOX_ITEM, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
+const reverseBoxInner = ReverseFunctionBasedOnValueTypes(wesBox, REVERSE_BOX, {});
+const reverseBoxItemInner = ReverseFunctionBasedOnValueTypes(wesBoxItem, REVERSE_BOX_ITEM, {});
+
+export const _reverse = {
+  Box: ReverseFunctionWithDefaultValues(DEFAULTS.Box, reverseBoxInner, "box", "Box"),
+  BoxItem: ReverseFunctionWithDefaultValues(DEFAULTS.BoxItem, reverseBoxItemInner, "boxItem", "BoxItem"),
+};
+
 export default {
+  _reverse,
   box,
   boxItem,
   Box: FunctionWithDefaultValues(DEFAULTS.Box, box),

@@ -1,5 +1,7 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
+import { ReverseFunctionTypes, createWes } from "./reverse.js";
 const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest, LogicalFour } = FunctionTypes;
+const { ReverseFunctionBasedOnValueTypes, ReverseLogicalFour, ReverseFunctionWithDefaultValues } = ReverseFunctionTypes;
 const { NumberInterpreter, Basic, LengthPercent, LengthPercentUnset, RepeatBasic, SpanBasic } = ValueTypes;
 
 const ALIGNMENTS = (_ => {
@@ -48,6 +50,27 @@ const ALIGNMENTS = (_ => {
   }
 })();
 
+const REVERSE_CONTAINER = {
+  padding: ReverseLogicalFour("padding"),
+};
+
+const REVERSE_ITEM = {
+  margin: ReverseLogicalFour("margin"),
+};
+
+// We also need to map the objects like ALIGNMENTS and static values to reverse map for wes
+function createWes(sources) {
+  let wes = {};
+  for (let src of sources) {
+    for (let [k, v] of Object.entries(src)) {
+      if (typeof v === "function") continue;
+      if (v?.args) continue; // forward functions
+      wes[k] = v;
+    }
+  }
+  return wes;
+}
+
 const CONTAINER = {
   padding: LogicalFour("padding", LengthPercent),
 };
@@ -62,6 +85,32 @@ const gap = SequentialFunction("/1-2", [LengthPercentUnset], (n, ar) => {
   if (ar[0] == "unset") return { columnGap: ar[1] };
   return { gap: ar.join(" ") };
 });
+
+const reverseGap = (style) => {
+  if (style && "gap" in style) {
+    const val = style.gap;
+    delete style.gap;
+    return typeof val === "string" ? val.split(" ") : [val];
+  }
+  if (style && "rowGap" in style && !("columnGap" in style)) {
+    const val = style.rowGap;
+    delete style.rowGap;
+    return [val, "_"];
+  }
+  if (style && "columnGap" in style && !("rowGap" in style)) {
+    const val = style.columnGap;
+    delete style.columnGap;
+    return ["_", val];
+  }
+  if (style && "rowGap" in style && "columnGap" in style) {
+    const r = style.rowGap;
+    const c = style.columnGap;
+    delete style.rowGap;
+    delete style.columnGap;
+    return [r, c];
+  }
+  return undefined;
+};
 
 export const DEFAULTS = {
   Block: {
@@ -199,6 +248,14 @@ const _IBlockItem = {
   ...BlockItem,
 };
 
+const wesContainer = createWes([CONTAINER]);
+const wesItem = createWes([ITEM]);
+const wesBlockItem = createWes([BlockItem]);
+const wesGrid = createWes([GRID]);
+const wesGridItem = createWes([_GridItem]);
+const wesFlex = createWes([FLEX]);
+const wesFlexItem = createWes([_FlexItem]);
+
 const block = FunctionBasedOnValueTypes(CONTAINER, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const blockItem = FunctionBasedOnValueTypes(BlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const lineClamp = ParseFirstThenRest(NumberInterpreter, block, (n, a, b) => ({ ...DEFAULTS.LineClamp, WebkitLineClamp: a, ...b }));
@@ -209,7 +266,59 @@ const flexItem = FunctionBasedOnValueTypes(_FlexItem, {}, {}, res => Object.assi
 const iBlock = FunctionBasedOnValueTypes(IBLOCK, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const iBlockItem = FunctionBasedOnValueTypes(_IBlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
+const reverseBlockInner = ReverseFunctionBasedOnValueTypes(wesContainer, REVERSE_CONTAINER, {});
+const reverseBlockItemInner = ReverseFunctionBasedOnValueTypes(wesBlockItem, REVERSE_ITEM, {});
+const reverseIBlockInner = ReverseFunctionBasedOnValueTypes(wesContainer, REVERSE_CONTAINER, {});
+const reverseIBlockItemInner = ReverseFunctionBasedOnValueTypes(wesBlockItem, REVERSE_ITEM, {});
+
+const reverseGridInner = ReverseFunctionBasedOnValueTypes(wesGrid, {
+  ...REVERSE_CONTAINER,
+  gap: reverseGap,
+  cols: (style) => { const v = style.gridTemplateColumns; if(v){delete style.gridTemplateColumns; return v;} },
+  rows: (style) => { const v = style.gridTemplateRows; if(v){delete style.gridTemplateRows; return v;} },
+  areas: (style) => { const v = style.gridTemplateAreas; if(v){delete style.gridTemplateAreas; return v;} }
+}, {});
+
+const reverseGridItemInner = ReverseFunctionBasedOnValueTypes(wesGridItem, {
+  ...REVERSE_ITEM,
+  column: (style) => { const v = style.gridColumn; if(v){delete style.gridColumn; return v;} },
+  row: (style) => { const v = style.gridRow; if(v){delete style.gridRow; return v;} },
+}, {});
+
+const reverseFlexInner = ReverseFunctionBasedOnValueTypes(wesFlex, { ...REVERSE_CONTAINER, gap: reverseGap }, {});
+
+const reverseFlexItemInner = ReverseFunctionBasedOnValueTypes(wesFlexItem, {
+  ...REVERSE_ITEM,
+  basis: (style) => { const v = style.flexBasis; if(v){delete style.flexBasis; return v;} },
+  grow: (style) => { const v = style.flexGrow; if(v){delete style.flexGrow; return v;} },
+  shrink: (style) => { const v = style.flexShrink; if(v){delete style.flexShrink; return v;} },
+  order: (style) => { const v = style.order; if(v){delete style.order; return v;} },
+}, {});
+
+const reverseLineClampInner = (style) => {
+  const clamp = style.WebkitLineClamp;
+  delete style.WebkitLineClamp;
+  const innerArgs = reverseBlockInner(style) ?? [];
+  if (clamp !== undefined) {
+    return [clamp, ...innerArgs];
+  }
+  return innerArgs;
+};
+
+export const _reverse = {
+  Block: ReverseFunctionWithDefaultValues(DEFAULTS.Block, reverseBlockInner, "block", "Block"),
+  IBlock: ReverseFunctionWithDefaultValues(DEFAULTS.IBlock, reverseIBlockInner, "iBlock", "IBlock"),
+  Grid: ReverseFunctionWithDefaultValues(DEFAULTS.Grid, reverseGridInner, "grid", "Grid"),
+  Flex: ReverseFunctionWithDefaultValues(DEFAULTS.Flex, reverseFlexInner, "flex", "Flex"),
+  LineClamp: ReverseFunctionWithDefaultValues(DEFAULTS.LineClamp, reverseLineClampInner, "lineClamp", "LineClamp"),
+  BlockItem: ReverseFunctionWithDefaultValues(DEFAULTS.BlockItem, reverseBlockItemInner, "blockItem", "BlockItem"),
+  IBlockItem: ReverseFunctionWithDefaultValues(DEFAULTS.BlockItem, reverseIBlockItemInner, "iBlockItem", "IBlockItem"),
+  GridItem: ReverseFunctionWithDefaultValues(DEFAULTS.GridItem, reverseGridItemInner, "gridItem", "GridItem"),
+  FlexItem: ReverseFunctionWithDefaultValues(DEFAULTS.FlexItem, reverseFlexItemInner, "flexItem", "FlexItem"),
+};
+
 export default {
+  _reverse,
   block,
   blockItem,
   lineClamp,
