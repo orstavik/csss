@@ -21,25 +21,6 @@ const PROPS = {
   fontKerning: undefined,
   hyphens: undefined,
 };
-const DEFAULTS = {
-  fontFamily: "unset",
-  fontSize: "unset",
-  fontStyle: "unset",
-  fontWeight: "unset",
-  fontSizeAdjust: "unset",
-  letterSpacing: "unset",
-  textTransform: "unset",
-  fontWidth: "unset",
-  fontStretch: "unset",
-  fontVariantCaps: "unset",
-  fontSynthesis: "unset",
-  fontFeatureSettings: "unset",
-  fontVariationSettings: "unset",
-  WebkitFontSmoothing: "unset",
-  MozOsxFontSmoothing: "unset",
-  fontKerning: "unset",
-  hyphens: "unset",
-};
 
 /**
  * TextTransform is a semi inherited css property (inherits over inline elements, but not block elements).
@@ -207,7 +188,7 @@ const font = FunctionBasedOnValueTypes(FONT_WORDS, {
 
 const Font = ParseFirstThenRest(NameUnset, font, (typeface, res = {}) => {
   if (typeface !== "unset")
-    for (let k in DEFAULTS)
+    for (let k in PROPS)
       if (!(k in res))
         res[k] = `var(--${typeface + k[0].toUpperCase() + k.slice(1)}, unset)`;
   return res;
@@ -216,7 +197,7 @@ const Font = ParseFirstThenRest(NameUnset, font, (typeface, res = {}) => {
 
 const Typeface = ParseFirstThenRest(Name, font, (typeface, tmp = {}) => {
   const res = {};
-  for (let k in DEFAULTS)
+  for (let k in PROPS)
     if (tmp[k] !== undefined)
       res[`--${typeface + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
   for (let k in tmp)
@@ -226,6 +207,7 @@ const Typeface = ParseFirstThenRest(Name, font, (typeface, tmp = {}) => {
 }
 )
 
+const DEFAULTS = Object.fromEntries(Object.keys(PROPS).map(k => [k, "unset"]));
 export default {
   ...PROPS,
   font,
