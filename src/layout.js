@@ -68,7 +68,8 @@ export const DEFAULTS = {
     display: "block",
     padding: "unset",
     //todo this is NOT as easy as I thought..
-    //">* /*blockItem*/": BlockItemDefaults,    //the BlockItem defaults should always be set by the Block.
+    //">* /*blockItem*/": BlockItemDefaults,    //a BlockItem defaults should also always be set by the Block.
+    //If we only set $Block(padding(10px)), then we should also set the euqivalent of "|*$BlockItem()" rule as default too. 
   },
   BlockItem: {
     margin: "unset",

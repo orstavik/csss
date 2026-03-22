@@ -3,7 +3,7 @@ const { Angle, Color, LengthPercent, Url, CamelWords, WordToValue, AnglePercent 
 const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction } = FunctionTypes;
 //todo isImage, interpretImage,
 
-const BackgroundDefaults = {
+const DEFAULTS = {
   background: "none",
   backgroundImage: "unset",
   backgroundPosition: "0% 0%",
@@ -227,7 +227,6 @@ const bg = FunctionBasedOnValueTypes({
 
 export default {
   background: undefined,
-  backgroundColor: undefined,
   backgroundImage: undefined,
   backgroundPosition: undefined,
   backgroundRepeat: undefined,
@@ -236,7 +235,8 @@ export default {
   backgroundClip: undefined,
   backgroundBlendMode: undefined,
   backgroundAttachment: undefined,
+  backgroundColor: undefined,
   bgColor: SingleArgumentFunction(Color, (n, v) => ({ backgroundColor: v })),
   //todo this hack should now be manageable from the animation point of view..
-  bg: FunctionWithDefaultValues(BackgroundDefaults, bg),
+  bg: FunctionWithDefaultValues(DEFAULTS, bg),
 };

@@ -2,7 +2,7 @@ import { ValueTypes, FunctionTypes } from "./func.js";
 const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest } = FunctionTypes;
 const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, NameUnset, AbsoluteUrl } = ValueTypes;
 
-const FontDefaults = {
+const DEFAULTS = {
   fontFamily: "unset",
   fontSize: "unset",
   fontStyle: "unset",
@@ -187,11 +187,10 @@ const font = FunctionBasedOnValueTypes(FONT_WORDS, {
 });
 
 const Font = ParseFirstThenRest(NameUnset, font,
-  (_, typeName, fontProps = {}) => {
-    const res = { ...FontDefaults, ...fontProps };
+  (_, typeName, res = {}) => {
     if (typeName !== "unset")
-      for (let k in res)
-        if (res[k] === FontDefaults[k])
+      for (let k in DEFAULTS)
+        if (!(k in res))
           res[k] = `var(--${typeName + k[0].toUpperCase() + k.slice(1)}, unset)`;
     return res;
   }
@@ -200,7 +199,7 @@ const Font = ParseFirstThenRest(NameUnset, font,
 const Typeface = ParseFirstThenRest(Name, font,
   (_, typeName, tmp = {}) => {
     const res = {};
-    for (let k in FontDefaults)
+    for (let k in DEFAULTS)
       if (tmp[k] !== undefined)
         res[`--${typeName + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
     for (let k in tmp)
@@ -212,7 +211,7 @@ const Typeface = ParseFirstThenRest(Name, font,
 
 export default {
   font,
-  Font: FunctionWithDefaultValues(FontDefaults, Font),
+  Font: FunctionWithDefaultValues(DEFAULTS, Font),
   Typeface,
 
   fontFamily: undefined,

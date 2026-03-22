@@ -157,6 +157,19 @@ const PARAGRAPHS = {
   }
 };
 
+const DEFAULTS = {
+  lineHeight: undefined,
+  textIndent: undefined,
+  wordSpacing: undefined,
+  hyphens: undefined,
+  whiteSpace: undefined,
+  overflowWrap: undefined,
+  wordBreak: undefined,
+  lineBreak: undefined,
+  textAlign: undefined,
+  textAlignLast: undefined,
+  hangingPunctuation: undefined,
+};
 
 const Paragraph = FunctionWithDefaultValues(PARAGRAPH,
   ParseFirstThenRest(
