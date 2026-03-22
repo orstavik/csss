@@ -43,7 +43,7 @@ const ObjectFit = {
   fitContain: { objectFit: "contain" },
   fitCover: { objectFit: "cover" },
   fitScaleDown: { objectFit: "scale-down" },
-  noObjectFit: { objectFit: "none" },
+  fitNone: { objectFit: "none" },
 };
 
 const SHORTS = {
