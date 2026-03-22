@@ -2,6 +2,51 @@ import { ValueTypes, FunctionTypes } from "./func.js";
 const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest, LogicalFour } = FunctionTypes;
 const { NumberInterpreter, Basic, LengthPercent, LengthPercentUnset, RepeatBasic, SpanBasic } = ValueTypes;
 
+const PROPS = {
+  display: undefined,
+  margin: undefined,
+  marginBlock: undefined,
+  marginInline: undefined,
+  marginBlockStart: undefined,
+  marginBlockEnd: undefined,
+  marginInlineStart: undefined,
+  marginInlineEnd: undefined,
+  padding: undefined,
+  paddingBlock: undefined,
+  paddingInline: undefined,
+  paddingBlockStart: undefined,
+  paddingBlockEnd: undefined,
+  paddingInlineStart: undefined,
+  paddingInlineEnd: undefined,
+  gap: undefined,
+  placeContent: undefined,
+  justifyContent: undefined,
+  alignContent: undefined,
+  placeItems: undefined,
+  justifyItems: undefined,
+  alignItems: undefined,
+  placeSelf: undefined,
+  justifySelf: undefined,
+  alignSelf: undefined,
+  float: undefined,
+  clear: undefined,
+  verticalAlign: undefined,
+  WebkitLineClamp: undefined,
+  WebkitBoxOrient: undefined,
+  direction: undefined,
+  basis: undefined,
+  grow: undefined,
+  shrink: undefined,
+  order: undefined,
+  gridTemplateColumns: undefined,
+  gridTemplateColumns: undefined,
+  gridTemplateRows: undefined,
+  gridTemplateAreas: undefined,
+  gridTemplateColumns: undefined,
+  gridTemplateRows: undefined,
+  gridTemplateAreas: undefined,
+};
+
 const ALIGNMENTS = (_ => {
   const POSITIONS = "|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd";
   const SPACE = "|Around|Between|Evenly";
@@ -196,10 +241,6 @@ const BlockItem = {
   alignSub: { verticalAlign: "sub" },
 }
 
-const _IBlockItem = {
-  ...BlockItem,
-};
-
 const block = FunctionBasedOnValueTypes(CONTAINER, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const blockItem = FunctionBasedOnValueTypes(BlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const lineClamp = ParseFirstThenRest(NumberInterpreter, block, (n, a, b) => ({ ...DEFAULTS.LineClamp, WebkitLineClamp: a, ...b }));
@@ -208,9 +249,11 @@ const gridItem = FunctionBasedOnValueTypes(_GridItem, {}, {}, res => Object.assi
 const flex = FunctionBasedOnValueTypes(FLEX, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const flexItem = FunctionBasedOnValueTypes(_FlexItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const iBlock = FunctionBasedOnValueTypes(IBLOCK, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const iBlockItem = FunctionBasedOnValueTypes(_IBlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const iBlockItem = FunctionBasedOnValueTypes(BlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
 export default {
+  ...PROPS,
+  displayNone: {display: "none"},
   block,
   blockItem,
   lineClamp,
@@ -230,21 +273,4 @@ export default {
   GridItem: FunctionWithDefaultValues(DEFAULTS.GridItem, gridItem),
   Flex: FunctionWithDefaultValues(DEFAULTS.Flex, flex),
   FlexItem: FunctionWithDefaultValues(DEFAULTS.FlexItem, flexItem),
-
-  hide: _ => ({ display: "none" }),
-
-  order: undefined,
-  float: undefined,
-  gap: undefined,
-  margin: undefined,
-  padding: undefined,
-  placeContent: undefined,
-  justifyContent: undefined,
-  alignContent: undefined,
-  placeItems: undefined,
-  justifyItems: undefined,
-  alignItems: undefined,
-  placeSelf: undefined,
-  justifySelf: undefined,
-  alignSelf: undefined,
 };

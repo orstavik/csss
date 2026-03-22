@@ -243,3 +243,12 @@ $Block(padding(1rem))
   margin-inline: 0 1rem;
 }
 ```
+
+**description:** display none utility for hiding elements.
+**csss:** $displayNone
+**css:**
+```css
+.\$displayNone {
+  display: none;
+}
+```
