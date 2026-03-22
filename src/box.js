@@ -1,7 +1,7 @@
 import { ValueTypes, FunctionTypes, Interpreters } from "./func.js";
 const { basic: isBasic } = Interpreters;
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, LogicalFour } = FunctionTypes;
-const { LengthPercent } = ValueTypes;
+const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest } = FunctionTypes;
+const { Angle, Color, Length, Name, NumberInterpreter, Fraction, Integer, Quote, Percent, Time, Unset, Url, Word, Basic, Radian, Repeat, Span, AnglePercent, LengthUnset, LengthPercent, LengthPercentUnset, LengthPercentNumber, NameUnset, NumberPercent, UrlUnset, ColorUrl, ColorPrimitive, RepeatBasic, SpanBasic, AbsoluteUrl, CamelWords, WordToValue, } = ValueTypes;
 
 function toSize(NAME, { args }) {
   if (args.length != 1 && args.length != 3)
