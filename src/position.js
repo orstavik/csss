@@ -1,6 +1,6 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
 const { LogicalFour, FunctionBasedOnValueTypes, FunctionWithDefaultValues } = FunctionTypes;
-const { WordToValue, LengthPercent } = ValueTypes;
+const { WordToValue, LengthPercent, LengthPercentAuto } = ValueTypes;
 
 const PROPS = {
   position: undefined,
@@ -15,7 +15,6 @@ const PROPS = {
   insetBlockEnd: undefined,
 };
 
-const LengthPercentAuto = a => a.text === "_" ? "auto" : LengthPercent(a);
 const LogicalFourAuto = LogicalFour("inset", LengthPercentAuto);
 
 export default {

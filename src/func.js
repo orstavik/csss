@@ -753,8 +753,9 @@ const AbsoluteUrl = a => {
 const AnglePercent = a => Angle(a) ?? Percent(a);
 const LengthUnset = a => Length(a) ?? Unset(a);
 const LengthPercent = a => Length(a) ?? Percent(a);
-const LengthPercentUnset = a => Length(a) ?? Percent(a) ?? Unset(a);
+const LengthPercentAuto = a => Length(a) ?? Percent(a) ?? (a.text == "_" ? "auto" : undefined);
 const LengthPercentNumber = a => Length(a) ?? Percent(a) ?? NumberInterpreter(a);
+const LengthPercentUnset = a => Length(a) ?? Percent(a) ?? Unset(a);
 const NameUnset = a => Name(a) ?? Unset(a);
 const NumberPercent = a => NumberInterpreter(a) ?? Percent(a);
 const UrlUnset = a => Url(a) ?? Unset(a);
@@ -789,6 +790,7 @@ export const ValueTypes = {
   AnglePercent,
   LengthUnset,
   LengthPercent,
+  LengthPercentAuto,
   LengthPercentUnset,
   LengthPercentNumber,
   NameUnset,
