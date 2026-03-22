@@ -150,8 +150,7 @@ const PARAGRAPHS = {
 };
 
 const Paragraph = FunctionWithDefaultValues(PARAGRAPH,
-  ParseFirstThenRest(WordToValue(PARAGRAPHS), paragraph, (first, rest) => ({ ...first, ...rest }))
-);
+  ParseFirstThenRest(WordToValue(PARAGRAPHS), paragraph, (a, b) => ({ ...a, ...b })));
 
 export default {
   ...PROPS,

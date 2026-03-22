@@ -2,6 +2,25 @@ import { ValueTypes, FunctionTypes } from "./func.js";
 const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest } = FunctionTypes;
 const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, NameUnset, AbsoluteUrl } = ValueTypes;
 
+const PROPS = {
+  fontFamily: undefined,
+  fontSize: undefined,
+  fontStyle: undefined,
+  fontWeight: undefined,
+  fontSizeAdjust: undefined,
+  letterSpacing: undefined,
+  textTransform: undefined,
+  fontWidth: undefined,
+  fontStretch: undefined,
+  fontVariantCaps: undefined,
+  fontSynthesis: undefined,
+  fontFeatureSettings: undefined,
+  fontVariationSettings: undefined,
+  WebkitFontSmoothing: undefined,
+  MozOsxFontSmoothing: undefined,
+  fontKerning: undefined,
+  hyphens: undefined,
+};
 const DEFAULTS = {
   fontFamily: "unset",
   fontSize: "unset",
@@ -186,20 +205,20 @@ const font = FunctionBasedOnValueTypes(FONT_WORDS, {
   return res;
 });
 
-const Font = ParseFirstThenRest(NameUnset, font, (typeName, res = {}) => {
-  if (typeName !== "unset")
+const Font = ParseFirstThenRest(NameUnset, font, (typeface, res = {}) => {
+  if (typeface !== "unset")
     for (let k in DEFAULTS)
       if (!(k in res))
-        res[k] = `var(--${typeName + k[0].toUpperCase() + k.slice(1)}, unset)`;
+        res[k] = `var(--${typeface + k[0].toUpperCase() + k.slice(1)}, unset)`;
   return res;
 }
 );
 
-const Typeface = ParseFirstThenRest(Name, font, (typeName, tmp = {}) => {
+const Typeface = ParseFirstThenRest(Name, font, (typeface, tmp = {}) => {
   const res = {};
   for (let k in DEFAULTS)
     if (tmp[k] !== undefined)
-      res[`--${typeName + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
+      res[`--${typeface + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
   for (let k in tmp)
     if (k.startsWith("@"))
       res[k] = tmp[k];
@@ -208,25 +227,8 @@ const Typeface = ParseFirstThenRest(Name, font, (typeName, tmp = {}) => {
 )
 
 export default {
+  ...PROPS,
   font,
   Font: FunctionWithDefaultValues(DEFAULTS, Font),
   Typeface,
-
-  fontFamily: undefined,
-  fontSize: undefined,
-  fontStyle: undefined,
-  fontWeight: undefined,
-  fontSizeAdjust: undefined,
-  letterSpacing: undefined,
-  textTransform: undefined,
-  fontWidth: undefined,
-  fontStretch: undefined,
-  fontVariantCaps: undefined,
-  fontSynthesis: undefined,
-  fontFeatureSettings: undefined,
-  fontVariationSettings: undefined,
-  WebkitFontSmoothing: undefined,
-  MozOsxFontSmoothing: undefined,
-  fontKerning: undefined,
-  hyphens: undefined,
 };

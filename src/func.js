@@ -694,7 +694,7 @@ const ParseFirstThenRest = (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
   if (first == null)
     throw BadArgument(name, args, 0, INTERPRETER.name);
   const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
-  return POST ? POST(first, res) : first;
+  return POST(first, res);
 };
 
 const Either = (...cbs) => (...args) => {
