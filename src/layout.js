@@ -1,6 +1,6 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
 const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest, LogicalFour } = FunctionTypes;
-const { NumberInterpreter, Basic, LengthPercent, LengthPercentUnset, RepeatBasic, SpanBasic } = ValueTypes;
+const { NumberInterpreter, Basic, LengthPercent, LengthPercentAuto, LengthPercentUnset, RepeatBasic, SpanBasic } = ValueTypes;
 
 const PROPS = {
   display: undefined,
@@ -98,7 +98,7 @@ const CONTAINER = {
 };
 
 const ITEM = {
-  margin: LogicalFour("margin", LengthPercent),
+  margin: LogicalFour("margin", LengthPercentAuto),
 };
 
 const gap = SequentialFunction("/1-2", [LengthPercentUnset], (n, ar) => {
@@ -253,7 +253,7 @@ const lineClamp = ParseFirstThenRest(NumberInterpreter, block, (a, b) => ({ ...D
 
 export default {
   ...PROPS,
-  displayNone: {display: "none"},
+  displayNone: { display: "none" },
   block,
   blockItem,
   lineClamp,

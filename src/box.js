@@ -1,24 +1,25 @@
-import { ValueTypes, FunctionTypes, Interpreters } from "./func.js";
-const { basic: isBasic } = Interpreters;
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest } = FunctionTypes;
+import { ValueTypes, FunctionTypes } from "./func.js";
+const { LogicalFour, FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest } = FunctionTypes;
 const { Angle, Color, Length, Name, NumberInterpreter, Fraction, Integer, Quote, Percent, Time, Unset, Url, Word, Basic, Radian, Repeat, Span, AnglePercent, LengthUnset, LengthPercent, LengthPercentUnset, LengthPercentNumber, NameUnset, NumberPercent, UrlUnset, ColorUrl, ColorPrimitive, RepeatBasic, SpanBasic, AbsoluteUrl, CamelWords, WordToValue, } = ValueTypes;
 
-function toSize(NAME, { args }) {
-  if (args.length != 1 && args.length != 3)
-    throw new SyntaxError(`$${NAME}() accepts only 1 or 3 arguments, got ${args.length}.`);
-  args = args.map(a =>
-    a.text == "_" ? "unset" :
-      isBasic(a).text
-  );
-  if (args.length === 1)
-    return { [NAME]: args[0] };
-  const NAME2 = NAME[0].toUpperCase() + NAME.slice(1);
-  return {
-    ["min" + NAME2]: args[0],
-    [NAME]: args[1],
-    ["max" + NAME2]: args[2]
-  };
-}
+export const PROPS = {
+  Box: {
+    inlineSize: "unset",
+    blockSize: "unset",
+    minInlineSize: "unset",
+    maxInlineSize: "unset",
+    minBlockSize: "unset",
+    maxBlockSize: "unset",
+    overflow: "unset",
+    scrollPadding: "unset",
+    scrollSnapType: "unset",
+  },
+  BoxItem: {
+    scrollMargin: "unset",
+    scrollSnapAlign: "unset",
+    scrollSnapStop: "unset",
+  },
+};
 
 const OVERFLOWS = (_ => {
   const SETTINGS = {
@@ -50,14 +51,15 @@ const OVERFLOWS = (_ => {
 })();
 
 const BOX = {
-  inline: toSize.bind(null, "inlineSize"),
-  block: toSize.bind(null, "blockSize"),
+  inline: SequentialFunction("inline/1-3", [LengthPercentUnset], (_, ar) =>
+    ar.length === 1 ? { inlineSize: ar[0] } : { minInlineSize: ar[0], inlineSize: ar[1], maxInlineSize: ar[2] ?? "unset" }),
+  block: SequentialFunction("block/1-3", [LengthPercentUnset], (_, ar) =>
+    ar.length === 1 ? { blockSize: ar[0] } : { minBlockSize: ar[0], blockSize: ar[1], maxBlockSize: ar[2] ?? "unset" }),
   scrollPadding: LogicalFour("scroll-padding", LengthPercent),
   ...OVERFLOWS,
 };
 
-const BOX_ITEM = {
-  scrollMargin: LogicalFour("scroll-margin", LengthPercent),
+const BoxItemWords = {
   snapStart: { scrollSnapAlign: "start" },
   snapStartCenter: { scrollSnapAlign: "start center" },
   snapStartEnd: { scrollSnapAlign: "start end" },
@@ -67,47 +69,24 @@ const BOX_ITEM = {
   snapEnd: { scrollSnapAlign: "end" },
   snapEndStart: { scrollSnapAlign: "end start" },
   snapEndCenter: { scrollSnapAlign: "end center" },
-  noSnap: { scrollSnapAlign: "none" },
+  snapNone: { scrollSnapAlign: "none" },
   snapStop: { scrollSnapStop: "always" },
+  snapNormal: { scrollSnapStop: "normal" },
 };
 
-const DEFAULTS = {
-  Box: {
-    inlineSize: "unset",
-    blockSize: "unset",
-    minInlineSize: "unset",
-    maxInlineSize: "unset",
-    minBlockSize: "unset",
-    maxBlockSize: "unset",
-    overflow: "unset",
-    scrollPadding: "unset",
-    scrollSnapType: "unset",
-  },
-  BoxItem: {
-    scrollMargin: "unset",
-    scrollSnapAlign: "unset",
-    scrollSnapStop: "unset",
-  },
+const BOX_ITEM = {
+  scrollMargin: LogicalFour("scroll-margin", LengthPercent),
+  ...BoxItemWords,
 };
 
 const box = FunctionBasedOnValueTypes(BOX, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const boxItem = FunctionBasedOnValueTypes(BOX_ITEM, {}, {}, res => Object.assign({}, ...Object.values(res)));
 
-export default {
+export const SHORTS = {
+  ...Object.fromEntries(Object.keys(PROPS.Box).map(k => [k])),
+  ...Object.fromEntries(Object.keys(PROPS.BoxItem).map(k => [k])),
   box,
   boxItem,
-  Box: FunctionWithDefaultValues(DEFAULTS.Box, box),
-  BoxItem: FunctionWithDefaultValues(DEFAULTS.BoxItem, boxItem),
-  inlineSize: undefined,
-  blockSize: undefined,
-  minInlineSize: undefined,
-  maxInlineSize: undefined,
-  minBlockSize: undefined,
-  maxBlockSize: undefined,
-  overflow: undefined,
-  scrollPadding: undefined,
-  scrollSnapType: undefined,
-  scrollMargin: undefined,
-  scrollSnapAlign: undefined,
-  scrollSnapStop: undefined,
+  Box: FunctionWithDefaultValues(PROPS.Box, box),
+  BoxItem: FunctionWithDefaultValues(PROPS.BoxItem, boxItem),
 };
