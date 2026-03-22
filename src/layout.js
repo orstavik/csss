@@ -249,7 +249,7 @@ const flex = FunctionBasedOnValueTypes(FLEX, {}, {}, res => Object.assign({}, ..
 const flexItem = FunctionBasedOnValueTypes(_FlexItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const iBlock = FunctionBasedOnValueTypes(IBLOCK, {}, {}, res => Object.assign({}, ...Object.values(res)));
 const iBlockItem = FunctionBasedOnValueTypes(BlockItem, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const lineClamp = ParseFirstThenRest(NumberInterpreter, block, (n, a, b) => ({ ...DEFAULTS.LineClamp, WebkitLineClamp: a, ...b }));
+const lineClamp = ParseFirstThenRest(NumberInterpreter, block, (a, b) => ({ ...DEFAULTS.LineClamp, WebkitLineClamp: a, ...b }));
 
 export default {
   ...PROPS,

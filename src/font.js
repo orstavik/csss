@@ -186,27 +186,25 @@ const font = FunctionBasedOnValueTypes(FONT_WORDS, {
   return res;
 });
 
-const Font = ParseFirstThenRest(NameUnset, font,
-  (_, typeName, res = {}) => {
-    if (typeName !== "unset")
-      for (let k in DEFAULTS)
-        if (!(k in res))
-          res[k] = `var(--${typeName + k[0].toUpperCase() + k.slice(1)}, unset)`;
-    return res;
-  }
+const Font = ParseFirstThenRest(NameUnset, font, (typeName, res = {}) => {
+  if (typeName !== "unset")
+    for (let k in DEFAULTS)
+      if (!(k in res))
+        res[k] = `var(--${typeName + k[0].toUpperCase() + k.slice(1)}, unset)`;
+  return res;
+}
 );
 
-const Typeface = ParseFirstThenRest(Name, font,
-  (_, typeName, tmp = {}) => {
-    const res = {};
-    for (let k in DEFAULTS)
-      if (tmp[k] !== undefined)
-        res[`--${typeName + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
-    for (let k in tmp)
-      if (k.startsWith("@"))
-        res[k] = tmp[k];
-    return res;
-  }
+const Typeface = ParseFirstThenRest(Name, font, (typeName, tmp = {}) => {
+  const res = {};
+  for (let k in DEFAULTS)
+    if (tmp[k] !== undefined)
+      res[`--${typeName + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
+  for (let k in tmp)
+    if (k.startsWith("@"))
+      res[k] = tmp[k];
+  return res;
+}
 )
 
 export default {
