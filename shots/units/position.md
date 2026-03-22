@@ -1,8 +1,8 @@
 **description:** A relative Block card with a badge and close button pinned into opposite top corners.
 **csss:**
 $Block(padding(1.5rem))$relative
-|.badge$absolute(endTop,1rem,1rem)$zIndex(2)
-|.close$absolute(startTop,1rem,1rem)
+|.badge$absolute(1rem,1rem,_,_)$zIndex(2)
+|.close$absolute(1rem,_,_,1rem)
 **css:**
 ```css
 .\$Block\(padding\(1\.5rem\)\)\$relative {
@@ -11,25 +11,25 @@ $Block(padding(1.5rem))$relative
   position: relative;
 }
 
-.\|\.badge\$absolute\(endTop\,1rem\,1rem\)\$zIndex\(2\)>:where(.badge) {
+.\|\.badge\$absolute\(1rem\,1rem\,_\,_\)\$zIndex\(2\)>:where(.badge) {
   position: absolute;
-  inset-inline-end: 1rem;
-  top: 1rem;
+  inset-block: 1rem auto;
+  inset-inline: 1rem auto;
   z-index: 2;
 }
 
-.\|\.close\$absolute\(startTop\,1rem\,1rem\)>:where(.close) {
+.\|\.close\$absolute\(1rem\,_\,_\,1rem\)>:where(.close) {
   position: absolute;
-  inset-inline-start: 1rem;
-  top: 1rem;
+  inset-block: 1rem auto;
+  inset-inline: auto 1rem;
 }
 ```
 
 **description:** A relative Flex toolbar with a dropdown anchored below the row and a help action fixed to the viewport corner.
 **csss:**
 $Flex(row,gap(1rem),padding(1rem))$relative
-|.menu$absolute(endTop,1rem,100%)$zIndex(4)
-|.help$fixed(endBottom,1rem,1rem)$zIndex(10)
+|.menu$absolute(100%,1rem,_,_)$zIndex(4)
+|.help$fixed(_,1rem,1rem,_)$zIndex(10)
 **css:**
 ```css
 .\$Flex\(row\,gap\(1rem\)\,padding\(1rem\)\)\$relative {
@@ -43,17 +43,17 @@ $Flex(row,gap(1rem),padding(1rem))$relative
   position: relative;
 }
 
-.\|\.menu\$absolute\(endTop\,1rem\,100\%\)\$zIndex\(4\)>:where(.menu) {
+.\|\.menu\$absolute\(100\%\,1rem\,_\,_\)\$zIndex\(4\)>:where(.menu) {
   position: absolute;
-  inset-inline-end: 1rem;
-  top: 100%;
+  inset-block: 100% auto;
+  inset-inline: 1rem auto;
   z-index: 4;
 }
 
-.\|\.help\$fixed\(endBottom\,1rem\,1rem\)\$zIndex\(10\)>:where(.help) {
+.\|\.help\$fixed\(_\,1rem\,1rem\,_\)\$zIndex\(10\)>:where(.help) {
   position: fixed;
-  inset-inline-end: 1rem;
-  bottom: 1rem;
+  inset-block: auto 1rem;
+  inset-inline: 1rem auto;
   z-index: 10;
 }
 ```
@@ -61,7 +61,7 @@ $Flex(row,gap(1rem),padding(1rem))$relative
 **description:** A Grid docs layout with a sticky sidebar that stays pinned while the main content remains in its own column.
 **csss:**
 $Grid(cols(240px,1fr),gap(2rem),padding(1rem))
-|.sidebar$GridItem(column(1),row(1))$sticky(top,1rem)$zIndex(2)
+|.sidebar$GridItem(column(1),row(1))$sticky(1rem,_,_)$zIndex(2)
 |.content$GridItem(column(2),row(1))
 **css:**
 ```css
@@ -77,7 +77,7 @@ $Grid(cols(240px,1fr),gap(2rem),padding(1rem))
   grid-auto-flow: unset;
 }
 
-.\|\.sidebar\$GridItem\(column\(1\)\,row\(1\)\)\$sticky\(top\,1rem\)\$zIndex\(2\)>:where(.sidebar) {
+.\|\.sidebar\$GridItem\(column\(1\)\,row\(1\)\)\$sticky\(1rem\,_\,_\)\$zIndex\(2\)>:where(.sidebar) {
   margin: unset;
   float: unset;
   clear: unset;
@@ -86,7 +86,8 @@ $Grid(cols(240px,1fr),gap(2rem),padding(1rem))
   grid-row: 1;
   place-self: unset;
   position: sticky;
-  top: 1rem;
+  inset-block: 1rem auto;
+  inset-inline: auto;
   z-index: 2;
 }
 
@@ -104,8 +105,8 @@ $Grid(cols(240px,1fr),gap(2rem),padding(1rem))
 **description:** A relative Block panel with bottom-anchored utility items placed on opposite inline sides.
 **csss:**
 $Block(padding(2rem))$relative
-|.note$absolute(startBottom,1rem,1rem)
-|.toast$absolute(endBottom,1rem,1rem)$zIndex(3)
+|.note$absolute(_,1rem,1rem,_)
+|.toast$absolute(_,_,1rem,1rem)$zIndex(3)
 **css:**
 ```css
 .\$Block\(padding\(2rem\)\)\$relative {
@@ -114,16 +115,16 @@ $Block(padding(2rem))$relative
   position: relative;
 }
 
-.\|\.note\$absolute\(startBottom\,1rem\,1rem\)>:where(.note) {
+.\|\.note\$absolute\(_\,1rem\,1rem\,_\)>:where(.note) {
   position: absolute;
-  inset-inline-start: 1rem;
-  bottom: 1rem;
+  inset-block: auto 1rem;
+  inset-inline: 1rem auto;
 }
 
-.\|\.toast\$absolute\(endBottom\,1rem\,1rem\)\$zIndex\(3\)>:where(.toast) {
+.\|\.toast\$absolute\(_\,_\,1rem\,1rem\)\$zIndex\(3\)>:where(.toast) {
   position: absolute;
-  inset-inline-end: 1rem;
-  bottom: 1rem;
+  inset-block: auto 1rem;
+  inset-inline: auto 1rem;
   z-index: 3;
 }
 ```
@@ -131,8 +132,8 @@ $Block(padding(2rem))$relative
 **description:** A relative Block callout with one child placed by calc from logical start and another snapped to the origin corner.
 **csss:**
 $Block(padding(1rem))$box(overflowHidden)$relative
-|.callout$absolute(start,10px+2em,5%)$zIndex(2)
-|.origin$absolute(0,0)
+|.callout$absolute(5%,10px+2em,_,_)$zIndex(2)
+|.origin$absolute(0,0,_,_)
 **css:**
 ```css
 .\$Block\(padding\(1rem\)\)\$box\(overflowHidden\)\$relative {
@@ -142,16 +143,16 @@ $Block(padding(1rem))$box(overflowHidden)$relative
   position: relative;
 }
 
-.\|\.callout\$absolute\(start\,10px\+2em\,5\%\)\$zIndex\(2\)>:where(.callout) {
+.\|\.callout\$absolute\(5\%\,10px\+2em\,_\,_\)\$zIndex\(2\)>:where(.callout) {
   position: absolute;
-  inset-inline-start: calc(10px + 2em);
-  inset-block-start: 5%;
+  inset-block: 5% auto;
+  inset-inline: calc(10px + 2em) auto;
   z-index: 2;
 }
 
-.\|\.origin\$absolute\(0\,0\)>:where(.origin) {
+.\|\.origin\$absolute\(0\,0\,_\,_\)>:where(.origin) {
   position: absolute;
-  inset-inline-start: 0;
-  inset-block-start: 0;
+  inset-block: 0 auto;
+  inset-inline: 0 auto;
 }
 ```

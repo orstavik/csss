@@ -1,48 +1,10 @@
-
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues } = FunctionTypes;
+const { LogicalFour, FunctionBasedOnValueTypes, FunctionWithDefaultValues } = FunctionTypes;
 const { WordToValue, LengthPercent } = ValueTypes;
-const ORIGINS = {
-  left: ["left"],
-  right: ["right"],
-  top: ["top"],
-  bottom: ["bottom"],
-  leftTop: ["left", "top"],
-  rightTop: ["right", "top"],
-  leftBottom: ["left", "bottom"],
-  rightBottom: ["right", "bottom"],
-  start: ["insetInlineStart", "insetBlockStart"],
-  end: ["insetInlineEnd", "insetBlockEnd"],
-  startEnd: ["insetInlineStart", "insetBlockEnd"],
-  endStart: ["insetInlineEnd", "insetBlockStart"],
-  startTop: ["insetInlineStart", "top"],
-  endTop: ["insetInlineEnd", "top"],
-  startBottom: ["insetInlineStart", "bottom"],
-  endBottom: ["insetInlineEnd", "bottom"],
-  leftStart: ["left", "insetBlockStart"],
-  rightStart: ["right", "insetBlockStart"],
-  leftEnd: ["left", "insetBlockEnd"],
-  rightEnd: ["right", "insetBlockEnd"],
-};
 
-function processPosition({ origin = ["insetInlineStart", "insetBlockStart"], one = 0, two = 0 }) {
-  return (origin.length == 1) ?
-    { [origin[0]]: one } :
-    { [origin[0]]: one, [origin[1]]: two };
-}
-
-const Position = FunctionBasedOnValueTypes({}, {
-  origin: WordToValue(ORIGINS),
-  one: LengthPercent,
-  two: LengthPercent,
-}, {}, processPosition);
-
-export default {
-  absolute: FunctionWithDefaultValues({ position: "absolute" }, Position),
-  relative: FunctionWithDefaultValues({ position: "relative" }, Position),
-  fixed: FunctionWithDefaultValues({ position: "fixed" }, Position),
-  sticky: FunctionWithDefaultValues({ position: "sticky" }, Position),
+const PROPS = {
   position: undefined,
+  inset: undefined,
   top: undefined,
   right: undefined,
   bottom: undefined,
@@ -51,4 +13,15 @@ export default {
   insetBlockStart: undefined,
   insetInlineEnd: undefined,
   insetBlockEnd: undefined,
+};
+
+const LengthPercentAuto = a => a.text === "_" ? "auto" : LengthPercent(a);
+const LogicalFourAuto = LogicalFour("inset", LengthPercentAuto);
+
+export default {
+  ...PROPS,
+  absolute: FunctionWithDefaultValues({ position: "absolute" }, LogicalFourAuto),
+  relative: FunctionWithDefaultValues({ position: "relative" }, LogicalFourAuto),
+  fixed: FunctionWithDefaultValues({ position: "fixed" }, LogicalFourAuto),
+  sticky: FunctionWithDefaultValues({ position: "sticky" }, LogicalFourAuto),
 };
