@@ -2,6 +2,20 @@ import { ValueTypes, FunctionTypes } from "./func.js";
 const { LengthPercentNumber, LengthPercent, WordToValue } = ValueTypes;
 const { FunctionBasedOnValueTypes, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest } = FunctionTypes;
 
+const PROPS = {
+  lineHeight: undefined,
+  textIndent: undefined,
+  wordSpacing: undefined,
+  hyphens: undefined,
+  whiteSpace: undefined,
+  overflowWrap: undefined,
+  wordBreak: undefined,
+  lineBreak: undefined,
+  textAlign: undefined,
+  textAlignLast: undefined,
+  hangingPunctuation: undefined,
+};
+
 const paragraph = FunctionBasedOnValueTypes({
   indent: SingleArgumentFunction(LengthPercent, (n, v) => ({ textIndent: v })),
   spacing: SingleArgumentFunction(LengthPercent, (n, v) => ({ wordSpacing: v })),
@@ -63,30 +77,16 @@ const paragraph = FunctionBasedOnValueTypes({
   return Object.assign({}, ...Object.values(res))
 });
 
-const PARAGRAPH = {
-  lineHeight: "unset",
-  textIndent: "unset",
-  wordSpacing: "unset",
-  hyphens: "unset",
-  whiteSpace: "unset",
-  overflowWrap: "unset",
-  wordBreak: "unset",
-  lineBreak: "unset",
-  textAlign: "unset",
-  textAlignLast: "unset",
-  hangingPunctuation: "unset",
-};
+const PARAGRAPH = Object.fromEntries(Object.keys(PROPS).map(k => [k, "unset"]));
 const PARAGRAPHS = {
-  _: PARAGRAPH,
+  _: {},
   body: {
-    ...PARAGRAPH,
     lineHeight: "1.5",
     hyphens: "auto",
     overflowWrap: "break-word",
     textAlign: "start",
   },
   legible: {
-    ...PARAGRAPH,
     lineHeight: "1.6",
     wordSpacing: "0.05em",
     hyphens: "none",
@@ -94,14 +94,12 @@ const PARAGRAPHS = {
     textAlign: "start",
   },
   journal: {
-    ...PARAGRAPH,
     lineHeight: "1.5",
     hyphens: "auto",
     lineBreak: "strict",
     textAlign: "justify",
   },
   novel: {
-    ...PARAGRAPH,
     lineHeight: "1.5",
     textIndent: "1.5em",
     hyphens: "auto",
@@ -109,7 +107,6 @@ const PARAGRAPHS = {
     hangingPunctuation: "last"
   },
   display: {
-    ...PARAGRAPH,
     lineHeight: "1.1",
     hyphens: "none",
     overflowWrap: "break-word",
@@ -117,14 +114,12 @@ const PARAGRAPHS = {
     hangingPunctuation: "first"
   },
   caption: {
-    ...PARAGRAPH,
     lineHeight: "1.3",
     hyphens: "none",
     overflowWrap: "break-word",
     textAlign: "center",
   },
   tabular: {
-    ...PARAGRAPH,
     lineHeight: "1.3",
     hyphens: "none",
     whiteSpace: "nowrap",
@@ -132,14 +127,12 @@ const PARAGRAPHS = {
     textAlign: "end",
   },
   interactive: {
-    ...PARAGRAPH,
     lineHeight: "1",
     hyphens: "none",
     whiteSpace: "nowrap",
     textAlign: "center",
   },
   terminal: {
-    ...PARAGRAPH,
     lineHeight: "1.4",
     hyphens: "none",
     whiteSpace: "pre-wrap",
@@ -148,27 +141,12 @@ const PARAGRAPHS = {
     textAlign: "start",
   },
   compound: {
-    ...PARAGRAPH,
     lineHeight: "1.5",
     hyphens: "auto",
     overflowWrap: "anywhere",
     wordBreak: "break-word",
     textAlign: "start",
   }
-};
-
-const DEFAULTS = {
-  lineHeight: undefined,
-  textIndent: undefined,
-  wordSpacing: undefined,
-  hyphens: undefined,
-  whiteSpace: undefined,
-  overflowWrap: undefined,
-  wordBreak: undefined,
-  lineBreak: undefined,
-  textAlign: undefined,
-  textAlignLast: undefined,
-  hangingPunctuation: undefined,
 };
 
 const Paragraph = FunctionWithDefaultValues(PARAGRAPH,
@@ -179,17 +157,7 @@ const Paragraph = FunctionWithDefaultValues(PARAGRAPH,
 );
 
 export default {
+  ...PROPS,
   paragraph,
   Paragraph,
-  lineHeight: undefined,
-  textIndent: undefined,
-  wordSpacing: undefined,
-  hyphens: undefined,
-  whiteSpace: undefined,
-  overflowWrap: undefined,
-  wordBreak: undefined,
-  lineBreak: undefined,
-  textAlign: undefined,
-  textAlignLast: undefined,
-  hangingPunctuation: undefined,
 };
