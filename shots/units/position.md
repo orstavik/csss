@@ -151,7 +151,7 @@ $Block(padding(1rem))$box(overflowHidden)$relative
 
 .\|\.origin\$absolute\(0\,0\)>:where(.origin) {
   position: absolute;
-  left: 0;
-  top: 0;
+  inset-inline-start: 0;
+  inset-block-start: 0;
 }
 ```

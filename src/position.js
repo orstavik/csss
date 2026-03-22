@@ -25,7 +25,7 @@ const ORIGINS = {
   rightEnd: ["right", "insetBlockEnd"],
 };
 
-function processPosition({ origin = ["left", "top"], one = 0, two = 0 }) {
+function processPosition({ origin = ["insetInlineStart", "insetBlockStart"], one = 0, two = 0 }) {
   return (origin.length == 1) ?
     { [origin[0]]: one } :
     { [origin[0]]: one, [origin[1]]: two };
@@ -42,4 +42,13 @@ export default {
   relative: FunctionWithDefaultValues({ position: "relative" }, Position),
   fixed: FunctionWithDefaultValues({ position: "fixed" }, Position),
   sticky: FunctionWithDefaultValues({ position: "sticky" }, Position),
+  position: undefined,
+  top: undefined,
+  right: undefined,
+  bottom: undefined,
+  left: undefined,
+  insetInlineStart: undefined,
+  insetBlockStart: undefined,
+  insetInlineEnd: undefined,
+  insetBlockEnd: undefined,
 };
