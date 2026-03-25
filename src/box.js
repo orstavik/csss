@@ -70,7 +70,7 @@ const BoxItemWords = {
   snapEndStart: { scrollSnapAlign: "end start" },
   snapEndCenter: { scrollSnapAlign: "end center" },
   snapNone: { scrollSnapAlign: "none" },
-  snapStop: { scrollSnapStop: "always" },
+  snapAlways: { scrollSnapStop: "always" },
   snapNormal: { scrollSnapStop: "normal" },
 };
 

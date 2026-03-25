@@ -150,12 +150,12 @@ $Block(padding(0))$Box(overflowSnapMandatory,scrollPadding(3.5rem,0))
 |*$BlockItem(margin(0))$BoxItem(block(100vh),snapStart,scrollMargin(3.5rem,0,0))
 |.intro$blockItem()$boxItem(noSnap)
 
-**description:** A long-form article where major section headings softly snap into view when scrolling stops, using scroll margin to keep each section from hiding behind a sticky header, and snapStop ensures the scroll always comes to rest exactly on a heading.
+**description:** A long-form article where major section headings softly snap into view when scrolling stops, using scroll margin to keep each section from hiding behind a sticky header, and snapAlways ensures the scroll always comes to rest exactly on a heading.
 **csss:**
 $Block(padding(2rem))$Box(overflowSnap,scrollPadding(2rem,0))
 |*$BlockItem(margin(0,0,2rem))
-|h2$blockItem()$boxItem(snapStart,snapStop,scrollMargin(2rem,0,0))
-|h3$blockItem()$boxItem(snapStart,snapStop,scrollMargin(2rem,0,0))
+|h2$blockItem()$boxItem(snapStart,snapAlways,scrollMargin(2rem,0,0))
+|h3$blockItem()$boxItem(snapStart,snapAlways,scrollMargin(2rem,0,0))
 
 **description:** A tall sidebar panel that scrolls vertically when content overflows but clips any content that spills horizontally, keeping the layout clean without a horizontal scrollbar.
 **csss:**
