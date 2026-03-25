@@ -878,12 +878,12 @@ $Block(padding(0))$Box(scroll)
 **description:**
 A full-screen vertical slideshow where each slide fills the viewport height and snaps mandatorily into place, with scroll padding and scroll margin offsetting a fixed 3.5rem top navigation bar, and an intro spacer that is explicitly opted out of snapping.
 **csss:**
-$Block(padding(0))$Box(snapMandatory,scrollPadding(3.5rem,0))
+$Block(padding(0))$Box(auto,snapMandatory,scrollPadding(3.5rem,0))
 |*$BlockItem(margin(0))$Box(block(100vh))$BoxItem(snapStart,scrollMargin(3.5rem,0,0))
 |.intro$boxItem(snapNone)
 **css:**
 ```css
-.\$Block\(padding\(0\)\)\$Box\(snapMandatory\,scrollPadding\(3\.5rem\,0\)\) {
+.\$Block\(padding\(0\)\)\$Box\(auto\,snapMandatory\,scrollPadding\(3\.5rem\,0\)\) {
   display: block;
   padding: 0;
   inline-size: unset;
@@ -926,13 +926,13 @@ $Block(padding(0))$Box(snapMandatory,scrollPadding(3.5rem,0))
 **description:**
 A long-form article where major section headings softly snap into view when scrolling stops, using scroll margin to keep each section from hiding behind a sticky header, and snapAlways ensures the scroll always comes to rest exactly on a heading.
 **csss:**
-$Block(padding(2rem))$Box(snap,scrollPadding(2rem,0))
+$Block(padding(2rem))$Box(auto,snap,scrollPadding(2rem,0))
 |*$BlockItem(margin(0,0,2rem))
 |h2$blockItem()$boxItem(snapStart,snapAlways,scrollMargin(2rem,0,0))
 |h3$blockItem()$boxItem(snapStart,snapAlways,scrollMargin(2rem,0,0))
 **css:**
 ```css
-.\$Block\(padding\(2rem\)\)\$Box\(snap\,scrollPadding\(2rem\,0\)\) {
+.\$Block\(padding\(2rem\)\)\$Box\(auto\,snap\,scrollPadding\(2rem\,0\)\) {
   display: block;
   padding: 2rem;
   inline-size: unset;
@@ -1163,11 +1163,11 @@ $Block(padding(1rem))$Paragraph(_,breakAnywhere)
 **description:**
 A square thumbnail gallery where each item is a fixed 10rem by 10rem block centered horizontally with auto inline margins, and each thumbnail snaps to center as the user scrolls through the stack.
 **csss:**
-$Block(padding(1.5rem))$Box(snap)
+$Block(padding(1.5rem))$Box(auto,snap)
 |*$BlockItem(margin(0.5rem,_))$Box(inline(10rem),block(10rem))$BoxItem(snapCenter)
 **css:**
 ```css
-.\$Block\(padding\(1\.5rem\)\)\$Box\(snap\) {
+.\$Block\(padding\(1\.5rem\)\)\$Box\(auto\,snap\) {
   display: block;
   padding: 1.5rem;
   inline-size: unset;
