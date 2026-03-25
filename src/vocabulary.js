@@ -3,7 +3,7 @@ import backgrounds from "./bg.js";
 import border from "./border.js";
 import fonts from "./font.js";
 import layouts from "./layout.js";
-import { SHORTS as box } from "./box.js";
+import box from "./box.js";
 import palette from "./palette.js";
 import transitions from "./transitions.js";
 import textDecorations from "./textDecorations.js";
@@ -64,6 +64,9 @@ const SHORTS = {
   ...ObjectFit,
   ...Animations,
 };
+for (let b in SHORTS)
+  if (typeof SHORTS[b] === "string")
+    SHORTS[b] = undefined;
 
 const MEDIA_WORDS = {
   progressive: "scan: progressive",

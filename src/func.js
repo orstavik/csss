@@ -643,6 +643,36 @@ const FunctionBasedOnValueTypes = (wes = {}, singlePrimes = {}, primes = {}, pos
   };
 };
 
+const TypeBasedFunction = (propToInterpreter, post) => {
+  const FUNCTIONS = [], WORDS = {};
+  for (let [prop, fnDict] of Object.entries(propToInterpreter)) {
+    if (fnDict instanceof Function)
+      FUNCTIONS.push([prop, fnDict]);
+    else if (fnDict) {
+      for (let [word, value] of Object.entries(fnDict))
+        WORDS[word] = { [prop]: value };
+    }
+  }
+  return ({ args, name }) => {
+    const res = {};
+    main: for (let i = 0; i < args.length; i++) {
+      if (args[i].kind === "WORD" && args[i].text in WORDS) {
+        Object.assign(res, WORDS[args[i].text]);
+        continue;
+      }
+      for (let [prop, fn] of FUNCTIONS) {
+        const v = fn(args[i]);
+        if (typeof v === "string") v = { [prop]: v };
+        if (v === undefined) continue;
+        Object.assign(res, v);
+        continue main;
+      }
+      throw BadArgument(name, args, i);
+    }
+    return post ? post(res) : res;
+  };
+};
+
 function assignAndStripBaseWhenInlineBlock(base, adjustment) {
   const res = { ...base, ...adjustment };
   for (let p in res)
@@ -813,4 +843,5 @@ export const FunctionTypes = {
   ParseFirstThenRest,
   LogicalFour,
   Either,
+  TypeBasedFunction,
 };
