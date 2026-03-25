@@ -2,17 +2,80 @@
 **csss:**
 $Block(padding(1.5rem))
 |*$BlockItem(margin(0,0,1rem))
- 
+**css:**
+```css
+.\$Block\(padding\(1\.5rem\)\) {
+  display: block;
+  padding: 1.5rem;
+  inline-size: unset;
+  block-size: unset;
+  min-inline-size: unset;
+  max-inline-size: unset;
+  min-block-size: unset;
+  max-block-size: unset;
+  overflow: unset;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
+}
+.\|\$BlockItem\(margin\(0\,0\,1rem\)\)>* {
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
+  margin-block: 0 1rem;
+  margin-inline: 0;
+}
+```
+
 **description:** Default Block layout for book-styled text with indented paragraphs, title has 0 indentation, subtitle 50% indentation.
 **csss:**
 $Block(padding(1.5rem))
-|*$BlockItem(margin(0,0,1rem))$Paragraph(indent(2em))
+|*$BlockItem(margin(0,0,1rem))$Paragraph(_,indent(2em))
 |.title$blockItem(margin(0,0,2rem))$paragraph(indent(0))
 |.subtitle$blockItem(margin(0,0,1.5rem))$paragraph(indent(1em))
+**css:**
+```css
+.\$Block\(padding\(1\.5rem\)\) {
+  display: block;
+  padding: 1.5rem;
+  inline-size: unset;
+  block-size: unset;
+  min-inline-size: unset;
+  max-inline-size: unset;
+  min-block-size: unset;
+  max-block-size: unset;
+  overflow: unset;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
+}
+.\|\$BlockItem\(margin\(0\,0\,1rem\)\)\$Paragraph\(indent\(2em\)\)>* {
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
+  margin-block: 0 1rem;
+  margin-inline: 0;
+  text-indent: 2em;
+}
+.\.title\$blockItem\(margin\(0\,0\,2rem\)\)\$paragraph\(indent\(0\)\) {
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
+  margin-block: 0 2rem;
+  margin-inline: 0;
+  text-indent: 0;
+}
+.\.subtitle\$blockItem\(margin\(0\,0\,1\.5rem\)\)\$paragraph\(indent\(1em\)\) {
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
+  margin-block: 0 1.5rem;
+  margin-inline: 0;
+  text-indent: 1em;
+}
+```
 
 **description:** A Block layout for a blog post with upto 600px wide, a gap between items, and a floating note on the right side.
 **csss:**
-$BlockItem(inline(_,_,600px))
+$Block$Box(inline(_,_,600px))
 |*$BlockItem(margin(0.5rem,1rem))
 |.box$blockItem(floatStart,margin(0,1rem,1rem,0))
 |p$blockItem(margin(0,0,1rem))
@@ -24,12 +87,12 @@ $BlockItem(inline(_,_,600px))
 **description:** A Block layout for a centered card upto 300px wide and no gap between items.
 **csss:**
 $Block(padding(0,10vh))
-|*$BlockItem(margin(auto,0),inline(_,_,300px))
+|*$BlockItem(margin(auto,0))$Box(inline(_,_,300px))
  
 **description:** A Block layout for a narrow centered reading column with a max-width of 65ch, comfortable vertical spacing between paragraphs, and extra bottom margin on headings to reinforce visual hierarchy for long-form articles or essays.
 **csss:**
 $Block(padding(1.5rem))
-|*$BlockItem(margin(0,0,1.5rem),inline(_,_,65ch))
+|*$BlockItem(margin(0,0,1.5rem))$Box(inline(_,_,65ch))
 |h1$blockItem(margin(0,0,2.5rem))
 |h2$blockItem(margin(0,0,2rem))
 |h3$blockItem(margin(0,0,1.75rem))
@@ -37,7 +100,7 @@ $Block(padding(1.5rem))
 
 **description:** A Block layout for a documentation page with wide outer padding, generous bottom margins on section-level elements, and tighter margins on paragraphs and code blocks to group related content visually within each section.
 **csss:**
-$Block(padding(2rem),breakWord)
+$Block(padding(2rem))$Paragraph(breakWord)
 |*$BlockItem(margin(0,0,1.5rem))
 |h1$blockItem(margin(0,0,3rem))
 |h2$blockItem(margin(0,0,2rem))
@@ -47,8 +110,8 @@ $Block(padding(2rem),breakWord)
 
 **description:** A Block layout for a product detail page with a constrained max-width of 800px, a full-bleed hero image block at the top with no bottom margin, and evenly spaced descriptive sections stacked below it, with overflow clipped so hero images never bleed outside the container.
 **csss:**
-$Block(padding(1.5rem),overflowClip)
-|*$BlockItem(margin(0,0,1.5rem),inline(_,_,800px))
+$Block(padding(1.5rem))$Box(overflowClip)
+|*$BlockItem(margin(0,0,1.5rem))$Box(inline(_,_,800px))
 |.hero$blockItem(margin(0,0,0))
 |.description$blockItem(margin(0,0,1.5rem))
 |.specs$blockItem(margin(0,0,1.5rem))
@@ -74,14 +137,14 @@ $Block(padding(1.5rem))
 
 **description:** A Block layout for a legal or terms-of-service document with a tight reading width of 700px, major numbered sections receiving extra top margin for separation, and nested sub-items indented with a left margin to indicate hierarchy.
 **csss:**
-$Block(padding(1.5rem),breakWord)
-|*$BlockItem(margin(0,0,1.5rem),inline(_,_,700px))
+$Block(padding(1.5rem))$Paragraph(breakWord)
+|*$BlockItem(margin(0,0,1.5rem))$Box(inline(_,_,700px))
 |.section$blockItem(margin(1.5rem,0,0))
 |.sub-item$blockItem(margin(0,0,0,1.5rem))
 
 **description:** A Block layout for a resume or CV with a full-width container, section headings getting a large bottom margin to anchor each section, individual entries with moderate vertical spacing, and fine-detail sub-lines with tight margins.
 **csss:**
-$Block(padding(1.5rem))
+$Block(padding(1.5rem))$Paragraph(breakWord)
 |*$BlockItem(margin(0,0,1.5rem))
 |.section-heading$blockItem(margin(0,0,2rem))
 |.entry$blockItem(margin(0,0,1rem))
@@ -90,7 +153,7 @@ $Block(padding(1.5rem))
 **description:** A Block layout for a news article with a 600px centered content column, a flush top header with no leading margin, inline pullquotes floating to the end side with a left margin, and paragraphs clearing the end-side float so they always sit below pulled quotes.
 **csss:**
 $Block(padding(1.5rem))
-|*$BlockItem(margin(0,0,1.5rem),inline(_,_,600px))
+|*$BlockItem(margin(0,0,1.5rem))$Box(inline(_,_,600px))
 |.header$blockItem(margin(0,0,0))
 |.pullquote$blockItem(floatEnd,margin(0,0,1.5rem,1.5rem))
 |.paragraph$blockItem(clearEnd,margin(0,0,1.5rem))
@@ -105,7 +168,7 @@ $Block(padding(1.5rem))
 **description:** A Block layout for a user profile page with a centered column up to 500px wide, a top avatar block that has no bottom gap and bleeds into the bio section, followed by stats and action blocks with a consistent small vertical rhythm.
 **csss:**
 $Block(padding(1.5rem))
-|*$BlockItem(margin(0,auto),inline(_,_,500px))
+|*$BlockItem(margin(0,auto))$Box(inline(_,_,500px))
 |.avatar$blockItem(margin(0))
 |.bio$blockItem(margin(0,0,1.5rem))
 |.stats$blockItem(margin(0,0,1.5rem))
@@ -132,7 +195,7 @@ $Block(padding(1.5rem))
 **description:** A Block layout for an email newsletter column capped at 600px with centered alignment, alternating section blocks that use top margin to space content rhythmically, and a footer block whose inner content floats to the end side.
 **csss:**
 $Block(padding(1.5rem))
-|*$BlockItem(margin(0,auto),inline(_,_,600px))
+|*$BlockItem(margin(0,auto))$Box(inline(_,_,600px))
 |.section$blockItem(margin(0,0,1.5rem))
 |.footer$blockItem(margin(0,0,0))
 |.footer-content$blockItem(floatEnd,margin(0))
@@ -173,13 +236,13 @@ $Block(padding(1.5rem),overflowHidden)
 
 **description:** A content block for East Asian text where words must never be broken mid-word at line ends, giving natural CJK line-breaking with generous paragraph spacing.
 **csss:**
-$Block(padding(1.5rem),keepAll)
+$Block(padding(1.5rem))$Paragraph(keepAll)
 |*$BlockItem(margin(0,0,1.25rem))
 |h2$blockItem(margin(0,0,1.75rem))
 
 **description:** A debug log or hash-display panel where every character is an eligible break point so that long unbreakable strings like SHA hashes or minified code never overflow their container.
 **csss:**
-$Block(padding(1rem),breakAnywhere)
+$Block(padding(1rem))$Paragraph(breakAnywhere)
 |*$BlockItem(margin(0,0,0.25rem))
 |.log-entry$boxItem(inline(100%),margin(0,0,0.5rem))
 
