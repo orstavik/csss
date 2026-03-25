@@ -3,6 +3,7 @@ import { diff } from "https://cdn.jsdelivr.net/gh/orstavik/making-a@25.08.27/dif
 function createLinkToCopyContent(header, txt) {
   const link = document.createElement("a");
   link.textContent = header;
+  link.style.display = "block";
   link.href = "#";
   link.addEventListener("click", e => { e.preventDefault(); navigator.clipboard.writeText(txt); });
   document.body.appendChild(link);
