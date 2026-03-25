@@ -1,5 +1,13 @@
 import { diff } from "https://cdn.jsdelivr.net/gh/orstavik/making-a@25.08.27/difference.js";
 
+function createLinkToCopyContent(header, txt) {
+  const link = document.createElement("a");
+  link.textContent = header;
+  link.href = "#";
+  link.addEventListener("click", e => { e.preventDefault(); navigator.clipboard.writeText(txt); });
+  document.body.appendChild(link);
+}
+
 function splitMd(txt) {
   const entry = txt.split(/(?:^|\n)\*\*([a-z0-9_-]+):\*\*/i).slice(1);
   const res = [];
@@ -12,6 +20,11 @@ function splitMd(txt) {
     now[key] = { type, value };
   }
   return res;
+}
+
+function printShot(shot) {
+  const wrapInType = (type, value) => ["css", "html", "js"].includes(type) ? `\`\`\`${type}\n${value}\n\`\`\`` : value;
+  return Object.entries(shot).map(([k, { type, value }]) => `**${k}:**\n${wrapInType(type, value)}`).join("\n");
 }
 
 function printDiff({ key, actual, expected, type }) {
@@ -37,7 +50,16 @@ export default async function runTests(paths, test) {
   for (let file of tests) {
     console.warn(`Testing ${file}`);
     const txt = await (await fetch(file)).text();
-    for (let shot of splitMd(txt))
-      printDiff(await test(shot));
+    const shots = splitMd(txt);
+    for (let shot of shots) {
+      try {
+        const result = await test(shot);
+        printDiff(result);
+        shot.css = { type: "css", value: result.actual };
+      } catch (e) {
+        console.error(`💣${shot.csss.value} in ${file}:`, e);
+      }
+    }
+    createLinkToCopyContent("Copy result of " + file, shots.map(printShot).join("\n\n"));
   }
 }

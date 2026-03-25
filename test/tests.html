@@ -9,7 +9,8 @@
   }
 
   function test({ csss, css }) {
-    const statement = csss.value, expected = css.value;
+    const statement = csss.value;
+    const expected = css?.value;
     const res = statement.split(/\s+/g).map(CSSS.parse).flat();
     const actual = res.map(({ cssText }) => stripLayers(cssText)).join("\n\n");
     return {
