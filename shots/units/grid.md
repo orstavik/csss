@@ -153,11 +153,11 @@ $Grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),padding(1rem))
 
 **description:** A scrollable Grid gallery with a wide first item.
 **csss:**
-$Grid(cols(repeat(4,1fr)),gap(1rem))$box(overflowScrollHidden)
+$Grid(cols(repeat(4,1fr)),gap(1rem))$box(scrollHidden)
 |:nth-child(1)$gridItem(column(1,span(3)))
 **css:**
 ```css
-.\$Grid\(cols\(repeat\(4\,1fr\)\)\,gap\(1rem\)\)\$box\(overflowScrollHidden\) {
+.\$Grid\(cols\(repeat\(4\,1fr\)\)\,gap\(1rem\)\)\$box\(scrollHidden\) {
   display: grid;
   padding: unset;
   place-items: unset;

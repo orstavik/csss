@@ -131,12 +131,12 @@ $Block(padding(2rem))$relative
 
 **description:** A relative Block callout with one child placed by calc from logical start and another snapped to the origin corner.
 **csss:**
-$Block(padding(1rem))$box(overflowHidden)$relative
+$Block(padding(1rem))$box(hidden)$relative
 |.callout$absolute(5%,10px+2em,_,_)$zIndex(2)
 |.origin$absolute(0,0,_,_)
 **css:**
 ```css
-.\$Block\(padding\(1rem\)\)\$box\(overflowHidden\)\$relative {
+.\$Block\(padding\(1rem\)\)\$box\(hidden\)\$relative {
   display: block;
   padding: 1rem;
   overflow: hidden;

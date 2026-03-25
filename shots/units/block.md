@@ -1,10 +1,10 @@
 **description:** A clipped Block card stack with padding and even item spacing.
 **csss:**
-$Block(padding(1rem))$Box(overflowHidden)
+$Block(padding(1rem))$Box(hidden)
 |$BlockItem(margin(1rem,0,0.5rem))
 **css:**
 ```css
-.\$Block\(padding\(1rem\)\)\$Box\(overflowHidden\) {
+.\$Block\(padding\(1rem\)\)\$Box\(hidden\) {
   display: block;
   padding: 1rem;
   inline-size: unset;
@@ -29,11 +29,11 @@ $Block(padding(1rem))$Box(overflowHidden)
 
 **description:** A scrolling Block media list with fixed-size items.
 **csss:**
-$block(padding(1.5rem))$Box(overflowScroll)
+$block(padding(1.5rem))$Box(scroll)
 |$Box(inline(60px),block(100px))
 **css:**
 ```css
-.\$block\(padding\(1\.5rem\)\)\$Box\(overflowScroll\) {
+.\$block\(padding\(1\.5rem\)\)\$Box\(scroll\) {
   padding: 1.5rem;
   inline-size: unset;
   block-size: unset;
@@ -61,11 +61,11 @@ $block(padding(1.5rem))$Box(overflowScroll)
 
 **description:** A scrollable Block note rail with clean word breaks.
 **csss:**
-$Box(overflowHiddenScroll)$paragraph(breakWord)
+$Box(hiddenScroll)$paragraph(breakWord)
 |$BlockItem(margin(0.5rem,1rem))
 **css:**
 ```css
-.\$Box\(overflowHiddenScroll\)\$paragraph\(breakWord\) {
+.\$Box\(hiddenScroll\)\$paragraph\(breakWord\) {
   inline-size: unset;
   block-size: unset;
   min-inline-size: unset;
@@ -90,11 +90,11 @@ $Box(overflowHiddenScroll)$paragraph(breakWord)
 
 **description:** A centered Block reading panel with capped line length.
 **csss:**
-$Block$box(overflowAuto)$Paragraph(_,center)
+$Block$box(auto)$Paragraph(_,center)
 |$Box(inline(_,_,600px))
 **css:**
 ```css
-.\$Block\$box\(overflowAuto\)\$Paragraph\(_\,center\) {
+.\$Block\$box\(auto\)\$Paragraph\(_\,center\) {
   display: block;
   padding: unset;
   overflow: auto;

@@ -284,14 +284,14 @@ $Block(padding(2rem))$Paragraph(_,breakWord)
 **description:**
 A Block layout for a product detail page with a constrained max-width of 800px, a full-bleed hero image block at the top with no bottom margin, and evenly spaced descriptive sections stacked below it, with overflow clipped so hero images never bleed outside the container.
 **csss:**
-$Block(padding(1.5rem))$Box(overflowClip)
+$Block(padding(1.5rem))$Box(clip)
 |*$BlockItem(margin(0,0,1.5rem))$Box(inline(_,_,800px))
 |.hero$blockItem(margin(0,0,0))
 |.description$blockItem(margin(0,0,1.5rem))
 |.specs$blockItem(margin(0,0,1.5rem))
 **css:**
 ```css
-.\$Block\(padding\(1\.5rem\)\)\$Box\(overflowClip\) {
+.\$Block\(padding\(1\.5rem\)\)\$Box\(clip\) {
   display: block;
   padding: 1.5rem;
   inline-size: unset;
@@ -341,12 +341,12 @@ $Block(padding(1.5rem))$Box(overflowClip)
 **description:**
 A Block layout for a sidebar navigation panel with no inline padding, compact vertical spacing between nav items, and extra top margin on group headings to create clear visual clusters without decorative separators.
 **csss:**
-$Block(padding(1.5rem,0))$Box(overflowAuto)
+$Block(padding(1.5rem,0))$Box(auto)
 |*$BlockItem(margin(0.25rem,0))
 |.nav-group$blockItem(margin(1.5rem,0,0))
 **css:**
 ```css
-.\$Block\(padding\(1\.5rem\,0\)\)\$Box\(overflowAuto\) {
+.\$Block\(padding\(1\.5rem\,0\)\)\$Box\(auto\) {
   display: block;
   padding-block: 1.5rem;
   padding-inline: 0;
@@ -827,13 +827,13 @@ $Block(padding(1.5rem))
 **description:**
 A Block layout for a compact dashboard widget with no outer padding, tightly packed rows with only 0.25rem vertical gaps, widget header blocks with a slightly larger bottom margin to separate them from their data rows, and a permanent scrollbar so the layout never shifts when content changes.
 **csss:**
-$Block(padding(0))$Box(overflowScroll)
+$Block(padding(0))$Box(scroll)
 |*$BlockItem(margin(0.25rem,0))
 |.widget-header$blockItem(margin(0,0,0.5rem))
 |.data-row$blockItem(margin(0,0,0))$Box(block(2.5rem))
 **css:**
 ```css
-.\$Block\(padding\(0\)\)\$Box\(overflowScroll\) {
+.\$Block\(padding\(0\)\)\$Box\(scroll\) {
   display: block;
   padding: 0;
   inline-size: unset;
@@ -878,12 +878,12 @@ $Block(padding(0))$Box(overflowScroll)
 **description:**
 A full-screen vertical slideshow where each slide fills the viewport height and snaps mandatorily into place, with scroll padding and scroll margin offsetting a fixed 3.5rem top navigation bar, and an intro spacer that is explicitly opted out of snapping.
 **csss:**
-$Block(padding(0))$Box(overflowSnapMandatory,scrollPadding(3.5rem,0))
+$Block(padding(0))$Box(snapMandatory,scrollPadding(3.5rem,0))
 |*$BlockItem(margin(0))$Box(block(100vh))$BoxItem(snapStart,scrollMargin(3.5rem,0,0))
 |.intro$boxItem(snapNone)
 **css:**
 ```css
-.\$Block\(padding\(0\)\)\$Box\(overflowSnapMandatory\,scrollPadding\(3\.5rem\,0\)\) {
+.\$Block\(padding\(0\)\)\$Box\(snapMandatory\,scrollPadding\(3\.5rem\,0\)\) {
   display: block;
   padding: 0;
   inline-size: unset;
@@ -926,13 +926,13 @@ $Block(padding(0))$Box(overflowSnapMandatory,scrollPadding(3.5rem,0))
 **description:**
 A long-form article where major section headings softly snap into view when scrolling stops, using scroll margin to keep each section from hiding behind a sticky header, and snapAlways ensures the scroll always comes to rest exactly on a heading.
 **csss:**
-$Block(padding(2rem))$Box(overflowSnap,scrollPadding(2rem,0))
+$Block(padding(2rem))$Box(snap,scrollPadding(2rem,0))
 |*$BlockItem(margin(0,0,2rem))
 |h2$blockItem()$boxItem(snapStart,snapAlways,scrollMargin(2rem,0,0))
 |h3$blockItem()$boxItem(snapStart,snapAlways,scrollMargin(2rem,0,0))
 **css:**
 ```css
-.\$Block\(padding\(2rem\)\)\$Box\(overflowSnap\,scrollPadding\(2rem\,0\)\) {
+.\$Block\(padding\(2rem\)\)\$Box\(snap\,scrollPadding\(2rem\,0\)\) {
   display: block;
   padding: 2rem;
   inline-size: unset;
@@ -973,12 +973,12 @@ $Block(padding(2rem))$Box(overflowSnap,scrollPadding(2rem,0))
 **description:**
 A tall sidebar panel that scrolls vertically when content overflows but clips any content that spills horizontally, keeping the layout clean without a horizontal scrollbar.
 **csss:**
-$Block(padding(1rem))$Box(overflowAutoHidden)
+$Block(padding(1rem))$Box(autoHidden)
 |*$BlockItem(margin(0,0,0.5rem))
 |.group-header$blockItem(margin(1.5rem,0,0.5rem))
 **css:**
 ```css
-.\$Block\(padding\(1rem\)\)\$Box\(overflowAutoHidden\) {
+.\$Block\(padding\(1rem\)\)\$Box\(autoHidden\) {
   display: block;
   padding: 1rem;
   inline-size: unset;
@@ -1009,14 +1009,14 @@ $Block(padding(1rem))$Box(overflowAutoHidden)
 **description:**
 A block layout with a start-side figure and an end-side aside that float beside the body text, and a footer that clears both floats to always sit below all floated content.
 **csss:**
-$Block(padding(1.5rem))$Box(overflowHidden)
+$Block(padding(1.5rem))$Box(hidden)
 |*$BlockItem(margin(0,0,1rem))
 |.figure$blockItem(floatStart,margin(0,1.5rem,1rem,0))$Box(inline(40%))
 |.aside$blockItem(floatEnd,margin(0,0,1rem,1.5rem))$Box(inline(30%))
 |.footer$blockItem(clear,margin(2rem,0,0))
 **css:**
 ```css
-.\$Block\(padding\(1\.5rem\)\)\$Box\(overflowHidden\) {
+.\$Block\(padding\(1\.5rem\)\)\$Box\(hidden\) {
   display: block;
   padding: 1.5rem;
   inline-size: unset;
@@ -1163,11 +1163,11 @@ $Block(padding(1rem))$Paragraph(_,breakAnywhere)
 **description:**
 A square thumbnail gallery where each item is a fixed 10rem by 10rem block centered horizontally with auto inline margins, and each thumbnail snaps to center as the user scrolls through the stack.
 **csss:**
-$Block(padding(1.5rem))$Box(overflowSnap)
+$Block(padding(1.5rem))$Box(snap)
 |*$BlockItem(margin(0.5rem,_))$Box(inline(10rem),block(10rem))$BoxItem(snapCenter)
 **css:**
 ```css
-.\$Block\(padding\(1\.5rem\)\)\$Box\(overflowSnap\) {
+.\$Block\(padding\(1\.5rem\)\)\$Box\(snap\) {
   display: block;
   padding: 1.5rem;
   inline-size: unset;

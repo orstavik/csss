@@ -175,13 +175,13 @@ $Flex(contentCenter,itemsStretch,gap(1rem),padding(1rem),wrap)
 
 **description:** A scrollable Flex control strip with mixed item sizing.
 **csss:**
-$Flex(gap(1rem),padding(1rem))$box(overflowScroll)
+$Flex(gap(1rem),padding(1rem))$box(scroll)
 |:nth-child(1)$flexItem(grow(1))
 |:nth-child(2)$flexItem(selfCenter)
 |:nth-child(3)$flexItem(shrink(0.5))
 **css:**
 ```css
-.\$Flex\(gap\(1rem\)\,padding\(1rem\)\)\$box\(overflowScroll\) {
+.\$Flex\(gap\(1rem\)\,padding\(1rem\)\)\$box\(scroll\) {
   display: flex;
   padding: 1rem;
   align-items: unset;

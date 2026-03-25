@@ -21,11 +21,11 @@ $IBlock(padding(0.5rem))$paragraph(center)
 
 **description:** An IBlock stat row with hidden overflow, padding, and shared spacing.
 **csss:**
-$IBlock(padding(0.5rem))$box(overflowHidden)
+$IBlock(padding(0.5rem))$box(hidden)
 |$IBlockItem(margin(1rem,0,0.5rem))
 **css:**
 ```css
-.\$IBlock\(padding\(0\.5rem\)\)\$box\(overflowHidden\) {
+.\$IBlock\(padding\(0\.5rem\)\)\$box\(hidden\) {
   display: inline-block;
   padding: 0.5rem;
   overflow: hidden;
