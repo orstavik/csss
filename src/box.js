@@ -55,28 +55,31 @@ const BOX = {
     ar.length === 1 ? { inlineSize: ar[0] } : { minInlineSize: ar[0], inlineSize: ar[1], maxInlineSize: ar[2] ?? "unset" }),
   block: SequentialFunction("block/1-3", [LengthPercentUnset], (_, ar) =>
     ar.length === 1 ? { blockSize: ar[0] } : { minBlockSize: ar[0], blockSize: ar[1], maxBlockSize: ar[2] ?? "unset" }),
-  scrollPadding: LogicalFour("scroll-padding", LengthPercent),
+  scrollPadding: LogicalFour("scrollPadding", LengthPercent),
   ...OVERFLOWS,
 };
 
-const BoxItemWords = {
-  snapStart: { scrollSnapAlign: "start" },
-  snapStartCenter: { scrollSnapAlign: "start center" },
-  snapStartEnd: { scrollSnapAlign: "start end" },
-  snapCenter: { scrollSnapAlign: "center" },
-  snapCenterStart: { scrollSnapAlign: "center start" },
-  snapCenterEnd: { scrollSnapAlign: "center end" },
-  snapEnd: { scrollSnapAlign: "end" },
-  snapEndStart: { scrollSnapAlign: "end start" },
-  snapEndCenter: { scrollSnapAlign: "end center" },
-  snapNone: { scrollSnapAlign: "none" },
-  snapAlways: { scrollSnapStop: "always" },
-  snapNormal: { scrollSnapStop: "normal" },
+const scrollSnapStop = {
+  snapAlways: "always",
+  snapNormal: "normal",
+};
+const scrollSnapAlign = {
+  snapStart: "start",
+  snapStartCenter: "start center",
+  snapStartEnd: "start end",
+  snapCenter: "center",
+  snapCenterStart: "center start",
+  snapCenterEnd: "center end",
+  snapEnd: "end",
+  snapEndStart: "end start",
+  snapEndCenter: "end center",
+  snapNone: "none",
 };
 
 const BOX_ITEM = {
-  scrollMargin: LogicalFour("scroll-margin", LengthPercent),
-  ...BoxItemWords,
+  scrollMargin: LogicalFour("scrollMargin", LengthPercent),
+  scrollSnapAlign: WordToValue("scrollSnapAlign", scrollSnapAlign),
+  scrollSnapStop: WordToValue("scrollSnapStop", scrollSnapStop),
 };
 
 const box = FunctionBasedOnValueTypes(BOX, {}, {}, res => Object.assign({}, ...Object.values(res)));
