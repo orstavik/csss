@@ -7,17 +7,9 @@ $Block(padding(1.5rem))
 .\$Block\(padding\(1\.5rem\)\) {
   display: block;
   padding: 1.5rem;
-  inline-size: unset;
-  block-size: unset;
-  min-inline-size: unset;
-  max-inline-size: unset;
-  min-block-size: unset;
-  max-block-size: unset;
-  overflow: unset;
-  scroll-padding: unset;
-  scroll-snap-type: unset;
 }
-.\|\$BlockItem\(margin\(0\,0\,1rem\)\)>* {
+
+.\|\*\$BlockItem\(margin\(0\,0\,1rem\)\)>* {
   float: unset;
   clear: unset;
   vertical-align: unset;
@@ -37,36 +29,34 @@ $Block(padding(1.5rem))
 .\$Block\(padding\(1\.5rem\)\) {
   display: block;
   padding: 1.5rem;
-  inline-size: unset;
-  block-size: unset;
-  min-inline-size: unset;
-  max-inline-size: unset;
-  min-block-size: unset;
-  max-block-size: unset;
-  overflow: unset;
-  scroll-padding: unset;
-  scroll-snap-type: unset;
 }
-.\|\$BlockItem\(margin\(0\,0\,1rem\)\)\$Paragraph\(indent\(2em\)\)>* {
+
+.\|\*\$BlockItem\(margin\(0\,0\,1rem\)\)\$Paragraph\(_\,indent\(2em\)\)>* {
   float: unset;
   clear: unset;
   vertical-align: unset;
   margin-block: 0 1rem;
   margin-inline: 0;
+  line-height: unset;
   text-indent: 2em;
+  word-spacing: unset;
+  hyphens: unset;
+  white-space: unset;
+  overflow-wrap: unset;
+  word-break: unset;
+  line-break: unset;
+  text-align: unset;
+  text-align-last: unset;
+  hanging-punctuation: unset;
 }
-.\.title\$blockItem\(margin\(0\,0\,2rem\)\)\$paragraph\(indent\(0\)\) {
-  float: unset;
-  clear: unset;
-  vertical-align: unset;
+
+.\|\.title\$blockItem\(margin\(0\,0\,2rem\)\)\$paragraph\(indent\(0\)\)>:where(.title) {
   margin-block: 0 2rem;
   margin-inline: 0;
   text-indent: 0;
 }
-.\.subtitle\$blockItem\(margin\(0\,0\,1\.5rem\)\)\$paragraph\(indent\(1em\)\) {
-  float: unset;
-  clear: unset;
-  vertical-align: unset;
+
+.\|\.subtitle\$blockItem\(margin\(0\,0\,1\.5rem\)\)\$paragraph\(indent\(1em\)\)>:where(.subtitle) {
   margin-block: 0 1.5rem;
   margin-inline: 0;
   text-indent: 1em;
