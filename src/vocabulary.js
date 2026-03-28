@@ -2,7 +2,15 @@ import nativeAndMore from "./func.js";
 import backgrounds from "./bg.js";
 import border from "./border.js";
 import fonts from "./font.js";
-import layouts from "./layout.js";
+import block from "./block.js";
+import blockItem from "./blockItem.js";
+import flex from "./flex.js";
+import flexItem from "./flexItem.js";
+import grid from "./grid.js";
+import gridItem from "./gridItem.js";
+import iBlock from "./iBlock.js";
+import iBlockItem from "./iBlockItem.js";
+import lineClamp from "./lineClamp.js";
 import boxItem from "./boxItem.js";
 import box from "./box.js";
 import palette from "./palette.js";
@@ -57,7 +65,15 @@ const SHORTS = {
   ...backgrounds,
   ...fonts,
   ...palette,
-  ...layouts,
+  ...block.props,
+  ...blockItem.props,
+  ...flex.props,
+  ...flexItem.props,
+  ...grid.props,
+  ...gridItem.props,
+  ...iBlock.props,
+  ...iBlockItem.props,
+  ...lineClamp.props,
   ...transitions,
   ...textDecorations,
   ...border,
@@ -70,6 +86,15 @@ const SHORTS = {
   ...Animations,
   ...box.csss,
   ...boxItem.csss,
+  ...block.csss,
+  ...blockItem.csss,
+  ...flex.csss,
+  ...flexItem.csss,
+  ...grid.csss,
+  ...gridItem.csss,
+  ...iBlock.csss,
+  ...iBlockItem.csss,
+  ...lineClamp.csss,
 };
 for (let b in SHORTS)
   if (typeof SHORTS[b] === "string")
@@ -78,6 +103,15 @@ for (let b in SHORTS)
 const REVERSES = {
   ...boxItem.css,
   ...box.css,
+  ...block.css,
+  ...blockItem.css,
+  ...flex.css,
+  ...flexItem.css,
+  ...grid.css,
+  ...gridItem.css,
+  ...iBlock.css,
+  ...iBlockItem.css,
+  ...lineClamp.css,
 };
 
 const MEDIA_WORDS = {
