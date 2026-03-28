@@ -236,6 +236,9 @@ export default {
   backgroundBlendMode: undefined,
   backgroundAttachment: undefined,
   backgroundColor: undefined,
+  //todo I think that these should be $Bg() and $BgColor()
+  //todo the reason being that they set the full background always.
+  //todo we could have a $bg() that sets only a few properties. We should probably have that.
   bgColor: SingleArgumentFunction(Color, (n, v) => ({ backgroundColor: v })),
   //todo this hack should now be manageable from the animation point of view..
   bg: FunctionWithDefaultValues(DEFAULTS, bg),
