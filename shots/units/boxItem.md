@@ -8,3 +8,12 @@
   scroll-margin-inline: 20px;
 }
 ```
+
+**description:** A BoxItem with 40px margin.
+**csss:** $boxItem(scrollMargin(20px*2))
+**css:**
+```css
+.\$boxItem\(scrollMargin\(20px\*2\)\) {
+  scroll-margin: 40px;
+}
+```

@@ -928,8 +928,8 @@ A long-form article where major section headings softly snap into view when scro
 **csss:**
 $Block(padding(2rem))$Box(auto,snap,scrollPadding(2rem,0))
 |*$BlockItem(margin(0,0,2rem))
-|h2$blockItem()$boxItem(snapStart,snapAlways,scrollMargin(2rem,0,0))
-|h3$blockItem()$boxItem(snapStart,snapAlways,scrollMargin(2rem,0,0))
+|h2$boxItem(snapStart,snapAlways,scrollMargin(2rem,0,0))
+|h3$boxItem(snapStart,snapAlways,scrollMargin(2rem,0,0))
 **css:**
 ```css
 .\$Block\(padding\(2rem\)\)\$Box\(auto\,snap\,scrollPadding\(2rem\,0\)\) {
@@ -955,14 +955,14 @@ $Block(padding(2rem))$Box(auto,snap,scrollPadding(2rem,0))
   margin-inline: 0;
 }
 
-.\|h2\$blockItem\(\)\$boxItem\(snapStart\,snapAlways\,scrollMargin\(2rem\,0\,0\)\)>:where(h2) {
+.\|h2\$boxItem\(snapStart\,snapAlways\,scrollMargin\(2rem\,0\,0\)\)>:where(h2) {
   scroll-snap-align: start;
   scroll-snap-stop: always;
   scroll-margin-block: 2rem 0;
   scroll-margin-inline: 0;
 }
 
-.\|h3\$blockItem\(\)\$boxItem\(snapStart\,snapAlways\,scrollMargin\(2rem\,0\,0\)\)>:where(h3) {
+.\|h3\$boxItem\(snapStart\,snapAlways\,scrollMargin\(2rem\,0\,0\)\)>:where(h3) {
   scroll-snap-align: start;
   scroll-snap-stop: always;
   scroll-margin-block: 2rem 0;
