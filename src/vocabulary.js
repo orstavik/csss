@@ -4,7 +4,7 @@ import border from "./border.js";
 import fonts from "./font.js";
 import layouts from "./layout.js";
 import boxItemX from "./boxItem.js";
-import box from "./box.js";
+import boxX from "./box2.js";
 import palette from "./palette.js";
 import transitions from "./transitions.js";
 import textDecorations from "./textDecorations.js";
@@ -16,6 +16,7 @@ import paragraph from "./paragraph.js";
 import { animationHo } from "./animations.js";
 
 const { csss: boxItem, props: boxItemProps, css: boxItemReverse } = boxItemX;
+const { csss: box, props: boxProps, css: boxReverse } = boxX;
 
 const Animations = {
   translateY: animationHo(filterTransforms.translateY),
@@ -68,10 +69,16 @@ const SHORTS = {
   ...ObjectFit,
   ...Animations,
   ...boxItem,
+  ...boxProps,
 };
 for (let b in SHORTS)
   if (typeof SHORTS[b] === "string")
     SHORTS[b] = undefined;
+
+export const REVERSES = {
+  ...boxItemReverse,
+  ...boxReverse,
+};
 
 const MEDIA_WORDS = {
   progressive: "scan: progressive",
@@ -150,7 +157,7 @@ const MEDIA_WORDS = {
 //   "overflow-inline": "overflow-x",
 // };
 
-export { SHORTS, MEDIA_WORDS };
+export { SHORTS, MEDIA_WORDS, REVERSES };
 
 
 /*
