@@ -1,202 +1,207 @@
-import { ValueTypes, FunctionTypes, BadArgument } from "./func.js";
-const { } = FunctionTypes;
-const { Length, Percent } = ValueTypes;
+import { ValueTypes, FunctionTypes } from "./func.js";
+const { LogicalFour: y, FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest, TypeBasedFunction: x } = FunctionTypes;
+const { Angle, Color, Length, Name, NumberInterpreter, Fraction, Integer, Quote, Percent, Time, Unset, Url, Word, Basic, Radian, Repeat, Span, AnglePercent, LengthUnset, LengthPercent, LengthPercentUnset, LengthPercentNumber, NameUnset, NumberPercent, UrlUnset, ColorUrl, ColorPrimitive, RepeatBasic, SpanBasic, AbsoluteUrl, CamelWords, WordToValue, } = ValueTypes;
 
-const TypeBasedFunction2 = Spec => {
+const SingleTable = (CssProp, Table) => ({ text }) => ({ [CssProp]: Table[text] });
+
+const TypeBasedFunction = (...FUNCTIONS) => {
   return ({ args, name }) => {
     const res = {};
-    main: for (let out, i = 0; i < args.length; i++) {
-      for (let ARG of Spec.ARGS)
-        if ((out = ARG.csss(args[i])) !== undefined) {
-          if (typeof out === "string")
-            res[ARG.PROPS[0]] = out;
-          else
-            Object.assign(res, out);
+    main: for (let i = 0; i < args.length; i++) {
+      for (let fn of FUNCTIONS) {
+        const v = fn(args[i]);
+        if (v != null) {
+          Object.assign(res, v);
           continue main;
         }
-      throw BadArgument(name, args, i);//, ARG.csssName); Todo we need to make the Interpreter for the arguments
-      //todo I think that we can do that in the constructor of the CsssFunction
+      }
+      throw BadArgument(name, args, i);
     }
     return res;
   };
-}
-
-const LogicalFour2Post = NAME => ar => ar.length < 2 ? { [NAME]: ar[0] ?? "none" } :
-  {
-    [NAME + "Block"]: ar[2] != null && ar[2] != ar[0] ? ar[0] + " " + ar[2] : ar[0],
-    [NAME + "Inline"]: ar[3] != null && ar[3] != ar[1] ? (ar[1] ?? ar[0]) + " " + ar[3] : ar[1] ?? ar[0],
-  };
-
-const LogicalFour2 = ({ ARGS }) => {
-  const Interpreter = makeInterpreter(ARGS.map(s => s.csss));
-  return ({ args }) => args.map(Interpreter);
 };
 
-const LogicalFourToShort = ({ ARGS, PROPS }) => {
-  PROPS = Object.keys(PROPS).filter(p => p.includes("Start") || p.includes("End"));
-  const INTERPRETER = makeInterpreter(ARGS.map(s => s.css));
+const LogicalFour = (CsssName, CssName, INTERPRETER) => ({ args, name }) => {
+  if (CsssName != name) return;
+  if (args.length > 4)
+    throw new SyntaxError(`${CsssName}() takes max 4 arguments, got ${args.length}.`);
+  if (!args.length)
+    return { [CsssName]: "none" };
+  args = args.map((a, i) => {
+    if (a = INTERPRETER(a))
+      return a;
+    throw BadArgument(CsssName, args, i, INTERPRETER.name);
+  });
+  return args.length === 1 ? { [CssName]: args[0] } :
+    {
+      [CssName + "-block"]: args[2] != null && args[2] != args[0] ? args[0] + " " + args[2] : args[0],
+      [CssName + "-inline"]: args[3] != null && args[3] != args[1] ? (args[1] ?? args[0]) + " " + args[3] : args[1] ?? args[0],
+    };
+}
+
+const scrollSnapAlign = {
+  snapStart: "start",
+  snapStartCenter: "start center",
+  snapStartEnd: "start end",
+  snapCenter: "center",
+  snapCenterStart: "center start",
+  snapCenterEnd: "center end",
+  snapEnd: "end",
+  snapEndStart: "end start",
+  snapEndCenter: "end center",
+  snapNone: "none",
+};
+const scrollSnapStop = {
+  snapAlways: "always",
+  snapNormal: "normal",
+};
+const DefaultBoxItem = {
+  scrollMargin: "unset",
+  scrollSnapAlign: "unset",
+  scrollSnapStop: "unset",
+};
+const scrollMarginProps = {
+  scrollMargin: undefined,
+  scrollMarginBlock: undefined,
+  scrollMarginInline: undefined,
+  scrollMarginBlockStart: undefined,
+  scrollMarginInlineStart: undefined,
+  scrollMarginBlockEnd: undefined,
+  scrollMarginInlineEnd: undefined,
+  scrollMarginTop: undefined,
+  scrollMarginRight: undefined,
+  scrollMarginBottom: undefined,
+  scrollMarginLeft: undefined,
+};
+const BoxItemProps = {
+  ...scrollMarginProps,
+  scrollSnapAlign: undefined,
+  scrollSnapStop: undefined,
+};
+
+const boxItem = TypeBasedFunction(
+  LogicalFour("scrollMargin", "scroll-margin", LengthPercent),
+  SingleTable("scroll-snap-align", scrollSnapAlign),
+  SingleTable("scroll-snap-stop", scrollSnapStop)
+);
+const BoxItem = FunctionWithDefaultValues(DefaultBoxItem, boxItem);
+
+export const csss = { ...BoxItemProps, boxItem, BoxItem };
+
+const LogicalFourReverse = (CssPrevix, CsssFnName, INTERPRETER, DEFAULT = "_") => {
+  const PROPS = ["-block-start", "-inline-start", "-block-end", "-inline-end"].map(s => CssPrevix + s);
   return style => {
-    const args = PROPS.map(p => style[p] ? INTERPRETER(style[p]) : "_");
-    if (args[1] !== args[3])
-      return args;
-    args.pop();
-    if (args[0] !== args[2])
-      return args;
-    args.pop();
-    if (args[0] !== args[1])
-      return args;
-    args.pop();
-    return args;
+    let args = PROPS.map(p => INTERPRETER(style[p]) ?? DEFAULT);
+    if (args[1] === args[3] && (args.pop() || true))
+      if (args[0] === args[2] && (args.pop() || true))
+        if (args[0] === args[1] && (args.pop() || true))
+          ;
+    return `${CsssFnName}(${args.join(",")})`;
   }
 };
 
-const Optional = (ARGS, POST) => style => {
+const SingleTableReverse = (CssProp, Table) => {
+  Table = Object.fromEntries(Object.entries(Table).map(([k, v]) => [v, k]));
+  return style => Table[style[CssProp]];
+};
+
+const Optional = (CsssName, ...Fns) => style => {
   let args;
-  for (let [props, fn] of ARGS)
-    if (props.some(p => style[p] !== undefined))
-      (args ??= []).push(fn(style, props));
-  return args && POST(args);
+  for (let fn of Fns)
+    if ((fn = fn(style)) !== undefined)
+      (args ??= []).push(fn);
+  return args && `${CsssName}(${args.join(",")})`;
 }
 
-class CsssPrimitive {
-  #csss;
-  #css;
-  constructor(csss, css) {
-    this.#csss = makeInterpreter(csss);
-    this.#css = makeInterpreter(css);
-  }
-  get csss() { return this.#csss; }
-  get css() { return this.#css; }
-}
-class CsssSinglePropertyWord {
-  #csss;
-  #css;
-  constructor({ property, csssToCss }) {
-    this.PROPS = [property];
-    this.csssToCss = Object.create(null);
-    this.cssToCsss = Object.create(null);
-    for (let [word, value] of Object.entries(csssToCss)) {
-      this.csssToCss[word] = { [property]: value };
-      this.cssToCsss[value] = word;
-    }
-    this.#csss = x => this.csssToCss[x.text];
-    this.#css = style => this.cssToCsss[style[property]];
-    Object.freeze(this);
-  }
-  get csss() { return this.#csss; }
-  get css() { return this.#css; }
-}
-function parseSignature(SIG) {
-  const [NAME, ARITY] = SIG.split("/");
-  if (!ARITY) return { NAME, checkArity: ({ name }) => name === NAME };
-  //todo add support for ","
-  let [MIN, MAX = MIN] = ARITY.split("-");
-  if (MAX === "") MAX = Infinity;
-  return {
-    NAME, MIN: Number(MIN), MAX: Number(MAX), checkArity: ({ name, args }) => {
-      if (name === NAME) {
-        if (args.length < MIN || args.length > MAX)
-          throw new SyntaxError(`${name}() takes ${MIN}${MIN !== MAX ? "-" + MAX : ""} arguments, got ${args.length}.`);
-        else
-          return true;
-      }
-    }
-  };
+export const css = {
+  boxItem: Optional("boxItem",
+    LogicalFourReverse("scroll-margin", "scrollMargin", v => v, "_"),
+    SingleTableReverse("scroll-snap-align", scrollSnapAlign),
+    SingleTableReverse("scroll-snap-stop", scrollSnapStop),
+  ),
 }
 
+// const DIR = ["BlockStart", "InlineStart", "BlockEnd", "InlineEnd"];
+// const kebabCase = s => s.replaceAll(/([A-Z])/g, "-$1").toLowerCase();
 
-class CsssFunction {
-  #csss;
-  #css;
-  constructor({ csssName, ARGS = [], PROPS, DEFAULT, csss, css, csssPost, cssPost }) {
-    const { NAME, checkArity } = parseSignature(csssName);
-    if (!NAME) throw new Error("CsssFunction must have a name");
-    if (typeof csss !== "function") throw new Error("CsssFunction must have a csss function");
-    if (typeof css !== "function") throw new Error("CsssFunction must have a css function");
-    if (csssPost != null && typeof csssPost !== "function") throw new Error("csssPost must be undefined or a function");
-    if (cssPost != null && typeof cssPost !== "function") throw new Error("cssPost must be undefined or a function");
-    if (!ARGS.every(a => a instanceof CsssPrimitive || a instanceof CsssSinglePropertyWord || a instanceof CsssFunction))
-      throw new Error("All ARGS must be instances of CsssPrimitive, CsssSinglePropertyWord or CsssFunction");
-    if (PROPS && typeof PROPS !== "object") throw new Error("PROPS must be undefined or an object");
-    if (DEFAULT && typeof DEFAULT !== "object") throw new Error("DEFAULT must be undefined or an object");
-    this.csssName = NAME;
-    this.ARGS = ARGS;
-    this.PROPS = PROPS ?? this.ARGS.reduce((acc, v) => ({ ...acc, ...v.PROPS }), {});
-    this.DEFAULT = DEFAULT ?? Object.fromEntries(Object.entries(this.PROPS).filter(([_, v]) => v !== undefined));
-    const csss2 = x => (checkArity(x) && csss(x));
-    this.#csss = csssPost ? x => csssPost(csss2(x)) : csss2;
-    this.#css = cssPost ? style => cssPost(css(style)) : css;
-    Object.freeze(this);
-  }
-  get csss() { return this.#csss; }
-  get css() { return this.#css; }
-}
+// const padding = DIR.map(s => kebabCase("padding" + s));
+// const borderColor = DIR.map(s => kebabCase("border" + s + "Color"));
 
-const scrollSnapAlign = new CsssSinglePropertyWord({
-  property: "scrollSnapAlign/1-4",
-  csssToCss: {
-    snapStart: "start",
-    snapStartCenter: "start center",
-    snapStartEnd: "start end",
-    snapCenter: "center",
-    snapCenterStart: "center start",
-    snapCenterEnd: "center end",
-    snapEnd: "end",
-    snapEndStart: "end start",
-    snapEndCenter: "end center",
-    snapNone: "none",
-  },
-});
-const scrollSnapStop = new CsssSinglePropertyWord({
-  property: "scrollSnapStop",
-  csssToCss: {
-    snapAlways: "always",
-    snapNormal: "normal",
-  },
-});
+// const inlineSize = ["minInlineSize", "inlineSize", "maxInlineSize"].map(kebabCase);
+// const blockSize = ["minBlockSize", "blockSize", "maxBlockSize"].map(kebabCase);
 
-function makeInterpreter(funcs) {
-  if (!Array.isArray(funcs)) return funcs;
-  if (funcs.length < 2) return funcs[0];
-  const name = funcs.map(p => p.name).join("/");
-  return {
-    [name]: x => {
-      for (let p of funcs)
-        if ((p = p(x)) != null)
-          return p;
-    }
-  }[name];
-}
+// const SequenceToShort = (NAME, INTERPRETER) => (style, PROPS) =>
+//   `${NAME}(${PROPS.map(p => style[p]).filter(v => v == null).map(INTERPRETER).join(",")})`;
 
-const LengthPercent2 = new CsssPrimitive([Length, Percent], v => v);
-const FunctionString = (name, args) => `${name}(${args.join(",")})`;
+// const PropsToOneThree = (NAME, INTERPRETER) => (style, PROPS) => {
+//   if (PROPS.every(p => style[p] === undefined))
+//     return;
+//   const args = PROPS.map(p => style[p] ? INTERPRETER(style[p]) : "_");
+//   return `${NAME}(${args[0] === "_" && args[2] === "_" ? args[1] : args.join(",")})`;
+// }
 
-const scrollMargin = new CsssFunction({
-  csssName: "scrollMargin",
-  csss: LogicalFour2,
-  csssPost: LogicalFour2Post,  // csss = csss(ARGS) , post = post(csssName), => post(csss(x))
-  css: LogicalFourToShort,  //gets the (PROPS, ARGS) => style =>
-  cssPost: FunctionString,
-  PROPS: {
-    scrollMargin: "unset",
-    scrollMarginBlock: "unset",
-    scrollMarginInline: "unset",
-    scrollMarginBlockStart: "unset",
-    scrollMarginInlineStart: "unset",
-    scrollMarginBlockEnd: "unset",
-    scrollMarginInlineEnd: "unset",
-    scrollMarginTop: undefined,
-    scrollMarginRight: undefined,
-    scrollMarginBottom: undefined,
-    scrollMarginLeft: undefined,
-  },
-  ARGS: [LengthPercent2],
-});
+// const TmpInterpreter = v => v;
 
-export const boxItem = new CsssFunction({
-  csssName: "boxItem",
-  csss: TypeBasedFunction2,
-  css: Optional,
-  cssPost: FunctionString,
-  ARGS: [scrollSnapAlign, scrollMargin, scrollSnapStop],
-});
+// const WordsInReverse = (DICT, INTERPRETER) => {
+//   const _DICT = Object.fromEntries(Object.entries(DICT).map(([k, v]) => [v, k]));
+//   return (style, [prop]) => _DICT[style[prop]] ?? INTERPRETER(style[prop]);
+// }
+
+// const WordsInReverseSpaceMerge = (DICT, INTERPRETER) => {
+//   const _DICT = Object.fromEntries(Object.entries(DICT).map(([k, v]) => [v, k]));
+//   return (style, PROPS) => _DICT[PROPS.map(p => INTERPRETER(style[p])).join(" ")];
+// }
+
+// const LogicalFourToShort = (NAME, INTERPRETER) => {
+//   return (style, PROPS) => {
+//     if (PROPS.every(p => style[p] === undefined))
+//       return;
+//     const args = PROPS.map(p => style[p] ? INTERPRETER(style[p]) : "_");
+//     if (args[1] !== args[3])
+//       return `${NAME}(${args.join(",")})`;
+//     args.pop();
+//     if (args[0] !== args[2])
+//       return `${NAME}(${args.join(",")})`;
+//     args.pop();
+//     if (args[0] !== args[1])
+//       return `${NAME}(${args.join(",")})`;
+//     args.pop();
+//     return `${NAME}(${args[0]})`;
+//   }
+// };
+
+// const Optional = (ARGS, POST) => style => {
+//   let args;
+//   for (let [props, fn] of ARGS)
+//     if (props.some(p => style[p] !== undefined))
+//       (args ??= []).push(fn(style, props));
+//   return args && POST(args);
+// }
+
+// const _box = Optional([
+//   [["scroll-snap-type"], WordsInReverse(BOX.scrollSnapType, TmpInterpreter)],
+//   [["overflow-inline", "overflow-block"], WordsInReverseSpaceMerge(BOX.overflow, TmpInterpreter)],
+//   [["minInlineSize", "inlineSize", "maxInlineSize"], PropsToOneThree("inline", TmpInterpreter)],
+//   [["minBlockSize", "blockSize", "maxBlockSize"], PropsToOneThree("block", TmpInterpreter)],
+//   [DIR.map(s => kebabCase("scrollPadding" + s)), LogicalFourToShort("scrollPadding", TmpInterpreter)],
+// ],
+//   args => `$box(${args.join(",")})`);
+
+// const reversals = {
+//   box: _box,
+// }
+
+// function reverse(style, reversals) {
+//   debugger
+//   const shorts = Object.values(reversals).map(rev => rev(style)).filter(Boolean);
+// }
+
+// const tst = {
+//   "scroll-snap-type": "both mandatory",
+//   "scroll-padding-block-start": "1em",
+//   "scroll-padding-block-end": "1em",
+//   "scroll-padding-inline-start": "2em",
+//   "scroll-padding-inline-end": "2em"
+// };
+
+// reverse(tst, reversals);
