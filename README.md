@@ -22,6 +22,7 @@ google-chrome --headless=new --user-data-dir=$PWD/temp-profile --enable-logging 
 touch "$TEST_FILE.actual"; \
 grep -E -o '(❌|✅|🟦).*' temp-profile/chrome.log > "$TEST_FILE.actual"; \
 diff "$TEST_FILE.actual" ${TEST_FILE}.log && echo "✅AS EXPECTED"; \
+rm -f "$TEST_FILE.actual"; \
 kill -9 $HTTP_PID; \
 rm -rf temp-profile
 ```
