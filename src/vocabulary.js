@@ -3,7 +3,7 @@ import backgrounds from "./bg.js";
 import border from "./border.js";
 import fonts from "./font.js";
 import layouts from "./layout.js";
-import boxItemX from "./boxItem.js";
+import boxItem from "./boxItem.js";
 import box from "./box.js";
 import palette from "./palette.js";
 import transitions from "./transitions.js";
@@ -15,7 +15,6 @@ import svg from "./svg.js";
 import paragraph from "./paragraph.js";
 import { animationHo } from "./animations.js";
 
-const { csss: boxItem, props: boxItemProps, css: boxItemReverse } = boxItemX;
 
 const Animations = {
   translateY: animationHo(filterTransforms.translateY),
@@ -51,12 +50,14 @@ const ObjectFit = {
 
 const SHORTS = {
   ...nativeAndMore,
-  ...boxItemProps,
+
+  ...boxItem.props,
+  ...box.props,
+
   ...backgrounds,
   ...fonts,
   ...palette,
   ...layouts,
-  ...box,
   ...transitions,
   ...textDecorations,
   ...border,
@@ -67,11 +68,17 @@ const SHORTS = {
   ...paragraph,
   ...ObjectFit,
   ...Animations,
-  ...boxItem,
+  ...box.csss,
+  ...boxItem.csss,
 };
 for (let b in SHORTS)
   if (typeof SHORTS[b] === "string")
     SHORTS[b] = undefined;
+
+const REVERSES = {
+  ...boxItem.css,
+  ...box.css,
+};
 
 const MEDIA_WORDS = {
   progressive: "scan: progressive",
@@ -150,7 +157,7 @@ const MEDIA_WORDS = {
 //   "overflow-inline": "overflow-x",
 // };
 
-export { SHORTS, MEDIA_WORDS };
+export { SHORTS, MEDIA_WORDS, REVERSES };
 
 
 /*
