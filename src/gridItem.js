@@ -3,11 +3,10 @@ const { SingleTable, TypeBasedFunction, LogicalFour, SequentialFunction, Functio
 const { LengthPercentAuto, SpanBasic } = CsssPrimitives;
 const { LogicalFourReverse, SingleTableReverse, SequentialFunctionReverse, Optional } = CssFunctions;
 
-const alignBlock = "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly|baseline|first baseline|last baseline";
-const alignInline = "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly";
-
-const placeSelf = CssValuesToCsssTable(alignBlock, alignInline);
-
+const placeSelf = CssValuesToCsssTable(
+  "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly|baseline|first baseline|last baseline",
+  "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly"
+);
 
 const DefaultGridItem = {
   margin: "unset",

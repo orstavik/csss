@@ -3,30 +3,12 @@ const { SingleTable, TypeBasedFunction, LogicalFour, SequentialFunction, Functio
 const { LengthPercent, LengthPercentUnset } = CsssPrimitives;
 const { LogicalFourReverse, SingleTableReverse, SequentialFunctionReverse, Optional } = CssFunctions;
 
-const alignBlock = "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly|baseline|first baseline|last baseline";
-const alignInline = "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly";
-
-const placeContent = CssValuesToCsssTable(alignBlock, alignInline);
-
-const flexDirection = {
-  column: "column",
-  columnReverse: "column-reverse",
-  rowReverse: "row-reverse",
-  row: "row",
-};
-
-const flexWrap = {
-  wrap: "wrap",
-  wrapReverse: "wrap-reverse",
-  noWrap: "nowrap",
-};
-
-const gap = SequentialFunction("gap/1-2", [LengthPercentUnset], (n, ar) => {
-  if (ar[0] == ar[1] || ar.length == 1) return { gap: ar[0] };
-  if (ar[1] == "unset") return { rowGap: ar[0] };
-  if (ar[0] == "unset") return { columnGap: ar[1] };
-  return { gap: ar.join(" ") };
-});
+const placeContent = CssValuesToCsssTable(
+  "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly|baseline|first baseline|last baseline",
+  "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly"
+);
+const flexDirection = CssValuesToCsssTable("column|column-reverse|row-reverse|row");
+const flexWrap = CssValuesToCsssTable("wrap|wrap-reverse|nowrap");
 
 const DefaultFlex = {
   display: "flex",
@@ -57,7 +39,7 @@ const flex = TypeBasedFunction(
   SingleTable("flexDirection", flexDirection),
   SingleTable("flexWrap", flexWrap),
   SingleTable("placeContent", placeContent),
-  gap
+  SequentialFunction("gap/1-2", [LengthPercentUnset], (n, ar) => ({ gap: ar.join(" ") }))
 );
 
 const Flex = FunctionWithDefaultValues(DefaultFlex, flex);
