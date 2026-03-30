@@ -17,6 +17,16 @@ const CsssPrimitives = {
 };
 
 const CsssFunctions = {
+  CssValuesToCsssTable: (Block, Inline) => {
+    const toCamelCase = s => s.replace(/[^a-z]./g, m => m[1].toUpperCase());
+    const Table = {};
+    for (let b of Block.split("|"))
+      for (let i of Inline.split("|")) {
+        const v = b == i ? b : (b + " " + i);
+        Table[toCamelCase(v)] = v;
+      }
+    return Table;
+  },
   SingleTable: (CssProp, Table) => ({ text }) => text in Table ? { [CssProp]: Table[text] } : undefined,
   LogicalFour: (CsssName, CssName, INTERPRETER) => ({ args, name }) => {
     if (CsssName != name) return;
