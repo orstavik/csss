@@ -1,4 +1,5 @@
-**description:** An IBlock badge row with centered text, padding, and even spacing.
+**description:**
+An IBlock badge row with centered text, padding, and even spacing.
 **csss:**
 $IBlock(padding(0.5rem))$paragraph(center)
 |$IBlockItem(margin(1rem,0,0.5rem))
@@ -8,18 +9,19 @@ $IBlock(padding(0.5rem))$paragraph(center)
   display: inline-block;
   padding: 0.5rem;
   text-align: center;
+  vertical-align: unset;
 }
 
 .\|\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 1rem 0.5rem;
   margin-inline: 0;
 }
 ```
 
-**description:** An IBlock stat row with hidden overflow, padding, and shared spacing.
+**description:**
+An IBlock stat row with hidden overflow, padding, and shared spacing.
 **csss:**
 $IBlock(padding(0.5rem))$box(hidden)
 |$IBlockItem(margin(1rem,0,0.5rem))
@@ -34,13 +36,13 @@ $IBlock(padding(0.5rem))$box(hidden)
 .\|\$IBlockItem\(margin\(1rem\,0\,0\.5rem\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 1rem 0.5rem;
   margin-inline: 0;
 }
 ```
 
-**description:** An IBlock card row with padding, fixed width, and mixed alignment, where edge items can opt into top alignment.
+**description:**
+An IBlock card row with padding, fixed width, and mixed alignment, where edge items can opt into top alignment.
 **csss:**
 $IBlock(padding(1rem))$paragraph(center)
 |$IBlockItem(alignMiddle)$Box(inline(200px))
@@ -51,6 +53,7 @@ $IBlock(padding(1rem))$paragraph(center)
   display: inline-block;
   padding: 1rem;
   text-align: center;
+  vertical-align: unset;
 }
 
 .\|\$IBlockItem\(alignMiddle\)\$Box\(inline\(200px\)\)>* {
@@ -74,7 +77,8 @@ $IBlock(padding(1rem))$paragraph(center)
 }
 ```
 
-**description:** An inline media row with centered text and mixed top and middle alignment.
+**description:**
+An inline media row with centered text and mixed top and middle alignment.
 **csss:**
 $IBlock(padding(0.5rem))$paragraph(center)
 |.lead$iBlockItem(alignTop,margin(0,1rem,1rem,0))
@@ -85,6 +89,7 @@ $IBlock(padding(0.5rem))$paragraph(center)
   display: inline-block;
   padding: 0.5rem;
   text-align: center;
+  vertical-align: unset;
 }
 
 .\|\.lead\$iBlockItem\(alignTop\,margin\(0\,1rem\,1rem\,0\)\)>:where(.lead) {
@@ -98,7 +103,8 @@ $IBlock(padding(0.5rem))$paragraph(center)
 }
 ```
 
-**description:** An IBlock metadata row with padding, shared spacing, plus width and alignment overrides on selected items.
+**description:**
+An IBlock metadata row with padding, shared spacing, plus width and alignment overrides on selected items.
 **csss:**
 $IBlock(padding(0.75rem))$paragraph(center)
 |$IBlockItem(margin(0.5rem,1rem),alignMiddle)
@@ -110,6 +116,7 @@ $IBlock(padding(0.75rem))$paragraph(center)
   display: inline-block;
   padding: 0.75rem;
   text-align: center;
+  vertical-align: unset;
 }
 
 .\|\$IBlockItem\(margin\(0\.5rem\,1rem\)\,alignMiddle\)>* {

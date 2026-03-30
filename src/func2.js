@@ -18,6 +18,18 @@ const CsssPrimitives = {
 };
 
 const CsssFunctions = {
+  CssValuesToCsssTableObject: (oneProp, oneValues, twoProp, twoValues) => {
+    const toCamelCase = s => s.replace(/[^a-z]./g, m => m[1].toUpperCase());
+    const Table = {};
+    for (let one of oneValues.split("|")) {
+      Table[toCamelCase(one)] = { [oneProp]: one, [twoProp]: "unset" };
+      for (let two of twoValues.split("|")) {
+        Table[toCamelCase(two)] = { [oneProp]: "unset", [twoProp]: two };
+        Table[toCamelCase(one + " " + two)] = { [oneProp]: one, [twoProp]: two };
+      }
+    }
+    return Table;
+  },
   CssValuesToCsssTable: (One, Two = "") => {
     const toCamelCase = s => s.replace(/[^a-z]./g, m => m[1].toUpperCase());
     const Table = {};
@@ -146,6 +158,14 @@ const CssFunctions = {
   SingleTableReverse: (CssProp, Table) => {
     Table = Object.fromEntries(Object.entries(Table).map(([k, v]) => [v, k]));
     return style => Table[style[CssProp]];
+  },
+  SingleTableReverseObject: Table => style => {
+    main: for (let short in Table) {
+      for (let p in Table[short])
+        if (style[p] !== Table[short][p])
+          continue main;
+      return short;
+    }
   },
   SequentialFunctionReverse: (CsssFnName, PROPS, INTERPRETER, DEFAULT = "_") => style => {
     let args = PROPS.map(p => INTERPRETER(style[p]) ?? DEFAULT);

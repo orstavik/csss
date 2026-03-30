@@ -1,7 +1,7 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func2.js";
 const { LengthPercent, LengthPercentNumber } = CsssPrimitives;
-const { TypeBasedFunction, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest, CssValuesToCsssTable, SingleTable } = CsssFunctions;
-const { SingleArgumentFunctionReverse, Optional, SingleTableReverse } = CssFunctions;
+const { TypeBasedFunction, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest, CssValuesToCsssTableObject, SingleTable } = CsssFunctions;
+const { SingleArgumentFunctionReverse, Optional, SingleTableReverse, SingleTableReverseObject } = CssFunctions;
 
 const hyphens = {
   hyphens: "auto",
@@ -21,7 +21,10 @@ const whiteSpace = {
   preserveBreaksNowrap: "preserve-breaks nowrap",
   breakSpacesNowrap: "break-spaces nowrap",
 };
-const verticalAlignKeywords = CssValuesToCsssTable("baseline|sub|super|text-top|text-bottom|middle|top|bottom");
+const align = CssValuesToCsssTableObject(
+  "textAlign", "start|end|left|right|center|justify",
+  "verticalAlign", "baseline|sub|super|text-top|text-bottom|middle|top|bottom"
+);
 
 const wordBreakAndOverflowWrap = {
   breakWord: { wordBreak: "normal", overflowWrap: "break-word" },
@@ -39,7 +42,6 @@ const lineBreak = {
   lineBreakNormal: "normal",
 };
 
-const textAlign = CssValuesToCsssTable("start|end|left|right|center|justify");
 
 const textAlignLast = {
   lastStart: "start",
@@ -65,10 +67,8 @@ const paragraph = TypeBasedFunction(
   SingleTable("hyphens", hyphens),
   SingleTable("whiteSpace", whiteSpace),
   SingleTable("lineBreak", lineBreak),
-  SingleTable("textAlign", textAlign),
   SingleTable("textAlignLast", textAlignLast),
-  SingleTable("verticalAlign", verticalAlignKeywords),
-  SingleArgumentFunction("verticalAlign", LengthPercent, (n, v) => ({ verticalAlign: v })),
+  a => a.text && align[a.text],
   SingleTable("hangingPunctuation", hangingPunctuation),
   SingleArgumentFunction("indent", LengthPercent, (n, v) => ({ textIndent: v })),
   SingleArgumentFunction("spacing", LengthPercent, (n, v) => ({ wordSpacing: v })),
@@ -195,7 +195,7 @@ export default {
         return undefined;
       },
       SingleTableReverse("lineBreak", lineBreak),
-      SingleTableReverse("textAlign", textAlign),
+      SingleTableReverseObject(align),
       SingleTableReverse("textAlignLast", textAlignLast),
       SingleTableReverse("hangingPunctuation", hangingPunctuation)
     )
