@@ -18,18 +18,18 @@ const CsssPrimitives = {
 };
 
 const CsssFunctions = {
-  CssValuesToCsssTableObject: (oneProp, oneValues, twoProp, twoValues) => {
-    const toCamelCase = s => s.replace(/[^a-z]./g, m => m[1].toUpperCase());
-    const Table = {};
-    for (let one of oneValues.split("|")) {
-      Table[toCamelCase(one)] = { [oneProp]: one, [twoProp]: "unset" };
-      for (let two of twoValues.split("|")) {
-        Table[toCamelCase(two)] = { [oneProp]: "unset", [twoProp]: two };
-        Table[toCamelCase(one + " " + two)] = { [oneProp]: one, [twoProp]: two };
-      }
-    }
-    return Table;
-  },
+  // CssValuesToCsssTableObject: (oneProp, oneValues, twoProp, twoValues) => {
+  //   const toCamelCase = s => s.replace(/[^a-z]./g, m => m[1].toUpperCase());
+  //   const Table = {};
+  //   for (let one of oneValues.split("|")) {
+  //     Table[toCamelCase(one)] = { [oneProp]: one, [twoProp]: "unset" };
+  //     for (let two of twoValues.split("|")) {
+  //       Table[toCamelCase(two)] = { [oneProp]: "unset", [twoProp]: two };
+  //       Table[toCamelCase(one + " " + two)] = { [oneProp]: one, [twoProp]: two };
+  //     }
+  //   }
+  //   return Table;
+  // },
   CssValuesToCsssTable: (One, Two = "") => {
     const toCamelCase = s => s.replace(/[^a-z]./g, m => m[1].toUpperCase());
     const Table = {};
