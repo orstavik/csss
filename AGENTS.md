@@ -2,6 +2,11 @@
 
 A lightweight CSS preprocessor that enables writing concise, expressive CSS directly in your HTML using shorthand syntax.
 
+## Rules for the repository
+
+1. no build scripts, no npm modules, no dependencies, and no temporary files.
+2. Use the automated test script below to verify the changes.
+
 ## Testing
 
 1. start a local server in the repository root directory: 
