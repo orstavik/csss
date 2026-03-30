@@ -3,10 +3,9 @@ const { SingleTable, TypeBasedFunction, LogicalFour, SingleArgumentFunction, Fun
 const { LengthPercentAuto, Basic } = CsssPrimitives;
 const { LogicalFourReverse, SingleTableReverse, SingleArgumentFunctionReverse, Optional } = CssFunctions;
 
-const alignBlock = "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly|baseline|first baseline|last baseline";
-const alignInline = "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly";
-
-const alignSelf = CssValuesToCsssTable(alignBlock, alignInline);
+const alignSelf = CssValuesToCsssTable(
+  "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly|baseline|first baseline|last baseline"
+);
 
 const DefaultFlexItem = {
   margin: "unset",

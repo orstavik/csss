@@ -17,14 +17,15 @@ const CsssPrimitives = {
 };
 
 const CsssFunctions = {
-  CssValuesToCsssTable: (Block, Inline) => {
+  CssValuesToCsssTable: (One, Two = "") => {
     const toCamelCase = s => s.replace(/[^a-z]./g, m => m[1].toUpperCase());
     const Table = {};
-    for (let b of Block.split("|"))
-      for (let i of Inline.split("|")) {
-        const v = b == i ? b : (b + " " + i);
-        Table[toCamelCase(v)] = v;
-      }
+    for (let b of One.split("|")) {
+      Table[toCamelCase(b)] = b;
+      for (let i of Two.split("|"))
+        if (b != i)
+          Table[toCamelCase(b + " " + i)] = b + " " + i;
+    }
     return Table;
   },
   SingleTable: (CssProp, Table) => ({ text }) => text in Table ? { [CssProp]: Table[text] } : undefined,
