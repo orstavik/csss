@@ -13,7 +13,6 @@ $Block(padding(1.5rem))
 .\|\*\$BlockItem\(margin\(0\,0\,1rem\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 1rem;
   margin-inline: 0;
 }
@@ -36,7 +35,6 @@ $Block(padding(1.5rem))
 .\|\*\$BlockItem\(margin\(0\,0\,1rem\)\)\$Paragraph\(_\,indent\(2em\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 1rem;
   margin-inline: 0;
   line-height: unset;
@@ -49,6 +47,7 @@ $Block(padding(1.5rem))
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 
@@ -95,7 +94,6 @@ $Block$Box(inline(_,_,600px))
 .\|\*\$BlockItem\(margin\(0\.5rem\,1rem\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0.5rem;
   margin-inline: 1rem;
 }
@@ -150,7 +148,6 @@ $Block(padding(0,10vh))
 .\|\*\$BlockItem\(margin\(_\,0\)\)\$Box\(inline\(_\,_\,300px\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: auto;
   margin-inline: 0;
   inline-size: unset;
@@ -184,7 +181,6 @@ $Block(padding(1.5rem))
 .\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)\$Box\(inline\(_\,_\,65ch\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 1.5rem;
   margin-inline: 0;
   inline-size: unset;
@@ -244,13 +240,13 @@ $Block(padding(2rem))$Paragraph(_,breakWord)
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 
 .\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 1.5rem;
   margin-inline: 0;
 }
@@ -308,7 +304,6 @@ $Block(padding(1.5rem))$Box(clip)
 .\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)\$Box\(inline\(_\,_\,800px\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 1.5rem;
   margin-inline: 0;
   inline-size: unset;
@@ -364,7 +359,6 @@ $Block(padding(1.5rem,0))$Box(auto)
 .\|\*\$BlockItem\(margin\(0\.25rem\,0\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0.25rem;
   margin-inline: 0;
 }
@@ -391,7 +385,6 @@ $Block(padding(1.5rem))
 .\|\*\$BlockItem\(margin\(1rem\,_\)\)\$Box\(inline\(_\,_\,400px\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 1rem;
   margin-inline: auto;
   inline-size: unset;
@@ -428,7 +421,6 @@ $Block(padding(1.5rem))
 .\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 1.5rem;
   margin-inline: 0;
 }
@@ -466,13 +458,13 @@ $Block(padding(1.5rem))$Paragraph(_,breakWord)
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 
 .\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)\$Box\(inline\(_\,_\,700px\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 1.5rem;
   margin-inline: 0;
   inline-size: unset;
@@ -520,13 +512,13 @@ $Block(padding(1.5rem))$Paragraph(_,breakWord)
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 
 .\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 1.5rem;
   margin-inline: 0;
 }
@@ -565,7 +557,6 @@ $Block(padding(1.5rem))
 .\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)\$Box\(inline\(_\,_\,600px\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 1.5rem;
   margin-inline: 0;
   inline-size: unset;
@@ -614,7 +605,6 @@ $Block(padding(1.5rem))
 .\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 1.5rem;
   margin-inline: 0;
 }
@@ -649,7 +639,6 @@ $Block(padding(1.5rem))
 .\|\*\$BlockItem\(margin\(0\,_\)\)\$Box\(inline\(_\,_\,500px\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0;
   margin-inline: auto;
   inline-size: unset;
@@ -703,7 +692,6 @@ $Block(padding(1.5rem,5vw))
 .\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 1.5rem;
   margin-inline: 0;
 }
@@ -748,7 +736,6 @@ $Block(padding(1.5rem))
 .\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 1.5rem;
   margin-inline: 0;
 }
@@ -794,7 +781,6 @@ $Block(padding(1.5rem))
 .\|\*\$BlockItem\(margin\(0\,_\)\)\$Box\(inline\(_\,_\,600px\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0;
   margin-inline: auto;
   inline-size: unset;
@@ -850,7 +836,6 @@ $Block(padding(0))$Box(scroll)
 .\|\*\$BlockItem\(margin\(0\.25rem\,0\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0.25rem;
   margin-inline: 0;
 }
@@ -902,7 +887,6 @@ $Block(padding(0))$Box(auto,snapMandatory,scrollPadding(3.5rem,0))
   margin: 0;
   float: unset;
   clear: unset;
-  vertical-align: unset;
   inline-size: unset;
   block-size: 100vh;
   min-inline-size: unset;
@@ -950,7 +934,6 @@ $Block(padding(2rem))$Box(auto,snap,scrollPadding(2rem,0))
 .\|\*\$BlockItem\(margin\(0\,0\,2rem\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 2rem;
   margin-inline: 0;
 }
@@ -995,7 +978,6 @@ $Block(padding(1rem))$Box(autoHidden)
 .\|\*\$BlockItem\(margin\(0\,0\,0\.5rem\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 0.5rem;
   margin-inline: 0;
 }
@@ -1033,7 +1015,6 @@ $Block(padding(1.5rem))$Box(hidden)
 .\|\*\$BlockItem\(margin\(0\,0\,1rem\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 1rem;
   margin-inline: 0;
 }
@@ -1096,13 +1077,13 @@ $Block(padding(1.5rem))$Paragraph(_,breakLongWords)
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 
 .\|\*\$BlockItem\(margin\(0\,0\,1\.25rem\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 1.25rem;
   margin-inline: 0;
 }
@@ -1134,13 +1115,13 @@ $Block(padding(1rem))$Paragraph(_,breakAnywhere)
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 
 .\|\*\$BlockItem\(margin\(0\,0\,0\.25rem\)\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0 0.25rem;
   margin-inline: 0;
 }
@@ -1184,7 +1165,6 @@ $Block(padding(1.5rem))$Box(auto,snap)
 .\|\*\$BlockItem\(margin\(0\.5rem\,_\)\)\$Box\(inline\(10rem\)\,block\(10rem\)\)\$BoxItem\(snapCenter\)>* {
   float: unset;
   clear: unset;
-  vertical-align: unset;
   margin-block: 0.5rem;
   margin-inline: auto;
   inline-size: 10rem;

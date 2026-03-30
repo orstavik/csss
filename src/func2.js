@@ -14,6 +14,7 @@ const CsssPrimitives = {
   RepeatBasic: ResolveMath(a => a.name === "repeat" ? `repeat(${a.args.map(a => a.text).join(", ")})` : a.text),
   SpanBasic: ResolveMath(a => a.name === "span" ? `span ${a.args[0].text}` : a.text),
   NumberInterpreter: ResolveMath(a => (a.type === "number" && a.unit === "") ? a.num : undefined),
+  LengthPercentNumber: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.type === "number") ? a.text : undefined),
 };
 
 const CsssFunctions = {

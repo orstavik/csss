@@ -13,6 +13,7 @@
   line-break: unset;
   text-align: justify;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -45,6 +46,7 @@
   line-break: strict;
   text-align: unset;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: first;
 }
 ```
@@ -76,6 +78,7 @@
   line-break: normal;
   text-align: left;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -95,6 +98,7 @@
   line-break: strict;
   text-align: justify;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: allow-end;
 }
 ```
@@ -125,6 +129,7 @@
   line-break: unset;
   text-align: justify;
   text-align-last: center;
+  vertical-align: unset;
   hanging-punctuation: force-end;
 }
 ```
@@ -155,6 +160,7 @@
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -174,6 +180,7 @@
   line-break: unset;
   text-align: start;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -193,6 +200,7 @@
   line-break: strict;
   text-align: justify;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -212,6 +220,7 @@
   line-break: normal;
   text-align: justify;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -231,6 +240,7 @@
   line-break: unset;
   text-align: justify;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: last;
 }
 ```
@@ -250,6 +260,7 @@
   line-break: unset;
   text-align: center;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: none;
 }
 ```
@@ -269,6 +280,7 @@
   line-break: unset;
   text-align: center;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -288,6 +300,7 @@
   line-break: unset;
   text-align: end;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -307,6 +320,7 @@
   line-break: unset;
   text-align: start;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -326,6 +340,7 @@
   line-break: unset;
   text-align: start;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -345,6 +360,7 @@
   line-break: unset;
   text-align: start;
   text-align-last: unset;
+  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```

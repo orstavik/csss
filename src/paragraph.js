@@ -1,83 +1,80 @@
-import { ValueTypes, FunctionTypes } from "./func.js";
-const { LengthPercentNumber, LengthPercent, WordToValue } = ValueTypes;
-const { FunctionBasedOnValueTypes, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest } = FunctionTypes;
+import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func2.js";
+const { LengthPercent, LengthPercentNumber } = CsssPrimitives;
+const { TypeBasedFunction, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest, CssValuesToCsssTable, SingleTable } = CsssFunctions;
+const { SingleArgumentFunctionReverse, Optional, SingleTableReverse } = CssFunctions;
 
-const PROPS = {
-  lineHeight: undefined,
-  textIndent: undefined,
-  wordSpacing: undefined,
-  hyphens: undefined,
-  whiteSpace: undefined,
-  overflowWrap: undefined,
-  wordBreak: undefined,
-  lineBreak: undefined,
-  textAlign: undefined,
-  textAlignLast: undefined,
-  hangingPunctuation: undefined,
+const hyphens = {
+  hyphens: "auto",
+  shy: "manual",
 };
 
-const paragraph = FunctionBasedOnValueTypes({
-  indent: SingleArgumentFunction(LengthPercent, (n, v) => ({ textIndent: v })),
-  spacing: SingleArgumentFunction(LengthPercent, (n, v) => ({ wordSpacing: v })),
+const whiteSpace = {
+  nowrap: "nowrap",
+  pre: "pre",
+  preWrap: "pre-wrap",
+  preLine: "pre-line",
+  whiteSpaceNormal: "normal",
+  preserve: "preserve",
+  preserveBreaks: "preserve-breaks",
+  breakSpaces: "break-spaces",
+  preserveNowrap: "preserve nowrap",
+  preserveBreaksNowrap: "preserve-breaks nowrap",
+  breakSpacesNowrap: "break-spaces nowrap",
+};
+const verticalAlignKeywords = CssValuesToCsssTable("baseline|sub|super|text-top|text-bottom|middle|top|bottom");
 
-  hyphens: { hyphens: "auto" },
-  shy: { hyphens: "manual" },
-
-  //todo i don't think that we need to include these settings as white-space overrides it: whiteSpaceCollapse: "unset", textWrapMode: "unset", 
-  nowrap: { whiteSpace: "nowrap" },
-  pre: { whiteSpace: "pre" },
-  preWrap: { whiteSpace: "pre-wrap" },
-  preLine: { whiteSpace: "pre-line" },
-  whiteSpaceNormal: { whiteSpace: "normal" },
-
-  preserve: { whiteSpace: "preserve" },
-  preserveBreaks: { whiteSpace: "preserve-breaks" },
-  breakSpaces: { whiteSpace: "break-spaces" },
-  preserveNowrap: { whiteSpace: "preserve nowrap" },
-  preserveBreaksNowrap: { whiteSpace: "preserve-breaks nowrap" },
-  breakSpacesNowrap: { whiteSpace: "break-spaces nowrap" },
-
+const wordBreakAndOverflowWrap = {
   breakWord: { wordBreak: "normal", overflowWrap: "break-word" },
   breakAnywhere: { wordBreak: "normal", overflowWrap: "anywhere" },
   breakLongWords: { wordBreak: "keep-all", overflowWrap: "break-word" },
   breakNone: { wordBreak: "keep-all", overflowWrap: "normal" },
   breakAll: { wordBreak: "break-all", overflowWrap: "normal" },
   breakNormal: { wordBreak: "normal", overflowWrap: "normal" },
+};
 
-  lineBreakLoose: { lineBreak: "loose" },
-  lineBreakStrict: { lineBreak: "strict" },
-  lineBreakAnywhere: { lineBreak: "anywhere" },
-  lineBreakNormal: { lineBreak: "normal" },
+const lineBreak = {
+  lineBreakLoose: "loose",
+  lineBreakStrict: "strict",
+  lineBreakAnywhere: "anywhere",
+  lineBreakNormal: "normal",
+};
 
-  start: { textAlign: "start" },
-  end: { textAlign: "end" },
-  left: { textAlign: "left" },
-  right: { textAlign: "right" },
-  center: { textAlign: "center" },
-  justify: { textAlign: "justify" },
-  lastStart: { textAlignLast: "start" },
-  lastEnd: { textAlignLast: "end" },
-  lastLeft: { textAlignLast: "left" },
-  lastRight: { textAlignLast: "right" },
-  lastCenter: { textAlignLast: "center" },
-  lastJustify: { textAlignLast: "justify" },
+const textAlign = CssValuesToCsssTable("start|end|left|right|center|justify");
 
-  //exp safari  
-  hangingPunctuationFirst: { hangingPunctuation: "first" },
-  hangingPunctuationLast: { hangingPunctuation: "last" },
-  hangingPunctuationAllowEnd: { hangingPunctuation: "allow-end" },
-  hangingPunctuationForceEnd: { hangingPunctuation: "force-end" },
-  hangingPunctuationNone: { hangingPunctuation: "none" },
+const textAlignLast = {
+  lastStart: "start",
+  lastEnd: "end",
+  lastLeft: "left",
+  lastRight: "right",
+  lastCenter: "center",
+  lastJustify: "justify",
+};
 
-}, {
-  lineHeight: LengthPercentNumber,      //todo this is not so good. Here we need to redo all of them.. A little too little automatic.
-}, {
-}, res => {
-  res.lineHeight &&= { lineHeight: res.lineHeight };
-  return Object.assign({}, ...Object.values(res))
-});
+const hangingPunctuation = {
+  hangingPunctuationFirst: "first",
+  hangingPunctuationLast: "last",
+  hangingPunctuationAllowEnd: "allow-end",
+  hangingPunctuationForceEnd: "force-end",
+  hangingPunctuationNone: "none",
+};
 
-const PARAGRAPH = Object.fromEntries(Object.keys(PROPS).map(k => [k, "unset"]));
+const PropertyType = (Prop, Type) => a => (a = Type(a)) && { [Prop]: a };
+
+const paragraph = TypeBasedFunction(
+  PropertyType("lineHeight", LengthPercentNumber),
+  SingleTable("hyphens", hyphens),
+  SingleTable("whiteSpace", whiteSpace),
+  SingleTable("lineBreak", lineBreak),
+  SingleTable("textAlign", textAlign),
+  SingleTable("textAlignLast", textAlignLast),
+  SingleTable("verticalAlign", verticalAlignKeywords),
+  SingleArgumentFunction("verticalAlign", LengthPercent, (n, v) => ({ verticalAlign: v })),
+  SingleTable("hangingPunctuation", hangingPunctuation),
+  SingleArgumentFunction("indent", LengthPercent, (n, v) => ({ textIndent: v })),
+  SingleArgumentFunction("spacing", LengthPercent, (n, v) => ({ wordSpacing: v })),
+  a => a.text && wordBreakAndOverflowWrap[a.text]
+);
+
 const PARAGRAPHS = {
   _: {},
   body: {
@@ -149,11 +146,58 @@ const PARAGRAPHS = {
   }
 };
 
-const Paragraph = FunctionWithDefaultValues(PARAGRAPH,
-  ParseFirstThenRest(WordToValue(PARAGRAPHS), paragraph, (a, b) => ({ ...a, ...b })));
+const props = {
+  lineHeight: undefined,
+  textIndent: undefined,
+  wordSpacing: undefined,
+  hyphens: undefined,
+  whiteSpace: undefined,
+  overflowWrap: undefined,
+  wordBreak: undefined,
+  lineBreak: undefined,
+  textAlign: undefined,
+  textAlignLast: undefined,
+  verticalAlign: undefined,
+  hangingPunctuation: undefined,
+};
+
+const Paragraph = FunctionWithDefaultValues(
+  Object.fromEntries(Object.keys(props).map(k => [k, "unset"])),
+  ParseFirstThenRest(
+    a => a.text && PARAGRAPHS[a.text],
+    paragraph,
+    (a, b) => ({ ...a, ...b })
+  )
+);
 
 export default {
-  ...PROPS,
-  paragraph,
-  Paragraph,
+  csss: {
+    paragraph,
+    Paragraph,
+  },
+  props,
+  css: {
+    paragraph: Optional("paragraph",
+      SingleArgumentFunctionReverse("indent", "textIndent", v => v, "_"),
+      SingleArgumentFunctionReverse("spacing", "wordSpacing", v => v, "_"),
+      style => {
+        if (style.lineHeight && style.lineHeight !== "_") return style.lineHeight;
+      },
+      SingleTableReverse("hyphens", hyphens),
+      SingleTableReverse("whiteSpace", whiteSpace),
+      style => {
+        const w = style.wordBreak;
+        const o = style.overflowWrap;
+        if (!w && !o) return undefined;
+        for (let [k, v] of Object.entries(wordBreakAndOverflowWrap)) {
+          if (v.wordBreak === w && v.overflowWrap === o) return k;
+        }
+        return undefined;
+      },
+      SingleTableReverse("lineBreak", lineBreak),
+      SingleTableReverse("textAlign", textAlign),
+      SingleTableReverse("textAlignLast", textAlignLast),
+      SingleTableReverse("hangingPunctuation", hangingPunctuation)
+    )
+  }
 };
