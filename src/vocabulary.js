@@ -84,7 +84,7 @@ const SHORTS = {
   ...shadows,
   ...position,
   ...svg,
-  ...paragraph,
+  ...paragraph.props,
   ...ObjectFit,
   ...Animations,
   ...box.csss,
