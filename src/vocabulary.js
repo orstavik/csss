@@ -47,7 +47,7 @@ const Animations = {
   Border: animationHo(border.Border),
 }
 
-const ObjectFit = {
+const ObjectFit = {       //convert to fit(fill|contain|cover|scaleDown|none) etc.
   objectFit: undefined,
   fitFill: { objectFit: "fill" },
   fitContain: { objectFit: "contain" },
@@ -95,6 +95,7 @@ const SHORTS = {
   ...iBlock.csss,
   ...iBlockItem.csss,
   ...lineClamp.csss,
+  displayNone: { display: "none" },
 };
 for (let b in SHORTS)
   if (typeof SHORTS[b] === "string")
