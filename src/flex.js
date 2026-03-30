@@ -7,7 +7,6 @@ const alignBlock = "normal|stretch|start|end|center|safe start|safe end|safe cen
 const alignInline = "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly";
 
 const placeContent = CssValuesToCsssTable(alignBlock, alignInline);
-const alignItems = CssValuesToCsssTable(alignBlock, alignInline);
 
 const flexDirection = {
   column: "column",
@@ -58,7 +57,6 @@ const flex = TypeBasedFunction(
   SingleTable("flexDirection", flexDirection),
   SingleTable("flexWrap", flexWrap),
   SingleTable("placeContent", placeContent),
-  SingleTable("alignItems", alignItems),
   gap
 );
 
@@ -86,7 +84,6 @@ export default {
       SingleTableReverse("flexDirection", flexDirection),
       SingleTableReverse("flexWrap", flexWrap),
       SingleTableReverse("placeContent", placeContent),
-      SingleTableReverse("alignItems", alignItems),
       SequentialFunctionReverse("gap", ["rowGap", "columnGap"], v => v, "_") // This mapping is slightly lossy because `gap` maps into `gap` not row/column in original sometimes but good enough, will tweak if we can
     ),
   }
