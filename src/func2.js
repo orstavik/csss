@@ -11,6 +11,11 @@ function BadArgument(name, args, I, expectedType = "") {
 const CsssPrimitives = {
   LengthPercent: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0") ? a.text : undefined),
   LengthPercentUnset: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0" || a.text === "_") ? (a.text === "_" ? "unset" : a.text) : undefined),
+  LengthPercentAuto: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0" || a.text === "_") ? (a.text === "_" ? "auto" : a.text) : undefined),
+  Basic: ResolveMath(a => a.text),
+  RepeatBasic: ResolveMath(a => a.name === "repeat" ? `repeat(${a.args.map(a => a.text).join(", ")})` : a.text),
+  SpanBasic: ResolveMath(a => a.name === "span" ? `span ${a.args[0].text}` : a.text),
+  NumberInterpreter: ResolveMath(a => (a.type === "number" && a.unit === "") ? a.num : undefined),
 };
 
 const CsssFunctions = {
@@ -31,6 +36,44 @@ const CsssFunctions = {
         [CssName + "Block"]: args[2] != null && args[2] != args[0] ? args[0] + " " + args[2] : args[0],
         [CssName + "Inline"]: args[3] != null && args[3] != args[1] ? (args[1] ?? args[0]) + " " + args[3] : args[1] ?? args[0],
       };
+  },
+  SequentialFunction: (SIG, INTERPRETERS, POST) => {
+    const parseSignature = SIG => {
+      const [NAME, ARITY] = SIG.split("/");
+      if (ARITY == undefined || ARITY == "") return { NAME };
+      let [MIN, MAX = MIN] = ARITY.split("-");
+      if (MAX === "") MAX = Infinity;
+      return { NAME, MIN: Number(MIN), MAX: Number(MAX) };
+    };
+    const { NAME, MIN = INTERPRETERS.length, MAX = INTERPRETERS.length } = parseSignature(SIG);
+    return ({ args, name }) => {
+      if (NAME && NAME !== name) return;
+      if (args.length < MIN || args.length > MAX)
+        throw new SyntaxError(`${name}() requires ${MIN} to ${MAX} arguments, got ${args.length}.`);
+      const res = args.map((a, i) => {
+        const a2 = (INTERPRETERS[i] ??= INTERPRETERS.at(-1))(a);
+        if (a2) return a2;
+        throw BadArgument(name, args, i, INTERPRETERS[i].name);
+      });
+      return POST ? POST(name, res) : res;
+    }
+  },
+  SingleArgumentFunction: (CsssName, INTERPRETER, POST) => ({ args, name }) => {
+    if (CsssName !== name) return;
+    if (args.length != 1)
+      throw new SyntaxError(`${name} requires 1 argument, got ${args.length} arguments.`);
+    const v = INTERPRETER(args[0]);
+    if (v == null) throw BadArgument(name, args, 0, INTERPRETER.name);
+    return POST ? POST(name, v) : v;
+  },
+  ParseFirstThenRest: (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
+    if (!args.length)
+      throw new SyntaxError(`${name} requires at least 1 argument, got 0 arguments.`)
+    const first = INTERPRETER(args[0]);
+    if (first == null)
+      throw BadArgument(name, args, 0, INTERPRETER.name);
+    const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
+    return POST(first, res);
   },
   TypeBasedFunction: (...FUNCTIONS) => ({ args, name }) => {
     const res = {};
@@ -73,6 +116,10 @@ const CsssFunctions = {
 };
 
 const CssFunctions = {
+  SingleArgumentFunctionReverse: (CsssFnName, CssProp, INTERPRETER, DEFAULT = "_") => style => {
+    let arg = INTERPRETER(style[CssProp]) ?? DEFAULT;
+    if (arg !== DEFAULT) return `${CsssFnName}(${arg})`;
+  },
   LogicalFourReverse: (CssPrefix, CsssFnName, INTERPRETER, DEFAULT = "_") => {
     const PROPS = ["BlockStart", "InlineStart", "BlockEnd", "InlineEnd"].map(s => CssPrefix + s);
     return style => {
