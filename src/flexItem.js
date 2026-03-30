@@ -10,9 +10,6 @@ const alignSelf = CssValuesToCsssTable(alignBlock, alignInline);
 
 const DefaultFlexItem = {
   margin: "unset",
-  float: "unset",
-  clear: "unset",
-  verticalAlign: "unset",
   flexBasis: "unset",
   flexGrow: "unset",
   flexShrink: "unset",
@@ -48,7 +45,7 @@ const FlexItem = FunctionWithDefaultValues(DefaultFlexItem, flexItem);
 export default {
   csss: {
     flexItem,
-    FlexItem
+    FlexItem,
   },
   props: {
     ...marginProps,

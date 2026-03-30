@@ -16,9 +16,6 @@ $Flex(column,gap(0.5rem),padding(1rem))
 
 .\|\$FlexItem\(basis\(100px\)\)>* {
   margin: unset;
-  float: unset;
-  clear: unset;
-  vertical-align: unset;
   flex-basis: 100px;
   flex-grow: unset;
   flex-shrink: unset;
@@ -70,9 +67,6 @@ $Flex(wrap,gap(1rem,2rem))
 }
 
 .\|\$FlexItem\(margin\(5px\,1rem\)\)\$Box\(inline\(150px\)\,block\(120px\)\)\$BoxItem\(scrollMargin\(10px\)\)>* {
-  float: unset;
-  clear: unset;
-  vertical-align: unset;
   flex-basis: unset;
   flex-grow: unset;
   flex-shrink: unset;
@@ -97,18 +91,17 @@ $Flex(wrap,gap(1rem,2rem))
 
 **description:** A wrapping Flex toolbar where key actions are reordered and aligned differently once the row starts to fill up.
 **csss:**
-$Flex(start,start,gap(1rem),padding(1rem),wrap)
+$Flex(start,gap(1rem),padding(1rem),wrap)
 |$FlexItem(order(3),start,margin(1rem))
-|.one$flexItem(order(3),start,margin(1rem))
 |.two$flexItem(order(1),center)
 |.three$flexItem(order(2),end)
 
 **css:**
 ```css
-.\$Flex\(start\,start\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
+.\$Flex\(start\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
   display: flex;
   padding: 1rem;
-  align-items: start;
+  align-items: unset;
   place-content: start;
   flex-direction: unset;
   flex-wrap: wrap;
@@ -117,20 +110,11 @@ $Flex(start,start,gap(1rem),padding(1rem),wrap)
 
 .\|\$FlexItem\(order\(3\)\,start\,margin\(1rem\)\)>* {
   margin: 1rem;
-  float: unset;
-  clear: unset;
-  vertical-align: unset;
   flex-basis: unset;
   flex-grow: unset;
   flex-shrink: unset;
   align-self: start;
   order: 3;
-}
-
-.\|\.one\$flexItem\(order\(3\)\,start\,margin\(1rem\)\)>:where(.one) {
-  order: 3;
-  align-self: start;
-  margin: 1rem;
 }
 
 .\|\.two\$flexItem\(order\(1\)\,center\)>:where(.two) {
@@ -146,14 +130,14 @@ $Flex(start,start,gap(1rem),padding(1rem),wrap)
 
 **description:** A centered Flex row with a stretched featured item.
 **csss:**
-$Flex(center,stretch,gap(1rem),padding(1rem),wrap)
+$Flex(center,gap(1rem),padding(1rem),wrap)
 |.featured$FlexItem(stretch)
 **css:**
 ```css
-.\$Flex\(center\,stretch\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
+.\$Flex\(center\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
   display: flex;
   padding: 1rem;
-  align-items: stretch;
+  align-items: unset;
   place-content: center;
   flex-direction: unset;
   flex-wrap: wrap;
@@ -162,9 +146,6 @@ $Flex(center,stretch,gap(1rem),padding(1rem),wrap)
 
 .\|\.featured\$FlexItem\(stretch\)>:where(.featured) {
   margin: unset;
-  float: unset;
-  clear: unset;
-  vertical-align: unset;
   flex-basis: unset;
   flex-grow: unset;
   flex-shrink: unset;
@@ -263,9 +244,6 @@ $Flex(gap(1rem),padding(1rem),wrap)
 
 .\|\$FlexItem\(basis\(180px\)\,grow\(1\)\,margin\(0\.5rem\)\)>* {
   margin: 0.5rem;
-  float: unset;
-  clear: unset;
-  vertical-align: unset;
   flex-basis: 180px;
   flex-grow: 1;
   flex-shrink: unset;

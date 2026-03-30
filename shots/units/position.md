@@ -79,9 +79,6 @@ $Grid(cols(240px,1fr),gap(2rem),padding(1rem))
 
 .\|\.sidebar\$GridItem\(column\(1\)\,row\(1\)\)\$sticky\(1rem\,_\,_\)\$zIndex\(2\)>:where(.sidebar) {
   margin: unset;
-  float: unset;
-  clear: unset;
-  vertical-align: unset;
   grid-column: 1;
   grid-row: 1;
   place-self: unset;
@@ -93,9 +90,6 @@ $Grid(cols(240px,1fr),gap(2rem),padding(1rem))
 
 .\|\.content\$GridItem\(column\(2\)\,row\(1\)\)>:where(.content) {
   margin: unset;
-  float: unset;
-  clear: unset;
-  vertical-align: unset;
   grid-column: 2;
   grid-row: 1;
   place-self: unset;

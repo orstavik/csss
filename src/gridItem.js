@@ -11,9 +11,6 @@ const placeSelf = CssValuesToCsssTable(alignBlock, alignInline);
 
 const DefaultGridItem = {
   margin: "unset",
-  float: "unset",
-  clear: "unset",
-  verticalAlign: "unset",
   gridColumn: "unset",
   gridRow: "unset",
   placeSelf: "unset",
@@ -45,7 +42,7 @@ const GridItem = FunctionWithDefaultValues(DefaultGridItem, gridItem);
 export default {
   csss: {
     gridItem,
-    GridItem
+    GridItem,
   },
   props: {
     ...marginProps,
