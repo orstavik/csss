@@ -1,12 +1,42 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func2.js";
-const { SingleTable, TypeBasedFunction, LogicalFour, SequentialFunction, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
+const { SingleTable, TypeBasedFunction, LogicalFour, SequentialFunction, FunctionWithDefaultValues } = CsssFunctions;
 const { LengthPercentAuto, SpanBasic } = CsssPrimitives;
 const { LogicalFourReverse, SingleTableReverse, SequentialFunctionReverse, Optional } = CssFunctions;
 
-const alignBlock = "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly|baseline|first baseline|last baseline";
-const alignInline = "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly";
+const ALIGNMENTS = (_ => {
+  const POSITIONS = "|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd";
+  const BASELINE = "|Baseline|First|Last";
+  const LEFTRIGHT = "|Left|Right|SafeLeft|SafeRight|UnsafeLeft|UnsafeRight";
+  const SELFSTARTEND = "|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd";
 
-const placeSelf = CssValuesToCsssTable(alignBlock, alignInline);
+  const AlignSelf = "Auto|Normal|Stretch|AnchorCenter" + POSITIONS + BASELINE + SELFSTARTEND;
+  const JustifySelf = "Auto|Normal|Stretch|AnchorCenter" + POSITIONS + BASELINE + SELFSTARTEND + LEFTRIGHT;
+
+  function lowSpaceKebab(str) {
+    return str
+      .replace(/(Unsafe|Safe|Legacy)(?!$)/g, "$& ")
+      .replace(/(Self|Flex|Anchor)(?!$)/g, "$&-")
+      .replace(/First|Last/g, "$& baseline")
+      .toLowerCase();
+  }
+
+  function makePlaceAligns(prop, name, one, two) {
+
+    const res = {};
+    for (let a of one.split("|")) {
+      res[name + a] = lowSpaceKebab(a);
+      if (two)
+        for (let b of two.split("|"))
+          if (a != b)
+            res[name + a + b] = lowSpaceKebab(a) + " " + lowSpaceKebab(b);
+    }
+    return res;
+  }
+
+  return {
+    placeSelf: makePlaceAligns("placeSelf", "self", AlignSelf, JustifySelf),
+  }
+})();
 
 
 const DefaultGridItem = {
@@ -35,7 +65,7 @@ const marginProps = {
 
 const gridItem = TypeBasedFunction(
   LogicalFour("margin", "margin", LengthPercentAuto),
-  SingleTable("placeSelf", placeSelf),
+  SingleTable("placeSelf", ALIGNMENTS.placeSelf),
   SequentialFunction("column/1-2", [SpanBasic], (n, ar) => ({ gridColumn: ar.join(" / ") })),
   SequentialFunction("row/1-2", [SpanBasic], (n, ar) => ({ gridRow: ar.join(" / ") }))
 );
@@ -56,7 +86,7 @@ export default {
   css: {
     gridItem: Optional("gridItem",
       LogicalFourReverse("margin", "margin", v => v, "_"),
-      SingleTableReverse("placeSelf", placeSelf),
+      SingleTableReverse("placeSelf", ALIGNMENTS.placeSelf),
       SequentialFunctionReverse("column", ["gridColumn"], v => v, "_"),
       SequentialFunctionReverse("row", ["gridRow"], v => v, "_")
     ),
