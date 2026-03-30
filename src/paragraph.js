@@ -1,6 +1,6 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func2.js";
 const { LengthPercent, LengthPercentNumber } = CsssPrimitives;
-const { TypeBasedFunction, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest, CssValuesToCsssTableObject, SingleTable } = CsssFunctions;
+const { TypeBasedFunction, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest, CssValuesToCsssTable, SingleTable } = CsssFunctions;
 const { SingleArgumentFunctionReverse, Optional, SingleTableReverse, SingleTableReverseObject } = CssFunctions;
 
 const hyphens = {
@@ -21,10 +21,7 @@ const whiteSpace = {
   preserveBreaksNowrap: "preserve-breaks nowrap",
   breakSpacesNowrap: "break-spaces nowrap",
 };
-const align = CssValuesToCsssTableObject(
-  "textAlign", "start|end|left|right|center|justify",
-  "verticalAlign", "baseline|sub|super|text-top|text-bottom|middle|top|bottom"
-);
+const alignText = CssValuesToCsssTable("start|end|left|right|center|justify");
 
 const wordBreakAndOverflowWrap = {
   breakWord: { wordBreak: "normal", overflowWrap: "break-word" },
@@ -68,7 +65,7 @@ const paragraph = TypeBasedFunction(
   SingleTable("whiteSpace", whiteSpace),
   SingleTable("lineBreak", lineBreak),
   SingleTable("textAlignLast", textAlignLast),
-  a => a.text && align[a.text],
+  SingleTable("textAlign", alignText),
   SingleTable("hangingPunctuation", hangingPunctuation),
   SingleArgumentFunction("indent", LengthPercent, (n, v) => ({ textIndent: v })),
   SingleArgumentFunction("spacing", LengthPercent, (n, v) => ({ wordSpacing: v })),
@@ -157,7 +154,6 @@ const props = {
   lineBreak: undefined,
   textAlign: undefined,
   textAlignLast: undefined,
-  verticalAlign: undefined,
   hangingPunctuation: undefined,
 };
 
@@ -195,7 +191,7 @@ export default {
         return undefined;
       },
       SingleTableReverse("lineBreak", lineBreak),
-      SingleTableReverseObject(align),
+      SingleTableReverse("textAlign", alignText),
       SingleTableReverse("textAlignLast", textAlignLast),
       SingleTableReverse("hangingPunctuation", hangingPunctuation)
     )
