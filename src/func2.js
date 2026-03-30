@@ -1,11 +1,9 @@
 import { ResolveMath } from "./funcMath2.js";
-import NativeCss from "./nativeCss.js";
 
-function BadArgument(name, args, I, expectedType = "") {
+function BadArgument(name, args, I, message = "") {
   args = args.map(a => a.text ?? (a.name + "/" + a.args.length));
   args[I] = ` => ${args[I]} <= `;
-  expectedType &&= `\n${args[I]} is not a ${expectedType}`;
-  return new SyntaxError(`Bad argument ${name}/${I + 1}:  ${name}(${args.join(",")})` + expectedType);
+  return new SyntaxError(`Bad argument ${name}/${I + 1}:  ${name}(${args.join(",")})` + message);
 }
 
 const CsssPrimitives = {
@@ -80,12 +78,14 @@ const CsssFunctions = {
     main: for (let i = 0; i < args.length; i++) {
       for (let fn of FUNCTIONS) {
         const v = fn(args[i]);
-        if (v != null) {
-          Object.assign(res, v);
-          continue main;
-        }
+        if (v == null) continue;
+        for (let k in v)
+          if (k in res)
+            throw BadDoubleArgument(name, args, i, `Property ${k} is already specified.`);
+        Object.assign(res, v);
+        continue main;
       }
-      throw BadArgument(name, args, i);
+      throw BadArgument(name, args, i, "Unknown argument.");
     }
     return res;
   },
