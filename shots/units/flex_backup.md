@@ -16,6 +16,9 @@ $Flex(column,gap(0.5rem),padding(1rem))
 
 .\|\$FlexItem\(basis\(100px\)\)>* {
   margin: unset;
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
   flex-basis: 100px;
   flex-grow: unset;
   flex-shrink: unset;
@@ -67,6 +70,9 @@ $Flex(wrap,gap(1rem,2rem))
 }
 
 .\|\$FlexItem\(margin\(5px\,1rem\)\)\$Box\(inline\(150px\)\,block\(120px\)\)\$BoxItem\(scrollMargin\(10px\)\)>* {
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
   flex-basis: unset;
   flex-grow: unset;
   flex-shrink: unset;
@@ -91,25 +97,29 @@ $Flex(wrap,gap(1rem,2rem))
 
 **description:** A wrapping Flex toolbar where key actions are reordered and aligned differently once the row starts to fill up.
 **csss:**
-$Flex(start,gap(1rem),padding(1rem),wrap)
-|$FlexItem(order(3),start,margin(1rem))
-|.two$flexItem(order(1),center)
-|.three$flexItem(order(2),end)
+$Flex(contentStart,itemsStart,gap(1rem),padding(1rem),wrap)
+|$FlexItem(order(3),selfStart,margin(1rem))
+|.one$flexItem(order(3),selfStart,margin(1rem))
+|.two$flexItem(order(1),selfCenter)
+|.three$flexItem(order(2),selfEnd)
 
 **css:**
 ```css
-.\$Flex\(start\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
+.\$Flex\(contentStart\,itemsStart\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
   display: flex;
   padding: 1rem;
-  align-items: unset;
+  align-items: start;
   place-content: start;
   flex-direction: unset;
   flex-wrap: wrap;
   gap: 1rem;
 }
 
-.\|\$FlexItem\(order\(3\)\,start\,margin\(1rem\)\)>* {
+.\|\$FlexItem\(order\(3\)\,selfStart\,margin\(1rem\)\)>* {
   margin: 1rem;
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
   flex-basis: unset;
   flex-grow: unset;
   flex-shrink: unset;
@@ -117,12 +127,18 @@ $Flex(start,gap(1rem),padding(1rem),wrap)
   order: 3;
 }
 
-.\|\.two\$flexItem\(order\(1\)\,center\)>:where(.two) {
+.\|\.one\$flexItem\(order\(3\)\,selfStart\,margin\(1rem\)\)>:where(.one) {
+  order: 3;
+  align-self: start;
+  margin: 1rem;
+}
+
+.\|\.two\$flexItem\(order\(1\)\,selfCenter\)>:where(.two) {
   order: 1;
   align-self: center;
 }
 
-.\|\.three\$flexItem\(order\(2\)\,end\)>:where(.three) {
+.\|\.three\$flexItem\(order\(2\)\,selfEnd\)>:where(.three) {
   order: 2;
   align-self: end;
 }
@@ -130,22 +146,25 @@ $Flex(start,gap(1rem),padding(1rem),wrap)
 
 **description:** A centered Flex row with a stretched featured item.
 **csss:**
-$Flex(center,gap(1rem),padding(1rem),wrap)
-|.featured$FlexItem(stretch)
+$Flex(contentCenter,itemsStretch,gap(1rem),padding(1rem),wrap)
+|.featured$FlexItem(selfStretch)
 **css:**
 ```css
-.\$Flex\(center\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
+.\$Flex\(contentCenter\,itemsStretch\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
   display: flex;
   padding: 1rem;
-  align-items: unset;
+  align-items: stretch;
   place-content: center;
   flex-direction: unset;
   flex-wrap: wrap;
   gap: 1rem;
 }
 
-.\|\.featured\$FlexItem\(stretch\)>:where(.featured) {
+.\|\.featured\$FlexItem\(selfStretch\)>:where(.featured) {
   margin: unset;
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
   flex-basis: unset;
   flex-grow: unset;
   flex-shrink: unset;
@@ -158,7 +177,7 @@ $Flex(center,gap(1rem),padding(1rem),wrap)
 **csss:**
 $Flex(gap(1rem),padding(1rem))$box(scroll)
 |:nth-child(1)$flexItem(grow(1))
-|:nth-child(2)$flexItem(center)
+|:nth-child(2)$flexItem(selfCenter)
 |:nth-child(3)$flexItem(shrink(0.5))
 **css:**
 ```css
@@ -177,7 +196,7 @@ $Flex(gap(1rem),padding(1rem))$box(scroll)
   flex-grow: 1;
 }
 
-.\|\:nth-child\(2\)\$flexItem\(center\)>:where(:nth-child(2)) {
+.\|\:nth-child\(2\)\$flexItem\(selfCenter\)>:where(:nth-child(2)) {
   align-self: center;
 }
 
@@ -190,8 +209,8 @@ $Flex(gap(1rem),padding(1rem))$box(scroll)
 **csss:**
 $Flex(row,gap(1rem),padding(1rem),wrap)
 |:nth-child(1)$flexItem(basis(200px),grow(1))
-|:nth-child(2)$flexItem(center)
-|:nth-child(3)$flexItem(end)
+|:nth-child(2)$flexItem(selfCenter)
+|:nth-child(3)$flexItem(selfEnd)
 |.note$flexItem(order(4),margin(1rem))
 **css:**
 ```css
@@ -210,11 +229,11 @@ $Flex(row,gap(1rem),padding(1rem),wrap)
   flex-grow: 1;
 }
 
-.\|\:nth-child\(2\)\$flexItem\(center\)>:where(:nth-child(2)) {
+.\|\:nth-child\(2\)\$flexItem\(selfCenter\)>:where(:nth-child(2)) {
   align-self: center;
 }
 
-.\|\:nth-child\(3\)\$flexItem\(end\)>:where(:nth-child(3)) {
+.\|\:nth-child\(3\)\$flexItem\(selfEnd\)>:where(:nth-child(3)) {
   align-self: end;
 }
 
@@ -229,7 +248,7 @@ $Flex(row,gap(1rem),padding(1rem),wrap)
 $Flex(gap(1rem),padding(1rem),wrap)
 |$FlexItem(basis(180px),grow(1),margin(0.5rem))
 |.wide$flexItem(basis(280px),grow(2))
-|.pin$flexItem(order(5),end)
+|.pin$flexItem(order(5),selfEnd)
 **css:**
 ```css
 .\$Flex\(gap\(1rem\)\,padding\(1rem\)\,wrap\) {
@@ -244,6 +263,9 @@ $Flex(gap(1rem),padding(1rem),wrap)
 
 .\|\$FlexItem\(basis\(180px\)\,grow\(1\)\,margin\(0\.5rem\)\)>* {
   margin: 0.5rem;
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
   flex-basis: 180px;
   flex-grow: 1;
   flex-shrink: unset;
@@ -256,7 +278,7 @@ $Flex(gap(1rem),padding(1rem),wrap)
   flex-grow: 2;
 }
 
-.\|\.pin\$flexItem\(order\(5\)\,end\)>:where(.pin) {
+.\|\.pin\$flexItem\(order\(5\)\,selfEnd\)>:where(.pin) {
   order: 5;
   align-self: end;
 }

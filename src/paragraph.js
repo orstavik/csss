@@ -1,21 +1,7 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func2.js";
 const { LengthPercent, LengthPercentNumber } = CsssPrimitives;
-const { TypeBasedFunction, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest } = CsssFunctions;
-const { SingleArgumentFunctionReverse, Optional, SingleTableReverse } = CssFunctions;
-
-const PARAGRAPH_PROPS = {
-  lineHeight: undefined,
-  textIndent: undefined,
-  wordSpacing: undefined,
-  hyphens: undefined,
-  whiteSpace: undefined,
-  overflowWrap: undefined,
-  wordBreak: undefined,
-  lineBreak: undefined,
-  textAlign: undefined,
-  textAlignLast: undefined,
-  hangingPunctuation: undefined,
-};
+const { TypeBasedFunction, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest, CssValuesToCsssTable, SingleTable } = CsssFunctions;
+const { SingleArgumentFunctionReverse, Optional, SingleTableReverse, SingleTableReverseObject } = CssFunctions;
 
 const hyphens = {
   hyphens: "auto",
@@ -35,6 +21,7 @@ const whiteSpace = {
   preserveBreaksNowrap: "preserve-breaks nowrap",
   breakSpacesNowrap: "break-spaces nowrap",
 };
+const alignText = CssValuesToCsssTable("start|end|left|right|center|justify");
 
 const wordBreakAndOverflowWrap = {
   breakWord: { wordBreak: "normal", overflowWrap: "break-word" },
@@ -52,14 +39,6 @@ const lineBreak = {
   lineBreakNormal: "normal",
 };
 
-const textAlign = {
-  start: "start",
-  end: "end",
-  left: "left",
-  right: "right",
-  center: "center",
-  justify: "justify",
-};
 
 const textAlignLast = {
   lastStart: "start",
@@ -78,29 +57,20 @@ const hangingPunctuation = {
   hangingPunctuationNone: "none",
 };
 
+const PropertyType = (Prop, Type) => a => (a = Type(a)) && { [Prop]: a };
 
 const paragraph = TypeBasedFunction(
+  PropertyType("lineHeight", LengthPercentNumber),
+  SingleTable("hyphens", hyphens),
+  SingleTable("whiteSpace", whiteSpace),
+  SingleTable("lineBreak", lineBreak),
+  SingleTable("textAlignLast", textAlignLast),
+  SingleTable("textAlign", alignText),
+  SingleTable("hangingPunctuation", hangingPunctuation),
   SingleArgumentFunction("indent", LengthPercent, (n, v) => ({ textIndent: v })),
   SingleArgumentFunction("spacing", LengthPercent, (n, v) => ({ wordSpacing: v })),
-  (a) => {
-    let res = LengthPercentNumber(a);
-    if (res !== undefined) return { lineHeight: res };
-  },
-  a => {
-    const map = {
-      ...Object.fromEntries(Object.entries(hyphens).map(([k,v]) => [k, {hyphens: v}])),
-      ...Object.fromEntries(Object.entries(whiteSpace).map(([k,v]) => [k, {whiteSpace: v}])),
-      ...wordBreakAndOverflowWrap,
-      ...Object.fromEntries(Object.entries(lineBreak).map(([k,v]) => [k, {lineBreak: v}])),
-      ...Object.fromEntries(Object.entries(textAlign).map(([k,v]) => [k, {textAlign: v}])),
-      ...Object.fromEntries(Object.entries(textAlignLast).map(([k,v]) => [k, {textAlignLast: v}])),
-      ...Object.fromEntries(Object.entries(hangingPunctuation).map(([k,v]) => [k, {hangingPunctuation: v}])),
-    };
-    return map[a.text];
-  }
+  a => a.text && wordBreakAndOverflowWrap[a.text]
 );
-
-const PARAGRAPH = Object.fromEntries(Object.keys(PARAGRAPH_PROPS).map(k => [k, "unset"]));
 
 const PARAGRAPHS = {
   _: {},
@@ -173,9 +143,24 @@ const PARAGRAPHS = {
   }
 };
 
-const Paragraph = FunctionWithDefaultValues(PARAGRAPH,
+const props = {
+  lineHeight: undefined,
+  textIndent: undefined,
+  wordSpacing: undefined,
+  hyphens: undefined,
+  whiteSpace: undefined,
+  overflowWrap: undefined,
+  wordBreak: undefined,
+  lineBreak: undefined,
+  textAlign: undefined,
+  textAlignLast: undefined,
+  hangingPunctuation: undefined,
+};
+
+const Paragraph = FunctionWithDefaultValues(
+  Object.fromEntries(Object.keys(props).map(k => [k, "unset"])),
   ParseFirstThenRest(
-    (a) => PARAGRAPHS[a.text],
+    a => a.text && PARAGRAPHS[a.text],
     paragraph,
     (a, b) => ({ ...a, ...b })
   )
@@ -186,7 +171,7 @@ export default {
     paragraph,
     Paragraph,
   },
-  props: PARAGRAPH_PROPS,
+  props,
   css: {
     paragraph: Optional("paragraph",
       SingleArgumentFunctionReverse("indent", "textIndent", v => v, "_"),
@@ -197,16 +182,16 @@ export default {
       SingleTableReverse("hyphens", hyphens),
       SingleTableReverse("whiteSpace", whiteSpace),
       style => {
-         const w = style.wordBreak;
-         const o = style.overflowWrap;
-         if (!w && !o) return undefined;
-         for (let [k, v] of Object.entries(wordBreakAndOverflowWrap)) {
-            if (v.wordBreak === w && v.overflowWrap === o) return k;
-         }
-         return undefined;
+        const w = style.wordBreak;
+        const o = style.overflowWrap;
+        if (!w && !o) return undefined;
+        for (let [k, v] of Object.entries(wordBreakAndOverflowWrap)) {
+          if (v.wordBreak === w && v.overflowWrap === o) return k;
+        }
+        return undefined;
       },
       SingleTableReverse("lineBreak", lineBreak),
-      SingleTableReverse("textAlign", textAlign),
+      SingleTableReverse("textAlign", alignText),
       SingleTableReverse("textAlignLast", textAlignLast),
       SingleTableReverse("hangingPunctuation", hangingPunctuation)
     )

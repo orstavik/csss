@@ -15,22 +15,10 @@ const clear = {
   clearNone: "none",
 };
 
-const verticalAlign = {
-  alignTop: "top",
-  alignMiddle: "middle",
-  alignBottom: "bottom",
-  alignBaseline: "baseline",
-  alignTextTop: "text-top",
-  alignTextBottom: "text-bottom",
-  alignSuper: "super",
-  alignSub: "sub",
-};
-
 const DefaultBlockItem = {
   margin: "unset",
   float: "unset",
   clear: "unset",
-  verticalAlign: "unset",
 };
 
 const marginProps = {
@@ -51,7 +39,6 @@ const blockItem = TypeBasedFunction(
   LogicalFour("margin", "margin", LengthPercentAuto),
   SingleTable("float", float),
   SingleTable("clear", clear),
-  SingleTable("verticalAlign", verticalAlign)
 );
 
 const BlockItem = FunctionWithDefaultValues(DefaultBlockItem, blockItem);
@@ -71,8 +58,7 @@ export default {
     blockItem: Optional("blockItem",
       LogicalFourReverse("margin", "margin", v => v, "_"),
       SingleTableReverse("float", float),
-      SingleTableReverse("clear", clear),
-      SingleTableReverse("verticalAlign", verticalAlign)
+      SingleTableReverse("clear", clear)
     ),
   }
 };

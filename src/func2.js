@@ -18,14 +18,27 @@ const CsssPrimitives = {
 };
 
 const CsssFunctions = {
-  CssValuesToCsssTable: (Block, Inline) => {
+  // CssValuesToCsssTableObject: (oneProp, oneValues, twoProp, twoValues) => {
+  //   const toCamelCase = s => s.replace(/[^a-z]./g, m => m[1].toUpperCase());
+  //   const Table = {};
+  //   for (let one of oneValues.split("|")) {
+  //     Table[toCamelCase(one)] = { [oneProp]: one, [twoProp]: "unset" };
+  //     for (let two of twoValues.split("|")) {
+  //       Table[toCamelCase(two)] = { [oneProp]: "unset", [twoProp]: two };
+  //       Table[toCamelCase(one + " " + two)] = { [oneProp]: one, [twoProp]: two };
+  //     }
+  //   }
+  //   return Table;
+  // },
+  CssValuesToCsssTable: (One, Two = "") => {
     const toCamelCase = s => s.replace(/[^a-z]./g, m => m[1].toUpperCase());
     const Table = {};
-    for (let b of Block.split("|"))
-      for (let i of Inline.split("|")) {
-        const v = b == i ? b : (b + " " + i);
-        Table[toCamelCase(v)] = v;
-      }
+    for (let b of One.split("|")) {
+      Table[toCamelCase(b)] = b;
+      for (let i of Two.split("|"))
+        if (b != i)
+          Table[toCamelCase(b + " " + i)] = b + " " + i;
+    }
     return Table;
   },
   SingleTable: (CssProp, Table) => ({ text }) => text in Table ? { [CssProp]: Table[text] } : undefined,
@@ -145,6 +158,14 @@ const CssFunctions = {
   SingleTableReverse: (CssProp, Table) => {
     Table = Object.fromEntries(Object.entries(Table).map(([k, v]) => [v, k]));
     return style => Table[style[CssProp]];
+  },
+  SingleTableReverseObject: Table => style => {
+    main: for (let short in Table) {
+      for (let p in Table[short])
+        if (style[p] !== Table[short][p])
+          continue main;
+      return short;
+    }
   },
   SequentialFunctionReverse: (CsssFnName, PROPS, INTERPRETER, DEFAULT = "_") => style => {
     let args = PROPS.map(p => INTERPRETER(style[p]) ?? DEFAULT);

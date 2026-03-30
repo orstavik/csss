@@ -25,9 +25,9 @@ google-chrome --headless=new --user-data-dir=$PWD/temp-profile --enable-logging 
   --log-file=$PWD/temp-profile/chrome.log --virtual-time-budget=5000 \
   "http://127.0.0.1:$PORT/$TEST_FILE" > /dev/null 2>&1; \
 touch "$TEST_FILE.actual"; \
-grep -E -o '(❌|✅|🟦).*' temp-profile/chrome.log > "$TEST_FILE.actual"; \
+grep -E -o '(❌|✅|🟦).*' temp-profile/chrome.log | sed 's/", source:.*//' > "$TEST_FILE.actual"; \
 diff "$TEST_FILE.actual" ${TEST_FILE}.log && echo "✅AS EXPECTED"; \
-rm -f "$TEST_FILE.actual"; \
+# rm -f "$TEST_FILE.actual"; \
 kill -9 $HTTP_PID; \
 rm -rf temp-profile
 ```

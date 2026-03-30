@@ -1,46 +1,14 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func2.js";
-const { SingleTable, TypeBasedFunction, LogicalFour, SingleArgumentFunction, FunctionWithDefaultValues } = CsssFunctions;
+const { SingleTable, TypeBasedFunction, LogicalFour, SingleArgumentFunction, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercentAuto, Basic } = CsssPrimitives;
 const { LogicalFourReverse, SingleTableReverse, SingleArgumentFunctionReverse, Optional } = CssFunctions;
 
-const ALIGNMENTS = (_ => {
-  const POSITIONS = "|Start|End|Center|SafeStart|SafeEnd|SafeCenter|UnsafeStart|UnsafeEnd|UnsafeCenter|FlexStart|FlexEnd|SafeFlexStart|SafeFlexEnd|UnsafeFlexStart|UnsafeFlexEnd";
-  const BASELINE = "|Baseline|First|Last";
-  const SELFSTARTEND = "|SelfStart|SelfEnd|SafeSelfStart|SafeSelfEnd|UnsafeSelfStart|UnsafeSelfEnd";
-
-  const AlignSelf = "Auto|Normal|Stretch|AnchorCenter" + POSITIONS + BASELINE + SELFSTARTEND;
-
-  function lowSpaceKebab(str) {
-    return str
-      .replace(/(Unsafe|Safe|Legacy)(?!$)/g, "$& ")
-      .replace(/(Self|Flex|Anchor)(?!$)/g, "$&-")
-      .replace(/First|Last/g, "$& baseline")
-      .toLowerCase();
-  }
-
-  function makePlaceAligns(prop, name, one, two) {
-
-    const res = {};
-    for (let a of one.split("|")) {
-      res[name + a] = lowSpaceKebab(a);
-      if (two)
-        for (let b of two.split("|"))
-          if (a != b)
-            res[name + a + b] = lowSpaceKebab(a) + " " + lowSpaceKebab(b);
-    }
-    return res;
-  }
-
-  return {
-    alignSelf: makePlaceAligns("alignSelf", "self", AlignSelf),
-  }
-})();
+const alignSelf = CssValuesToCsssTable(
+  "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly|baseline|first baseline|last baseline"
+);
 
 const DefaultFlexItem = {
   margin: "unset",
-  float: "unset",
-  clear: "unset",
-  verticalAlign: "unset",
   flexBasis: "unset",
   flexGrow: "unset",
   flexShrink: "unset",
@@ -64,7 +32,7 @@ const marginProps = {
 
 const flexItem = TypeBasedFunction(
   LogicalFour("margin", "margin", LengthPercentAuto),
-  SingleTable("alignSelf", ALIGNMENTS.alignSelf),
+  SingleTable("alignSelf", alignSelf),
   SingleArgumentFunction("basis", Basic, (n, v) => ({ flexBasis: v })),
   SingleArgumentFunction("grow", Basic, (n, v) => ({ flexGrow: v })),
   SingleArgumentFunction("shrink", Basic, (n, v) => ({ flexShrink: v })),
@@ -76,7 +44,7 @@ const FlexItem = FunctionWithDefaultValues(DefaultFlexItem, flexItem);
 export default {
   csss: {
     flexItem,
-    FlexItem
+    FlexItem,
   },
   props: {
     ...marginProps,
@@ -89,7 +57,7 @@ export default {
   css: {
     flexItem: Optional("flexItem",
       LogicalFourReverse("margin", "margin", v => v, "_"),
-      SingleTableReverse("alignSelf", ALIGNMENTS.alignSelf),
+      SingleTableReverse("alignSelf", alignSelf),
       SingleArgumentFunctionReverse("basis", "flexBasis", v => v, "_"),
       SingleArgumentFunctionReverse("grow", "flexGrow", v => v, "_"),
       SingleArgumentFunctionReverse("shrink", "flexShrink", v => v, "_"),

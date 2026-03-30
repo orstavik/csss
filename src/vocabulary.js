@@ -21,6 +21,7 @@ import shadows from "./shadows.js";
 import position from "./position.js";
 import svg from "./svg.js";
 import paragraph from "./paragraph.js";
+import paragraphItem from "./paragraphItem.js";
 import { animationHo } from "./animations.js";
 
 
@@ -74,6 +75,8 @@ const SHORTS = {
   ...iBlock.props,
   ...iBlockItem.props,
   ...lineClamp.props,
+  ...paragraph.props,
+  ...paragraphItem.props,
   ...transitions,
   ...textDecorations,
   ...border,
@@ -96,6 +99,7 @@ const SHORTS = {
   ...iBlockItem.csss,
   ...lineClamp.csss,
   ...paragraph.csss,
+  ...paragraphItem.csss,
   displayNone: { display: "none" },
 };
 for (let b in SHORTS)
@@ -115,6 +119,7 @@ const REVERSES = {
   ...iBlockItem.css,
   ...lineClamp.css,
   ...paragraph.css,
+  ...paragraphItem.css,
 };
 
 const MEDIA_WORDS = {

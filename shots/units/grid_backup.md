@@ -50,9 +50,9 @@ $Grid(rows(repeat(3,1fr)),column,gap(0.5rem),padding(1rem))
 A feature Grid with a spanning hero and a side card that can be aligned independently for contrast.
 **csss:**
 $Grid(center,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
-|$gridItem(stretch)
+|$gridItem(selfStretch)
 |.hero$GridItem(column(1,span(2)),margin(1rem))
-|.aside$GridItem(startEnd,row(2))
+|.aside$GridItem(selfStartEnd,row(2))
 **css:**
 ```css
 .\$Grid\(center\,cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
@@ -67,19 +67,25 @@ $Grid(center,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
   grid-auto-flow: unset;
 }
 
-.\|\$gridItem\(stretch\)>* {
+.\|\$gridItem\(selfStretch\)>* {
   place-self: stretch;
 }
 
 .\|\.hero\$GridItem\(column\(1\,span\(2\)\)\,margin\(1rem\)\)>:where(.hero) {
   margin: 1rem;
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
   grid-column: 1 / span 2;
   grid-row: unset;
   place-self: unset;
 }
 
-.\|\.aside\$GridItem\(startEnd\,row\(2\)\)>:where(.aside) {
+.\|\.aside\$GridItem\(selfStartEnd\,row\(2\)\)>:where(.aside) {
   margin: unset;
+  float: unset;
+  clear: unset;
+  vertical-align: unset;
   grid-column: unset;
   grid-row: 2;
   place-self: start end;
@@ -90,7 +96,7 @@ $Grid(center,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
 A two-column Grid editorial layout with placed items.
 **csss:**
 $Grid(startEnd,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
-|$gridItem(stretchStart)
+|$gridItem(selfStretchStart)
 |:nth-child(1)$gridItem(column(1,1))
 |:nth-child(2)$gridItem(row(2,span(2)),column(2))
 **css:**
@@ -107,7 +113,7 @@ $Grid(startEnd,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
   grid-auto-flow: unset;
 }
 
-.\|\$gridItem\(stretchStart\)>* {
+.\|\$gridItem\(selfStretchStart\)>* {
   place-self: stretch start;
 }
 
@@ -126,8 +132,8 @@ A collage Grid with a wide featured panel, a centered highlight tile, and a tall
 **csss:**
 $Grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),padding(1rem))
 |.a$gridItem(column(1,span(2)),row(1))
-|.b$gridItem(center,column(3),row(2))
-|.c$gridItem(stretchStart,column(1),row(2,span(2)))
+|.b$gridItem(selfCenter,column(3),row(2))
+|.c$gridItem(selfStretchStart,column(1),row(2,span(2)))
 **css:**
 ```css
 .\$Grid\(cols\(repeat\(3\,1fr\)\)\,rows\(repeat\(3\,80px\)\)\,gap\(1rem\)\,padding\(1rem\)\) {
@@ -147,13 +153,13 @@ $Grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),padding(1rem))
   grid-row: 1;
 }
 
-.\|\.b\$gridItem\(center\,column\(3\)\,row\(2\)\)>:where(.b) {
+.\|\.b\$gridItem\(selfCenter\,column\(3\)\,row\(2\)\)>:where(.b) {
   place-self: center;
   grid-column: 3;
   grid-row: 2;
 }
 
-.\|\.c\$gridItem\(stretchStart\,column\(1\)\,row\(2\,span\(2\)\)\)>:where(.c) {
+.\|\.c\$gridItem\(selfStretchStart\,column\(1\)\,row\(2\,span\(2\)\)\)>:where(.c) {
   place-self: stretch start;
   grid-column: 1;
   grid-row: 2 / span 2;
