@@ -110,7 +110,6 @@ $Block$box(auto)$Paragraph(_,center)
   line-break: unset;
   text-align: center;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 
@@ -193,7 +192,6 @@ $Block(padding(1.5rem))
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 

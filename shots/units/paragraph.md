@@ -15,7 +15,6 @@ $Paragraph(_,1.6,justify,indent(1.5em),hyphens)
   line-break: unset;
   text-align: justify;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -52,7 +51,6 @@ $Paragraph(_,breakLongWords,lineBreakStrict,hangingPunctuationFirst,1.8)
   line-break: strict;
   text-align: unset;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: first;
 }
 ```
@@ -88,7 +86,6 @@ Resets paragraph inheritance defaults for nested elements using a universal chil
   line-break: normal;
   text-align: left;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -110,7 +107,6 @@ $Paragraph(journal,1.7,shy,hangingPunctuationAllowEnd)
   line-break: strict;
   text-align: justify;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: allow-end;
 }
 ```
@@ -125,7 +121,6 @@ Sets typography for poetry or lyrics block. Keeps spaces and lines as authored b
   white-space: preserve;
   line-height: 1.4;
   text-align: center;
-  vertical-align: unset;
 }
 ```
 
@@ -146,7 +141,6 @@ $Paragraph(novel,1.3,lastCenter,hangingPunctuationForceEnd,indent(1rem))
   line-break: unset;
   text-align: justify;
   text-align-last: center;
-  vertical-align: unset;
   hanging-punctuation: force-end;
 }
 ```
@@ -181,7 +175,6 @@ $Paragraph(_,pre,breakNormal,indent(0),shy)
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -203,7 +196,6 @@ $Paragraph(body)
   line-break: unset;
   text-align: start;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -225,7 +217,6 @@ $Paragraph(legible,justify,lineBreakStrict)
   line-break: strict;
   text-align: justify;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -247,7 +238,6 @@ $Paragraph(journal,lineBreakNormal)
   line-break: normal;
   text-align: justify;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -269,7 +259,6 @@ $Paragraph(novel)
   line-break: unset;
   text-align: justify;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: last;
 }
 ```
@@ -291,7 +280,6 @@ $Paragraph(display,center,hangingPunctuationNone)
   line-break: unset;
   text-align: center;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: none;
 }
 ```
@@ -313,7 +301,6 @@ $Paragraph(caption)
   line-break: unset;
   text-align: center;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -335,7 +322,6 @@ $Paragraph(tabular)
   line-break: unset;
   text-align: end;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -357,7 +343,6 @@ $Paragraph(interactive,spacing(0.02em),start)
   line-break: unset;
   text-align: start;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -379,7 +364,6 @@ $Paragraph(terminal,pre)
   line-break: unset;
   text-align: start;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```
@@ -401,7 +385,6 @@ $Paragraph(compound)
   line-break: unset;
   text-align: start;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 ```

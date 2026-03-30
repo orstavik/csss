@@ -47,7 +47,6 @@ $Block(padding(1.5rem))
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 
@@ -240,7 +239,6 @@ $Block(padding(2rem))$Paragraph(_,breakWord)
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 
@@ -458,7 +456,6 @@ $Block(padding(1.5rem))$Paragraph(_,breakWord)
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 
@@ -512,7 +509,6 @@ $Block(padding(1.5rem))$Paragraph(_,breakWord)
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 
@@ -1077,7 +1073,6 @@ $Block(padding(1.5rem))$Paragraph(_,breakLongWords)
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 
@@ -1115,7 +1110,6 @@ $Block(padding(1rem))$Paragraph(_,breakAnywhere)
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
-  vertical-align: unset;
   hanging-punctuation: unset;
 }
 
