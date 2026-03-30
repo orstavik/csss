@@ -81,7 +81,7 @@ const SHORTS = {
   ...shadows,
   ...position,
   ...svg,
-  ...paragraph,
+  ...paragraph.props,
   ...ObjectFit,
   ...Animations,
   ...box.csss,
@@ -95,6 +95,7 @@ const SHORTS = {
   ...iBlock.csss,
   ...iBlockItem.csss,
   ...lineClamp.csss,
+  ...paragraph.csss,
   displayNone: { display: "none" },
 };
 for (let b in SHORTS)
@@ -113,6 +114,7 @@ const REVERSES = {
   ...iBlock.css,
   ...iBlockItem.css,
   ...lineClamp.css,
+  ...paragraph.css,
 };
 
 const MEDIA_WORDS = {
