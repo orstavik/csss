@@ -78,11 +78,11 @@ const SHORTS = {
   ...paragraph.props,
   ...paragraphItem.props,
   ...textDecorations.props,
+  ...position.props,
   ...transitions,
   ...border,
   ...filterTransforms,
   ...shadows,
-  ...position,
   ...svg,
   ...paragraph.props,
   ...ObjectFit,
@@ -101,6 +101,7 @@ const SHORTS = {
   ...paragraph.csss,
   ...paragraphItem.csss,
   ...textDecorations.csss,
+  ...position.csss,
   displayNone: { display: "none" },
 };
 
@@ -119,6 +120,7 @@ const REVERSES = {
   ...paragraph.css,
   ...paragraphItem.css,
   // ...textDecorations.css,
+  // ...position.css,
 };
 
 const MEDIA_WORDS = {
