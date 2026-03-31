@@ -1,6 +1,6 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func2.js";
 const { LengthPercent, LengthPercentNumber } = CsssPrimitives;
-const { TypeBasedFunction, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest, CssValuesToCsssTable, SingleTable, PropertyType } = CsssFunctions;
+const { TypeBasedFunction, FunctionPropertyType, FunctionWithDefaultValues, ParseFirstThenRest, CssValuesToCsssTable, SingleTable, PropertyType } = CsssFunctions;
 const { SingleArgumentFunctionReverse, Optional, SingleTableReverse } = CssFunctions;
 
 const hyphens = {
@@ -65,8 +65,8 @@ const paragraph = TypeBasedFunction(
   SingleTable("textAlignLast", textAlignLast),
   SingleTable("textAlign", alignText),
   SingleTable("hangingPunctuation", hangingPunctuation),
-  SingleArgumentFunction("indent", LengthPercent, (n, v) => ({ textIndent: v })),
-  SingleArgumentFunction("spacing", LengthPercent, (n, v) => ({ wordSpacing: v })),
+  FunctionPropertyType("indent", "textIndent", LengthPercent),
+  FunctionPropertyType("spacing", "wordSpacing", LengthPercent),
   a => a.text && wordBreakAndOverflowWrap[a.text]
 );
 

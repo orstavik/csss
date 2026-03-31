@@ -1,5 +1,5 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func2.js";
-const { SingleTable, TypeBasedFunction, LogicalFour, SingleArgumentFunction, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
+const { SingleTable, TypeBasedFunction, LogicalFour, FunctionPropertyType, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercentAuto, NumberInterpreter } = CsssPrimitives;
 const { LogicalFourReverse, SingleTableReverse, SingleArgumentFunctionReverse, Optional } = CssFunctions;
 
@@ -33,10 +33,10 @@ const marginProps = {
 const flexItem = TypeBasedFunction(
   LogicalFour("margin", "margin", LengthPercentAuto),
   SingleTable("alignSelf", alignSelf),
-  SingleArgumentFunction("basis", LengthPercentAuto, (n, v) => ({ flexBasis: v })),
-  SingleArgumentFunction("grow", NumberInterpreter, (n, v) => ({ flexGrow: v })),
-  SingleArgumentFunction("shrink", NumberInterpreter, (n, v) => ({ flexShrink: v })),
-  SingleArgumentFunction("order", NumberInterpreter, (n, v) => ({ [n]: v }))
+  FunctionPropertyType("basis", "flexBasis", LengthPercentAuto),
+  FunctionPropertyType("grow", "flexGrow", NumberInterpreter),
+  FunctionPropertyType("shrink", "flexShrink", NumberInterpreter),
+  FunctionPropertyType("order", "order", NumberInterpreter)
 );
 
 const FlexItem = FunctionWithDefaultValues(DefaultFlexItem, flexItem);

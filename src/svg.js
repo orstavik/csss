@@ -1,6 +1,6 @@
 
 import { CsssPrimitives, CsssFunctions } from "./func2.js";
-const { FunctionWithDefaultValues, SF2, SingleArgumentFunction, TypeBasedFunction, PropertyType, SingleTable, CssValuesToCsssTable, FunctionProperty } = CsssFunctions;
+const { FunctionWithDefaultValues, SF2, TypeBasedFunction, PropertyType, SingleTable, CssValuesToCsssTable, FunctionPropertyType } = CsssFunctions;
 const { SingleTableRaw, LengthPercentNumber, NumberInterpreter, ColorUrl, Url, Length, UrlUnset } = CsssPrimitives;
 
 const strokeDefaults = {
@@ -61,8 +61,8 @@ const stroke = TypeBasedFunction(
   SingleTable("strokeLinecap", strokeLinecap),
   SingleTable("strokeLinejoin", strokeLinejoin),
   SF2("dasharray/2-", [LengthPercentNumber], (name, ar) => ({ strokeDasharray: ar.join(", ") })),
-  SingleArgumentFunction("dashoffset", LengthPercentNumber, (name, ar) => ({ strokeDashoffset: ar })),
-  SingleArgumentFunction("miterlimit", NumberInterpreter, (name, ar) => ({ strokeMiterlimit: ar }))
+  FunctionPropertyType("dashoffset", "strokeDashoffset", LengthPercentNumber),
+  FunctionPropertyType("miterlimit", "strokeMiterlimit", NumberInterpreter)
 );
 
 const fill = TypeBasedFunction(
@@ -91,27 +91,27 @@ export default {
   Fill: FunctionWithDefaultValues(fillDefaults, fill),
   SvgText: FunctionWithDefaultValues(svgTextDefaults, svgText),
 
-  markerStart: FunctionProperty("markerStart", "markerStart", Url),
-  markerEnd: FunctionProperty("markerEnd", "markerEnd", Url),
-  markerMid: FunctionProperty("markerMid", "markerMid", Url),
+  markerStart: FunctionPropertyType("markerStart", "markerStart", Url),
+  markerEnd: FunctionPropertyType("markerEnd", "markerEnd", Url),
+  markerMid: FunctionPropertyType("markerMid", "markerMid", Url),
   marker: SF2("marker/1-3", [UrlUnset], (name, m) =>
     m.length == 1 ? { marker: m[0] } :
       m.length == 2 ? { markerStart: m[0], markerEnd: m[1] } :
         { markerStart: m[0], markerMid: m[1], markerEnd: m[2] }
   ),
 
-  stopColor: FunctionProperty("stopColor", "stopColor", ColorUrl),
-  stopOpacity: FunctionProperty("stopOpacity", "stopOpacity", NumberInterpreter),
-  vectorEffect: TypeBasedFunction(SingleTable("vectorEffect", vectorEffect)),
-  clipRule: TypeBasedFunction(SingleTable("clipRule", clipRule)),
-  colorInterpolation: TypeBasedFunction(SingleTable("colorInterpolation", colorInterpolation)),
-  shapeRendering: TypeBasedFunction(SingleTable("shapeRendering", shapeRendering)),
-  colorRendering: TypeBasedFunction(SingleTable("colorRendering", colorRendering)),
-  imageRendering: TypeBasedFunction(SingleTable("imageRendering", imageRendering)),
-  maskType: TypeBasedFunction(SingleTable("maskType", maskType)),
+  stopColor: FunctionPropertyType("stopColor", "stopColor", ColorUrl),
+  stopOpacity: FunctionPropertyType("stopOpacity", "stopOpacity", NumberInterpreter),
+  vectorEffect: FunctionPropertyType("vectorEffect", "vectorEffect", SingleTableRaw(vectorEffect)),
+  clipRule: FunctionPropertyType("clipRule", "clipRule", SingleTableRaw(clipRule)),
+  colorInterpolation: FunctionPropertyType("colorInterpolation", "colorInterpolation", SingleTableRaw(colorInterpolation)),
+  shapeRendering: FunctionPropertyType("shapeRendering", "shapeRendering", SingleTableRaw(shapeRendering)),
+  colorRendering: FunctionPropertyType("colorRendering", "colorRendering", SingleTableRaw(colorRendering)),
+  imageRendering: FunctionPropertyType("imageRendering", "imageRendering", SingleTableRaw(imageRendering)),
+  maskType: FunctionPropertyType("maskType", "maskType", SingleTableRaw(maskType)),
   paintOrder: SF2("paintOrder/0-4", [SingleTableRaw(paintOrder)], (name, ar) => ({ paintOrder: ar.join(" ") })),
-  lightingColor: FunctionProperty("lightingColor", "lightingColor", ColorUrl),
-  svgOpacity: FunctionProperty("svgOpacity", "svgOpacity", NumberInterpreter),
+  lightingColor: FunctionPropertyType("lightingColor", "lightingColor", ColorUrl),
+  svgOpacity: FunctionPropertyType("svgOpacity", "svgOpacity", NumberInterpreter),
 
   strokeWidth: undefined,
   strokeLinecap: undefined,
