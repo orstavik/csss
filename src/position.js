@@ -1,6 +1,6 @@
-import { ValueTypes, FunctionTypes } from "./func.js";
-const { LogicalFour, FunctionBasedOnValueTypes, FunctionWithDefaultValues } = FunctionTypes;
-const { WordToValue, LengthPercent, LengthPercentAuto } = ValueTypes;
+import { CsssFunctions, CsssPrimitives } from "./func2.js";
+const { LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
+const { LengthPercentAuto } = CsssPrimitives;
 
 const PROPS = {
   position: undefined,
@@ -15,12 +15,10 @@ const PROPS = {
   insetBlockEnd: undefined,
 };
 
-const LogicalFourAuto = LogicalFour("inset", LengthPercentAuto);
-
 export default {
   ...PROPS,
-  absolute: FunctionWithDefaultValues({ position: "absolute" }, LogicalFourAuto),
-  relative: FunctionWithDefaultValues({ position: "relative" }, LogicalFourAuto),
-  fixed: FunctionWithDefaultValues({ position: "fixed" }, LogicalFourAuto),
-  sticky: FunctionWithDefaultValues({ position: "sticky" }, LogicalFourAuto),
+  absolute: FunctionWithDefaultValues({ position: "absolute" }, LogicalFour("absolute", "inset", LengthPercentAuto)),
+  relative: FunctionWithDefaultValues({ position: "relative" }, LogicalFour("relative", "inset", LengthPercentAuto)),
+  fixed: FunctionWithDefaultValues({ position: "fixed" }, LogicalFour("fixed", "inset", LengthPercentAuto)),
+  sticky: FunctionWithDefaultValues({ position: "sticky" }, LogicalFour("sticky", "inset", LengthPercentAuto)),
 };

@@ -27,8 +27,9 @@ const CsssPrimitives = {
   ColorUrl: a => Color(a) ?? Url(a),
   SingleTableRaw: Table => ({ text }) => text in Table ? Table[text] : undefined,
 };
-
+//these returns objects.
 const CsssFunctions = {
+  //this is special
   CssValuesToCsssTable: (One, Two = "") => {
     const Table = {};
     for (let b of One.split("|")) {
