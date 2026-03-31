@@ -97,21 +97,24 @@ const CsssFunctions = {
     const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
     return POST(first, res);
   },
-  TypeBasedFunction: (...FUNCTIONS) => ({ args, name }) => {
-    const res = {};
-    main: for (let i = 0; i < args.length; i++) {
-      for (let fn of FUNCTIONS) {
-        const v = fn(args[i]);
-        if (v == null) continue;
-        for (let k in v)
-          if (k in res)
-            throw BadDoubleArgument(name, args, i, `Property ${k} is already specified.`);
-        Object.assign(res, v);
-        continue main;
+  TypeBasedFunction: (...FUNCTIONS) => {
+    const once = new Set();
+    return ({ args, name }) => {
+      once.clear();
+      const res = {};
+      main: for (let i = 0; i < args.length; i++) {
+        for (let fn of FUNCTIONS) {
+          if (once.has(fn)) continue;
+          const v = fn(args[i]);
+          if (v == null) continue;
+          once.add(fn);
+          Object.assign(res, v);
+          continue main;
+        }
+        throw BadArgument(name, args, i, "Unknown argument.");
       }
-      throw BadArgument(name, args, i, "Unknown argument.");
+      return res;
     }
-    return res;
   },
   FunctionWithDefaultValues: (BASE, CB) => {
     Object.freeze(BASE);
