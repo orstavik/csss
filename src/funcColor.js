@@ -336,12 +336,14 @@ const COLORS = {
   "#mixOklchDecreasing": args => cssColorMix([{ kind: "WORD", text: "oklch decreasing hue" }, ...args]),
 };
 
-function Color(a) {
+function ColorRaw(a) {
   return a.kind === "COLOR" ? parseColor(a.text) :
     a.name in COLORS ? { type: "color", text: COLORS[a.name](a.args) } :
       undefined;
 }
+const Color = a => ColorRaw(a)?.text;
 
 export {
+  ColorRaw,
   Color,
 };

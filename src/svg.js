@@ -2,8 +2,8 @@
 import { ValueTypes } from "./func.js";
 import { CsssPrimitives, CsssFunctions } from "./func2.js";
 const { FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, TypeBasedFunction, PropertyType, SingleTable } = CsssFunctions;
-const { LengthPercentNumber, NumberInterpreter } = CsssPrimitives;
-const { Fraction, Url, Length, LengthPercent, UrlUnset, ColorUrl, CamelWords, WordToValue } = ValueTypes;
+const { LengthPercentNumber, NumberInterpreter, ColorUrl, Url, LengthPercent, Length } = CsssPrimitives;
+const { Fraction, UrlUnset, CamelWords, WordToValue } = ValueTypes;
 
 const strokeDefaults = {
   stroke: "unset",
@@ -46,8 +46,8 @@ const stroke = TypeBasedFunction(
   SingleTable("strokeLinecap", "butt|round|square"),
   SingleTable("strokeLinejoin", "miter|round|bevel"),
   SequentialFunction("dasharray/2-", [LengthPercentNumber], (name, ar) => ({ strokeDasharray: ar.join(", ") })),
-  SequentialFunction("dashoffset", [LengthPercent], (name, ar) => ({ strokeDashoffset: ar[0] })),
-  SequentialFunction("miterlimit", [NumberInterpreter], (name, ar) => ({ strokeMiterlimit: ar[0] }))
+  SequentialFunction("dashoffset/", [LengthPercent], (name, ar) => ({ strokeDashoffset: ar[0] })),
+  SingleArgumentFunction("miterlimit", NumberInterpreter, (name, ar) => ({ strokeMiterlimit: ar }))
 );
 
 const fill = TypeBasedFunction(

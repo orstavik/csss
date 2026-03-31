@@ -11,6 +11,7 @@ function BadArgument(name, args, I, message = "") {
 
 const Url = a => a.kind === "QUOTE" ? `url(${a.text})` : a.name === "url" ? `url(${a.args[0].text})` : undefined;
 const CsssPrimitives = {
+  Length: ResolveMath(a => (a.type === "length" || a.text === "0") ? a.text : undefined),
   LengthPercent: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0") ? a.text : undefined),
   LengthPercentUnset: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0" || a.text === "_") ? (a.text === "_" ? "unset" : a.text) : undefined),
   LengthPercentAuto: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0" || a.text === "_") ? (a.text === "_" ? "auto" : a.text) : undefined),
