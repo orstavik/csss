@@ -102,9 +102,6 @@ const SHORTS = {
   ...paragraphItem.csss,
   displayNone: { display: "none" },
 };
-for (let b in SHORTS)
-  if (typeof SHORTS[b] === "string")
-    SHORTS[b] = undefined;
 
 const REVERSES = {
   ...boxItem.css,
