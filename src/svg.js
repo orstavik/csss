@@ -1,7 +1,10 @@
 
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest } = FunctionTypes;
-const { Angle, Color, Length, Name, NumberInterpreter, Fraction, Integer, Quote, Percent, Time, Unset, Url, Word, Basic, Radian, Repeat, Span, AnglePercent, LengthUnset, LengthPercent, LengthPercentUnset, LengthPercentNumber, NameUnset, NumberPercent, UrlUnset, ColorUrl, ColorPrimitive, RepeatBasic, SpanBasic, AbsoluteUrl, CamelWords, WordToValue, } = ValueTypes;
+import { CsssPrimitives, CsssFunctions } from "./func2.js";
+const { FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, TypeBasedFunction } = CsssFunctions;
+const { LengthPercentNumber, NumberInterpreter } = CsssPrimitives;
+const { FunctionBasedOnValueTypes } = FunctionTypes;
+const { Fraction, Url, Length, LengthPercent, UrlUnset, ColorUrl, CamelWords, WordToValue } = ValueTypes;
 
 const strokeDefaults = {
   stroke: "unset",
@@ -37,29 +40,29 @@ const svgTextDefaults = {
 // optimizeSpeed: { "color-rendering": "optimizeSpeed", "image-rendering": "optimizeSpeed" },
 // optimizeQuality: { "color-rendering": "optimizeQuality", "image-rendering": "optimizeQuality" },
 
-const stroke = FunctionBasedOnValueTypes({}, {
-  stroke: ColorUrl,
-  strokeWidth: Length, //todo we need Integer here too, as 1,2,3,4 is valid
-  strokeOpacity: NumberInterpreter, //todo and this should be a Fraction? Or a Percent?
-  strokeLinecap: CamelWords("butt|round|square"),
-  strokeLinejoin: CamelWords("miter|round|bevel"),
-  strokeDasharray: SequentialFunction("dasharray/2-", [LengthPercentNumber], (name, ar) => ar.join(", ")),
-  strokeDashoffset: SequentialFunction("dashoffset", [LengthPercent], (name, ar) => ar[0]),
-  strokeMiterlimit: SequentialFunction("miterlimit", [NumberInterpreter], (name, ar) => ar[0]),
-}, {});
+const stroke = TypeBasedFunction(
+  e => ColorUrl(e) ? { stroke: ColorUrl(e) } : undefined,
+  e => Length(e) ? { strokeWidth: Length(e) } : undefined,
+  e => NumberInterpreter(e) ? { strokeOpacity: NumberInterpreter(e) } : undefined,
+  e => CamelWords("butt|round|square")(e) ? { strokeLinecap: CamelWords("butt|round|square")(e) } : undefined,
+  e => CamelWords("miter|round|bevel")(e) ? { strokeLinejoin: CamelWords("miter|round|bevel")(e) } : undefined,
+  SequentialFunction("dasharray/2-", [LengthPercentNumber], (name, ar) => ({ strokeDasharray: ar.join(", ") })),
+  SequentialFunction("dashoffset", [LengthPercent], (name, ar) => ({ strokeDashoffset: ar[0] })),
+  SequentialFunction("miterlimit", [NumberInterpreter], (name, ar) => ({ strokeMiterlimit: ar[0] }))
+);
 
-const fill = FunctionBasedOnValueTypes({}, {
-  fill: ColorUrl,
-  fillOpacity: NumberInterpreter,
-  fillRule: CamelWords("evenodd|nonzero"),
-}, {});
+const fill = TypeBasedFunction(
+  e => ColorUrl(e) ? { fill: ColorUrl(e) } : undefined,
+  e => NumberInterpreter(e) ? { fillOpacity: NumberInterpreter(e) } : undefined,
+  e => CamelWords("evenodd|nonzero")(e) ? { fillRule: CamelWords("evenodd|nonzero")(e) } : undefined
+);
 
-const svgText = FunctionBasedOnValueTypes({}, {
-  textAnchor: CamelWords("start|middle|end"),
-  dominantBaseline: CamelWords("auto|textBottom|alphabetic|ideographic|middle|central|mathematical|hanging|textTop"),
-  alignmentBaseline: CamelWords("auto|baseline|beforeEdge|textBeforeEdge|middle|central|afterEdge|textAfterEdge|ideographic|alphabetic|hanging|mathematical"),
-  baselineShift: CamelWords("sub|super|baseline"),
-}, {});
+const svgText = TypeBasedFunction(
+  e => CamelWords("start|middle|end")(e) ? { textAnchor: CamelWords("start|middle|end")(e) } : undefined,
+  e => CamelWords("auto|textBottom|alphabetic|ideographic|middle|central|mathematical|hanging|textTop")(e) ? { dominantBaseline: CamelWords("auto|textBottom|alphabetic|ideographic|middle|central|mathematical|hanging|textTop")(e) } : undefined,
+  e => CamelWords("auto|baseline|beforeEdge|textBeforeEdge|middle|central|afterEdge|textAfterEdge|ideographic|alphabetic|hanging|mathematical")(e) ? { alignmentBaseline: CamelWords("auto|baseline|beforeEdge|textBeforeEdge|middle|central|afterEdge|textAfterEdge|ideographic|alphabetic|hanging|mathematical")(e) } : undefined,
+  e => CamelWords("sub|super|baseline")(e) ? { baselineShift: CamelWords("sub|super|baseline")(e) } : undefined
+);
 
 const strokeNone = { ...strokeDefaults, stroke: "none" };
 const fillNone = { ...fillDefaults, fill: "none" };
@@ -74,27 +77,27 @@ export default {
   Fill: FunctionWithDefaultValues(fillDefaults, fill),
   SvgText: FunctionWithDefaultValues(svgTextDefaults, svgText),
 
-  markerStart: SingleArgumentFunction(Url, (name, v) => ({ [name]: v })),
-  markerEnd: SingleArgumentFunction(Url, (name, v) => ({ [name]: v })),
-  markerMid: SingleArgumentFunction(Url, (name, v) => ({ [name]: v })),
+  markerStart: SingleArgumentFunction("markerStart", Url, (name, v) => ({ [name]: v })),
+  markerEnd: SingleArgumentFunction("markerEnd", Url, (name, v) => ({ [name]: v })),
+  markerMid: SingleArgumentFunction("markerMid", Url, (name, v) => ({ [name]: v })),
   marker: SequentialFunction("marker/1-3", [UrlUnset], (name, m) =>
     m.length == 1 ? { marker: m[0] } :
       m.length == 2 ? { markerStart: m[0], markerEnd: m[1] } :
         { markerStart: m[0], markerMid: m[1], markerEnd: m[2] }
   ),
 
-  stopColor: SingleArgumentFunction(ColorUrl, (p, v = "currentColor") => ({ [p]: v })),
-  stopOpacity: SingleArgumentFunction(Fraction, (p, v = "1") => ({ [p]: v })),
-  vectorEffect: SingleArgumentFunction(CamelWords("none|nonScalingStroke|nonScalingSize|nonRotation|fixedPosition"), (p, v) => ({ [p]: v })),
-  clipRule: SingleArgumentFunction(CamelWords("nonzero|evenodd"), (p, v) => ({ [p]: v })),
-  colorInterpolation: SingleArgumentFunction(CamelWords("auto|sRGB|linearRGB"), (p, v) => ({ [p]: v })),
-  shapeRendering: SingleArgumentFunction(WordToValue({ auto: "auto", optimizeSpeed: "optimizeSpeed", crispEdges: "crispEdges", geometricPrecision: "geometricPrecision" }), (p, v) => ({ [p]: v })),
-  colorRendering: SingleArgumentFunction(CamelWords("auto|optimizeSpeed|optimizeQuality"), (p, v) => ({ [p]: v })),
-  imageRendering: SingleArgumentFunction(CamelWords("auto|optimizeSpeed|optimizeQuality|pixelated"), (p, v) => ({ [p]: v })),
-  maskType: SingleArgumentFunction(CamelWords("luminance|alpha"), (p, v) => ({ [p]: v })),
-  paintOrder: SequentialFunction("paintOrder/0-4", [CamelWords("normal|fill|stroke|markers")], (p, v = ["normal"]) => ({ [p]: v.join(" ") })),
-  lightingColor: SingleArgumentFunction(ColorUrl, (p, v = "currentColor") => ({ [p]: v })),
-  svgOpacity: SingleArgumentFunction(Fraction, (p, v = "1") => ({ [p]: v })),
+  stopColor: SingleArgumentFunction("stopColor", e => ColorUrl(e) ?? "currentColor", (p, v) => ({ [p]: v })),
+  stopOpacity: SingleArgumentFunction("stopOpacity", e => Fraction(e) ?? "1", (p, v) => ({ [p]: v })),
+  vectorEffect: SingleArgumentFunction("vectorEffect", CamelWords("none|nonScalingStroke|nonScalingSize|nonRotation|fixedPosition"), (p, v) => ({ [p]: v })),
+  clipRule: SingleArgumentFunction("clipRule", CamelWords("nonzero|evenodd"), (p, v) => ({ [p]: v })),
+  colorInterpolation: SingleArgumentFunction("colorInterpolation", CamelWords("auto|sRGB|linearRGB"), (p, v) => ({ [p]: v })),
+  shapeRendering: SingleArgumentFunction("shapeRendering", WordToValue({ auto: "auto", optimizeSpeed: "optimizeSpeed", crispEdges: "crispEdges", geometricPrecision: "geometricPrecision" }), (p, v) => ({ [p]: v })),
+  colorRendering: SingleArgumentFunction("colorRendering", CamelWords("auto|optimizeSpeed|optimizeQuality"), (p, v) => ({ [p]: v })),
+  imageRendering: SingleArgumentFunction("imageRendering", CamelWords("auto|optimizeSpeed|optimizeQuality|pixelated"), (p, v) => ({ [p]: v })),
+  maskType: SingleArgumentFunction("maskType", CamelWords("luminance|alpha"), (p, v) => ({ [p]: v })),
+  paintOrder: SequentialFunction("paintOrder/0-4", [e => CamelWords("normal|fill|stroke|markers")(e) ?? "normal"], (p, v) => ({ [p]: v.join(" ") })),
+  lightingColor: SingleArgumentFunction("lightingColor", e => ColorUrl(e) ?? "currentColor", (p, v) => ({ [p]: v })),
+  svgOpacity: SingleArgumentFunction("svgOpacity", e => Fraction(e) ?? "1", (p, v) => ({ [p]: v })),
 
   strokeWidth: undefined,
   strokeLinecap: undefined,
