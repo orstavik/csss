@@ -1,6 +1,6 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func2.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, SequentialFunction, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
-const { LengthPercent, LengthPercentUnset, RepeatBasic } = CsssPrimitives;
+const { LengthPercent, LengthPercentUnset, Repeat } = CsssPrimitives;
 const { LogicalFourReverse, SingleTableReverse, SequentialFunctionReverse, Optional } = CssFunctions;
 
 const gridAutoFlow = {
@@ -43,10 +43,10 @@ const placeContent = CssValuesToCsssTable(alignBlock, alignInline);
 const grid = TypeBasedFunction(
   LogicalFour("padding", "padding", LengthPercent),
   SingleTable("placeContent", placeContent),
-  SequentialFunction("cols/1-", [RepeatBasic], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
-  SequentialFunction("columns/1-", [RepeatBasic], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
-  SequentialFunction("rows/1-", [RepeatBasic], (n, ar) => ({ gridTemplateRows: ar.join(" ") })),
-  SequentialFunction("areas/1-", [RepeatBasic], (n, ar) => ({ gridTemplateAreas: ar.join(" ") })),
+  SequentialFunction("cols/1-", [Repeat], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
+  SequentialFunction("columns/1-", [Repeat], (n, ar) => ({ gridTemplateColumns: ar.join(" ") })),
+  SequentialFunction("rows/1-", [Repeat], (n, ar) => ({ gridTemplateRows: ar.join(" ") })),
+  SequentialFunction("areas/1-", [Repeat], (n, ar) => ({ gridTemplateAreas: ar.join(" ") })),
   SequentialFunction("gap/1-2", [LengthPercentUnset], (n, ar) => ({ gap: ar.map(a => a ?? 0).join(" ") })),
   SingleTable("gridAutoFlow", gridAutoFlow)
 );
