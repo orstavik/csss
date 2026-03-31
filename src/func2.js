@@ -1,7 +1,7 @@
 import { ResolveMath } from "./funcMath2.js";
 import { Color } from "./funcColor.js";
 
-const toCamelCase = s => s.replace(/[^a-z]./g, m => m[1].toUpperCase());
+const toCamelCase = s => s.replace(/[^a-z]./ig, m => m[1].toUpperCase());
 
 function BadArgument(name, args, I, message = "") {
   args = args.map(a => a.text ?? (a.name + "/" + a.args.length));
@@ -20,6 +20,8 @@ const CsssPrimitives = {
   SpanBasic: ResolveMath(a => a.name === "span" ? `span ${a.args[0].text}` : a.text),
   NumberInterpreter: ResolveMath(a => (a.type === "number" && a.unit === "") ? a.num : undefined),
   LengthPercentNumber: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.type === "number") ? a.text : undefined),
+  Unset: a => a.text === "_" ? "unset" : undefined,
+  UrlUnset: a => Url(a) ?? Unset(a),
   Url,
   Color,
   ColorUrl: a => Color(a) ?? Url(a),
@@ -31,13 +33,15 @@ const CsssFunctions = {
     const Table = {};
     for (let b of One.split("|")) {
       Table[toCamelCase(b)] = b;
-      for (let i of Two.split("|"))
-        if (b != i)
-          Table[toCamelCase(b + " " + i)] = b + " " + i;
+      if (Two)
+        for (let i of Two.split("|"))
+          if (b != i)
+            Table[toCamelCase(b + " " + i)] = b + " " + i;
     }
     return Table;
   },
   SingleTable: (CssProp, Table) => ({ text }) => text in Table ? { [CssProp]: Table[text] } : undefined,
+  SingleTableRaw: Table => ({ text }) => text in Table ? Table[text] : undefined,
   LogicalFour: (CsssName, CssName, INTERPRETER) => ({ args, name }) => {
     if (CsssName != name) return;
     if (args.length > 4)
@@ -76,6 +80,14 @@ const CsssFunctions = {
       });
       return POST ? POST(name, res) : res;
     }
+  },
+  FunctionProperty: (CsssName, CssProp, INTERPRETER) => ({ args, name }) => {
+    if (CsssName !== name) return;
+    if (args.length != 1)
+      throw new SyntaxError(`${name}() requires 1 argument, got ${args.length} arguments.`);
+    const v = INTERPRETER(args[0]);
+    if (v == null) throw BadArgument(name, args, 0, INTERPRETER.name);
+    return { [CssProp]: v };
   },
   SingleArgumentFunction: (CsssName, INTERPRETER, POST) => ({ args, name }) => {
     if (CsssName !== name) return;
