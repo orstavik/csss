@@ -1,9 +1,8 @@
 
-import { ValueTypes, FunctionTypes } from "./func.js";
+import { ValueTypes } from "./func.js";
 import { CsssPrimitives, CsssFunctions } from "./func2.js";
-const { FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, TypeBasedFunction } = CsssFunctions;
+const { FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, TypeBasedFunction, PropertyType, SingleTable } = CsssFunctions;
 const { LengthPercentNumber, NumberInterpreter } = CsssPrimitives;
-const { FunctionBasedOnValueTypes } = FunctionTypes;
 const { Fraction, Url, Length, LengthPercent, UrlUnset, ColorUrl, CamelWords, WordToValue } = ValueTypes;
 
 const strokeDefaults = {
@@ -41,27 +40,27 @@ const svgTextDefaults = {
 // optimizeQuality: { "color-rendering": "optimizeQuality", "image-rendering": "optimizeQuality" },
 
 const stroke = TypeBasedFunction(
-  e => ColorUrl(e) ? { stroke: ColorUrl(e) } : undefined,
-  e => Length(e) ? { strokeWidth: Length(e) } : undefined,
-  e => NumberInterpreter(e) ? { strokeOpacity: NumberInterpreter(e) } : undefined,
-  e => CamelWords("butt|round|square")(e) ? { strokeLinecap: CamelWords("butt|round|square")(e) } : undefined,
-  e => CamelWords("miter|round|bevel")(e) ? { strokeLinejoin: CamelWords("miter|round|bevel")(e) } : undefined,
+  PropertyType("stroke", ColorUrl),
+  PropertyType("strokeWidth", Length),
+  PropertyType("strokeOpacity", NumberInterpreter),
+  SingleTable("strokeLinecap", "butt|round|square"),
+  SingleTable("strokeLinejoin", "miter|round|bevel"),
   SequentialFunction("dasharray/2-", [LengthPercentNumber], (name, ar) => ({ strokeDasharray: ar.join(", ") })),
   SequentialFunction("dashoffset", [LengthPercent], (name, ar) => ({ strokeDashoffset: ar[0] })),
   SequentialFunction("miterlimit", [NumberInterpreter], (name, ar) => ({ strokeMiterlimit: ar[0] }))
 );
 
 const fill = TypeBasedFunction(
-  e => ColorUrl(e) ? { fill: ColorUrl(e) } : undefined,
-  e => NumberInterpreter(e) ? { fillOpacity: NumberInterpreter(e) } : undefined,
-  e => CamelWords("evenodd|nonzero")(e) ? { fillRule: CamelWords("evenodd|nonzero")(e) } : undefined
+  PropertyType("fill", ColorUrl),
+  PropertyType("fillOpacity", NumberInterpreter),
+  SingleTable("fillRule", "evenodd|nonzero"),
 );
 
 const svgText = TypeBasedFunction(
-  e => CamelWords("start|middle|end")(e) ? { textAnchor: CamelWords("start|middle|end")(e) } : undefined,
-  e => CamelWords("auto|textBottom|alphabetic|ideographic|middle|central|mathematical|hanging|textTop")(e) ? { dominantBaseline: CamelWords("auto|textBottom|alphabetic|ideographic|middle|central|mathematical|hanging|textTop")(e) } : undefined,
-  e => CamelWords("auto|baseline|beforeEdge|textBeforeEdge|middle|central|afterEdge|textAfterEdge|ideographic|alphabetic|hanging|mathematical")(e) ? { alignmentBaseline: CamelWords("auto|baseline|beforeEdge|textBeforeEdge|middle|central|afterEdge|textAfterEdge|ideographic|alphabetic|hanging|mathematical")(e) } : undefined,
-  e => CamelWords("sub|super|baseline")(e) ? { baselineShift: CamelWords("sub|super|baseline")(e) } : undefined
+  SingleTable("textAnchor", "start|middle|end"),
+  SingleTable("dominantBaseline", "auto|text-bottom|alphabetic|ideographic|middle|central|mathematical|hanging|text-top"),
+  SingleTable("alignmentBaseline", "auto|baseline|before-edge|text-before-edge|middle|central|after-edge|text-after-edge|ideographic|alphabetic|hanging|mathematical"),
+  SingleTable("baselineShift", "sub|super|baseline")
 );
 
 const strokeNone = { ...strokeDefaults, stroke: "none" };

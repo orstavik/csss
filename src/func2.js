@@ -1,4 +1,7 @@
 import { ResolveMath } from "./funcMath2.js";
+import { Color } from "./funcColor.js";
+
+const toCamelCase = s => s.replace(/[^a-z]./g, m => m[1].toUpperCase());
 
 function BadArgument(name, args, I, message = "") {
   args = args.map(a => a.text ?? (a.name + "/" + a.args.length));
@@ -6,6 +9,7 @@ function BadArgument(name, args, I, message = "") {
   return new SyntaxError(`Bad argument ${name}/${I + 1}:  ${name}(${args.join(",")})` + message);
 }
 
+const Url = a => a.kind === "QUOTE" ? `url(${a.text})` : a.name === "url" ? `url(${a.args[0].text})` : undefined;
 const CsssPrimitives = {
   LengthPercent: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0") ? a.text : undefined),
   LengthPercentUnset: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0" || a.text === "_") ? (a.text === "_" ? "unset" : a.text) : undefined),
@@ -15,23 +19,14 @@ const CsssPrimitives = {
   SpanBasic: ResolveMath(a => a.name === "span" ? `span ${a.args[0].text}` : a.text),
   NumberInterpreter: ResolveMath(a => (a.type === "number" && a.unit === "") ? a.num : undefined),
   LengthPercentNumber: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.type === "number") ? a.text : undefined),
+  Url,
+  Color,
+  ColorUrl: a => Color(a) ?? Url(a),
 };
 
 const CsssFunctions = {
-  // CssValuesToCsssTableObject: (oneProp, oneValues, twoProp, twoValues) => {
-  //   const toCamelCase = s => s.replace(/[^a-z]./g, m => m[1].toUpperCase());
-  //   const Table = {};
-  //   for (let one of oneValues.split("|")) {
-  //     Table[toCamelCase(one)] = { [oneProp]: one, [twoProp]: "unset" };
-  //     for (let two of twoValues.split("|")) {
-  //       Table[toCamelCase(two)] = { [oneProp]: "unset", [twoProp]: two };
-  //       Table[toCamelCase(one + " " + two)] = { [oneProp]: one, [twoProp]: two };
-  //     }
-  //   }
-  //   return Table;
-  // },
+  PropertyType: (Prop, Type) => a => (a = Type(a)) && { [Prop]: a },
   CssValuesToCsssTable: (One, Two = "") => {
-    const toCamelCase = s => s.replace(/[^a-z]./g, m => m[1].toUpperCase());
     const Table = {};
     for (let b of One.split("|")) {
       Table[toCamelCase(b)] = b;
@@ -41,7 +36,10 @@ const CsssFunctions = {
     }
     return Table;
   },
-  SingleTable: (CssProp, Table) => ({ text }) => text in Table ? { [CssProp]: Table[text] } : undefined,
+  SingleTable: (CssProp, Table) => {
+    typeof Table === "string" && (Table = Object.fromEntries(Table.split("|").map(v => [toCamelCase(v), v])));
+    return ({ text }) => text in Table ? { [CssProp]: Table[text] } : undefined;
+  },
   LogicalFour: (CsssName, CssName, INTERPRETER) => ({ args, name }) => {
     if (CsssName != name) return;
     if (args.length > 4)
@@ -59,6 +57,7 @@ const CsssFunctions = {
         [CssName + "Inline"]: args[3] != null && args[3] != args[1] ? (args[1] ?? args[0]) + " " + args[3] : args[1] ?? args[0],
       };
   },
+  //todo this needs to get the CsssName and the CssName and have arity as other arguments.
   SequentialFunction: (SIG, INTERPRETERS, POST) => {
     const parseSignature = SIG => {
       const [NAME, ARITY] = SIG.split("/");

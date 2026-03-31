@@ -1,7 +1,7 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func2.js";
 const { LengthPercent, LengthPercentNumber } = CsssPrimitives;
-const { TypeBasedFunction, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest, CssValuesToCsssTable, SingleTable } = CsssFunctions;
-const { SingleArgumentFunctionReverse, Optional, SingleTableReverse, SingleTableReverseObject } = CssFunctions;
+const { TypeBasedFunction, SingleArgumentFunction, FunctionWithDefaultValues, ParseFirstThenRest, CssValuesToCsssTable, SingleTable, PropertyType } = CsssFunctions;
+const { SingleArgumentFunctionReverse, Optional, SingleTableReverse } = CssFunctions;
 
 const hyphens = {
   hyphens: "auto",
@@ -56,8 +56,6 @@ const hangingPunctuation = {
   hangingPunctuationForceEnd: "force-end",
   hangingPunctuationNone: "none",
 };
-
-const PropertyType = (Prop, Type) => a => (a = Type(a)) && { [Prop]: a };
 
 const paragraph = TypeBasedFunction(
   PropertyType("lineHeight", LengthPercentNumber),
