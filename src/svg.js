@@ -1,7 +1,7 @@
 
 import { ValueTypes } from "./func.js";
 import { CsssPrimitives, CsssFunctions } from "./func2.js";
-const { FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, TypeBasedFunction, PropertyType, SingleTable } = CsssFunctions;
+const { FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, TypeBasedFunction, PropertyType, SingleTable, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercentNumber, NumberInterpreter, ColorUrl, Url, LengthPercent, Length } = CsssPrimitives;
 const { Fraction, UrlUnset, CamelWords, WordToValue } = ValueTypes;
 
@@ -29,6 +29,14 @@ const svgTextDefaults = {
   baselineShift: "unset",
 };
 
+const strokeLinecap = CssValuesToCsssTable("butt|round|square");
+const strokeLinejoin = CssValuesToCsssTable("miter|round|bevel");
+const fillRule = CssValuesToCsssTable("evenodd|nonzero");
+const textAnchor = CssValuesToCsssTable("start|middle|end");
+const dominantBaseline = CssValuesToCsssTable("auto|text-bottom|alphabetic|ideographic|middle|central|mathematical|hanging|text-top");
+const alignmentBaseline = CssValuesToCsssTable("auto|baseline|before-edge|text-before-edge|middle|central|after-edge|text-after-edge|ideographic|alphabetic|hanging|mathematical");
+const baselineShift = CssValuesToCsssTable("sub|super|baseline");
+
 //todo should we make a table with some common words? 
 // It will be hard for the llm to know these words, and i am not sure we need to teach it this thing..
 // solidStroke: { "stroke-dasharray": "none" },
@@ -43,8 +51,8 @@ const stroke = TypeBasedFunction(
   PropertyType("stroke", ColorUrl),
   PropertyType("strokeWidth", Length),
   PropertyType("strokeOpacity", NumberInterpreter),
-  SingleTable("strokeLinecap", "butt|round|square"),
-  SingleTable("strokeLinejoin", "miter|round|bevel"),
+  SingleTable("strokeLinecap", strokeLinecap),
+  SingleTable("strokeLinejoin", strokeLinejoin),
   SequentialFunction("dasharray/2-", [LengthPercentNumber], (name, ar) => ({ strokeDasharray: ar.join(", ") })),
   SequentialFunction("dashoffset/", [LengthPercent], (name, ar) => ({ strokeDashoffset: ar[0] })),
   SingleArgumentFunction("miterlimit", NumberInterpreter, (name, ar) => ({ strokeMiterlimit: ar }))
@@ -53,14 +61,14 @@ const stroke = TypeBasedFunction(
 const fill = TypeBasedFunction(
   PropertyType("fill", ColorUrl),
   PropertyType("fillOpacity", NumberInterpreter),
-  SingleTable("fillRule", "evenodd|nonzero"),
+  SingleTable("fillRule", fillRule),
 );
 
 const svgText = TypeBasedFunction(
-  SingleTable("textAnchor", "start|middle|end"),
-  SingleTable("dominantBaseline", "auto|text-bottom|alphabetic|ideographic|middle|central|mathematical|hanging|text-top"),
-  SingleTable("alignmentBaseline", "auto|baseline|before-edge|text-before-edge|middle|central|after-edge|text-after-edge|ideographic|alphabetic|hanging|mathematical"),
-  SingleTable("baselineShift", "sub|super|baseline")
+  SingleTable("textAnchor", textAnchor),
+  SingleTable("dominantBaseline", dominantBaseline),
+  SingleTable("alignmentBaseline", alignmentBaseline),
+  SingleTable("baselineShift", baselineShift)
 );
 
 const strokeNone = { ...strokeDefaults, stroke: "none" };

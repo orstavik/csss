@@ -37,10 +37,7 @@ const CsssFunctions = {
     }
     return Table;
   },
-  SingleTable: (CssProp, Table) => {
-    typeof Table === "string" && (Table = Object.fromEntries(Table.split("|").map(v => [toCamelCase(v), v])));
-    return ({ text }) => text in Table ? { [CssProp]: Table[text] } : undefined;
-  },
+  SingleTable: (CssProp, Table) => ({ text }) => text in Table ? { [CssProp]: Table[text] } : undefined,
   LogicalFour: (CsssName, CssName, INTERPRETER) => ({ args, name }) => {
     if (CsssName != name) return;
     if (args.length > 4)
