@@ -3,10 +3,28 @@ import { Color } from "./funcColor.js";
 
 const toCamelCase = s => s.replace(/[^a-z]./ig, m => m[1].toUpperCase());
 
-function BadArgument(name, args, I, message = "") {
+export function BadArgument(name, args, I, message = "") {
   args = args.map(a => a.text ?? (a.name + "/" + a.args.length));
   args[I] = ` => ${args[I]} <= `;
   return new SyntaxError(`Bad argument ${name}/${I + 1}:  ${name}(${args.join(",")})` + message);
+}
+
+const once = new Set();
+function matchArgsWithInterpreters(NAME, args, INTERPRETERS) {
+  once.clear();
+  const res = [];
+  main: for (let i = 0; i < args.length; i++) {
+    for (let fn of INTERPRETERS) {
+      if (once.has(fn)) continue;
+      const v = fn(args[i]);
+      if (v == null) continue;
+      once.add(fn);
+      res.push(v);
+      continue main;
+    }
+    throw BadArgument(NAME, args, i, "Unknown argument.");
+  }
+  return res;
 }
 
 const Url = a => a.kind === "QUOTE" ? `url(${a.text})` : a.name === "url" ? `url(${a.args[0].text})` : undefined;
@@ -118,25 +136,7 @@ const CsssFunctions = {
     const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
     return POST(first, res);
   },
-  TypeBasedFunction: (...FUNCTIONS) => {
-    const once = new Set();
-    return ({ args, name }) => {
-      once.clear();
-      const res = {};
-      main: for (let i = 0; i < args.length; i++) {
-        for (let fn of FUNCTIONS) {
-          if (once.has(fn)) continue;
-          const v = fn(args[i]);
-          if (v == null) continue;
-          once.add(fn);
-          Object.assign(res, v);
-          continue main;
-        }
-        throw BadArgument(name, args, i, "Unknown argument.");
-      }
-      return res;
-    }
-  },
+  TypeBasedFunction: (...FUNCTIONS) => ({ args, name }) => Object.assign({}, ...matchArgsWithInterpreters(name, args, FUNCTIONS)),
   FunctionWithDefaultValues: (BASE, CB) => {
     Object.freeze(BASE);
     const reduce = o => { for (let k in o) if ((k + "Block") in o && (k + "Inline") in o) delete o[k]; return o };

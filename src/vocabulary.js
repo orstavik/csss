@@ -77,8 +77,8 @@ const SHORTS = {
   ...lineClamp.props,
   ...paragraph.props,
   ...paragraphItem.props,
+  ...textDecorations.props,
   ...transitions,
-  ...textDecorations,
   ...border,
   ...filterTransforms,
   ...shadows,
@@ -100,6 +100,7 @@ const SHORTS = {
   ...lineClamp.csss,
   ...paragraph.csss,
   ...paragraphItem.csss,
+  ...textDecorations.csss,
   displayNone: { display: "none" },
 };
 
@@ -117,6 +118,7 @@ const REVERSES = {
   ...lineClamp.css,
   ...paragraph.css,
   ...paragraphItem.css,
+  // ...textDecorations.css,
 };
 
 const MEDIA_WORDS = {
