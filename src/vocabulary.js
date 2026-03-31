@@ -48,7 +48,7 @@ const Animations = {
   Border: animationHo(border.Border),
 }
 
-const ObjectFit = {       //convert to fit(fill|contain|cover|scaleDown|none) etc.
+const ObjectFit = {       //convert to objectFit("fill|contain|cover|scale-down|none") etc.
   objectFit: undefined,
   fitFill: { objectFit: "fill" },
   fitContain: { objectFit: "contain" },
