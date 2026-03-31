@@ -1,5 +1,5 @@
 import { ResolveMath } from "./funcMath2.js";
-import { Color } from "./funcColor.js";
+import { Color, ColorRaw } from "./funcColor.js";
 
 const toCamelCase = s => s.replace(/[^a-z]./ig, m => m[1].toUpperCase());
 
@@ -36,6 +36,7 @@ const CsssPrimitives = {
   LengthPercentAuto: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0" || a.text === "_") ? (a.text === "_" ? "auto" : a.text) : undefined),
   Repeat: ResolveMath(a => a.name === "repeat" ? `repeat(${a.args.map(a => a.text).join(", ")})` : a.text),
   Span: ResolveMath(a => a.name === "span" ? `span ${a.args[0].text}` : a.text),
+  Name: a => a.kind === "WORD" && a.text.match(/^[a-z][a-z0-9_-]+$/i)?.[0],
   NumberInterpreter: ResolveMath(a => (a.type === "number" && a.unit === "") ? a.num : undefined),
   LengthPercentNumber: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.type === "number") ? a.text : undefined),
   Unset: a => a.text === "_" ? "unset" : undefined,
@@ -43,6 +44,7 @@ const CsssPrimitives = {
   Url,
   Color,
   ColorUrl: a => Color(a) ?? Url(a),
+  ColorPrimitive: a => (a = ColorRaw(a))?.hex && a,
   SingleTableRaw: Table => ({ text }) => text in Table ? Table[text] : undefined,
 };
 //these returns objects.
