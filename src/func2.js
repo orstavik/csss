@@ -17,7 +17,7 @@ const CsssPrimitives = {
   LengthPercentAuto: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0" || a.text === "_") ? (a.text === "_" ? "auto" : a.text) : undefined),
   Basic: ResolveMath(a => a.text),
   RepeatBasic: ResolveMath(a => a.name === "repeat" ? `repeat(${a.args.map(a => a.text).join(", ")})` : a.text),
-  SpanBasic: ResolveMath(a => a.name === "span" ? `span ${a.args[0].text}` : a.text),
+  Span: ResolveMath(a => a.name === "span" ? `span ${a.args[0].text}` : a.text),
   NumberInterpreter: ResolveMath(a => (a.type === "number" && a.unit === "") ? a.num : undefined),
   LengthPercentNumber: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.type === "number") ? a.text : undefined),
   Unset: a => a.text === "_" ? "unset" : undefined,
@@ -59,7 +59,6 @@ const CsssFunctions = {
         [CssName + "Inline"]: args[3] != null && args[3] != args[1] ? (args[1] ?? args[0]) + " " + args[3] : args[1] ?? args[0],
       };
   },
-  //todo this needs to get the CsssName and the CssName and have arity as other arguments.
   SequentialFunction: (SIG, INTERPRETERS, POST) => {
     const parseSignature = SIG => {
       const [NAME, ARITY] = SIG.split("/");
