@@ -1,5 +1,5 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func2.js";
-const { SingleTable, TypeBasedFunction, LogicalFour, SequentialFunction, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
+const { SingleTable, TypeBasedFunction, LogicalFour, SF2: SF2, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercent, LengthPercentUnset } = CsssPrimitives;
 const { LogicalFourReverse, SingleTableReverse, SequentialFunctionReverse, Optional } = CssFunctions;
 
@@ -39,7 +39,7 @@ const flex = TypeBasedFunction(
   SingleTable("flexDirection", flexDirection),
   SingleTable("flexWrap", flexWrap),
   SingleTable("placeContent", placeContent),
-  SequentialFunction("gap/1-2", [LengthPercentUnset], (n, ar) => ({ gap: ar.join(" ") }))
+  SF2("gap/1-2", [LengthPercentUnset], (n, ar) => ({ gap: ar.join(" ") }))
 );
 
 const Flex = FunctionWithDefaultValues(DefaultFlex, flex);

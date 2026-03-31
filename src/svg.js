@@ -1,7 +1,7 @@
 
 import { CsssPrimitives, CsssFunctions } from "./func2.js";
-const { FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, TypeBasedFunction, PropertyType, SingleTable, SingleTableRaw, CssValuesToCsssTable, FunctionProperty } = CsssFunctions;
-const { LengthPercentNumber, NumberInterpreter, ColorUrl, Url, LengthPercent, Length, UrlUnset } = CsssPrimitives;
+const { FunctionWithDefaultValues, SF2, SingleArgumentFunction, TypeBasedFunction, PropertyType, SingleTable, CssValuesToCsssTable, FunctionProperty } = CsssFunctions;
+const { SingleTableRaw, LengthPercentNumber, NumberInterpreter, ColorUrl, Url, Length, UrlUnset } = CsssPrimitives;
 
 const strokeDefaults = {
   stroke: "unset",
@@ -60,8 +60,8 @@ const stroke = TypeBasedFunction(
   PropertyType("strokeOpacity", NumberInterpreter),
   SingleTable("strokeLinecap", strokeLinecap),
   SingleTable("strokeLinejoin", strokeLinejoin),
-  SequentialFunction("dasharray/2-", [LengthPercentNumber], (name, ar) => ({ strokeDasharray: ar.join(", ") })),
-  SequentialFunction("dashoffset/", [LengthPercent], (name, ar) => ({ strokeDashoffset: ar[0] })),
+  SF2("dasharray/2-", [LengthPercentNumber], (name, ar) => ({ strokeDasharray: ar.join(", ") })),
+  SingleArgumentFunction("dashoffset", LengthPercentNumber, (name, ar) => ({ strokeDashoffset: ar })),
   SingleArgumentFunction("miterlimit", NumberInterpreter, (name, ar) => ({ strokeMiterlimit: ar }))
 );
 
@@ -94,7 +94,7 @@ export default {
   markerStart: FunctionProperty("markerStart", "markerStart", Url),
   markerEnd: FunctionProperty("markerEnd", "markerEnd", Url),
   markerMid: FunctionProperty("markerMid", "markerMid", Url),
-  marker: SequentialFunction("marker/1-3", [UrlUnset], (name, m) =>
+  marker: SF2("marker/1-3", [UrlUnset], (name, m) =>
     m.length == 1 ? { marker: m[0] } :
       m.length == 2 ? { markerStart: m[0], markerEnd: m[1] } :
         { markerStart: m[0], markerMid: m[1], markerEnd: m[2] }
@@ -109,7 +109,7 @@ export default {
   colorRendering: TypeBasedFunction(SingleTable("colorRendering", colorRendering)),
   imageRendering: TypeBasedFunction(SingleTable("imageRendering", imageRendering)),
   maskType: TypeBasedFunction(SingleTable("maskType", maskType)),
-  paintOrder: SequentialFunction("paintOrder/0-4", [SingleTableRaw(paintOrder)], (name, ar) => ({ paintOrder: ar.join(" ") })),
+  paintOrder: SF2("paintOrder/0-4", [SingleTableRaw(paintOrder)], (name, ar) => ({ paintOrder: ar.join(" ") })),
   lightingColor: FunctionProperty("lightingColor", "lightingColor", ColorUrl),
   svgOpacity: FunctionProperty("svgOpacity", "svgOpacity", NumberInterpreter),
 

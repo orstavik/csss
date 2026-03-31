@@ -1,5 +1,5 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func2.js";
-const { SingleTable, TypeBasedFunction, LogicalFour, SequentialFunction, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
+const { SingleTable, TypeBasedFunction, LogicalFour, SF2: SF2, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercentAuto, Span } = CsssPrimitives;
 const { LogicalFourReverse, SingleTableReverse, SequentialFunctionReverse, Optional } = CssFunctions;
 
@@ -32,8 +32,8 @@ const marginProps = {
 const gridItem = TypeBasedFunction(
   LogicalFour("margin", "margin", LengthPercentAuto),
   SingleTable("placeSelf", placeSelf),
-  SequentialFunction("column/1-2", [Span], (n, ar) => ({ gridColumn: ar.join(" / ") })),
-  SequentialFunction("row/1-2", [Span], (n, ar) => ({ gridRow: ar.join(" / ") }))
+  SF2("column/1-2", [Span], (n, ar) => ({ gridColumn: ar.join(" / ") })),
+  SF2("row/1-2", [Span], (n, ar) => ({ gridRow: ar.join(" / ") }))
 );
 
 const GridItem = FunctionWithDefaultValues(DefaultGridItem, gridItem);
