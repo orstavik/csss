@@ -76,10 +76,10 @@
 ```
 
 **description:** Removes stroke and resets all stroke properties.
-**csss:** $noStroke
+**csss:** $strokeNone
 **css:**
 ```css
-.\$noStroke {
+.\$strokeNone {
   stroke: none;
   stroke-width: unset;
   stroke-opacity: unset;
@@ -123,10 +123,10 @@
 ```
 
 **description:** Removes fill and resets fill properties.
-**csss:** $noFill
+**csss:** $fillNone
 **css:**
 ```css
-.\$noFill {
+.\$fillNone {
   fill: none;
   fill-opacity: unset;
   fill-rule: unset;

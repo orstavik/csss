@@ -130,9 +130,9 @@ export default {
   strokeNone,
   fillNone,
   svgTextNone,
-  noStroke: strokeNone,
-  noFill: fillNone,
-  noSvgText: svgTextNone,
-  noMarker: { marker: "none" },
+  // noStroke: strokeNone,
+  // noFill: fillNone,
+  // noSvgText: svgTextNone,
+  // noMarker: { marker: "none" },
   markerNone: { marker: "none" },
 };
