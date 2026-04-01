@@ -1,4 +1,8 @@
 import { isBasic } from "./func.js";
+import { CsssFunctions, CsssPrimitives } from "./func2.js";
+const { SF2 } = CsssFunctions;
+const { AngleNumber, Percent } = CsssPrimitives;
+
 //colors
 export const WEBCOLORS = {
   aliceblue: "f0f8ff",
@@ -298,27 +302,31 @@ function parseColor(txt) {
 }
 
 const COLORS = {
-  "#hash": hash,
-  "#rgb": rgb,
-  "#rgba": rgba,
-  "#hsl": nativeCssColorFunction.bind(null, "hsl"),
-  "#hsla": nativeCssColorFunction.bind(null, "hsla"),
-  "#hwb": nativeCssColorFunction.bind(null, "hwb"),
-  "#lab": nativeCssColorFunction.bind(null, "lab"),
-  "#lch": nativeCssColorFunction.bind(null, "lch"),
-  "#oklab": nativeCssColorFunction.bind(null, "oklab"),
-  "#oklch": nativeCssColorFunction.bind(null, "oklch"),
-  "#srgb": nativeCssColorSpaceFunction.bind(null, "srgb"),
-  "#srgbLinear": nativeCssColorSpaceFunction.bind(null, "srgb-linear"),
-  "#displayP3": nativeCssColorSpaceFunction.bind(null, "display-p3"),
-  "#a98Rgb": nativeCssColorSpaceFunction.bind(null, "a98-rgb"),
-  "#prophotoRgb": nativeCssColorSpaceFunction.bind(null, "prophoto-rgb"),
-  "#rec2020": nativeCssColorSpaceFunction.bind(null, "rec2020"),
-  "#xyz": nativeCssColorSpaceFunction.bind(null, "xyz"),
-  "#xyzD50": nativeCssColorSpaceFunction.bind(null, "xyz-d50"),
-  "#xyzD65": nativeCssColorSpaceFunction.bind(null, "xyz-d65"),
-  "#color": nativeCssColorSpaceFunction.bind(null, "srgb"),
-  "#mix": cssColorMix.bind(null),
+  "#hash": args => hash(args),
+  "#rgb": args => rgb(args),
+  "#rgba": args => rgba(args),
+  // "#hsl": SF2("#hsl/3-4", [AngleNumber, Percent, Percent, Percent], args => { if (args.length > 3) args.splice(3, "/"); return `hsl(${args.join(", ")})`; }),
+  "#hsl": args => nativeCssColorFunction("hsl", args),
+  "#hsla": args => nativeCssColorFunction("hsla", args),
+  "#hwb": args => nativeCssColorFunction("hwb", args),
+  "#lab": args => nativeCssColorFunction("lab", args),
+  "#lch": args => nativeCssColorFunction("lch", args),
+  "#oklab": args => nativeCssColorFunction("oklab", args),
+  "#oklch": args => nativeCssColorFunction("oklch", args),
+
+  "#srgb": args => nativeCssColorSpaceFunction("srgb", args),
+  "#srgbLinear": args => nativeCssColorSpaceFunction("srgb-linear", args),
+  "#displayP3": args => nativeCssColorSpaceFunction("display-p3", args),
+  "#a98Rgb": args => nativeCssColorSpaceFunction("a98-rgb", args),
+  "#prophotoRgb": args => nativeCssColorSpaceFunction("prophoto-rgb", args),
+  "#rec2020": args => nativeCssColorSpaceFunction("rec2020", args),
+  "#xyz": args => nativeCssColorSpaceFunction("xyz", args),
+  "#xyzD50": args => nativeCssColorSpaceFunction("xyz-d50", args),
+  "#xyzD65": args => nativeCssColorSpaceFunction("xyz-d65", args),
+  "#color": args => nativeCssColorSpaceFunction("srgb", args),
+
+  "#mix": args => cssColorMix(args),
+
   "#mixHslLonger": args => cssColorMix([{ kind: "WORD", text: "hsl longer hue" }, ...args]),
   "#mixHslShorter": args => cssColorMix([{ kind: "WORD", text: "hsl shorter hue" }, ...args]),
   "#mixHslIncreasing": args => cssColorMix([{ kind: "WORD", text: "hsl increasing hue" }, ...args]),

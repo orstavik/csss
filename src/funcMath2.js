@@ -214,6 +214,7 @@ export default {
     PercentNumber: ResolveMath(a => (a.type === "percent" || a.type === "number") ? a.text : undefined),
     Angle: ResolveMath(a => (a.type === "angle") ? a.text : undefined),
     AnglePercent: ResolveMath(a => (a.type === "angle" || a.type === "percent") ? a.text : undefined),
+    AngleNumber: ResolveMath(a => (a.type === "angle" || (a.type === "number" && a.unit === "")) ? a.text : undefined),
     NumberPercent: ResolveMath(a => (a.type === "number" || a.type === "percent") ? a.text : undefined),
     Radian: ResolveMath(a => a.type === "angle" ? angleToRad(a) : a?.num == 0 && a.type === "number" ? 0 : undefined),
   },
