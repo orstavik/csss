@@ -4,6 +4,17 @@ const { SF2 } = CsssFunctions;
 const { AngleNumber, PercentNumber } = CsssPrimitives;
 
 const RGBPercentNumber = a => a.unit === "percent" ? a.num * 2.55 : (a.type === "number" && !a.unit) ? a.num : undefined;
+const AlphaValue = a => (a.unit === "percent" && a.num >= 0 && a.num <= 100) ? a.num * .01 : (a.type === "number" && !a.unit && a.num >= 0 && a.num <= 1) ? a.num : undefined;
+
+const ColorSpace = a => a.kind === "WORD" ? a.text.match(/^(srgb|srgbLinear|displayP3|a98Rgb|prophotoRgb|rec2020|xyz|xyzD50|xyzD65)$/i) : undefined;
+
+const ColorRaw = a =>
+  a.kind === "COLOR" ? parseColor(a.text) :
+    a.name in COLORS ? { type: "color", text: COLORS[a.name](a) } :
+      undefined;
+const Color = a => ColorRaw(a)?.text;
+const ColorPrimitive = a => (a = ColorRaw(a))?.hex && a;
+
 //colors
 export const WEBCOLORS = {
   aliceblue: "f0f8ff",
@@ -155,18 +166,6 @@ export const WEBCOLORS = {
   yellowgreen: "9acd32",
 };
 
-function nativeCssColorSpaceFunction(space, args) {
-  if (args.length < 3 || args.length > 5)
-    throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
-  args = args.map(a => ColorRaw(a) ?? isBasic(a));
-  const from = args[0].type === "color";
-  const txts = args.map(a => a.text);
-  if (args.length - from === 4) txts.splice(-1, 0, "/");
-  if (from) txts.unshift("from");
-  txts.unshift(space);
-  return `color(${txts.join(" ")})`;
-}
-
 function cssColorMix([space, one, two, percent]) {
   space = space == "_" ? "oklab" : isBasic(space).text;
   one = Color(one);
@@ -267,29 +266,44 @@ function parseColor(txt) {
   };
 }
 
+function nativeCssColorSpaceFunction(space, args) {
+  if (args.length < 3 || args.length > 5)
+    throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
+  args = args.map(a => ColorRaw(a) ?? isBasic(a));
+  const from = args[0].type === "color";
+  const txts = args.map(a => a.text);
+  if (args.length - from === 4) txts.splice(-1, 0, "/");
+  if (from) txts.unshift("from");
+  txts.unshift(space);
+  return `color(${txts.join(" ")})`;
+}
+
+
 const fourIsSlash = ar => ar.reduce((acc, cur, i) => acc + (i === 3 ? (" / " + cur) : i ? (" " + cur) : cur), "");
 const COLORS = {
   "#hash": ({ args }) => hash(args),
-  "#rgb": SF2("#rgb/3-4", [RGBPercentNumber, RGBPercentNumber, RGBPercentNumber, PercentNumber], (_, ar) => `rgb(${fourIsSlash(ar)})`),
-  "#rgba": SF2("#rgba/4", [RGBPercentNumber, RGBPercentNumber, RGBPercentNumber, PercentNumber], (_, ar) => `rgba(${fourIsSlash(ar)})`),
-  "#hsl": SF2("#hsl/3-4", [AngleNumber, PercentNumber, PercentNumber, PercentNumber], (_, ar) => `hsl(${fourIsSlash(ar)})`),
-  "#hsla": SF2("#hsla/4", [AngleNumber, PercentNumber, PercentNumber, PercentNumber], (_, ar) => `hsla(${fourIsSlash(ar)})`),
-  "#hwb": SF2("#hwb/3-4", [AngleNumber, PercentNumber, PercentNumber, PercentNumber], (_, ar) => `hwb(${fourIsSlash(ar)})`),
-  "#lab": SF2("#lab/3-4", [PercentNumber, PercentNumber, PercentNumber, PercentNumber], (_, ar) => `lab(${fourIsSlash(ar)})`),
-  "#oklab": SF2("#oklab/3-4", [PercentNumber, PercentNumber, PercentNumber, PercentNumber], (_, ar) => `oklab(${fourIsSlash(ar)})`),
-  "#lch": SF2("#lch/3-4", [PercentNumber, PercentNumber, AngleNumber, PercentNumber], (_, ar) => `lch(${fourIsSlash(ar)})`),
-  "#oklch": SF2("#oklch/3-4", [PercentNumber, PercentNumber, AngleNumber, PercentNumber], (_, ar) => `oklch(${fourIsSlash(ar)})`),
+  "#rgb": SF2("#rgb/3-4", [RGBPercentNumber, RGBPercentNumber, RGBPercentNumber, AlphaValue], (_, ar) => `rgb(${fourIsSlash(ar)})`),
+  "#rgba": SF2("#rgba/4", [RGBPercentNumber, RGBPercentNumber, RGBPercentNumber, AlphaValue], (_, ar) => `rgba(${fourIsSlash(ar)})`),
+  "#hsl": SF2("#hsl/3-4", [AngleNumber, PercentNumber, PercentNumber, AlphaValue], (_, ar) => `hsl(${fourIsSlash(ar)})`),
+  "#hsla": SF2("#hsla/4", [AngleNumber, PercentNumber, PercentNumber, AlphaValue], (_, ar) => `hsla(${fourIsSlash(ar)})`),
+  "#hwb": SF2("#hwb/3-4", [AngleNumber, PercentNumber, PercentNumber, AlphaValue], (_, ar) => `hwb(${fourIsSlash(ar)})`),
+  "#lab": SF2("#lab/3-4", [PercentNumber, PercentNumber, PercentNumber, AlphaValue], (_, ar) => `lab(${fourIsSlash(ar)})`),
+  "#oklab": SF2("#oklab/3-4", [PercentNumber, PercentNumber, PercentNumber, AlphaValue], (_, ar) => `oklab(${fourIsSlash(ar)})`),
+  "#lch": SF2("#lch/3-4", [PercentNumber, PercentNumber, AngleNumber, AlphaValue], (_, ar) => `lch(${fourIsSlash(ar)})`),
+  "#oklch": SF2("#oklch/3-4", [PercentNumber, PercentNumber, AngleNumber, AlphaValue], (_, ar) => `oklch(${fourIsSlash(ar)})`),
 
-  "#srgb": ({ args }) => nativeCssColorSpaceFunction("srgb", args),
-  "#srgbLinear": ({ args }) => nativeCssColorSpaceFunction("srgb-linear", args),
-  "#displayP3": ({ args }) => nativeCssColorSpaceFunction("display-p3", args),
-  "#a98Rgb": ({ args }) => nativeCssColorSpaceFunction("a98-rgb", args),
-  "#prophotoRgb": ({ args }) => nativeCssColorSpaceFunction("prophoto-rgb", args),
-  "#rec2020": ({ args }) => nativeCssColorSpaceFunction("rec2020", args),
-  "#xyz": ({ args }) => nativeCssColorSpaceFunction("xyz", args),
-  "#xyzD50": ({ args }) => nativeCssColorSpaceFunction("xyz-d50", args),
-  "#xyzD65": ({ args }) => nativeCssColorSpaceFunction("xyz-d65", args),
-  "#color": ({ args }) => nativeCssColorSpaceFunction("srgb", args),
+  "#srgb": SF2("#srgb/3-4", [AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(srgb ${fourIsSlash(ar)})`),
+  "#srgbLinear": SF2("#srgbLinear/3-4", [AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(srgb-linear ${fourIsSlash(ar)})`),
+  "#displayP3": SF2("#displayP3/3-4", [AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(display-p3 ${fourIsSlash(ar)})`),
+  "#a98Rgb": SF2("#a98Rgb/3-4", [AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(a98-rgb ${fourIsSlash(ar)})`),
+  "#prophotoRgb": SF2("#prophotoRgb/3-4", [AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(prophoto-rgb ${fourIsSlash(ar)})`),
+  "#rec2020": SF2("#rec2020/3-4", [AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(rec2020 ${fourIsSlash(ar)})`),
+  "#xyz": SF2("#xyz/3-4", [AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(xyz ${fourIsSlash(ar)})`),
+  "#xyzD50": SF2("#xyzD50/3-4", [AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(xyz-d50 ${fourIsSlash(ar)})`),
+  "#xyzD65": SF2("#xyzD65/3-4", [AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(xyz-d65 ${fourIsSlash(ar)})`),
+  "#color": SF2("#color/3-4", [AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(srgb ${fourIsSlash(ar)})`),
+
+  "#from": SF2("#from/5-6", [Color, ColorSpace, AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(from ${ar[0]} ${ar[1]} ${fourIsSlash(ar.slice(2))})`),
 
   "#mix": ({ args }) => cssColorMix(args),
 
@@ -311,13 +325,6 @@ const COLORS = {
   "#mixOklchDecreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "oklch decreasing hue" }, ...args]),
 };
 
-function ColorRaw(a) {
-  return a.kind === "COLOR" ? parseColor(a.text) :
-    a.name in COLORS ? { type: "color", text: COLORS[a.name](a) } :
-      undefined;
-}
-const Color = a => ColorRaw(a)?.text;
-const ColorPrimitive = a => (a = ColorRaw(a))?.hex && a;
 
 export {
   ColorRaw,
