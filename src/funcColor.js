@@ -1,8 +1,9 @@
 import { isBasic } from "./func.js";
 import { CsssFunctions, CsssPrimitives } from "./func2.js";
 const { SF2 } = CsssFunctions;
-const { AngleNumber, Percent } = CsssPrimitives;
+const { AngleNumber, PercentNumber } = CsssPrimitives;
 
+const RGBPercentNumber = a => a.unit === "percent" ? a.num * 2.55 : (a.type === "number" && !a.unit) ? a.num : undefined;
 //colors
 export const WEBCOLORS = {
   aliceblue: "f0f8ff",
@@ -154,17 +155,6 @@ export const WEBCOLORS = {
   yellowgreen: "9acd32",
 };
 
-function nativeCssColorFunction(name, args) {
-  if (args.length < 3 || args.length > 5)
-    throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
-  args = args.map(a => ColorRaw(a) ?? isBasic(a));
-  const from = args[0].type === "color";
-  const txts = args.map(a => a.text);
-  if (args.length - from === 4) txts.splice(-1, 0, "/");
-  if (from) txts.unshift("from");
-  return `${name}(${txts.join(" ")})`;
-}
-
 function nativeCssColorSpaceFunction(space, args) {
   if (args.length < 3 || args.length > 5)
     throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
@@ -207,28 +197,6 @@ function hash(oneTwo) {
   if (two.percent >= 100)
     return two.hue ?? two.text;
   return `color-mix(in oklab, ${one.text}, ${two.hue ?? two.text} ${two.percent}%)`;
-}
-
-function rgbaImpl(name, rgba) {
-  if (name.length != rgba.length)
-    throw new SyntaxError(`${name}() requires exactly ${name.length} arguments.`);
-  rgba = rgba.map(isBasic);
-  let hex = "";
-  for (let i = 0; i < rgba.length; i++) {
-    const c = rgba[i];
-    let num = c.num;
-    if (num == null)
-      break;
-    if (c.type == "percent")
-      num *= 2.55;
-    else if (c.type == "number" && i == 3)
-      num *= 255;
-    else if (c.type != "number")
-      throw new SyntaxError(`Expected number or percent, got ${c.type}: ${c.text}`);
-    hex += Math.min(Math.max(0, Math.round(num)), 255).toString(16).padStart(2, '0');
-  }
-  return hex.length === rgba.length * 2 ? "#" + hex :
-    name + "(" + rgba.map(c => c.text).join(", ") + ")";
 }
 
 const CRX = new RegExp("^#(?:" +
@@ -299,19 +267,18 @@ function parseColor(txt) {
   };
 }
 
-// "#hsl": SF2("#hsl/3-4", [AngleNumber, Percent, Percent, Percent], args => { if (args.length > 3) args.splice(3, "/"); return `hsl(${args.join(", ")})`; }),
-
+const fourIsSlash = ar => ar.reduce((acc, cur, i) => acc + (i === 3 ? (" / " + cur) : i ? (" " + cur) : cur), "");
 const COLORS = {
   "#hash": ({ args }) => hash(args),
-  "#rgb": ({ args }) => rgbaImpl("rgb", args),
-  "#rgba": ({ args }) => rgbaImpl("rgba", args),
-  "#hsl": ({ args }) => nativeCssColorFunction("hsl", args),
-  "#hsla": ({ args }) => nativeCssColorFunction("hsla", args),
-  "#hwb": ({ args }) => nativeCssColorFunction("hwb", args),
-  "#lab": ({ args }) => nativeCssColorFunction("lab", args),
-  "#lch": ({ args }) => nativeCssColorFunction("lch", args),
-  "#oklab": ({ args }) => nativeCssColorFunction("oklab", args),
-  "#oklch": ({ args }) => nativeCssColorFunction("oklch", args),
+  "#rgb": SF2("#rgb/3-4", [RGBPercentNumber, RGBPercentNumber, RGBPercentNumber, PercentNumber], (_, ar) => `rgb(${fourIsSlash(ar)})`),
+  "#rgba": SF2("#rgba/4", [RGBPercentNumber, RGBPercentNumber, RGBPercentNumber, PercentNumber], (_, ar) => `rgba(${fourIsSlash(ar)})`),
+  "#hsl": SF2("#hsl/3-4", [AngleNumber, PercentNumber, PercentNumber, PercentNumber], (_, ar) => `hsl(${fourIsSlash(ar)})`),
+  "#hsla": SF2("#hsla/4", [AngleNumber, PercentNumber, PercentNumber, PercentNumber], (_, ar) => `hsla(${fourIsSlash(ar)})`),
+  "#hwb": SF2("#hwb/3-4", [AngleNumber, PercentNumber, PercentNumber, PercentNumber], (_, ar) => `hwb(${fourIsSlash(ar)})`),
+  "#lab": SF2("#lab/3-4", [PercentNumber, PercentNumber, PercentNumber, PercentNumber], (_, ar) => `lab(${fourIsSlash(ar)})`),
+  "#oklab": SF2("#oklab/3-4", [PercentNumber, PercentNumber, PercentNumber, PercentNumber], (_, ar) => `oklab(${fourIsSlash(ar)})`),
+  "#lch": SF2("#lch/3-4", [PercentNumber, PercentNumber, AngleNumber, PercentNumber], (_, ar) => `lch(${fourIsSlash(ar)})`),
+  "#oklch": SF2("#oklch/3-4", [PercentNumber, PercentNumber, AngleNumber, PercentNumber], (_, ar) => `oklch(${fourIsSlash(ar)})`),
 
   "#srgb": ({ args }) => nativeCssColorSpaceFunction("srgb", args),
   "#srgbLinear": ({ args }) => nativeCssColorSpaceFunction("srgb-linear", args),

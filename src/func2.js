@@ -87,7 +87,7 @@ const CsssFunctions = {
 
       const res = args.map((a, i) => {
         const a2 = (INTERPRETERS[i] ??= INTERPRETERS.at(-1))(a);
-        if (a2) return a2;
+        if (a2 != null) return a2;
         throw BadArgument(name, args, i, INTERPRETERS[i].name);
       });
       return POST ? POST(name, res) : res;
