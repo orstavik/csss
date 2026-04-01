@@ -222,4 +222,27 @@ function doMath(check, func, post, texter, args) {
     { type: args.find(a => a.type)?.type, text: texter(args.map(a => a.text)) };
 }
 
-export const ResolveMath = CB => a => CB(a.name in Maths ? Maths[a.name]?.(a.args) : a);
+const ResolveMath = CB => a => CB(a.name in Maths ? Maths[a.name]?.(a.args) : a);
+
+export default {
+  csss: {
+    Length: ResolveMath(a => (a.type === "length" || a.text === "0") ? a.text : undefined),
+    LengthPercent: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0") ? a.text : undefined),
+    LengthPercentUnset: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0" || a.text === "_") ? (a.text === "_" ? "unset" : a.text) : undefined),
+    LengthPercentAuto: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0" || a.text === "_") ? (a.text === "_" ? "auto" : a.text) : undefined),
+    Repeat: ResolveMath(a => a.name === "repeat" ? `repeat(${a.args.map(a => a.text).join(", ")})` : a.text),
+    Span: ResolveMath(a => a.name === "span" ? `span ${a.args[0].text}` : a.text),
+    NumberInterpreter: ResolveMath(a => (a.type === "number" && a.unit === "") ? a.num : undefined),
+    LengthPercentNumber: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.type === "number") ? a.text : undefined),
+    LengthNumber: ResolveMath(a => (a.type === "length" || (a.type === "number" && a.unit === "")) ? a.text : undefined),
+    Percent: ResolveMath(a => a.type === "percent" ? a.text : undefined),
+    Time: ResolveMath(a => a.type === "time" ? a.text : undefined),
+    Resolution: ResolveMath(a => a.type === "resolution" ? a.text : (a.type === "number" && a.num === 0) ? "0x" : undefined),
+    MinMax: ResolveMath(a => a.name === "minmax" ? `minmax(${a.args.map(a => a.text).join(", ")})` : a.text),
+    PercentNumber: ResolveMath(a => (a.type === "percent" || a.type === "number") ? a.text : undefined),
+    Angle: ResolveMath(a => (a.type === "angle") ? a.text : undefined),
+    AnglePercent: ResolveMath(a => (a.type === "angle" || a.type === "percent") ? a.text : undefined),
+    NumberPercent: ResolveMath(a => (a.type === "number" || a.type === "percent") ? a.text : undefined),
+    Radian: ResolveMath(interpretRadian),
+  }
+};
