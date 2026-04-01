@@ -177,7 +177,13 @@ const Maths = {
   sign: doMath.bind(null, singleArgumentOnly, sign, toNumber, texter.bind(null, "sign")),
 };
 
-const resolve = a => a.name in Maths ? Maths[a.name]?.(a.args) : a;
+const Cache = new WeakMap();
+const resolve = a => {
+  let result = Cache.get(a);
+  if (result === undefined)
+    Cache.set(a, result = a.name in Maths ? Maths[a.name]?.(a.args) : a);
+  return result;
+};
 
 function doMath(check, func, post, texter, args) {
   args = args.map(resolve);
