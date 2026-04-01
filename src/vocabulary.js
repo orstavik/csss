@@ -41,8 +41,8 @@ const Animations = {
   skewX: animationHo(filterTransforms.skewX),
   skewY: animationHo(filterTransforms.skewY),
   opacity: animationHo(nativeAndMore.opacity),
-  bg: animationHo(backgrounds.bg),
-  bgColor: animationHo(backgrounds.bgColor),
+  bg: animationHo(backgrounds.csss.bg),
+  bgColor: animationHo(backgrounds.csss.bgColor),
   color: animationHo(nativeAndMore.color),
   border: animationHo(border.border),
   Border: animationHo(border.Border),
@@ -63,8 +63,8 @@ const SHORTS = {
   ...boxItem.props,
   ...box.props,
 
-  ...backgrounds,
-  ...fonts,
+  ...backgrounds.props,
+  ...fonts.props,
   ...palette,
   ...block.props,
   ...blockItem.props,
@@ -102,6 +102,7 @@ const SHORTS = {
   ...paragraphItem.csss,
   ...textDecorations.csss,
   ...position.csss,
+  ...fonts.csss,
   displayNone: { display: "none" },
 };
 

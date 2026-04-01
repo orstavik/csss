@@ -226,20 +226,24 @@ const bg = FunctionBasedOnValueTypes({
 );
 
 export default {
-  background: undefined,
-  backgroundImage: undefined,
-  backgroundPosition: undefined,
-  backgroundRepeat: undefined,
-  backgroundSize: undefined,
-  backgroundOrigin: undefined,
-  backgroundClip: undefined,
-  backgroundBlendMode: undefined,
-  backgroundAttachment: undefined,
-  backgroundColor: undefined,
-  //todo I think that these should be $Bg() and $BgColor()
-  //todo the reason being that they set the full background always.
-  //todo we could have a $bg() that sets only a few properties. We should probably have that.
-  bgColor: SingleArgumentFunction(Color, (n, v) => ({ backgroundColor: v })),
-  //todo this hack should now be manageable from the animation point of view..
-  bg: FunctionWithDefaultValues(DEFAULTS, bg),
+  props: {
+    background: undefined,
+    backgroundImage: undefined,
+    backgroundPosition: undefined,
+    backgroundRepeat: undefined,
+    backgroundSize: undefined,
+    backgroundOrigin: undefined,
+    backgroundClip: undefined,
+    backgroundBlendMode: undefined,
+    backgroundAttachment: undefined,
+    backgroundColor: undefined,
+  },
+  csss: {
+    //todo I think that these should be $Bg() and $BgColor()
+    //todo the reason being that they set the full background always.
+    //todo we could have a $bg() that sets only a few properties. We should probably have that.
+    bgColor: SingleArgumentFunction(Color, (n, v) => ({ backgroundColor: v })),
+    //todo this hack should now be manageable from the animation point of view..
+    bg: FunctionWithDefaultValues(DEFAULTS, bg),
+  }, css: {}
 };

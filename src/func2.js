@@ -1,4 +1,4 @@
-import { ResolveMath } from "./funcMath2.js";
+import { ResolveMath, interpretRadian } from "./funcMath2.js";
 import { Color, ColorRaw } from "./funcColor.js";
 
 const toCamelCase = s => s.replace(/[^a-z]./ig, m => m[1].toUpperCase());
@@ -39,6 +39,11 @@ const CsssPrimitives = {
   Name: a => a.kind === "WORD" && a.text.match(/^[a-z][a-z0-9_-]+$/i)?.[0],
   NumberInterpreter: ResolveMath(a => (a.type === "number" && a.unit === "") ? a.num : undefined),
   LengthPercentNumber: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.type === "number") ? a.text : undefined),
+  PercentNumber: ResolveMath(a => (a.type === "percent" || a.type === "number") ? a.text : undefined),
+  Angle: ResolveMath(a => (a.type === "angle") ? a.text : undefined),
+  AnglePercent: ResolveMath(a => (a.type === "angle" || a.type === "percent") ? a.text : undefined),
+  NumberPercent: ResolveMath(a => (a.type === "number" || a.type === "percent") ? a.text : undefined),
+  Radian: ResolveMath(interpretRadian),
   Unset: a => a.text === "_" ? "unset" : undefined,
   UrlUnset: a => Url(a) ?? Unset(a),
   Url,

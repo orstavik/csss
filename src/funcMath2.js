@@ -198,6 +198,21 @@ const Maths = {
   sign: doMath.bind(null, singleArgumentOnly, sign, toNumber, texter.bind(null, "sign")),
 };
 
+export function interpretRadian(a) {
+  if (a?.num == 0 && a.type === "number")
+    return 0;
+  if (a?.type !== "angle")
+    return;
+  if (a.unit === "rad")
+    return a.num;
+  if (a.unit === "deg")
+    return a.num * (Math.PI / 180);
+  if (a.unit === "grad")
+    return a.num * (Math.PI / 200);
+  if (a.unit === "turn")
+    return a.num * (2 * Math.PI);
+}
+
 function doMath(check, func, post, texter, args) {
   args = args.map(a => a.name in Maths ? Maths[a.name]?.(a.args) : a);
   check(args);

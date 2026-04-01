@@ -208,8 +208,11 @@ const Typeface = ParseFirstThenRest(Name, font, (typeface, tmp = {}) => {
 
 const DEFAULTS = Object.fromEntries(Object.keys(PROPS).map(k => [k, "unset"]));
 export default {
-  ...PROPS,
-  font,
-  Font: FunctionWithDefaultValues(DEFAULTS, Font),
-  Typeface,
+  props: PROPS,
+  csss: {
+    font,
+    Font: FunctionWithDefaultValues(DEFAULTS, Font),
+    Typeface,
+  },
+  css: {}
 };
