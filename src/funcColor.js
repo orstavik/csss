@@ -209,8 +209,6 @@ function hash(oneTwo) {
   return `color-mix(in oklab, ${one.text}, ${two.hue ?? two.text} ${two.percent}%)`;
 }
 
-function rgb(rgb) { return rgbaImpl("rgb", rgb); }
-function rgba(rgba) { return rgbaImpl("rgba", rgba); }
 function rgbaImpl(name, rgba) {
   if (name.length != rgba.length)
     throw new SyntaxError(`${name}() requires exactly ${name.length} arguments.`);
@@ -301,53 +299,54 @@ function parseColor(txt) {
   };
 }
 
+// "#hsl": SF2("#hsl/3-4", [AngleNumber, Percent, Percent, Percent], args => { if (args.length > 3) args.splice(3, "/"); return `hsl(${args.join(", ")})`; }),
+
 const COLORS = {
-  "#hash": args => hash(args),
-  "#rgb": args => rgb(args),
-  "#rgba": args => rgba(args),
-  // "#hsl": SF2("#hsl/3-4", [AngleNumber, Percent, Percent, Percent], args => { if (args.length > 3) args.splice(3, "/"); return `hsl(${args.join(", ")})`; }),
-  "#hsl": args => nativeCssColorFunction("hsl", args),
-  "#hsla": args => nativeCssColorFunction("hsla", args),
-  "#hwb": args => nativeCssColorFunction("hwb", args),
-  "#lab": args => nativeCssColorFunction("lab", args),
-  "#lch": args => nativeCssColorFunction("lch", args),
-  "#oklab": args => nativeCssColorFunction("oklab", args),
-  "#oklch": args => nativeCssColorFunction("oklch", args),
+  "#hash": ({ args }) => hash(args),
+  "#rgb": ({ args }) => rgbaImpl("rgb", args),
+  "#rgba": ({ args }) => rgbaImpl("rgba", args),
+  "#hsl": ({ args }) => nativeCssColorFunction("hsl", args),
+  "#hsla": ({ args }) => nativeCssColorFunction("hsla", args),
+  "#hwb": ({ args }) => nativeCssColorFunction("hwb", args),
+  "#lab": ({ args }) => nativeCssColorFunction("lab", args),
+  "#lch": ({ args }) => nativeCssColorFunction("lch", args),
+  "#oklab": ({ args }) => nativeCssColorFunction("oklab", args),
+  "#oklch": ({ args }) => nativeCssColorFunction("oklch", args),
 
-  "#srgb": args => nativeCssColorSpaceFunction("srgb", args),
-  "#srgbLinear": args => nativeCssColorSpaceFunction("srgb-linear", args),
-  "#displayP3": args => nativeCssColorSpaceFunction("display-p3", args),
-  "#a98Rgb": args => nativeCssColorSpaceFunction("a98-rgb", args),
-  "#prophotoRgb": args => nativeCssColorSpaceFunction("prophoto-rgb", args),
-  "#rec2020": args => nativeCssColorSpaceFunction("rec2020", args),
-  "#xyz": args => nativeCssColorSpaceFunction("xyz", args),
-  "#xyzD50": args => nativeCssColorSpaceFunction("xyz-d50", args),
-  "#xyzD65": args => nativeCssColorSpaceFunction("xyz-d65", args),
-  "#color": args => nativeCssColorSpaceFunction("srgb", args),
+  "#srgb": ({ args }) => nativeCssColorSpaceFunction("srgb", args),
+  "#srgbLinear": ({ args }) => nativeCssColorSpaceFunction("srgb-linear", args),
+  "#displayP3": ({ args }) => nativeCssColorSpaceFunction("display-p3", args),
+  "#a98Rgb": ({ args }) => nativeCssColorSpaceFunction("a98-rgb", args),
+  "#prophotoRgb": ({ args }) => nativeCssColorSpaceFunction("prophoto-rgb", args),
+  "#rec2020": ({ args }) => nativeCssColorSpaceFunction("rec2020", args),
+  "#xyz": ({ args }) => nativeCssColorSpaceFunction("xyz", args),
+  "#xyzD50": ({ args }) => nativeCssColorSpaceFunction("xyz-d50", args),
+  "#xyzD65": ({ args }) => nativeCssColorSpaceFunction("xyz-d65", args),
+  "#color": ({ args }) => nativeCssColorSpaceFunction("srgb", args),
 
-  "#mix": args => cssColorMix(args),
+  "#mix": ({ args }) => cssColorMix(args),
 
-  "#mixHslLonger": args => cssColorMix([{ kind: "WORD", text: "hsl longer hue" }, ...args]),
-  "#mixHslShorter": args => cssColorMix([{ kind: "WORD", text: "hsl shorter hue" }, ...args]),
-  "#mixHslIncreasing": args => cssColorMix([{ kind: "WORD", text: "hsl increasing hue" }, ...args]),
-  "#mixHslDecreasing": args => cssColorMix([{ kind: "WORD", text: "hsl decreasing hue" }, ...args]),
-  "#mixHwbLonger": args => cssColorMix([{ kind: "WORD", text: "hwb longer hue" }, ...args]),
-  "#mixHwbShorter": args => cssColorMix([{ kind: "WORD", text: "hwb shorter hue" }, ...args]),
-  "#mixHwbIncreasing": args => cssColorMix([{ kind: "WORD", text: "hwb increasing hue" }, ...args]),
-  "#mixHwbDecreasing": args => cssColorMix([{ kind: "WORD", text: "hwb decreasing hue" }, ...args]),
-  "#mixLchLonger": args => cssColorMix([{ kind: "WORD", text: "lch longer hue" }, ...args]),
-  "#mixLchShorter": args => cssColorMix([{ kind: "WORD", text: "lch shorter hue" }, ...args]),
-  "#mixLchIncreasing": args => cssColorMix([{ kind: "WORD", text: "lch increasing hue" }, ...args]),
-  "#mixLchDecreasing": args => cssColorMix([{ kind: "WORD", text: "lch decreasing hue" }, ...args]),
-  "#mixOklchLonger": args => cssColorMix([{ kind: "WORD", text: "oklch longer hue" }, ...args]),
-  "#mixOklchShorter": args => cssColorMix([{ kind: "WORD", text: "oklch shorter hue" }, ...args]),
-  "#mixOklchIncreasing": args => cssColorMix([{ kind: "WORD", text: "oklch increasing hue" }, ...args]),
-  "#mixOklchDecreasing": args => cssColorMix([{ kind: "WORD", text: "oklch decreasing hue" }, ...args]),
+  "#mixHslLonger": ({ args }) => cssColorMix([{ kind: "WORD", text: "hsl longer hue" }, ...args]),
+  "#mixHslShorter": ({ args }) => cssColorMix([{ kind: "WORD", text: "hsl shorter hue" }, ...args]),
+  "#mixHslIncreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "hsl increasing hue" }, ...args]),
+  "#mixHslDecreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "hsl decreasing hue" }, ...args]),
+  "#mixHwbLonger": ({ args }) => cssColorMix([{ kind: "WORD", text: "hwb longer hue" }, ...args]),
+  "#mixHwbShorter": ({ args }) => cssColorMix([{ kind: "WORD", text: "hwb shorter hue" }, ...args]),
+  "#mixHwbIncreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "hwb increasing hue" }, ...args]),
+  "#mixHwbDecreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "hwb decreasing hue" }, ...args]),
+  "#mixLchLonger": ({ args }) => cssColorMix([{ kind: "WORD", text: "lch longer hue" }, ...args]),
+  "#mixLchShorter": ({ args }) => cssColorMix([{ kind: "WORD", text: "lch shorter hue" }, ...args]),
+  "#mixLchIncreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "lch increasing hue" }, ...args]),
+  "#mixLchDecreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "lch decreasing hue" }, ...args]),
+  "#mixOklchLonger": ({ args }) => cssColorMix([{ kind: "WORD", text: "oklch longer hue" }, ...args]),
+  "#mixOklchShorter": ({ args }) => cssColorMix([{ kind: "WORD", text: "oklch shorter hue" }, ...args]),
+  "#mixOklchIncreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "oklch increasing hue" }, ...args]),
+  "#mixOklchDecreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "oklch decreasing hue" }, ...args]),
 };
 
 function ColorRaw(a) {
   return a.kind === "COLOR" ? parseColor(a.text) :
-    a.name in COLORS ? { type: "color", text: COLORS[a.name](a.args) } :
+    a.name in COLORS ? { type: "color", text: COLORS[a.name](a) } :
       undefined;
 }
 const Color = a => ColorRaw(a)?.text;
