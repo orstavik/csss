@@ -1,6 +1,16 @@
-import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest } = FunctionTypes;
-const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, NameUnset, AbsoluteUrl } = ValueTypes;
+import { CsssPrimitives, CsssFunctions } from "./func2.js";
+
+const { TypeBasedFunction, FunctionWithDefaultValues, SF2, ParseFirstThenRest, SingleTable, SingleTableRaw, PropertyType, FunctionPropertyType } = CsssFunctions;
+const { Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, Unset, Url } = CsssPrimitives;
+
+// Angle interpretation similar to func.js
+function isAngle(a) {
+  if (a?.num == 0 && a.type === "number")
+    return { type: "angle", text: "0deg", unit: "deg", num: 0 };
+  if (a?.type === "angle")
+    return a;
+}
+const Angle = a => isAngle(a)?.text;
 
 const PROPS = {
   fontFamily: undefined,
@@ -20,14 +30,9 @@ const PROPS = {
   MozOsxFontSmoothing: undefined,
   fontKerning: undefined,
   hyphens: undefined,
+  fontVariant: undefined,
 };
 
-/**
- * TextTransform is a semi inherited css property (inherits over inline elements, but not block elements).
- * The same way as shifting font family or style, caption is a family-ish trait. Would be normal to consider part of font umbrella.
- * Most of the text properties are either layout (text-align, line-height, word-spacing, hyphenation).
- * text-decoration is standalone. text-shadow is standalone (in same space as colors).
- */
 const SYNTHESIS_WORDS = (function () {
   function* permutations(arr, remainder) {
     for (let i = 0; i < arr.length; i++) {
@@ -45,85 +50,95 @@ const SYNTHESIS_WORDS = (function () {
   for (let k = 1; k <= synths.length - 1; k++)
     for (const combo of permutations(synths, k))
       res["no" + combo.join("") + "Synthesis"] = synths.filter(k => !combo.includes(k)).join(" ").replace("Caps", "-caps").toLowerCase();
-  res.noSynthesis = { fontSynthesis: "none" };
+  res.noSynthesis = "none";
   return res;
 })();
 
-const FONT_WORDS = {
-  ...SYNTHESIS_WORDS,
-  uppercase: { textTransform: "uppercase" },
-  lowercase: { textTransform: "lowercase" },
-  capitalize: { textTransform: "capitalize" },
-  fullWidth: { textTransform: "full-width" },
-  noTransform: { textTransform: "none" },
+const fontSynthesisTable = SYNTHESIS_WORDS;
 
-  bold: { fontWeight: "bold" },
-  b: { fontWeight: "bold" },
-  bolder: { fontWeight: "bolder" },
-  lighter: { fontWeight: "lighter" },
-  noWeight: { fontWeight: "normal" },
+const textTransformTable = {
+  uppercase: "uppercase",
+  lowercase: "lowercase",
+  capitalize: "capitalize",
+  fullWidth: "full-width",
+  noTransform: "none",
+};
 
-  italic: { fontStyle: "italic" },
-  ital: { fontStyle: "italic" },
-  i: { fontStyle: "italic" },
-  noStyle: { fontStyle: "normal" },
+const fontWeightTable = {
+  bold: "bold",
+  b: "bold",
+  bolder: "bolder",
+  lighter: "lighter",
+  noWeight: "normal",
+};
 
-  smallCaps: { fontVariantCaps: "small-caps" },
-  allSmallCaps: { fontVariantCaps: "all-small-caps" },
-  petiteCaps: { fontVariantCaps: "petite-caps" },
-  allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
-  unicase: { fontVariantCaps: "unicase" },
-  titlingCaps: { fontVariantCaps: "titling-caps" },
-  noVariant: { fontVariantCaps: "normal" },
+const fontStyleTable = {
+  italic: "italic",
+  ital: "italic",
+  i: "italic",
+  noStyle: "normal",
+};
 
-  condensed: { fontWidth: "condensed" },
-  expanded: { fontWidth: "expanded" },
-  semiCondensed: { fontWidth: "semi-condensed" },
-  semiExpanded: { fontWidth: "semi-expanded" },
-  extraCondensed: { fontWidth: "extra-condensed" },
-  extraExpanded: { fontWidth: "extra-expanded" },
-  ultraCondensed: { fontWidth: "ultra-condensed" },
-  ultraExpanded: { fontWidth: "ultra-expanded" },
-  noStretch: { fontWidth: "normal" },
+const fontVariantCapsTable = {
+  smallCaps: "small-caps",
+  allSmallCaps: "all-small-caps",
+  petiteCaps: "petite-caps",
+  allPetiteCaps: "all-petite-caps",
+  unicase: "unicase",
+  titlingCaps: "titling-caps",
+  noVariant: "normal",
+};
 
-  kerning: { fontKerning: "normal" },
-  noKerning: { fontKerning: "none" },
+const fontWidthTable = {
+  condensed: "condensed",
+  expanded: "expanded",
+  semiCondensed: "semi-condensed",
+  semiExpanded: "semi-expanded",
+  extraCondensed: "extra-condensed",
+  extraExpanded: "extra-expanded",
+  ultraCondensed: "ultra-condensed",
+  ultraExpanded: "ultra-expanded",
+  noStretch: "normal",
+};
 
-  hyphens: { hyphens: "auto" },
-  shy: { hyphens: "manual" },
-  noHyphens: { hyphens: "none" },
+const fontKerningTable = {
+  kerning: "normal",
+  noKerning: "none",
+};
 
+const hyphensTable = {
+  hyphens: "auto",
+  shy: "manual",
+  noHyphens: "none",
+};
+
+const fontSizeTable = {
+  larger: "larger",
+  smaller: "smaller",
+  xxs: "xx-small",
+  xs: "x-small",
+  sm: "small",
+  md: "medium",
+  lg: "large",
+  xl: "x-large",
+  xxl: "xx-large",
+  xxxl: "xxx-large",
+};
+
+const mixedTable = {
   normal: { fontStyle: "normal", fontWeight: "normal" },
   smooth: { WebkitFontSmoothing: "auto", MozOsxFontSmoothing: "auto" }, //todo this is wrong? should be "antialiased" for WebkitFontSmoothing and "grayscale" for MozOsxFontSmoothing??
-
-  larger: { fontSize: "larger" },
-  smaller: { fontSize: "smaller" },
-  xxs: { fontSize: "xx-small" },
-  xs: { fontSize: "x-small" },
-  sm: { fontSize: "small" },
-  md: { fontSize: "medium" },
-  lg: { fontSize: "large" },
-  xl: { fontSize: "x-large" },
-  xxl: { fontSize: "xx-large" },
-  xxxl: { fontSize: "xxx-large" },
-
-  variant: SequentialFunction("variant/1-5", [Word], (n, v) => ({ fontVariant: v.join(" ") })), //todo: more specific parsing?
-  width: SingleArgumentFunction(Percent, (n, v) => ({ fontWidth: v })),
-  spacing: SingleArgumentFunction(Length, (n, v) => ({ letterSpacing: v })), //"_" => "normal". This should be LengthNormal? where we do "_" as "normal"?
-  adjust: SingleArgumentFunction(Basic, (n, v) => ({ fontSizeAdjust: v })),
 };
 
 
-// @font-face {
-// font-family: "Trickster";
-// src:
-//   local("Trickster"),
-//   url("trickster-COLRv1.otf") format("opentype") tech(color-COLRv1),
-//   url("trickster-outline.otf") format("opentype"),
-//   url("trickster-outline.woff") format("woff");
-// }
-// becomes 
-// "./trickster-COLRv1.otf#family=Trickster&format=opentype&tech=color-COLRv1&src=trickster-outline.otf&format=opentype&src=trickster-outline.woff&format=woff"
+const AbsoluteUrl = a => {
+  if (a.kind === "QUOTE" && a.text.match(/^["'\`](https?|data):/i))
+    return new URL(a.text.slice(1, -1));
+  else if (a.name === "url" && a.args.length === 1 && (a = a.args[0].text))
+    if (a.match(/^["'\`](https?|data):/i))
+      try { return new URL(a.slice(1, -1)); } catch (e) { }
+};
+
 function FontFaceUrl(t) {
   const font = AbsoluteUrl(t);
   if (!font)
@@ -157,33 +172,71 @@ function FontFaceUrl(t) {
   return res;
 }
 
-const font = FunctionBasedOnValueTypes(FONT_WORDS, {
-  fontSize: Length,
-  fontSizeAdjust: Fraction,
-  fontWeight: Integer,
-  Angle,
-}, {
-  fontFamily: t => FontFaceUrl(t) ?? Word(t) ?? Quote(t)
-}, obj => {
-  const res = {};
-  for (let [k, v] of Object.entries(obj)) {
-    if (k === "fontFamily") {
-      if (v.includes("emoji")) {
-        v.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
-        v = v.filter(f => f !== "emoji");
-      }
-      res.fontFamily = v
-        .map(f => f.fontFamily ?? f)
-        .map(f => f.replaceAll("+", " "))
-        .join(", ");
-      for (let face of v.filter(f => f instanceof Object))
-        res["@font-face " + face.src.split("\n")[0]] = face;
-    } else if (k === "Angle") res.fontStyle = "oblique " + v;
-    else if (v instanceof Object) Object.assign(res, v);
-    else res[k] = v;
+const fontInner = TypeBasedFunction(
+  SingleTable("fontSynthesis", fontSynthesisTable),
+  SingleTable("textTransform", textTransformTable),
+  SingleTable("fontWeight", fontWeightTable),
+  SingleTable("fontStyle", fontStyleTable),
+  SingleTable("fontVariantCaps", fontVariantCapsTable),
+  SingleTable("fontWidth", fontWidthTable),
+  SingleTable("fontKerning", fontKerningTable),
+  SingleTable("hyphens", hyphensTable),
+  SingleTable("fontSize", fontSizeTable),
+
+  (a) => {
+    if (a.kind === "WORD" && mixedTable[a.text]) return mixedTable[a.text];
+  },
+
+  a => {
+    if (a.name === "variant") return { fontVariant: a.args.map(x => x.text).join(" ") };
+  },
+  FunctionPropertyType("width", "fontWidth", Percent),
+  FunctionPropertyType("spacing", "letterSpacing", Length),
+  FunctionPropertyType("adjust", "fontSizeAdjust", a => Basic(a) || Fraction(a)),
+
+  PropertyType("fontSize", Length),
+  PropertyType("fontSizeAdjust", Fraction),
+  PropertyType("fontWeight", Integer),
+  PropertyType("fontStyle", a => {
+    const angle = Angle(a);
+    if (angle) return "oblique " + angle;
+  }),
+
+  a => {
+    let fontFamily = FontFaceUrl(a) ?? (a.kind === "WORD" ? a.text : undefined) ?? Quote(a);
+    if (fontFamily) {
+        return { fontFamily: [fontFamily] };
+    }
   }
-  return res;
-});
+);
+
+const font = (arg) => {
+    const res = fontInner(arg);
+    const finalRes = {};
+    for (let [k, v] of Object.entries(res)) {
+        if (k === "fontFamily") {
+            let families = v;
+            if (families.includes("emoji")) {
+              families.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+              families = families.filter(f => f !== "emoji");
+            }
+            finalRes.fontFamily = families
+              .map(f => f.fontFamily ?? f)
+              .map(f => typeof f === "string" ? f.replaceAll("+", " ") : f)
+              .join(", ");
+            for (let face of families.filter(f => f instanceof Object))
+              finalRes["@font-face " + face.src.split("\n")[0]] = face;
+        } else if (v instanceof Object) {
+            Object.assign(finalRes, v);
+        } else {
+            finalRes[k] = v;
+        }
+    }
+    return finalRes;
+};
+
+
+const NameUnset = a => Name(a) ?? Unset(a);
 
 const Font = ParseFirstThenRest(NameUnset, font, (typeface, res = {}) => {
   if (typeface !== "unset")
@@ -207,9 +260,15 @@ const Typeface = ParseFirstThenRest(Name, font, (typeface, tmp = {}) => {
 )
 
 const DEFAULTS = Object.fromEntries(Object.keys(PROPS).map(k => [k, "unset"]));
+
 export default {
-  ...PROPS,
-  font,
-  Font: FunctionWithDefaultValues(DEFAULTS, Font),
-  Typeface,
+  csss: {
+    font,
+    Font: FunctionWithDefaultValues(DEFAULTS, Font),
+    Typeface,
+  },
+  props: {
+    ...PROPS,
+  },
+  css: {}
 };
