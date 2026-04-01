@@ -156,10 +156,6 @@ function optionalSecondNumber(args) {
 function onlyOneArgWithUnit(args) {
   if (args.filter(a => a.unit).length > 1) throw "Only one argument can have a unit.";
 }
-// function firstIsVar(args) {
-//   if (args[0].kind != "VAR")
-//     throw "?? must follow a var() expression.";
-// }
 //POSTS
 function toNumber(num, a) { return { type: "number", unit: "", num, text: num }; }
 function toAngle(num, a) { return { type: "angle", unit: "rad", num, text: num }; }
@@ -176,7 +172,6 @@ const Maths = {
   "*": doMath.bind(null, onlyOneArgWithUnit, multi, updateFirst, txts => `calc(${txts.join(" * ")})`),
   "/": doMath.bind(null, illegalDividend, divide, updateFirst, txts => `calc(${txts.join(" / ")})`),
   "**": doMath.bind(null, secondArgumentIsNumber, pow, updateFirst, texter.bind(null, "pow")),
-  // "??": doMath.bind(null, firstIsVar, undefined, undefined, txts => txts[0].slice(0, -1) + "," + txts[1] + ")"),
   mod: doMath.bind(null, illegalDividend, mod, updateFirst, texter.bind(null, "mod")),
   rem: doMath.bind(null, illegalDividend, rem, updateFirst, texter.bind(null, "rem")),
   clamp: doMath.bind(null, sameType, clamp, updateFirst, texter.bind(null, "clamp")),
@@ -198,23 +193,10 @@ const Maths = {
   sign: doMath.bind(null, singleArgumentOnly, sign, toNumber, texter.bind(null, "sign")),
 };
 
-function interpretRadian(a) {
-  if (a?.num == 0 && a.type === "number")
-    return 0;
-  if (a?.type !== "angle")
-    return;
-  if (a.unit === "rad")
-    return a.num;
-  if (a.unit === "deg")
-    return a.num * (Math.PI / 180);
-  if (a.unit === "grad")
-    return a.num * (Math.PI / 200);
-  if (a.unit === "turn")
-    return a.num * (2 * Math.PI);
-}
+const resolve = a => a.name in Maths ? Maths[a.name]?.(a.args) : a;
 
 function doMath(check, func, post, texter, args) {
-  args = args.map(a => a.name in Maths ? Maths[a.name]?.(a.args) : a);
+  args = args.map(resolve);
   check(args);
   const nums = computableNumbers(args);
   return nums ?
@@ -222,7 +204,7 @@ function doMath(check, func, post, texter, args) {
     { type: args.find(a => a.type)?.type, text: texter(args.map(a => a.text)) };
 }
 
-const ResolveMath = CB => a => CB(a.name in Maths ? Maths[a.name]?.(a.args) : a);
+const ResolveMath = CB => a => CB(resolve(a));
 
 export default {
   csss: {
@@ -243,6 +225,6 @@ export default {
     Angle: ResolveMath(a => (a.type === "angle") ? a.text : undefined),
     AnglePercent: ResolveMath(a => (a.type === "angle" || a.type === "percent") ? a.text : undefined),
     NumberPercent: ResolveMath(a => (a.type === "number" || a.type === "percent") ? a.text : undefined),
-    Radian: ResolveMath(interpretRadian),
-  }
+    Radian: ResolveMath(a => a.type === "angle" ? angleToRad(a) : a?.num == 0 && a.type === "number" ? 0 : undefined),
+  },
 };
