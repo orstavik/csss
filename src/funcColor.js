@@ -1,6 +1,3 @@
-import { CsssPrimitives } from "./func2.js";
-const { Url } = CsssPrimitives;
-
 import { isBasic } from "./func.js";
 //colors
 export const WEBCOLORS = {
@@ -346,12 +343,10 @@ function ColorRaw(a) {
       undefined;
 }
 const Color = a => ColorRaw(a)?.text;
-const ColorUrl = a => Color(a) ?? Url(a);
 const ColorPrimitive = a => (a = ColorRaw(a))?.hex && a;
 
 export {
   ColorRaw,
   Color,
-  ColorUrl,
   ColorPrimitive,
 };

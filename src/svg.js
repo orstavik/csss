@@ -2,7 +2,8 @@
 import { CsssPrimitives, CsssFunctions } from "./func2.js";
 const { FunctionWithDefaultValues, SF2, TypeBasedFunction, PropertyType, SingleTable, CssValuesToCsssTable, FunctionPropertyType } = CsssFunctions;
 const { SingleTableRaw, LengthPercentNumber, NumberInterpreter, Url, Length, UrlUnset } = CsssPrimitives;
-import { ColorUrl } from "./funcColor.js";
+import { Color } from "./funcColor.js";
+const ColorUrl = a => Color(a) ?? Url(a);
 
 const strokeDefaults = {
   stroke: "unset",
