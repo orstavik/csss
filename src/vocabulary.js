@@ -48,7 +48,7 @@ const Animations = {
   Border: animationHo(border.Border),
 }
 
-const ObjectFit = {       //convert to fit(fill|contain|cover|scaleDown|none) etc.
+const ObjectFit = {       //convert to objectFit("fill|contain|cover|scale-down|none") etc.
   objectFit: undefined,
   fitFill: { objectFit: "fill" },
   fitContain: { objectFit: "contain" },
@@ -77,12 +77,12 @@ const SHORTS = {
   ...lineClamp.props,
   ...paragraph.props,
   ...paragraphItem.props,
+  ...textDecorations.props,
+  ...position.props,
   ...transitions,
-  ...textDecorations,
   ...border,
   ...filterTransforms,
   ...shadows,
-  ...position,
   ...svg,
   ...paragraph.props,
   ...ObjectFit,
@@ -100,11 +100,10 @@ const SHORTS = {
   ...lineClamp.csss,
   ...paragraph.csss,
   ...paragraphItem.csss,
+  ...textDecorations.csss,
+  ...position.csss,
   displayNone: { display: "none" },
 };
-for (let b in SHORTS)
-  if (typeof SHORTS[b] === "string")
-    SHORTS[b] = undefined;
 
 const REVERSES = {
   ...boxItem.css,
@@ -120,6 +119,8 @@ const REVERSES = {
   ...lineClamp.css,
   ...paragraph.css,
   ...paragraphItem.css,
+  // ...textDecorations.css,
+  // ...position.css,
 };
 
 const MEDIA_WORDS = {

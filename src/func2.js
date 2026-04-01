@@ -1,51 +1,73 @@
 import { ResolveMath } from "./funcMath2.js";
+import { Color, ColorRaw } from "./funcColor.js";
 
-function BadArgument(name, args, I, message = "") {
+const toCamelCase = s => s.replace(/[^a-z]./ig, m => m[1].toUpperCase());
+
+export function BadArgument(name, args, I, message = "") {
   args = args.map(a => a.text ?? (a.name + "/" + a.args.length));
   args[I] = ` => ${args[I]} <= `;
   return new SyntaxError(`Bad argument ${name}/${I + 1}:  ${name}(${args.join(",")})` + message);
 }
 
+const once = new Set();
+function matchArgsWithInterpreters(NAME, args, INTERPRETERS) {
+  once.clear();
+  const res = [];
+  main: for (let i = 0; i < args.length; i++) {
+    for (let fn of INTERPRETERS) {
+      if (once.has(fn)) continue;
+      const v = fn(args[i]);
+      if (v == null) continue;
+      once.add(fn);
+      res.push(v);
+      continue main;
+    }
+    throw BadArgument(NAME, args, i, "Unknown argument.");
+  }
+  return res;
+}
+
+const Url = a => a.kind === "QUOTE" ? `url(${a.text})` : a.name === "url" ? `url(${a.args[0].text})` : undefined;
+//these return strings.
 const CsssPrimitives = {
+  Length: ResolveMath(a => (a.type === "length" || a.text === "0") ? a.text : undefined),
   LengthPercent: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0") ? a.text : undefined),
   LengthPercentUnset: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0" || a.text === "_") ? (a.text === "_" ? "unset" : a.text) : undefined),
   LengthPercentAuto: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0" || a.text === "_") ? (a.text === "_" ? "auto" : a.text) : undefined),
-  Basic: ResolveMath(a => a.text),
-  RepeatBasic: ResolveMath(a => a.name === "repeat" ? `repeat(${a.args.map(a => a.text).join(", ")})` : a.text),
-  SpanBasic: ResolveMath(a => a.name === "span" ? `span ${a.args[0].text}` : a.text),
+  Repeat: ResolveMath(a => a.name === "repeat" ? `repeat(${a.args.map(a => a.text).join(", ")})` : a.text),
+  Span: ResolveMath(a => a.name === "span" ? `span ${a.args[0].text}` : a.text),
+  Name: a => a.kind === "WORD" && a.text.match(/^[a-z][a-z0-9_-]+$/i)?.[0],
   NumberInterpreter: ResolveMath(a => (a.type === "number" && a.unit === "") ? a.num : undefined),
   LengthPercentNumber: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.type === "number") ? a.text : undefined),
+  Unset: a => a.text === "_" ? "unset" : undefined,
+  UrlUnset: a => Url(a) ?? Unset(a),
+  Url,
+  Color,
+  ColorUrl: a => Color(a) ?? Url(a),
+  ColorPrimitive: a => (a = ColorRaw(a))?.hex && a,
+  SingleTableRaw: Table => ({ text }) => text in Table ? Table[text] : undefined,
 };
-
+//these returns objects.
 const CsssFunctions = {
-  // CssValuesToCsssTableObject: (oneProp, oneValues, twoProp, twoValues) => {
-  //   const toCamelCase = s => s.replace(/[^a-z]./g, m => m[1].toUpperCase());
-  //   const Table = {};
-  //   for (let one of oneValues.split("|")) {
-  //     Table[toCamelCase(one)] = { [oneProp]: one, [twoProp]: "unset" };
-  //     for (let two of twoValues.split("|")) {
-  //       Table[toCamelCase(two)] = { [oneProp]: "unset", [twoProp]: two };
-  //       Table[toCamelCase(one + " " + two)] = { [oneProp]: one, [twoProp]: two };
-  //     }
-  //   }
-  //   return Table;
-  // },
+  //this is special
   CssValuesToCsssTable: (One, Two = "") => {
-    const toCamelCase = s => s.replace(/[^a-z]./g, m => m[1].toUpperCase());
     const Table = {};
     for (let b of One.split("|")) {
       Table[toCamelCase(b)] = b;
-      for (let i of Two.split("|"))
-        if (b != i)
-          Table[toCamelCase(b + " " + i)] = b + " " + i;
+      if (Two)
+        for (let i of Two.split("|"))
+          if (b != i)
+            Table[toCamelCase(b + " " + i)] = b + " " + i;
     }
     return Table;
   },
+  PropertyType: (CssProp, Type) => a => (a = Type(a)) && { [CssProp]: a },
   SingleTable: (CssProp, Table) => ({ text }) => text in Table ? { [CssProp]: Table[text] } : undefined,
   LogicalFour: (CsssName, CssName, INTERPRETER) => ({ args, name }) => {
     if (CsssName != name) return;
     if (args.length > 4)
       throw new SyntaxError(`${CsssName}() takes max 4 arguments, got ${args.length}.`);
+
     if (!args.length)
       return { [CsssName]: "none" };
     args = args.map((a, i) => {
@@ -59,7 +81,7 @@ const CsssFunctions = {
         [CssName + "Inline"]: args[3] != null && args[3] != args[1] ? (args[1] ?? args[0]) + " " + args[3] : args[1] ?? args[0],
       };
   },
-  SequentialFunction: (SIG, INTERPRETERS, POST) => {
+  SF2: (CsssNameArity, INTERPRETERS, POST) => {
     const parseSignature = SIG => {
       const [NAME, ARITY] = SIG.split("/");
       if (ARITY == undefined || ARITY == "") return { NAME };
@@ -67,11 +89,12 @@ const CsssFunctions = {
       if (MAX === "") MAX = Infinity;
       return { NAME, MIN: Number(MIN), MAX: Number(MAX) };
     };
-    const { NAME, MIN = INTERPRETERS.length, MAX = INTERPRETERS.length } = parseSignature(SIG);
+    const { NAME, MIN = INTERPRETERS.length, MAX = INTERPRETERS.length } = parseSignature(CsssNameArity);
     return ({ args, name }) => {
       if (NAME && NAME !== name) return;
       if (args.length < MIN || args.length > MAX)
         throw new SyntaxError(`${name}() requires ${MIN} to ${MAX} arguments, got ${args.length}.`);
+
       const res = args.map((a, i) => {
         const a2 = (INTERPRETERS[i] ??= INTERPRETERS.at(-1))(a);
         if (a2) return a2;
@@ -80,62 +103,46 @@ const CsssFunctions = {
       return POST ? POST(name, res) : res;
     }
   },
-  SingleArgumentFunction: (CsssName, INTERPRETER, POST) => ({ args, name }) => {
+  FunctionPropertyType: (CsssName, CssProp, INTERPRETER) => ({ args, name }) => {
     if (CsssName !== name) return;
     if (args.length != 1)
-      throw new SyntaxError(`${name} requires 1 argument, got ${args.length} arguments.`);
+      throw new SyntaxError(`${name}() requires 1 argument, got ${args.length} arguments.`);
+
     const v = INTERPRETER(args[0]);
     if (v == null) throw BadArgument(name, args, 0, INTERPRETER.name);
-    return POST ? POST(name, v) : v;
+    return { [CssProp]: v };
+  },
+  SizeFunction: (CsssName, [min, CssName, max], INTERPRETER) => ({ args, name }) => {
+    if (CsssName !== name)
+      return;
+    if (args.length < 1 || args.length > 3)
+      throw new SyntaxError(`${name}() requires 1 to 3 arguments, got ${args.length}.`);
+
+    const res = args.map((a, i) => {
+      const a2 = INTERPRETER(a);
+      if (a2)
+        return a2;
+      throw BadArgument(name, args, i, INTERPRETER.name);
+    });
+    return args.length === 1 ?
+      { [CssName]: res[0] } :
+      { [min]: res[0], [CssName]: res[1], [max]: res[2] ?? "unset" };
   },
   ParseFirstThenRest: (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
     if (!args.length)
       throw new SyntaxError(`${name} requires at least 1 argument, got 0 arguments.`)
+
     const first = INTERPRETER(args[0]);
     if (first == null)
       throw BadArgument(name, args, 0, INTERPRETER.name);
     const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
     return POST(first, res);
   },
-  TypeBasedFunction: (...FUNCTIONS) => ({ args, name }) => {
-    const res = {};
-    main: for (let i = 0; i < args.length; i++) {
-      for (let fn of FUNCTIONS) {
-        const v = fn(args[i]);
-        if (v == null) continue;
-        for (let k in v)
-          if (k in res)
-            throw BadDoubleArgument(name, args, i, `Property ${k} is already specified.`);
-        Object.assign(res, v);
-        continue main;
-      }
-      throw BadArgument(name, args, i, "Unknown argument.");
-    }
-    return res;
-  },
+  TypeBasedFunction: (...FUNCTIONS) => ({ args, name }) => Object.assign({}, ...matchArgsWithInterpreters(name, args, FUNCTIONS)),
   FunctionWithDefaultValues: (BASE, CB) => {
     Object.freeze(BASE);
     const reduce = o => { for (let k in o) if ((k + "Block") in o && (k + "Inline") in o) delete o[k]; return o };
     return x => !x.args?.length ? BASE : reduce({ ...BASE, ...CB(x) });
-  },
-  SizeFunction: (CsssName, CssName, INTERPRETER) => {
-    const min = "min" + CssName[0].toUpperCase() + CssName.slice(1);
-    const max = "max" + CssName[0].toUpperCase() + CssName.slice(1);
-    return ({ args, name }) => {
-      if (CsssName !== name)
-        return;
-      if (args.length < 1 || args.length > 3)
-        throw new SyntaxError(`${name}() requires 1 to 3 arguments, got ${args.length}.`);
-      const res = args.map((a, i) => {
-        const a2 = INTERPRETER(a);
-        if (a2)
-          return a2;
-        throw BadArgument(name, args, i, INTERPRETER.name);
-      });
-      return args.length === 1 ?
-        { [CssName]: res[0] } :
-        { [min]: res[0], [CssName]: res[1], [max]: res[2] ?? "unset" };
-    }
   },
 };
 

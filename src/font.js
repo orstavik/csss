@@ -27,7 +27,6 @@ const PROPS = {
  * The same way as shifting font family or style, caption is a family-ish trait. Would be normal to consider part of font umbrella.
  * Most of the text properties are either layout (text-align, line-height, word-spacing, hyphenation).
  * text-decoration is standalone. text-shadow is standalone (in same space as colors).
- * ??candidate for font is hyphenation. Where we break the words, that could be more a font characteristic than a layout characteristic??
  */
 const SYNTHESIS_WORDS = (function () {
   function* permutations(arr, remainder) {
