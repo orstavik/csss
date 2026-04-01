@@ -298,7 +298,7 @@ function parseColor(txt) {
 }
 
 const COLORS = {
-  "#": hash,
+  "#hash": hash,
   "#rgb": rgb,
   "#rgba": rgba,
   "#hsl": nativeCssColorFunction.bind(null, "hsl"),
