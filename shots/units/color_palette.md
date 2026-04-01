@@ -243,22 +243,22 @@ $color(#xyzD65(0.6,0.4,0.1))
 **description:**
 Mixes red and blue 50/50 in oklch color space.
 **csss:**
-$color(#mix(oklch,#red,#blue,50%))
+$color(#mix(oklch,#red,50%,#blue,50%))
 **css:**
 ```css
-.\$color\(\#mix\(oklch\,\#red\,\#blue\,50\%\)\) {
-  color: color-mix(in oklch, red, blue 50%);
+.\$color\(\#mix\(oklch\,\#red\,50\%\,\#blue\,50\%\)\) {
+  color: color-mix(in oklch, red 50%, blue 50%);
 }
 ```
 
 **description:**
 Mixes orange and purple 75% using HSL longer hue interpolation.
 **csss:**
-$color(#mixHslLonger(#orange,#purple,75%))
+$color(#mix(hslLongerHue,#orange,25%,#purple,75%))
 **css:**
 ```css
-.\$color\(\#mixHslLonger\(\#orange\,\#purple\,75\%\)\) {
-  color: color-mix(in hsl longer hue, orange, purple 75%);
+.\$color\(\#mix\(hslLongerHue\,\#orange\,25\%\,\#purple\,75\%\)\) {
+  color: color-mix(in hsl longer hue, orange 25%, purple 75%);
 }
 ```
 

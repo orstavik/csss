@@ -1,12 +1,20 @@
-import { isBasic } from "./func.js";
 import { CsssFunctions, CsssPrimitives } from "./func2.js";
-const { SF2 } = CsssFunctions;
+const { SF2, CssValuesToCsssTable } = CsssFunctions;
 const { AngleNumber, PercentNumber } = CsssPrimitives;
 
 const RGBPercentNumber = a => a.unit === "percent" ? a.num * 2.55 : (a.type === "number" && !a.unit) ? a.num : undefined;
 const AlphaValue = a => (a.unit === "percent" && a.num >= 0 && a.num <= 100) ? a.num * .01 : (a.type === "number" && !a.unit && a.num >= 0 && a.num <= 1) ? a.num : undefined;
 
-const ColorSpace = a => a.kind === "WORD" ? a.text.match(/^(srgb|srgbLinear|displayP3|a98Rgb|prophotoRgb|rec2020|xyz|xyzD50|xyzD65)$/i) : undefined;
+const ColorSpaces = CssValuesToCsssTable("srgb|srgb-linear|display-p3|a98-rgb|prophoto-rgb|rec2020|xyz|xyz-d50|xyz-d65|oklch|oklab|lab|lch");
+const ColorSpace = a => a.kind === "WORD" ? ColorSpaces[a.text] : undefined;
+
+const ColorInterpolationMethods = CssValuesToCsssTable(
+  "srgb|srgb-linear|display-p3|display-p3-linear|a98-rgb|prophoto-rgb|rec2020|lab|oklab|xyz|xyz-d50|xyz-d65|" +
+  "hsl|hsl longer hue|hsl increasing hue|hsl decreasing hue|" +
+  "hwb|hwb longer hue|hwb increasing hue|hwb decreasing hue|" +
+  "lch|lch longer hue|lch increasing hue|lch decreasing hue|" +
+  "oklch|oklch longer hue|oklch increasing hue|oklch decreasing hue");
+const ColorDirection = a => a.kind === "WORD" ? ColorInterpolationMethods[a.text] : undefined;
 
 const ColorRaw = a =>
   a.kind === "COLOR" ? parseColor(a.text) :
@@ -166,22 +174,14 @@ export const WEBCOLORS = {
   yellowgreen: "9acd32",
 };
 
-function cssColorMix([space, one, two, percent]) {
-  space = space == "_" ? "oklab" : isBasic(space).text;
-  one = Color(one);
-  two = Color(two);
-  two += " " + (percent ? isBasic(percent).text : "50%");
-  return `color-mix(in ${[space, one, two].join(", ")})`;
-}
-
 //#123 => hash(123) => #123
 //#primary#30 => hash(primary,30)
 //#primary#30#a80 => hash(primary,30,a80)
 //#primary#brown33#50
-function hash(oneTwo) {
-  let [one, two] = oneTwo.map(ColorRaw);
+function hash({ args }) {
+  let [one, two] = args.map(ColorRaw);
   if (two.vector == "") {
-    let left = oneTwo[0], i = 1;
+    let left = args[0], i = 1;
     while (left.name === "#hash") {
       left = left.args[0];
       i++;
@@ -266,22 +266,10 @@ function parseColor(txt) {
   };
 }
 
-function nativeCssColorSpaceFunction(space, args) {
-  if (args.length < 3 || args.length > 5)
-    throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
-  args = args.map(a => ColorRaw(a) ?? isBasic(a));
-  const from = args[0].type === "color";
-  const txts = args.map(a => a.text);
-  if (args.length - from === 4) txts.splice(-1, 0, "/");
-  if (from) txts.unshift("from");
-  txts.unshift(space);
-  return `color(${txts.join(" ")})`;
-}
-
 
 const fourIsSlash = ar => ar.reduce((acc, cur, i) => acc + (i === 3 ? (" / " + cur) : i ? (" " + cur) : cur), "");
 const COLORS = {
-  "#hash": ({ args }) => hash(args),
+  "#hash": hash,
   "#rgb": SF2("#rgb/3-4", [RGBPercentNumber, RGBPercentNumber, RGBPercentNumber, AlphaValue], (_, ar) => `rgb(${fourIsSlash(ar)})`),
   "#rgba": SF2("#rgba/4", [RGBPercentNumber, RGBPercentNumber, RGBPercentNumber, AlphaValue], (_, ar) => `rgba(${fourIsSlash(ar)})`),
   "#hsl": SF2("#hsl/3-4", [AngleNumber, PercentNumber, PercentNumber, AlphaValue], (_, ar) => `hsl(${fourIsSlash(ar)})`),
@@ -301,28 +289,10 @@ const COLORS = {
   "#xyz": SF2("#xyz/3-4", [AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(xyz ${fourIsSlash(ar)})`),
   "#xyzD50": SF2("#xyzD50/3-4", [AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(xyz-d50 ${fourIsSlash(ar)})`),
   "#xyzD65": SF2("#xyzD65/3-4", [AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(xyz-d65 ${fourIsSlash(ar)})`),
-  "#color": SF2("#color/3-4", [AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(srgb ${fourIsSlash(ar)})`),
 
-  "#from": SF2("#from/5-6", [Color, ColorSpace, AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(from ${ar[0]} ${ar[1]} ${fourIsSlash(ar.slice(2))})`),
+  "#colorFrom": SF2("#colorFrom/5-6", [Color, ColorSpace, AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(from ${ar[0]} ${ar[1]} ${fourIsSlash(ar.slice(2))})`),
 
-  "#mix": ({ args }) => cssColorMix(args),
-
-  "#mixHslLonger": ({ args }) => cssColorMix([{ kind: "WORD", text: "hsl longer hue" }, ...args]),
-  "#mixHslShorter": ({ args }) => cssColorMix([{ kind: "WORD", text: "hsl shorter hue" }, ...args]),
-  "#mixHslIncreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "hsl increasing hue" }, ...args]),
-  "#mixHslDecreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "hsl decreasing hue" }, ...args]),
-  "#mixHwbLonger": ({ args }) => cssColorMix([{ kind: "WORD", text: "hwb longer hue" }, ...args]),
-  "#mixHwbShorter": ({ args }) => cssColorMix([{ kind: "WORD", text: "hwb shorter hue" }, ...args]),
-  "#mixHwbIncreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "hwb increasing hue" }, ...args]),
-  "#mixHwbDecreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "hwb decreasing hue" }, ...args]),
-  "#mixLchLonger": ({ args }) => cssColorMix([{ kind: "WORD", text: "lch longer hue" }, ...args]),
-  "#mixLchShorter": ({ args }) => cssColorMix([{ kind: "WORD", text: "lch shorter hue" }, ...args]),
-  "#mixLchIncreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "lch increasing hue" }, ...args]),
-  "#mixLchDecreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "lch decreasing hue" }, ...args]),
-  "#mixOklchLonger": ({ args }) => cssColorMix([{ kind: "WORD", text: "oklch longer hue" }, ...args]),
-  "#mixOklchShorter": ({ args }) => cssColorMix([{ kind: "WORD", text: "oklch shorter hue" }, ...args]),
-  "#mixOklchIncreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "oklch increasing hue" }, ...args]),
-  "#mixOklchDecreasing": ({ args }) => cssColorMix([{ kind: "WORD", text: "oklch decreasing hue" }, ...args]),
+  "#mix": SF2("#mix/5", [ColorDirection, Color, PercentNumber, Color, PercentNumber], (_, ar) => `color-mix(in ${ar[0]}, ${ar[1]} ${ar[2]}, ${ar[3]} ${ar[4]})`),
 };
 
 
