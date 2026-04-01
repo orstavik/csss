@@ -86,11 +86,6 @@ const SHORTS = {
 
 for (let [kebab, types] of Object.entries(NativeCss.supported)) {
   let camel = kebab.replace(/-([a-z])/g, g => g[1].toUpperCase());
-  function fixBorderNames(originalCamel) {
-    const m = originalCamel.match(/^(border)(.+)(Style|Width|Color|Radius)$/);
-    return m ? m[1] + m[3] + m[2] : originalCamel;
-  }
-  camel = fixBorderNames(camel);
   if (camel in SHORTS)
     continue;
 
