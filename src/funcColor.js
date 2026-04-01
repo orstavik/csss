@@ -1,3 +1,7 @@
+import { CsssPrimitives } from "./func2.js";
+const { Url } = CsssPrimitives;
+
+import { isBasic } from "./func.js";
 //colors
 export const WEBCOLORS = {
   aliceblue: "f0f8ff",
@@ -152,7 +156,7 @@ export const WEBCOLORS = {
 function nativeCssColorFunction(name, args) {
   if (args.length < 3 || args.length > 5)
     throw new SyntaxError(`${name} accepts 3 to 5 arguments: ${args}`);
-  args = args.map(a => isColor(a) ?? isBasic(a));
+  args = args.map(a => ColorRaw(a) ?? isBasic(a));
   const from = args[0].type === "color";
   const txts = args.map(a => a.text);
   if (args.length - from === 4) txts.splice(-1, 0, "/");
@@ -163,7 +167,7 @@ function nativeCssColorFunction(name, args) {
 function nativeCssColorSpaceFunction(space, args) {
   if (args.length < 3 || args.length > 5)
     throw new SyntaxError(`color() accepts only 3 to 5 arguments: ${args}`);
-  args = args.map(a => isColor(a) ?? isBasic(a));
+  args = args.map(a => ColorRaw(a) ?? isBasic(a));
   const from = args[0].type === "color";
   const txts = args.map(a => a.text);
   if (args.length - from === 4) txts.splice(-1, 0, "/");
@@ -174,8 +178,8 @@ function nativeCssColorSpaceFunction(space, args) {
 
 function cssColorMix([space, one, two, percent]) {
   space = space == "_" ? "oklab" : isBasic(space).text;
-  one = isColor(one).text;
-  two = isColor(two).text;
+  one = Color(one);
+  two = Color(two);
   two += " " + (percent ? isBasic(percent).text : "50%");
   return `color-mix(in ${[space, one, two].join(", ")})`;
 }
@@ -185,14 +189,14 @@ function cssColorMix([space, one, two, percent]) {
 //#primary#30#a80 => hash(primary,30,a80)
 //#primary#brown33#50
 function hash(oneTwo) {
-  let [one, two] = oneTwo.map(isColor);
+  let [one, two] = oneTwo.map(ColorRaw);
   if (two.vector == "") {
     let left = oneTwo[0], i = 1;
     while (left.name === "#hash") {
       left = left.args[0];
       i++;
     }
-    const vector = left.kind == "COLOR" && isColor(left).vector;
+    const vector = left.kind == "COLOR" && ColorRaw(left).vector;
     if (!vector)
       throw new SyntaxError(`First color ${left.text} is not a color vector, while ${two.text} is a relative color vector.`);
     if (two.percent >= 100)
@@ -342,8 +346,12 @@ function ColorRaw(a) {
       undefined;
 }
 const Color = a => ColorRaw(a)?.text;
+const ColorUrl = a => Color(a) ?? Url(a);
+const ColorPrimitive = a => (a = ColorRaw(a))?.hex && a;
 
 export {
   ColorRaw,
   Color,
+  ColorUrl,
+  ColorPrimitive,
 };

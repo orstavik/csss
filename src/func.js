@@ -348,7 +348,7 @@ const COLORS = {
 //   attr: (...args) => { args[0] = args[0].replace(":", " "); return `attr(${args.join(",")})` },
 // };
 
-function isBasic(arg) {
+export function isBasic(arg) {
   if (arg.kind == "VAR")
     arg.text = `var(${arg.text})`;
   if (arg.kind !== "EXP")

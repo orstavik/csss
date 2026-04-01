@@ -1,5 +1,4 @@
 import { ResolveMath, interpretRadian } from "./funcMath2.js";
-import { Color, ColorRaw } from "./funcColor.js";
 
 const toCamelCase = s => s.replace(/[^a-z]./ig, m => m[1].toUpperCase());
 
@@ -47,9 +46,6 @@ const CsssPrimitives = {
   Unset: a => a.text === "_" ? "unset" : undefined,
   UrlUnset: a => Url(a) ?? Unset(a),
   Url,
-  Color,
-  ColorUrl: a => Color(a) ?? Url(a),
-  ColorPrimitive: a => (a = ColorRaw(a))?.hex && a,
   SingleTableRaw: Table => ({ text }) => text in Table ? Table[text] : undefined,
 };
 //these returns objects.

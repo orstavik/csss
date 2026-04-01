@@ -1,6 +1,7 @@
 import { CsssPrimitives, BadArgument, CsssFunctions } from "./func2.js";
-const { Color, Length } = CsssPrimitives;
+const { Length } = CsssPrimitives;
 const { CssValuesToCsssTable } = CsssFunctions;
+import { Color } from "./funcColor.js";
 
 const style = CssValuesToCsssTable("solid|dashed|dotted|double|wavy|blink|grammar-error|spelling-error");
 
