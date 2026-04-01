@@ -81,34 +81,18 @@ function angleToRad({ unit, num }) {
         num;
 }
 
-function plus(a, b) { return a + b; }
-function minus(a, b) { return a - b; }
-function multi(a, b) { return a * b; }
-function divide(a, b) { return a / b; }
-
-function mod(a, b) { return a - b * Math.floor(a / b); }
-function rem(a, b) { return a - b * Math.trunc(a / b); }
-function clamp(a, b, c) { return Math.min(Math.max(a, b), c); }
-
-function sin(a) { return Math.sin(angleToRad(a)); }
-function cos(a) { return Math.cos(angleToRad(a)); }
-function tan(a) { return Math.tan(angleToRad(a)); }
-
-function log(a, b = Math.E) { return Math.log(a) / Math.log(b); }
-
-const pow = Math.pow;
-const min = Math.min;
-const max = Math.max;
-const round = Math.round;
-const asin = Math.asin;
-const acos = Math.acos;
-const atan = Math.atan;
-const atan2 = Math.atan2;
-const sqrt = Math.sqrt;
-const hypot = Math.hypot;
-const exp = Math.exp;
-const abs = Math.abs;
-const sign = Math.sign;
+const plus = (a, b) => a + b;
+const minus = (a, b) => a - b;
+const multi = (a, b) => a * b;
+const divide = (a, b) => a / b;
+const mod = (a, b) => a - b * Math.floor(a / b);
+const rem = (a, b) => a - b * Math.trunc(a / b);
+const clamp = (a, b, c) => Math.min(Math.max(a, b), c);
+const sin = (a) => Math.sin(angleToRad(a));
+const cos = (a) => Math.cos(angleToRad(a));
+const tan = (a) => Math.tan(angleToRad(a));
+const log = (a, b = Math.E) => Math.log(a) / Math.log(b);
+const { pow, min, max, round, asin, acos, atan, atan2, sqrt, hypot, exp, abs, sign } = Math;
 
 //CHECKS
 //returns [inputUnit, outputUnit].
