@@ -1,4 +1,8 @@
-import nativeAndMore from "./func.js";
+import NativeCss from "./nativeCss.js";
+import { interpretImage } from "./func.js";
+import { CsssPrimitives } from "./func2.js";
+import { Color } from "./funcColor.js";
+
 import backgrounds from "./bg.js";
 import border from "./border.js";
 import fonts from "./font.js";
@@ -24,30 +28,6 @@ import paragraph from "./paragraph.js";
 import paragraphItem from "./paragraphItem.js";
 import { animationHo } from "./animations.js";
 
-
-const Animations = {
-  translateY: animationHo(filterTransforms.translateY),
-  translate: animationHo(filterTransforms.translate),
-  translateX: animationHo(filterTransforms.translateX),
-  translateZ: animationHo(filterTransforms.translateZ),
-  scale: animationHo(filterTransforms.scale),
-  scaleX: animationHo(filterTransforms.scaleX),
-  scaleY: animationHo(filterTransforms.scaleY),
-  scaleZ: animationHo(filterTransforms.scaleZ),
-  rotate: animationHo(filterTransforms.rotate),
-  rotateX: animationHo(filterTransforms.rotateX),
-  rotateY: animationHo(filterTransforms.rotateY),
-  rotateZ: animationHo(filterTransforms.rotateZ),
-  skewX: animationHo(filterTransforms.skewX),
-  skewY: animationHo(filterTransforms.skewY),
-  opacity: animationHo(nativeAndMore.opacity),
-  bg: animationHo(backgrounds.csss.bg),
-  bgColor: animationHo(backgrounds.csss.bgColor),
-  color: animationHo(nativeAndMore.color),
-  border: animationHo(border.border),
-  Border: animationHo(border.Border),
-}
-
 const ObjectFit = {       //convert to objectFit("fill|contain|cover|scale-down|none") etc.
   objectFit: undefined,
   fitFill: { objectFit: "fill" },
@@ -58,8 +38,6 @@ const ObjectFit = {       //convert to objectFit("fill|contain|cover|scale-down|
 };
 
 const SHORTS = {
-  ...nativeAndMore,
-
   ...boxItem.props,
   ...box.props,
 
@@ -86,7 +64,6 @@ const SHORTS = {
   ...svg,
   ...paragraph.props,
   ...ObjectFit,
-  ...Animations,
   ...box.csss,
   ...boxItem.csss,
   ...block.csss,
@@ -103,8 +80,62 @@ const SHORTS = {
   ...textDecorations.csss,
   ...position.csss,
   ...fonts.csss,
+  ...backgrounds.csss,
   displayNone: { display: "none" },
 };
+
+for (let [kebab, types] of Object.entries(NativeCss.supported)) {
+  let camel = kebab.replace(/-([a-z])/g, g => g[1].toUpperCase());
+  function fixBorderNames(originalCamel) {
+    const m = originalCamel.match(/^(border)(.+)(Style|Width|Color|Radius)$/);
+    return m ? m[1] + m[3] + m[2] : originalCamel;
+  }
+  camel = fixBorderNames(camel);
+  if (camel in SHORTS)
+    continue;
+
+  const Interpreters2 = {
+    number: CsssPrimitives.NumberInterpreter,
+    zero: CsssPrimitives.Zero,
+    length: CsssPrimitives.Length,
+    percent: CsssPrimitives.Percent,
+    angle: CsssPrimitives.Angle,
+    time: CsssPrimitives.Time,
+    resolution: CsssPrimitives.Resolution,
+    color: Color,
+    url: CsssPrimitives.Url,
+    repeat: CsssPrimitives.Repeat,
+    minmax: CsssPrimitives.MinMax,
+    span: CsssPrimitives.Span,
+    image: interpretImage,
+    quote: CsssPrimitives.Quote,
+    lengthNumber: CsssPrimitives.LengthNumber,
+    lengthPercent: CsssPrimitives.LengthPercent,
+    lengthPercentNumber: CsssPrimitives.LengthPercentNumber,
+    anglePercent: CsssPrimitives.AnglePercent,
+    numberPercent: CsssPrimitives.NumberPercent,
+  };
+  const functions = [...types.map(t => Interpreters2[t]).filter(Boolean)].reverse();
+
+  function interpretNativeValue({ args, name }) {
+    const argsOut = args.map(a => {
+      let result;
+      for (const cb of functions)
+        if (result = cb(a))
+          return result;
+      if (a.name)
+        throw new SyntaxError(`Could not interpret to ${camel}(${a.name}(...)).`);
+      return a;
+    });
+    return { [camel]: argsOut.join(" ") };
+  }
+  Object.defineProperty(interpretNativeValue, 'name', { value: camel });
+  SHORTS[camel] = interpretNativeValue;
+}
+
+const Animatables = "translateY|translate|translateX|translateZ|scale|scaleX|scaleY|scaleZ|rotate|rotateX|rotateY|rotateZ|skewX|skewY|opacity|bg|bgColor|color|border|Border".split("|");
+for (let k of Animatables)
+  SHORTS[k] = animationHo(SHORTS[k]);
 
 const REVERSES = {
   ...boxItem.css,
