@@ -14,7 +14,7 @@ const ColorInterpolationMethods = CssValuesToCsssTable(
   "hwb|hwb longer hue|hwb increasing hue|hwb decreasing hue|" +
   "lch|lch longer hue|lch increasing hue|lch decreasing hue|" +
   "oklch|oklch longer hue|oklch increasing hue|oklch decreasing hue");
-const ColorDirection = a => a.kind === "WORD" ? ColorInterpolationMethods[a.text] : undefined;
+const ColorInterpolationMethod = a => a.kind === "WORD" ? ColorInterpolationMethods[a.text] : undefined;
 
 const ColorRaw = a =>
   a.kind === "COLOR" ? parseColor(a.text) :
@@ -292,7 +292,7 @@ const COLORS = {
 
   "#colorFrom": SF2("#colorFrom/5-6", [Color, ColorSpace, AlphaValue, AlphaValue, AlphaValue, AlphaValue], (_, ar) => `color(from ${ar[0]} ${ar[1]} ${fourIsSlash(ar.slice(2))})`),
 
-  "#mix": SF2("#mix/5", [ColorDirection, Color, PercentNumber, Color, PercentNumber], (_, ar) => `color-mix(in ${ar[0]}, ${ar[1]} ${ar[2]}, ${ar[3]} ${ar[4]})`),
+  "#mix": SF2("#mix/5", [ColorInterpolationMethod, Color, PercentNumber, Color, PercentNumber], (_, ar) => `color-mix(in ${ar[0]}, ${ar[1]} ${ar[2]}, ${ar[3]} ${ar[4]})`),
 };
 
 
@@ -300,4 +300,5 @@ export {
   ColorRaw,
   Color,
   ColorPrimitive,
+  ColorInterpolationMethod,
 };

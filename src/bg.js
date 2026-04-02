@@ -2,6 +2,7 @@ import { ValueTypes, FunctionTypes } from "./func.js";
 const { Angle, Color, LengthPercent, Url, CamelWords, WordToValue, AnglePercent } = ValueTypes;
 const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction } = FunctionTypes;
 //todo isImage, interpretImage,
+import { ColorInterpolationMethod } from "./funcColor.js";
 
 const DEFAULTS = {
   background: "none",
@@ -14,37 +15,6 @@ const DEFAULTS = {
   backgroundBlendMode: "normal",
   backgroundAttachment: "scroll",
 };
-
-const ColorSpace = WordToValue({
-  hslLonger: "in hsl longer hue",
-  hslShorter: "in hsl shorter hue",
-  hslIncreasing: "in hsl increasing hue",
-  hslDecreasing: "in hsl decreasing hue",
-  hwbLonger: "in hwb longer hue",
-  hwbShorter: "in hwb shorter hue",
-  hwbIncreasing: "in hwb increasing hue",
-  hwbDecreasing: "in hwb decreasing hue",
-  lchLonger: "in lch longer hue",
-  lchShorter: "in lch shorter hue",
-  lchIncreasing: "in lch increasing hue",
-  lchDecreasing: "in lch decreasing hue",
-  oklchLonger: "in oklch longer hue",
-  oklchShorter: "in oklch shorter hue",
-  oklchIncreasing: "in oklch increasing hue",
-  oklchDecreasing: "in oklch decreasing hue",
-  oklab: "in oklab",
-  lab: "in lab",
-  lch: "in lch",
-  srgb: "in srgb",
-  srgbLinear: "in srgb-linear",
-  displayP3: "in display-p3",
-  a98Rgb: "in a98-rgb",
-  prophotoRgb: "in prophoto-rgb",
-  rec2020: "in rec2020",
-  xyz: "in xyz",
-  xyzD50: "in xyz-d50",
-  xyzD65: "in xyz-d65",
-});
 
 const LinearDirections = WordToValue({
   left: "to left",
@@ -74,38 +44,40 @@ const At = SequentialFunction("at/1-2", [LengthPercentAtPosition], (n, res) => "
 const conic = FunctionBasedOnValueTypes({}, {
   At,
   Angle,
-  ColorSpace,
+  ColorInterpolationMethod,
 }, {
   colorStops: ColorStopAnglePercent,
-}, ({ Angle, At, ColorSpace, colorStops }) => {
+}, ({ Angle, At, ColorInterpolationMethod, colorStops }) => {
   if (!colorStops)
     throw new SyntaxError(`conic() must have at least one color stop`);
   Angle &&= "from " + Angle;
-  const first = [Angle, At, ColorSpace].filter(Boolean).join(" ");
+  ColorInterpolationMethod &&= "in " + ColorInterpolationMethod;
+  const first = [Angle, At, ColorInterpolationMethod].filter(Boolean).join(" ");
   return [first, ...colorStops].filter(Boolean).join(", ")
 })
 
 const linear = FunctionBasedOnValueTypes({}, {
   AngleOrLinearDirection,
-  ColorSpace,
+  ColorInterpolationMethod,
 }, {
   colorStops: ColorStopLengthPercent,
-}, ({ AngleOrLinearDirection, ColorSpace, colorStops }) => {
+}, ({ AngleOrLinearDirection, ColorInterpolationMethod, colorStops }) => {
   if (!colorStops)
     throw new SyntaxError(`linear() must have at least one color stop`);
-  const first = [AngleOrLinearDirection, ColorSpace].filter(Boolean).join(" ");
+  ColorInterpolationMethod &&= "in " + ColorInterpolationMethod;
+  const first = [AngleOrLinearDirection, ColorInterpolationMethod].filter(Boolean).join(" ");
   return [first, ...colorStops].filter(Boolean).join(", ")
 });
 
 
 const radial = FunctionBasedOnValueTypes({}, {
   At,
-  ColorSpace,
+  ColorInterpolationMethod,
   FarthestClosest,
 }, {
   colorStops: ColorStopLengthPercent,
   size: LengthPercent,
-}, ({ size, FarthestClosest, At, ColorSpace, colorStops }) => {
+}, ({ size, FarthestClosest, At, ColorInterpolationMethod, colorStops }) => {
   if (!colorStops)
     throw new SyntaxError(`radial() must have at least one color stop`);
   if (size?.length > 2)
@@ -113,20 +85,22 @@ const radial = FunctionBasedOnValueTypes({}, {
   size &&= size.join(" ");
   if (size && FarthestClosest)
     throw new SyntaxError(`radial() size specified twice: ${size} AND ${FarthestClosest}`);
-  const first = [size, FarthestClosest, At, ColorSpace].filter(Boolean).join(" ");
+  ColorInterpolationMethod &&= "in " + ColorInterpolationMethod;
+  const first = [size, FarthestClosest, At, ColorInterpolationMethod].filter(Boolean).join(" ");
   return [first, ...colorStops].filter(Boolean).join(", ")
 });
 
 const circle = FunctionBasedOnValueTypes({}, {
   At,
-  ColorSpace,
+  ColorInterpolationMethod,
   size: LengthPercentOrFarthestClosest,
 }, {
   colorStops: ColorStopLengthPercent,
-}, ({ size, At, ColorSpace, colorStops }) => {
+}, ({ size, At, ColorInterpolationMethod, colorStops }) => {
   if (!colorStops)
     throw new SyntaxError(`circle() must have at least one color stop`);
-  return ["circle", size, At, ColorSpace].filter(Boolean).join(" ") + ", " + colorStops.join(", ")
+  ColorInterpolationMethod &&= "in " + ColorInterpolationMethod;
+  return ["circle", size, At, ColorInterpolationMethod].filter(Boolean).join(" ") + ", " + colorStops.join(", ")
 });
 
 const bg = FunctionBasedOnValueTypes({
