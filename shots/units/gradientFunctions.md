@@ -6,7 +6,7 @@ $bg(size(10%,20%),10%,11%,#green,local,colorBurn)
 ```css
 .\$bg\(size\(10\%\,20\%\)\,10\%\,11\%\,\#green\,local\,colorBurn\) {
   background: none;
-  background-image: unset;
+  background-image: linear-gradient(green);
   background-position: 10% 11%;
   background-repeat: repeat;
   background-size: 10% 20%;
@@ -14,7 +14,6 @@ $bg(size(10%,20%),10%,11%,#green,local,colorBurn)
   background-clip: border-box;
   background-blend-mode: color-burn;
   background-attachment: local;
-  background-color: green;
 }
 ```
 
@@ -420,10 +419,10 @@ $bg(circle(at(center),#blue,#green))
 **description:**
 Ellipse gradient with background-position offset from left/top.
 **csss:**
-$bg(left,top,20px,10px,ellipse(10em,40%,#red,#blue))
+$bg(left,20px,top,10px,ellipse(10em,40%,#red,#blue))
 **css:**
 ```css
-.\$bg\(left\,top\,20px\,10px\,ellipse\(10em\,40\%\,\#red\,\#blue\)\) {
+.\$bg\(left\,20px\,top\,10px\,ellipse\(10em\,40\%\,\#red\,\#blue\)\) {
   background: none;
   background-image: radial-gradient(ellipse 10em 40%, red, blue);
   background-position: left 20px top 10px;
