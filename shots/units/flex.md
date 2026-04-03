@@ -1,4 +1,5 @@
-**description:** A vertical Flex settings panel with shared item basis.
+**description:**
+A vertical Flex settings panel with shared item basis.
 **csss:**
 $Flex(column,gap(0.5rem),padding(1rem))
 |$FlexItem(100px)
@@ -14,7 +15,7 @@ $Flex(column,gap(0.5rem),padding(1rem))
   gap: 0.5rem;
 }
 
-.\|\$FlexItem\(basis\(100px\)\)>* {
+.\|\$FlexItem\(100px\)>* {
   margin: unset;
   flex: 100px;
   align-self: unset;
@@ -22,7 +23,8 @@ $Flex(column,gap(0.5rem),padding(1rem))
 }
 ```
 
-**description:** A reversed Flex action bar with mixed growth.
+**description:**
+A reversed Flex action bar with mixed growth.
 **csss:**
 $Flex(rowReverse,gap(0.5rem),padding(1rem))
 |:nth-child(1)$flexItem(1)
@@ -48,7 +50,8 @@ $Flex(rowReverse,gap(0.5rem),padding(1rem))
 }
 ```
 
-**description:** A wrapping Flex card grid with fixed tile sizing.
+**description:**
+A wrapping Flex card grid with fixed tile sizing.
 **csss:**
 $Flex(wrap,gap(1rem,2rem))
 |$FlexItem(margin(5px,1rem))$Box(inline(150px),block(120px))$BoxItem(scrollMargin(10px))
@@ -65,9 +68,7 @@ $Flex(wrap,gap(1rem,2rem))
 }
 
 .\|\$FlexItem\(margin\(5px\,1rem\)\)\$Box\(inline\(150px\)\,block\(120px\)\)\$BoxItem\(scrollMargin\(10px\)\)>* {
-  flex-basis: unset;
-  flex-grow: unset;
-  flex-shrink: unset;
+  flex: unset;
   align-self: unset;
   order: unset;
   margin-block: 5px;
@@ -87,13 +88,13 @@ $Flex(wrap,gap(1rem,2rem))
 }
 ```
 
-**description:** A wrapping Flex toolbar where key actions are reordered and aligned differently once the row starts to fill up.
+**description:**
+A wrapping Flex toolbar where key actions are reordered and aligned differently once the row starts to fill up.
 **csss:**
 $Flex(start,gap(1rem),padding(1rem),wrap)
 |$FlexItem(order(3),start,margin(1rem))
 |.two$flexItem(order(1),center)
 |.three$flexItem(order(2),end)
-
 **css:**
 ```css
 .\$Flex\(start\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
@@ -108,9 +109,7 @@ $Flex(start,gap(1rem),padding(1rem),wrap)
 
 .\|\$FlexItem\(order\(3\)\,start\,margin\(1rem\)\)>* {
   margin: 1rem;
-  flex-basis: unset;
-  flex-grow: unset;
-  flex-shrink: unset;
+  flex: unset;
   align-self: start;
   order: 3;
 }
@@ -126,7 +125,8 @@ $Flex(start,gap(1rem),padding(1rem),wrap)
 }
 ```
 
-**description:** A centered Flex row with a stretched featured item.
+**description:**
+A centered Flex row with a stretched featured item.
 **csss:**
 $Flex(center,gap(1rem),padding(1rem),wrap)
 |.featured$FlexItem(stretch)
@@ -144,15 +144,14 @@ $Flex(center,gap(1rem),padding(1rem),wrap)
 
 .\|\.featured\$FlexItem\(stretch\)>:where(.featured) {
   margin: unset;
-  flex-basis: unset;
-  flex-grow: unset;
-  flex-shrink: unset;
+  flex: unset;
   align-self: stretch;
   order: unset;
 }
 ```
 
-**description:** A scrollable Flex control strip with mixed item sizing.
+**description:**
+A scrollable Flex control strip with mixed item sizing.
 **csss:**
 $Flex(gap(1rem),padding(1rem))$box(scroll)
 |:nth-child(1)$flexItem(1)
@@ -184,7 +183,8 @@ $Flex(gap(1rem),padding(1rem))$box(scroll)
 }
 ```
 
-**description:** A Flex comparison row with a flexible lead item, supporting items aligned independently, and a note moved later in the visual order.
+**description:**
+A Flex comparison row with a flexible lead item, supporting items aligned independently, and a note moved later in the visual order.
 **csss:**
 $Flex(row,gap(1rem),padding(1rem),wrap)
 |:nth-child(1)$flexItem(1,200px)
@@ -221,7 +221,8 @@ $Flex(row,gap(1rem),padding(1rem),wrap)
 }
 ```
 
-**description:** A Flex inheritance example with parent item defaults and targeted child overrides.
+**description:**
+A Flex inheritance example with parent item defaults and targeted child overrides.
 **csss:**
 $Flex(gap(1rem),padding(1rem),wrap)
 |$FlexItem(1,180px,margin(0.5rem))
