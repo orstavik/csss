@@ -292,7 +292,7 @@ $bg(cover,ellipse(#green,#purple))
 ```css
 .\$bg\(cover\,ellipse\(\#green\,\#purple\)\) {
   background: none;
-  background-image: radial-gradient(green, purple);
+  background-image: radial-gradient(ellipse, green, purple);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: cover;
@@ -311,7 +311,7 @@ $bg(ellipse(at(center),#orange,#cyan))
 ```css
 .\$bg\(ellipse\(at\(center\)\,\#orange\,\#cyan\)\) {
   background: none;
-  background-image: radial-gradient(at center, orange, cyan);
+  background-image: radial-gradient(ellipse at center, orange, cyan);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -330,7 +330,7 @@ $bg(ellipse(10em,40%,at(center),#red,#blue))
 ```css
 .\$bg\(ellipse\(10em\,40\%\,at\(center\)\,\#red\,\#blue\)\) {
   background: none;
-  background-image: radial-gradient(10em 40% at center, red, blue);
+  background-image: radial-gradient(ellipse 10em 40% at center, red, blue);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -349,7 +349,7 @@ $bg(ellipse(closestSide,(#red,20%),#blue))
 ```css
 .\$bg\(ellipse\(closestSide\,\(\#red\,20\%\)\,\#blue\)\) {
   background: none;
-  background-image: radial-gradient(closest-side, red 20%, blue);
+  background-image: radial-gradient(ellipse closest-side, red 20%, blue);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -368,7 +368,7 @@ $bg(ellipse(50%,30%,at(25%,75%),(#green,30%),(#red,80%)))
 ```css
 .\$bg\(ellipse\(50\%\,30\%\,at\(25\%\,75\%\)\,\(\#green\,30\%\)\,\(\#red\,80\%\)\)\) {
   background: none;
-  background-image: radial-gradient(50% 30% at 25% 75%, green 30%, red 80%);
+  background-image: radial-gradient(ellipse 50% 30% at 25% 75%, green 30%, red 80%);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -382,12 +382,12 @@ $bg(ellipse(50%,30%,at(25%,75%),(#green,30%),(#red,80%)))
 **description:**
 Generic radial gradient at top-center with 3 color stops.
 **csss:**
-$bg(radial(at(50%,0),#yellow,#blue,#white))
+$bg(circle(at(50%,0),#yellow,#blue,#white))
 **css:**
 ```css
-.\$bg\(radial\(at\(50\%\,0\)\,\#yellow\,\#blue\,\#white\)\) {
+.\$bg\(circle\(at\(50\%\,0\)\,\#yellow\,\#blue\,\#white\)\) {
   background: none;
-  background-image: radial-gradient(at 50% 0, yellow, blue, white);
+  background-image: radial-gradient(circle at 50% 0, yellow, blue, white);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -401,12 +401,12 @@ $bg(radial(at(50%,0),#yellow,#blue,#white))
 **description:**
 Generic radial gradient centered from blue to green.
 **csss:**
-$bg(radial(at(center),#blue,#green))
+$bg(circle(at(center),#blue,#green))
 **css:**
 ```css
-.\$bg\(radial\(at\(center\)\,\#blue\,\#green\)\) {
+.\$bg\(circle\(at\(center\)\,\#blue\,\#green\)\) {
   background: none;
-  background-image: radial-gradient(at center, blue, green);
+  background-image: radial-gradient(circle at center, blue, green);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -425,7 +425,7 @@ $bg(left,top,20px,10px,ellipse(10em,40%,#red,#blue))
 ```css
 .\$bg\(left\,top\,20px\,10px\,ellipse\(10em\,40\%\,\#red\,\#blue\)\) {
   background: none;
-  background-image: radial-gradient(10em 40%, red, blue);
+  background-image: radial-gradient(ellipse 10em 40%, red, blue);
   background-position: left 20px top 10px;
   background-repeat: repeat;
   background-size: auto;
