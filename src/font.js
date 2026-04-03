@@ -25,7 +25,6 @@ const PROPS = {
 /**
  * TextTransform is a semi inherited css property (inherits over inline elements, but not block elements).
  * The same way as shifting font family or style, caption is a family-ish trait. Would be normal to consider part of font umbrella.
- * Most of the text properties are either layout (text-align, line-height, word-spacing, hyphenation).
  * text-decoration is standalone. text-shadow is standalone (in same space as colors).
  */
 const SYNTHESIS_WORDS = (function () {
