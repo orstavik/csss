@@ -1,21 +1,21 @@
 //todo isImage, interpretImage,
-import { Color } from "./funcColor.js";
 import { CsssFunctions, CsssPrimitives, BadArgument } from "./func2.js";
 const { LengthPercent, Url, LengthPercentAuto } = CsssPrimitives;
 const { SF2, CssValuesToCsssTable, FunctionPropertyType, FunctionWithDefaultValues } = CsssFunctions;
+import { Color } from "./funcColor.js";
 import gradients from "./funcGradients.js";
 const { linear, ellipse, circle, conic, } = gradients.csss;
 
 const DEFAULTS = {
-  background: "unset",
+  background: "none",
   backgroundImage: "unset",
-  backgroundPosition: "unset",
-  backgroundRepeat: "unset",
-  backgroundSize: "unset",
-  backgroundOrigin: "unset",
-  backgroundClip: "unset",
-  backgroundBlendMode: "unset",
-  backgroundAttachment: "unset",
+  backgroundPosition: "0% 0%",
+  backgroundRepeat: "repeat",
+  backgroundSize: "auto",
+  backgroundOrigin: "padding-box",
+  backgroundClip: "border-box",
+  backgroundBlendMode: "normal",
+  backgroundAttachment: "scroll",
 };
 
 const Repeats = CssValuesToCsssTable("repeat|repeat-x|repeat-y|space|round|no-repeat");
@@ -30,19 +30,20 @@ const PositionsY = CssValuesToCsssTable("top|center|bottom");
 const size = SF2("size/1-2", [LengthPercentAuto], (name, ar) => ar.join(" "));
 
 const bg = ({ name, args }) => {
-  if (name !== "bg") return;
+  if (name.toLowerCase() !== "bg") return;
 
-  let backgroundColor, backgroundImage, x, xl, y, yl, backgroundRepeat, backgroundSize, backgroundOrigin, backgroundClip, backgroundAttachment, backgroundBlendMode;
+  const res = {};
 
-  if (args.length === 1) if (backgroundColor = Color(args[0])) return { backgroundColor };
+  if (args.length === 1) if (res.backgroundColor = Color(args[0])) return res;
 
-  for (let i = 0; i < args.length; i++) {
+  let colors = [], x, xl, y, yl, backgroundRepeat, backgroundSize, backgroundOrigin, backgroundClip, backgroundAttachment, backgroundBlendMode;
+  for (let i = 0, v; i < args.length; i++) {
     const arg = args[i];
-    if (!backgroundImage) if (backgroundImage = Url(arg)) continue;
-    if (!backgroundImage && args.length) if (backgroundImage = linear(arg) ?? ellipse(arg) ?? circle(arg) ?? conic(arg)) continue;
-    if (!backgroundImage) if (backgroundImage = Color(arg)) if (backgroundImage = `linear-gradient(${backgroundImage})`) continue;
+    if (!res.backgroundImage) if (res.backgroundImage = Url(arg)) continue;
+    if (!res.backgroundImage && args.length) if (res.backgroundImage = linear(arg) ?? ellipse(arg) ?? circle(arg) ?? conic(arg)) continue;
+    if (!res.backgroundImage) if (v = Color(arg)) if (colors.push(v)) continue;
     if (!xl && !y) if (xl = LengthPercent(arg)) continue;
-    if (!yl && !y) if (yl = LengthPercent(arg)) continue;
+    if (!yl) if (yl = LengthPercent(arg)) continue;
     if (!backgroundSize) if (backgroundSize = size(arg)) continue;
 
     if (arg.kind === "WORD") {
@@ -57,96 +58,17 @@ const bg = ({ name, args }) => {
     }
     throw BadArgument(name, args, i);
   }
-  const backgroundPosition = (x || xl || y || yl) ? [x, xl, y, yl].filter(Boolean).join(" ") : undefined;
-
-  return {
-    backgroundImage,
-    backgroundPosition,
-    backgroundRepeat,
-    backgroundSize,
-    backgroundOrigin,
-    backgroundClip,
-    backgroundAttachment,
-    backgroundBlendMode,
-  };
+  if (colors.length && !res.backgroundImage)
+    res.backgroundImage = `linear-gradient(${colors.join(", ")})`;
+  if (x || xl || y || yl) res.backgroundPosition = [x, xl, y, yl].filter(Boolean).join(" ");
+  if (backgroundRepeat) res.backgroundRepeat = backgroundRepeat;
+  if (backgroundSize) res.backgroundSize = backgroundSize;
+  if (backgroundOrigin) res.backgroundOrigin = backgroundOrigin;
+  if (backgroundClip) res.backgroundClip = backgroundClip;
+  if (backgroundAttachment) res.backgroundAttachment = backgroundAttachment;
+  if (backgroundBlendMode) res.backgroundBlendMode = backgroundBlendMode;
+  return res;
 }
-// FunctionBasedOnValueTypes({
-// }, {
-// }, {
-//   Color, Url, positions: BgPositions, positionValues: LengthPercent
-// },
-//   res => {
-//     if (res.positionValues?.length > 2)
-//       throw new SyntaxError(`background-position has max 2 values: ${res.positionValues}`);
-//     if (res.positions?.length > 2)
-//       throw new SyntaxError(`background-position has max 2 directions: ${res.positions}`);
-//     if (res.positions || res.positionValues) {
-//       const [a, c] = res.positions ?? [];
-//       const [b, d] = res.positionValues ?? [];
-//       res.backgroundPosition = [a, b, c, d].filter(Boolean).join(" ");
-//       delete res.positions;
-//       delete res.positionValues;
-//     }
-//     if (res.linear) {
-//       res.backgroundImage = res.linear;//`linear-gradient(${res.linear})`;
-//       delete res.linear;
-//     }
-//     if (res.ellipse) {
-//       res.backgroundImage = res.ellipse;
-//       delete res.ellipse;
-//     }
-//     if (res.radial) {
-//       res.backgroundImage = res.radial;
-//       delete res.radial;
-//     }
-//     if (res.circle) {
-//       res.backgroundImage = res.circle;
-//       delete res.circle;
-//     }
-//     if (res.conic) {
-//       res.backgroundImage = res.conic;
-//       delete res.conic;
-//     }
-//     if (res.repeatingLinear) {
-//       res.backgroundImage = res.repeatingLinear;
-//       delete res.repeatingLinear;
-//     }
-//     if (res.repeatingEllipse) {
-//       res.backgroundImage = res.repeatingEllipse;
-//       delete res.repeatingEllipse;
-//     }
-//     if (res.repeatingRadial) {
-//       res.backgroundImage = res.repeatingRadial;
-//       delete res.repeatingRadial;
-//     }
-//     if (res.repeatingCircle) {
-//       res.backgroundImage = res.repeatingCircle;
-//       delete res.repeatingCircle;
-//     }
-//     if (res.repeatingConic) {
-//       res.backgroundImage = res.repeatingConic;
-//       delete res.repeatingConic;
-//     }
-//     if (res.size) {
-//       res.backgroundSize = res.size;
-//       delete res.size;
-//     }
-//     if (res.Color) {
-//       if (res.Color.length == 1)
-//         res.backgroundColor = res.Color[0];
-//       else
-//         res.backgroundImage = `linear-gradient(${res.Color.join(", ")})`;
-//       delete res.Color;
-//     }
-//     //todo check that we only get one url //todo this should be isImage
-//     if (res.Url) {
-//       res.backgroundImage = res.Url[0];
-//       delete res.Url;
-//     }
-//     //todo check that we only define backgroundImage once, and all the other properties just once
-//     return res;
-//   }
-// );
 
 export default {
   props: {
@@ -162,11 +84,8 @@ export default {
     backgroundColor: undefined,
   },
   csss: {
-    //todo I think that these should be $Bg() and $BgColor()
-    //todo the reason being that they set the full background always.
-    //todo we could have a $bg() that sets only a few properties. We should probably have that.
-    bgColor: FunctionPropertyType("bgColor", "backgroundColor", Color), //to make it animatable..
-    //todo this hack should now be manageable from the animation point of view..
-    bg: FunctionWithDefaultValues(DEFAULTS, bg),
+    bgColor: FunctionPropertyType("bgColor", "backgroundColor", Color), //animatable property..
+    bg,
+    Bg: FunctionWithDefaultValues(DEFAULTS, bg),
   }, css: {}
 };

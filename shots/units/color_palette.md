@@ -269,15 +269,6 @@ $bg(#oklch(70%,0.15,180+30))
 **css:**
 ```css
 .\$bg\(\#oklch\(70\%\,0\.15\,180\+30\)\) {
-  background: none;
-  background-image: unset;
-  background-position: 0% 0%;
-  background-repeat: repeat;
-  background-size: auto;
-  background-origin: padding-box;
-  background-clip: border-box;
-  background-blend-mode: normal;
-  background-attachment: scroll;
   background-color: oklch(70% 0.15 210);
 }
 ```
@@ -289,15 +280,6 @@ $bg(#lab(50%*1.5,10,-20))
 **css:**
 ```css
 .\$bg\(\#lab\(50\%\*1\.5\,10\,-20\)\) {
-  background: none;
-  background-image: unset;
-  background-position: 0% 0%;
-  background-repeat: repeat;
-  background-size: auto;
-  background-origin: padding-box;
-  background-clip: border-box;
-  background-blend-mode: normal;
-  background-attachment: scroll;
   background-color: lab(75% 10 -20);
 }
 ```
@@ -413,15 +395,6 @@ $bg(#primary)
 **css:**
 ```css
 .\$bg\(\#primary\) {
-  background: none;
-  background-image: unset;
-  background-position: 0% 0%;
-  background-repeat: repeat;
-  background-size: auto;
-  background-origin: padding-box;
-  background-clip: border-box;
-  background-blend-mode: normal;
-  background-attachment: scroll;
   background-color: var(--color-primary);
 }
 ```
@@ -433,15 +406,6 @@ $bg(#primary#50)
 **css:**
 ```css
 .\$bg\(\#primary\#50\) {
-  background: none;
-  background-image: unset;
-  background-position: 0% 0%;
-  background-repeat: repeat;
-  background-size: auto;
-  background-origin: padding-box;
-  background-clip: border-box;
-  background-blend-mode: normal;
-  background-attachment: scroll;
   background-color: color-mix(in oklab, var(--color-primary), var(--color-primary1) 50%);
 }
 ```
@@ -453,15 +417,6 @@ $bg(#primary#20#a50)
 **css:**
 ```css
 .\$bg\(\#primary\#20\#a50\) {
-  background: none;
-  background-image: unset;
-  background-position: 0% 0%;
-  background-repeat: repeat;
-  background-size: auto;
-  background-origin: padding-box;
-  background-clip: border-box;
-  background-blend-mode: normal;
-  background-attachment: scroll;
   background-color: color-mix(in oklab, color-mix(in oklab, var(--color-primary), var(--color-primary1) 20%), transparent 50%);
 }
 ```
