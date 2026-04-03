@@ -1,7 +1,7 @@
 **description:** A vertical Flex settings panel with shared item basis.
 **csss:**
 $Flex(column,gap(0.5rem),padding(1rem))
-|$FlexItem(basis(100px))
+|$FlexItem(100px)
 **css:**
 ```css
 .\$Flex\(column\,gap\(0\.5rem\)\,padding\(1rem\)\) {
@@ -16,9 +16,7 @@ $Flex(column,gap(0.5rem),padding(1rem))
 
 .\|\$FlexItem\(basis\(100px\)\)>* {
   margin: unset;
-  flex-basis: 100px;
-  flex-grow: unset;
-  flex-shrink: unset;
+  flex: 100px;
   align-self: unset;
   order: unset;
 }
@@ -27,8 +25,8 @@ $Flex(column,gap(0.5rem),padding(1rem))
 **description:** A reversed Flex action bar with mixed growth.
 **csss:**
 $Flex(rowReverse,gap(0.5rem),padding(1rem))
-|:nth-child(1)$flexItem(grow(1))
-|:nth-child(2)$flexItem(grow(2))
+|:nth-child(1)$flexItem(1)
+|:nth-child(2)$flexItem(2)
 **css:**
 ```css
 .\$Flex\(rowReverse\,gap\(0\.5rem\)\,padding\(1rem\)\) {
@@ -41,12 +39,12 @@ $Flex(rowReverse,gap(0.5rem),padding(1rem))
   gap: 0.5rem;
 }
 
-.\|\:nth-child\(1\)\$flexItem\(grow\(1\)\)>:where(:nth-child(1)) {
-  flex-grow: 1;
+.\|\:nth-child\(1\)\$flexItem\(1\)>:where(:nth-child(1)) {
+  flex: 1;
 }
 
-.\|\:nth-child\(2\)\$flexItem\(grow\(2\)\)>:where(:nth-child(2)) {
-  flex-grow: 2;
+.\|\:nth-child\(2\)\$flexItem\(2\)>:where(:nth-child(2)) {
+  flex: 2;
 }
 ```
 
@@ -157,9 +155,9 @@ $Flex(center,gap(1rem),padding(1rem),wrap)
 **description:** A scrollable Flex control strip with mixed item sizing.
 **csss:**
 $Flex(gap(1rem),padding(1rem))$box(scroll)
-|:nth-child(1)$flexItem(grow(1))
+|:nth-child(1)$flexItem(1)
 |:nth-child(2)$flexItem(center)
-|:nth-child(3)$flexItem(shrink(0.5))
+|:nth-child(3)$flexItem(1,0.5)
 **css:**
 ```css
 .\$Flex\(gap\(1rem\)\,padding\(1rem\)\)\$box\(scroll\) {
@@ -173,23 +171,23 @@ $Flex(gap(1rem),padding(1rem))$box(scroll)
   overflow: scroll;
 }
 
-.\|\:nth-child\(1\)\$flexItem\(grow\(1\)\)>:where(:nth-child(1)) {
-  flex-grow: 1;
+.\|\:nth-child\(1\)\$flexItem\(1\)>:where(:nth-child(1)) {
+  flex: 1;
 }
 
 .\|\:nth-child\(2\)\$flexItem\(center\)>:where(:nth-child(2)) {
   align-self: center;
 }
 
-.\|\:nth-child\(3\)\$flexItem\(shrink\(0\.5\)\)>:where(:nth-child(3)) {
-  flex-shrink: 0.5;
+.\|\:nth-child\(3\)\$flexItem\(1\,0\.5\)>:where(:nth-child(3)) {
+  flex: 1 0.5;
 }
 ```
 
 **description:** A Flex comparison row with a flexible lead item, supporting items aligned independently, and a note moved later in the visual order.
 **csss:**
 $Flex(row,gap(1rem),padding(1rem),wrap)
-|:nth-child(1)$flexItem(basis(200px),grow(1))
+|:nth-child(1)$flexItem(1,200px)
 |:nth-child(2)$flexItem(center)
 |:nth-child(3)$flexItem(end)
 |.note$flexItem(order(4),margin(1rem))
@@ -205,9 +203,8 @@ $Flex(row,gap(1rem),padding(1rem),wrap)
   gap: 1rem;
 }
 
-.\|\:nth-child\(1\)\$flexItem\(basis\(200px\)\,grow\(1\)\)>:where(:nth-child(1)) {
-  flex-basis: 200px;
-  flex-grow: 1;
+.\|\:nth-child\(1\)\$flexItem\(1\,200px\)>:where(:nth-child(1)) {
+  flex: 1 200px;
 }
 
 .\|\:nth-child\(2\)\$flexItem\(center\)>:where(:nth-child(2)) {
@@ -227,8 +224,8 @@ $Flex(row,gap(1rem),padding(1rem),wrap)
 **description:** A Flex inheritance example with parent item defaults and targeted child overrides.
 **csss:**
 $Flex(gap(1rem),padding(1rem),wrap)
-|$FlexItem(basis(180px),grow(1),margin(0.5rem))
-|.wide$flexItem(basis(280px),grow(2))
+|$FlexItem(1,180px,margin(0.5rem))
+|.wide$flexItem(2,280px)
 |.pin$flexItem(order(5),end)
 **css:**
 ```css
@@ -242,18 +239,15 @@ $Flex(gap(1rem),padding(1rem),wrap)
   gap: 1rem;
 }
 
-.\|\$FlexItem\(basis\(180px\)\,grow\(1\)\,margin\(0\.5rem\)\)>* {
+.\|\$FlexItem\(1\,180px\,margin\(0\.5rem\)\)>* {
   margin: 0.5rem;
-  flex-basis: 180px;
-  flex-grow: 1;
-  flex-shrink: unset;
+  flex: 1 180px;
   align-self: unset;
   order: unset;
 }
 
-.\|\.wide\$flexItem\(basis\(280px\)\,grow\(2\)\)>:where(.wide) {
-  flex-basis: 280px;
-  flex-grow: 2;
+.\|\.wide\$flexItem\(2\,280px\)>:where(.wide) {
+  flex: 2 280px;
 }
 
 .\|\.pin\$flexItem\(order\(5\)\,end\)>:where(.pin) {
