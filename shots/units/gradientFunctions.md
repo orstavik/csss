@@ -140,7 +140,7 @@ $bg(circle(#red,#blue))
 ```css
 .\$bg\(circle\(\#red\,\#blue\)\) {
   background: none;
-  background-image: radial-gradient(circle, red, blue);
+  background-image: radial-gradient(red, blue);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -159,7 +159,7 @@ $bg(circle(#yellow,#red,#blue))
 ```css
 .\$bg\(circle\(\#yellow\,\#red\,\#blue\)\) {
   background: none;
-  background-image: radial-gradient(circle, yellow, red, blue);
+  background-image: radial-gradient(yellow, red, blue);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -178,7 +178,7 @@ $bg(circle(#transparent,#000000))
 ```css
 .\$bg\(circle\(\#transparent\,\#000000\)\) {
   background: none;
-  background-image: radial-gradient(circle, transparent, #000000);
+  background-image: radial-gradient(transparent, #000000);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -197,7 +197,7 @@ $bg(circle(closestCorner,at(left,top),#red,#blue))
 ```css
 .\$bg\(circle\(closestCorner\,at\(left\,top\)\,\#red\,\#blue\)\) {
   background: none;
-  background-image: radial-gradient(circle closest-corner at left top, red, blue);
+  background-image: radial-gradient(closest-corner, red, blue);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -216,7 +216,7 @@ $bg(circle(10px,at(left,top),(#blue,45%),(#pink,90%)))
 ```css
 .\$bg\(circle\(10px\,at\(left\,top\)\,\(\#blue\,45\%\)\,\(\#pink\,90\%\)\)\) {
   background: none;
-  background-image: radial-gradient(circle 10px at left top, blue 45%, pink 90%);
+  background-image: radial-gradient(10px, blue 45%, pink 90%);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -235,7 +235,7 @@ $bg(circle(at(20em,30%),#yellow,#green))
 ```css
 .\$bg\(circle\(at\(20em\,30\%\)\,\#yellow\,\#green\)\) {
   background: none;
-  background-image: radial-gradient(circle at 20em 30%, yellow, green);
+  background-image: radial-gradient(at 20em 30%, yellow, green);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -254,7 +254,7 @@ $bg(circle(at(50%,50%),#ff0000,#transparent))
 ```css
 .\$bg\(circle\(at\(50\%\,50\%\)\,\#ff0000\,\#transparent\)\) {
   background: none;
-  background-image: radial-gradient(circle at 50% 50%, #ff0000, transparent);
+  background-image: radial-gradient(at 50% 50%, #ff0000, transparent);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -273,7 +273,7 @@ $bg(circle(at(20%,30%),#rgba(255,255,255,0.1),#transparent))
 ```css
 .\$bg\(circle\(at\(20\%\,30\%\)\,\#rgba\(255\,255\,255\,0\.1\)\,\#transparent\)\) {
   background: none;
-  background-image: radial-gradient(circle at 20% 30%, rgba(255 255 255 / 0.1), transparent);
+  background-image: radial-gradient(at 20% 30%, rgba(255 255 255 / 0.1), transparent);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -387,7 +387,7 @@ $bg(circle(at(50%,0),#yellow,#blue,#white))
 ```css
 .\$bg\(circle\(at\(50\%\,0\)\,\#yellow\,\#blue\,\#white\)\) {
   background: none;
-  background-image: radial-gradient(circle at 50% 0, yellow, blue, white);
+  background-image: radial-gradient(at 50% 0, yellow, blue, white);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -406,7 +406,7 @@ $bg(circle(at(center),#blue,#green))
 ```css
 .\$bg\(circle\(at\(center\)\,\#blue\,\#green\)\) {
   background: none;
-  background-image: radial-gradient(circle at center, blue, green);
+  background-image: radial-gradient(at center, blue, green);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -520,7 +520,7 @@ $bg(conic(45deg,at(left,top),#red,#blue))
 ```css
 .\$bg\(conic\(45deg\,at\(left\,top\)\,\#red\,\#blue\)\) {
   background: none;
-  background-image: conic-gradient(from 45deg at left top, red, blue);
+  background-image: conic-gradient(from 45deg, red, blue);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
@@ -615,7 +615,7 @@ $bg(repeatingCircle((#green,5%),(#yellow,15%)))
 ```css
 .\$bg\(repeatingCircle\(\(\#green\,5\%\)\,\(\#yellow\,15\%\)\)\) {
   background: none;
-  background-image: repeating-radial-gradient(circle, green 5%, yellow 15%);
+  background-image: repeating-radial-gradient(green 5%, yellow 15%);
   background-position: 0% 0%;
   background-repeat: repeat;
   background-size: auto;
