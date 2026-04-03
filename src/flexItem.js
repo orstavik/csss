@@ -1,17 +1,15 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func2.js";
-const { SingleTable, TypeBasedFunction, LogicalFour, FunctionPropertyType, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
-const { LengthPercentAuto, NumberInterpreter } = CsssPrimitives;
+import { CsssPrimitives, CsssFunctions, CssFunctions, BadArgument } from "./func2.js";
+const { SF2, TypeBasedFunction, LogicalFour, FunctionPropertyType, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
+const { LengthPercentAuto, NumberInterpreter, SingleTableRaw, } = CsssPrimitives;
 const { LogicalFourReverse, SingleTableReverse, SingleArgumentFunctionReverse, Optional } = CssFunctions;
 
-const alignSelf = CssValuesToCsssTable(
+const AlignSelf = CssValuesToCsssTable(
   "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly|baseline|first baseline|last baseline"
 );
 
 const DefaultFlexItem = {
   margin: "unset",
-  flexBasis: "unset",
-  flexGrow: "unset",
-  flexShrink: "unset",
+  flex: "unset",
   alignSelf: "unset",
   order: "unset",
 };
@@ -30,14 +28,30 @@ const marginProps = {
   marginLeft: undefined,
 };
 
-const flexItem = TypeBasedFunction(
-  LogicalFour("margin", "margin", LengthPercentAuto),
-  SingleTable("alignSelf", alignSelf),
-  FunctionPropertyType("basis", "flexBasis", LengthPercentAuto),
-  FunctionPropertyType("grow", "flexGrow", NumberInterpreter),
-  FunctionPropertyType("shrink", "flexShrink", NumberInterpreter),
-  FunctionPropertyType("order", "order", NumberInterpreter)
-);
+const alignSelf = SingleTableRaw(AlignSelf);
+const orderFn = SF2("order", [NumberInterpreter]);
+
+const flexItem = ({ name, args }) => {
+  if (name.toLowerCase() !== "flexitem") return;
+  let flexGrow, flexShrink, flexBasis, order, align, margin;
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (flexGrow == null) if (flexGrow = NumberInterpreter(arg)) continue;
+    if (flexShrink == null) if (flexShrink = NumberInterpreter(arg)) continue;
+    if (flexBasis == null) if (flexBasis = LengthPercentAuto(arg)) continue;
+    if (align == null && arg.kind === "WORD") if (align = alignSelf(arg)) continue;
+    if (margin == null) if (margin = LogicalFour("margin", "margin", LengthPercentAuto)(arg)) continue;
+    if (order == null) if ((order = orderFn(arg)?.[0]) != null) continue;
+    throw BadArgument(name, args, i);
+  }
+  const flex = [flexGrow, flexShrink, flexBasis].filter(Boolean);
+  const res = {};
+  if (flex.length) res.flex = flex.join(" ");
+  if (order) res.order = order;
+  if (align) res.alignSelf = align;
+  if (margin) Object.assign(res, margin);
+  return res;
+};
 
 const FlexItem = FunctionWithDefaultValues(DefaultFlexItem, flexItem);
 
@@ -47,6 +61,7 @@ export default {
     FlexItem,
   },
   props: {
+    flex: undefined,
     ...marginProps,
     alignSelf: undefined,
     flexBasis: undefined,
@@ -57,7 +72,8 @@ export default {
   css: {
     flexItem: Optional("flexItem",
       LogicalFourReverse("margin", "margin", v => v, "_"),
-      SingleTableReverse("alignSelf", alignSelf),
+      SingleTableReverse("alignSelf", AlignSelf),
+      //todo fix the reverse functions here.
       SingleArgumentFunctionReverse("basis", "flexBasis", v => v, "_"),
       SingleArgumentFunctionReverse("grow", "flexGrow", v => v, "_"),
       SingleArgumentFunctionReverse("shrink", "flexShrink", v => v, "_"),

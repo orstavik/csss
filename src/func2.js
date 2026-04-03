@@ -51,6 +51,7 @@ const CsssFunctions = {
     }
     return Table;
   },
+  FunctionType: (CsssName, INTERPRETER) => ({ args, name }) => name === CsssName ? INTERPRETER(args) : undefined,
   PropertyType: (CssProp, Type) => a => (a = Type(a)) && { [CssProp]: a },
   SingleTable: (CssProp, Table) => ({ text }) => text in Table ? { [CssProp]: Table[text] } : undefined,
   LogicalFour: (CsssName, CssName, INTERPRETER) => ({ args, name }) => {
