@@ -1,6 +1,6 @@
-import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest } = FunctionTypes;
-const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, NameUnset, AbsoluteUrl } = ValueTypes;
+import { CsssPrimitives, CsssFunctions } from "./func2.js";
+const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, NameUnset, AbsoluteUrl } = CsssPrimitives;
+const { AccumulatingTypeBasedFunction, FunctionWithDefaultValues, ParseFirstThenRest, FunctionPropertyType, SF2, SingleTableRaw } = CsssFunctions;
 
 const PROPS = {
   fontFamily: undefined,
@@ -106,11 +106,15 @@ const FONT_WORDS = {
   xxl: { fontSize: "xx-large" },
   xxxl: { fontSize: "xxx-large" },
 
-  variant: SequentialFunction("variant/1-5", [Word], (n, v) => ({ fontVariant: v.join(" ") })), //todo: more specific parsing?
-  width: SingleArgumentFunction(Percent, (n, v) => ({ fontWidth: v })),
-  spacing: SingleArgumentFunction(Length, (n, v) => ({ letterSpacing: v })), //"_" => "normal". This should be LengthNormal? where we do "_" as "normal"?
-  adjust: SingleArgumentFunction(Basic, (n, v) => ({ fontSizeAdjust: v })),
 };
+
+const FONT_FUNCTIONS = [
+  SF2("variant/1-5", [Word], (n, v) => ({ fontVariant: v.join(" ") })), //todo: more specific parsing?
+  FunctionPropertyType("width", "fontWidth", Percent),
+  FunctionPropertyType("spacing", "letterSpacing", Length), //"_" => "normal". This should be LengthNormal? where we do "_" as "normal"?
+  FunctionPropertyType("adjust", "fontSizeAdjust", Basic),
+  SingleTableRaw(FONT_WORDS)
+];
 
 
 // @font-face {
@@ -156,61 +160,85 @@ function FontFaceUrl(t) {
   return res;
 }
 
-const font = FunctionBasedOnValueTypes(FONT_WORDS, {
-  fontSize: Length,
-  fontSizeAdjust: Fraction,
-  fontWeight: Integer,
-  Angle,
-}, {
-  fontFamily: t => FontFaceUrl(t) ?? Word(t) ?? Quote(t)
-}, obj => {
+const FontFamily = a => {
+  const t = FontFaceUrl(a) ?? Word(a) ?? Quote(a);
+  if (t) return { fontFamily: t };
+};
+const FontSize = a => { const t = Length(a); if (t) return { fontSize: t }; };
+const FontSizeAdjust = a => { const t = Fraction(a); if (t) return { fontSizeAdjust: t }; };
+const FontWeight = a => { const t = Integer(a); if (t) return { fontWeight: t }; };
+const FontAngle = a => { const t = Angle(a); if (t) return { fontStyle: "oblique " + t }; };
+
+const fontTypeBased = AccumulatingTypeBasedFunction(
+  ...FONT_FUNCTIONS,
+  FontSize,
+  FontSizeAdjust,
+  FontWeight,
+  FontAngle,
+  FontFamily
+);
+
+const font = ({ name, args }) => {
+  if (name !== "font") return;
+  const obj = fontTypeBased({ name, args });
   const res = {};
+
   for (let [k, v] of Object.entries(obj)) {
     if (k === "fontFamily") {
-      if (v.includes("emoji")) {
-        v.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
-        v = v.filter(f => f !== "emoji");
+      let fontFamilies = Array.isArray(v) ? v : [v];
+      if (fontFamilies.includes("emoji")) {
+        fontFamilies.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+        fontFamilies = fontFamilies.filter(f => f !== "emoji");
       }
-      res.fontFamily = v
+      res.fontFamily = fontFamilies
         .map(f => f.fontFamily ?? f)
-        .map(f => f.replaceAll("+", " "))
+        .map(f => typeof f === "string" ? f.replaceAll("+", " ") : f)
         .join(", ");
-      for (let face of v.filter(f => f instanceof Object))
+      for (let face of fontFamilies.filter(f => f instanceof Object))
         res["@font-face " + face.src.split("\n")[0]] = face;
-    } else if (k === "Angle") res.fontStyle = "oblique " + v;
-    else if (v instanceof Object) Object.assign(res, v);
+    } else if (k === "Angle") res.fontStyle = "oblique " + v; // From original font code
+    else if (v instanceof Object && !Array.isArray(v)) Object.assign(res, v);
     else res[k] = v;
   }
-  return res;
-});
 
-const Font = ParseFirstThenRest(NameUnset, font, (typeface, res = {}) => {
+  return res;
+};
+
+const innerFont = ({ args }) => font({ name: "font", args });
+
+const FontUnset = ParseFirstThenRest(NameUnset, innerFont, (typeface, res = {}) => {
   if (typeface !== "unset")
     for (let k in PROPS)
       if (!(k in res))
         res[k] = `var(--${typeface + k[0].toUpperCase() + k.slice(1)}, unset)`;
   return res;
-}
-);
+});
 
-const Typeface = ParseFirstThenRest(Name, font, (typeface, tmp = {}) => {
-  const res = {};
-  for (let k in PROPS)
-    if (tmp[k] !== undefined)
-      res[`--${typeface + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
-  for (let k in tmp)
-    if (k.startsWith("@"))
-      res[k] = tmp[k];
-  return res;
-}
-)
+const Font = a => {
+  if (a.name !== "Font") return;
+  return FunctionWithDefaultValues(DEFAULTS, FontUnset)(a);
+};
+
+const Typeface = a => {
+  if (a.name !== "Typeface") return;
+  return ParseFirstThenRest(Name, innerFont, (typeface, tmp = {}) => {
+    const res = {};
+    for (let k in PROPS)
+      if (tmp[k] !== undefined)
+        res[`--${typeface + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
+    for (let k in tmp)
+      if (k.startsWith("@"))
+        res[k] = tmp[k];
+    return res;
+  })(a);
+};
 
 const DEFAULTS = Object.fromEntries(Object.keys(PROPS).map(k => [k, "unset"]));
 export default {
   props: PROPS,
   csss: {
     font,
-    Font: FunctionWithDefaultValues(DEFAULTS, Font),
+    Font,
     Typeface,
   },
   css: {}
