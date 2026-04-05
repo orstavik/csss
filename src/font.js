@@ -1,6 +1,6 @@
-import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest } = FunctionTypes;
-const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, NameUnset, AbsoluteUrl } = ValueTypes;
+import { CsssPrimitives, CsssFunctions } from "./func2.js";
+const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, NameUnset, AbsoluteUrl } = CsssPrimitives;
+const { FunctionWithDefaultValues, ParseFirstThenRest, FunctionPropertyType, SF2, CssValuesToCsssTable } = CsssFunctions;
 
 const PROPS = {
   fontFamily: undefined,
@@ -48,69 +48,22 @@ const SYNTHESIS_WORDS = (function () {
   return res;
 })();
 
-const FONT_WORDS = {
-  ...SYNTHESIS_WORDS,
-  uppercase: { textTransform: "uppercase" },
-  lowercase: { textTransform: "lowercase" },
-  capitalize: { textTransform: "capitalize" },
-  fullWidth: { textTransform: "full-width" },
-  noTransform: { textTransform: "none" },
+const Transforms = CssValuesToCsssTable("uppercase|lowercase|capitalize|full-width");
+Transforms.noTransform = "none";
+const Weights = CssValuesToCsssTable("bold|bolder|lighter");
+Weights.noWeight = "normal";
+const Styles = CssValuesToCsssTable("italic");
+Styles.noStyle = "normal";
+const VariantCaps = CssValuesToCsssTable("small-caps|all-small-caps|petite-caps|all-petite-caps|unicase|titling-caps");
+VariantCaps.noVariant = "normal";
+const Widths = CssValuesToCsssTable("condensed|expanded|semi-condensed|semi-expanded|extra-condensed|extra-expanded|ultra-condensed|ultra-expanded");
+Widths.noStretch = "normal";
+const Kernings = CssValuesToCsssTable("kerning");
+Kernings.noKerning = "none";
+const Hyphens = { hyphens: "auto", shy: "manual", noHyphens: "none" };
+const Sizes = CssValuesToCsssTable("larger|smaller|xx-small|x-small|small|medium|large|x-large|xx-large|xxx-large");
 
-  bold: { fontWeight: "bold" },
-  b: { fontWeight: "bold" },
-  bolder: { fontWeight: "bolder" },
-  lighter: { fontWeight: "lighter" },
-  noWeight: { fontWeight: "normal" },
-
-  italic: { fontStyle: "italic" },
-  ital: { fontStyle: "italic" },
-  i: { fontStyle: "italic" },
-  noStyle: { fontStyle: "normal" },
-
-  smallCaps: { fontVariantCaps: "small-caps" },
-  allSmallCaps: { fontVariantCaps: "all-small-caps" },
-  petiteCaps: { fontVariantCaps: "petite-caps" },
-  allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
-  unicase: { fontVariantCaps: "unicase" },
-  titlingCaps: { fontVariantCaps: "titling-caps" },
-  noVariant: { fontVariantCaps: "normal" },
-
-  condensed: { fontWidth: "condensed" },
-  expanded: { fontWidth: "expanded" },
-  semiCondensed: { fontWidth: "semi-condensed" },
-  semiExpanded: { fontWidth: "semi-expanded" },
-  extraCondensed: { fontWidth: "extra-condensed" },
-  extraExpanded: { fontWidth: "extra-expanded" },
-  ultraCondensed: { fontWidth: "ultra-condensed" },
-  ultraExpanded: { fontWidth: "ultra-expanded" },
-  noStretch: { fontWidth: "normal" },
-
-  kerning: { fontKerning: "normal" },
-  noKerning: { fontKerning: "none" },
-
-  hyphens: { hyphens: "auto" },
-  shy: { hyphens: "manual" },
-  noHyphens: { hyphens: "none" },
-
-  normal: { fontStyle: "normal", fontWeight: "normal" },
-  smooth: { WebkitFontSmoothing: "auto", MozOsxFontSmoothing: "auto" }, //todo this is wrong? should be "antialiased" for WebkitFontSmoothing and "grayscale" for MozOsxFontSmoothing??
-
-  larger: { fontSize: "larger" },
-  smaller: { fontSize: "smaller" },
-  xxs: { fontSize: "xx-small" },
-  xs: { fontSize: "x-small" },
-  sm: { fontSize: "small" },
-  md: { fontSize: "medium" },
-  lg: { fontSize: "large" },
-  xl: { fontSize: "x-large" },
-  xxl: { fontSize: "xx-large" },
-  xxxl: { fontSize: "xxx-large" },
-
-  variant: SequentialFunction("variant/1-5", [Word], (n, v) => ({ fontVariant: v.join(" ") })), //todo: more specific parsing?
-  width: SingleArgumentFunction(Percent, (n, v) => ({ fontWidth: v })),
-  spacing: SingleArgumentFunction(Length, (n, v) => ({ letterSpacing: v })), //"_" => "normal". This should be LengthNormal? where we do "_" as "normal"?
-  adjust: SingleArgumentFunction(Basic, (n, v) => ({ fontSizeAdjust: v })),
-};
+const variant = SF2("variant/1-5", [Word], (n, v) => v.join(" ")); //todo: more specific parsing?
 
 
 // @font-face {
@@ -156,61 +109,114 @@ function FontFaceUrl(t) {
   return res;
 }
 
-const font = FunctionBasedOnValueTypes(FONT_WORDS, {
-  fontSize: Length,
-  fontSizeAdjust: Fraction,
-  fontWeight: Integer,
-  Angle,
-}, {
-  fontFamily: t => FontFaceUrl(t) ?? Word(t) ?? Quote(t)
-}, obj => {
-  const res = {};
-  for (let [k, v] of Object.entries(obj)) {
-    if (k === "fontFamily") {
-      if (v.includes("emoji")) {
-        v.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
-        v = v.filter(f => f !== "emoji");
-      }
-      res.fontFamily = v
-        .map(f => f.fontFamily ?? f)
-        .map(f => f.replaceAll("+", " "))
-        .join(", ");
-      for (let face of v.filter(f => f instanceof Object))
-        res["@font-face " + face.src.split("\n")[0]] = face;
-    } else if (k === "Angle") res.fontStyle = "oblique " + v;
-    else if (v instanceof Object) Object.assign(res, v);
-    else res[k] = v;
-  }
-  return res;
-});
+const FontFamily = a => {
+  const t = FontFaceUrl(a) ?? Word(a) ?? Quote(a);
+  if (t) return { fontFamily: t };
+};
+const FontSize = a => { const t = Length(a); if (t) return { fontSize: t }; };
+const FontSizeAdjust = a => { const t = Fraction(a); if (t) return { fontSizeAdjust: t }; };
+const FontWeight = a => { const t = Integer(a); if (t) return { fontWeight: t }; };
+const FontAngle = a => { const t = Angle(a); if (t) return { fontStyle: "oblique " + t }; };
 
-const Font = ParseFirstThenRest(NameUnset, font, (typeface, res = {}) => {
+import { BadArgument } from "./func2.js";
+
+const font = ({ name, args }) => {
+  if (name.toLowerCase() !== "font") return;
+  const res = {};
+  let fontFamilies = [];
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+
+    if (arg.kind === "WORD") {
+      const text = arg.text;
+      if (text in SYNTHESIS_WORDS) { Object.assign(res, SYNTHESIS_WORDS[text]); continue; }
+      if (text in Transforms) { res.textTransform = Transforms[text]; continue; }
+      if (text in Weights) { res.fontWeight = Weights[text]; continue; }
+      if (text in Styles) { res.fontStyle = Styles[text]; continue; }
+      if (text in VariantCaps) { res.fontVariantCaps = VariantCaps[text]; continue; }
+      if (text in Widths) { res.fontWidth = Widths[text]; continue; }
+      if (text in Kernings) { res.fontKerning = Kernings[text]; continue; }
+      if (text in Hyphens) { res.hyphens = Hyphens[text]; continue; }
+      if (text in Sizes) { res.fontSize = Sizes[text]; continue; }
+      if (text === "normal") { res.fontStyle = "normal"; res.fontWeight = "normal"; continue; }
+      if (text === "smooth") { res.WebkitFontSmoothing = "auto"; res.MozOsxFontSmoothing = "auto"; continue; }
+    }
+
+    if (arg.name === "variant") { res.fontVariant = variant(arg); continue; }
+    if (arg.name === "width") { const val = Percent(arg.args[0]); if (val) { res.fontWidth = val; continue; } }
+    if (arg.name === "spacing") { const val = Length(arg.args[0]); if (val) { res.letterSpacing = val; continue; } }
+    if (arg.name === "adjust") { const val = Basic(arg.args[0]); if (val) { res.fontSizeAdjust = val; continue; } }
+
+    const vLength = Length(arg);
+    if (vLength && !res.fontSize) { res.fontSize = vLength; continue; }
+
+    const vFraction = Fraction(arg);
+    if (vFraction && !res.fontSizeAdjust) { res.fontSizeAdjust = vFraction; continue; }
+
+    const vInteger = Integer(arg);
+    if (vInteger && !res.fontWeight) { res.fontWeight = vInteger; continue; }
+
+    const vAngle = Angle(arg);
+    if (vAngle && !res.fontStyle) { res.fontStyle = "oblique " + vAngle; continue; }
+
+    const vFontFamily = FontFamily(arg);
+    if (vFontFamily) { fontFamilies.push(vFontFamily.fontFamily); continue; }
+
+    throw BadArgument(name, args, i);
+  }
+
+  if (fontFamilies.length > 0) {
+    if (fontFamilies.includes("emoji")) {
+      fontFamilies.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+      fontFamilies = fontFamilies.filter(f => f !== "emoji");
+    }
+    res.fontFamily = fontFamilies
+      .map(f => f.fontFamily ?? f)
+      .map(f => typeof f === "string" ? f.replaceAll("+", " ") : f)
+      .join(", ");
+    for (let face of fontFamilies.filter(f => f instanceof Object))
+      res["@font-face " + face.src.split("\n")[0]] = face;
+  }
+
+  return res;
+};
+
+const innerFont = ({ args }) => font({ name: "font", args });
+
+const FontUnset = ParseFirstThenRest(NameUnset, innerFont, (typeface, res = {}) => {
   if (typeface !== "unset")
     for (let k in PROPS)
       if (!(k in res))
         res[k] = `var(--${typeface + k[0].toUpperCase() + k.slice(1)}, unset)`;
   return res;
-}
-);
+});
 
-const Typeface = ParseFirstThenRest(Name, font, (typeface, tmp = {}) => {
-  const res = {};
-  for (let k in PROPS)
-    if (tmp[k] !== undefined)
-      res[`--${typeface + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
-  for (let k in tmp)
-    if (k.startsWith("@"))
-      res[k] = tmp[k];
-  return res;
-}
-)
+const Font = a => {
+  if (a.name !== "Font") return;
+  return FunctionWithDefaultValues(DEFAULTS, FontUnset)(a);
+};
+
+const Typeface = a => {
+  if (a.name !== "Typeface") return;
+  return ParseFirstThenRest(Name, innerFont, (typeface, tmp = {}) => {
+    const res = {};
+    for (let k in PROPS)
+      if (tmp[k] !== undefined)
+        res[`--${typeface + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
+    for (let k in tmp)
+      if (k.startsWith("@"))
+        res[k] = tmp[k];
+    return res;
+  })(a);
+};
 
 const DEFAULTS = Object.fromEntries(Object.keys(PROPS).map(k => [k, "unset"]));
 export default {
   props: PROPS,
   csss: {
     font,
-    Font: FunctionWithDefaultValues(DEFAULTS, Font),
+    Font,
     Typeface,
   },
   css: {}
