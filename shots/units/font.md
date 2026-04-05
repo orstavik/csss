@@ -19,10 +19,10 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 ```
 
 **description:** Defines a "body" typeface using system fonts with full style overrides.
-**csss:** $Typeface(body,system-ui,sans-serif,400,0.5,bold,italic,condensed,12px,uppercase)
+**csss:** $Typeface(body,system-ui,sans-serif,0.5,bold,italic,condensed,12px,uppercase)
 **css:**
 ```css
-.\$Typeface\(body\,system-ui\,sans-serif\,400\,0\.5\,bold\,italic\,condensed\,12px\,uppercase\) {
+.\$Typeface\(body\,system-ui\,sans-serif\,0\.5\,bold\,italic\,condensed\,12px\,uppercase\) {
   --bodyFontFamily: system-ui, sans-serif;
   --bodyFontSize: 12px;
   --bodyFontStyle: italic;
@@ -34,12 +34,12 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 ```
 
 **description:** Sets font-family, weight, size-adjust, style, width and size directly.
-**csss:** $font(system-ui,sans-serif,400,0.5,bold,italic,condensed,12px)
+**csss:** $font(system-ui,sans-serif,400,0.5,italic,condensed,12px)
 **css:**
 ```css
-.\$font\(system-ui\,sans-serif\,400\,0\.5\,bold\,italic\,condensed\,12px\) {
+.\$font\(system-ui\,sans-serif\,400\,0\.5\,italic\,condensed\,12px\) {
   font-family: system-ui, sans-serif;
-  font-weight: bold;
+  font-weight: 400;
   font-size-adjust: 0.5;
   font-style: italic;
   font-width: condensed;
@@ -153,10 +153,10 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 ```
 
 **description:** Removes any text transformation.
-**csss:** $font(noTransform)
+**csss:** $font(transformNone)
 **css:**
 ```css
-.\$font\(noTransform\) {
+.\$font\(transformNone\) {
   text-transform: none;
 }
 ```
