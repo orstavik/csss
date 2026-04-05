@@ -109,20 +109,17 @@ function FontFaceUrl(t) {
   return res;
 }
 
-const FontFamily = a => {
-  const t = FontFaceUrl(a) ?? Word(a) ?? Quote(a);
-  if (t) return { fontFamily: t };
-};
-const FontSize = a => { const t = Length(a); if (t) return { fontSize: t }; };
-const FontSizeAdjust = a => { const t = Fraction(a); if (t) return { fontSizeAdjust: t }; };
-const FontWeight = a => { const t = Integer(a); if (t) return { fontWeight: t }; };
-const FontAngle = a => { const t = Angle(a); if (t) return { fontStyle: "oblique " + t }; };
+const FontFamily = a => FontFaceUrl(a) ?? Word(a) ?? Quote(a);
+// const FontSize = a => { const t = Length(a); if (t) return { fontSize: t }; };
+// const FontSizeAdjust = a => { const t = Fraction(a); if (t) return { fontSizeAdjust: t }; };
+// const FontWeight = a => { const t = Integer(a); if (t) return { fontWeight: t }; };
+// const FontAngle = a => { const t = Angle(a); if (t) return { fontStyle: "oblique " + t }; };
 
 import { BadArgument } from "./func2.js";
 
 const font = ({ name, args }) => {
   if (name.toLowerCase() !== "font") return;
-  const res = {};
+  let res = {};
   let fontFamilies = [];
 
   for (let i = 0; i < args.length; i++) {
@@ -161,7 +158,7 @@ const font = ({ name, args }) => {
     if (vAngle && !res.fontStyle) { res.fontStyle = "oblique " + vAngle; continue; }
 
     const vFontFamily = FontFamily(arg);
-    if (vFontFamily) { fontFamilies.push(vFontFamily.fontFamily); continue; }
+    if (vFontFamily) { fontFamilies.push(vFontFamily); continue; }
 
     throw BadArgument(name, args, i);
   }
@@ -171,10 +168,11 @@ const font = ({ name, args }) => {
       fontFamilies.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
       fontFamilies = fontFamilies.filter(f => f !== "emoji");
     }
-    res.fontFamily = fontFamilies
+    const fontFamily = fontFamilies
       .map(f => f.fontFamily ?? f)
       .map(f => typeof f === "string" ? f.replaceAll("+", " ") : f)
       .join(", ");
+    res = { fontFamily, ...res };
     for (let face of fontFamilies.filter(f => f instanceof Object))
       res["@font-face " + face.src.split("\n")[0]] = face;
   }

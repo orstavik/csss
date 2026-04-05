@@ -1,5 +1,5 @@
 **description:** Defines a "comic" typeface with web font URL, size, stretch, style and weight.
-**csss:** $Typeface(comic,"MS+Comic+Sans","https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2",xxs,semiExpanded,italic,bolder)
+**csss:** $Typeface(comic,"MS+Comic+Sans","https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2",xxSmall,semiExpanded,italic,bolder)
 **css:**
 ```css
 @font-face /*https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2*/ {
@@ -9,7 +9,7 @@ local("ComicNeue"),
 url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2");
 }
 
-.\$Typeface\(comic\,\"MS\+Comic\+Sans\"\,\"https\:\/\/cdn\.jsdelivr\.net\/npm\/\@openfonts\/comic-neue_latin\@latest\/files\/ComicNeue-Regular\.woff2\"\,xxs\,semiExpanded\,italic\,bolder\) {
+.\$Typeface\(comic\,\"MS\+Comic\+Sans\"\,\"https\:\/\/cdn\.jsdelivr\.net\/npm\/\@openfonts\/comic-neue_latin\@latest\/files\/ComicNeue-Regular\.woff2\"\,xxSmall\,semiExpanded\,italic\,bolder\) {
   --comicFontFamily: "MS Comic Sans", ComicNeue;
   --comicFontSize: xx-small;
   --comicFontStyle: italic;
@@ -19,10 +19,10 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 ```
 
 **description:** Defines a "body" typeface using system fonts with full style overrides.
-**csss:** $Typeface(body,system-ui,sans-serif,400,0.5,bold,i,condensed,12px,uppercase)
+**csss:** $Typeface(body,system-ui,sans-serif,400,0.5,bold,italic,condensed,12px,uppercase)
 **css:**
 ```css
-.\$Typeface\(body\,system-ui\,sans-serif\,400\,0\.5\,bold\,i\,condensed\,12px\,uppercase\) {
+.\$Typeface\(body\,system-ui\,sans-serif\,400\,0\.5\,bold\,italic\,condensed\,12px\,uppercase\) {
   --bodyFontFamily: system-ui, sans-serif;
   --bodyFontSize: 12px;
   --bodyFontStyle: italic;
@@ -34,10 +34,10 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 ```
 
 **description:** Sets font-family, weight, size-adjust, style, width and size directly.
-**csss:** $font(system-ui,sans-serif,400,0.5,bold,i,condensed,12px)
+**csss:** $font(system-ui,sans-serif,400,0.5,bold,italic,condensed,12px)
 **css:**
 ```css
-.\$font\(system-ui\,sans-serif\,400\,0\.5\,bold\,i\,condensed\,12px\) {
+.\$font\(system-ui\,sans-serif\,400\,0\.5\,bold\,italic\,condensed\,12px\) {
   font-family: system-ui, sans-serif;
   font-weight: bold;
   font-size-adjust: 0.5;

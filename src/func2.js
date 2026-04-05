@@ -27,14 +27,46 @@ function matchArgsWithInterpreters(NAME, args, INTERPRETERS) {
 }
 
 const Url = a => a.kind === "QUOTE" ? `url(${a.text})` : a.name === "url" ? `url(${a.args[0].text})` : undefined;
+const Unset = a => a.text === "_" ? "unset" : undefined;
+const Name = a => a.kind === "WORD" && a.text.match(/^[a-z][a-z0-9_-]+$/i)?.[0];
+const Basic = a => a.kind === "VAR" ? `var(${a.text})` : (a.kind !== "EXP" ? a.text : (a.name in Maths ? Maths[a.name](a.name, a.args) : undefined)); // Simplified Basic interpreter
+const Length = a => (a.type === "length" || (a.num === 0 && a.type === "number")) ? a.text : undefined;
+const Percent = a => a.type === "percent" ? a.text : undefined;
+const NumberInterpreter = a => (a.type === "number" && a.unit === "") ? a.num : undefined;
+const Fraction = a => { const n = NumberInterpreter(a); return (n !== undefined && !Number.isInteger(n)) ? n : undefined; };
+const Integer = a => { const n = NumberInterpreter(a); return (n !== undefined && Number.isInteger(n)) ? n : undefined; };
+const Angle = a => { if (a.num === 0 && a.type === "number") return "0deg"; return a.type === "angle" ? a.text : undefined; };
+const Quote = a => a.kind === "QUOTE" ? a.text : undefined;
+const Word = a => a.kind === "WORD" ? a.text : undefined;
+
+const AbsoluteUrl = a => {
+  if (a.kind === "QUOTE" && a.text.match(/^["'\`](https?|data):/i))
+    return new URL(a.text.slice(1, -1));
+  else if (a.name === "url" && a.args.length === 1 && (a = a.args[0].text))
+    if (a.match(/^["'\`](https?|data):/i))
+      try { return new URL(a.slice(1, -1)); } catch (e) { }
+};
+
 //these return strings.
 const CsssPrimitives = {
   ...Maths.csss,
-  Name: a => a.kind === "WORD" && a.text.match(/^[a-z][a-z0-9_-]+$/i)?.[0],
-  Quote: a => a.kind === "QUOTE" ? a.text : undefined,
-  Unset: a => a.text === "_" ? "unset" : undefined,
+  Name,
+  Quote,
+  Unset,
   UrlUnset: a => Url(a) ?? Unset(a),
   Url,
+  Length,
+  Percent,
+  NumberInterpreter,
+  Fraction,
+  Integer,
+  Angle,
+  Word,
+  Basic,
+  NameUnset: a => Name(a) ?? Unset(a),
+  AbsoluteUrl,
+  LengthPercentUnset: a => Length(a) ?? Percent(a) ?? Unset(a),
+  LengthPercent: a => Length(a) ?? Percent(a),
   SingleTableRaw: Table => ({ text }) => text in Table ? Table[text] : undefined,
 };
 //these returns objects.
