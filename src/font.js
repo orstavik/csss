@@ -1,4 +1,4 @@
-import { CsssPrimitives, CsssFunctions } from "./func2.js";
+import { CsssPrimitives, CsssFunctions, BadArgument } from "./func2.js";
 const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, NameUnset, AbsoluteUrl } = CsssPrimitives;
 const { FunctionWithDefaultValues, ParseFirstThenRest, FunctionPropertyType, SF2, CssValuesToCsssTable } = CsssFunctions;
 
@@ -115,8 +115,6 @@ const FontFamily = a => FontFaceUrl(a) ?? Word(a) ?? Quote(a);
 // const FontWeight = a => { const t = Integer(a); if (t) return { fontWeight: t }; };
 // const FontAngle = a => { const t = Angle(a); if (t) return { fontStyle: "oblique " + t }; };
 
-import { BadArgument } from "./func2.js";
-
 const font = ({ name, args }) => {
   if (name.toLowerCase() !== "font") return;
   let res = {};
@@ -127,17 +125,17 @@ const font = ({ name, args }) => {
 
     if (arg.kind === "WORD") {
       const text = arg.text;
-      if (text in SYNTHESIS_WORDS) { Object.assign(res, SYNTHESIS_WORDS[text]); continue; }
-      if (text in Transforms) { res.textTransform = Transforms[text]; continue; }
-      if (text in Weights) { res.fontWeight = Weights[text]; continue; }
-      if (text in Styles) { res.fontStyle = Styles[text]; continue; }
-      if (text in VariantCaps) { res.fontVariantCaps = VariantCaps[text]; continue; }
-      if (text in Widths) { res.fontWidth = Widths[text]; continue; }
-      if (text in Kernings) { res.fontKerning = Kernings[text]; continue; }
-      if (text in Hyphens) { res.hyphens = Hyphens[text]; continue; }
-      if (text in Sizes) { res.fontSize = Sizes[text]; continue; }
-      if (text === "normal") { res.fontStyle = "normal"; res.fontWeight = "normal"; continue; }
-      if (text === "smooth") { res.WebkitFontSmoothing = "auto"; res.MozOsxFontSmoothing = "auto"; continue; }
+      if (res.fontSynthesis == null) if (text in SYNTHESIS_WORDS) { Object.assign(res, SYNTHESIS_WORDS[text]); continue; }
+      if (res.textTransform == null) if (text in Transforms) { res.textTransform = Transforms[text]; continue; }
+      if (res.fontWeight == null) if (text in Weights) { res.fontWeight = Weights[text]; continue; }
+      if (res.fontStyle == null) if (text in Styles) { res.fontStyle = Styles[text]; continue; }
+      if (res.fontVariantCaps == null) if (text in VariantCaps) { res.fontVariantCaps = VariantCaps[text]; continue; }
+      if (res.fontWidth == null) if (text in Widths) { res.fontWidth = Widths[text]; continue; }
+      if (res.fontKerning == null) if (text in Kernings) { res.fontKerning = Kernings[text]; continue; }
+      if (res.hyphens == null) if (text in Hyphens) { res.hyphens = Hyphens[text]; continue; }
+      if (res.fontSize == null) if (text in Sizes) { res.fontSize = Sizes[text]; continue; }
+      if (res.fontStyle == null) if (text === "normal") { res.fontStyle = "normal"; res.fontWeight = "normal"; continue; }
+      if (res.WebkitFontSmoothing == null) if (text === "smooth") { res.WebkitFontSmoothing = "auto"; res.MozOsxFontSmoothing = "auto"; continue; }
     }
 
     if (arg.name === "variant") { res.fontVariant = variant(arg); continue; }
