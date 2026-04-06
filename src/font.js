@@ -1,12 +1,14 @@
 import { CsssPrimitives, CsssFunctions, BadArgument } from "./func2.js";
-const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, NumberInterpreter, AbsoluteUrl } = CsssPrimitives;
-const { ParseFirstThenRest, FunctionType, SF2, CssValuesToCsssTable } = CsssFunctions;
+const { Angle, Length, Name, Integer, Quote, Percent, Word, NumberInterpreter, AbsoluteUrl } = CsssPrimitives;
+const { FunctionType, SF2, CssValuesToCsssTable } = CsssFunctions;
 
 // http://dbushell.com/2024/11/05/webkit-font-smoothing/
 // this should be added by default, same as padding:0, margin: 0, box-sizing: border-box, etc.
 // :root { -webkit-font-smoothing: antialiased; }
 
-const PROPS = {
+// note: font-width is not supported yet.
+
+const props = {
   fontFamily: undefined,
   fontSize: undefined,
   fontStyle: undefined,
@@ -23,7 +25,7 @@ const PROPS = {
 };
 
 const SynthesisTable = CssValuesToCsssTable("none|style|weight|small-caps|position");
-const FontSynthesis = SF2("synthesis/1-4", [a => SynthesisTable[a.text]], (_, ar) => {
+const fontSynthesis = SF2("synthesis/1-4", [a => SynthesisTable[a.text]], (_, ar) => {
   if (ar.find((a, i) => ar.lastIndexOf(a) !== i))
     throw BadArgument("synthesis", ar, i, "Duplicate synthesis type.");
   return ar.map(a => SynthesisTable[a.text]).join(" ");
@@ -37,15 +39,15 @@ const FontSynthesis = SF2("synthesis/1-4", [a => SynthesisTable[a.text]], (_, ar
 
 const Transforms = CssValuesToCsssTable("uppercase|lowercase|capitalize|full-width");
 Transforms.transformNone = "none";
-const TextTransform = a => Transforms[a.text];
+const textTransform = a => Transforms[a.text];
 
 const Weights = CssValuesToCsssTable("bold|bolder|lighter");
 Weights.weightNormal = "normal";
-const FontWeight = a => Weights[a.text] ?? (((a = Integer(a)) && a >= 1 && a <= 1000 && a) || undefined);
+const fontWeight = a => Weights[a.text] ?? (((a = Integer(a)) && a >= 1 && a <= 1000 && a) || undefined);
 
 const Styles = CssValuesToCsssTable("italic");
 Styles.styleNormal = "normal";
-const FontStyle = a => Styles[a.text] ?? ((a = Angle(a)) && `oblique ${a}`);
+const fontStyle = a => Styles[a.text] ?? ((a = Angle(a)) && `oblique ${a}`);
 
 const VariantCaps = CssValuesToCsssTable("small-caps|all-small-caps|petite-caps|all-petite-caps|unicase|titling-caps");
 const VariantNumeric = CssValuesToCsssTable("ordinal|slashed-zero|lining-nums|oldstyle-nums|proportional-nums|tabular-nums");
@@ -54,22 +56,22 @@ const VariantEmoji = CssValuesToCsssTable("emoji|text|unicode");
 const VariantAlternate = CssValuesToCsssTable("historical-forms");//|stylistic(set)?\\d+|styleset\\d+|character-variant\\d+");
 const VariantLigatures = CssValuesToCsssTable("common-ligatures|no-common-ligatures|discretionary-ligatures|no-discretionary-ligatures|historical-ligatures|no-historical-ligatures|contextual|no-contextual");
 const VariantPosition = CssValuesToCsssTable("sub|super");
-const FontVariant = SF2("variant/1-9", [({ text }) => VariantCaps[text] ?? VariantNumeric[text] ?? VariantEastAsian[text] ?? VariantEmoji[text] ?? VariantAlternate[text] ?? VariantLigatures[text] ?? VariantPosition[text]], (name, args) => args.map(a => a.text).join(" "));
+const fontVariant = SF2("variant/1-9", [({ text }) => VariantCaps[text] ?? VariantNumeric[text] ?? VariantEastAsian[text] ?? VariantEmoji[text] ?? VariantAlternate[text] ?? VariantLigatures[text] ?? VariantPosition[text]], (name, args) => args.map(a => a.text).join(" "));
 
-const Widths = CssValuesToCsssTable("condensed|expanded|semi-condensed|semi-expanded|extra-condensed|extra-expanded|ultra-condensed|ultra-expanded");
-const Width = FunctionType("width", a => a.text === "normal" ? "normal" : Percent(a));
-const FontWidth = a => Widths[a.text] ?? Width(a);
+const Stretches = CssValuesToCsssTable("condensed|expanded|semi-condensed|semi-expanded|extra-condensed|extra-expanded|ultra-condensed|ultra-expanded");
+const Stretch = FunctionType("width", a => a.text === "normal" ? "normal" : Percent(a));
+const fontStretch = a => Stretches[a.text] ?? Stretch(a);
 
 const Kernings = CssValuesToCsssTable("auto|normal|none");
-const FontKerning = SF2("kerning/1", [a => Kernings[a.text]], (_, args) => args[0]);
+const fontKerning = SF2("kerning/1", [a => Kernings[a.text]], (_, args) => args[0]);
 
 const Sizes = CssValuesToCsssTable("larger|smaller|xx-small|x-small|small|medium|large|x-large|xx-large|xxx-large");
-const FontSize = a => Sizes[a.text] ?? Length(a);
+const fontSize = a => Sizes[a.text] ?? Length(a);
 
-const LetterSpacing = FunctionType("spacing", Length);
+const letterSpacing = FunctionType("spacing", Length);
 
 const FontMetrics = CssValuesToCsssTable("ex-height|cap-height|ch-width|ic-width|ic-height");
-const FontSizeAdjust = ({ name, args }) => {
+const fontSizeAdjust = ({ name, args }) => {
   if (name !== "adjust") return;
   let i = 0;
   const fontMetric = FontMetrics[args[i].text];
@@ -126,115 +128,21 @@ function FontFaceUrl(t) {
 }
 
 const FontFamily = a => FontFaceUrl(a) ?? Word(a) ?? Quote(a);
-// const FontSize = a => { const t = Length(a); if (t) return { fontSize: t }; };
-// const FontSizeAdjust = a => { const t = Fraction(a); if (t) return { fontSizeAdjust: t }; };
-// const FontWeight = a => { const t = Integer(a); if (t) return { fontWeight: t }; };
-// const FontAngle = a => { const t = Angle(a); if (t) return { fontStyle: "oblique " + t }; };
 
-const font = ({ name, args }) => {
-  if (name.toLowerCase() !== "font") return;
-  let res = {};
-  let fontFamilies = [];
-
-  for (let i = 0, v; i < args.length; i++) {
-    const arg = args[i];
-
-    v = FontVariant(arg);
-    if (v && res.fontVariant != null) throw BadArgument(name, args, i, "Multiple font variant values specified.");
-    if (v) { res.fontVariant = v; continue; }
-
-    v = LetterSpacing(arg);
-    if (v && res.letterSpacing != null) throw BadArgument(name, args, i, "Multiple letter spacing values specified.");
-    if (v) { res.letterSpacing = v; continue; }
-
-    v = FontSizeAdjust(arg);
-    if (v && res.fontSizeAdjust != null) throw BadArgument(name, args, i, "Multiple font size adjust values specified.");
-    if (v) { res.fontSizeAdjust = v; continue; }
-
-    v = FontKerning(arg);
-    if (v && res.fontKerning != null) throw BadArgument(name, args, i, "Multiple font kerning values specified.");
-    if (v) { res.fontKerning = v; continue; }
-
-    v = TextTransform(arg);
-    if (v && res.textTransform != null) throw BadArgument(name, args, i, "Multiple text transform values specified.");
-    if (v) { res.textTransform = v; continue; }
-
-    v = Fraction(arg);
-    if (v && res.fontSizeAdjust != null) throw BadArgument(name, args, i, "Multiple font size adjust values specified.");
-    if (v) { res.fontSizeAdjust = v; continue; }
-
-    v = FontSize(arg);
-    if (v && res.fontSize != null) throw BadArgument(name, args, i, "Multiple font sizes specified.");
-    if (v) { res.fontSize = v; continue; }
-
-    v = FontWidth(arg);
-    if (v && res.fontStretch != null) throw BadArgument(name, args, i, "Multiple font stretch values specified.");
-    if (v) { res.fontStretch = v; continue; }
-
-    v = FontSynthesis(arg);
-    if (v && res.fontSynthesis != null) throw BadArgument(name, args, i, "Multiple font synthesis values specified.");
-    if (v) { res.fontSynthesis = v; continue; }
-
-    v = FontWeight(arg);
-    if (v && res.fontWeight != null) throw BadArgument(name, args, i, "Multiple font weights specified.");
-    if (v) { res.fontWeight = v; continue; }
-
-    v = FontStyle(arg);
-    if (v && res.fontStyle != null) throw BadArgument(name, args, i, "Multiple font styles specified.");
-    if (v) { res.fontStyle = v; continue; }
-
-    v = FontFamily(arg);
-    if (v) { fontFamilies.push(v); continue; }
-
-    throw BadArgument(name, args, i);
-  }
-
-  if (!fontFamilies.length)
-    return res;
-  if (fontFamilies.includes("emoji")) {
-    fontFamilies.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
-    fontFamilies = fontFamilies.filter(f => f !== "emoji");
-  }
-  const fontFamily = fontFamilies
-    .map(f => f.fontFamily ?? f)
-    .map(f => typeof f === "string" ? f.replaceAll("+", " ") : f)
-    .join(", ");
-  for (let face of fontFamilies.filter(f => f instanceof Object))
-    res["@font-face " + face.src.split("\n")[0]] = face;
-  return { fontFamily, ...res };
-};
-
-const innerFont = ({ args }) => font({ name: "font", args });
-
-const Typeface = a => {
-  if (a.name !== "Typeface") return;
-  return ParseFirstThenRest(Name, innerFont, (typeface, tmp = {}) => {
-    const res = {};
-    for (let k in PROPS)
-      if (tmp[k] !== undefined)
-        res[`--${typeface + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
-    for (let k in tmp)
-      if (k.startsWith("@"))
-        res[k] = tmp[k];
-    return res;
-  })(a);
-};
-
-const cache = new Set();
-const Singles = {
-  fontSize: FontSize,
-  fontStyle: FontStyle,
-  fontWeight: FontWeight,
-  fontSizeAdjust: FontSizeAdjust,
-  letterSpacing: LetterSpacing,
-  textTransform: TextTransform,
-  fontStretch: FontWidth,
-  fontVariant: FontVariant,
-  fontSynthesis: FontSynthesis,
-  fontKerning: FontKerning,
-}
 function fontImpl(NAME, I, args) {
-  cache.clear();
+  const cache = new Set();
+  const Singles = {
+    fontSize,
+    fontStyle,
+    fontWeight,
+    fontSizeAdjust,
+    letterSpacing,
+    textTransform,
+    fontStretch,
+    fontVariant,
+    fontSynthesis,
+    fontKerning,
+  };
   const res = {}, fontFamilies = [];
   main: for (let i = I; i < args.length; i++) {
     const a = args[i];
@@ -273,21 +181,38 @@ function fontImpl(NAME, I, args) {
   return { fontFamily, ...res };
 }
 
+const font = ({ name, args }) => name === "font" && fontImpl(name, 0, args);
+
 const Font = ({ name, args }) => {
   if (name !== "Font") return;
   const typeface = Name(args[0]);
   if (!typeface) throw BadArgument(name, args, 0, "First argument must be a typeface name.");
   const res = fontImpl(name, 1, args);
-  for (let k in PROPS)
+  for (let k in props)
     if (!(k in res))
       res[k] = typeface === "_" ? "unset" : `var(--${typeface + k[0].toUpperCase() + k.slice(1)}, unset)`;
   return res;
 };
 
+const Typeface = ({ name, args }) => {
+  if (name !== "Typeface") return;
+  const typeface = Name(args[0]);
+  if (!typeface) throw BadArgument(name, args, 0, "First argument must be a typeface name.");
+  const tmp = fontImpl(name, 1, args);
+  const res = {};
+  for (let k in props)
+    if (tmp[k] !== undefined)
+      res[`--${typeface + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
+  for (let k in tmp)
+    if (k.startsWith("@"))
+      res[k] = tmp[k];
+  return res;
+};
+
 export default {
-  props: PROPS,
+  props,
   csss: {
-    font: ({ name, args }) => name === "font" && fontImpl("font", 0, args),
+    font,
     Font,
     Typeface,
   },

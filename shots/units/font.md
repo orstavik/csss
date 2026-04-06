@@ -19,10 +19,10 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 ```
 
 **description:** Defines a "body" typeface using system fonts with full style overrides.
-**csss:** $Typeface(body,system-ui,sans-serif,0.5,bold,italic,condensed,12px,uppercase)
+**csss:** $Typeface(body,system-ui,sans-serif,adjust(0.5),bold,italic,condensed,12px,uppercase)
 **css:**
 ```css
-.\$Typeface\(body\,system-ui\,sans-serif\,0\.5\,bold\,italic\,condensed\,12px\,uppercase\) {
+.\$Typeface\(body\,system-ui\,sans-serif\,adjust\(0\.5\)\,bold\,italic\,condensed\,12px\,uppercase\) {
   --bodyFontFamily: system-ui, sans-serif;
   --bodyFontSize: 12px;
   --bodyFontStyle: italic;

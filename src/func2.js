@@ -40,7 +40,6 @@ const Name = a => a.kind === "WORD" && a.text.match(/^[a-z_][a-z_0-9-]*$/i)?.[0]
 const Length = a => (a.type === "length" || (a.num === 0 && a.type === "number")) ? a.text : undefined;
 const Percent = a => a.type === "percent" ? a.text : undefined;
 const NumberInterpreter = a => (a.type === "number" && a.unit === "") ? a.num : undefined;
-const Fraction = a => { const n = NumberInterpreter(a); return (n !== undefined && !Number.isInteger(n)) ? n : undefined; };
 const Integer = a => { const n = NumberInterpreter(a); return (n !== undefined && Number.isInteger(n)) ? n : undefined; };
 const Angle = a => { if (a.num === 0 && a.type === "number") return "0deg"; return a.type === "angle" ? a.text : undefined; };
 const Quote = a => a.kind === "QUOTE" ? a.text : undefined;
@@ -65,7 +64,6 @@ const CsssPrimitives = {
   Length,
   Percent,
   NumberInterpreter,
-  Fraction,
   Integer,
   Angle,
   Word,
