@@ -2,6 +2,10 @@ import { CsssPrimitives, CsssFunctions, BadArgument } from "./func2.js";
 const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, NameUnset, AbsoluteUrl } = CsssPrimitives;
 const { FunctionWithDefaultValues, ParseFirstThenRest, FunctionType, FunctionPropertyType, SF2, CssValuesToCsssTable } = CsssFunctions;
 
+// http://dbushell.com/2024/11/05/webkit-font-smoothing/
+// this should be added by default, same as padding:0, margin: 0, box-sizing: border-box, etc.
+// :root { -webkit-font-smoothing: antialiased; }
+
 const PROPS = {
   fontFamily: undefined,
   fontSize: undefined,
@@ -23,7 +27,7 @@ const PROPS = {
 };
 
 const cache = new Set();
-function OneOfEach(NAME, I, Singles, Arrays, args) {
+function fontImpl(NAME, I, Singles, Arrays, args) {
   cache.clear();
   const res = {};
   main: for (let i = 0; i < args.length; i++) {
@@ -65,26 +69,6 @@ const FontSynthesis = SF2("synthesis/1-4", [a => SynthesisTable[a.text]], (name,
  * The same way as shifting font family or style, caption is a family-ish trait. Would be normal to consider part of font umbrella.
  * text-decoration is standalone. text-shadow is standalone (in same space as colors).
  */
-// const SYNTHESIS_WORDS = (function () {
-//   function* permutations(arr, remainder) {
-//     for (let i = 0; i < arr.length; i++) {
-//       const x = arr[i];
-//       const rest = arr.slice(0, i).concat(arr.slice(i + 1));
-//       if (remainder == 1)
-//         yield [x];
-//       else
-//         for (let p of permutations(rest, remainder - 1))
-//           yield [x, ...p];
-//     }
-//   }
-//   const res = {};
-//   const synths = ["Style", "Weight", "SmallCaps", "Position"];
-//   for (let k = 1; k <= synths.length - 1; k++)
-//     for (const combo of permutations(synths, k))
-//       res["no" + combo.join("") + "Synthesis"] = synths.filter(k => !combo.includes(k)).join(" ").replace("Caps", "-caps").toLowerCase();
-//   res.noSynthesis = { fontSynthesis: "none" };
-//   return res;
-// })();
 
 const Transforms = CssValuesToCsssTable("uppercase|lowercase|capitalize|full-width");
 Transforms.transformNone = "none";
@@ -99,23 +83,42 @@ Styles.styleNormal = "normal";
 const FontStyle = a => Styles[a.text] ?? ((a = Angle(a)) && `oblique ${a}`);
 
 const VariantCaps = CssValuesToCsssTable("small-caps|all-small-caps|petite-caps|all-petite-caps|unicase|titling-caps");
-VariantCaps.variantNormal = "normal";
+const VariantNumeric = CssValuesToCsssTable("ordinal|slashed-zero|lining-nums|oldstyle-nums|proportional-nums|tabular-nums");
+const VariantEastAsian = CssValuesToCsssTable("jis78|jis83|jis90|jis04|simplified|traditional");
+const VariantEmoji = CssValuesToCsssTable("emoji|text|unicode");
+const VariantAlternate = CssValuesToCsssTable("historical-forms");//|stylistic(set)?\\d+|styleset\\d+|character-variant\\d+");
+const VariantLigatures = CssValuesToCsssTable("common-ligatures|no-common-ligatures|discretionary-ligatures|no-discretionary-ligatures|historical-ligatures|no-historical-ligatures|contextual|no-contextual");
+const VariantPosition = CssValuesToCsssTable("sub|super");
+const FontVariant = SF2("variant/1-9", [({ text }) => VariantCaps[text] ?? VariantNumeric[text] ?? VariantEastAsian[text] ?? VariantEmoji[text] ?? VariantAlternate[text] ?? VariantLigatures[text] ?? VariantPosition[text]], (name, args) => args.map(a => a.text).join(" "));
 
 const Widths = CssValuesToCsssTable("condensed|expanded|semi-condensed|semi-expanded|extra-condensed|extra-expanded|ultra-condensed|ultra-expanded");
 const Width = FunctionType("width", a => a.text === "normal" ? "normal" : Percent(a));
 const FontWidth = a => Widths[a.text] ?? Width(a);
 
-const Kernings = CssValuesToCsssTable("kerning");
-Kernings.kerningNone = "none";
+const Kernings = CssValuesToCsssTable("auto|normal|none");
+const FontKerning = SF2("kerning/1", [a => Kernings[a.text]], (name, args) => args[0]);
 
 const Hyphens = { hyphens: "auto", hyphensManual: "manual", hyphensNone: "none" };
-
+const Hyphen = a => Hyphens[a.text];
 
 const Sizes = CssValuesToCsssTable("larger|smaller|xx-small|x-small|small|medium|large|x-large|xx-large|xxx-large");
 const FontSize = a => Sizes[a.text] ?? Length(a);
 
-const variant = SF2("variant/1-5", [Word], (n, v) => v.join(" ")); //todo: more specific parsing?
+const LetterSpacing = FunctionType("spacing", Length);
 
+const FontMetrics = CssValuesToCsssTable("ex-height|cap-height|ch-width|ic-width|ic-height");
+const FontSizeAdjust = ({ name, args }) => {
+  if (name !== "adjust") return;
+  let i = 0;
+  const fontMetric = FontMetrics[args[i].text];
+  if (fontMetric) i++;
+  const fromFont = args[i].text === "fromFont" ? "from-font" : undefined;
+  if (fromFont) i++;
+  const number = NumberInterpreter(args[i]);
+  if (number != null) i++;
+  if (i !== args.length) throw BadArgument(name, args, i, "Invalid argument.");
+  return [fontMetric, fromFont, number].filter(Boolean).join(" ");
+};
 
 // @font-face {
 // font-family: "Trickster";
@@ -174,21 +177,25 @@ const font = ({ name, args }) => {
   for (let i = 0, v; i < args.length; i++) {
     const arg = args[i];
 
-    if (arg.kind === "WORD") {
-      const text = arg.text;
-      // if (res.textTransform == null) if (text in Transforms) { res.textTransform = Transforms[text]; continue; }
-      if (res.fontVariantCaps == null) if (text in VariantCaps) { res.fontVariantCaps = VariantCaps[text]; continue; }
-      // if (res.fontWidth == null) if (text in Widths) { res.fontWidth = Widths[text]; continue; }
-      if (res.fontKerning == null) if (text in Kernings) { res.fontKerning = Kernings[text]; continue; }
-      if (res.hyphens == null) if (text in Hyphens) { res.hyphens = Hyphens[text]; continue; }
-      // if (res.fontStyle == null) if (text === "normal") { res.fontStyle = "normal"; res.fontWeight = "normal"; continue; }
-      if (res.WebkitFontSmoothing == null) if (text === "smooth") { res.WebkitFontSmoothing = "auto"; res.MozOsxFontSmoothing = "auto"; continue; }
-    }
+    v = FontVariant(arg);
+    if (v && res.fontVariant != null) throw BadArgument(name, args, i, "Multiple font variant values specified.");
+    if (v) { res.fontVariant = v; continue; }
 
-    if (arg.name === "variant") { res.fontVariant = variant(arg); continue; }
-    // if (arg.name === "width") { const val = Percent(arg.args[0]); if (val) { res.fontWidth = val; continue; } }
-    if (arg.name === "spacing") { const val = Length(arg.args[0]); if (val) { res.letterSpacing = val; continue; } }
-    if (arg.name === "adjust") { const val = Basic(arg.args[0]); if (val) { res.fontSizeAdjust = val; continue; } }
+    v = LetterSpacing(arg);
+    if (v && res.letterSpacing != null) throw BadArgument(name, args, i, "Multiple letter spacing values specified.");
+    if (v) { res.letterSpacing = v; continue; }
+
+    v = FontSizeAdjust(arg);
+    if (v && res.fontSizeAdjust != null) throw BadArgument(name, args, i, "Multiple font size adjust values specified.");
+    if (v) { res.fontSizeAdjust = v; continue; }
+
+    v = Hyphen(arg);
+    if (v && res.hyphens != null) throw BadArgument(name, args, i, "Multiple hyphens values specified.");
+    if (v) { res.hyphens = v; continue; }
+
+    v = FontKerning(arg);
+    if (v && res.fontKerning != null) throw BadArgument(name, args, i, "Multiple font kerning values specified.");
+    if (v) { res.fontKerning = v; continue; }
 
     v = TextTransform(arg);
     if (v && res.textTransform != null) throw BadArgument(name, args, i, "Multiple text transform values specified.");
@@ -210,16 +217,16 @@ const font = ({ name, args }) => {
     if (v && res.fontSynthesis != null) throw BadArgument(name, args, i, "Multiple font synthesis values specified.");
     if (v) { res.fontSynthesis = v; continue; }
 
-    const vFontWeight = FontWeight(arg);
-    if (vFontWeight && res.fontWeight != null) throw BadArgument(name, args, i, "Multiple font weights specified.");
-    if (vFontWeight) { res.fontWeight = vFontWeight; continue; }
+    v = FontWeight(arg);
+    if (v && res.fontWeight != null) throw BadArgument(name, args, i, "Multiple font weights specified.");
+    if (v) { res.fontWeight = v; continue; }
 
-    const vFontStyle = FontStyle(arg);
-    if (vFontStyle && res.fontStyle != null) throw BadArgument(name, args, i, "Multiple font styles specified.");
-    if (vFontStyle) { res.fontStyle = vFontStyle; continue; }
+    v = FontStyle(arg);
+    if (v && res.fontStyle != null) throw BadArgument(name, args, i, "Multiple font styles specified.");
+    if (v) { res.fontStyle = v; continue; }
 
-    const vFontFamily = FontFamily(arg);
-    if (vFontFamily) { fontFamilies.push(vFontFamily); continue; }
+    v = FontFamily(arg);
+    if (v) { fontFamilies.push(v); continue; }
 
     throw BadArgument(name, args, i);
   }
