@@ -14,7 +14,7 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
   --comicFontSize: xx-small;
   --comicFontStyle: italic;
   --comicFontWeight: bolder;
-  --comicFontWidth: semi-expanded;
+  --comicFontStretch: semi-expanded;
 }
 ```
 
@@ -29,7 +29,7 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
   --bodyFontWeight: bold;
   --bodyFontSizeAdjust: 0.5;
   --bodyTextTransform: uppercase;
-  --bodyFontWidth: condensed;
+  --bodyFontStretch: condensed;
 }
 ```
 
@@ -42,7 +42,7 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
   font-weight: 400;
   font-size-adjust: 0.5;
   font-style: italic;
-  font-width: condensed;
+  font-stretch: condensed;
   font-size: 12px;
 }
 ```
