@@ -26,6 +26,14 @@ function matchArgsWithInterpreters(NAME, args, INTERPRETERS) {
   return res;
 }
 
+const parseSignature = SIG => {
+  const [NAME, ARITY] = SIG.split("/");
+  if (ARITY == undefined || ARITY == "") return { NAME };
+  let [MIN, MAX = MIN] = ARITY.split("-");
+  if (MAX === "") MAX = Infinity;
+  return { NAME, MIN: Number(MIN), MAX: Number(MAX) };
+};
+
 const Url = a => a.kind === "QUOTE" ? `url(${a.text})` : a.name === "url" ? `url(${a.args[0].text})` : undefined;
 const Unset = a => a.text === "_" ? "unset" : undefined;
 const Name = a => a.kind === "WORD" && a.text.match(/^[a-z][a-z0-9_-]+$/i)?.[0];
@@ -105,13 +113,6 @@ const CsssFunctions = {
       };
   },
   SF2: (CsssNameArity, INTERPRETERS, POST) => {
-    const parseSignature = SIG => {
-      const [NAME, ARITY] = SIG.split("/");
-      if (ARITY == undefined || ARITY == "") return { NAME };
-      let [MIN, MAX = MIN] = ARITY.split("-");
-      if (MAX === "") MAX = Infinity;
-      return { NAME, MIN: Number(MIN), MAX: Number(MAX) };
-    };
     const { NAME, MIN = INTERPRETERS.length, MAX = INTERPRETERS.length } = parseSignature(CsssNameArity);
     return ({ args, name }) => {
       if (NAME && NAME !== name) return;

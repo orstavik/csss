@@ -22,6 +22,56 @@ const PROPS = {
   hyphens: undefined,
 };
 
+const cache = new Set();
+function OneOfEach(NAME, I, Singles, Arrays, args) {
+  cache.clear();
+  const res = {};
+  main: for (let i = 0; i < args.length; i++) {
+    const a = args[i];
+    for (let key in Singles) {
+      if (cache.has(key))
+        continue;
+      const v = Singles[key](a);
+      if (v == null)
+        continue;
+      cache.add(key);
+      res[key] = v;
+      continue main;
+    }
+    for (let key in Arrays) {
+      const v = Arrays[key](a);
+      if (v == null)
+        continue;
+      (res[key] ??= []).push(v);
+      continue main;
+    }
+    for (let k in cache)
+      if (Singles[k](a) != null)
+        throw BadArgument(NAME, args, I + i, `Multiple values for ${k} specified.`);
+    throw BadArgument(NAME, args, I + i, "Unknown argument.");
+  }
+  return res;
+}
+
+const Synthesis = {
+  synthesisNone: "none",
+  synthesisStyle: "style",
+  synthesisWeight: "weight",
+  synthesisSmallCaps: "small-caps",
+  synthesisPosition: "position",
+  synthesisStyleWeight: "style weight",
+  synthesisStyleSmallCaps: "style small-caps",
+  synthesisStylePosition: "style position",
+  synthesisWeightSmallCaps: "weight small-caps",
+  synthesisWeightPosition: "weight position",
+  synthesisSmallCapsPosition: "small-caps position",
+  synthesisStyleWeightSmallCaps: "style weight small-caps",
+  synthesisStyleWeightPosition: "style weight position",
+  synthesisStyleSmallCapsPosition: "style small-caps position",
+  synthesisWeightSmallCapsPosition: "weight small-caps position",
+  synthesisStyleWeightSmallCapsPosition: "style weight small-caps position",
+};
+
 /**
  * TextTransform is a semi inherited css property (inherits over inline elements, but not block elements).
  * The same way as shifting font family or style, caption is a family-ish trait. Would be normal to consider part of font umbrella.
@@ -49,19 +99,27 @@ const SYNTHESIS_WORDS = (function () {
 })();
 
 const Transforms = CssValuesToCsssTable("uppercase|lowercase|capitalize|full-width");
-Transforms.noTransform = "none";
+Transforms.transformNone = "none";
+
 const Weights = CssValuesToCsssTable("bold|bolder|lighter");
-Weights.noWeight = "normal";
+Weights.weightNormal = "normal";
+const FontWeight = a => Weights[a.text] ?? (((a = Integer(a)) && a >= 1 && a <= 1000 && a) || undefined);
+
 const Styles = CssValuesToCsssTable("italic");
-Styles.noStyle = "normal";
+Styles.styleNormal = "normal";
+const FontStyle = a => Styles[a.text] ?? ((a = Angle(a)) && `oblique ${a}`);
+
 const VariantCaps = CssValuesToCsssTable("small-caps|all-small-caps|petite-caps|all-petite-caps|unicase|titling-caps");
-VariantCaps.noVariant = "normal";
+VariantCaps.variantNormal = "normal";
+
 const Widths = CssValuesToCsssTable("condensed|expanded|semi-condensed|semi-expanded|extra-condensed|extra-expanded|ultra-condensed|ultra-expanded");
-Widths.noStretch = "normal";
+Widths.widthNormal = "normal";
 const Kernings = CssValuesToCsssTable("kerning");
-Kernings.noKerning = "none";
-const Hyphens = { hyphens: "auto", shy: "manual", noHyphens: "none" };
+Kernings.kerningNone = "none";
+const Hyphens = { hyphens: "auto", hyphensManual: "manual", hyphensNone: "none" };
+
 const Sizes = CssValuesToCsssTable("larger|smaller|xx-small|x-small|small|medium|large|x-large|xx-large|xxx-large");
+const FontSize = a => Sizes[a.text] ?? Length(a);
 
 const variant = SF2("variant/1-5", [Word], (n, v) => v.join(" ")); //todo: more specific parsing?
 
@@ -120,20 +178,17 @@ const font = ({ name, args }) => {
   let res = {};
   let fontFamilies = [];
 
-  for (let i = 0; i < args.length; i++) {
+  for (let i = 0, v; i < args.length; i++) {
     const arg = args[i];
 
     if (arg.kind === "WORD") {
       const text = arg.text;
       if (res.fontSynthesis == null) if (text in SYNTHESIS_WORDS) { Object.assign(res, SYNTHESIS_WORDS[text]); continue; }
       if (res.textTransform == null) if (text in Transforms) { res.textTransform = Transforms[text]; continue; }
-      if (res.fontWeight == null) if (text in Weights) { res.fontWeight = Weights[text]; continue; }
-      if (res.fontStyle == null) if (text in Styles) { res.fontStyle = Styles[text]; continue; }
       if (res.fontVariantCaps == null) if (text in VariantCaps) { res.fontVariantCaps = VariantCaps[text]; continue; }
       if (res.fontWidth == null) if (text in Widths) { res.fontWidth = Widths[text]; continue; }
       if (res.fontKerning == null) if (text in Kernings) { res.fontKerning = Kernings[text]; continue; }
       if (res.hyphens == null) if (text in Hyphens) { res.hyphens = Hyphens[text]; continue; }
-      if (res.fontSize == null) if (text in Sizes) { res.fontSize = Sizes[text]; continue; }
       if (res.fontStyle == null) if (text === "normal") { res.fontStyle = "normal"; res.fontWeight = "normal"; continue; }
       if (res.WebkitFontSmoothing == null) if (text === "smooth") { res.WebkitFontSmoothing = "auto"; res.MozOsxFontSmoothing = "auto"; continue; }
     }
@@ -143,17 +198,18 @@ const font = ({ name, args }) => {
     if (arg.name === "spacing") { const val = Length(arg.args[0]); if (val) { res.letterSpacing = val; continue; } }
     if (arg.name === "adjust") { const val = Basic(arg.args[0]); if (val) { res.fontSizeAdjust = val; continue; } }
 
-    const vLength = Length(arg);
-    if (vLength && !res.fontSize) { res.fontSize = vLength; continue; }
+    if ((v = Fraction(arg)) && !res.fontSizeAdjust) { res.fontSizeAdjust = v; continue; }
 
-    const vFraction = Fraction(arg);
-    if (vFraction && !res.fontSizeAdjust) { res.fontSizeAdjust = vFraction; continue; }
+    if ((v = FontSize(arg)) && res.fontSize != null) throw BadArgument(name, args, i, "Multiple font sizes specified.");
+    if (v) { res.fontSize = v; continue; }
 
-    const vInteger = Integer(arg);
-    if (vInteger && !res.fontWeight) { res.fontWeight = vInteger; continue; }
+    const vFontWeight = FontWeight(arg);
+    if (vFontWeight && res.fontWeight != null) throw BadArgument(name, args, i, "Multiple font weights specified.");
+    if (vFontWeight) { res.fontWeight = vFontWeight; continue; }
 
-    const vAngle = Angle(arg);
-    if (vAngle && !res.fontStyle) { res.fontStyle = "oblique " + vAngle; continue; }
+    const vFontStyle = FontStyle(arg);
+    if (vFontStyle && res.fontStyle != null) throw BadArgument(name, args, i, "Multiple font styles specified.");
+    if (vFontStyle) { res.fontStyle = vFontStyle; continue; }
 
     const vFontFamily = FontFamily(arg);
     if (vFontFamily) { fontFamilies.push(vFontFamily); continue; }
@@ -161,21 +217,19 @@ const font = ({ name, args }) => {
     throw BadArgument(name, args, i);
   }
 
-  if (fontFamilies.length > 0) {
-    if (fontFamilies.includes("emoji")) {
-      fontFamilies.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
-      fontFamilies = fontFamilies.filter(f => f !== "emoji");
-    }
-    const fontFamily = fontFamilies
-      .map(f => f.fontFamily ?? f)
-      .map(f => typeof f === "string" ? f.replaceAll("+", " ") : f)
-      .join(", ");
-    res = { fontFamily, ...res };
-    for (let face of fontFamilies.filter(f => f instanceof Object))
-      res["@font-face " + face.src.split("\n")[0]] = face;
+  if (!fontFamilies.length)
+    return res;
+  if (fontFamilies.includes("emoji")) {
+    fontFamilies.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+    fontFamilies = fontFamilies.filter(f => f !== "emoji");
   }
-
-  return res;
+  const fontFamily = fontFamilies
+    .map(f => f.fontFamily ?? f)
+    .map(f => typeof f === "string" ? f.replaceAll("+", " ") : f)
+    .join(", ");
+  for (let face of fontFamilies.filter(f => f instanceof Object))
+    res["@font-face " + face.src.split("\n")[0]] = face;
+  return { fontFamily, ...res };
 };
 
 const innerFont = ({ args }) => font({ name: "font", args });

@@ -117,19 +117,19 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 ```
 
 **description:** Enables manual hyphenation (soft hyphens only).
-**csss:** $font(shy)
+**csss:** $font(hyphensManual)
 **css:**
 ```css
-.\$font\(shy\) {
+.\$font\(hyphensManual\) {
   hyphens: manual;
 }
 ```
 
 **description:** Disables all hyphenation.
-**csss:** $font(noHyphens)
+**csss:** $font(hyphensNone)
 **css:**
 ```css
-.\$font\(noHyphens\) {
+.\$font\(hyphensNone\) {
   hyphens: none;
 }
 ```
