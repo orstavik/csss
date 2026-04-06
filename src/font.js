@@ -58,10 +58,10 @@ function fontImpl(NAME, I, Singles, Arrays, args) {
 }
 
 const SynthesisTable = CssValuesToCsssTable("none|style|weight|small-caps|position");
-const FontSynthesis = SF2("synthesis/1-4", [a => SynthesisTable[a.text]], (name, args) => {
-  if (args.find((a, i) => args.lastIndexOf(a) !== i))
-    throw BadArgument(name, args, i, "Duplicate synthesis type.");
-  return args.map(a => SynthesisTable[a.text]).join(" ");
+const FontSynthesis = SF2("synthesis/1-4", [a => SynthesisTable[a.text]], (_, ar) => {
+  if (ar.find((a, i) => ar.lastIndexOf(a) !== i))
+    throw BadArgument("synthesis", ar, i, "Duplicate synthesis type.");
+  return ar.map(a => SynthesisTable[a.text]).join(" ");
 });
 
 /**
