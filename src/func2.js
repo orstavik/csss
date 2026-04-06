@@ -36,8 +36,7 @@ const parseSignature = SIG => {
 
 const Url = a => a.kind === "QUOTE" ? `url(${a.text})` : a.name === "url" ? `url(${a.args[0].text})` : undefined;
 const Unset = a => a.text === "_" ? "unset" : undefined;
-const Name = a => a.kind === "WORD" && a.text.match(/^[a-z][a-z0-9_-]+$/i)?.[0];
-const Basic = a => a.kind === "VAR" ? `var(${a.text})` : (a.kind !== "EXP" ? a.text : (a.name in Maths ? Maths[a.name](a.name, a.args) : undefined)); // Simplified Basic interpreter
+const Name = a => a.kind === "WORD" && a.text.match(/^[a-z_][a-z_0-9-]*$/i)?.[0];
 const Length = a => (a.type === "length" || (a.num === 0 && a.type === "number")) ? a.text : undefined;
 const Percent = a => a.type === "percent" ? a.text : undefined;
 const NumberInterpreter = a => (a.type === "number" && a.unit === "") ? a.num : undefined;
@@ -70,7 +69,6 @@ const CsssPrimitives = {
   Integer,
   Angle,
   Word,
-  Basic,
   NameUnset: a => Name(a) ?? Unset(a),
   AbsoluteUrl,
   LengthPercentUnset: a => Length(a) ?? Percent(a) ?? Unset(a),

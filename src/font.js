@@ -1,6 +1,6 @@
 import { CsssPrimitives, CsssFunctions, BadArgument } from "./func2.js";
-const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, NameUnset, AbsoluteUrl } = CsssPrimitives;
-const { FunctionWithDefaultValues, ParseFirstThenRest, FunctionType, FunctionPropertyType, SF2, CssValuesToCsssTable } = CsssFunctions;
+const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, NumberInterpreter, AbsoluteUrl } = CsssPrimitives;
+const { ParseFirstThenRest, FunctionType, SF2, CssValuesToCsssTable } = CsssFunctions;
 
 // http://dbushell.com/2024/11/05/webkit-font-smoothing/
 // this should be added by default, same as padding:0, margin: 0, box-sizing: border-box, etc.
@@ -14,48 +14,13 @@ const PROPS = {
   fontSizeAdjust: undefined,
   letterSpacing: undefined,
   textTransform: undefined,
-  fontWidth: undefined,
   fontStretch: undefined,
   fontVariantCaps: undefined,
   fontSynthesis: undefined,
   fontFeatureSettings: undefined,
   fontVariationSettings: undefined,
-  WebkitFontSmoothing: undefined,
-  MozOsxFontSmoothing: undefined,
   fontKerning: undefined,
-  hyphens: undefined,
 };
-
-const cache = new Set();
-function fontImpl(NAME, I, Singles, Arrays, args) {
-  cache.clear();
-  const res = {};
-  main: for (let i = 0; i < args.length; i++) {
-    const a = args[i];
-    for (let key in Singles) {
-      if (cache.has(key))
-        continue;
-      const v = Singles[key](a);
-      if (v == null)
-        continue;
-      cache.add(key);
-      res[key] = v;
-      continue main;
-    }
-    for (let key in Arrays) {
-      const v = Arrays[key](a);
-      if (v == null)
-        continue;
-      (res[key] ??= []).push(v);
-      continue main;
-    }
-    for (let k in cache)
-      if (Singles[k](a) != null)
-        throw BadArgument(NAME, args, I + i, `Multiple values for ${k} specified.`);
-    throw BadArgument(NAME, args, I + i, "Unknown argument.");
-  }
-  return res;
-}
 
 const SynthesisTable = CssValuesToCsssTable("none|style|weight|small-caps|position");
 const FontSynthesis = SF2("synthesis/1-4", [a => SynthesisTable[a.text]], (_, ar) => {
@@ -96,10 +61,7 @@ const Width = FunctionType("width", a => a.text === "normal" ? "normal" : Percen
 const FontWidth = a => Widths[a.text] ?? Width(a);
 
 const Kernings = CssValuesToCsssTable("auto|normal|none");
-const FontKerning = SF2("kerning/1", [a => Kernings[a.text]], (name, args) => args[0]);
-
-const Hyphens = { hyphens: "auto", hyphensManual: "manual", hyphensNone: "none" };
-const Hyphen = a => Hyphens[a.text];
+const FontKerning = SF2("kerning/1", [a => Kernings[a.text]], (_, args) => args[0]);
 
 const Sizes = CssValuesToCsssTable("larger|smaller|xx-small|x-small|small|medium|large|x-large|xx-large|xxx-large");
 const FontSize = a => Sizes[a.text] ?? Length(a);
@@ -189,10 +151,6 @@ const font = ({ name, args }) => {
     if (v && res.fontSizeAdjust != null) throw BadArgument(name, args, i, "Multiple font size adjust values specified.");
     if (v) { res.fontSizeAdjust = v; continue; }
 
-    v = Hyphen(arg);
-    if (v && res.hyphens != null) throw BadArgument(name, args, i, "Multiple hyphens values specified.");
-    if (v) { res.hyphens = v; continue; }
-
     v = FontKerning(arg);
     if (v && res.fontKerning != null) throw BadArgument(name, args, i, "Multiple font kerning values specified.");
     if (v) { res.fontKerning = v; continue; }
@@ -248,19 +206,6 @@ const font = ({ name, args }) => {
 
 const innerFont = ({ args }) => font({ name: "font", args });
 
-const FontUnset = ParseFirstThenRest(NameUnset, innerFont, (typeface, res = {}) => {
-  if (typeface !== "unset")
-    for (let k in PROPS)
-      if (!(k in res))
-        res[k] = `var(--${typeface + k[0].toUpperCase() + k.slice(1)}, unset)`;
-  return res;
-});
-
-const Font = a => {
-  if (a.name !== "Font") return;
-  return FunctionWithDefaultValues(DEFAULTS, FontUnset)(a);
-};
-
 const Typeface = a => {
   if (a.name !== "Typeface") return;
   return ParseFirstThenRest(Name, innerFont, (typeface, tmp = {}) => {
@@ -275,11 +220,74 @@ const Typeface = a => {
   })(a);
 };
 
-const DEFAULTS = Object.fromEntries(Object.keys(PROPS).map(k => [k, "unset"]));
+const cache = new Set();
+const Singles = {
+  fontSize: FontSize,
+  fontStyle: FontStyle,
+  fontWeight: FontWeight,
+  fontSizeAdjust: FontSizeAdjust,
+  letterSpacing: LetterSpacing,
+  textTransform: TextTransform,
+  fontStretch: FontWidth,
+  fontVariant: FontVariant,
+  fontSynthesis: FontSynthesis,
+  fontKerning: FontKerning,
+}
+function fontImpl(NAME, I, args) {
+  cache.clear();
+  const res = {}, fontFamilies = [];
+  main: for (let i = I; i < args.length; i++) {
+    const a = args[i];
+    for (let key in Singles) {
+      if (cache.has(key))
+        continue;
+      const v = Singles[key](a);
+      if (v == null)
+        continue;
+      cache.add(key);
+      res[key] = v;
+      continue main;
+    }
+    const v = FontFamily(a);
+    if (v != null) {
+      fontFamilies.push(v);
+      continue main;
+    }
+    for (let k in cache)
+      if (Singles[k](a) != null)
+        throw BadArgument(NAME, args, i, `Multiple values for ${k} specified.`);
+    throw BadArgument(NAME, args, i, "Unknown argument.");
+  }
+  if (!fontFamilies.length)
+    return res;
+  if (fontFamilies.includes("emoji")) {
+    fontFamilies.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+    fontFamilies = fontFamilies.filter(f => f !== "emoji");
+  }
+  const fontFamily = fontFamilies
+    .map(f => f.fontFamily ?? f)
+    .map(f => typeof f === "string" ? f.replaceAll("+", " ") : f)
+    .join(", ");
+  for (let face of fontFamilies.filter(f => f instanceof Object))
+    res["@font-face " + face.src.split("\n")[0]] = face;
+  return { fontFamily, ...res };
+}
+
+const Font = ({ name, args }) => {
+  if (name !== "Font") return;
+  const typeface = Name(args[0]);
+  if (!typeface) throw BadArgument(name, args, 0, "First argument must be a typeface name.");
+  const res = fontImpl(name, 1, args);
+  for (let k in PROPS)
+    if (!(k in res))
+      res[k] = typeface === "_" ? "unset" : `var(--${typeface + k[0].toUpperCase() + k.slice(1)}, unset)`;
+  return res;
+};
+
 export default {
   props: PROPS,
   csss: {
-    font,
+    font: ({ name, args }) => name === "font" && fontImpl("font", 0, args),
     Font,
     Typeface,
   },

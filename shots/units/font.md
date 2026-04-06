@@ -34,10 +34,10 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 ```
 
 **description:** Sets font-family, weight, size-adjust, style, width and size directly.
-**csss:** $font(system-ui,sans-serif,400,0.5,italic,condensed,12px)
+**csss:** $font(system-ui,sans-serif,400,adjust(0.5),italic,condensed,12px)
 **css:**
 ```css
-.\$font\(system-ui\,sans-serif\,400\,0\.5\,italic\,condensed\,12px\) {
+.\$font\(system-ui\,sans-serif\,400\,adjust\(0\.5\)\,italic\,condensed\,12px\) {
   font-family: system-ui, sans-serif;
   font-weight: 400;
   font-size-adjust: 0.5;
@@ -47,7 +47,7 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 }
 ```
 
-**description:** Sets font-family to a named "body" font.
+**description:** Sets font-family to "body" font.
 **csss:** $font(body)
 **css:**
 ```css
@@ -56,13 +56,12 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 }
 ```
 
-**description:** Sets serif font family with auto hyphenation.
-**csss:** $font(serif,hyphens)
+**description:** Sets serif font family.
+**csss:** $font(serif)
 **css:**
 ```css
-.\$font\(serif\,hyphens\) {
+.\$font\(serif\) {
   font-family: serif;
-  hyphens: auto;
 }
 ```
 
@@ -78,16 +77,12 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
   font-size-adjust: var(--bodyFontSizeAdjust, unset);
   letter-spacing: var(--bodyLetterSpacing, unset);
   text-transform: var(--bodyTextTransform, unset);
-  font-width: var(--bodyFontWidth, unset);
   font-stretch: var(--bodyFontStretch, unset);
   font-variant-caps: var(--bodyFontVariantCaps, unset);
   font-synthesis: var(--bodyFontSynthesis, unset);
   font-feature-settings: var(--bodyFontFeatureSettings, unset);
   font-variation-settings: var(--bodyFontVariationSettings, unset);
-  -webkit-font-smoothing: var(--bodyWebkitFontSmoothing, unset);
-  -moz-osx-font-smoothing: var(--bodyMozOsxFontSmoothing, unset);
   font-kerning: var(--bodyFontKerning, unset);
-  hyphens: var(--bodyHyphens, unset);
 }
 ```
 
@@ -98,48 +93,17 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 .\$Font\(_\,Arial\,16px\,bold\) {
   font-family: Arial;
   font-size: 16px;
-  font-style: unset;
   font-weight: bold;
+  font-style: unset;
   font-size-adjust: unset;
   letter-spacing: unset;
   text-transform: unset;
-  font-width: unset;
   font-stretch: unset;
   font-variant-caps: unset;
   font-synthesis: unset;
   font-feature-settings: unset;
   font-variation-settings: unset;
-  -webkit-font-smoothing: unset;
-  -moz-osx-font-smoothing: unset;
   font-kerning: unset;
-  hyphens: unset;
-}
-```
-
-**description:** Enables manual hyphenation (soft hyphens only).
-**csss:** $font(hyphensManual)
-**css:**
-```css
-.\$font\(hyphensManual\) {
-  hyphens: manual;
-}
-```
-
-**description:** Disables all hyphenation.
-**csss:** $font(hyphensNone)
-**css:**
-```css
-.\$font\(hyphensNone\) {
-  hyphens: none;
-}
-```
-
-**description:** Enables automatic hyphenation via font.
-**csss:** $font(hyphens)
-**css:**
-```css
-.\$font\(hyphens\) {
-  hyphens: auto;
 }
 ```
 
