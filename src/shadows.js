@@ -1,11 +1,7 @@
 //todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
-
-import { FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, Either } = FunctionTypes;
 import { Color } from "./funcColor.js";
 import { CsssPrimitives, matchArgsWithInterpreters, CsssFunctions } from "./func2.js";
-const { Name, Length, Radian, LengthNumberRaw } = CsssPrimitives;
-const { SF2 } = CsssFunctions;
+const { Length, Radian, LengthNumberRaw } = CsssPrimitives;
 // There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 
 // Then in the $shadow(shade,angle,length,color?) to use it.
 // If the length is passed in as 
@@ -52,21 +48,6 @@ function calculateShadow({ type, angle = Math.PI * .75, length = { num: 5 }, col
   return `${x} ${y} ${blur} ${spread} ${color}`;
 }
 
-const parseAbsoluteShadowArgs = FunctionBasedOnValueTypes({}, {
-  x: Length,
-  y: Length,
-  blur: Length,
-  spread: Length,
-  color: Color,
-}, {});
-const parseNamedShadowArgs = FunctionBasedOnValueTypes({}, {
-  type: a => SHADES[a.text],
-  angle: Radian,
-  length: LengthNumberRaw,
-  color: Color,
-}, {}, calculateShadow);
-const Shadow = Either(parseAbsoluteShadowArgs, parseNamedShadowArgs);
-
 const boxShadow2 = ({ name, args }) => {
   const type = ShadeType(args[0]);
   if (type) {
@@ -90,19 +71,10 @@ const textDropShadow2 = ({ name, args }) => {
   throw BadArgument("textShadow", args.length, args, `Must get either two lengths (x,y) or start with a shadeType: ${Object.keys(SHADES).join("|")}.`);
 }
 
-function boxShadow(a) {
-  const { x, y, blur, spread, color } = Shadow(a);
-  return [x, y, blur, spread, color].filter(Boolean).join(" ");
-}
-function textDropShadow(a) {
-  const { x, y, blur, color } = Shadow(a);
-  return [x, y, blur, color].filter(Boolean).join(" ");
-}
-
 export default {
-  boxShadow: a => ({ boxShadow: boxShadow2(a) }), //a => ({ boxShadow: boxShadow(a) }),
-  textShadow: a => ({ textShadow: textDropShadow2(a) }), //a => ({ textShadow: textDropShadow(a) }),
-  dropShadow: a => `drop-shadow(${textDropShadow(a)})`,
+  boxShadow: a => ({ boxShadow: boxShadow2(a) }),
+  textShadow: a => ({ textShadow: textDropShadow2(a) }), 
+  dropShadow: a => `drop-shadow(${textDropShadow2(a)})`,
   noBoxShadow: { boxShadow: "none" },
   noTextShadow: { textShadow: "none" },
 };
