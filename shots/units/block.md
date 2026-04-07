@@ -236,15 +236,15 @@ $Block(padding(1rem))
 }
 
 .\|\.start\$blockItem\(floatStart\,margin\(0\.5rem\,0\,0\,0\)\)>:where(.start) {
-  float: inline-start;
   margin-block: 0.5rem 0;
   margin-inline: 0;
+  float: inline-start;
 }
 
 .\|\.note\$blockItem\(floatEnd\,margin\(0\,0\,1rem\,1rem\)\)>:where(.note) {
-  float: inline-end;
   margin-block: 0 1rem;
   margin-inline: 0 1rem;
+  float: inline-end;
 }
 ```
 

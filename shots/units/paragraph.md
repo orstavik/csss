@@ -26,11 +26,11 @@ Formats user-generated comments or markdown blocks by targeting a specific class
 **css:**
 ```css
 .\.comment\$paragraph\(preWrap\,breakWord\,spacing\(0\.1em\)\,1\.5\):where(.comment) {
+  line-height: 1.5;
   white-space: pre-wrap;
+  word-spacing: 0.1em;
   word-break: normal;
   overflow-wrap: break-word;
-  word-spacing: 0.1em;
-  line-height: 1.5;
 }
 ```
 
@@ -62,10 +62,10 @@ Styles the first child in a container (like a terminal output or hash dump block
 **css:**
 ```css
 .\|\:first-child\$paragraph\(breakAll\,spacing\(0\)\,1\.2\)>:where(:first-child) {
+  line-height: 1.2;
+  word-spacing: 0;
   word-break: break-all;
   overflow-wrap: normal;
-  word-spacing: 0;
-  line-height: 1.2;
 }
 ```
 
@@ -118,8 +118,8 @@ Sets typography for poetry or lyrics block. Keeps spaces and lines as authored b
 **css:**
 ```css
 .\.poetry\$paragraph\(preserve\,1\.4\,center\):where(.poetry) {
-  white-space: preserve;
   line-height: 1.4;
+  white-space: preserve;
   text-align: center;
 }
 ```
@@ -152,9 +152,9 @@ Renders hover styles for a summary card description, where text might overflow a
 **css:**
 ```css
 .\:hover\$paragraph\(breakSpaces\,spacing\(-0\.05em\)\,1\.5\):where(:hover) {
+  line-height: 1.5;
   white-space: break-spaces;
   word-spacing: -0.05em;
-  line-height: 1.5;
 }
 ```
 

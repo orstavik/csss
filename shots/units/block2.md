@@ -98,9 +98,9 @@ $Block$Box(inline(_,_,600px))
 }
 
 .\|\.box\$blockItem\(floatStart\,margin\(0\,1rem\,1rem\,0\)\)>:where(.box) {
-  float: inline-start;
   margin-block: 0 1rem;
   margin-inline: 1rem 0;
+  float: inline-start;
 }
 
 .\|p\$blockItem\(margin\(0\,0\,1rem\)\)>:where(p) {
@@ -114,9 +114,9 @@ $Block$Box(inline(_,_,600px))
 }
 
 .\|\.intro\$blockItem\(clearStart\,margin\(0\,0\,2rem\)\)>:where(.intro) {
-  clear: inline-start;
   margin-block: 0 2rem;
   margin-inline: 0;
+  clear: inline-start;
 }
 
 .\|\.content\$blockItem\(margin\(0\,0\,1rem\)\)>:where(.content) {
@@ -125,9 +125,9 @@ $Block$Box(inline(_,_,600px))
 }
 
 .\|\.note\$blockItem\(floatEnd\,margin\(0\,0\,1rem\,1rem\)\)>:where(.note) {
-  float: inline-end;
   margin-block: 0 1rem;
   margin-inline: 0 1rem;
+  float: inline-end;
 }
 ```
 
@@ -572,15 +572,15 @@ $Block(padding(1.5rem))
 }
 
 .\|\.pullquote\$blockItem\(floatEnd\,margin\(0\,0\,1\.5rem\,1\.5rem\)\)>:where(.pullquote) {
-  float: inline-end;
   margin-block: 0 1.5rem;
   margin-inline: 0 1.5rem;
+  float: inline-end;
 }
 
 .\|\.paragraph\$blockItem\(clearEnd\,margin\(0\,0\,1\.5rem\)\)>:where(.paragraph) {
-  clear: inline-end;
   margin-block: 0 1.5rem;
   margin-inline: 0;
+  clear: inline-end;
 }
 ```
 
@@ -742,15 +742,15 @@ $Block(padding(1.5rem))
 }
 
 .\|\.metadata\$blockItem\(floatStart\,margin\(0\,1\.5rem\,1rem\,0\)\)>:where(.metadata) {
-  float: inline-start;
   margin-block: 0 1rem;
   margin-inline: 1.5rem 0;
+  float: inline-start;
 }
 
 .\|\.ingredients\$blockItem\(clearStart\,margin\(0\,0\,1\.5rem\)\)>:where(.ingredients) {
-  clear: inline-start;
   margin-block: 0 1.5rem;
   margin-inline: 0;
+  clear: inline-start;
 }
 
 .\|\.steps\$blockItem\(margin\(0\,0\,1\.5rem\)\)>:where(.steps) {
@@ -801,8 +801,8 @@ $Block(padding(1.5rem))
 }
 
 .\|\.footer-content\$blockItem\(floatEnd\,margin\(0\)\)>:where(.footer-content) {
-  float: inline-end;
   margin: 0;
+  float: inline-end;
 }
 ```
 
@@ -935,17 +935,17 @@ $Block(padding(2rem))$Box(auto,snap,scrollPadding(2rem,0))
 }
 
 .\|h2\$boxItem\(snapStart\,snapAlways\,scrollMargin\(2rem\,0\,0\)\)>:where(h2) {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   scroll-margin-block: 2rem 0;
   scroll-margin-inline: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .\|h3\$boxItem\(snapStart\,snapAlways\,scrollMargin\(2rem\,0\,0\)\)>:where(h3) {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   scroll-margin-block: 2rem 0;
   scroll-margin-inline: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 ```
 
@@ -1016,9 +1016,9 @@ $Block(padding(1.5rem))$Box(hidden)
 }
 
 .\|\.figure\$blockItem\(floatStart\,margin\(0\,1\.5rem\,1rem\,0\)\)\$Box\(inline\(40\%\)\)>:where(.figure) {
-  float: inline-start;
   margin-block: 0 1rem;
   margin-inline: 1.5rem 0;
+  float: inline-start;
   inline-size: 40%;
   block-size: unset;
   min-inline-size: unset;
@@ -1031,9 +1031,9 @@ $Block(padding(1.5rem))$Box(hidden)
 }
 
 .\|\.aside\$blockItem\(floatEnd\,margin\(0\,0\,1rem\,1\.5rem\)\)\$Box\(inline\(30\%\)\)>:where(.aside) {
-  float: inline-end;
   margin-block: 0 1rem;
   margin-inline: 0 1.5rem;
+  float: inline-end;
   inline-size: 30%;
   block-size: unset;
   min-inline-size: unset;
@@ -1046,9 +1046,9 @@ $Block(padding(1.5rem))$Box(hidden)
 }
 
 .\|\.footer\$blockItem\(clear\,margin\(2rem\,0\,0\)\)>:where(.footer) {
-  clear: both;
   margin-block: 2rem 0;
   margin-inline: 0;
+  clear: both;
 }
 ```
 

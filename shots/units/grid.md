@@ -116,8 +116,8 @@ $Grid(startEnd,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
 }
 
 .\|\:nth-child\(2\)\$gridItem\(row\(2\,span\(2\)\)\,column\(2\)\)>:where(:nth-child(2)) {
-  grid-row: 2 / span 2;
   grid-column: 2;
+  grid-row: 2 / span 2;
 }
 ```
 
