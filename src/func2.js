@@ -71,7 +71,7 @@ const CsssPrimitives = {
   AbsoluteUrl,
   LengthPercentUnset: a => Length(a) ?? Percent(a) ?? Unset(a),
   LengthPercent: a => Length(a) ?? Percent(a),
-  SingleTableRaw: Table => ({ text }) => text in Table ? Table[text] : undefined,
+  SingleTableRaw: Table => ({ text }) => Table[text],
 };
 //these returns objects.
 const CsssFunctions = {
