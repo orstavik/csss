@@ -57,10 +57,10 @@ const SHORTS = {
   ...paragraphItem.props,
   ...textDecorations.props,
   ...position.props,
+  ...shadows.props,
   ...transitions,
   ...border,
   ...filterTransforms,
-  ...shadows,
   ...svg,
   ...paragraph.props,
   ...ObjectFit,
@@ -81,6 +81,7 @@ const SHORTS = {
   ...position.csss,
   ...fonts.csss,
   ...backgrounds.csss,
+  ...shadows.csss,
   displayNone: { display: "none" },
 };
 

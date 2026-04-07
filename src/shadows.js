@@ -1,6 +1,6 @@
 //todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
 import { Color } from "./funcColor.js";
-import { CsssPrimitives, matchArgsWithInterpreters, CsssFunctions } from "./func2.js";
+import { CsssPrimitives, matchArgsWithInterpreters, BadArgument } from "./func2.js";
 const { Length, Radian, LengthNumberRaw } = CsssPrimitives;
 // There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 
 // Then in the $shadow(shade,angle,length,color?) to use it.
@@ -72,9 +72,13 @@ const textDropShadow2 = ({ name, args }) => {
 }
 
 export default {
-  boxShadow: a => ({ boxShadow: boxShadow2(a) }),
-  textShadow: a => ({ textShadow: textDropShadow2(a) }), 
+  props: { boxShadow: undefined, textShadow: undefined },
+  csss: {
+    boxShadow: a => ({ boxShadow: boxShadow2(a) }),
+    textShadow: a => ({ textShadow: textDropShadow2(a) }),
+    noBoxShadow: { boxShadow: "none" },
+    noTextShadow: { textShadow: "none" },
+  },
+  css: {},
   dropShadow: a => `drop-shadow(${textDropShadow2(a)})`,
-  noBoxShadow: { boxShadow: "none" },
-  noTextShadow: { textShadow: "none" },
 };
