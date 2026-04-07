@@ -1,9 +1,6 @@
-import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, SequentialFunction, SingleArgumentFunction } = FunctionTypes;
-// const { Angle, Length, NumberInterpreter, Url, AnglePercent, LengthPercent, NumberPercent } = ValueTypes;
-import { CsssPrimitives, CsssFunctions, matchArgsWithInterpreters } from "./func2.js";
-const { NumberPercent, Length, Angle, LengthPercent, Url, AnglePercent, NumberInterpreter, SingleFunctionFunction } = CsssPrimitives;
-const { SF2, FunctionFunctionPropertyType, TypeBasedFunction } = CsssFunctions;
+import { CsssPrimitives, CsssFunctions } from "./func2.js";
+const { NumberPercent, Length, Angle, LengthPercent, AnglePercent, NumberInterpreter, SingleFunctionFunction } = CsssPrimitives;
+const { SF2 } = CsssFunctions;
 
 const Scale = ({ name, args }) => {
   if (name !== "scale") return;
@@ -69,12 +66,6 @@ const transform = ({ name, args }) => {
   });
   return { transform: ar.join(" ") };
 };
-// const transformWithFunc = (name, ar) => ({ transform: `${name}(${ar.join(", ")})` });
-// const transformWithFuncOne = (name, v) => ({ transform: `${name}(${v})` });
-// const rotate = SingleArgumentFunction(Angle, transformWithFuncOne);
-// const translateX = SingleArgumentFunction(LengthPercent, transformWithFuncOne);
-// const scaleX = SingleArgumentFunction(NumberPercent, transformWithFuncOne);
-// const skewX = SingleArgumentFunction(AnglePercent, transformWithFuncOne);
 
 export default {
   props: { transform: undefined, translate: undefined, scale: undefined, rotate: undefined },
