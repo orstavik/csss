@@ -58,7 +58,7 @@ const SHORTS = {
   ...textDecorations.props,
   ...position.props,
   ...shadows.props,
-  ...transitions,
+  ...transitions.props,
   ...border,
   ...filterTransforms,
   ...svg,
@@ -82,6 +82,7 @@ const SHORTS = {
   ...fonts.csss,
   ...backgrounds.csss,
   ...shadows.csss,
+  ...transitions.csss,
   displayNone: { display: "none" },
 };
 

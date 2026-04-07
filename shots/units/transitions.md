@@ -43,19 +43,19 @@
 ```
 
 **description:** Creates a 5-step transition with jump-end timing.
-**csss:** $transition(stepsEnd(5))
+**csss:** $transition(steps(5,end))
 **css:**
 ```css
-.\$transition\(stepsEnd\(5\)\) {
-  transition: steps(5);
+.\$transition\(steps\(5\,end\)\) {
+  transition: steps(5, end);
 }
 ```
 
 **description:** Creates a 5-step transition with jump-both timing.
-**csss:** $transition(stepsBoth(5))
+**csss:** $transition(steps(5,jumpBoth))
 **css:**
 ```css
-.\$transition\(stepsBoth\(5\)\) {
+.\$transition\(steps\(5\,jumpBoth\)\) {
   transition: steps(5, jump-both);
 }
 ```
