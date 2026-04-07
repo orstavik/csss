@@ -59,7 +59,7 @@ const SHORTS = {
   ...position.props,
   ...shadows.props,
   ...transitions.props,
-  ...border,
+  ...border.props,
   ...filterTransforms,
   ...svg,
   ...paragraph.props,
@@ -83,6 +83,7 @@ const SHORTS = {
   ...backgrounds.csss,
   ...shadows.csss,
   ...transitions.csss,
+  ...border.csss,
   displayNone: { display: "none" },
 };
 

@@ -38,12 +38,6 @@ const parseSignature = SIG => {
 const Url = a => a.kind === "QUOTE" ? `url(${a.text})` : a.name === "url" ? `url(${a.args[0].text})` : undefined;
 const Unset = a => a.text === "_" ? "unset" : undefined;
 const Name = a => a.kind === "WORD" && a.text.match(/^[a-z_][a-z_0-9-]*$/i)?.[0];
-const Length = a => (a.type === "length" || (a.num === 0 && a.type === "number")) ? a.text : undefined;
-const LengthNumberRaw = a => (a.type === "length" || a.type === "number") ? a : undefined;
-const Percent = a => a.type === "percent" ? a.text : undefined;
-const NumberInterpreter = a => (a.type === "number" && a.unit === "") ? a.num : undefined;
-const Integer = a => { const n = NumberInterpreter(a); return (n !== undefined && Number.isInteger(n)) ? n : undefined; };
-const Angle = a => { if (a.num === 0 && a.type === "number") return "0deg"; return a.type === "angle" ? a.text : undefined; };
 const Quote = a => a.kind === "QUOTE" ? a.text : undefined;
 const Word = a => a.kind === "WORD" ? a.text : undefined;
 
@@ -63,18 +57,9 @@ const CsssPrimitives = {
   Unset,
   UrlUnset: a => Url(a) ?? Unset(a),
   Url,
-  Length,
-  LengthNumberRaw,
-  Percent,
-  NumberInterpreter,
-  Integer,
-  Angle,
   Word,
   NameUnset: a => Name(a) ?? Unset(a),
   AbsoluteUrl,
-  LengthPercentUnset: a => Length(a) ?? Percent(a) ?? Unset(a),
-  LengthPercent: a => Length(a) ?? Percent(a),
-  LengthNumber: a => Length(a) ?? Percent(a),
   SingleTableRaw: Table => ({ text }) => Table[text],
 };
 //these returns objects.
