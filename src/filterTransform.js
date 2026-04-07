@@ -1,7 +1,9 @@
 import shadow from "./shadows.js";
 import { ValueTypes, FunctionTypes } from "./func.js";
 const { FunctionBasedOnValueTypes, SequentialFunction, SingleArgumentFunction } = FunctionTypes;
-const { Angle, Length, NumberInterpreter, Url, AnglePercent, LengthPercent, NumberPercent } = ValueTypes;
+// const { Angle, Length, NumberInterpreter, Url, AnglePercent, LengthPercent, NumberPercent } = ValueTypes;
+import { CsssPrimitives } from "./func2.js";
+const { NumberPercent, Length, Angle, LengthPercent, Url, AnglePercent, NumberInterpreter } = CsssPrimitives;
 
 const FILTER_FUNCS = {
   blur: SingleArgumentFunction(Length, (n, v) => `${n}(${v})`),
