@@ -20,12 +20,13 @@ import box from "./box.js";
 import palette from "./palette.js";
 import transitions from "./transitions.js";
 import textDecorations from "./textDecorations.js";
-import filterTransforms from "./filterTransform.js";
 import shadows from "./shadows.js";
 import position from "./position.js";
 import svg from "./svg.js";
 import paragraph from "./paragraph.js";
 import paragraphItem from "./paragraphItem.js";
+import filter from "./filter.js";
+import transforms from "./transform.js";
 import { animationHo } from "./animations.js";
 
 const ObjectFit = {       //convert to objectFit("fill|contain|cover|scale-down|none") etc.
@@ -61,7 +62,8 @@ const SHORTS = {
   ...transitions.props,
   ...border.props,
   ...svg.props,
-  ...filterTransforms,
+  ...filter.props,
+  ...transforms.props,
   ...paragraph.props,
   ...ObjectFit,
   ...box.csss,
@@ -85,6 +87,8 @@ const SHORTS = {
   ...transitions.csss,
   ...border.csss,
   ...svg.csss,
+  ...filter.csss,
+  ...transforms.csss,
   displayNone: { display: "none" },
 };
 

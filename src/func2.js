@@ -61,6 +61,10 @@ const CsssPrimitives = {
   NameUnset: a => Name(a) ?? Unset(a),
   AbsoluteUrl,
   SingleTableRaw: Table => ({ text }) => Table[text],
+  SingleFunctionFunction: (CssName, INTERPRETER) => {
+    const CsssName = toCamelCase(CssName);
+    return ({ name, args }) => name === CsssName && args.length === 1 ? `${CssName}(${INTERPRETER(args[0])})` : undefined
+  },
 };
 //these returns objects.
 const CsssFunctions = {
@@ -120,6 +124,18 @@ const CsssFunctions = {
     const v = INTERPRETER(args[0]);
     if (v == null) throw BadArgument(name, args, 0, INTERPRETER.name);
     return { [CssProp]: v };
+  },
+  FunctionFunctionPropertyType: (CssProp, CssFunction, INTERPRETER) => {
+    const CsssName = toCamelCase(CssFunction);
+    return ({ args, name }) => {
+      if (CsssName !== name) return;
+      if (args.length != 1)
+        throw new SyntaxError(`${name}() requires 1 argument, got ${args.length} arguments.`);
+
+      const v = INTERPRETER(args[0]);
+      if (v == null) throw BadArgument(name, args, 0, INTERPRETER.name);
+      return { [CssProp]: `${CssFunction}(${v})` };
+    }
   },
   SizeFunction: (CsssName, [min, CssName, max], INTERPRETER) => ({ args, name }) => {
     if (CsssName !== name)

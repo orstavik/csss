@@ -48,7 +48,7 @@ function calculateShadow({ type, angle = Math.PI * .75, length = { num: 5 }, col
   return `${x} ${y} ${blur} ${spread} ${color}`;
 }
 
-const boxShadow2 = ({ name, args }) => {
+const boxShadow = ({ name, args }) => {
   const type = ShadeType(args[0]);
   if (type) {
     const [inset, angle, length, color] = matchArgsWithInterpreters(name, 1, args, [Inset, Radian, LengthNumberRaw, Color]);
@@ -59,7 +59,7 @@ const boxShadow2 = ({ name, args }) => {
     return [inset, x, y, blur, spread, color2].filter(Boolean).join(" ");
   throw BadArgument("boxShadow", args.length, args, `Must get either two lengths (x,y) or start with a shadeType: ${Object.keys(SHADES).join("|")}.`);
 }
-const textDropShadow2 = ({ name, args }) => {
+const textDropShadow = ({ name, args }) => {
   const type = ShadeType(args[0]);
   if (type) {
     const [angle, length, color] = matchArgsWithInterpreters(name, 1, args, [Radian, LengthNumberRaw, Color]);
@@ -74,11 +74,14 @@ const textDropShadow2 = ({ name, args }) => {
 export default {
   props: { boxShadow: undefined, textShadow: undefined },
   csss: {
-    boxShadow: a => ({ boxShadow: boxShadow2(a) }),
-    textShadow: a => ({ textShadow: textDropShadow2(a) }),
+    boxShadow: a => ({ boxShadow: boxShadow(a) }),
+    textShadow: a => ({ textShadow: textDropShadow(a) }),
     noBoxShadow: { boxShadow: "none" },
     noTextShadow: { textShadow: "none" },
   },
   css: {},
-  dropShadow: a => `drop-shadow(${textDropShadow2(a)})`,
+  raw: {
+    boxShadow,
+    textDropShadow,
+  }
 };

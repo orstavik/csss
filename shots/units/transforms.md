@@ -3,7 +3,7 @@
 **css:**
 ```css
 .\$rotate\(45deg\) {
-  transform: rotate(45deg);
+  rotate: 45deg;
 }
 ```
 
@@ -12,7 +12,7 @@
 **css:**
 ```css
 .\$scale\(30\%\,15\%\) {
-  transform: scale(30%, 15%);
+  scale: 30% 15%;
 }
 ```
 
@@ -21,7 +21,7 @@
 **css:**
 ```css
 .\$scale\(30\%\) {
-  transform: scale(30%);
+  scale: 30%;
 }
 ```
 
@@ -30,24 +30,29 @@
 **css:**
 ```css
 .\$translate\(10px\,5\%\)\$rotate\(15deg\) {
-  transform: translate(10px, 5%) rotate(15deg);
+  translate: 10px 5%;
+  rotate: 15deg;
 }
 ```
 
 **description:** Chains translate, rotate and matrix transforms together.
-**csss:** $translate(10px,5%)$rotate(15deg)$matrix(1,2,3,4,5,6.6)
+**csss:** $translate(10px,5%)$rotate(15deg)$transform(matrix(1,2,3,4,5,6.6))
 **css:**
 ```css
-.\$translate\(10px\,5\%\)\$rotate\(15deg\)\$matrix\(1\,2\,3\,4\,5\,6\.6\) {
-  transform: translate(10px, 5%) rotate(15deg) matrix(1, 2, 3, 4, 5, 6.6);
+.\$translate\(10px\,5\%\)\$rotate\(15deg\)\$transform\(matrix\(1\,2\,3\,4\,5\,6\.6\)\) {
+  translate: 10px 5%;
+  rotate: 15deg;
+  transform: matrix(1, 2, 3, 4, 5, 6.6);
 }
 ```
 
 **description:** Chains 3D scale, rotate and translate transforms together.
-**csss:** $scale3d(1,2,3)$rotate3d(1,2,3,15deg)$translate3d(10px,5%,10px)
+**csss:** $scale(1,2,3)$rotate(1,2,3,15deg)$translate(10px,5%,10px)
 **css:**
 ```css
-.\$scale3d\(1\,2\,3\)\$rotate3d\(1\,2\,3\,15deg\)\$translate3d\(10px\,5\%\,10px\) {
-  transform: scale3d(1, 2, 3) rotate3d(1, 2, 3, 15deg) translate3d(10px, 5%, 10px);
+.\$scale\(1\,2\,3\)\$rotate\(1\,2\,3\,15deg\)\$translate\(10px\,5\%\,10px\) {
+  scale: 1 2 3;
+  rotate: 1 2 3 15deg;
+  translate: 10px 5% 10px;
 }
 ```
