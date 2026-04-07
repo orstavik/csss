@@ -1,7 +1,7 @@
-import { Color } from "./funcColor.js";
 import { CsssPrimitives, CsssFunctions, matchArgsWithInterpreters } from "./func2.js";
 const { LengthPercent } = CsssPrimitives;
 const { CssValuesToCsssTable } = CsssFunctions;
+import { Color } from "./funcColor.js";
 
 const Styles = CssValuesToCsssTable("solid|dotted|dashed|double|groove|ridge|inset|outset|none|hidden");
 const Style = a => Styles[a.text];
