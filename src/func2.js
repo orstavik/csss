@@ -9,16 +9,17 @@ export function BadArgument(name, args, I, message = "") {
 }
 
 const once = new Set();
-function matchArgsWithInterpreters(NAME, args, INTERPRETERS) {
+export function matchArgsWithInterpreters(NAME, i, args, INTERPRETERS) {
   once.clear();
-  const res = [];
-  main: for (let i = 0; i < args.length; i++) {
-    for (let fn of INTERPRETERS) {
-      if (once.has(fn)) continue;
+  const res = Array(INTERPRETERS.length);
+  main: for (; i < args.length; i++) {
+    for (let j = 0; j < INTERPRETERS.length; j++) {
+      const fn = INTERPRETERS[j];
+      if (once.has(j)) continue;
       const v = fn(args[i]);
       if (v == null) continue;
-      once.add(fn);
-      res.push(v);
+      once.add(j);
+      res[j] = v;
       continue main;
     }
     throw BadArgument(NAME, args, i, "Unknown argument.");
@@ -38,6 +39,7 @@ const Url = a => a.kind === "QUOTE" ? `url(${a.text})` : a.name === "url" ? `url
 const Unset = a => a.text === "_" ? "unset" : undefined;
 const Name = a => a.kind === "WORD" && a.text.match(/^[a-z_][a-z_0-9-]*$/i)?.[0];
 const Length = a => (a.type === "length" || (a.num === 0 && a.type === "number")) ? a.text : undefined;
+const LengthNumberRaw = a => (a.type === "length" || a.type === "number") ? a : undefined;
 const Percent = a => a.type === "percent" ? a.text : undefined;
 const NumberInterpreter = a => (a.type === "number" && a.unit === "") ? a.num : undefined;
 const Integer = a => { const n = NumberInterpreter(a); return (n !== undefined && Number.isInteger(n)) ? n : undefined; };
@@ -62,6 +64,7 @@ const CsssPrimitives = {
   UrlUnset: a => Url(a) ?? Unset(a),
   Url,
   Length,
+  LengthNumberRaw,
   Percent,
   NumberInterpreter,
   Integer,
@@ -71,6 +74,7 @@ const CsssPrimitives = {
   AbsoluteUrl,
   LengthPercentUnset: a => Length(a) ?? Percent(a) ?? Unset(a),
   LengthPercent: a => Length(a) ?? Percent(a),
+  LengthNumber: a => Length(a) ?? Percent(a),
   SingleTableRaw: Table => ({ text }) => Table[text],
 };
 //these returns objects.
@@ -158,7 +162,7 @@ const CsssFunctions = {
     const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
     return POST(first, res);
   },
-  TypeBasedFunction: (...FUNCTIONS) => ({ args, name }) => Object.assign({}, ...matchArgsWithInterpreters(name, args, FUNCTIONS)),
+  TypeBasedFunction: (...FUNCTIONS) => ({ args, name }) => Object.assign({}, ...matchArgsWithInterpreters(name, 0, args, FUNCTIONS)),
   FunctionWithDefaultValues: (BASE, CB) => {
     Object.freeze(BASE);
     const reduce = o => { for (let k in o) if ((k + "Block") in o && (k + "Inline") in o) delete o[k]; return o };
