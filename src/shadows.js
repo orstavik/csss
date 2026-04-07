@@ -1,9 +1,11 @@
 //todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
 
-import { ValueTypes, FunctionTypes, Interpreters } from "./func.js";
-const { lengthNumber: isLengthNumber } = Interpreters;
+import { FunctionTypes } from "./func.js";
 const { FunctionBasedOnValueTypes, Either } = FunctionTypes;
-const { Color, Length, Radian, WordToValue } = ValueTypes;// Shadows are handled similarly to transitions. Or even more semantically regulated.
+import { Color } from "./funcColor.js";
+import { CsssPrimitives, matchArgsWithInterpreters, CsssFunctions } from "./func2.js";
+const { Name, Length, Radian, LengthNumberRaw } = CsssPrimitives;
+const { SF2 } = CsssFunctions;
 // There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 
 // Then in the $shadow(shade,angle,length,color?) to use it.
 // If the length is passed in as 
@@ -31,10 +33,12 @@ const SHADES = {
   subtle: { l: 0.05, b: 0.1, s: 0.1 },
   delicate: { l: 0.07, b: 0.15, s: 0.15 },
 };
+const ShadeType = a => SHADES[a.text];
+const Inset = a => a.text === "inset" ? "inset" : undefined;
 
 //default angle 135deg
 // default length is plain number? 5 is "normal" => 0.25rem. 1 is very small => 0.05rem. 10 is large => 0.5rem.
-function calculateShadow({ type, angle = Math.PI * .75, length = { num: 5 }, color = "var(--shadowColor, #0003)" }) {
+function calculateShadow({ type, angle = Math.PI * .75, length = { num: 5 }, color = "var(--shadowColor, #0003)" }, doSpread) {
   if (!type) throw new SyntaxError("Missing shadow name: " + Object.keys(SHADES).join("|"));
   if (!length.unit) { length.num /= 20; length.unit = "rem"; }
   const { num, unit } = length;
@@ -42,8 +46,10 @@ function calculateShadow({ type, angle = Math.PI * .75, length = { num: 5 }, col
   const x = -round(Math.cos(angle) * type.l * num) + unit;
   const y = round(Math.sin(angle) * type.l * num) + unit;
   const blur = round(type.b * num) + unit;
+  if (!doSpread)
+    return `${x} ${y} ${blur} ${color}`;
   const spread = round(type.s * num) + unit;
-  return { x, y, blur, spread, color };
+  return `${x} ${y} ${blur} ${spread} ${color}`;
 }
 
 const parseAbsoluteShadowArgs = FunctionBasedOnValueTypes({}, {
@@ -54,12 +60,35 @@ const parseAbsoluteShadowArgs = FunctionBasedOnValueTypes({}, {
   color: Color,
 }, {});
 const parseNamedShadowArgs = FunctionBasedOnValueTypes({}, {
-  type: WordToValue(SHADES),
+  type: a => SHADES[a.text],
   angle: Radian,
-  length: isLengthNumber,
+  length: LengthNumberRaw,
   color: Color,
 }, {}, calculateShadow);
 const Shadow = Either(parseAbsoluteShadowArgs, parseNamedShadowArgs);
+
+const boxShadow2 = ({ name, args }) => {
+  const type = ShadeType(args[0]);
+  if (type) {
+    const [inset, angle, length, color] = matchArgsWithInterpreters(name, 1, args, [Inset, Radian, LengthNumberRaw, Color]);
+    return (inset ? "inset " : "") + calculateShadow({ type, angle, length, color }, true);
+  }
+  const [inset, x, y, blur, spread, color2] = matchArgsWithInterpreters(name, 0, args, [Inset, Length, Length, Length, Length, Color]);
+  if (y)
+    return [inset, x, y, blur, spread, color2].filter(Boolean).join(" ");
+  throw BadArgument("boxShadow", args.length, args, `Must get either two lengths (x,y) or start with a shadeType: ${Object.keys(SHADES).join("|")}.`);
+}
+const textDropShadow2 = ({ name, args }) => {
+  const type = ShadeType(args[0]);
+  if (type) {
+    const [angle, length, color] = matchArgsWithInterpreters(name, 1, args, [Radian, LengthNumberRaw, Color]);
+    return calculateShadow({ type, angle, length, color }, false);
+  }
+  const [x, y, blur, color2] = matchArgsWithInterpreters(name, 0, args, [Length, Length, Length, Color]);
+  if (y)
+    return [x, y, blur, color2].filter(Boolean).join(" ");
+  throw BadArgument("textShadow", args.length, args, `Must get either two lengths (x,y) or start with a shadeType: ${Object.keys(SHADES).join("|")}.`);
+}
 
 function boxShadow(a) {
   const { x, y, blur, spread, color } = Shadow(a);
@@ -71,9 +100,8 @@ function textDropShadow(a) {
 }
 
 export default {
-  boxShadowInset: a => ({ boxShadow: "inset " + boxShadow(a) }),
-  boxShadow: a => ({ boxShadow: boxShadow(a) }),
-  textShadow: a => ({ textShadow: textDropShadow(a) }),
+  boxShadow: a => ({ boxShadow: boxShadow2(a) }), //a => ({ boxShadow: boxShadow(a) }),
+  textShadow: a => ({ textShadow: textDropShadow2(a) }), //a => ({ textShadow: textDropShadow(a) }),
   dropShadow: a => `drop-shadow(${textDropShadow(a)})`,
   noBoxShadow: { boxShadow: "none" },
   noTextShadow: { textShadow: "none" },

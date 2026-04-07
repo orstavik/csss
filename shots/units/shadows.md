@@ -23,10 +23,10 @@ $boxShadow(0,1rem,.25rem,#3f51b5)$boxShadow(0,.5rem,.5rem,#blue)
 **description:**
 Adds an inset box shadow with 4px blur and 60% opacity black.
 **csss:**
-$boxShadowInset(0,2px,4px,0,#rgba(0,0,0,0.6))
+$boxShadow(inset,0,2px,4px,0,#rgba(0,0,0,0.6))
 **css:**
 ```css
-.\$boxShadowInset\(0\,2px\,4px\,0\,\#rgba\(0\,0\,0\,0\.6\)\) {
+.\$boxShadow\(inset\,0\,2px\,4px\,0\,\#rgba\(0\,0\,0\,0\.6\)\) {
   box-shadow: inset 0 2px 4px 0 rgba(0 0 0 / 0.6);
 }
 ```
