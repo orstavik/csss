@@ -84,36 +84,28 @@ const strokeNone = { ...strokeDefaults, stroke: "none" };
 const fillNone = { ...fillDefaults, fill: "none" };
 const svgTextNone = { ...svgTextDefaults };
 
-export default {
-  stroke,
-  fill,
-  svgText,
+const props = {
+  stroke: undefined,
+  fill: undefined,
+  svgText: undefined,
 
-  Stroke: FunctionWithDefaultValues(strokeDefaults, stroke),
-  Fill: FunctionWithDefaultValues(fillDefaults, fill),
-  SvgText: FunctionWithDefaultValues(svgTextDefaults, svgText),
+  markerStart: undefined,
+  markerEnd: undefined,
+  markerMid: undefined,
+  marker: undefined,
 
-  markerStart: FunctionPropertyType("markerStart", "markerStart", Url),
-  markerEnd: FunctionPropertyType("markerEnd", "markerEnd", Url),
-  markerMid: FunctionPropertyType("markerMid", "markerMid", Url),
-  marker: SF2("marker/1-3", [UrlUnset], (name, m) =>
-    m.length == 1 ? { marker: m[0] } :
-      m.length == 2 ? { markerStart: m[0], markerEnd: m[1] } :
-        { markerStart: m[0], markerMid: m[1], markerEnd: m[2] }
-  ),
-
-  stopColor: FunctionPropertyType("stopColor", "stopColor", ColorUrl),
-  stopOpacity: FunctionPropertyType("stopOpacity", "stopOpacity", NumberInterpreter),
-  vectorEffect: FunctionPropertyType("vectorEffect", "vectorEffect", SingleTableRaw(vectorEffect)),
-  clipRule: FunctionPropertyType("clipRule", "clipRule", SingleTableRaw(clipRule)),
-  colorInterpolation: FunctionPropertyType("colorInterpolation", "colorInterpolation", SingleTableRaw(colorInterpolation)),
-  shapeRendering: FunctionPropertyType("shapeRendering", "shapeRendering", SingleTableRaw(shapeRendering)),
-  colorRendering: FunctionPropertyType("colorRendering", "colorRendering", SingleTableRaw(colorRendering)),
-  imageRendering: FunctionPropertyType("imageRendering", "imageRendering", SingleTableRaw(imageRendering)),
-  maskType: FunctionPropertyType("maskType", "maskType", SingleTableRaw(maskType)),
-  paintOrder: SF2("paintOrder/0-4", [SingleTableRaw(paintOrder)], (name, ar) => ({ paintOrder: ar.join(" ") })),
-  lightingColor: FunctionPropertyType("lightingColor", "lightingColor", ColorUrl),
-  svgOpacity: FunctionPropertyType("svgOpacity", "svgOpacity", NumberInterpreter),
+  stopColor: undefined,
+  stopOpacity: undefined,
+  vectorEffect: undefined,
+  clipRule: undefined,
+  colorInterpolation: undefined,
+  shapeRendering: undefined,
+  colorRendering: undefined,
+  imageRendering: undefined,
+  maskType: undefined,
+  paintOrder: undefined,
+  lightingColor: undefined,
+  svgOpacity: undefined,
 
   strokeWidth: undefined,
   strokeLinecap: undefined,
@@ -128,13 +120,47 @@ export default {
   dominantBaseline: undefined,
   alignmentBaseline: undefined,
   baselineShift: undefined,
+};
+export default {
+  props,
+  csss: {
+    stroke,
+    fill,
+    svgText,
 
-  strokeNone,
-  fillNone,
-  svgTextNone,
-  // noStroke: strokeNone,
-  // noFill: fillNone,
-  // noSvgText: svgTextNone,
-  // noMarker: { marker: "none" },
-  markerNone: { marker: "none" },
+    Stroke: FunctionWithDefaultValues(strokeDefaults, stroke),
+    Fill: FunctionWithDefaultValues(fillDefaults, fill),
+    SvgText: FunctionWithDefaultValues(svgTextDefaults, svgText),
+
+    markerStart: FunctionPropertyType("markerStart", "markerStart", Url),
+    markerEnd: FunctionPropertyType("markerEnd", "markerEnd", Url),
+    markerMid: FunctionPropertyType("markerMid", "markerMid", Url),
+    marker: SF2("marker/1-3", [UrlUnset], (name, m) =>
+      m.length == 1 ? { marker: m[0] } :
+        m.length == 2 ? { markerStart: m[0], markerEnd: m[1] } :
+          { markerStart: m[0], markerMid: m[1], markerEnd: m[2] }
+    ),
+
+    stopColor: FunctionPropertyType("stopColor", "stopColor", ColorUrl),
+    stopOpacity: FunctionPropertyType("stopOpacity", "stopOpacity", NumberInterpreter),
+    vectorEffect: FunctionPropertyType("vectorEffect", "vectorEffect", SingleTableRaw(vectorEffect)),
+    clipRule: FunctionPropertyType("clipRule", "clipRule", SingleTableRaw(clipRule)),
+    colorInterpolation: FunctionPropertyType("colorInterpolation", "colorInterpolation", SingleTableRaw(colorInterpolation)),
+    shapeRendering: FunctionPropertyType("shapeRendering", "shapeRendering", SingleTableRaw(shapeRendering)),
+    colorRendering: FunctionPropertyType("colorRendering", "colorRendering", SingleTableRaw(colorRendering)),
+    imageRendering: FunctionPropertyType("imageRendering", "imageRendering", SingleTableRaw(imageRendering)),
+    maskType: FunctionPropertyType("maskType", "maskType", SingleTableRaw(maskType)),
+    paintOrder: SF2("paintOrder/0-4", [SingleTableRaw(paintOrder)], (name, ar) => ({ paintOrder: ar.join(" ") })),
+    lightingColor: FunctionPropertyType("lightingColor", "lightingColor", ColorUrl),
+    svgOpacity: FunctionPropertyType("svgOpacity", "svgOpacity", NumberInterpreter),
+    strokeNone,
+    fillNone,
+    svgTextNone,
+    // noStroke: strokeNone,
+    // noFill: fillNone,
+    // noSvgText: svgTextNone,
+    // noMarker: { marker: "none" },
+    markerNone: { marker: "none" },
+  },
+  css: {}
 };

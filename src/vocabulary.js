@@ -60,8 +60,8 @@ const SHORTS = {
   ...shadows.props,
   ...transitions.props,
   ...border.props,
+  ...svg.props,
   ...filterTransforms,
-  ...svg,
   ...paragraph.props,
   ...ObjectFit,
   ...box.csss,
@@ -84,6 +84,7 @@ const SHORTS = {
   ...shadows.csss,
   ...transitions.csss,
   ...border.csss,
+  ...svg.csss,
   displayNone: { display: "none" },
 };
 
