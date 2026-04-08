@@ -105,7 +105,7 @@ function sameType(args) {
     return a.type ? a : t;
   }, null);
 }
-function illegalDividend(a, b) {
+function illegalDividend([a, b]) {
   if (b.type != "number") throw "Divisor must be a plain number.";
   if (b.num == 0) throw "Divide by zero.";
 }
