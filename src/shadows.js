@@ -59,7 +59,8 @@ const boxShadow = ({ name, args }) => {
     return [inset, x, y, blur, spread, color2].filter(Boolean).join(" ");
   throw BadArgument("boxShadow", args.length, args, `Must get either two lengths (x,y) or start with a shadeType: ${Object.keys(SHADES).join("|")}.`);
 }
-const textDropShadow = ({ name, args }) => {
+
+const textDropShadowRaw = ({ name, args }) => {
   const type = ShadeType(args[0]);
   if (type) {
     const [angle, length, color] = matchArgsWithInterpreters(name, 1, args, [Radian, LengthNumberRaw, Color]);
@@ -68,6 +69,11 @@ const textDropShadow = ({ name, args }) => {
   const [x, y, blur, color2] = matchArgsWithInterpreters(name, 0, args, [Length, Length, Length, Color]);
   if (y)
     return [x, y, blur, color2].filter(Boolean).join(" ");
+}
+
+const textDropShadow = ({ name, args }) => {
+  const txt = textDropShadowRaw({ name, args });
+  if(txt != null) return txt;
   throw BadArgument("textShadow", args.length, args, `Must get either two lengths (x,y) or start with a shadeType: ${Object.keys(SHADES).join("|")}.`);
 }
 
@@ -81,7 +87,6 @@ export default {
   },
   css: {},
   raw: {
-    boxShadow,
-    textDropShadow,
+    textDropShadowRaw,
   }
 };
