@@ -3,94 +3,94 @@ import { ValueTypes, FunctionTypes } from "./func.js";
 const { FunctionBasedOnValueTypes } = FunctionTypes;
 import { CsssPrimitives } from "./func2.js";
 const { Time, NumberInterpreter } = CsssPrimitives;
-import * as CURVES from "./Curves.js";
+import * as CURVES from "./funcEasing.js";
 
-// const DIRECTION_WORDS = {
-//   normal: "normal",
-//   reverse: "reverse",
-//   alternate: "alternate",
-//   alternateReverse: "alternate-reverse",
-// };
+const DIRECTION_WORDS = {
+  normal: "normal",
+  reverse: "reverse",
+  alternate: "alternate",
+  alternateReverse: "alternate-reverse",
+};
 
-// const FILL_MODE_WORDS = {
-//   forwards: "forwards",
-//   backwards: "backwards",
-//   both: "both",
-//   none: "none",
-// };
+const FILL_MODE_WORDS = {
+  forwards: "forwards",
+  backwards: "backwards",
+  both: "both",
+  none: "none",
+};
 
-// const PLAY_STATE_WORDS = {
-//   running: "running",
-//   paused: "paused",
-// };
+const PLAY_STATE_WORDS = {
+  running: "running",
+  paused: "paused",
+};
 
-// const EASingleArgumentFunctionG_WORDS = {
-//   ease: "ease",
-//   linear: "linear",
-//   easeIn: "ease-in",
-//   easeOut: "ease-out",
-//   easeInOut: "ease-in-out",
-//   ...CURVES,
-// };
+const EASingleArgumentFunctionG_WORDS = {
+  ease: "ease",
+  linear: "linear",
+  easeIn: "ease-in",
+  easeOut: "ease-out",
+  easeInOut: "ease-in-out",
+  ...CURVES,
+};
 
 const ANIMS = {
-  // animation: FunctionBasedOnValueTypes({
-  //   infinite: "infinite",
-  //   ...EASingleArgumentFunctionG_WORDS,
-  //   ...DIRECTION_WORDS,
-  //   ...FILL_MODE_WORDS,
-  //   ...PLAY_STATE_WORDS,
-  // }, {
-  //   duration: Time,
-  //   delay: Time,
-  //   iterationCount: NumberInterpreter,
-  // }, {
-  //   cubicBezier: NumberInterpreter,
-  //   steps: NumberInterpreter,
-  // }, (res) => {
-  //   const settings = {};
-  //   if (res.duration) settings.duration = res.duration;
-  //   if (res.delay) settings.delay = res.delay;
-  //   if (res.iterationCount) settings.iterationCount = res.iterationCount;
-  //   if (res.infinite) settings.iterationCount = "infinite";
-  //   // Handle direction
-  //   for (let key in DIRECTION_WORDS) {
-  //     if (res[key]) {
-  //       settings.direction = DIRECTION_WORDS[key];
-  //       break;
-  //     }
-  //   }
-  //   // Handle fillMode
-  //   for (let key in FILL_MODE_WORDS) {
-  //     if (res[key]) {
-  //       settings.fillMode = FILL_MODE_WORDS[key];
-  //       break;
-  //     }
-  //   }
+  animation: FunctionBasedOnValueTypes({
+    infinite: "infinite",
+    ...EASingleArgumentFunctionG_WORDS,
+    ...DIRECTION_WORDS,
+    ...FILL_MODE_WORDS,
+    ...PLAY_STATE_WORDS,
+  }, {
+    duration: Time,
+    delay: Time,
+    iterationCount: NumberInterpreter,
+  }, {
+    cubicBezier: NumberInterpreter,
+    steps: NumberInterpreter,
+  }, (res) => {
+    const settings = {};
+    if (res.duration) settings.duration = res.duration;
+    if (res.delay) settings.delay = res.delay;
+    if (res.iterationCount) settings.iterationCount = res.iterationCount;
+    if (res.infinite) settings.iterationCount = "infinite";
+    // Handle direction
+    for (let key in DIRECTION_WORDS) {
+      if (res[key]) {
+        settings.direction = DIRECTION_WORDS[key];
+        break;
+      }
+    }
+    // Handle fillMode
+    for (let key in FILL_MODE_WORDS) {
+      if (res[key]) {
+        settings.fillMode = FILL_MODE_WORDS[key];
+        break;
+      }
+    }
 
-  //   // Handle playState
-  //   for (let key in PLAY_STATE_WORDS) {
-  //     if (res[key]) {
-  //       settings.playState = PLAY_STATE_WORDS[key];
-  //       break;
-  //     }
-  //   }
+    // Handle playState
+    for (let key in PLAY_STATE_WORDS) {
+      if (res[key]) {
+        settings.playState = PLAY_STATE_WORDS[key];
+        break;
+      }
+    }
 
-  //   // Handle easing
-  //   for (let key in EASingleArgumentFunctionG_WORDS) {
-  //     if (res[key]) {
-  //       settings.easing = EASingleArgumentFunctionG_WORDS[key];
-  //       break;
-  //     }
-  //   }
-  //   if (res.cubicBezier) {
-  //     settings.easing = { name: "cubicBezier", args: res.cubicBezier };
-  //   }
-  //   if (res.steps) {
-  //     settings.easing = { name: "steps", args: res.steps };
-  //   }
-  //   return { settings };
-  // }),
+    // Handle easing
+    for (let key in EASingleArgumentFunctionG_WORDS) {
+      if (res[key]) {
+        settings.easing = EASingleArgumentFunctionG_WORDS[key];
+        break;
+      }
+    }
+    if (res.cubicBezier) {
+      settings.easing = { name: "cubicBezier", args: res.cubicBezier };
+    }
+    if (res.steps) {
+      settings.easing = { name: "steps", args: res.steps };
+    }
+    return { settings };
+  }),
   to: function ({ args }) {
     return { settings: {}, stepKey: "100%", nextArgs: args };
   },
@@ -102,6 +102,13 @@ const ANIMS = {
     const percent = args[0]?.text || "50%";
     return { settings: {}, stepKey: percent, nextArgs: args.slice(1) };
   },
+  infiniteAlternate: { settings: { iterationCount: "infinite", direction: "alternate" } },
+  infinite: { settings: { iterationCount: "infinite" } },
+  alternate: { settings: { direction: "alternate" } },
+  reverse: { settings: { direction: "reverse" } },
+  forwards: { settings: { fillMode: "forwards" } },
+  backwards: { settings: { fillMode: "backwards" } },
+  both: { settings: { fillMode: "both" } },
 };
 
 //TODO not implemented/supported, neither here nor in the Parser.js
@@ -141,21 +148,10 @@ const ANIMS = {
 //         });
 // }
 
-const AnimationWords = {
-  infiniteAlternate: { settings: { iterationCount: "infinite", direction: "alternate" } },
-  infinite: { settings: { iterationCount: "infinite" } },
-  alternate: { settings: { direction: "alternate" } },
-  reverse: { settings: { direction: "reverse" } },
-  fillForwards: { settings: { fillMode: "forwards" } },
-  fillBackwards: { settings: { fillMode: "backwards" } },
-  fillBoth: { settings: { fillMode: "both" } },
-};
 function animationHo(cb) {
-
   return ({ name, args }) => {
-    // debugger
     // Find where animation functions start (check both .name for EXP and .text for WORD)
-    const i = args.findIndex(a => (a.name in ANIMS) || (a.text in AnimationWords));
+    const i = args.findIndex(a => (a.name in ANIMS) || (a.text in ANIMS));
     if (i === -1)
       return cb({ name, args });
 
@@ -173,8 +169,8 @@ function animationHo(cb) {
     // Process each animation step
     for (let anim of anims) {
       let extraSettings, stepKey, nextArgs;
-      if (anim.text in AnimationWords)
-        ({ settings: extraSettings, stepKey, nextArgs } = AnimationWords[anim.text]);
+      if (anim.text in ANIMS)
+        ({ settings: extraSettings, stepKey, nextArgs } = ANIMS[anim.text]);
       else if (anim.name in ANIMS)
         ({ settings: extraSettings, stepKey, nextArgs } = ANIMS[anim.name](anim));
       else

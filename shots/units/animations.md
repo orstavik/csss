@@ -46,8 +46,6 @@
 }
 ```
 
-transform + animation — scale
-
 **description:** Animates scale from 1 up to 1.5 over 2 seconds.
 **csss:** $scale(1.5,from(1))
 **css:**
@@ -64,8 +62,6 @@ transform + animation — scale
 }
 ```
 
-transform + animation — rotate
-
 **description:** Animates rotation from 0deg to 180deg over 2 seconds.
 **csss:** $rotate(180deg,from(0deg))
 **css:**
@@ -81,8 +77,6 @@ transform + animation — rotate
   animation: rotate-from0deg 2s;
 }
 ```
-
-combined animations — opacity, scale & translate
 
 **description:** Runs three simultaneous animations: fade in, scale up and slide up.
 **csss:** $opacity(1,from(0.3))$scale(1.2,from(0.8))$translate(0px,from(0,30px))
