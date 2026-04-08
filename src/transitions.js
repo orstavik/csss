@@ -12,10 +12,17 @@ const NativeEasingFunction = a => NativeEaseFunctions[a.text] ?? cubicBezier(a) 
 const AllowDiscrete = a => a.text === "allowDiscrete" ? "allow-discrete" : undefined;
 const TransitionProperty = a => Name(a)?.replaceAll(/[A-Z]/g, m => `-${m.toLowerCase()}`);
 
+function easingFunctionRaw(a) {
+  const curve = CURVES[a.text];
+  if (curve) return [`var(--transition-${a.text})`, { [`:root /*--transition-${a.text}*/`]: { [`--transition-${a.text}`]: curve } }];
+  let ease = NativeEasingFunction(a);
+  if (ease) return [ease];
+  return [];
+}
+
 const transition = ({ args }) => {
-  let i = 0, curve;
-  let ease = NativeEasingFunction(args[i]);
-  ease ??= (args[i].text in CURVES) ? `var(--transition-${curve = args[i].text})` : undefined;
+  let i = 0;
+  const [ease, extra] = easingFunctionRaw(args[i]);
   if (ease) i++;
   const duration = (i < args.length) && Time(args[i]);
   if (duration) i++;
@@ -31,9 +38,7 @@ const transition = ({ args }) => {
   if (properties.includes("all"))
     properties.length = 0;
 
-  const res = {};
-  if (curve)
-    res[`:root /*--transition-${curve}*/`] = { [`--transition-${curve}`]: CURVES[curve] };
+  const res = extra ?? {};
   const tail = [ease, duration, delay, allowDiscrete].filter(Boolean).join(" ");
   res.transition = !properties.length ? tail : properties.map(p => `${p} ${tail}`).join(", ");
   return res;
@@ -50,4 +55,7 @@ export default {
   csss: {
     transition,
   },
+  raw: {
+    easingFunctionRaw,
+  }
 };
