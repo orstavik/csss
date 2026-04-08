@@ -1,6 +1,8 @@
 import { ValueTypes, FunctionTypes } from "./func.js";
-const { NumberInterpreter, Time } = ValueTypes;
+// const { NumberInterpreter, Time } = ValueTypes;
 const { FunctionBasedOnValueTypes } = FunctionTypes;
+import { CsssPrimitives } from "./func2.js";
+const { Time, NumberInterpreter } = CsssPrimitives;
 import * as CURVES from "./Curves.js";
 
 const DIRECTION_WORDS = {
@@ -146,7 +148,7 @@ const ANIMS = {
 //         });
 // }
 
-export function animationHo(cb) {
+function animationHo(cb) {
   return ({ name, args }) => {
     // Find where animation functions start (check both .name for EXP and .text for WORD)
     const i = args.findIndex(a => (a.name in ANIMS) || (a.text in ANIMS));
@@ -205,8 +207,7 @@ export function animationHo(cb) {
     return result;
   };
 }
-
-export default {
+const props = {
   animation: undefined,
   animationName: undefined,
   animationDuration: undefined,
@@ -216,4 +217,11 @@ export default {
   animationDirection: undefined,
   animationFillMode: undefined,
   animationPlayState: undefined,
+};
+
+export default {
+  props,
+  raw: {
+    animationHo,
+  }
 };
