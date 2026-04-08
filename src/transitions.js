@@ -1,28 +1,14 @@
-import { CsssPrimitives, CsssFunctions, BadArgument } from "./func2.js";
-const { Name, NumberInterpreter, Time } = CsssPrimitives;
-const { CssValuesToCsssTable, SF2 } = CsssFunctions;
-import * as CURVES from "./Curves.js";
-
-const NativeEaseFunctions = CssValuesToCsssTable("ease|ease-in|ease-out|ease-in-out|linear");
-const cubicBezier = SF2("cubic-bezier/4", Array(4).fill(NumberInterpreter), (_, ar) => `cubic-bezier(${ar.join(",")})`);
-const Step = SF2("steps/1-2", [NumberInterpreter, a => StepFunctions[a.text]], (_, ar) => `steps(${ar.join(", ")})`);
-const StepFunctions = CssValuesToCsssTable("start|end|jump-start|jump-end|jump-both|jump-none");
-const NativeEasingFunction = a => NativeEaseFunctions[a.text] ?? cubicBezier(a) ?? Step(a);
+import { CsssPrimitives, BadArgument } from "./func2.js";
+const { Name, Time } = CsssPrimitives;
+import Easing from "./funcEasing.js";
+const { easingFunction } = Easing.csss;
 
 const AllowDiscrete = a => a.text === "allowDiscrete" ? "allow-discrete" : undefined;
 const TransitionProperty = a => Name(a)?.replaceAll(/[A-Z]/g, m => `-${m.toLowerCase()}`);
 
-function easingFunctionRaw(a) {
-  const curve = CURVES[a.text];
-  if (curve) return [`var(--transition-${a.text})`, { [`:root /*--transition-${a.text}*/`]: { [`--transition-${a.text}`]: curve } }];
-  let ease = NativeEasingFunction(a);
-  if (ease) return [ease];
-  return [];
-}
-
 const transition = ({ args }) => {
   let i = 0;
-  const [ease, extra] = easingFunctionRaw(args[i]);
+  const [ease, extra] = easingFunction(args[i]);
   if (ease) i++;
   const duration = (i < args.length) && Time(args[i]);
   if (duration) i++;
@@ -55,7 +41,4 @@ export default {
   csss: {
     transition,
   },
-  raw: {
-    easingFunctionRaw,
-  }
 };

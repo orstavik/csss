@@ -134,8 +134,8 @@ const wobble = cssLinear(join(
   sineWave(2, .1, 60).map((y, i) => 1 - y - (60 - i) / 120)
 ));
 
-export {
-  backInEaseOut, 
+const CURVES = {
+  backInEaseOut,
   easeInBackOut,
   backInOut,
   easeInBounceOut,
@@ -145,4 +145,29 @@ export {
   springInEaseOut,
   springInOut,
   wobble,
+};
+
+import { CsssFunctions, CsssPrimitives } from "./func2.js";
+const { CssValuesToCsssTable, SF2 } = CsssFunctions;
+const { NumberInterpreter } = CsssPrimitives;
+
+const NativeEaseFunctions = CssValuesToCsssTable("ease|ease-in|ease-out|ease-in-out|linear");
+const StepFunctions = CssValuesToCsssTable("start|end|jump-start|jump-end|jump-both|jump-none");
+
+const CubicBezier = SF2("cubic-bezier/4", Array(4).fill(NumberInterpreter), (_, ar) => `cubic-bezier(${ar.join(",")})`);
+const Step = SF2("steps/1-2", [NumberInterpreter, a => StepFunctions[a.text]], (_, ar) => `steps(${ar.join(", ")})`);
+const NativeEasingFunction = a => NativeEaseFunctions[a.text] ?? CubicBezier(a) ?? Step(a);
+
+function easingFunction(a) {
+  const curve = CURVES[a.text];
+  if (curve) return [`var(--transition-${a.text})`, { [`:root /*--transition-${a.text}*/`]: { [`--transition-${a.text}`]: curve } }];
+  let ease = NativeEasingFunction(a);
+  if (ease) return [ease];
+  return [];
+}
+
+export default {
+  csss: {
+    easingFunction
+  }
 };
