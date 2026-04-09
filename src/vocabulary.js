@@ -26,7 +26,7 @@ import paragraph from "./paragraph.js";
 import paragraphItem from "./paragraphItem.js";
 import filter from "./filter.js";
 import transforms from "./transform.js";
-import animations from "./animations2.js";
+import animations from "./animations.js";
 
 const ObjectFit = {       //convert to objectFit("fill|contain|cover|scale-down|none") etc.
   objectFit: undefined,

@@ -1,6 +1,7 @@
 import { BadArgument, matchArgsWithInterpreters, CsssFunctions, CsssPrimitives } from "./func2.js";
 const { CssValuesToCsssTable } = CsssFunctions;
 const { MsOrNumber, Time, PositiveInteger } = CsssPrimitives;
+const IterationCount = a => a.text === 'infinite' ? 'infinite' : PositiveInteger(a);
 import Easing from "./funcEasing.js";
 const EasingFunction = Easing.csss.easingFunction;
 const EasingFunction2 = x => {
@@ -67,7 +68,7 @@ function animationHof({ animation, keyFrames }, CB, X) {
 }
 
 function animate({ name, args }) {
-  let [ease, behavior, fillMode, count, delay, times] = matchArgsWithInterpreters("animate", 0, args, [EasingFunction2, Behavior, FillMode, PositiveInteger, Time, TimeVector]);
+  let [ease, behavior, fillMode, count, delay, times] = matchArgsWithInterpreters("animate", 0, args, [EasingFunction2, Behavior, FillMode, IterationCount, Time, TimeVector]);
   if (delay == null && times == null)
     times = [0, 300]; //todo here we are adding a default animation length.
   if (delay != null && times == null) {
