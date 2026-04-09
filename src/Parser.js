@@ -102,8 +102,8 @@ const clashOrStack = (function () {
   };
 
   return function clashOrStack(shortsI) {
-    const res = {};
-    for (const obj of shortsI) {
+    const res = shortsI[0];
+    for (const obj of shortsI.slice(1)) {
       for (let [k, v] of Object.entries(obj)) {
         if (v == null) continue;
         if (!(k in res))
@@ -119,6 +119,8 @@ const clashOrStack = (function () {
   }
 })();
 
+const removeUndefined = o => Object.fromEntries(Object.entries(o).filter(([k, v]) => v != null));
+
 function bodyToTxt(name, body, depth = 0) {
   const spaces = "  ".repeat(depth);
   const spaces2 = "  ".repeat(depth + 1);
@@ -130,7 +132,7 @@ function bodyToTxt(name, body, depth = 0) {
   return `${spaces}${name} {\n${body2}\n${spaces}}`;
 }
 
-function interpretShort(exp) {
+function interpretShort(acc, exp) {
   try {
     const cb = SHORTS[exp.name ?? exp.text];
     if (!cb) throw new ReferenceError(exp.name);
@@ -148,9 +150,17 @@ export function parse(short) {
   short = short.match(/(.*?)\!*$/)[1];
   const { exp, media } = parseMediaQuery(short, MEDIA_WORDS);
   let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
+  // const res = {};
+  // for (let x of exprList) {
+  //   const a = parseNestedExpression(x);
+  //   const b = interpretShort(acc, a);
+  //   const c = removeUndefined(b);
+  //   res = clashOrStack(res, c);
+  // }
   exprList = exprList.map(parseNestedExpression);
-  exprList = exprList.map(interpretShort);
-  exprList &&= clashOrStack(exprList);
+  exprList = exprList.map(x => interpretShort(undefined, x));
+  exprList = exprList.map(removeUndefined);
+  exprList = clashOrStack(exprList);
   let { selector, item, grandItem } = parseSelectorPipe(sel, clazz);
   const layer = (grandItem ? "grandItems" : item ? "items" : "container") + (short.match(/^(\$|\|\$|\|\|\$)/) ? "Default" : "");
   exprList = kebabcaseKeys(exprList);
