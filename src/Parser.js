@@ -101,21 +101,19 @@ const clashOrStack = (function () {
     fontVariant: " ",
   };
 
-  return function clashOrStack(shortsI) {
-    return shortsI.slice(1).reduce((acc, obj) => {
-      for (let [k, v] of Object.entries(obj)) {
-        if (v == null) continue;
-        if (!(k in acc))
-          acc[k] = v;
-        //todo if ::before and ::after or >* or other atRules clash, then add /*comments to separate them*/ as transitions and @font-face does.
-        else if (k in STACKABLE_PROPERTIES)
-          acc[k] += (STACKABLE_PROPERTIES[k] + v);
-        else
-          throw new SyntaxError(`CSS$ clash: ${k} = ${acc[k]}  AND = ${v}.`);
-      }
-      return acc;
-    }, shortsI[0]);
-  }
+  return function clashOrStack(acc, obj) {
+    for (let [k, v] of Object.entries(obj)) {
+      if (v == null) continue;
+      if (!(k in acc))
+        acc[k] = v;
+      //todo if ::before and ::after or >* or other atRules clash, then add /*comments to separate them*/ as transitions and @font-face does.
+      else if (k in STACKABLE_PROPERTIES)
+        acc[k] += (STACKABLE_PROPERTIES[k] + v);
+      else
+        throw new SyntaxError(`CSS$ clash: ${k} = ${acc[k]}  AND = ${v}.`);
+    }
+    return acc;
+  };
 })();
 
 const removeUndefined = o => Object.fromEntries(Object.entries(o).filter(([k, v]) => v != null));
@@ -149,21 +147,17 @@ export function parse(short) {
   short = short.match(/(.*?)\!*$/)[1];
   const { exp, media } = parseMediaQuery(short, MEDIA_WORDS);
   let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
-  // const res = {};
-  // for (let x of exprList) {
-  //   const a = parseNestedExpression(x);
-  //   const b = interpretShort(acc, a);
-  //   const c = removeUndefined(b);
-  //   res = clashOrStack(res, c);
-  // }
-  exprList = exprList.map(parseNestedExpression);
-  exprList = exprList.map(x => interpretShort(undefined, x));
-  exprList = exprList.map(removeUndefined);
-  exprList = clashOrStack(exprList);
+  let resCsss = {};
+  for (let x of exprList) {
+    const a = parseNestedExpression(x);
+    const b = interpretShort(resCsss, a);
+    const c = removeUndefined(b);
+    resCsss = clashOrStack(resCsss, c);
+  }
   let { selector, item, grandItem } = parseSelectorPipe(sel, clazz);
   const layer = (grandItem ? "grandItems" : item ? "items" : "container") + (short.match(/^(\$|\|\$|\|\|\$)/) ? "Default" : "");
-  exprList = kebabcaseKeys(exprList);
-  const { atRules, mainRule: body } = extractAtRules(exprList);
+  const resCss = kebabcaseKeys(resCsss);
+  const { atRules, mainRule: body } = extractAtRules(resCss);
   checkProperty(body);
   let obj = { [selector]: body };
   if (media) obj = { [`@media ${media}`]: obj };
