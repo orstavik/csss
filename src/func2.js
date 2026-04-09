@@ -27,6 +27,23 @@ export function matchArgsWithInterpreters(NAME, i, args, INTERPRETERS) {
   return res;
 }
 
+export function flatVector(op, INTERPRETER, x) {
+  if(x.name !== op){
+    const v = INTERPRETER(x);
+    if(v == null) throw BadArgument(op, [x], 0, `Expected ${INTERPRETER.name} or ${op}-vector, got ${x}.`);
+    return [v];
+  }
+  const parts = [];
+  for (; x.name === op; x = x.args[0])
+    parts.unshift(x.args[1]);
+  parts.unshift(x);
+  return parts.map((a, i) => {
+    const ms = INTERPRETER(a);
+    if (ms != null) return ms;
+    throw BadArgument(">", parts, i, `Expected ${INTERPRETER.name}, got ${parts[i]}.`);
+  });
+}
+
 const parseSignature = SIG => {
   const [NAME, ARITY] = SIG.split("/");
   if (ARITY == undefined || ARITY == "") return { NAME };

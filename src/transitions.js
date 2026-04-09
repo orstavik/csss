@@ -8,7 +8,7 @@ const TransitionProperty = a => Name(a)?.replaceAll(/[A-Z]/g, m => `-${m.toLower
 
 const transition = ({ args }) => {
   let i = 0;
-  const [ease, extra] = easingFunction(args[i]);
+  const ease = easingFunction(args[i]);
   if (ease) i++;
   const duration = (i < args.length) && Time(args[i]);
   if (duration) i++;
@@ -24,8 +24,8 @@ const transition = ({ args }) => {
   if (properties.includes("all"))
     properties.length = 0;
 
-  const res = extra ?? {};
-  const tail = [ease, duration, delay, allowDiscrete].filter(Boolean).join(" ");
+  const res = ease?.[1] ?? {};
+  const tail = [ease?.[0], duration, delay, allowDiscrete].filter(Boolean).join(" ");
   res.transition = !properties.length ? tail : properties.map(p => `${p} ${tail}`).join(", ");
   return res;
 };

@@ -163,7 +163,6 @@ function easingFunction(a) {
   if (curve) return [`var(--transition-${a.text})`, { [`:root /*--transition-${a.text}*/`]: { [`--transition-${a.text}`]: curve } }];
   let ease = NativeEasingFunction(a);
   if (ease) return [ease];
-  return [];
 }
 
 export default {

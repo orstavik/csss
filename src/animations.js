@@ -1,40 +1,15 @@
-import { BadArgument, matchArgsWithInterpreters, CsssFunctions, CsssPrimitives } from "./func2.js";
+import { matchArgsWithInterpreters, CsssFunctions, CsssPrimitives, flatVector } from "./func2.js";
 const { CssValuesToCsssTable } = CsssFunctions;
 const { MsOrNumber, Time, PositiveInteger } = CsssPrimitives;
 const IterationCount = a => a.text === 'infinite' ? 'infinite' : PositiveInteger(a);
 import Easing from "./funcEasing.js";
+
 const EasingFunction = Easing.csss.easingFunction;
-const EasingFunction2 = x => {
-  const xx = EasingFunction(x);
-  return xx.length ? xx : undefined;
-}
-
-function flattenTheRootVectorExpr(x) {
-  const parts = [];
-  for (; x.name === ">"; x = x.args[0])
-    parts.unshift(x.args[1]);
-  parts.unshift(x);
-  return parts;
-}
-
 const BehaviorWords = CssValuesToCsssTable("alternate|reverse|alternate-reverse");
 const Behavior = a => BehaviorWords[a.text];
 const FillModeWords = CssValuesToCsssTable("forwards|backwards|both");
 const FillMode = a => FillModeWords[a.text];
-const TimeVector = x => {
-  const ms = MsOrNumber(x);
-  if (ms != null)
-    return [0, ms];
-  if (x.name !== ">")
-    return;
-  const flat = flattenTheRootVectorExpr(x);
-  const mss = flat.map((a, i) => {
-    const ms = MsOrNumber(a);
-    if (ms != null) return ms;
-    throw BadArgument(">", flat, i, `Expected <time|number>, got ${flat[i]}.`);
-  });
-  return mss;
-}
+const TimeVector = x => (x = flatVector(">", MsOrNumber, x))?.length === 1 ? [0, x[0]] : x;
 
 function extract(x, i) {
   if (x.name === ">") return extract(x.args[i % x.args.length], i);
@@ -68,7 +43,7 @@ function animationHof({ animation, keyFrames }, CB, X) {
 }
 
 function animate({ name, args }) {
-  let [ease, behavior, fillMode, count, delay, times] = matchArgsWithInterpreters("animate", 0, args, [EasingFunction2, Behavior, FillMode, IterationCount, Time, TimeVector]);
+  let [ease, behavior, fillMode, count, delay, times] = matchArgsWithInterpreters("animate", 0, args, [EasingFunction, Behavior, FillMode, IterationCount, Time, TimeVector]);
   if (delay == null && times == null)
     times = [0, 300]; //todo here we are adding a default animation length.
   if (delay != null && times == null) {
