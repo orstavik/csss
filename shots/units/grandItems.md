@@ -69,11 +69,11 @@ $grid(cols(repeat(2,1fr)),gap(1rem))
 **description:**
 Sets 50x50px size on all grid grandchildren.
 **csss:**
-|*|*$box(inline(50px),block(50px))
+|*|*$box(50px,50px)
 **css:**
 ```css
-.\|\*\|\*\$box\(inline\(50px\)\,block\(50px\)\)>*>* {
-  inline-size: 50px;
+.\|\*\|\*\$box\(50px\,50px\)>*>* {
   block-size: 50px;
+  inline-size: 50px;
 }
 ```

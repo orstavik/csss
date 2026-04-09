@@ -154,7 +154,7 @@ function interpretShort(res, x) {
     //we don't run hofs on fixed values. as they cannot contain >-vectors. for now.
     return ObjectAssignStack(res, cb);
   } catch (e) {
-    debugger;
+    // debugger;
     //todo improve error message
     throw e;
   }
@@ -453,7 +453,7 @@ const NUMBER = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${TYPES.LENGTHS})|($
 const tokenize = (_ => {
   const QUOTE = /([`'"])(\\.|(?!\2).)*?\2/.source;
   const VAR = /--[a-zA-Z][a-zA-Z0-9_]*/.source;
-  const WORD = /[._a-zA-Z][._%a-zA-Z0-9+<-]*/.source;
+  const WORD = /[._a-zA-Z][._%a-zA-Z0-9+-]*/.source;
   const NUMBER_WORDS = /e|pi|infinity|NaN/.source; //todo not added yet.
   const COLOR = `#[a-zA-Z0-9_]+`;
   const OPERATOR = /\?\?|\*\*|[><*/+-]/.source;

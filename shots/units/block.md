@@ -8,12 +8,12 @@ $Block(padding(1rem))$Box(hidden)
 .\$Block\(padding\(1rem\)\)\$Box\(hidden\) {
   display: block;
   padding: 1rem;
-  inline-size: unset;
   block-size: unset;
-  min-inline-size: unset;
-  max-inline-size: unset;
   min-block-size: unset;
   max-block-size: unset;
+  inline-size: unset;
+  min-inline-size: unset;
+  max-inline-size: unset;
   overflow: hidden;
   scroll-padding: unset;
   scroll-snap-type: unset;
@@ -31,29 +31,29 @@ $Block(padding(1rem))$Box(hidden)
 A scrolling Block media list with fixed-size items.
 **csss:**
 $block(padding(1.5rem))$Box(scroll)
-|$Box(inline(60px),block(100px))
+|$Box(100px,60px)
 **css:**
 ```css
 .\$block\(padding\(1\.5rem\)\)\$Box\(scroll\) {
   padding: 1.5rem;
-  inline-size: unset;
   block-size: unset;
-  min-inline-size: unset;
-  max-inline-size: unset;
   min-block-size: unset;
   max-block-size: unset;
+  inline-size: unset;
+  min-inline-size: unset;
+  max-inline-size: unset;
   overflow: scroll;
   scroll-padding: unset;
   scroll-snap-type: unset;
 }
 
-.\|\$Box\(inline\(60px\)\,block\(100px\)\)>* {
-  inline-size: 60px;
+.\|\$Box\(100px\,60px\)>* {
   block-size: 100px;
-  min-inline-size: unset;
-  max-inline-size: unset;
   min-block-size: unset;
   max-block-size: unset;
+  inline-size: 60px;
+  min-inline-size: unset;
+  max-inline-size: unset;
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
@@ -68,12 +68,12 @@ $Box(hiddenScroll)$paragraph(breakWord)
 **css:**
 ```css
 .\$Box\(hiddenScroll\)\$paragraph\(breakWord\) {
-  inline-size: unset;
   block-size: unset;
-  min-inline-size: unset;
-  max-inline-size: unset;
   min-block-size: unset;
   max-block-size: unset;
+  inline-size: unset;
+  min-inline-size: unset;
+  max-inline-size: unset;
   overflow: hidden scroll;
   scroll-padding: unset;
   scroll-snap-type: unset;
@@ -93,7 +93,7 @@ $Box(hiddenScroll)$paragraph(breakWord)
 A centered Block reading panel with capped line length.
 **csss:**
 $Block$box(auto)$Paragraph(_,center)
-|$Box(inline(_,_,600px))
+|$Box(_,_<_<600px)
 **css:**
 ```css
 .\$Block\$box\(auto\)\$Paragraph\(_\,center\) {
@@ -113,13 +113,13 @@ $Block$box(auto)$Paragraph(_,center)
   hanging-punctuation: unset;
 }
 
-.\|\$Box\(inline\(_\,_\,600px\)\)>* {
-  inline-size: unset;
+.\|\$Box\(_\,_\<_\<600px\)>* {
   block-size: unset;
-  min-inline-size: unset;
-  max-inline-size: 600px;
   min-block-size: unset;
   max-block-size: unset;
+  inline-size: unset;
+  min-inline-size: unset;
+  max-inline-size: 600px;
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;

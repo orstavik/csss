@@ -54,7 +54,7 @@ $Flex(rowReverse,gap(0.5rem),padding(1rem))
 A wrapping Flex card grid with fixed tile sizing.
 **csss:**
 $Flex(wrap,gap(1rem,2rem))
-|$FlexItem(margin(5px,1rem))$Box(inline(150px),block(120px))$BoxItem(scrollMargin(10px))
+|$FlexItem(margin(5px,1rem))$Box(120px,150px)$BoxItem(scrollMargin(10px))
 **css:**
 ```css
 .\$Flex\(wrap\,gap\(1rem\,2rem\)\) {
@@ -67,18 +67,18 @@ $Flex(wrap,gap(1rem,2rem))
   gap: 1rem 2rem;
 }
 
-.\|\$FlexItem\(margin\(5px\,1rem\)\)\$Box\(inline\(150px\)\,block\(120px\)\)\$BoxItem\(scrollMargin\(10px\)\)>* {
+.\|\$FlexItem\(margin\(5px\,1rem\)\)\$Box\(120px\,150px\)\$BoxItem\(scrollMargin\(10px\)\)>* {
   flex: unset;
   align-self: unset;
   order: unset;
   margin-block: 5px;
   margin-inline: 1rem;
-  inline-size: 150px;
   block-size: 120px;
-  min-inline-size: unset;
-  max-inline-size: unset;
   min-block-size: unset;
   max-block-size: unset;
+  inline-size: 150px;
+  min-inline-size: unset;
+  max-inline-size: unset;
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;

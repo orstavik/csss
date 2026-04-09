@@ -42,12 +42,12 @@ const scrollSnapType = {
 };
 
 const DefaultBox = {
-  inlineSize: "unset",
   blockSize: "unset",
-  minInlineSize: "unset",
-  maxInlineSize: "unset",
   minBlockSize: "unset",
   maxBlockSize: "unset",
+  inlineSize: "unset",
+  minInlineSize: "unset",
+  maxInlineSize: "unset",
   overflow: "unset",
   scrollPadding: "unset",
   scrollSnapType: "unset",
@@ -68,8 +68,10 @@ const scrollPaddingProps = {
 };
 
 const box = TypeBasedFunction(
-  SizeFunction("inline", ["minInlineSize", "inlineSize", "maxInlineSize"], LengthPercentUnset),
-  SizeFunction("block", ["minBlockSize", "blockSize", "maxBlockSize"], LengthPercentUnset),
+  SizeFunction("block", "<", LengthPercentUnset),
+  SizeFunction("inline", "<", LengthPercentUnset),
+  // SizeFunction("inline", ["minInlineSize", "inlineSize", "maxInlineSize"], LengthPercentUnset),
+  // SizeFunction("block", ["minBlockSize", "blockSize", "maxBlockSize"], LengthPercentUnset),
   SingleTable("overflow", overflow),
   LogicalFour("scrollPadding", "scrollPadding", LengthPercent),
   SingleTable("scrollSnapType", scrollSnapType)
@@ -95,8 +97,9 @@ export default {
   },
   css: {
     box: Optional("box",
-      SequentialFunctionReverse("inline", ["minInlineSize", "inlineSize", "maxInlineSize"], v => v, "_"),
-      SequentialFunctionReverse("block", ["minBlockSize", "blockSize", "maxBlockSize"], v => v, "_"),
+      //todo convert this into a Reverse vector with three values.
+      // SequentialFunctionReverse("inline", ["minInlineSize", "inlineSize", "maxInlineSize"], v => v, "_"),
+      // SequentialFunctionReverse("block", ["minBlockSize", "blockSize", "maxBlockSize"], v => v, "_"),
       SingleTableReverse("overflow", overflow),
       LogicalFourReverse("scrollPadding", "scrollPadding", v => v, "_"),
       SingleTableReverse("scrollSnapType", scrollSnapType)

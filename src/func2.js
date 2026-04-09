@@ -28,11 +28,8 @@ export function matchArgsWithInterpreters(NAME, i, args, INTERPRETERS) {
 }
 
 export function flatVector(op, INTERPRETER, x) {
-  if(x.name !== op){
-    const v = INTERPRETER(x);
-    if(v == null) throw BadArgument(op, [x], 0, `Expected ${INTERPRETER.name} or ${op}-vector, got ${x}.`);
-    return [v];
-  }
+  if (x.name !== op)
+    return (x = INTERPRETER(x)) == null ? x : [x];
   const parts = [];
   for (; x.name === op; x = x.args[0])
     parts.unshift(x.args[1]);
@@ -172,21 +169,17 @@ const CsssFunctions = {
       return { [CssProp]: `${CssFunction}(${v})` };
     }
   },
-  SizeFunction: (CsssName, [min, CssName, max], INTERPRETER) => ({ args, name }) => {
-    if (CsssName !== name)
-      return;
-    if (args.length < 1 || args.length > 3)
-      throw new SyntaxError(`${name}() requires 1 to 3 arguments, got ${args.length}.`);
-
-    const res = args.map((a, i) => {
-      const a2 = INTERPRETER(a);
-      if (a2)
-        return a2;
-      throw BadArgument(name, args, i, INTERPRETER.name);
-    });
-    return args.length === 1 ?
-      { [CssName]: res[0] } :
-      { [min]: res[0], [CssName]: res[1], [max]: res[2] ?? "unset" };
+  SizeFunction: (direction, Op, INTERPRETER) => {
+    const Direction = direction[0].toUpperCase() + direction.slice(1);
+    const min = `min${Direction}Size`, normal = `${direction}Size`, max = `max${Direction}Size`;
+    return x => {
+      const res = flatVector(Op, INTERPRETER, x);
+      if (res == null) return;
+      if (res.length === 1) return { [normal]: res[0] };
+      if (res.length === 2) return { [min]: res[0], [normal]: res[1] };
+      if (res.length === 3) return { [min]: res[0], [normal]: res[1], [max]: res[2] };
+      throw new SyntaxError(`size using ${Op}-vector takes 1 to 3 arguments, got ${res.length}.`);
+    }
   },
   ParseFirstThenRest: (INTERPRETER, INNERcb, POST) => ({ args, name }) => {
     if (!args.length)
