@@ -27,8 +27,9 @@ import paragraph from "./paragraph.js";
 import paragraphItem from "./paragraphItem.js";
 import filter from "./filter.js";
 import transforms from "./transform.js";
-import animations from "./animations.js";
-const { animationHo } = animations.raw;
+// import animations from "./animations.js";
+// const { animationHo } = animations.raw;
+import animations from "./animations2.js";
 
 const ObjectFit = {       //convert to objectFit("fill|contain|cover|scale-down|none") etc.
   objectFit: undefined,
@@ -91,6 +92,7 @@ const SHORTS = {
   ...svg.csss,
   ...filter.csss,
   ...transforms.csss,
+  ...animations.csss,
   displayNone: { display: "none" },
 };
 
@@ -138,9 +140,9 @@ for (let [kebab, types] of Object.entries(NativeCss.supported)) {
   SHORTS[camel] = interpretNativeValue;
 }
 
-const Animatables = "translateY|translate|translateX|translateZ|scale|scaleX|scaleY|scaleZ|rotate|rotateX|rotateY|rotateZ|skewX|skewY|opacity|bg|bgColor|color|border|Border".split("|");
-for (let k of Animatables)
-  SHORTS[k] = animationHo(SHORTS[k]);
+// const Animatables = "translateY|translate|translateX|translateZ|scale|scaleX|scaleY|scaleZ|rotate|rotateX|rotateY|rotateZ|skewX|skewY|opacity|bg|bgColor|color|border|Border".split("|");
+// for (let k of Animatables)
+//   SHORTS[k] = animationHo(SHORTS[k]);
 
 const REVERSES = {
   ...boxItem.css,
