@@ -87,7 +87,7 @@ const csssToCss = (function () {
     return Object.fromEntries(Object.entries(obj).map(([k, v]) => {
       if (Array.isArray(v) && k in STACKABLE_PROPERTIES)
         v = v.join(STACKABLE_PROPERTIES[k]);
-      if (v instanceof Object)
+      if (k[0] === "@" || k[0] === ":" || k.endsWith("%"))
         return [k, csssToCss(v)];
       if (Array.isArray(v))
         throw new SyntaxError(`Unstackable CSS property: ${k} = ${v.map(toString).toString()}.`);
@@ -141,14 +141,16 @@ function bodyToTxt(name, body, depth = 0) {
   return `${spaces}${name} {\n${body2}\n${spaces}}`;
 }
 
-function interpretShort(res, exp) {
+function interpretShort(res, x) {
   try {
-    const cb = SHORTS[exp.name ?? exp.text];
-    if (!cb) throw new ReferenceError(exp.name ?? exp.text);
+    const cb = SHORTS[x.name ?? x.text];
+    if (!cb) throw new ReferenceError(x.name ?? x.text);
+    if (cb instanceof Function && res.$ instanceof Function)
+      return ObjectAssignStack(res, res.$(cb, x));
     if (cb instanceof Function && res.$)
-      return res.$.reduceRight((acc, fn) => ObjectAssignStack(acc, fn(acc, cb, x)), res);
+      return res.$.reduceRight((acc, fn) => ObjectAssignStack(acc, fn(cb, x)), res);
     if (cb instanceof Function)
-      return ObjectAssignStack(res, cb(exp));
+      return ObjectAssignStack(res, cb(x));
     //we don't run hofs on fixed values. as they cannot contain >-vectors. for now.
     return ObjectAssignStack(res, cb);
   } catch (e) {
