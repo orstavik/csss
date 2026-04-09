@@ -102,20 +102,19 @@ const clashOrStack = (function () {
   };
 
   return function clashOrStack(shortsI) {
-    const res = shortsI[0];
-    for (const obj of shortsI.slice(1)) {
+    return shortsI.slice(1).reduce((acc, obj) => {
       for (let [k, v] of Object.entries(obj)) {
         if (v == null) continue;
-        if (!(k in res))
-          res[k] = v;
+        if (!(k in acc))
+          acc[k] = v;
         //todo if ::before and ::after or >* or other atRules clash, then add /*comments to separate them*/ as transitions and @font-face does.
         else if (k in STACKABLE_PROPERTIES)
-          res[k] += (STACKABLE_PROPERTIES[k] + v);
+          acc[k] += (STACKABLE_PROPERTIES[k] + v);
         else
-          throw new SyntaxError(`CSS$ clash: ${k} = ${res[k]}  AND = ${v}.`);
+          throw new SyntaxError(`CSS$ clash: ${k} = ${acc[k]}  AND = ${v}.`);
       }
-    }
-    return res;
+      return acc;
+    }, shortsI[0]);
   }
 })();
 
