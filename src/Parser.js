@@ -109,6 +109,8 @@ const clashOrStack = (function () {
       //todo if ::before and ::after or >* or other atRules clash, then add /*comments to separate them*/ as transitions and @font-face does.
       else if (k in STACKABLE_PROPERTIES)
         acc[k] += (STACKABLE_PROPERTIES[k] + v);
+      else if (k === "$")
+        (acc.$ ??= []).push(obj.$);
       else
         throw new SyntaxError(`CSS$ clash: ${k} = ${acc[k]}  AND = ${v}.`);
     }
