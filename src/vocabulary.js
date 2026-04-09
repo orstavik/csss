@@ -1,5 +1,4 @@
 import NativeCss from "./nativeCss.js";
-import { interpretImage } from "./func.js";
 import { CsssPrimitives } from "./func2.js";
 import { Color } from "./funcColor.js";
 
@@ -27,8 +26,6 @@ import paragraph from "./paragraph.js";
 import paragraphItem from "./paragraphItem.js";
 import filter from "./filter.js";
 import transforms from "./transform.js";
-// import animations from "./animations.js";
-// const { animationHo } = animations.raw;
 import animations from "./animations2.js";
 
 const ObjectFit = {       //convert to objectFit("fill|contain|cover|scale-down|none") etc.
@@ -114,7 +111,7 @@ for (let [kebab, types] of Object.entries(NativeCss.supported)) {
     repeat: CsssPrimitives.Repeat,
     minmax: CsssPrimitives.MinMax,
     span: CsssPrimitives.Span,
-    image: interpretImage,
+    image: CsssPrimitives.Image,
     quote: CsssPrimitives.Quote,
     lengthNumber: CsssPrimitives.LengthNumber,
     lengthPercent: CsssPrimitives.LengthPercent,

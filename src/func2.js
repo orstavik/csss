@@ -35,6 +35,22 @@ const parseSignature = SIG => {
   return { NAME, MIN: Number(MIN), MAX: Number(MAX) };
 };
 
+const SF2 = (CsssNameArity, INTERPRETERS, POST) => {
+  const { NAME, MIN = INTERPRETERS.length, MAX = INTERPRETERS.length } = parseSignature(CsssNameArity);
+  return ({ args, name }) => {
+    if (NAME && NAME !== name) return;
+    if (args.length < MIN || args.length > MAX)
+      throw new SyntaxError(`${name}() requires ${MIN} to ${MAX} arguments, got ${args.length}.`);
+
+    const res = args.map((a, i) => {
+      const a2 = (INTERPRETERS[i] ??= INTERPRETERS.at(-1))(a);
+      if (a2 != null) return a2;
+      throw BadArgument(name, args, i, INTERPRETERS[i].name);
+    });
+    return POST ? POST(name, res) : res;
+  }
+};
+
 const Url = a => a.kind === "QUOTE" ? `url(${a.text})` : a?.name === "url" ? `url(${a.args[0].text})` : undefined;
 const Unset = a => a.text === "_" ? "unset" : undefined;
 const Name = a => a.kind === "WORD" && a.text.match(/^[a-z_][a-z_0-9-]*$/i)?.[0];
@@ -49,6 +65,18 @@ const AbsoluteUrl = a => {
       try { return new URL(a.slice(1, -1)); } catch (e) { }
 };
 
+const MimeTypes = {
+  image: "image/*",
+  imageJpeg: "image/jpeg",
+  imagePng: "image/png",
+  imageGif: "image/gif",
+  imageWebp: "image/webp",
+  imageAvif: "image/avif",
+  imageSvgXml: "image/svg+xml",
+};
+const MimeType = a => MimeTypes[a.text];
+const ImageSet = SF2("image-set/1-3", [MimeType, Url, Maths.csss.Resolution], (name, [mime, url, resolution]) => `image-set(${url} ${mime} ${resolution})`);
+
 //these return strings.
 const CsssPrimitives = {
   ...Maths.csss,
@@ -59,6 +87,10 @@ const CsssPrimitives = {
   Url,
   Word,
   NameUnset: a => Name(a) ?? Unset(a),
+  MimeType,
+  //todo we need to work with the image types.
+  ImageSet,
+  Image: a => Url(a) ?? ImageSet(a),
   AbsoluteUrl,
   SingleTableRaw: Table => ({ text }) => Table[text],
   SingleFunctionFunction: (CssName, INTERPRETER) => {
@@ -101,21 +133,7 @@ const CsssFunctions = {
         [CssName + "Inline"]: args[3] != null && args[3] != args[1] ? (args[1] ?? args[0]) + " " + args[3] : args[1] ?? args[0],
       };
   },
-  SF2: (CsssNameArity, INTERPRETERS, POST) => {
-    const { NAME, MIN = INTERPRETERS.length, MAX = INTERPRETERS.length } = parseSignature(CsssNameArity);
-    return ({ args, name }) => {
-      if (NAME && NAME !== name) return;
-      if (args.length < MIN || args.length > MAX)
-        throw new SyntaxError(`${name}() requires ${MIN} to ${MAX} arguments, got ${args.length}.`);
-
-      const res = args.map((a, i) => {
-        const a2 = (INTERPRETERS[i] ??= INTERPRETERS.at(-1))(a);
-        if (a2 != null) return a2;
-        throw BadArgument(name, args, i, INTERPRETERS[i].name);
-      });
-      return POST ? POST(name, res) : res;
-    }
-  },
+  SF2,
   FunctionPropertyType: (CsssName, CssProp, INTERPRETER) => ({ args, name }) => {
     if (CsssName !== name) return;
     if (args.length != 1)
