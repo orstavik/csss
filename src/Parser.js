@@ -127,13 +127,16 @@ function bodyToTxt(name, body, depth = 0) {
   return `${spaces}${name} {\n${body2}\n${spaces}}`;
 }
 
-function interpretShort(acc, exp) {
+function interpretShort(res, exp) {
   try {
     const cb = SHORTS[exp.name ?? exp.text];
     if (!cb) throw new ReferenceError(exp.name ?? exp.text);
-    const res = cb instanceof Function ? cb(exp) : cb;
-    const res3 = clashOrStack(acc, res);
-    return res3;
+    if (cb instanceof Function && res.$)
+      return res.$.reduceRight((acc, fn) => clashOrStack(acc, fn(acc, cb, x)), res);
+    if (cb instanceof Function)
+      return clashOrStack(res, cb(exp));
+    //we don't run hofs on fixed values. as they cannot contain >-vectors. for now.
+    return clashOrStack(res, cb);
   } catch (e) {
     debugger;
     //todo improve error message
