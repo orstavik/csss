@@ -116,8 +116,6 @@ const clashOrStack = (function () {
   };
 })();
 
-const removeUndefined = o => Object.fromEntries(Object.entries(o).filter(([k, v]) => v != null));
-
 function bodyToTxt(name, body, depth = 0) {
   const spaces = "  ".repeat(depth);
   const spaces2 = "  ".repeat(depth + 1);
@@ -132,8 +130,10 @@ function bodyToTxt(name, body, depth = 0) {
 function interpretShort(acc, exp) {
   try {
     const cb = SHORTS[exp.name ?? exp.text];
-    if (!cb) throw new ReferenceError(exp.name);
-    return cb instanceof Function ? cb(exp) : cb;
+    if (!cb) throw new ReferenceError(exp.name ?? exp.text);
+    const res = cb instanceof Function ? cb(exp) : cb;
+    const res3 = clashOrStack(acc, res);
+    return res3;
   } catch (e) {
     debugger;
     //todo improve error message
@@ -147,13 +147,8 @@ export function parse(short) {
   short = short.match(/(.*?)\!*$/)[1];
   const { exp, media } = parseMediaQuery(short, MEDIA_WORDS);
   let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
-  let resCsss = {};
-  for (let x of exprList) {
-    const a = parseNestedExpression(x);
-    const b = interpretShort(resCsss, a);
-    const c = removeUndefined(b);
-    resCsss = clashOrStack(resCsss, c);
-  }
+  exprList = exprList.map(parseNestedExpression);
+  let resCsss = exprList.reduce(interpretShort, {});
   let { selector, item, grandItem } = parseSelectorPipe(sel, clazz);
   const layer = (grandItem ? "grandItems" : item ? "items" : "container") + (short.match(/^(\$|\|\$|\|\|\$)/) ? "Default" : "");
   const resCss = kebabcaseKeys(resCsss);
