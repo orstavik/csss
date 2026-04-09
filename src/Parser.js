@@ -1,4 +1,5 @@
 import { SHORTS, MEDIA_WORDS } from "./vocabulary.js";
+import NativeCss from "./nativeCss.js";
 
 /**
  * If you have a cssRules object, then you need to do:
@@ -53,26 +54,7 @@ export function extractShort(rule) {
   return className && className.slice(1).replaceAll("\\", "");
 }
 
-function extractAtRules(obj) {
-  const atRules = {}, mainRule = {};
-  for (let [k, v] of Object.entries(obj))
-    ((k.match(/^[@:]/)) ? atRules : mainRule)[k] = v;
-  return { atRules, mainRule };
-}
-
-function kebabcaseKeys(obj) {
-  if (!(obj instanceof Object)) return obj;
-  return Object.fromEntries(Object.entries(obj).map(([k, v]) =>
-    [k.match(/^(--|@|:)/) ? k : k.replace(/[A-Z]/g, "-$&").toLowerCase(), kebabcaseKeys(v)]));
-}
-
-function checkProperty(obj) {
-  for (let k in obj)
-    if (CSS.supports(k, "inherit") && !CSS.supports(k, obj[k]))
-      throw new SyntaxError(`Invalid CSS$ value => ${k}: ${obj[k]}`);
-}
-
-const clashOrStack = (function () {
+const csssToCss = (function () {
   const STACKABLE_PROPERTIES = {
     background: ", ",
     backgroundImage: ", ",
@@ -101,22 +83,52 @@ const clashOrStack = (function () {
     fontVariant: " ",
   };
 
-  return function clashOrStack(acc, obj) {
+  function csssToCss(obj) {
+    return Object.fromEntries(Object.entries(obj).map(([k, v]) => {
+      if (Array.isArray(v) && k in STACKABLE_PROPERTIES)
+        v = v.join(STACKABLE_PROPERTIES[k]);
+      if (v instanceof Object)
+        return [k, csssToCss(v)];
+      if (Array.isArray(v))
+        throw new SyntaxError(`Unstackable CSS property: ${k} = ${v.map(toString).toString()}.`);
+      if (k.startsWith("--"))
+        return [k, v];
+      k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
+      if (!(k in NativeCss.all))
+        return;
+      if ((k in NativeCss.supported) && !CSS.supports(k, v))
+        throw new SyntaxError(`Invalid CSS value => ${k}: ${v}`);
+      return [k, v];
+    }).filter(Boolean));
+  }
+
+  return function (selector, obj) {
+    const res = { [selector]: {} };
     for (let [k, v] of Object.entries(obj)) {
-      if (v == null) continue;
-      if (!(k in acc))
-        acc[k] = v;
-      //todo if ::before and ::after or >* or other atRules clash, then add /*comments to separate them*/ as transitions and @font-face does.
-      else if (k in STACKABLE_PROPERTIES)
-        acc[k] += (STACKABLE_PROPERTIES[k] + v);
-      else if (k === "$")
-        (acc.$ ??= []).push(obj.$);
-      else
-        throw new SyntaxError(`CSS$ clash: ${k} = ${acc[k]}  AND = ${v}.`);
+      if (k.match(/^(@|:)/)) { //split the main rule from the @|:root rules, 
+        if (Array.isArray(v))
+          throw new SyntaxError(`At-rules with the same key differ!!: ${k} = ${v.map(toString).toString()}.`);
+        res[k] = csssToCss(v);
+      } else
+        res[selector][k] = v;
     }
-    return acc;
+    res[selector] = csssToCss(res[selector]);
+    return res;
   };
 })();
+
+function ObjectAssignStack(a, b) {
+  for (let [k, v] of Object.entries(b)) {
+    if (v == null) continue;
+    else if (Array.isArray(a[k]))
+      a[k].push(v);
+    else if (k in a && JSON.stringify(a[k]) != JSON.stringify(v))
+      a[k] = [a[k], v];
+    else
+      a[k] = v;
+  }
+  return a;
+}
 
 function bodyToTxt(name, body, depth = 0) {
   const spaces = "  ".repeat(depth);
@@ -134,11 +146,11 @@ function interpretShort(res, exp) {
     const cb = SHORTS[exp.name ?? exp.text];
     if (!cb) throw new ReferenceError(exp.name ?? exp.text);
     if (cb instanceof Function && res.$)
-      return res.$.reduceRight((acc, fn) => clashOrStack(acc, fn(acc, cb, x)), res);
+      return res.$.reduceRight((acc, fn) => ObjectAssignStack(acc, fn(acc, cb, x)), res);
     if (cb instanceof Function)
-      return clashOrStack(res, cb(exp));
+      return ObjectAssignStack(res, cb(exp));
     //we don't run hofs on fixed values. as they cannot contain >-vectors. for now.
-    return clashOrStack(res, cb);
+    return ObjectAssignStack(res, cb);
   } catch (e) {
     debugger;
     //todo improve error message
@@ -156,15 +168,15 @@ export function parse(short) {
   let resCsss = exprList.reduce(interpretShort, {});
   let { selector, item, grandItem } = parseSelectorPipe(sel, clazz);
   const layer = (grandItem ? "grandItems" : item ? "items" : "container") + (short.match(/^(\$|\|\$|\|\|\$)/) ? "Default" : "");
-  const resCss = kebabcaseKeys(resCsss);
-  const { atRules, mainRule: body } = extractAtRules(resCss);
-  checkProperty(body);
-  let obj = { [selector]: body };
+  const resCss = csssToCss(selector, resCsss);
+
+  let obj, body;
+  obj = body = { [selector]: resCss[selector] };
   if (media) obj = { [`@media ${media}`]: obj };
   const cssText = bodyToTxt(`@layer ${layer}`, obj);
   const main = { short, layer, media, selector, body, cssText };
 
-  const atRuleTexts = Object.entries(atRules).map(([rule, body]) => ({ rule, body, cssText: bodyToTxt(rule, body) }));
+  const atRuleTexts = Object.entries(resCss).filter(([k]) => k !== selector).map(([rule, body]) => ({ rule, body, cssText: bodyToTxt(rule, body) }));
   return [...atRuleTexts, main];
 }
 
