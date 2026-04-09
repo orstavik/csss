@@ -72,52 +72,6 @@ function checkProperty(obj) {
       throw new SyntaxError(`Invalid CSS$ value => ${k}: ${obj[k]}`);
 }
 
-function bodyToTxt(name, body, depth = 0) {
-  const spaces = "  ".repeat(depth);
-  const spaces2 = "  ".repeat(depth + 1);
-  const body2 = Object.entries(body).map(([k, v]) =>
-    v instanceof Object ?
-      bodyToTxt(k, v, depth + 1) :
-      `${spaces2}${k}: ${v};`
-  ).join("\n");
-  return `${spaces}${name} {\n${body2}\n${spaces}}`;
-}
-
-function interpretShort(exp) {
-  try {
-    const cb = SHORTS[exp.name ?? exp.text];
-    if (!cb) throw new ReferenceError(exp.name);
-    return cb instanceof Function ? cb(exp) : cb;
-  } catch (e) {
-    debugger;
-    //todo improve error message
-    throw e;
-  }
-}
-
-const MAGICWORD = `$"'$`;
-export function parse(short) {
-  const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
-  short = short.match(/(.*?)\!*$/)[1];
-  const { exp, media } = parseMediaQuery(short, MEDIA_WORDS);
-  let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
-  exprList = exprList.map(parseNestedExpression);
-  exprList = exprList.map(interpretShort);
-  exprList &&= clashOrStack(exprList);
-  let { selector, item, grandItem } = parseSelectorPipe(sel, clazz);
-  const layer = (grandItem ? "grandItems" : item ? "items" : "container") + (short.match(/^(\$|\|\$|\|\|\$)/) ? "Default" : "");
-  exprList = kebabcaseKeys(exprList);
-  const { atRules, mainRule: body } = extractAtRules(exprList);
-  checkProperty(body);
-  let obj = { [selector]: body };
-  if (media) obj = { [`@media ${media}`]: obj };
-  const cssText = bodyToTxt(`@layer ${layer}`, obj);
-  const main = { short, layer, media, selector, body, cssText };
-
-  const atRuleTexts = Object.entries(atRules).map(([rule, body]) => ({ rule, body, cssText: bodyToTxt(rule, body) }));
-  return [...atRuleTexts, main];
-}
-
 const clashOrStack = (function () {
   const STACKABLE_PROPERTIES = {
     background: ", ",
@@ -165,6 +119,52 @@ const clashOrStack = (function () {
   }
 })();
 
+function bodyToTxt(name, body, depth = 0) {
+  const spaces = "  ".repeat(depth);
+  const spaces2 = "  ".repeat(depth + 1);
+  const body2 = Object.entries(body).map(([k, v]) =>
+    v instanceof Object ?
+      bodyToTxt(k, v, depth + 1) :
+      `${spaces2}${k}: ${v};`
+  ).join("\n");
+  return `${spaces}${name} {\n${body2}\n${spaces}}`;
+}
+
+function interpretShort(exp) {
+  try {
+    const cb = SHORTS[exp.name ?? exp.text];
+    if (!cb) throw new ReferenceError(exp.name);
+    return cb instanceof Function ? cb(exp) : cb;
+  } catch (e) {
+    debugger;
+    //todo improve error message
+    throw e;
+  }
+}
+
+const MAGICWORD = `$"'$`;
+export function parse(short) {
+  const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
+  short = short.match(/(.*?)\!*$/)[1];
+  const { exp, media } = parseMediaQuery(short, MEDIA_WORDS);
+  let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
+  exprList = exprList.map(parseNestedExpression);
+  exprList = exprList.map(interpretShort);
+  exprList &&= clashOrStack(exprList);
+  let { selector, item, grandItem } = parseSelectorPipe(sel, clazz);
+  const layer = (grandItem ? "grandItems" : item ? "items" : "container") + (short.match(/^(\$|\|\$|\|\|\$)/) ? "Default" : "");
+  exprList = kebabcaseKeys(exprList);
+  const { atRules, mainRule: body } = extractAtRules(exprList);
+  checkProperty(body);
+  let obj = { [selector]: body };
+  if (media) obj = { [`@media ${media}`]: obj };
+  const cssText = bodyToTxt(`@layer ${layer}`, obj);
+  const main = { short, layer, media, selector, body, cssText };
+
+  const atRuleTexts = Object.entries(atRules).map(([rule, body]) => ({ rule, body, cssText: bodyToTxt(rule, body) }));
+  return [...atRuleTexts, main];
+}
+
 function goRightComma(tokens, divider) {
   const args = [];
   if (tokens[0].text == ")" && tokens.shift())
@@ -182,7 +182,7 @@ function goRightComma(tokens, divider) {
 }
 
 function operatorPriority(a, name, b) {
-  const PRI = { "**": 1, "*": 2, "/": 2, "+": 3, "-": 3, "??": 4, };
+  const PRI = { "**": 1, "*": 2, "/": 2, "+": 3, "-": 3, "??": 4, "<": 5, ">": 6 };
   const leftPri = PRI[a.name] ?? 0;
   const rightPri = PRI[name] ?? 10;
   if (leftPri <= rightPri)
@@ -439,7 +439,7 @@ const tokenize = (_ => {
   const WORD = /[._a-zA-Z][._%a-zA-Z0-9+<-]*/.source;
   const NUMBER_WORDS = /e|pi|infinity|NaN/.source; //todo not added yet.
   const COLOR = `#[a-zA-Z0-9_]+`;
-  const OPERATOR = /\?\?|\*\*|[*/+-]/.source;
+  const OPERATOR = /\?\?|\*\*|[><*/+-]/.source;
   const CPP = /[,()]/.source;
 
   const TOKENS = new RegExp([
