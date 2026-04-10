@@ -1,7 +1,13 @@
 # Instructions for Converting HTML Test Files to Markdown
 
 ## Goal
-Convert HTML test files (like `hpBorder.html`) into markdown files (like `hpBorder.md`) with **csss:** and **css:** sections, extracting CSS rules while removing all HTML structure.
+Convert HTML test files (like `hpBorder.html`) into markdown files (like `hpBorder.md`) with **csss:**
+```csss
+and
+```
+**css:**
+```css
+sections, extracting CSS rules while removing all HTML structure.
 
 ## Conversion Steps
 
@@ -31,12 +37,19 @@ Convert HTML test files (like `hpBorder.html`) into markdown files (like `hpBord
 - Maintain the existing indentation and formatting
 
 ### 5. Convert to Markdown Format
-- Transform each CSS rule into a **csss:**/**css:** pair
-- Extract the class name from HTML elements (e.g., `class="$border"`) for the **csss:** section
+- Transform each CSS rule into a **csss:**
+```csss
+/
+```
+**css:** pair
+- Extract the class name from HTML elements (e.g., `class="$border"`) for the **csss:**
+```csss
+section
 - Format each rule as:
   ```
   **csss:** $className
-  **css:**
+```
+**css:**
   ```css
   @layer container {
     .\$className {
@@ -45,16 +58,26 @@ Convert HTML test files (like `hpBorder.html`) into markdown files (like `hpBord
   }
   ```
   ```
-- Ensure proper spacing between each **csss:**/**css:** pair
+- Ensure proper spacing between each **csss:**
+```csss
+/
+```
+**css:** pair
 
 ### 6. File Structure
 The resulting markdown file should contain:
-- **csss:** sections with the original class names (unescaped)
-- **css:** sections with individual `@layer container` blocks wrapped in ```css code fences
+- **csss:**
+```csss
+sections with the original class names (unescaped)
+-
+```
+**css:** sections with individual `@layer container` blocks wrapped in ```css code fences
 - Individual `@layer items` blocks (if they contain rules)
 - No HTML elements or attributes
 - No `<style>` tag wrappers
-- No className comments (these are replaced by **csss:** sections)
+- No className comments (these are replaced by **csss:**
+```csss
+sections)
 
 ## Example Transformation
 
@@ -80,6 +103,7 @@ The resulting markdown file should contain:
 **After (Markdown):**
 ```markdown
 **csss:** $border
+```
 **css:**
 ```css
 @layer container {
@@ -96,5 +120,10 @@ The resulting markdown file should contain:
 3. **Keep CSS structure** - maintain `@layer` organization within code fences
 4. **Remove empty blocks** - eliminate empty `@layer items {}` blocks
 5. **Clean formatting** - ensure consistent indentation and spacing
-6. **Markdown structure** - use **csss:** and **css:** headers with proper code fencing
+6. **Markdown structure** - use **csss:**
+```csss
+and
+```
+**css:** headers with proper code fencing
 7. **Code fences** - wrap all CSS content in ```css blocks
+```

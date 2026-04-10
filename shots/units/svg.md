@@ -1,7 +1,9 @@
 **description:**
-Sets stroke width, round linecap and miterlimit.
+A UI component with stroke width, round linecap and miterlimit.
 **csss:**
+```csss
 $stroke(3px,round,miterlimit(4))
+```
 **css:**
 ```css
 .\$stroke\(3px\,round\,miterlimit\(4\)\) {
@@ -10,55 +12,60 @@ $stroke(3px,round,miterlimit(4))
   stroke-miterlimit: 4;
 }
 ```
-
 **description:**
-Sets stroke opacity to 0.8.
+A UI component with stroke opacity to 0.8.
 **csss:**
+```csss
 $stroke(0.8)
+```
 **css:**
 ```css
 .\$stroke\(0\.8\) {
   stroke-opacity: 0.8;
 }
 ```
-
 **description:**
-Sets round linecap on stroke.
+A UI component with round linecap on stroke.
 **csss:**
+```csss
 $stroke(round)
+```
 **css:**
 ```css
 .\$stroke\(round\) {
   stroke-linecap: round;
 }
 ```
-
 **description:**
-Sets bevel linejoin on stroke.
+A UI component with bevel linejoin on stroke.
 **csss:**
+```csss
 $stroke(bevel)
+```
 **css:**
 ```css
 .\$stroke\(bevel\) {
   stroke-linejoin: bevel;
 }
 ```
-
 **description:**
-Sets a 5,5 dash pattern on stroke.
+A UI component with a 5,5 dash pattern on stroke.
 **csss:**
+```csss
 $stroke(dasharray(5,5))
+```
 **css:**
 ```css
 .\$stroke\(dasharray\(5\,5\)\) {
   stroke-dasharray: 5, 5;
 }
 ```
-
 **description:**
-Sets stroke color, width, opacity, linejoin, linecap and dash pattern.
+A UI component with stroke color, width, opacity, linejoin, linecap and dash pattern.
 **csss:**
+```csss
 $stroke(#deepskyblue,3px,.5,bevel,butt,dasharray(5px,5%))
+```
 **css:**
 ```css
 .\$stroke\(\#deepskyblue\,3px\,\.5\,bevel\,butt\,dasharray\(5px\,5\%\)\) {
@@ -70,11 +77,12 @@ $stroke(#deepskyblue,3px,.5,bevel,butt,dasharray(5px,5%))
   stroke-dasharray: 5px, 5%;
 }
 ```
-
 **description:**
-Resets all stroke properties then sets width, linecap and miterlimit.
+An example demonstrating resets all stroke properties then sets width, linecap and miterlimit.
 **csss:**
+```csss
 $Stroke(3px,round,miterlimit(4))
+```
 **css:**
 ```css
 .\$Stroke\(3px\,round\,miterlimit\(4\)\) {
@@ -88,11 +96,12 @@ $Stroke(3px,round,miterlimit(4))
   stroke-miterlimit: 4;
 }
 ```
-
 **description:**
-Removes stroke and resets all stroke properties.
+An example demonstrating removes stroke and resets all stroke properties.
 **csss:**
+```csss
 $strokeNone
+```
 **css:**
 ```css
 .\$strokeNone {
@@ -106,11 +115,12 @@ $strokeNone
   stroke-miterlimit: unset;
 }
 ```
-
 **description:**
-Sets fill color, opacity and fill rule.
+A UI component with fill color, opacity and fill rule.
 **csss:**
+```csss
 $fill(#azure,.5,evenodd)
+```
 **css:**
 ```css
 .\$fill\(\#azure\,\.5\,evenodd\) {
@@ -119,22 +129,24 @@ $fill(#azure,.5,evenodd)
   fill-rule: evenodd;
 }
 ```
-
 **description:**
-Sets fill opacity to 0.5.
+A UI component with fill opacity to 0.5.
 **csss:**
+```csss
 $fill(0.5)
+```
 **css:**
 ```css
 .\$fill\(0\.5\) {
   fill-opacity: 0.5;
 }
 ```
-
 **description:**
-Sets fill color, opacity and rule (uppercase resets all fill props).
+A UI component with fill color, opacity and rule (uppercase resets all fill props).
 **csss:**
+```csss
 $Fill(#azure,.5,evenodd)
+```
 **css:**
 ```css
 .\$Fill\(\#azure\,\.5\,evenodd\) {
@@ -143,11 +155,12 @@ $Fill(#azure,.5,evenodd)
   fill-rule: evenodd;
 }
 ```
-
 **description:**
-Removes fill and resets fill properties.
+An example demonstrating removes fill and resets fill properties.
 **csss:**
+```csss
 $fillNone
+```
 **css:**
 ```css
 .\$fillNone {
@@ -156,33 +169,36 @@ $fillNone
   fill-rule: unset;
 }
 ```
-
 **description:**
-Sets gradient stop color to blue.
+A UI component with gradient stop color to blue.
 **csss:**
+```csss
 $stopColor(#blue)
+```
 **css:**
 ```css
 .\$stopColor\(\#blue\) {
   stop-color: blue;
 }
 ```
-
 **description:**
-Sets text-anchor to middle.
+A UI component with text-anchor to middle.
 **csss:**
+```csss
 $svgText(middle)
+```
 **css:**
 ```css
 .\$svgText\(middle\) {
   text-anchor: middle;
 }
 ```
-
 **description:**
-Sets text-anchor, dominant-baseline and alignment-baseline.
+A UI component with text-anchor, dominant-baseline and alignment-baseline.
 **csss:**
+```csss
 $svgText(start,middle,textAfterEdge)
+```
 **css:**
 ```css
 .\$svgText\(start\,middle\,textAfterEdge\) {
@@ -191,11 +207,12 @@ $svgText(start,middle,textAfterEdge)
   alignment-baseline: text-after-edge;
 }
 ```
-
 **description:**
-Sets text-anchor, baselines with baseline-shift reset.
+A UI component with text-anchor, baselines with baseline-shift reset.
 **csss:**
+```csss
 $SvgText(middle,alphabetic,textBeforeEdge)
+```
 **css:**
 ```css
 .\$SvgText\(middle\,alphabetic\,textBeforeEdge\) {
@@ -205,33 +222,36 @@ $SvgText(middle,alphabetic,textBeforeEdge)
   baseline-shift: unset;
 }
 ```
-
 **description:**
-Sets shape rendering to crisp edges for sharp SVG paths.
+A UI component with shape rendering to crisp edges for sharp svg paths.
 **csss:**
+```csss
 $shapeRendering(crispEdges)
+```
 **css:**
 ```css
 .\$shapeRendering\(crispEdges\) {
   shape-rendering: crispEdges;
 }
 ```
-
 **description:**
-Applies non-scaling-stroke so stroke width stays constant on zoom.
+A layout container with non-scaling-stroke so stroke width stays constant on zoom.
 **csss:**
+```csss
 $vectorEffect(nonScalingStroke)
+```
 **css:**
 ```css
 .\$vectorEffect\(nonScalingStroke\) {
   vector-effect: non-scaling-stroke;
 }
 ```
-
 **description:**
-Sets paint order to render stroke before fill.
+A UI component with paint order to render stroke before fill.
 **csss:**
+```csss
 $paintOrder(stroke,fill)
+```
 **css:**
 ```css
 .\$paintOrder\(stroke\,fill\) {

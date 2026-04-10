@@ -1,4 +1,7 @@
-**csss:** $color(#primary#80#a25)!!
+**csss:**
+```csss
+$color(#primary#80#a25)!!
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -8,7 +11,10 @@
 }
 ```
 
-**csss:** @xxl$w(20px)!
+**csss:**
+```csss
+@xxl$w(20px)!
+```
 **css:**
 ```css
 @layer container {
@@ -20,7 +26,10 @@
 }
 ```
 
-**csss:** @xxxl$w(20px)
+**csss:**
+```csss
+@xxxl$w(20px)
+```
 **css:**
 ```css
 @layer container {

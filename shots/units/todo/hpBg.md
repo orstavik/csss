@@ -1,4 +1,7 @@
-**csss:** $linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c)
+**csss:**
+```csss
+$linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -15,7 +18,10 @@
 }
 ```
 
-**csss:** $repeatingLinear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,stops(10%,67%))
+**csss:**
+```csss
+$repeatingLinear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,stops(10%,67%))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -32,7 +38,10 @@
 }
 ```
 
-**csss:** $linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,stops(10%,25%,35%))
+**csss:**
+```csss
+$linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,stops(10%,25%,35%))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -49,7 +58,10 @@
 }
 ```
 
-**csss:** $bg(--picjpg,size(30%),noRepeat,center,luminosity)$bg(--picjpg,size(30%),noRepeat,left,overlay)$linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,topRight,size(70%,70%))
+**csss:**
+```csss
+$bg(--picjpg,size(30%),noRepeat,center,luminosity)$bg(--picjpg,size(30%),noRepeat,left,overlay)$linear(0.25turn,#3f87a6,#ebf8e1,#f69d3c,topRight,size(70%,70%))
+```
 **css:**
 ```css
 @layer containerDefault {

@@ -1,7 +1,9 @@
 **description:**
-Sets 1px solid border with radius reset to 0.
+A UI component with 1px solid border with radius reset to 0.
 **csss:**
+```csss
 $Border(1px,solid)
+```
 **css:**
 ```css
 .\$Border\(1px\,solid\) {
@@ -9,11 +11,12 @@ $Border(1px,solid)
   border-radius: 0;
 }
 ```
-
 **description:**
-Sets asymmetric widths, dotted style, dual colors and 4-corner radius.
+A UI component with asymmetric widths, dotted style, dual colors and 4-corner radius.
 **csss:**
+```csss
 $Border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))
+```
 **css:**
 ```css
 .\$Border\(2px\,4px\,dotted\,\#red\,\#blue\,radius\(0\,5px\,3\%\,1rem\)\) {
@@ -28,11 +31,12 @@ $Border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))
   border-end-end-radius: 1rem 3%;
 }
 ```
-
 **description:**
-Sets 2px solid red border with simple 2-value radius.
+A UI component with 2px solid red border with simple 2-value radius.
 **csss:**
+```csss
 $Border(2px,solid,#red,radius(2px,4px))
+```
 **css:**
 ```css
 .\$Border\(2px\,solid\,\#red\,radius\(2px\,4px\)\) {
@@ -43,11 +47,12 @@ $Border(2px,solid,#red,radius(2px,4px))
   border-end-start-radius: 4px 2px;
 }
 ```
-
 **description:**
-Sets border to none with 20px uniform radius.
+A UI component with border to none with 20px uniform radius.
 **csss:**
+```csss
 $Border(radius(20px))
+```
 **css:**
 ```css
 .\$Border\(radius\(20px\)\) {
@@ -55,11 +60,12 @@ $Border(radius(20px))
   border-radius: 20px;
 }
 ```
-
 **description:**
-Sets asymmetric widths, dotted style, dual colors and 4-corner radius.
+A UI component with asymmetric widths, dotted style, dual colors and 4-corner radius.
 **csss:**
+```csss
 $border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))
+```
 **css:**
 ```css
 .\$border\(2px\,4px\,dotted\,\#red\,\#blue\,radius\(0\,5px\,3\%\,1rem\)\) {
@@ -74,11 +80,12 @@ $border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))
   border-end-end-radius: 1rem 3%;
 }
 ```
-
 **description:**
-Sets 2px solid red border with 2-value radius without reset.
+A UI component with 2px solid red border with 2-value radius without reset.
 **csss:**
+```csss
 $border(2px,solid,#red,radius(2px,4px))
+```
 **css:**
 ```css
 .\$border\(2px\,solid\,\#red\,radius\(2px\,4px\)\) {
@@ -91,11 +98,12 @@ $border(2px,solid,#red,radius(2px,4px))
   border-end-start-radius: 4px 2px;
 }
 ```
-
 **description:**
-Sets complex border with split styles, 3 colors and 7-value radius.
+A UI component with complex border with split styles, 3 colors and 7-value radius.
 **csss:**
+```csss
 $border(2px,dotted,dashed,#red,#blue,#white,radius(0,1px,2px,3px,4px,5px,6px))
+```
 **css:**
 ```css
 .\$border\(2px\,dotted\,dashed\,\#red\,\#blue\,\#white\,radius\(0\,1px\,2px\,3px\,4px\,5px\,6px\)\) {
@@ -110,11 +118,12 @@ $border(2px,dotted,dashed,#red,#blue,#white,radius(0,1px,2px,3px,4px,5px,6px))
   border-end-end-radius: 3px 6px;
 }
 ```
-
 **description:**
-Removes all borders from the element.
+An example demonstrating removes all borders from the element.
 **csss:**
+```csss
 $noBorder
+```
 **css:**
 ```css
 .\$noBorder {

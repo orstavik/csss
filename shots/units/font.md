@@ -1,5 +1,9 @@
-**description:** Defines a "comic" typeface with web font URL, size, stretch, style and weight.
-**csss:** $Typeface(comic,"MS+Comic+Sans","https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2",xxSmall,semiExpanded,italic,bolder)
+**description:**
+An example demonstrating defines a "comic" typeface with web font url, size, stretch, style and weight.
+**csss:**
+```csss
+$Typeface(comic,"MS+Comic+Sans","https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2",xxSmall,semiExpanded,italic,bolder)
+```
 **css:**
 ```css
 @font-face /*https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2*/ {
@@ -17,9 +21,12 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
   --comicFontStretch: semi-expanded;
 }
 ```
-
-**description:** Defines a "body" typeface using system fonts with full style overrides.
-**csss:** $Typeface(body,system-ui,sans-serif,adjust(0.5),bold,italic,condensed,12px,uppercase)
+**description:**
+An example demonstrating defines a "body" typeface using system fonts with full style overrides.
+**csss:**
+```csss
+$Typeface(body,system-ui,sans-serif,adjust(0.5),bold,italic,condensed,12px,uppercase)
+```
 **css:**
 ```css
 .\$Typeface\(body\,system-ui\,sans-serif\,adjust\(0\.5\)\,bold\,italic\,condensed\,12px\,uppercase\) {
@@ -32,9 +39,12 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
   --bodyFontStretch: condensed;
 }
 ```
-
-**description:** Sets font-family, weight, size-adjust, style, width and size directly.
-**csss:** $font(system-ui,sans-serif,400,adjust(0.5),italic,condensed,12px)
+**description:**
+A UI component with font-family, weight, size-adjust, style, width and size directly.
+**csss:**
+```csss
+$font(system-ui,sans-serif,400,adjust(0.5),italic,condensed,12px)
+```
 **css:**
 ```css
 .\$font\(system-ui\,sans-serif\,400\,adjust\(0\.5\)\,italic\,condensed\,12px\) {
@@ -46,27 +56,36 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
   font-size: 12px;
 }
 ```
-
-**description:** Sets font-family to "body" font.
-**csss:** $font(body)
+**description:**
+A UI component with font-family to "body" font.
+**csss:**
+```csss
+$font(body)
+```
 **css:**
 ```css
 .\$font\(body\) {
   font-family: body;
 }
 ```
-
-**description:** Sets serif font family.
-**csss:** $font(serif)
+**description:**
+A UI component with serif font family.
+**csss:**
+```csss
+$font(serif)
+```
 **css:**
 ```css
 .\$font\(serif\) {
   font-family: serif;
 }
 ```
-
-**description:** Applies all "body" typeface variables to font properties.
-**csss:** $Font(body)
+**description:**
+A layout container with all "body" typeface variables to font properties.
+**csss:**
+```csss
+$Font(body)
+```
 **css:**
 ```css
 .\$Font\(body\) {
@@ -85,9 +104,12 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
   font-kerning: var(--bodyFontKerning, unset);
 }
 ```
-
-**description:** Resets all font properties and overrides family, size and weight.
-**csss:** $Font(_,Arial,16px,bold)
+**description:**
+An example demonstrating resets all font properties and overrides family, size and weight.
+**csss:**
+```csss
+$Font(_,Arial,16px,bold)
+```
 **css:**
 ```css
 .\$Font\(_\,Arial\,16px\,bold\) {
@@ -106,18 +128,24 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
   font-kerning: unset;
 }
 ```
-
-**description:** Transforms text to uppercase.
-**csss:** $font(uppercase)
+**description:**
+An example demonstrating transforms text to uppercase.
+**csss:**
+```csss
+$font(uppercase)
+```
 **css:**
 ```css
 .\$font\(uppercase\) {
   text-transform: uppercase;
 }
 ```
-
-**description:** Removes any text transformation.
-**csss:** $font(transformNone)
+**description:**
+An example demonstrating removes any text transformation.
+**csss:**
+```csss
+$font(transformNone)
+```
 **css:**
 ```css
 .\$font\(transformNone\) {

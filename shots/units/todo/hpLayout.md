@@ -1,4 +1,7 @@
-**csss:** $grid(cols(1fr,1fr,1fr),gap(1rem))
+**csss:**
+```csss
+$grid(cols(1fr,1fr,1fr),gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -16,7 +19,10 @@
 }
 ```
 
-**csss:** $border
+**csss:**
+```csss
+$border
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -26,7 +32,10 @@
 }
 ```
 
-**csss:** $padding(1rem)
+**csss:**
+```csss
+$padding(1rem)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -36,7 +45,10 @@
 }
 ```
 
-**csss:** $grid(cols(100px,auto,1fr),rows(50px,100px,auto),gap(1rem))
+**csss:**
+```csss
+$grid(cols(100px,auto,1fr),rows(50px,100px,auto),gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -55,7 +67,10 @@
 }
 ```
 
-**csss:** $padding(0.5rem)
+**csss:**
+```csss
+$padding(0.5rem)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -65,7 +80,10 @@
 }
 ```
 
-**csss:** $grid(cols(1fr,1fr),rows(100px,100px),gap(1rem),ccss)
+**csss:**
+```csss
+$grid(cols(1fr,1fr),rows(100px,100px),gap(1rem),ccss)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -86,7 +104,10 @@
 }
 ```
 
-**csss:** $h(300px)
+**csss:**
+```csss
+$h(300px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -96,7 +117,10 @@
 }
 ```
 
-**csss:** $grid(cols(1fr,1fr),rows(100px,100px),gap(1rem),abab)
+**csss:**
+```csss
+$grid(cols(1fr,1fr),rows(100px,100px),gap(1rem),abab)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -117,7 +141,10 @@
 }
 ```
 
-**csss:** $grid(cols(1fr,1fr),rows(50px,50px),gap(1rem),wucs)
+**csss:**
+```csss
+$grid(cols(1fr,1fr),rows(50px,50px),gap(1rem),wucs)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -138,7 +165,10 @@
 }
 ```
 
-**csss:** $flex(gap(1rem))
+**csss:**
+```csss
+$flex(gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -155,7 +185,10 @@
 }
 ```
 
-**csss:** $flex(column,gap(1rem))
+**csss:**
+```csss
+$flex(column,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -173,7 +206,10 @@
 }
 ```
 
-**csss:** $flex(rowReverse,gap(1rem))
+**csss:**
+```csss
+$flex(rowReverse,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -191,7 +227,10 @@
 }
 ```
 
-**csss:** $flex(column-reverse,gap(1rem))
+**csss:**
+```csss
+$flex(column-reverse,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -209,7 +248,10 @@
 }
 ```
 
-**csss:** $flex(c,gap(1rem))
+**csss:**
+```csss
+$flex(c,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -228,7 +270,10 @@
 }
 ```
 
-**csss:** $h(200px)
+**csss:**
+```csss
+$h(200px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -238,7 +283,10 @@
 }
 ```
 
-**csss:** $flex(ab,gap(1rem))
+**csss:**
+```csss
+$flex(ab,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -257,7 +305,10 @@
 }
 ```
 
-**csss:** $flex(w,gap(1rem))
+**csss:**
+```csss
+$flex(w,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -276,7 +327,10 @@
 }
 ```
 
-**csss:** $flex(u,gap(1rem))
+**csss:**
+```csss
+$flex(u,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -295,7 +349,10 @@
 }
 ```
 
-**csss:** $flex(v,gap(1rem))
+**csss:**
+```csss
+$flex(v,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -314,7 +371,10 @@
 }
 ```
 
-**csss:** $flex(cc,gap(1rem))
+**csss:**
+```csss
+$flex(cc,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -333,7 +393,10 @@
 }
 ```
 
-**csss:** $flex(ww,gap(1rem))
+**csss:**
+```csss
+$flex(ww,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -352,7 +415,10 @@
 }
 ```
 
-**csss:** $flex(vu,gap(1rem))
+**csss:**
+```csss
+$flex(vu,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -371,7 +437,10 @@
 }
 ```
 
-**csss:** $flex(s.,gap(1rem))
+**csss:**
+```csss
+$flex(s.,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -391,7 +460,10 @@
 }
 ```
 
-**csss:** $flex(.w,gap(1rem))
+**csss:**
+```csss
+$flex(.w,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -411,7 +483,10 @@
 }
 ```
 
-**csss:** $flex(ccs,gap(1rem))
+**csss:**
+```csss
+$flex(ccs,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -430,7 +505,10 @@
 }
 ```
 
-**csss:** $flex(ws_,gap(1rem))
+**csss:**
+```csss
+$flex(ws_,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -449,7 +527,10 @@
 }
 ```
 
-**csss:** $flex(..s,gap(1rem))
+**csss:**
+```csss
+$flex(..s,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -468,7 +549,10 @@
 }
 ```
 
-**csss:** $flex(a,gap(1rem))
+**csss:**
+```csss
+$flex(a,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -487,7 +571,10 @@
 }
 ```
 
-**csss:** $flex(.b,gap(1rem))
+**csss:**
+```csss
+$flex(.b,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -507,7 +594,10 @@
 }
 ```
 
-**csss:** $flex(acb,gap(1rem))
+**csss:**
+```csss
+$flex(acb,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -526,7 +616,10 @@
 }
 ```
 
-**csss:** $flex(.c_,gap(1rem))
+**csss:**
+```csss
+$flex(.c_,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -546,7 +639,10 @@
 }
 ```
 
-**csss:** $flex(vvc,gap(1rem))
+**csss:**
+```csss
+$flex(vvc,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -565,7 +661,10 @@
 }
 ```
 
-**csss:** $w(300px)
+**csss:**
+```csss
+$w(300px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -575,7 +674,10 @@
 }
 ```
 
-**csss:** $w(100px)
+**csss:**
+```csss
+$w(100px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -585,7 +687,10 @@
 }
 ```
 
-**csss:** $flex(wrap,gap(1rem))
+**csss:**
+```csss
+$flex(wrap,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -603,7 +708,10 @@
 }
 ```
 
-**csss:** $flex(wrap-reverse,gap(1rem))
+**csss:**
+```csss
+$flex(wrap-reverse,gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -621,7 +729,10 @@
 }
 ```
 
-**csss:** $block(g(0.5em,1.5))
+**csss:**
+```csss
+$block(g(0.5em,1.5))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -637,7 +748,10 @@
 }
 ```
 
-**csss:** $grid(cols(1fr,1fr),gap(1rem))
+**csss:**
+```csss
+$grid(cols(1fr,1fr),gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -655,7 +769,10 @@
 }
 ```
 
-**csss:** $block(a)
+**csss:**
+```csss
+$block(a)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -671,7 +788,10 @@
 }
 ```
 
-**csss:** $block(c)
+**csss:**
+```csss
+$block(c)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -687,7 +807,10 @@
 }
 ```
 
-**csss:** $block(b)
+**csss:**
+```csss
+$block(b)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -703,7 +826,10 @@
 }
 ```
 
-**csss:** $block(s)
+**csss:**
+```csss
+$block(s)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -719,7 +845,10 @@
 }
 ```
 
-**csss:** $block(visible)
+**csss:**
+```csss
+$block(visible)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -736,7 +865,10 @@
 }
 ```
 
-**csss:** $h(100px)
+**csss:**
+```csss
+$h(100px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -746,7 +878,10 @@
 }
 ```
 
-**csss:** $w(200px)
+**csss:**
+```csss
+$w(200px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -756,7 +891,10 @@
 }
 ```
 
-**csss:** $block(overflowHidden)
+**csss:**
+```csss
+$block(overflowHidden)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -773,7 +911,10 @@
 }
 ```
 
-**csss:** $block(overflowScroll)
+**csss:**
+```csss
+$block(overflowScroll)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -790,7 +931,10 @@
 }
 ```
 
-**csss:** $block(auto)
+**csss:**
+```csss
+$block(auto)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -807,7 +951,10 @@
 }
 ```
 
-**csss:** $block(overflowHiddenScrollSnapMandatory,snap-stop)
+**csss:**
+```csss
+$block(overflowHiddenScrollSnapMandatory,snap-stop)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -827,7 +974,10 @@
 }
 ```
 
-**csss:** |$blockItem(snap-end)
+**csss:**
+```csss
+|$blockItem(snap-end)
+```
 **css:**
 ```css
 @layer itemsDefault {
@@ -837,7 +987,10 @@
 }
 ```
 
-**csss:** |$blockItem(snap-center-start)
+**csss:**
+```csss
+|$blockItem(snap-center-start)
+```
 **css:**
 ```css
 @layer itemsDefault {
@@ -847,7 +1000,10 @@
 }
 ```
 
-**csss:** $block(overflowScrollSnapHidden)
+**csss:**
+```csss
+$block(overflowScrollSnapHidden)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -866,7 +1022,10 @@
 }
 ```
 
-**csss:** $block(nowrap)
+**csss:**
+```csss
+$block(nowrap)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -882,7 +1041,10 @@
 }
 ```
 
-**csss:** $block(pre)
+**csss:**
+```csss
+$block(pre)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -898,7 +1060,10 @@
 }
 ```
 
-**csss:** $block(pre-wrap)
+**csss:**
+```csss
+$block(pre-wrap)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -914,7 +1079,10 @@
 }
 ```
 
-**csss:** $block(pre-line)
+**csss:**
+```csss
+$block(pre-line)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -930,7 +1098,10 @@
 }
 ```
 
-**csss:** $block(break-spaces)
+**csss:**
+```csss
+$block(break-spaces)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -946,7 +1117,10 @@
 }
 ```
 
-**csss:** $block(break-word)
+**csss:**
+```csss
+$block(break-word)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -963,7 +1137,10 @@
 }
 ```
 
-**csss:** $block(break-all)
+**csss:**
+```csss
+$block(break-all)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -980,7 +1157,10 @@
 }
 ```
 
-**csss:** $block(keep-all)
+**csss:**
+```csss
+$block(keep-all)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -997,7 +1177,10 @@
 }
 ```
 
-**csss:** $block(break-anywhere)
+**csss:**
+```csss
+$block(break-anywhere)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -1014,7 +1197,10 @@
 }
 ```
 
-**csss:** $block(ellipsis,overflowHidden)
+**csss:**
+```csss
+$block(ellipsis,overflowHidden)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -1032,7 +1218,10 @@
 }
 ```
 
-**csss:** $w(150px)
+**csss:**
+```csss
+$w(150px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -1042,7 +1231,10 @@
 }
 ```
 
-**csss:** $block(hyphens)
+**csss:**
+```csss
+$block(hyphens)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -1058,7 +1250,10 @@
 }
 ```
 
-**csss:** $w(80px)
+**csss:**
+```csss
+$w(80px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -1068,7 +1263,10 @@
 }
 ```
 
-**csss:** $w(300px)
+**csss:**
+```csss
+$w(300px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -1078,7 +1276,10 @@
 }
 ```
 
-**csss:** $block(clamp(2))
+**csss:**
+```csss
+$block(clamp(2))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -1097,7 +1298,10 @@
 }
 ```
 
-**csss:** $height(2*1.2em)
+**csss:**
+```csss
+$height(2*1.2em)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -1107,7 +1311,10 @@
 }
 ```
 
-**csss:** $block(clamp(3))
+**csss:**
+```csss
+$block(clamp(3))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -1126,7 +1333,10 @@
 }
 ```
 
-**csss:** $height(3*(1.2em))
+**csss:**
+```csss
+$height(3*(1.2em))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -1136,7 +1346,10 @@
 }
 ```
 
-**csss:** $grid(cols(1fr,1fr,1fr),rows(100px,100px),gap(1rem))
+**csss:**
+```csss
+$grid(cols(1fr,1fr,1fr),rows(100px,100px),gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -1155,7 +1368,10 @@
 }
 ```
 
-**csss:** $block(shy)
+**csss:**
+```csss
+$block(shy)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -1171,7 +1387,10 @@
 }
 ```
 
-**csss:** $flex(hyphens)
+**csss:**
+```csss
+$flex(hyphens)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -1187,7 +1406,10 @@
 }
 ```
 
-**csss:** $grid(cols(repeat(3,minmax(100px,1fr))),gap(1rem))
+**csss:**
+```csss
+$grid(cols(repeat(3,minmax(100px,1fr))),gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -1205,7 +1427,10 @@
 }
 ```
 
-**csss:** $grid(cols(repeat(auto-fill,minmax(100px,1fr))),gap(1rem))
+**csss:**
+```csss
+$grid(cols(repeat(auto-fill,minmax(100px,1fr))),gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -1223,7 +1448,10 @@
 }
 ```
 
-**csss:** |:nth-child(1)$flexItem(grow(1))
+**csss:**
+```csss
+|:nth-child(1)$flexItem(grow(1))
+```
 **css:**
 ```css
 @layer items {
@@ -1233,7 +1461,10 @@
 }
 ```
 
-**csss:** |:nth-child(2)$flexItem(grow(2))
+**csss:**
+```csss
+|:nth-child(2)$flexItem(grow(2))
+```
 **css:**
 ```css
 @layer items {
@@ -1243,7 +1474,10 @@
 }
 ```
 
-**csss:** |:nth-child(3)$flexItem(shrink(0.5))
+**csss:**
+```csss
+|:nth-child(3)$flexItem(shrink(0.5))
+```
 **css:**
 ```css
 @layer items {
@@ -1253,7 +1487,10 @@
 }
 ```
 
-**csss:** |:nth-child(4)$flexItem(basis(100px))
+**csss:**
+```csss
+|:nth-child(4)$flexItem(basis(100px))
+```
 **css:**
 ```css
 @layer items {
@@ -1263,7 +1500,10 @@
 }
 ```
 
-**csss:** |:nth-child(1)$gridItem(column(1,3))
+**csss:**
+```csss
+|:nth-child(1)$gridItem(column(1,3))
+```
 **css:**
 ```css
 @layer items {
@@ -1273,7 +1513,10 @@
 }
 ```
 
-**csss:** |:nth-child(2)$gridItem(row(4,4))
+**csss:**
+```csss
+|:nth-child(2)$gridItem(row(4,4))
+```
 **css:**
 ```css
 @layer items {
@@ -1283,7 +1526,10 @@
 }
 ```
 
-**csss:** |:nth-child(3)$gridItem(column(1,1))
+**csss:**
+```csss
+|:nth-child(3)$gridItem(column(1,1))
+```
 **css:**
 ```css
 @layer items {
@@ -1293,7 +1539,10 @@
 }
 ```
 
-**csss:** |:nth-child(4)$gridItem(row(1,2),column(2,3))
+**csss:**
+```csss
+|:nth-child(4)$gridItem(row(1,2),column(2,3))
+```
 **css:**
 ```css
 @layer items {
@@ -1303,7 +1552,10 @@
 }
 ```
 
-**csss:** |$border$padding(0.5rem)
+**csss:**
+```csss
+|$border$padding(0.5rem)
+```
 **css:**
 ```css
 @layer itemsDefault {
@@ -1314,7 +1566,10 @@
 }
 ```
 
-**csss:** $block(overflowHiddenScroll)
+**csss:**
+```csss
+$block(overflowHiddenScroll)
+```
 **css:**
 ```css
 @layer containerDefault {

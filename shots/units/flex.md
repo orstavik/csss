@@ -1,8 +1,10 @@
 **description:**
 A vertical Flex settings panel with shared item basis.
 **csss:**
+```csss
 $Flex(column,gap(0.5rem),padding(1rem))
 |$FlexItem(100px)
+```
 **css:**
 ```css
 .\$Flex\(column\,gap\(0\.5rem\)\,padding\(1rem\)\) {
@@ -22,13 +24,14 @@ $Flex(column,gap(0.5rem),padding(1rem))
   order: unset;
 }
 ```
-
 **description:**
 A reversed Flex action bar with mixed growth.
 **csss:**
+```csss
 $Flex(rowReverse,gap(0.5rem),padding(1rem))
 |:nth-child(1)$flexItem(1)
 |:nth-child(2)$flexItem(2)
+```
 **css:**
 ```css
 .\$Flex\(rowReverse\,gap\(0\.5rem\)\,padding\(1rem\)\) {
@@ -49,12 +52,13 @@ $Flex(rowReverse,gap(0.5rem),padding(1rem))
   flex: 2;
 }
 ```
-
 **description:**
 A wrapping Flex card grid with fixed tile sizing.
 **csss:**
+```csss
 $Flex(wrap,gap(1rem,2rem))
 |$FlexItem(margin(5px,1rem))$Box(150px,120px)$BoxItem(scrollMargin(10px))
+```
 **css:**
 ```css
 .\$Flex\(wrap\,gap\(1rem\,2rem\)\) {
@@ -87,14 +91,15 @@ $Flex(wrap,gap(1rem,2rem))
   scroll-snap-stop: unset;
 }
 ```
-
 **description:**
 A wrapping Flex toolbar where key actions are reordered and aligned differently once the row starts to fill up.
 **csss:**
+```csss
 $Flex(start,gap(1rem),padding(1rem),wrap)
 |$FlexItem(order(3),start,margin(1rem))
 |.two$flexItem(order(1),center)
 |.three$flexItem(order(2),end)
+```
 **css:**
 ```css
 .\$Flex\(start\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
@@ -124,12 +129,13 @@ $Flex(start,gap(1rem),padding(1rem),wrap)
   align-self: end;
 }
 ```
-
 **description:**
 A centered Flex row with a stretched featured item.
 **csss:**
+```csss
 $Flex(center,gap(1rem),padding(1rem),wrap)
 |.featured$FlexItem(stretch)
+```
 **css:**
 ```css
 .\$Flex\(center\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
@@ -149,14 +155,15 @@ $Flex(center,gap(1rem),padding(1rem),wrap)
   order: unset;
 }
 ```
-
 **description:**
 A scrollable Flex control strip with mixed item sizing.
 **csss:**
+```csss
 $Flex(gap(1rem),padding(1rem))$box(scroll)
 |:nth-child(1)$flexItem(1)
 |:nth-child(2)$flexItem(center)
 |:nth-child(3)$flexItem(1,0.5)
+```
 **css:**
 ```css
 .\$Flex\(gap\(1rem\)\,padding\(1rem\)\)\$box\(scroll\) {
@@ -182,15 +189,16 @@ $Flex(gap(1rem),padding(1rem))$box(scroll)
   flex: 1 0.5;
 }
 ```
-
 **description:**
 A Flex comparison row with a flexible lead item, supporting items aligned independently, and a note moved later in the visual order.
 **csss:**
+```csss
 $Flex(row,gap(1rem),padding(1rem),wrap)
 |:nth-child(1)$flexItem(1,200px)
 |:nth-child(2)$flexItem(center)
 |:nth-child(3)$flexItem(end)
 |.note$flexItem(order(4),margin(1rem))
+```
 **css:**
 ```css
 .\$Flex\(row\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
@@ -220,14 +228,15 @@ $Flex(row,gap(1rem),padding(1rem),wrap)
   margin: 1rem;
 }
 ```
-
 **description:**
 A Flex inheritance example with parent item defaults and targeted child overrides.
 **csss:**
+```csss
 $Flex(gap(1rem),padding(1rem),wrap)
 |$FlexItem(1,180px,margin(0.5rem))
 |.wide$flexItem(2,280px)
 |.pin$flexItem(order(5),end)
+```
 **css:**
 ```css
 .\$Flex\(gap\(1rem\)\,padding\(1rem\)\,wrap\) {

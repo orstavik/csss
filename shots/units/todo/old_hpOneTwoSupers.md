@@ -1,4 +1,7 @@
-**csss:** $grid(layout,gap(2rem))
+**csss:**
+```csss
+$grid(layout,gap(2rem))
+```
 **css:**
 ```css
 @layer container {
@@ -16,7 +19,10 @@
 }
 ```
 
-**csss:** $flex2
+**csss:**
+```csss
+$flex2
+```
 **css:**
 ```css
 @layer container {
@@ -35,7 +41,10 @@
 }
 ```
 
-**csss:** $unknown(22px)
+**csss:**
+```csss
+$unknown(22px)
+```
 **css:**
 ```css
 @layer container {
@@ -45,7 +54,10 @@
 }
 ```
 
-**csss:** $grid(unknown(22px))
+**csss:**
+```csss
+$grid(unknown(22px))
+```
 **css:**
 ```css
 @layer container {

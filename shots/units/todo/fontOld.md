@@ -1,4 +1,7 @@
-**csss:** $font(helvetica,arial,bold)
+**csss:**
+```csss
+$font(helvetica,arial,bold)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -20,7 +23,10 @@
 }
 ```
 
-**csss:** $font(comic+sans,lucida,DejaVu+Sans+Mono)
+**csss:**
+```csss
+$font(comic+sans,lucida,DejaVu+Sans+Mono)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -38,7 +44,10 @@
 }
 ```
 
-**csss:** $font(times,serif,500,2px,italic)
+**csss:**
+```csss
+$font(times,serif,500,2px,italic)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -56,7 +65,10 @@
 }
 ```
 
-**csss:** $font(helvetica,arial,'sans-serif',900)
+**csss:**
+```csss
+$font(helvetica,arial,'sans-serif',900)
+```
 **css:**
 ```css
 @layer containerDefault {

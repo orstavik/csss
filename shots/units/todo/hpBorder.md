@@ -1,4 +1,7 @@
-**csss:** $border
+**csss:**
+```csss
+$border
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -8,7 +11,10 @@
 }
 ```
 
-**csss:** $grid(cols(1fr,1fr,1fr,1fr),gap(1rem))
+**csss:**
+```csss
+$grid(cols(1fr,1fr,1fr,1fr),gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -26,7 +32,10 @@
 }
 ```
 
-**csss:** $border
+**csss:**
+```csss
+$border
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -36,7 +45,10 @@
 }
 ```
 
-**csss:** $padding(1rem)
+**csss:**
+```csss
+$padding(1rem)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -46,7 +58,10 @@
 }
 ```
 
-**csss:** $border(dashed)
+**csss:**
+```csss
+$border(dashed)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -56,7 +71,10 @@
 }
 ```
 
-**csss:** $border(dotted)
+**csss:**
+```csss
+$border(dotted)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -66,7 +84,10 @@
 }
 ```
 
-**csss:** $border(double)
+**csss:**
+```csss
+$border(double)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -76,7 +97,10 @@
 }
 ```
 
-**csss:** $grid(cols(1fr,1fr,1fr),gap(1rem))
+**csss:**
+```csss
+$grid(cols(1fr,1fr,1fr),gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -94,7 +118,10 @@
 }
 ```
 
-**csss:** $border(solid,thin)
+**csss:**
+```csss
+$border(solid,thin)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -105,7 +132,10 @@
 }
 ```
 
-**csss:** $padding(1rem)
+**csss:**
+```csss
+$padding(1rem)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -115,7 +145,10 @@
 }
 ```
 
-**csss:** $border(solid,medium)
+**csss:**
+```csss
+$border(solid,medium)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -126,7 +159,10 @@
 }
 ```
 
-**csss:** $border(solid,thick)
+**csss:**
+```csss
+$border(solid,thick)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -137,7 +173,10 @@
 }
 ```
 
-**csss:** $border(solid,1px)
+**csss:**
+```csss
+$border(solid,1px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -148,7 +187,10 @@
 }
 ```
 
-**csss:** $border(solid,0.25rem)
+**csss:**
+```csss
+$border(solid,0.25rem)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -159,7 +201,10 @@
 }
 ```
 
-**csss:** $border(solid,5px)
+**csss:**
+```csss
+$border(solid,5px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -170,7 +215,10 @@
 }
 ```
 
-**csss:** $border(w(1em,2px,3cm,4rem))
+**csss:**
+```csss
+$border(w(1em,2px,3cm,4rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -182,7 +230,10 @@
 }
 ```
 
-**csss:** $grid(cols(1fr,1fr,1fr),gap(1rem))
+**csss:**
+```csss
+$grid(cols(1fr,1fr,1fr),gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -200,7 +251,10 @@
 }
 ```
 
-**csss:** $border(solid,2px,radius(0.25rem))
+**csss:**
+```csss
+$border(solid,2px,radius(0.25rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -212,7 +266,10 @@
 }
 ```
 
-**csss:** $padding(1rem)
+**csss:**
+```csss
+$padding(1rem)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -222,7 +279,10 @@
 }
 ```
 
-**csss:** $border(solid,2px,radius(1rem))
+**csss:**
+```csss
+$border(solid,2px,radius(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -234,7 +294,10 @@
 }
 ```
 
-**csss:** $border(solid,2px,radius(50%))
+**csss:**
+```csss
+$border(solid,2px,radius(50%))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -246,7 +309,10 @@
 }
 ```
 
-**csss:** $border(solid,2px,r(10px,20px,30px,40px))
+**csss:**
+```csss
+$border(solid,2px,r(10px,20px,30px,40px))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -261,7 +327,10 @@
 }
 ```
 
-**csss:** $border(solid,2px,r(50%,10%,50%,10%))
+**csss:**
+```csss
+$border(solid,2px,r(50%,10%,50%,10%))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -276,7 +345,10 @@
 }
 ```
 
-**csss:** $border(solid,2px,r(1px,99%,2px,98%))
+**csss:**
+```csss
+$border(solid,2px,r(1px,99%,2px,98%))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -291,7 +363,10 @@
 }
 ```
 
-**csss:** $border(solid,2px,r(1em,2vh,3%,4px))
+**csss:**
+```csss
+$border(solid,2px,r(1em,2vh,3%,4px))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -306,7 +381,10 @@
 }
 ```
 
-**csss:** $grid(cols(1fr,1fr,1fr),gap(1rem))
+**csss:**
+```csss
+$grid(cols(1fr,1fr,1fr),gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -324,7 +402,10 @@
 }
 ```
 
-**csss:** $border(solid,2px)
+**csss:**
+```csss
+$border(solid,2px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -335,7 +416,10 @@
 }
 ```
 
-**csss:** $borderColor(red)
+**csss:**
+```csss
+$borderColor(red)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -345,7 +429,10 @@
 }
 ```
 
-**csss:** $padding(1rem)
+**csss:**
+```csss
+$padding(1rem)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -355,7 +442,10 @@
 }
 ```
 
-**csss:** $borderColor(blue)
+**csss:**
+```csss
+$borderColor(blue)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -365,7 +455,10 @@
 }
 ```
 
-**csss:** $borderColor(#00ff00)
+**csss:**
+```csss
+$borderColor(#00ff00)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -375,7 +468,10 @@
 }
 ```
 
-**csss:** $borderColor(rgba(128,0,128,0.5))
+**csss:**
+```csss
+$borderColor(rgba(128,0,128,0.5))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -385,7 +481,10 @@
 }
 ```
 
-**csss:** $grid(cols(1fr,1fr),gap(1rem))
+**csss:**
+```csss
+$grid(cols(1fr,1fr),gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -403,7 +502,10 @@
 }
 ```
 
-**csss:** $border(w(1px,2px,3px,4px),s(solid,dashed,dotted,double))
+**csss:**
+```csss
+$border(w(1px,2px,3px,4px),s(solid,dashed,dotted,double))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -417,7 +519,10 @@
 }
 ```
 
-**csss:** $padding(1rem)
+**csss:**
+```csss
+$padding(1rem)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -427,7 +532,10 @@
 }
 ```
 
-**csss:** $border(w(.,2px,.,4px),s(.,solid,.,dotted))
+**csss:**
+```csss
+$border(w(.,2px,.,4px),s(.,solid,.,dotted))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -441,7 +549,10 @@
 }
 ```
 
-**csss:** $border(w(0,3px,0,3px))
+**csss:**
+```csss
+$border(w(0,3px,0,3px))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -453,7 +564,10 @@
 }
 ```
 
-**csss:** $border(w(3px,0,3px,0))
+**csss:**
+```csss
+$border(w(3px,0,3px,0))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -465,7 +579,10 @@
 }
 ```
 
-**csss:** $grid(cols(1fr,1fr,1fr),gap(1rem))
+**csss:**
+```csss
+$grid(cols(1fr,1fr,1fr),gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -483,7 +600,10 @@
 }
 ```
 
-**csss:** $border(0)
+**csss:**
+```csss
+$border(0)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -494,7 +614,10 @@
 }
 ```
 
-**csss:** $padding(1rem)
+**csss:**
+```csss
+$padding(1rem)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -504,7 +627,10 @@
 }
 ```
 
-**csss:** $border(none)
+**csss:**
+```csss
+$border(none)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -514,7 +640,10 @@
 }
 ```
 
-**csss:** $border(solid,2px,r(0))
+**csss:**
+```csss
+$border(solid,2px,r(0))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -526,7 +655,10 @@
 }
 ```
 
-**csss:** $border(w(0,1px,2px,),s(.,.,solid,dashed))
+**csss:**
+```csss
+$border(w(0,1px,2px,),s(.,.,solid,dashed))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -542,7 +674,10 @@
 }
 ```
 
-**csss:** $border(solid,0.0001px)
+**csss:**
+```csss
+$border(solid,0.0001px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -553,7 +688,10 @@
 }
 ```
 
-**csss:** $border(solid,99px)
+**csss:**
+```csss
+$border(solid,99px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -564,7 +702,10 @@
 }
 ```
 
-**csss:** $block(g(1rem))
+**csss:**
+```csss
+$block(g(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -579,7 +720,10 @@
 }
 ```
 
-**csss:** $border(solid,1px)
+**csss:**
+```csss
+$border(solid,1px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -590,7 +734,10 @@
 }
 ```
 
-**csss:** $padding(0.5rem,1rem)
+**csss:**
+```csss
+$padding(0.5rem,1rem)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -600,7 +747,10 @@
 }
 ```
 
-**csss:** :hover$border(solid,2px,r(0.5rem))
+**csss:**
+```csss
+:hover$border(solid,2px,r(0.5rem))
+```
 **css:**
 ```css
 @layer container {
@@ -612,7 +762,10 @@
 }
 ```
 
-**csss:** $padding(1rem)
+**csss:**
+```csss
+$padding(1rem)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -622,7 +775,10 @@
 }
 ```
 
-**csss:** :hover$border(dashed,3px,r(1rem))
+**csss:**
+```csss
+:hover$border(dashed,3px,r(1rem))
+```
 **css:**
 ```css
 @layer container {
@@ -634,7 +790,10 @@
 }
 ```
 
-**csss:** $grid(cols(1fr,1fr),gap(1rem))
+**csss:**
+```csss
+$grid(cols(1fr,1fr),gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -652,7 +811,10 @@
 }
 ```
 
-**csss:** $border(solid,w(1px+1em))
+**csss:**
+```csss
+$border(solid,w(1px+1em))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -663,7 +825,10 @@
 }
 ```
 
-**csss:** $padding(1rem)
+**csss:**
+```csss
+$padding(1rem)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -673,7 +838,10 @@
 }
 ```
 
-**csss:** |*$border(r(25%))$padding(1rem)
+**csss:**
+```csss
+|*$border(r(25%))$padding(1rem)
+```
 **css:**
 ```css
 @layer items {
@@ -685,7 +853,10 @@
 }
 ```
 
-**csss:** $border(w(1px,2px,3px,4px),s(solid,dashed,dotted,double))
+**csss:**
+```csss
+$border(w(1px,2px,3px,4px),s(solid,dashed,dotted,double))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -699,7 +870,10 @@
 }
 ```
 
-**csss:** :hover$border(w(4px,3px,2px,1px),s(double,dotted,dashed,solid))
+**csss:**
+```csss
+:hover$border(w(4px,3px,2px,1px),s(double,dotted,dashed,solid))
+```
 **css:**
 ```css
 @layer container {
@@ -713,7 +887,10 @@
 }
 ```
 
-**csss:** $border(1px)
+**csss:**
+```csss
+$border(1px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -724,7 +901,10 @@
 }
 ```
 
-**csss:** |*$border(dotted,2px,r(2rem))
+**csss:**
+```csss
+|*$border(dotted,2px,r(2rem))
+```
 **css:**
 ```css
 @layer items {
@@ -736,7 +916,10 @@
 }
 ```
 
-**csss:** |.special$border(dashed,3px,r(3rem))
+**csss:**
+```csss
+|.special$border(dashed,3px,r(3rem))
+```
 **css:**
 ```css
 @layer items {
@@ -748,7 +931,10 @@
 }
 ```
 
-**csss:** |.super$border(double,4px,r(4rem))
+**csss:**
+```csss
+|.super$border(double,4px,r(4rem))
+```
 **css:**
 ```css
 @layer items {
@@ -760,7 +946,10 @@
 }
 ```
 
-**csss:** $border(solid,1px)
+**csss:**
+```csss
+$border(solid,1px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -771,7 +960,10 @@
 }
 ```
 
-**csss:** $border(dotted,2px)
+**csss:**
+```csss
+$border(dotted,2px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -782,7 +974,10 @@
 }
 ```
 
-**csss:** $border(dashed,3px)
+**csss:**
+```csss
+$border(dashed,3px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -793,7 +988,10 @@
 }
 ```
 
-**csss:** $grid(cols(1fr,1fr),gap(1rem))
+**csss:**
+```csss
+$grid(cols(1fr,1fr),gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -811,7 +1009,10 @@
 }
 ```
 
-**csss:** $border(solid,w(--border-width))
+**csss:**
+```csss
+$border(solid,w(--border-width))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -822,7 +1023,10 @@
 }
 ```
 
-**csss:** $padding(1rem)
+**csss:**
+```csss
+$padding(1rem)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -832,7 +1036,10 @@
 }
 ```
 
-**csss:** $border(solid,w(1px+2px))
+**csss:**
+```csss
+$border(solid,w(1px+2px))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -843,7 +1050,10 @@
 }
 ```
 
-**csss:** $boxShadow(10px,5px,5px,2px,#5c6bc0)
+**csss:**
+```csss
+$boxShadow(10px,5px,5px,2px,#5c6bc0)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -853,7 +1063,10 @@
 }
 ```
 
-**csss:** $boxShadow(0,1rem,.25rem,#3f51b5)$boxShadow(0,.5rem,.5rem,blue)
+**csss:**
+```csss
+$boxShadow(0,1rem,.25rem,#3f51b5)$boxShadow(0,.5rem,.5rem,blue)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -863,7 +1076,10 @@
 }
 ```
 
-**csss:** $flex(gap(2rem))
+**csss:**
+```csss
+$flex(gap(2rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -880,7 +1096,10 @@
 }
 ```
 
-**csss:** $boxShadow(0,.125rem,.25rem,rgba(0,0,0,.175))
+**csss:**
+```csss
+$boxShadow(0,.125rem,.25rem,rgba(0,0,0,.175))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -890,7 +1109,10 @@
 }
 ```
 
-**csss:** $boxShadow(0,.5rem,1rem,rgba(0,0,0,0.15))
+**csss:**
+```csss
+$boxShadow(0,.5rem,1rem,rgba(0,0,0,0.15))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -900,7 +1122,10 @@
 }
 ```
 
-**csss:** $boxShadow(0,1rem,3rem,rgba(0,0,0,0.175))
+**csss:**
+```csss
+$boxShadow(0,1rem,3rem,rgba(0,0,0,0.175))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -910,7 +1135,10 @@
 }
 ```
 
-**csss:** $boxShadow(inset,0,2px,4px,0,rgba(0,0,0,0.6))
+**csss:**
+```csss
+$boxShadow(inset,0,2px,4px,0,rgba(0,0,0,0.6))
+```
 **css:**
 ```css
 @layer containerDefault {

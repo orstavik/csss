@@ -17,7 +17,7 @@ function splitMd(txt) {
     const body = entry[j].trim();
     if (!now || key in now)
       res.push(now = {});
-    const [, type, value] = body.match(/^```([^\s]+)\s*(.*?)\s*```$/mis) ?? [, "txt", body];
+    const [, type, value] = body.match(/```([^\s]+)\n([\s\S]*?)\n```/) ?? [, "txt", body];
     now[key] = { type, value };
   }
   return res;

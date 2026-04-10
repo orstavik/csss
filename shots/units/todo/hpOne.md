@@ -1,4 +1,7 @@
-**csss:** $palette(primary,#ec1221,white)
+**csss:**
+```csss
+$palette(primary,#ec1221,white)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -15,7 +18,10 @@
 }
 ```
 
-**csss:** $color(#primary)
+**csss:**
+```csss
+$color(#primary)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -25,7 +31,10 @@
 }
 ```
 
-**csss:** $border(solid,2px)
+**csss:**
+```csss
+$border(solid,2px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -36,7 +45,10 @@
 }
 ```
 
-**csss:** $color(#primary#a20)
+**csss:**
+```csss
+$color(#primary#a20)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -46,7 +58,10 @@
 }
 ```
 
-**csss:** $h(300px)
+**csss:**
+```csss
+$h(300px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -56,7 +71,10 @@
 }
 ```
 
-**csss:** $w(600px)
+**csss:**
+```csss
+$w(600px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -66,7 +84,10 @@
 }
 ```
 
-**csss:** $border(r(10px,30px,60px))
+**csss:**
+```csss
+$border(r(10px,30px,60px))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -80,7 +101,10 @@
 }
 ```
 
-**csss:** |*$border(double,2px,radius(0.25rem))
+**csss:**
+```csss
+|*$border(double,2px,radius(0.25rem))
+```
 **css:**
 ```css
 @layer items {
@@ -92,7 +116,10 @@
 }
 ```
 
-**csss:** |.new$border(solid,4px,radius(1rem))
+**csss:**
+```csss
+|.new$border(solid,4px,radius(1rem))
+```
 **css:**
 ```css
 @layer items {
@@ -104,7 +131,10 @@
 }
 ```
 
-**csss:** |.sale$border(dashed,3px,radius(0.5rem))
+**csss:**
+```csss
+|.sale$border(dashed,3px,radius(0.5rem))
+```
 **css:**
 ```css
 @layer items {
@@ -116,7 +146,10 @@
 }
 ```
 
-**csss:** $border(0,radius(1rem))
+**csss:**
+```csss
+$border(0,radius(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -128,7 +161,10 @@
 }
 ```
 
-**csss:** $border(w(0,1px,2px,),s(.,.,solid,dashed))
+**csss:**
+```csss
+$border(w(0,1px,2px,),s(.,.,solid,dashed))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -144,7 +180,10 @@
 }
 ```
 
-**csss:** $border(thin)
+**csss:**
+```csss
+$border(thin)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -155,7 +194,10 @@
 }
 ```
 
-**csss:** $palette(primary,blue,green)
+**csss:**
+```csss
+$palette(primary,blue,green)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -172,7 +214,10 @@
 }
 ```
 
-**csss:** $bg(#primary#90)
+**csss:**
+```csss
+$bg(#primary#90)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -189,7 +234,10 @@
 }
 ```
 
-**csss:** $palette(primary,blue,yellow)
+**csss:**
+```csss
+$palette(primary,blue,yellow)
+```
 **css:**
 ```css
  @layer containerDefault {
@@ -206,7 +254,10 @@
 }
 ```
 
-**csss:** $color(rgb(0,12,255,0.6))
+**csss:**
+```csss
+$color(rgb(0,12,255,0.6))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -216,7 +267,10 @@
 }
 ```
 
-**csss:** $w(min-content)
+**csss:**
+```csss
+$w(min-content)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -226,7 +280,10 @@
 }
 ```
 
-**csss:** $w(min-content,2px,max-content)
+**csss:**
+```csss
+$w(min-content,2px,max-content)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -238,7 +295,10 @@
 }
 ```
 
-**csss:** $w(1px,2px,)
+**csss:**
+```csss
+$w(1px,2px,)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -249,7 +309,10 @@
 }
 ```
 
-**csss:** $h(,2px,)
+**csss:**
+```csss
+$h(,2px,)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -259,7 +322,10 @@
 }
 ```
 
-**csss:** $flex(rowReverse,padding(1%,,3%),gap(,3rem))
+**csss:**
+```csss
+$flex(rowReverse,padding(1%,,3%),gap(,3rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -278,7 +344,10 @@
 }
 ```
 
-**csss:** $flex(gap(4px),padding(22px,33px,44px))
+**csss:**
+```csss
+$flex(gap(4px),padding(22px,33px,44px))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -296,7 +365,10 @@
   }
 }
 ```
-**csss:** |$flexItem(margin(,0.1px,,20%))
+**csss:**
+```csss
+|$flexItem(margin(,0.1px,,20%))
+```
 **css:**
 ```css
 @layer itemsDefault {
@@ -306,7 +378,10 @@
 }
 ```
 
-**csss:** $flex(cc)
+**csss:**
+```csss
+$flex(cc)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -323,7 +398,10 @@
   }
 }
 ```
-**csss:** |*$flexItem(margin(10px))
+**csss:**
+```csss
+|*$flexItem(margin(10px))
+```
 **css:**
 ```css
 @layer items {

@@ -1,4 +1,7 @@
-**csss:** $flex(ellipsis)
+**csss:**
+```csss
+$flex(ellipsis)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -15,7 +18,10 @@
 }
 ```
 
-**csss:** $flex(gap(1rem),overflowVisibleAuto,padding(1rem))$w(80%)
+**csss:**
+```csss
+$flex(gap(1rem),overflowVisibleAuto,padding(1rem))$w(80%)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -36,7 +42,10 @@
 }
 ```
 
-**csss:** |*$flexItem(shrink(0),center,w(7rem),h(3rem))
+**csss:**
+```csss
+|*$flexItem(shrink(0),center,w(7rem),h(3rem))
+```
 **css:**
 ```css
 @layer items {
@@ -50,7 +59,10 @@
 }
 ```
 
-**csss:** $cursor(pointer)
+**csss:**
+```csss
+$cursor(pointer)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -60,7 +72,10 @@
 }
 ```
 
-**csss:** $cursor(ew-resize)
+**csss:**
+```csss
+$cursor(ew-resize)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -70,7 +85,10 @@
 }
 ```
 
-**csss:** $translate(10px)$rotate(45deg)
+**csss:**
+```csss
+$translate(10px)$rotate(45deg)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -80,7 +98,10 @@
 }
 ```
 
-**csss:** $w(100%)
+**csss:**
+```csss
+$w(100%)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -90,7 +111,10 @@
 }
 ```
 
-**csss:** $em(15px)
+**csss:**
+```csss
+$em(15px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -100,7 +124,10 @@
 }
 ```
 
-**csss:** $block(s,gap(0.3em,1em))
+**csss:**
+```csss
+$block(s,gap(0.3em,1em))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -116,7 +143,10 @@
 }
 ```
 
-**csss:** |$blockItem(indent(15%))
+**csss:**
+```csss
+|$blockItem(indent(15%))
+```
 **css:**
 ```css
 @layer itemsDefault {
@@ -126,7 +156,10 @@
 }
 ```
 
-**csss:** |.head$blockItem(indent(-5%))
+**csss:**
+```csss
+|.head$blockItem(indent(-5%))
+```
 **css:**
 ```css
 @layer items {
@@ -136,7 +169,10 @@
 }
 ```
 
-**csss:** |.subheading$blockItem(indent(0))
+**csss:**
+```csss
+|.subheading$blockItem(indent(0))
+```
 **css:**
 ```css
 @layer items {
@@ -146,7 +182,10 @@
 }
 ```
 
-**csss:** @(print,screen):hover$border(solid,2px)
+**csss:**
+```csss
+@(print,screen):hover$border(solid,2px)
+```
 **css:**
 ```css
 @layer container {
@@ -160,7 +199,10 @@
 }
 ```
 
-**csss:** @(print,screen):hover|:valid$border(dotted,2px)
+**csss:**
+```csss
+@(print,screen):hover|:valid$border(dotted,2px)
+```
 **css:**
 ```css
 @layer items {
@@ -174,7 +216,10 @@
 }
 ```
 
-**csss:** @(print,screen):hover|.first$border(dashed,2px)
+**csss:**
+```csss
+@(print,screen):hover|.first$border(dashed,2px)
+```
 **css:**
 ```css
 @layer items {
@@ -188,7 +233,10 @@
 }
 ```
 
-**csss:** $grid(cols(1fr,1fr),gap(1rem))
+**csss:**
+```csss
+$grid(cols(1fr,1fr),gap(1rem))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -206,7 +254,10 @@
 }
 ```
 
-**csss:** $border(solid,w(1px+1em))
+**csss:**
+```csss
+$border(solid,w(1px+1em))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -217,7 +268,10 @@
 }
 ```
 
-**csss:** $padding(1rem)
+**csss:**
+```csss
+$padding(1rem)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -227,7 +281,10 @@
 }
 ```
 
-**csss:** $border(solid,w(--border-width))
+**csss:**
+```csss
+$border(solid,w(--border-width))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -238,7 +295,10 @@
 }
 ```
 
-**csss:** $border(solid,w(1px+2px))
+**csss:**
+```csss
+$border(solid,w(1px+2px))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -249,7 +309,10 @@
 }
 ```
 
-**csss:** $ultraCondensed
+**csss:**
+```csss
+$ultraCondensed
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -259,7 +322,10 @@
 }
 ```
 
-**csss:** $lineThrough(3px)
+**csss:**
+```csss
+$lineThrough(3px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -272,7 +338,10 @@
 }
 ```
 
-**csss:** $overLine(2px,#myblue)
+**csss:**
+```csss
+$overLine(2px,#myblue)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -285,7 +354,10 @@
 }
 ```
 
-**csss:** $grammarError(2px)
+**csss:**
+```csss
+$grammarError(2px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -297,7 +369,10 @@
 }
 ```
 
-**csss:** $overUnderLineThrough(2px)
+**csss:**
+```csss
+$overUnderLineThrough(2px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -310,7 +385,10 @@
 }
 ```
 
-**csss:** $wavyOverUnderLineThrough(2px)
+**csss:**
+```csss
+$wavyOverUnderLineThrough(2px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -323,7 +401,10 @@
 }
 ```
 
-**csss:** $dottedUnderLine(2px)
+**csss:**
+```csss
+$dottedUnderLine(2px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -336,7 +417,10 @@
 }
 ```
 
-**csss:** $dashedOverUnderLineThrough(2px)
+**csss:**
+```csss
+$dashedOverUnderLineThrough(2px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -349,7 +433,10 @@
 }
 ```
 
-**csss:** $doubleOverLine(2px)
+**csss:**
+```csss
+$doubleOverLine(2px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -362,7 +449,10 @@
 }
 ```
 
-**csss:** $textDecoration(none)
+**csss:**
+```csss
+$textDecoration(none)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -375,7 +465,10 @@
 }
 ```
 
-**csss:** $textDecoration(.)
+**csss:**
+```csss
+$textDecoration(.)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -388,7 +481,10 @@
 }
 ```
 
-**csss:** $lowercase
+**csss:**
+```csss
+$lowercase
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -398,7 +494,10 @@
 }
 ```
 
-**csss:** $uppercase
+**csss:**
+```csss
+$uppercase
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -408,7 +507,10 @@
 }
 ```
 
-**csss:** $lineClamp(2)
+**csss:**
+```csss
+$lineClamp(2)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -427,7 +529,10 @@
 }
 ```
 
-**csss:** $color(#fg)
+**csss:**
+```csss
+$color(#fg)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -437,7 +542,10 @@
 }
 ```
 
-**csss:** $bg(yellow)
+**csss:**
+```csss
+$bg(yellow)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -454,7 +562,10 @@
 }
 ```
 
-**csss:** $textCenter
+**csss:**
+```csss
+$textCenter
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -464,7 +575,10 @@
 }
 ```
 
-**csss:** $bg(blue)
+**csss:**
+```csss
+$bg(blue)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -481,7 +595,10 @@
 }
 ```
 
-**csss:** $color(white)
+**csss:**
+```csss
+$color(white)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -491,7 +608,10 @@
 }
 ```
 
-**csss:** $bg(red)
+**csss:**
+```csss
+$bg(red)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -508,7 +628,10 @@
 }
 ```
 
-**csss:** $bg(green)
+**csss:**
+```csss
+$bg(green)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -525,7 +648,10 @@
 }
 ```
 
-**csss:** $block
+**csss:**
+```csss
+$block
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -541,7 +667,10 @@
 }
 ```
 
-**csss:** $border
+**csss:**
+```csss
+$border
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -551,7 +680,10 @@
 }
 ```
 
-**csss:** $border(dotted,50px,easeIn(10s))
+**csss:**
+```csss
+$border(dotted,50px,easeIn(10s))
+```
 **css:**
 ```css
 @layer containerDefault {

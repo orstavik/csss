@@ -1,8 +1,11 @@
-**description:** A relative Block card with a badge and close button pinned into opposite top corners.
+**description:**
+A relative Block card with a badge and close button pinned into opposite top corners.
 **csss:**
+```csss
 $Block(padding(1.5rem))$relative
 |.badge$absolute(1rem,1rem,_,_)$zIndex(2)
 |.close$absolute(1rem,_,_,1rem)
+```
 **css:**
 ```css
 .\$Block\(padding\(1\.5rem\)\)\$relative {
@@ -24,12 +27,14 @@ $Block(padding(1.5rem))$relative
   inset-inline: auto 1rem;
 }
 ```
-
-**description:** A relative Flex toolbar with a dropdown anchored below the row and a help action fixed to the viewport corner.
+**description:**
+A relative Flex toolbar with a dropdown anchored below the row and a help action fixed to the viewport corner.
 **csss:**
+```csss
 $Flex(row,gap(1rem),padding(1rem))$relative
 |.menu$absolute(100%,1rem,_,_)$zIndex(4)
 |.help$fixed(_,1rem,1rem,_)$zIndex(10)
+```
 **css:**
 ```css
 .\$Flex\(row\,gap\(1rem\)\,padding\(1rem\)\)\$relative {
@@ -57,12 +62,14 @@ $Flex(row,gap(1rem),padding(1rem))$relative
   z-index: 10;
 }
 ```
-
-**description:** A Grid docs layout with a sticky sidebar that stays pinned while the main content remains in its own column.
+**description:**
+A Grid docs layout with a sticky sidebar that stays pinned while the main content remains in its own column.
 **csss:**
+```csss
 $Grid(cols(240px,1fr),gap(2rem),padding(1rem))
 |.sidebar$GridItem(column(1),row(1))$sticky(1rem,_,_)$zIndex(2)
 |.content$GridItem(column(2),row(1))
+```
 **css:**
 ```css
 .\$Grid\(cols\(240px\,1fr\)\,gap\(2rem\)\,padding\(1rem\)\) {
@@ -95,12 +102,14 @@ $Grid(cols(240px,1fr),gap(2rem),padding(1rem))
   place-self: unset;
 }
 ```
-
-**description:** A relative Block panel with bottom-anchored utility items placed on opposite inline sides.
+**description:**
+A relative Block panel with bottom-anchored utility items placed on opposite inline sides.
 **csss:**
+```csss
 $Block(padding(2rem))$relative
 |.note$absolute(_,1rem,1rem,_)
 |.toast$absolute(_,_,1rem,1rem)$zIndex(3)
+```
 **css:**
 ```css
 .\$Block\(padding\(2rem\)\)\$relative {
@@ -122,12 +131,14 @@ $Block(padding(2rem))$relative
   z-index: 3;
 }
 ```
-
-**description:** A relative Block callout with one child placed by calc from logical start and another snapped to the origin corner.
+**description:**
+A relative Block callout with one child placed by calc from logical start and another snapped to the origin corner.
 **csss:**
+```csss
 $Block(padding(1rem))$box(hidden)$relative
 |.callout$absolute(5%,10px+2em,_,_)$zIndex(2)
 |.origin$absolute(0,0,_,_)
+```
 **css:**
 ```css
 .\$Block\(padding\(1rem\)\)\$box\(hidden\)\$relative {

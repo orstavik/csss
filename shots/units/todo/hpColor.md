@@ -1,4 +1,7 @@
-**csss:** $textShadow(2px,4px,6px,rgba(0,0,0,0.5))
+**csss:**
+```csss
+$textShadow(2px,4px,6px,rgba(0,0,0,0.5))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -8,7 +11,10 @@
 }
 ```
 
-**csss:** $dropShadow(0,0,0.75rem,#crimson)
+**csss:**
+```csss
+$dropShadow(0,0,0.75rem,#crimson)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -18,7 +24,10 @@
 }
 ```
 
-**csss:** $textShadow(0,0,10px,#blue)
+**csss:**
+```csss
+$textShadow(0,0,10px,#blue)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -28,7 +37,10 @@
 }
 ```
 
-**csss:** $boxShadow(2px,4px,6px,rgba(0,0,0,0.5))
+**csss:**
+```csss
+$boxShadow(2px,4px,6px,rgba(0,0,0,0.5))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -38,7 +50,10 @@
 }
 ```
 
-**csss:** $palette(variations,#yellow,#blue)
+**csss:**
+```csss
+$palette(variations,#yellow,#blue)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -55,7 +70,10 @@
 }
 ```
 
-**csss:** $bg(#variations-bland#50)
+**csss:**
+```csss
+$bg(#variations-bland#50)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -72,7 +90,10 @@
 }
 ```
 
-**csss:** $color(#variations-pop#a60)
+**csss:**
+```csss
+$color(#variations-pop#a60)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -82,7 +103,10 @@
 }
 ```
 
-**csss:** $bg(#variations-accent)
+**csss:**
+```csss
+$bg(#variations-accent)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -99,7 +123,10 @@
 }
 ```
 
-**csss:** $color(#variations-accent)
+**csss:**
+```csss
+$color(#variations-accent)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -109,7 +136,10 @@
 }
 ```
 
-**csss:** $bg(#variations#20#a30)
+**csss:**
+```csss
+$bg(#variations#20#a30)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -126,7 +156,10 @@
 }
 ```
 
-**csss:** $color(#variations-pop#20#a40)
+**csss:**
+```csss
+$color(#variations-pop#20#a40)
+```
 **css:**
 ```css
 @layer containerDefault {

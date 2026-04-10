@@ -1,5 +1,9 @@
-**description:** Applies bounceInOut easing to margin and color transitions over 2s.
-**csss:** $transition(bounceInOut,2s,margin,color)
+**description:**
+A layout container with bounceinout easing to margin and color transitions over 2s.
+**csss:**
+```csss
+$transition(bounceInOut,2s,margin,color)
+```
 **css:**
 ```css
 :root /*--transition-bounceInOut*/ {
@@ -10,9 +14,12 @@
   transition: margin var(--transition-bounceInOut) 2s, color var(--transition-bounceInOut) 2s;
 }
 ```
-
-**description:** Applies backInOut easing to transform and opacity with 1s duration and 1s delay.
-**csss:** $transition(backInOut,1s,1s,transform,opacity)
+**description:**
+A layout container with backinout easing to transform and opacity with 1s duration and 1s delay.
+**csss:**
+```csss
+$transition(backInOut,1s,1s,transform,opacity)
+```
 **css:**
 ```css
 :root /*--transition-backInOut*/ {
@@ -23,45 +30,60 @@
   transition: transform var(--transition-backInOut) 1s 1s, opacity var(--transition-backInOut) 1s 1s;
 }
 ```
-
-**description:** Applies ease-in timing function with 2s duration.
-**csss:** $transition(easeIn,2s)
+**description:**
+A layout container with ease-in timing function with 2s duration.
+**csss:**
+```csss
+$transition(easeIn,2s)
+```
 **css:**
 ```css
 .\$transition\(easeIn\,2s\) {
   transition: ease-in 2s;
 }
 ```
-
-**description:** Creates a 5-step transition (default jump-end).
-**csss:** $transition(steps(5))
+**description:**
+An example demonstrating creates a 5-step transition (default jump-end).
+**csss:**
+```csss
+$transition(steps(5))
+```
 **css:**
 ```css
 .\$transition\(steps\(5\)\) {
   transition: steps(5);
 }
 ```
-
-**description:** Creates a 5-step transition with jump-end timing.
-**csss:** $transition(steps(5,end))
+**description:**
+An example demonstrating creates a 5-step transition with jump-end timing.
+**csss:**
+```csss
+$transition(steps(5,end))
+```
 **css:**
 ```css
 .\$transition\(steps\(5\,end\)\) {
   transition: steps(5, end);
 }
 ```
-
-**description:** Creates a 5-step transition with jump-both timing.
-**csss:** $transition(steps(5,jumpBoth))
+**description:**
+An example demonstrating creates a 5-step transition with jump-both timing.
+**csss:**
+```csss
+$transition(steps(5,jumpBoth))
+```
 **css:**
 ```css
 .\$transition\(steps\(5\,jumpBoth\)\) {
   transition: steps(5, jump-both);
 }
 ```
-
-**description:** Combines two custom easing functions for different properties in one rule.
-**csss:** $transition(backInOut,1s,1s,transform,opacity)$transition(bounceInOut,2s,margin,color)
+**description:**
+An example demonstrating combines two custom easing functions for different properties in one rule.
+**csss:**
+```csss
+$transition(backInOut,1s,1s,transform,opacity)$transition(bounceInOut,2s,margin,color)
+```
 **css:**
 ```css
 :root /*--transition-backInOut*/ {

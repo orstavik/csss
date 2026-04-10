@@ -1,4 +1,7 @@
-**csss:** $bg(--color-my)
+**csss:**
+```csss
+$bg(--color-my)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -15,7 +18,10 @@
 }
 ```
 
-**csss:** $bg((--color-undefined,--color-primary))
+**csss:**
+```csss
+$bg((--color-undefined,--color-primary))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -32,7 +38,10 @@
 }
 ```
 
-**csss:** $width(100px+20px)
+**csss:**
+```csss
+$width(100px+20px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -42,7 +51,10 @@
 }
 ```
 
-**csss:** $width(100%-20px)
+**csss:**
+```csss
+$width(100%-20px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -52,7 +64,10 @@
 }
 ```
 
-**csss:** $height(2rem+1em)
+**csss:**
+```csss
+$height(2rem+1em)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -62,7 +77,10 @@
 }
 ```
 
-**csss:** $blockItem(margin(10px+5px*2))
+**csss:**
+```csss
+$blockItem(margin(10px+5px*2))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -72,7 +90,10 @@
 }
 ```
 
-**csss:** $padding(1rem+2px/2)
+**csss:**
+```csss
+$padding(1rem+2px/2)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -82,7 +103,10 @@
 }
 ```
 
-**csss:** $width((100px+5vw)*2)
+**csss:**
+```csss
+$width((100px+5vw)*2)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -92,7 +116,10 @@
 }
 ```
 
-**csss:** $height(3rem*(1+0.5))
+**csss:**
+```csss
+$height(3rem*(1+0.5))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -102,7 +129,10 @@
 }
 ```
 
-**csss:** $width(--base-size*2)
+**csss:**
+```csss
+$width(--base-size*2)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -112,7 +142,10 @@
 }
 ```
 
-**csss:** $height(--base-size+10px)
+**csss:**
+```csss
+$height(--base-size+10px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -122,7 +155,10 @@
 }
 ```
 
-**csss:** $blockItem(margin(-10px+20px))
+**csss:**
+```csss
+$blockItem(margin(-10px+20px))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -132,7 +168,10 @@
 }
 ```
 
-**csss:** $padding(1rem-5px)
+**csss:**
+```csss
+$padding(1rem-5px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -142,7 +181,10 @@
 }
 ```
 
-**csss:** $width((100px+50px)*(2-0.5))
+**csss:**
+```csss
+$width((100px+50px)*(2-0.5))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -152,7 +194,10 @@
 }
 ```
 
-**csss:** $bg((--color-undefined1,--color-primary,--color-secondary))
+**csss:**
+```csss
+$bg((--color-undefined1,--color-primary,--color-secondary))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -169,7 +214,10 @@
 }
 ```
 
-**csss:** $width(1em/--var)
+**csss:**
+```csss
+$width(1em/--var)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -179,7 +227,10 @@
 }
 ```
 
-**csss:** $width((1em+20px)*20+40px)
+**csss:**
+```csss
+$width((1em+20px)*20+40px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -189,7 +240,10 @@
 }
 ```
 
-**csss:** $bg(lightblue)
+**csss:**
+```csss
+$bg(lightblue)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -206,7 +260,10 @@
 }
 ```
 
-**csss:** $padding(1rem)
+**csss:**
+```csss
+$padding(1rem)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -216,7 +273,10 @@
 }
 ```
 
-**csss:** $blockItem(margin(2px+5px*(--var/3.5)))
+**csss:**
+```csss
+$blockItem(margin(2px+5px*(--var/3.5)))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -226,7 +286,10 @@
 }
 ```
 
-**csss:** $border(solid,1px)
+**csss:**
+```csss
+$border(solid,1px)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -237,7 +300,10 @@
 }
 ```
 
-**csss:** $w(min(2px+1em,10%))
+**csss:**
+```csss
+$w(min(2px+1em,10%))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -247,7 +313,10 @@
 }
 ```
 
-**csss:** $h(max(2px+1em,10%,3vw))
+**csss:**
+```csss
+$h(max(2px+1em,10%,3vw))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -257,7 +326,10 @@
 }
 ```
 
-**csss:** $em(clamp(10%,2px+1em,20%))
+**csss:**
+```csss
+$em(clamp(10%,2px+1em,20%))
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -267,7 +339,10 @@
 }
 ```
 
-**csss:** $w(---safe-area-inset-top)
+**csss:**
+```csss
+$w(---safe-area-inset-top)
+```
 **css:**
 ```css
 @layer containerDefault {
@@ -277,7 +352,10 @@
 }
 ```
 
-**csss:** $h(---safe-area-inset-top*2)
+**csss:**
+```csss
+$h(---safe-area-inset-top*2)
+```
 **css:**
 ```css
 @layer containerDefault {

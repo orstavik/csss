@@ -1,7 +1,9 @@
 **description:**
-Generates warm palette with red foreground and brown contrast.
+An example demonstrating generates warm palette with red foreground and brown contrast.
 **csss:**
+```csss
 $Palette(warm,#red,#brown)
+```
 **css:**
 ```css
 .\$Palette\(warm\,\#red\,\#brown\) {
@@ -17,11 +19,12 @@ $Palette(warm,#red,#brown)
   --color-onWarmNeutral: #b8b8b8;
 }
 ```
-
 **description:**
-Generates primary palette with royalblue foreground and skyblue contrast.
+An example demonstrating generates primary palette with royalblue foreground and skyblue contrast.
 **csss:**
+```csss
 $Palette(primary,#royalblue,#skyblue)
+```
 **css:**
 ```css
 .\$Palette\(primary\,\#royalblue\,\#skyblue\) {
@@ -37,99 +40,108 @@ $Palette(primary,#royalblue,#skyblue)
   --color-onPrimaryNeutral: #e9e9e9;
 }
 ```
-
 **description:**
-Uses primary palette variable for text color.
+An example demonstrating uses primary palette variable for text color.
 **csss:**
+```csss
 $color(#primary)
+```
 **css:**
 ```css
 .\$color\(\#primary\) {
   color: var(--color-primary);
 }
 ```
-
 **description:**
-Mixes primary with 50% of its secondary variant.
+An example demonstrating mixes primary with 50% of its secondary variant.
 **csss:**
+```csss
 $color(#primary#50)
+```
 **css:**
 ```css
 .\$color\(\#primary\#50\) {
   color: color-mix(in oklab, var(--color-primary), var(--color-primary1) 50%);
 }
 ```
-
 **description:**
-Mixes primary with 80% of its secondary variant.
+An example demonstrating mixes primary with 80% of its secondary variant.
 **csss:**
+```csss
 $color(#primary#80)
+```
 **css:**
 ```css
 .\$color\(\#primary\#80\) {
   color: color-mix(in oklab, var(--color-primary), var(--color-primary1) 80%);
 }
 ```
-
 **description:**
-Mixes neutral with 99% of its secondary variant.
+An example demonstrating mixes neutral with 99% of its secondary variant.
 **csss:**
+```csss
 $color(#neutral#99)
+```
 **css:**
 ```css
 .\$color\(\#neutral\#99\) {
   color: color-mix(in oklab, var(--color-neutral), var(--color-neutral1) 99%);
 }
 ```
-
 **description:**
-Sets background using primary palette variable.
+A UI component with background using primary palette variable.
 **csss:**
+```csss
 $bg(#primary)
+```
 **css:**
 ```css
 .\$bg\(\#primary\) {
   background-color: var(--color-primary);
 }
 ```
-
 **description:**
-Sets background to 50% primary palette mix.
+A UI component with background to 50% primary palette mix.
 **csss:**
+```csss
 $bg(#primary#50)
+```
 **css:**
 ```css
 .\$bg\(\#primary\#50\) {
   background-color: color-mix(in oklab, var(--color-primary), var(--color-primary1) 50%);
 }
 ```
-
 **description:**
-Sets background to 20% primary mix with 50% transparency.
+A UI component with background to 20% primary mix with 50% transparency.
 **csss:**
+```csss
 $bg(#primary#20#a50)
+```
 **css:**
 ```css
 .\$bg\(\#primary\#20\#a50\) {
   background-color: color-mix(in oklab, color-mix(in oklab, var(--color-primary), var(--color-primary1) 20%), transparent 50%);
 }
 ```
-
 **description:**
-Sets border color to 40% neutral palette mix.
+A UI component with border color to 40% neutral palette mix.
 **csss:**
+```csss
 $border(#neutral#40)
+```
 **css:**
 ```css
 .\$border\(\#neutral\#40\) {
   border-color: color-mix(in oklab, var(--color-neutral), var(--color-neutral1) 40%);
 }
 ```
-
 **description:**
-Sets border color to 60% neutral palette mix.
+A UI component with border color to 60% neutral palette mix.
 **csss:**
+```csss
 $border(#neutral#60)
+```
 **css:**
 ```css
 .\$border\(\#neutral\#60\) {

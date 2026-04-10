@@ -1,8 +1,10 @@
 **description:**
 A clipped Block card stack with padding and even item spacing.
 **csss:**
+```csss
 $Block(padding(1rem))$Box(hidden)
 |$BlockItem(margin(1rem,0,0.5rem))
+```
 **css:**
 ```css
 .\$Block\(padding\(1rem\)\)\$Box\(hidden\) {
@@ -26,12 +28,13 @@ $Block(padding(1rem))$Box(hidden)
   margin-inline: 0;
 }
 ```
-
 **description:**
 A scrolling Block media list with fixed-size items.
 **csss:**
+```csss
 $block(padding(1.5rem))$Box(scroll)
 |$Box(100px,60px)
+```
 **css:**
 ```css
 .\$block\(padding\(1\.5rem\)\)\$Box\(scroll\) {
@@ -59,12 +62,13 @@ $block(padding(1.5rem))$Box(scroll)
   scroll-snap-type: unset;
 }
 ```
-
 **description:**
 A scrollable Block note rail with clean word breaks.
 **csss:**
+```csss
 $Box(hiddenScroll)$paragraph(breakWord)
 |$BlockItem(margin(0.5rem,1rem))
+```
 **css:**
 ```css
 .\$Box\(hiddenScroll\)\$paragraph\(breakWord\) {
@@ -88,12 +92,13 @@ $Box(hiddenScroll)$paragraph(breakWord)
   margin-inline: 1rem;
 }
 ```
-
 **description:**
 A centered Block reading panel with capped line length.
 **csss:**
+```csss
 $Block$box(auto)$Paragraph(_,center)
 |$Box(_<_<600px)
+```
 **css:**
 ```css
 .\$Block\$box\(auto\)\$Paragraph\(_\,center\) {
@@ -125,11 +130,12 @@ $Block$box(auto)$Paragraph(_,center)
   scroll-snap-type: unset;
 }
 ```
-
 **description:**
 A 3-line clamp for teaser text and previews.
 **csss:**
+```csss
 $lineClamp(3)$paragraph(breakAll)
+```
 **css:**
 ```css
 .\$lineClamp\(3\)\$paragraph\(breakAll\) {
@@ -142,12 +148,13 @@ $lineClamp(3)$paragraph(breakAll)
   overflow-wrap: normal;
 }
 ```
-
 **description:**
-Default Block with padding and a gap after each item.
+An example demonstrating default block with padding and a gap after each item.
 **csss:**
+```csss
 $Block(padding(1.5rem))
 |$BlockItem(margin(0,0,1rem))
+```
 **css:**
 ```css
 .\$Block\(padding\(1\.5rem\)\) {
@@ -162,14 +169,15 @@ $Block(padding(1.5rem))
   margin-inline: 0;
 }
 ```
-
 **description:**
-Default Block layout for book-styled text with indented paragraphs, plus title and subtitle overrides that soften the rhythm at the top.
+An example demonstrating default block layout for book-styled text with indented paragraphs, plus title and subtitle overrides that soften the rhythm at the top.
 **csss:**
+```csss
 $Block(padding(1.5rem))
 |$BlockItem(margin(0,0,1rem))$Paragraph(_,indent(2em))
 |.title$blockItem(margin(0,0,2rem))$paragraph(indent(0))
 |.subtitle$blockItem(margin(0,0,1.5rem))$paragraph(indent(1em))
+```
 **css:**
 ```css
 .\$Block\(padding\(1\.5rem\)\) {
@@ -207,15 +215,16 @@ $Block(padding(1.5rem))
   text-indent: 1em;
 }
 ```
-
 **description:**
 A Block blog post layout with stacked paragraphs, tighter heading spacing, and a floated note that sits beside the main reading flow.
 **csss:**
+```csss
 $Block(padding(1rem))
 |$BlockItem(margin(0,0,1rem))
 |h4$blockItem(margin(0,0,0.5rem))
 |.start$blockItem(floatStart,margin(0.5rem,0,0,0))
 |.note$blockItem(floatEnd,margin(0,0,1rem,1rem))
+```
 **css:**
 ```css
 .\$Block\(padding\(1rem\)\) {
@@ -247,11 +256,12 @@ $Block(padding(1rem))
   float: inline-end;
 }
 ```
-
 **description:**
-display none utility for hiding elements.
+An example demonstrating display none utility for hiding elements.
 **csss:**
+```csss
 $displayNone
+```
 **css:**
 ```css
 .\$displayNone {

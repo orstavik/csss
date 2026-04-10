@@ -1,8 +1,10 @@
 **description:**
 An IBlock badge row with centered text, padding, and even spacing.
 **csss:**
+```csss
 $IBlock(padding(0.5rem))$paragraph(center)
 |$IBlockItem(margin(1rem,0,0.5rem))
+```
 **css:**
 ```css
 .\$IBlock\(padding\(0\.5rem\)\)\$paragraph\(center\) {
@@ -18,12 +20,13 @@ $IBlock(padding(0.5rem))$paragraph(center)
   margin-inline: 0;
 }
 ```
-
 **description:**
 An IBlock stat row with hidden overflow, padding, and shared spacing.
 **csss:**
+```csss
 $IBlock(padding(0.5rem))$box(hidden)
 |$IBlockItem(margin(1rem,0,0.5rem))
+```
 **css:**
 ```css
 .\$IBlock\(padding\(0\.5rem\)\)\$box\(hidden\) {
@@ -39,13 +42,14 @@ $IBlock(padding(0.5rem))$box(hidden)
   margin-inline: 0;
 }
 ```
-
 **description:**
 An IBlock card row with padding, fixed width, and mixed alignment, where edge items can opt into top alignment.
 **csss:**
+```csss
 $IBlock(padding(1rem))$paragraph(center)
 |$paragraphItem(middle)$Box(200px)
 |.edge$paragraphItem(top)
+```
 **css:**
 ```css
 .\$IBlock\(padding\(1rem\)\)\$paragraph\(center\) {
@@ -71,13 +75,14 @@ $IBlock(padding(1rem))$paragraph(center)
   vertical-align: top;
 }
 ```
-
 **description:**
 An inline media row with centered text and mixed top and middle alignment.
 **csss:**
+```csss
 $IBlock(padding(0.5rem))$paragraph(center)
 |.lead$iBlockItem(margin(0,1rem,1rem,0))$paragraphItem(top)
 |.cta$paragraphItem(middle)
+```
 **css:**
 ```css
 .\$IBlock\(padding\(0\.5rem\)\)\$paragraph\(center\) {
@@ -96,14 +101,15 @@ $IBlock(padding(0.5rem))$paragraph(center)
   vertical-align: middle;
 }
 ```
-
 **description:**
 An IBlock metadata row with padding, shared spacing, plus width and alignment overrides on selected items.
 **csss:**
+```csss
 $IBlock(padding(0.75rem))$paragraph(center)
 |$IBlockItem(margin(0.5rem,1rem))$paragraphItem(middle)
 |.card$box(240px)
 |.meta$box(120px)$paragraphItem(top)
+```
 **css:**
 ```css
 .\$IBlock\(padding\(0\.75rem\)\)\$paragraph\(center\) {
