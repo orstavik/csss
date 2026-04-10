@@ -31,18 +31,15 @@ function printShot(shot) {
 function printDiff({ key, actual, expected, type }) {
   if (actual == expected)
     return console.log(`✅ ${key}`);
-  const d =
-    //diffHtml? //diffCss? //diffJson?
-    // type == "html" ? FlatHtml.fromString(actual).diff(expected) :
-    diff(expected, actual);
-  const noMatch = d.find(({ type, a, b }) => type != "match" && (a.trim() || b.trim()))
+  const d = diff(expected.split('\n'), actual.split('\n'));
+  const noMatch = d.find(({ type, a, b }) => type != "match" && (a.join("").trim() || b.join("").trim()));
   const logger = noMatch ? console.error : console.log;
   logger(`${noMatch ? "❌" : "🟦"} ${key}`);
-  for (let { a, b, type } of d)
-    type == "ins" ? logger("%c%s", "background-color:green", b) :
-      type == "del" ? logger("%c%s", "background-color:red", a) :
-        logger("%c%s", "color:grey", a);
-  logger(actual);
+
+  for (let { a, b, type } of d) {
+    if (type == "ins") logger("%c%s", "background-color:green", b);
+    else if (type == "del") logger("%c%s", "background-color:red", a);
+  }
 }
 
 export default async function runTests(paths, test) {

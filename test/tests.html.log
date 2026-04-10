@@ -26,7 +26,7 @@
 ✅ $displayNone
 ✅ $Block(padding(1.5rem))
 ✅ $Block(padding(1.5rem))
-✅ $Block$Box(_,_<_<600px)
+✅ $Block$Box(_<_<600px)
 ✅ $Block(padding(0,10vh))
 ✅ $Block(padding(1.5rem))
 ✅ $Block(padding(2rem))$Paragraph(_,breakWord)
