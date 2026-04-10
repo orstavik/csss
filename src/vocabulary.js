@@ -155,9 +155,34 @@ const REVERSES = {
   ...lineClamp.css,
   ...paragraph.css,
   ...paragraphItem.css,
-  // ...textDecorations.css,
-  // ...position.css,
+  ...textDecorations.css,
+  ...position.css,
+  ...animations.css,
+  ...backgrounds.css,
+  ...border.css,
+  ...filter.css,
+  ...fonts.css,
+  ...shadows.css,
+  ...svg.css,
+  ...transforms.css,
+  ...transitions.css,
 };
+
+for (let [kebab, types] of Object.entries(NativeCss.supported)) {
+  let camel = kebab.replace(/-([a-z])/g, g => g[1].toUpperCase());
+  if (camel in SHORTS)
+    continue;
+  
+  if (!(camel in REVERSES)) {
+    REVERSES[camel] = style => {
+      let v = style[camel];
+      if (v !== undefined) {
+        return `${camel}(${v.replace(/\s+/g, ",")})`;
+      }
+      return undefined;
+    };
+  }
+}
 
 const MEDIA_WORDS = {
   progressive: "scan: progressive",

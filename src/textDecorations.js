@@ -43,6 +43,15 @@ export default {
     textDecorationThickness: undefined,
   },
   css: {
-
+    textDecoration: style => {
+      const v = style.textDecoration;
+      const skip = style.textDecorationSkipInk;
+      if (v === "none") return "textDecorationNone";
+      if (!v && !skip) return undefined;
+      const parts = (v || "").split(" ").filter(p => p && p !== "solid");
+      if (skip === "none") parts.push("noSkipInk");
+      if (parts.length === 0) return "textDecoration(solid)";
+      return `textDecoration(${parts.map(p => p === "overline" ? "over" : p === "underline" ? "under" : p === "line-through" ? "through" : p).join(",")})`;
+    }
   }
 }

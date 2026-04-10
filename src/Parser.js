@@ -1,4 +1,4 @@
-import { SHORTS, MEDIA_WORDS } from "./vocabulary.js";
+import { SHORTS, MEDIA_WORDS, REVERSES } from "./vocabulary.js";
 import NativeCss from "./nativeCss.js";
 
 /**
@@ -158,6 +158,16 @@ function interpretShort(res, x) {
     //todo improve error message
     throw e;
   }
+}
+
+export function reverse(style) {
+  const parts = [];
+  for (const fn of Object.values(REVERSES)) {
+    const res = fn(style);
+    if (res !== undefined)
+      parts.push(res);
+  }
+  return parts.join(" ");
 }
 
 const MAGICWORD = `$"'$`;

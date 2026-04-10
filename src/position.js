@@ -1,6 +1,14 @@
-import { CsssFunctions, CsssPrimitives } from "./func2.js";
+import { CsssFunctions, CsssPrimitives, CssFunctions } from "./func2.js";
 const { LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
+const { LogicalFourReverse } = CssFunctions;
 const { LengthPercentAuto } = CsssPrimitives;
+
+const CssPositions = {
+  absolute: LogicalFourReverse("inset", "absolute", v => v),
+  relative: LogicalFourReverse("inset", "relative", v => v),
+  fixed: LogicalFourReverse("inset", "fixed", v => v),
+  sticky: LogicalFourReverse("inset", "sticky", v => v),
+};
 
 export default {
   csss: {
@@ -23,5 +31,7 @@ export default {
     insetInlineEnd: undefined,
     insetBlockEnd: undefined,
   },
-  css: {},
+  css: {
+    position: style => CssPositions[style.position]?.(style),
+  },
 };

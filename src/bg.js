@@ -87,5 +87,34 @@ export default {
     bgColor: FunctionPropertyType("bgColor", "backgroundColor", Color), //animatable property..
     bg,
     Bg: FunctionWithDefaultValues(DEFAULTS, bg),
-  }, css: {}
+  },
+  css: {
+    bg: style => {
+      let args = [];
+      if (style.backgroundColor && style.backgroundColor !== "none" && style.backgroundColor !== "unset" && !style.backgroundImage) {
+        args.push(style.backgroundColor);
+      }
+      if (style.backgroundImage && style.backgroundImage !== "none" && style.backgroundImage !== "unset") {
+        let bi = style.backgroundImage;
+        if (bi.startsWith("linear-gradient(") || bi.startsWith("radial-gradient(") || bi.startsWith("conic-gradient(")) {
+          // just pass it back? in csss gradient functions are like linear(...). Just push it as is, or reconstruct.
+          // Reconstructing gradients could be complex, we just dump the bg string.
+          // Let's replace the -gradient part.
+          bi = bi.replace(/-gradient\(/g, "(");
+          // And spaces inside the paren with commas
+          bi = bi.replace(/\(([^)]+)\)/g, (_, m) => "(" + m.replace(/,\s*/g, ",").replace(/\s+(?![^(]*\))/g, ",") + ")");
+        }
+        args.push(bi);
+      }
+      if (style.backgroundPosition && style.backgroundPosition !== "0% 0%") args.push(style.backgroundPosition.replace(/\s+/g, ","));
+      if (style.backgroundRepeat && style.backgroundRepeat !== "repeat") args.push(style.backgroundRepeat);
+      if (style.backgroundSize && style.backgroundSize !== "auto") args.push(style.backgroundSize.replace(/\s+/g, ","));
+      if (style.backgroundOrigin && style.backgroundOrigin !== "padding-box") args.push(style.backgroundOrigin);
+      if (style.backgroundClip && style.backgroundClip !== "border-box") args.push(style.backgroundClip);
+      if (style.backgroundAttachment && style.backgroundAttachment !== "scroll") args.push(style.backgroundAttachment);
+      if (style.backgroundBlendMode && style.backgroundBlendMode !== "normal") args.push(style.backgroundBlendMode);
+      
+      return args.length ? `bg(${args.join(",")})` : undefined;
+    }
+  }
 };

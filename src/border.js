@@ -161,7 +161,32 @@ export default {
     Border,
     noBorder: { border: "none" },
   },
-  css: {}
+  css: {
+    border: style => {
+      let args = [];
+      if (style.border === "none") return "noBorder";
+
+      // Just reconstructing a simple border statement
+      let hasBorder = false;
+
+      // Extract width, style, color
+      if (style.borderWidth) { args.push(style.borderWidth); hasBorder = true; }
+      if (style.borderStyle) { args.push(style.borderStyle); hasBorder = true; }
+      if (style.borderColor) { args.push(style.borderColor); hasBorder = true; }
+
+      // Also radius if present
+      if (style.borderRadius && style.borderRadius !== "0") {
+        args.push(`radius(${style.borderRadius.replace(/\s+/g, ",")})`);
+        hasBorder = true;
+      } else if (style.borderStartStartRadius) {
+         // handling logical border radius is complex, just push a basic radius
+         args.push(`radius(${style.borderStartStartRadius.replace(/\s+/g, ",")})`);
+         hasBorder = true;
+      }
+
+      return hasBorder ? `border(${args.join(",")})` : undefined;
+    }
+  }
   //todo border-image!
 }
 

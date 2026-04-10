@@ -208,6 +208,7 @@ const CssFunctions = {
     const PROPS = ["BlockStart", "InlineStart", "BlockEnd", "InlineEnd"].map(s => CssPrefix + s);
     return style => {
       let args = PROPS.map(p => INTERPRETER(style[p]) ?? DEFAULT);
+      if (args.every(a => a === DEFAULT)) return undefined;
       if (args[1] === args[3] && (args.pop() || true))
         if (args[0] === args[2] && (args.pop() || true))
           if (args[0] === args[1] && (args.pop() || true))
@@ -238,12 +239,49 @@ const CssFunctions = {
     for (let fn of Fns)
       if ((fn = fn(style)) !== undefined)
         (args ??= []).push(fn);
-    return args && `${CsssName}(${args.join(",")})`;
+    return args?.length && `${CsssName}(${args.join(",")})`;
   }
 };
+
+function spacelessCssTokens(str) {
+  // a) Replace spaces inside quotes with '+', ignoring escaped quotes
+  str = str.trim().replaceAll(/(["'])(?:\\.|(?!\1)[^\\])*\1/g, m => m.replaceAll(' ', '+'));
+  let now = "", res = [];
+  for (let i = 0, d = 0; i < str.length; i++) {
+    const c = str[i];
+    if (c === "(") d++;
+    else if (c === ")") d--;
+
+    if (c !== " " || d) now += c;
+    else if (now) { res.push(now); (now = ""); }
+  }
+  now && res.push(now);
+  return res;
+}
+
+const splitOnComma = ar => {
+  const res = [];
+  let now = [];
+  for (let a of ar) {
+    if (a.endsWith(",")) {
+      now.push(a.slice(0, -1));
+      res.push(now.join(","));
+      now = [];
+    } else
+      now.push(a);
+  }
+  return res;
+}
+
+const CssPrimitives = {
+  spacelessCssTokens,
+  splitOnComma,
+  Word
+}
 
 export {
   CsssFunctions,
   CsssPrimitives,
   CssFunctions,
+  CssPrimitives,
 }

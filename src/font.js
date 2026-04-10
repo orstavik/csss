@@ -216,5 +216,22 @@ export default {
     Font,
     Typeface,
   },
-  css: {}
+  css: {
+    font: style => {
+      let args = [];
+      if (style.fontFamily && style.fontFamily !== "unset") args.push(style.fontFamily.replace(/\s+/g, "+").replace(/,/g, ", "));
+      if (style.fontSize && style.fontSize !== "unset") args.push(style.fontSize);
+      if (style.fontStyle && style.fontStyle !== "unset") args.push(style.fontStyle);
+      if (style.fontWeight && style.fontWeight !== "unset") args.push(style.fontWeight);
+      if (style.fontSizeAdjust && style.fontSizeAdjust !== "unset") args.push(`adjust(${style.fontSizeAdjust.replace(/\s+/g, ",")})`);
+      if (style.letterSpacing && style.letterSpacing !== "unset") args.push(`spacing(${style.letterSpacing})`);
+      if (style.textTransform && style.textTransform !== "unset") args.push(style.textTransform);
+      if (style.fontStretch && style.fontStretch !== "unset") args.push(style.fontStretch.replace(/\s+/g, ""));
+      if (style.fontVariant && style.fontVariant !== "unset") args.push(`variant(${style.fontVariant.replace(/\s+/g, ",")})`);
+      if (style.fontSynthesis && style.fontSynthesis !== "unset") args.push(`synthesis(${style.fontSynthesis.replace(/\s+/g, ",")})`);
+      if (style.fontKerning && style.fontKerning !== "unset") args.push(`kerning(${style.fontKerning})`);
+
+      return args.length ? `font(${args.join(",")})` : undefined;
+    }
+  }
 };

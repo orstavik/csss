@@ -1,6 +1,6 @@
 //todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
 import { Color } from "./funcColor.js";
-import { CsssPrimitives, matchArgsWithInterpreters, BadArgument } from "./func2.js";
+import { CsssPrimitives, matchArgsWithInterpreters, BadArgument, CssPrimitives } from "./func2.js";
 const { Length, Radian, LengthNumberRaw } = CsssPrimitives;
 // There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 
 // Then in the $shadow(shade,angle,length,color?) to use it.
@@ -73,9 +73,12 @@ const textDropShadowRaw = ({ name, args }) => {
 
 const textDropShadow = ({ name, args }) => {
   const txt = textDropShadowRaw({ name, args });
-  if(txt != null) return txt;
+  if (txt != null) return txt;
   throw BadArgument("textShadow", args.length, args, `Must get either two lengths (x,y) or start with a shadeType: ${Object.keys(SHADES).join("|")}.`);
 }
+
+const { splitOnComma, spacelessCssTokens } = CssPrimitives;
+//todo i need to do splitOnComma(unpackCalc(spacelessCssTokens(str)))
 
 export default {
   props: { boxShadow: undefined, textShadow: undefined },
@@ -85,7 +88,20 @@ export default {
     noBoxShadow: { boxShadow: "none" },
     noTextShadow: { textShadow: "none" },
   },
-  css: {},
+  css: {
+    boxShadow: style => {
+      if (style.boxShadow == null) return undefined;
+      if (style.boxShadow === "none") return "noBoxShadow";
+      return splitOnComma(spacelessCssTokens(style.boxShadow)).map(t =>
+        `$boxShadow(${t.join(",")})`).join("");
+    },
+    textShadow: style => {
+      if (style.textShadow == null) return undefined;
+      if (style.textShadow === "none") return "noTextShadow";
+      return splitOnComma(spacelessCssTokens(style.textShadow)).map(t =>
+        `$textShadow(${t.join(",")})`).join("");
+    },
+  },
   raw: {
     textDropShadowRaw,
   }

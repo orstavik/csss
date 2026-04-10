@@ -162,5 +162,54 @@ export default {
     // noMarker: { marker: "none" },
     markerNone: { marker: "none" },
   },
-  css: {}
+  css: {
+    stroke: style => {
+      let args = [];
+      if (style.stroke === "none") return "strokeNone";
+      if (style.stroke && style.stroke !== "unset") args.push(style.stroke);
+      if (style.strokeWidth && style.strokeWidth !== "unset") args.push(style.strokeWidth);
+      if (style.strokeOpacity && style.strokeOpacity !== "unset") args.push(style.strokeOpacity);
+      if (style.strokeLinecap && style.strokeLinecap !== "unset") args.push(style.strokeLinecap);
+      if (style.strokeLinejoin && style.strokeLinejoin !== "unset") args.push(style.strokeLinejoin);
+      if (style.strokeDasharray && style.strokeDasharray !== "unset") args.push(`dasharray(${style.strokeDasharray.replace(/,\s*/g, ",")})`);
+      if (style.strokeDashoffset && style.strokeDashoffset !== "unset") args.push(`dashoffset(${style.strokeDashoffset})`);
+      if (style.strokeMiterlimit && style.strokeMiterlimit !== "unset") args.push(`miterlimit(${style.strokeMiterlimit})`);
+      return args.length ? `stroke(${args.join(",")})` : undefined;
+    },
+    fill: style => {
+      let args = [];
+      if (style.fill === "none") return "fillNone";
+      if (style.fill && style.fill !== "unset") args.push(style.fill);
+      if (style.fillOpacity && style.fillOpacity !== "unset") args.push(style.fillOpacity);
+      if (style.fillRule && style.fillRule !== "unset") args.push(style.fillRule);
+      return args.length ? `fill(${args.join(",")})` : undefined;
+    },
+    svgText: style => {
+      let args = [];
+      if (style.textAnchor && style.textAnchor !== "unset") args.push(style.textAnchor);
+      if (style.dominantBaseline && style.dominantBaseline !== "unset") args.push(style.dominantBaseline);
+      if (style.alignmentBaseline && style.alignmentBaseline !== "unset") args.push(style.alignmentBaseline);
+      if (style.baselineShift && style.baselineShift !== "unset") args.push(style.baselineShift);
+      return args.length ? `svgText(${args.join(",")})` : undefined;
+    },
+    marker: style => {
+      if (style.marker === "none") return "markerNone";
+      if (style.marker) return `marker(${style.marker})`;
+      if (style.markerStart && style.markerMid && style.markerEnd) return `marker(${style.markerStart},${style.markerMid},${style.markerEnd})`;
+      if (style.markerStart && style.markerEnd) return `marker(${style.markerStart},${style.markerEnd})`;
+      return undefined;
+    },
+    stopColor: style => style.stopColor ? `stopColor(${style.stopColor})` : undefined,
+    stopOpacity: style => style.stopOpacity ? `stopOpacity(${style.stopOpacity})` : undefined,
+    vectorEffect: style => style.vectorEffect ? `vectorEffect(${style.vectorEffect})` : undefined,
+    clipRule: style => style.clipRule ? `clipRule(${style.clipRule})` : undefined,
+    colorInterpolation: style => style.colorInterpolation ? `colorInterpolation(${style.colorInterpolation})` : undefined,
+    shapeRendering: style => style.shapeRendering ? `shapeRendering(${style.shapeRendering})` : undefined,
+    colorRendering: style => style.colorRendering ? `colorRendering(${style.colorRendering})` : undefined,
+    imageRendering: style => style.imageRendering ? `imageRendering(${style.imageRendering})` : undefined,
+    maskType: style => style.maskType ? `maskType(${style.maskType})` : undefined,
+    paintOrder: style => style.paintOrder ? `paintOrder(${style.paintOrder.replace(/\s+/g, ",")})` : undefined,
+    lightingColor: style => style.lightingColor ? `lightingColor(${style.lightingColor})` : undefined,
+    svgOpacity: style => style.svgOpacity ? `svgOpacity(${style.svgOpacity})` : undefined,
+  }
 };

@@ -62,11 +62,11 @@ export default {
   },
   css: {
     flex: Optional("flex",
-      LogicalFourReverse("padding", "padding", v => v, "_"),
       SingleTableReverse("flexDirection", flexDirection),
+      SequentialFunctionReverse("gap", ["gap"], v => v ? v.replace(/\s+/g, ",") : v, "_"), // gap parses row and column directly via `gap` property mapping in tests
+      LogicalFourReverse("padding", "padding", v => v, "_"),
       SingleTableReverse("flexWrap", flexWrap),
-      SingleTableReverse("placeContent", placeContent),
-      SequentialFunctionReverse("gap", ["rowGap", "columnGap"], v => v, "_") // This mapping is slightly lossy because `gap` maps into `gap` not row/column in original sometimes but good enough, will tweak if we can
+      SingleTableReverse("placeContent", placeContent)
     ),
   }
 };

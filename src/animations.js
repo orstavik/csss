@@ -77,4 +77,13 @@ export default {
     animate,
   },
   props,
+  css: {
+    animate: style => {
+      // Reversing animation involves checking multiple properties
+      if (!style.animation) return undefined;
+      // Because `animate` in csss creates @keyFrames, it's very hard to perfectly reverse it just from the `animation` property.
+      // We will provide a best effort fallback for the animation property if it doesn't contain generated names, or just ignore.
+      return undefined; // actually, we should return undefined if we can't reliably reverse.
+    }
+  }
 };
