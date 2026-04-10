@@ -18,15 +18,15 @@ function extract(x, i) {
 }
 
 function makeName(obj) {
-  let res = "a";
+  let res = ["a"];
   for (let [k, v] of Object.entries(obj)) {
-    res += parseFloat(k) + "_";
+    res.push(parseFloat(k));
     for (let [kk, vv] of Object.entries(v)) {
-      res += kk + "_";
-      res += (vv.replaceAll?.(/[^a-z0-9_-]/ig, m => !m.trim() ? "_" : "\\" + m) ?? vv) + "_";
+      res.push(kk);
+      res.push(vv.replaceAll?.(/[^a-z0-9_-]/ig, m => !m.trim() ? "_" : "\\" + m) ?? vv);
     }
   }
-  return res;
+  return res.join("_");
 }
 
 //ctx is the existing results, CB is the next $short, X is the full expr for that short.
@@ -62,10 +62,11 @@ function animate({ name, args }) {
     times = [0, delay];
     delay = undefined;
   }
+  if (delay != null) delay += "ms";
   const duration = times.reduce((a, b) => a + b, 0);
   return {
     $: animationHof.bind(null, {
-      animation: [ease?.[0], behavior, duration, fillMode, count].filter(Boolean).join(" "),
+      animation: [ease?.[0], behavior, duration + "ms", delay, fillMode, count].filter(Boolean).join(" "),
       keyFrames: times.map(a => Math.floor(a * 100 / duration)),
     }),
     ...(ease?.[1] ?? {}),

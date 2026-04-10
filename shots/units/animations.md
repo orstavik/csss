@@ -1,10 +1,8 @@
-**description:**
-Animates translate y from -20px to 20px in infinite alternate loop.
-**csss:**
- $animate(alternate,infinite,0s>10s)$translate(0px,-20px>20px)
+**description:** Animates translate y from -20px to 20px in infinite alternate loop.
+**csss:**  $animate(alternate,infinite,0s>10s)$translate(0px,-20px>20px)
 **css:**
 ```css
-@keyFrames a0_translate_0px_-20px_100_translate_0px_20px {
+@keyFrames a_0_translate_0px_-20px_100_translate_0px_20px {
   0% {
     translate: 0px -20px;
   }
@@ -14,17 +12,15 @@ Animates translate y from -20px to 20px in infinite alternate loop.
 }
 
 .\$animate\(alternate\,infinite\,0s\>10s\)\$translate\(0px\,-20px\>20px\) {
-  animation: alternate 10000 infinite a0_translate_0px_-20px_100_translate_0px_20px;
+  animation: alternate 10000ms infinite a_0_translate_0px_-20px_100_translate_0px_20px;
 }
 ```
 
-**description:**
-Animates translate x from 0px to 100px over 2000 milliseconds.
-**csss:**
- $animate(0s>2000ms)$translate(0px>100px)
+**description:** Animates translate x from 0px to 100px over 2000 milliseconds.
+**csss:**  $animate(0s>2000ms)$translate(0px>100px)
 **css:**
 ```css
-@keyFrames a0_translate_0px_100_translate_100px {
+@keyFrames a_0_translate_0px_100_translate_100px {
   0% {
     translate: 0px;
   }
@@ -34,17 +30,15 @@ Animates translate x from 0px to 100px over 2000 milliseconds.
 }
 
 .\$animate\(0s\>2000ms\)\$translate\(0px\>100px\) {
-  animation: 2000 a0_translate_0px_100_translate_100px;
+  animation: 2000ms a_0_translate_0px_100_translate_100px;
 }
 ```
 
-**description:**
-Animates opacity from 1 down to 0.3 over 3 seconds.
-**csss:**
- $animate(0s>3s)$opacity(1>0.3)
+**description:** Animates opacity from 1 down to 0.3 over 3 seconds.
+**csss:**  $animate(0s>3s)$opacity(1>0.3)
 **css:**
 ```css
-@keyFrames a0_opacity_1_100_opacity_0\.3 {
+@keyFrames a_0_opacity_1_100_opacity_0.3 {
   0% {
     opacity: 1;
   }
@@ -54,17 +48,15 @@ Animates opacity from 1 down to 0.3 over 3 seconds.
 }
 
 .\$animate\(0s\>3s\)\$opacity\(1\>0\.3\) {
-  animation: 3000 a0_opacity_1_100_opacity_0\.3;
+  animation: 3000ms a_0_opacity_1_100_opacity_0.3;
 }
 ```
 
-**description:**
-Animates scale from 1 up to 1.5 over 4000 milliseconds.
-**csss:**
- $animate(0s>4000ms)$scale(1>1.5)
+**description:** Animates scale from 1 up to 1.5 over 4000 milliseconds.
+**csss:**  $animate(0s>4000ms)$scale(1>1.5)
 **css:**
 ```css
-@keyFrames a0_scale_1_100_scale_1\.5 {
+@keyFrames a_0_scale_1_100_scale_1\.5 {
   0% {
     scale: 1;
   }
@@ -74,17 +66,15 @@ Animates scale from 1 up to 1.5 over 4000 milliseconds.
 }
 
 .\$animate\(0s\>4000ms\)\$scale\(1\>1\.5\) {
-  animation: 4000 a0_scale_1_100_scale_1\.5;
+  animation: 4000ms a_0_scale_1_100_scale_1\.5;
 }
 ```
 
-**description:**
-Animates rotation from 0deg to 180deg over 5 seconds.
-**csss:**
- $animate(0s>5s)$rotate(0deg>180deg)
+**description:** Animates rotation from 0deg to 180deg over 5 seconds.
+**csss:**  $animate(0s>5s)$rotate(0deg>180deg)
 **css:**
 ```css
-@keyFrames a0_rotate_0deg_100_rotate_180deg {
+@keyFrames a_0_rotate_0deg_100_rotate_180deg {
   0% {
     rotate: 0deg;
   }
@@ -94,17 +84,15 @@ Animates rotation from 0deg to 180deg over 5 seconds.
 }
 
 .\$animate\(0s\>5s\)\$rotate\(0deg\>180deg\) {
-  animation: 5000 a0_rotate_0deg_100_rotate_180deg;
+  animation: 5000ms a_0_rotate_0deg_100_rotate_180deg;
 }
 ```
 
-**description:**
-Runs three simultaneous animations: fade in, scale up and slide up.
-**csss:**
- $animate(0s>6s)$opacity(0.3>1)$scale(0.8>1.2)$translate(0px,30px>0px)
+**description:** Runs three simultaneous animations: fade in, scale up and slide up.
+**csss:**  $animate(0s>6s)$opacity(0.3>1)$scale(0.8>1.2)$translate(0px,30px>0px)
 **css:**
 ```css
-@keyFrames a0_opacity_0\.3_100_opacity_1 {
+@keyFrames a_0_opacity_0.3_100_opacity_1 {
   0% {
     opacity: 0.3;
   }
@@ -113,7 +101,7 @@ Runs three simultaneous animations: fade in, scale up and slide up.
   }
 }
 
-@keyFrames a0_scale_0\.8_100_scale_1\.2 {
+@keyFrames a_0_scale_0\.8_100_scale_1\.2 {
   0% {
     scale: 0.8;
   }
@@ -122,7 +110,7 @@ Runs three simultaneous animations: fade in, scale up and slide up.
   }
 }
 
-@keyFrames a0_translate_0px_30px_100_translate_0px_0px {
+@keyFrames a_0_translate_0px_30px_100_translate_0px_0px {
   0% {
     translate: 0px 30px;
   }
@@ -132,17 +120,15 @@ Runs three simultaneous animations: fade in, scale up and slide up.
 }
 
 .\$animate\(0s\>6s\)\$opacity\(0\.3\>1\)\$scale\(0\.8\>1\.2\)\$translate\(0px\,30px\>0px\) {
-  animation: 6000 a0_opacity_0\.3_100_opacity_1, 6000 a0_scale_0\.8_100_scale_1\.2, 6000 a0_translate_0px_30px_100_translate_0px_0px;
+  animation: 6000ms a_0_opacity_0.3_100_opacity_1, 6000ms a_0_scale_0\.8_100_scale_1\.2, 6000ms a_0_translate_0px_30px_100_translate_0px_0px;
 }
 ```
 
-**description:**
-Animates translate x from 0px+1px to 30px*2 over 2 seconds.
-**csss:**
- $animate(0>2s)$translate(0px+1px>30px*2)
+**description:** Animates translate x from 0px+1px to 30px*2 over 2 seconds.
+**csss:**  $animate(0>2s)$translate(0px+1px>30px*2)
 **css:**
 ```css
-@keyFrames a0_translate_1px_100_translate_60px {
+@keyFrames a_0_translate_1px_100_translate_60px {
   0% {
     translate: 1px;
   }
@@ -152,17 +138,15 @@ Animates translate x from 0px+1px to 30px*2 over 2 seconds.
 }
 
 .\$animate\(0\>2s\)\$translate\(0px\+1px\>30px\*2\) {
-  animation: 2000 a0_translate_1px_100_translate_60px;
+  animation: 2000ms a_0_translate_1px_100_translate_60px;
 }
 ```
 
-**description:**
-Animates translate y while leaving x unchanged.
-**csss:**
- $animate(0>2s)$translate(4px,0px+1px>30px*2)
+**description:** Animates translate y while leaving x unchanged.
+**csss:**  $animate(0>2s)$translate(4px,0px+1px>30px*2)
 **css:**
 ```css
-@keyFrames a0_translate_4px_1px_100_translate_4px_60px {
+@keyFrames a_0_translate_4px_1px_100_translate_4px_60px {
   0% {
     translate: 4px 1px;
   }
@@ -172,7 +156,7 @@ Animates translate y while leaving x unchanged.
 }
 
 .\$animate\(0\>2s\)\$translate\(4px\,0px\+1px\>30px\*2\) {
-  animation: 2000 a0_translate_4px_1px_100_translate_4px_60px;
+  animation: 2000ms a_0_translate_4px_1px_100_translate_4px_60px;
 }
 ```
 
@@ -180,7 +164,7 @@ Animates translate y while leaving x unchanged.
 **csss:**  $animate(forwards,0s>2s)$opacity(0>1)
 **css:**
 ```css
-@keyFrames a0_opacity_0_100_opacity_1_ {
+@keyFrames a_0_opacity_0_100_opacity_1 {
   0% {
     opacity: 0;
   }
@@ -190,7 +174,7 @@ Animates translate y while leaving x unchanged.
 }
 
 .\$animate\(forwards\,0s\>2s\)\$opacity\(0\>1\) {
-  animation: 2000 forwards a0_opacity_0_100_opacity_1_;
+  animation: 2000ms forwards a_0_opacity_0_100_opacity_1;
 }
 ```
 
@@ -198,7 +182,7 @@ Animates translate y while leaving x unchanged.
 **csss:**  $animate(backwards,0s>2s)$opacity(0>1)
 **css:**
 ```css
-@keyFrames a0_opacity_0_100_opacity_1_ {
+@keyFrames a_0_opacity_0_100_opacity_1 {
   0% {
     opacity: 0;
   }
@@ -208,7 +192,7 @@ Animates translate y while leaving x unchanged.
 }
 
 .\$animate\(backwards\,0s\>2s\)\$opacity\(0\>1\) {
-  animation: 2000 backwards a0_opacity_0_100_opacity_1_;
+  animation: 2000ms backwards a_0_opacity_0_100_opacity_1;
 }
 ```
 
@@ -216,7 +200,7 @@ Animates translate y while leaving x unchanged.
 **csss:**  $animate(both,0s>2s)$opacity(0>1)
 **css:**
 ```css
-@keyFrames a0_opacity_0_100_opacity_1_ {
+@keyFrames a_0_opacity_0_100_opacity_1 {
   0% {
     opacity: 0;
   }
@@ -226,7 +210,7 @@ Animates translate y while leaving x unchanged.
 }
 
 .\$animate\(both\,0s\>2s\)\$opacity\(0\>1\) {
-  animation: 2000 both a0_opacity_0_100_opacity_1_;
+  animation: 2000ms both a_0_opacity_0_100_opacity_1;
 }
 ```
 
@@ -234,7 +218,7 @@ Animates translate y while leaving x unchanged.
 **csss:**  $animate(reverse,0s>2s)$rotate(0deg>90deg)
 **css:**
 ```css
-@keyFrames a0_rotate_0deg_100_rotate_90deg_ {
+@keyFrames a_0_rotate_0deg_100_rotate_90deg {
   0% {
     rotate: 0deg;
   }
@@ -244,21 +228,33 @@ Animates translate y while leaving x unchanged.
 }
 
 .\$animate\(reverse\,0s\>2s\)\$rotate\(0deg\>90deg\) {
-  animation: reverse 2000 a0_rotate_0deg_100_rotate_90deg_;
+  animation: reverse 2000ms a_0_rotate_0deg_100_rotate_90deg;
 }
 ```
 
 **description:** Animates rotation in 'alternate-reverse' direction.
-**csss:**  $animate(alternate-reverse,0s>2s)$rotate(0deg>90deg)
-**css:** ```css
+**csss:**  $animate(alternateReverse,0s>2s)$rotate(0deg>90deg)
+**css:**
+```css
+@keyFrames a_0_rotate_0deg_100_rotate_90deg {
+  0% {
+    rotate: 0deg;
+  }
+  100% {
+    rotate: 90deg;
+  }
+}
 
+.\$animate\(alternateReverse\,0s\>2s\)\$rotate\(0deg\>90deg\) {
+  animation: alternate-reverse 2000ms a_0_rotate_0deg_100_rotate_90deg;
+}
 ```
 
 **description:** Animates scale exactly 3 times.
 **csss:**  $animate(3,0s>1s)$scale(1>2)
 **css:**
 ```css
-@keyFrames a0_scale_1_100_scale_2_ {
+@keyFrames a_0_scale_1_100_scale_2 {
   0% {
     scale: 1;
   }
@@ -268,7 +264,7 @@ Animates translate y while leaving x unchanged.
 }
 
 .\$animate\(3\,0s\>1s\)\$scale\(1\>2\) {
-  animation: 1000 3 a0_scale_1_100_scale_2_;
+  animation: 1000ms 3 a_0_scale_1_100_scale_2;
 }
 ```
 
@@ -276,7 +272,7 @@ Animates translate y while leaving x unchanged.
 **csss:**  $animate(easeInOut,0s>1s)$translate(0px>10px)
 **css:**
 ```css
-@keyFrames a0_translate_0px_100_translate_10px_ {
+@keyFrames a_0_translate_0px_100_translate_10px {
   0% {
     translate: 0px;
   }
@@ -286,7 +282,7 @@ Animates translate y while leaving x unchanged.
 }
 
 .\$animate\(easeInOut\,0s\>1s\)\$translate\(0px\>10px\) {
-  animation: ease-in-out 1000 a0_translate_0px_100_translate_10px_;
+  animation: ease-in-out 1000ms a_0_translate_0px_100_translate_10px;
 }
 ```
 
@@ -294,7 +290,7 @@ Animates translate y while leaving x unchanged.
 **csss:**  $animate(steps(4,end),0s>1s)$translate(0px>10px)
 **css:**
 ```css
-@keyFrames a0_translate_0px_100_translate_10px_ {
+@keyFrames a_0_translate_0px_100_translate_10px {
   0% {
     translate: 0px;
   }
@@ -304,7 +300,7 @@ Animates translate y while leaving x unchanged.
 }
 
 .\$animate\(steps\(4\,end\)\,0s\>1s\)\$translate\(0px\>10px\) {
-  animation: steps(4, end) 1000 a0_translate_0px_100_translate_10px_;
+  animation: steps(4, end) 1000ms a_0_translate_0px_100_translate_10px;
 }
 ```
 
@@ -312,7 +308,7 @@ Animates translate y while leaving x unchanged.
 **csss:**  $animate(cubicBezier(0.1,0.7,1.0,0.1),0s>1s)$translate(0px>10px)
 **css:**
 ```css
-@keyFrames a0_translate_0px_100_translate_10px {
+@keyFrames a_0_translate_0px_100_translate_10px {
   0% {
     translate: 0px;
   }
@@ -322,7 +318,7 @@ Animates translate y while leaving x unchanged.
 }
 
 .\$animate\(cubicBezier\(0\.1\,0\.7\,1\.0\,0\.1\)\,0s\>1s\)\$translate\(0px\>10px\) {
-  animation: cubic-bezier(0.1,0.7,1,0.1) 1000 a0_translate_0px_100_translate_10px;
+  animation: cubic-bezier(0.1,0.7,1,0.1) 1000ms a_0_translate_0px_100_translate_10px;
 }
 ```
 
@@ -330,7 +326,7 @@ Animates translate y while leaving x unchanged.
 **csss:**  $animate(1s,0s>2s)$bg(#red>#blue)
 **css:**
 ```css
-@keyFrames a0_backgroundColor_red_100_backgroundColor_blue_ {
+@keyFrames a_0_backgroundColor_red_100_backgroundColor_blue {
   0% {
     background-color: red;
   }
@@ -340,7 +336,7 @@ Animates translate y while leaving x unchanged.
 }
 
 .\$animate\(1s\,0s\>2s\)\$bg\(\#red\>\#blue\) {
-  animation: 2000 a0_backgroundColor_red_100_backgroundColor_blue_;
+  animation: 2000ms 1sms a_0_backgroundColor_red_100_backgroundColor_blue;
 }
 ```
 
@@ -349,7 +345,7 @@ Tests mismatched vectors: 3 time slots (0s, 1s, 2s) but 2 value slots (1, 2) in 
 **csss:**  $animate(0s>1s>2s)$scale(1>2)
 **css:**
 ```css
-@keyFrames a0_scale_1_33_scale_2_ {
+@keyFrames a_0_scale_1_33_scale_2 {
   0%, 66% {
     scale: 1;
   }
@@ -359,7 +355,7 @@ Tests mismatched vectors: 3 time slots (0s, 1s, 2s) but 2 value slots (1, 2) in 
 }
 
 .\$animate\(0s\>1s\>2s\)\$scale\(1\>2\) {
-  animation: 3000 a0_scale_1_33_scale_2_;
+  animation: 3000ms a_0_scale_1_33_scale_2;
 }
 ```
 
@@ -367,7 +363,7 @@ Tests mismatched vectors: 3 time slots (0s, 1s, 2s) but 2 value slots (1, 2) in 
 **csss:**  $animate(0s>1s)$scale(1>2>3)
 **css:**
 ```css
-@keyFrames a0_scale_1_100_scale_3_ {
+@keyFrames a_0_scale_1_100_scale_3 {
   0% {
     scale: 1;
   }
@@ -377,7 +373,7 @@ Tests mismatched vectors: 3 time slots (0s, 1s, 2s) but 2 value slots (1, 2) in 
 }
 
 .\$animate\(0s\>1s\)\$scale\(1\>2\>3\) {
-  animation: 1000 a0_scale_1_100_scale_3_;
+  animation: 1000ms a_0_scale_1_100_scale_3;
 }
 ```
 
@@ -385,7 +381,7 @@ Tests mismatched vectors: 3 time slots (0s, 1s, 2s) but 2 value slots (1, 2) in 
 **csss:**  $animate(0s>1s>2s>3s)$opacity(0>1)$scale(1>2>3)
 **css:**
 ```css
-@keyFrames a0_opacity_0_16_opacity_1_ {
+@keyFrames a_0_opacity_0_16_opacity_1 {
   0%, 33% {
     opacity: 0;
   }
@@ -394,7 +390,7 @@ Tests mismatched vectors: 3 time slots (0s, 1s, 2s) but 2 value slots (1, 2) in 
   }
 }
 
-@keyFrames a0_scale_1_16_scale_3_ {
+@keyFrames a_0_scale_1_16_scale_3 {
   0%, 33% {
     scale: 1;
   }
@@ -404,7 +400,7 @@ Tests mismatched vectors: 3 time slots (0s, 1s, 2s) but 2 value slots (1, 2) in 
 }
 
 .\$animate\(0s\>1s\>2s\>3s\)\$opacity\(0\>1\)\$scale\(1\>2\>3\) {
-  animation: 6000 a0_opacity_0_16_opacity_1_, 6000 a0_scale_1_16_scale_3_;
+  animation: 6000ms a_0_opacity_0_16_opacity_1, 6000ms a_0_scale_1_16_scale_3;
 }
 ```
 
@@ -412,7 +408,7 @@ Tests mismatched vectors: 3 time slots (0s, 1s, 2s) but 2 value slots (1, 2) in 
 **csss:**  $animate(0s>1s>2s)$translate(0px>10px,50px)
 **css:**
 ```css
-@keyFrames a0_translate_0px_50px_33_translate_10px_50px_ {
+@keyFrames a_0_translate_0px_50px_33_translate_10px_50px {
   0%, 66% {
     translate: 0px 50px;
   }
@@ -422,7 +418,7 @@ Tests mismatched vectors: 3 time slots (0s, 1s, 2s) but 2 value slots (1, 2) in 
 }
 
 .\$animate\(0s\>1s\>2s\)\$translate\(0px\>10px\,50px\) {
-  animation: 3000 a0_translate_0px_50px_33_translate_10px_50px_;
+  animation: 3000ms a_0_translate_0px_50px_33_translate_10px_50px;
 }
 ```
 
@@ -431,7 +427,7 @@ Complex combination of parameters: alternate behavior, forwards fill mode, infin
 **csss:**  $animate(alternate,forwards,infinite,500ms,0s>2s)$opacity(0>1)
 **css:**
 ```css
-@keyFrames a0_opacity_0_100_opacity_1_ {
+@keyFrames a_0_opacity_0_100_opacity_1 {
   0% {
     opacity: 0;
   }
@@ -441,7 +437,7 @@ Complex combination of parameters: alternate behavior, forwards fill mode, infin
 }
 
 .\$animate\(alternate\,forwards\,infinite\,500ms\,0s\>2s\)\$opacity\(0\>1\) {
-  animation: alternate 2000 forwards infinite a0_opacity_0_100_opacity_1_;
+  animation: alternate 2000ms 500msms forwards infinite a_0_opacity_0_100_opacity_1;
 }
 ```
 
@@ -449,7 +445,7 @@ Complex combination of parameters: alternate behavior, forwards fill mode, infin
 **csss:**  $animate(0s>1s>2s>3s)$translate(0px>100px)
 **css:**
 ```css
-@keyFrames a0_translate_0px_16_translate_100px_ {
+@keyFrames a_0_translate_0px_16_translate_100px {
   0%, 33% {
     translate: 0px;
   }
@@ -459,6 +455,6 @@ Complex combination of parameters: alternate behavior, forwards fill mode, infin
 }
 
 .\$animate\(0s\>1s\>2s\>3s\)\$translate\(0px\>100px\) {
-  animation: 6000 a0_translate_0px_16_translate_100px_;
+  animation: 6000ms a_0_translate_0px_16_translate_100px;
 }
 ```

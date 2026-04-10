@@ -154,7 +154,7 @@ const { NumberInterpreter } = CsssPrimitives;
 const NativeEaseFunctions = CssValuesToCsssTable("ease|ease-in|ease-out|ease-in-out|linear");
 const StepFunctions = CssValuesToCsssTable("start|end|jump-start|jump-end|jump-both|jump-none");
 
-const CubicBezier = SF2("cubic-bezier/4", Array(4).fill(NumberInterpreter), (_, ar) => `cubic-bezier(${ar.join(",")})`);
+const CubicBezier = SF2("cubicBezier/4", Array(4).fill(NumberInterpreter), (_, ar) => `cubic-bezier(${ar.join(",")})`);
 const Step = SF2("steps/1-2", [NumberInterpreter, a => StepFunctions[a.text]], (_, ar) => `steps(${ar.join(", ")})`);
 const NativeEasingFunction = a => NativeEaseFunctions[a.text] ?? CubicBezier(a) ?? Step(a);
 
