@@ -258,3 +258,15 @@ display none utility for hiding elements.
   display: none;
 }
 ```
+
+**description:**
+Sets 1rem block margin and zero inline margin on all children.
+**csss:** 
+|*$blockItem(margin(1rem,0))
+**css:**
+```css
+.\|\*\$blockItem\(margin\(1rem\,0\)\)>* {
+  margin-block: 1rem;
+  margin-inline: 0;
+}
+```
