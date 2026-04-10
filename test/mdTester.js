@@ -24,8 +24,13 @@ function splitMd(txt) {
 }
 
 function printShot(shot) {
-  const wrapInType = (type, value) => ["css", "html", "js"].includes(type) ? `\`\`\`${type}\n${value}\n\`\`\`` : value;
-  return Object.entries(shot).map(([k, { type, value }]) => `**${k}:**\n${wrapInType(type, value)}`).join("\n");
+  return Object.entries(shot).map(([k, { type: t, value: v }]) => {
+    k = "**" + k + ":**";
+    if (v.includes("\n") || v.length > 120) k += "\n";
+    v = v.replaceAll(/^\$/g, " $");
+    if (["css", "csss", "html", "js"].includes(t)) v = `\`\`\`${t}\n${v}\n\`\`\``;
+    return `${k}${v}`;
+  }).join("\n");
 }
 
 function printDiff({ key, actual, expected, type }) {

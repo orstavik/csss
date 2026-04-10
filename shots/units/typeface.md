@@ -1,7 +1,6 @@
 **description:**
 Inherits the operating system's default personality. It feels native, fast, frictionless, and completely invisible to the user, building immediate familiarity and trust without drawing attention to itself.
-**csss:**
- $Typeface(systemUI,system-ui,sans-serif)
+**csss:** $Typeface(systemUI,system-ui,sans-serif)
 **css:**
 ```css
 .\$Typeface\(systemUI\,system-ui\,sans-serif\) {
@@ -11,8 +10,7 @@ Inherits the operating system's default personality. It feels native, fast, fric
 
 **description:**
 Bridges the gap between classic print and modern digital. It provides a crisp, authoritative reading experience that feels academic and reliable, making it perfect for holding a user's focus during long-form articles.
-**csss:**
- $Typeface(transitional,Charter,"Bitstream+Charter","Sitka+Text",Cambria,serif)
+**csss:** $Typeface(transitional,Charter,"Bitstream+Charter","Sitka+Text",Cambria,serif)
 **css:**
 ```css
 .\$Typeface\(transitional\,Charter\,\"Bitstream\+Charter\"\,\"Sitka\+Text\"\,Cambria\,serif\) {
@@ -22,8 +20,7 @@ Bridges the gap between classic print and modern digital. It provides a crisp, a
 
 **description:**
 Evokes the cozy familiarity of a well-worn, comfortable hardcover book. It offers a warm, inviting, and deeply human aesthetic that naturally lowers reading fatigue on screens.
-**csss:**
- $Typeface(oldStyle,"Iowan+Old+Style","Palatino+Linotype","URW+Palladio+L",Pica,"Book+Antiqua",serif)
+**csss:** $Typeface(oldStyle,"Iowan+Old+Style","Palatino+Linotype","URW+Palladio+L",Pica,"Book+Antiqua",serif)
 **css:**
 ```css
 .\$Typeface\(oldStyle\,\"Iowan\+Old\+Style\"\,\"Palatino\+Linotype\"\,\"URW\+Palladio\+L\"\,Pica\,\"Book\+Antiqua\"\,serif\) {
@@ -33,8 +30,7 @@ Evokes the cozy familiarity of a well-worn, comfortable hardcover book. It offer
 
 **description:**
 Highly legible with a friendly, approachable voice. The open counters and organic strokes make digital interfaces feel less robotic, highly conversational, and effortlessly accessible.
-**csss:**
- $Typeface(humanist,Seravek,"Gill+Sans+Nova",Ubuntu,Calibri,"DejaVu+Sans",source-sans-pro,sans-serif)
+**csss:** $Typeface(humanist,Seravek,"Gill+Sans+Nova",Ubuntu,Calibri,"DejaVu+Sans",source-sans-pro,sans-serif)
 **css:**
 ```css
 .\$Typeface\(humanist\,Seravek\,\"Gill\+Sans\+Nova\"\,Ubuntu\,Calibri\,\"DejaVu\+Sans\"\,source-sans-pro\,sans-serif\) {
@@ -44,8 +40,7 @@ Highly legible with a friendly, approachable voice. The open counters and organi
 
 **description:**
 Clean, architectural, and thoroughly modern. It provides a crisp, contemporary aesthetic that feels inherently forward-thinking, making it excellent for tech-focused, minimalist user journeys.
-**csss:**
- $Typeface(geometricHumanist,Avenir,Montserrat,Corbel,"URW+Gothic",source-sans-pro,sans-serif)
+**csss:** $Typeface(geometricHumanist,Avenir,Montserrat,Corbel,"URW+Gothic",source-sans-pro,sans-serif)
 **css:**
 ```css
 .\$Typeface\(geometricHumanist\,Avenir\,Montserrat\,Corbel\,\"URW\+Gothic\"\,source-sans-pro\,sans-serif\) {
@@ -55,8 +50,7 @@ Clean, architectural, and thoroughly modern. It provides a crisp, contemporary a
 
 **description:**
 Graceful and gently sophisticated. It brings a touch of subtle elegance to the interface, offering a refined, premium user experience without demanding too much visual attention.
-**csss:**
- $Typeface(classicalHumanist,Optima,Candara,"Noto+Sans",source-sans-pro,sans-serif)
+**csss:** $Typeface(classicalHumanist,Optima,Candara,"Noto+Sans",source-sans-pro,sans-serif)
 **css:**
 ```css
 .\$Typeface\(classicalHumanist\,Optima\,Candara\,\"Noto\+Sans\"\,source-sans-pro\,sans-serif\) {
@@ -66,8 +60,7 @@ Graceful and gently sophisticated. It brings a touch of subtle elegance to the i
 
 **description:**
 Acts as the ultimate neutral canvas. It feels objective and universally legible, ensuring the user's emotional focus remains entirely on the content itself rather than the styling.
-**csss:**
- $Typeface(neoGrotesque,Inter,Roboto,"Helvetica+Neue","Arial+Nova","Nimbus+Sans",Arial,sans-serif)
+**csss:** $Typeface(neoGrotesque,Inter,Roboto,"Helvetica+Neue","Arial+Nova","Nimbus+Sans",Arial,sans-serif)
 **css:**
 ```css
 .\$Typeface\(neoGrotesque\,Inter\,Roboto\,\"Helvetica\+Neue\"\,\"Arial\+Nova\"\,\"Nimbus\+Sans\"\,Arial\,sans-serif\) {
@@ -77,8 +70,7 @@ Acts as the ultimate neutral canvas. It feels objective and universally legible,
 
 **description:**
 Brings a tactile, typewriter-like nostalgia to the screen. It feels deliberate and a bit charmingly bureaucratic, slowing down the user slightly to encourage focus on individual details.
-**csss:**
- $Typeface(monospaceSlab,"Nimbus+Mono+PS","Courier+New",monospace)
+**csss:** $Typeface(monospaceSlab,"Nimbus+Mono+PS","Courier+New",monospace)
 **css:**
 ```css
 .\$Typeface\(monospaceSlab\,\"Nimbus\+Mono\+PS\"\,\"Courier\+New\"\,monospace\) {
@@ -88,8 +80,7 @@ Brings a tactile, typewriter-like nostalgia to the screen. It feels deliberate a
 
 **description:**
 Feels precise, technical, and strictly organized. It immediately signals a highly structured environment, giving users a sense of control, accuracy, and rigorous alignment.
-**csss:**
- $Typeface(monospaceCode,ui-monospace,"Cascadia+Code","Source+Code+Pro",Menlo,Consolas,"DejaVu+Sans+Mono",monospace)
+**csss:** $Typeface(monospaceCode,ui-monospace,"Cascadia+Code","Source+Code+Pro",Menlo,Consolas,"DejaVu+Sans+Mono",monospace)
 **css:**
 ```css
 .\$Typeface\(monospaceCode\,ui-monospace\,\"Cascadia\+Code\"\,\"Source\+Code\+Pro\"\,Menlo\,Consolas\,\"DejaVu\+Sans\+Mono\"\,monospace\) {
@@ -121,8 +112,7 @@ Soft, playful, and entirely unthreatening. It creates a joyful, relaxed user exp
 
 **description:**
 Sturdy, grounded, and highly confident. It commands attention with a steady, reliable voice, making UI elements feel solidly built and deeply reassuring.
-**csss:**
- $Typeface(slabSerif,Rockwell,"Rockwell+Nova","Roboto+Slab","DejaVu+Serif","Sitka+Small",serif)
+**csss:** $Typeface(slabSerif,Rockwell,"Rockwell+Nova","Roboto+Slab","DejaVu+Serif","Sitka+Small",serif)
 **css:**
 ```css
 .\$Typeface\(slabSerif\,Rockwell\,\"Rockwell\+Nova\"\,\"Roboto\+Slab\"\,\"DejaVu\+Serif\"\,\"Sitka\+Small\"\,serif\) {
@@ -132,8 +122,7 @@ Sturdy, grounded, and highly confident. It commands attention with a steady, rel
 
 **description:**
 Carries a warm, vintage charm that feels culturally established and rooted in history. It provides a cozy storytelling vibe that signals long-lasting value and craftsmanship.
-**csss:**
- $Typeface(antique,"Superclarendon","Bookman+Old+Style","URW+Bookman","URW+Bookman+L","Georgia+Pro",Georgia,serif)
+**csss:** $Typeface(antique,"Superclarendon","Bookman+Old+Style","URW+Bookman","URW+Bookman+L","Georgia+Pro",Georgia,serif)
 **css:**
 ```css
 .\$Typeface\(antique\,\"Superclarendon\"\,\"Bookman\+Old\+Style\"\,\"URW\+Bookman\"\,\"URW\+Bookman\+L\"\,\"Georgia\+Pro\"\,Georgia\,serif\) {
@@ -143,8 +132,7 @@ Carries a warm, vintage charm that feels culturally established and rooted in hi
 
 **description:**
 Exudes high fashion, luxury, and strict elegance. The extreme contrast between thick and thin strokes provides a dramatic, premium experience best suited for capturing attention on large displays.
-**csss:**
- $Typeface(didone,Didot,"Bodoni+MT","Noto+Serif+Display","URW+Palladio+L",Pica,serif)
+**csss:** $Typeface(didone,Didot,"Bodoni+MT","Noto+Serif+Display","URW+Palladio+L",Pica,serif)
 **css:**
 ```css
 .\$Typeface\(didone\,Didot\,\"Bodoni\+MT\"\,\"Noto\+Serif\+Display\"\,\"URW\+Palladio\+L\"\,Pica\,serif\) {
@@ -163,8 +151,7 @@ Feels casual, deeply personal, and delightfully imperfect. It breaks the digital
 }
 ```
 
-**description:**
-Defines a "comic" typeface with web font URL, size, stretch, style and weight.
+**description:**Defines a "comic" typeface with web font URL, size, stretch, style and weight.
 **csss:**
  $Typeface(comic,"MS+Comic+Sans","https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2",xxSmall,semiExpanded,italic,bolder)
 **css:**
@@ -216,8 +203,7 @@ Defines a standard "body" (brødtekst) typeface using system fonts, ensuring hig
 
 **description:**
 FinePrint. Intentionally exhausting yet technically compliant. It maximizes character density to fulfill legal obligations while presenting a monotonous, tightly packed texture that subtly discourages the user from actually reading it. Keywords: Dense, Bureaucratic, Compliance, EULA, Friction. Best for: Terms of Service, Disclaimers, Legal Footnotes, Copyright Notices.
-**csss:**
- $Typeface(FinePrint,"Arial+Narrow","Helvetica+Neue+Condensed",sans-serif-condensed,sans-serif,11px)
+**csss:** $Typeface(FinePrint,"Arial+Narrow","Helvetica+Neue+Condensed",sans-serif-condensed,sans-serif,11px)
 **css:**
 ```css
 .\$Typeface\(FinePrint\,\"Arial\+Narrow\"\,\"Helvetica\+Neue\+Condensed\"\,sans-serif-condensed\,sans-serif\,11px\) {
