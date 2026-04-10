@@ -17,6 +17,18 @@ function extract(x, i) {
   return { ...x, args };
 }
 
+function makeName(obj) {
+  let res = "a";
+  for (let [k, v] of Object.entries(obj)) {
+    res += parseFloat(k) + "_";
+    for (let [kk, vv] of Object.entries(v)) {
+      res += kk + "_";
+      res += (vv.replaceAll?.(/[^a-z0-9_-]/ig, m => !m.trim() ? "_" : "\\" + m) ?? vv) + "_";
+    }
+  }
+  return res;
+}
+
 //ctx is the existing results, CB is the next $short, X is the full expr for that short.
 function animationHof({ animation, keyFrames }, CB, X) {
   const flatArgs = keyFrames.map((num, i) => extract(X, i));
@@ -38,7 +50,7 @@ function animationHof({ animation, keyFrames }, CB, X) {
     }
     res[key] = keyFrameBodies[i];
   }
-  const name = "a" + Object.entries(res).map(([k, v]) => `${parseFloat(k)}_${Object.entries(v).map(([kk, vv]) => `${kk}_${vv.replaceAll(/[^a-z0-9_-]/ig, m => !m.trim() ? "_" : "\\" + m)}`).join("_")}`).join("_");
+  const name = makeName(res);
   return { ...base, ["@keyFrames " + name]: res, animation: animation + " " + name };
 }
 

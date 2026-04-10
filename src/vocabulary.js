@@ -1,5 +1,5 @@
 import NativeCss from "./nativeCss.js";
-import { CsssPrimitives } from "./func2.js";
+import { CsssPrimitives, CsssFunctions } from "./func2.js";
 import { Color } from "./funcColor.js";
 
 import backgrounds from "./bg.js";
@@ -36,6 +36,7 @@ const ObjectFit = {       //convert to objectFit("fill|contain|cover|scale-down|
   fitScaleDown: { objectFit: "scale-down" },
   fitNone: { objectFit: "none" },
 };
+const Opacity = CsssFunctions.FunctionPropertyType("opacity", "opacity", CsssPrimitives.PercentFraction);
 
 const SHORTS = {
   ...boxItem.props,
@@ -66,6 +67,7 @@ const SHORTS = {
   ...paragraph.props,
   ...animations.props,
   ...ObjectFit,
+  opacity: Opacity,
   ...box.csss,
   ...boxItem.csss,
   ...block.csss,
@@ -137,10 +139,6 @@ for (let [kebab, types] of Object.entries(NativeCss.supported)) {
   SHORTS[camel] = interpretNativeValue;
 }
 
-// const Animatables = "translateY|translate|translateX|translateZ|scale|scaleX|scaleY|scaleZ|rotate|rotateX|rotateY|rotateZ|skewX|skewY|opacity|bg|bgColor|color|border|Border".split("|");
-// for (let k of Animatables)
-//   SHORTS[k] = animationHo(SHORTS[k]);
-
 const REVERSES = {
   ...boxItem.css,
   ...box.css,
@@ -172,7 +170,7 @@ for (let [kebab, types] of Object.entries(NativeCss.supported)) {
   let camel = kebab.replace(/-([a-z])/g, g => g[1].toUpperCase());
   if (camel in SHORTS)
     continue;
-  
+
   if (!(camel in REVERSES)) {
     REVERSES[camel] = style => {
       let v = style[camel];

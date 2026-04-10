@@ -211,6 +211,7 @@ export default {
     LengthNumber: ResolveMath(a => (a.type === "length" || (a.type === "number" && a.unit === "")) ? a.text : undefined),
     LengthNumberRaw: ResolveMath(a => (a.type === "length" || (a.type === "number" && a.unit === "")) ? a : undefined),
     Percent: ResolveMath(a => a.type === "percent" ? a.text : undefined),
+    PercentFraction: ResolveMath(a => a.type === "percent" ? a.num / 100 : (a.unit === "" && a.num >= 0 && a.num <= 1) ? a.num : undefined),
     Time: ResolveMath(a => a.type === "time" ? a.text : undefined),
     MsOrNumber: ResolveMath(a => a.unit === "ms" || a.unit === "" ? a.num : a.unit === "s" ? a.num * 1000 : undefined),
     Resolution: ResolveMath(a => a.type === "resolution" ? a.text : a.num === 0 && a.unit === "" ? "0x" : undefined),
