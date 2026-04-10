@@ -1,7 +1,7 @@
 **description:**
 Sets text color to orange.
 **csss:**
-$color(#orange)
+ $color(#orange)
 **css:**
 ```css
 .\$color\(\#orange\) {
@@ -12,7 +12,7 @@ $color(#orange)
 **description:**
 Mixes orange with 75% purple in oklab color space.
 **csss:**
-$color(#orange#purple75)
+ $color(#orange#purple75)
 **css:**
 ```css
 .\$color\(\#orange\#purple75\) {
@@ -23,7 +23,7 @@ $color(#orange#purple75)
 **description:**
 Triple color mix: orange→75% purple→53% dark gray.
 **csss:**
-$color(#orange#purple75#3338)
+ $color(#orange#purple75#3338)
 **css:**
 ```css
 .\$color\(\#orange\#purple75\#3338\) {
@@ -34,7 +34,7 @@ $color(#orange#purple75#3338)
 **description:**
 Sets text color using rgb function notation.
 **csss:**
-$color(#rgb(255,0,0))
+ $color(#rgb(255,0,0))
 **css:**
 ```css
 .\$color\(\#rgb\(255\,0\,0\)\) {
@@ -45,7 +45,7 @@ $color(#rgb(255,0,0))
 **description:**
 Mixes rgb red with 33% orange in oklab.
 **csss:**
-$color(#rgb(255,0,0)#orange33)
+ $color(#rgb(255,0,0)#orange33)
 **css:**
 ```css
 .\$color\(\#rgb\(255\,0\,0\)\#orange33\) {
@@ -56,7 +56,7 @@ $color(#rgb(255,0,0)#orange33)
 **description:**
 Sets text color using rgba with 50% opacity.
 **csss:**
-$color(#rgba(0,255,0,0.5))
+ $color(#rgba(0,255,0,0.5))
 **css:**
 ```css
 .\$color\(\#rgba\(0\,255\,0\,0\.5\)\) {
@@ -67,7 +67,7 @@ $color(#rgba(0,255,0,0.5))
 **description:**
 Sets text color using hsl function (blue).
 **csss:**
-$color(#hsl(240,100%,50%))
+ $color(#hsl(240,100%,50%))
 **css:**
 ```css
 .\$color\(\#hsl\(240\,100\%\,50\%\)\) {
@@ -78,7 +78,7 @@ $color(#hsl(240,100%,50%))
 **description:**
 Sets text color using hsla with 80% opacity.
 **csss:**
-$color(#hsla(60,100%,50%,0.8))
+ $color(#hsla(60,100%,50%,0.8))
 **css:**
 ```css
 .\$color\(\#hsla\(60\,100\%\,50\%\,0\.8\)\) {
@@ -89,7 +89,7 @@ $color(#hsla(60,100%,50%,0.8))
 **description:**
 Sets text color using hwb function (teal-ish).
 **csss:**
-$color(#hwb(180,20%,20%))
+ $color(#hwb(180,20%,20%))
 **css:**
 ```css
 .\$color\(\#hwb\(180\,20\%\,20\%\)\) {
@@ -100,7 +100,7 @@ $color(#hwb(180,20%,20%))
 **description:**
 Sets text color using CIE lab values.
 **csss:**
-$color(#lab(50%,20,-30))
+ $color(#lab(50%,20,-30))
 **css:**
 ```css
 .\$color\(\#lab\(50\%\,20\,-30\)\) {
@@ -111,7 +111,7 @@ $color(#lab(50%,20,-30))
 **description:**
 Sets text color using CIE lch values.
 **csss:**
-$color(#lch(70%,45,120))
+ $color(#lch(70%,45,120))
 **css:**
 ```css
 .\$color\(\#lch\(70\%\,45\,120\)\) {
@@ -122,7 +122,7 @@ $color(#lch(70%,45,120))
 **description:**
 Sets text color using oklab perceptual values.
 **csss:**
-$color(#oklab(0.7,0.1,-0.1))
+ $color(#oklab(0.7,0.1,-0.1))
 **css:**
 ```css
 .\$color\(\#oklab\(0\.7\,0\.1\,-0\.1\)\) {
@@ -133,7 +133,7 @@ $color(#oklab(0.7,0.1,-0.1))
 **description:**
 Sets text color using oklch perceptual values.
 **csss:**
-$color(#oklch(0.8,0.15,180))
+ $color(#oklch(0.8,0.15,180))
 **css:**
 ```css
 .\$color\(\#oklch\(0\.8\,0\.15\,180\)\) {
@@ -144,7 +144,7 @@ $color(#oklch(0.8,0.15,180))
 **description:**
 Sets text color using sRGB color function.
 **csss:**
-$color(#srgb(1,0,0))
+ $color(#srgb(1,0,0))
 **css:**
 ```css
 .\$color\(\#srgb\(1\,0\,0\)\) {
@@ -155,7 +155,7 @@ $color(#srgb(1,0,0))
 **description:**
 Sets text color using linear sRGB color space.
 **csss:**
-$color(#srgbLinear(0.8,0.2,0.1))
+ $color(#srgbLinear(0.8,0.2,0.1))
 **css:**
 ```css
 .\$color\(\#srgbLinear\(0\.8\,0\.2\,0\.1\)\) {
@@ -166,7 +166,7 @@ $color(#srgbLinear(0.8,0.2,0.1))
 **description:**
 Sets text color using Display P3 wide-gamut color space.
 **csss:**
-$color(#displayP3(1,0.5,0))
+ $color(#displayP3(1,0.5,0))
 **css:**
 ```css
 .\$color\(\#displayP3\(1\,0\.5\,0\)\) {
@@ -177,7 +177,7 @@ $color(#displayP3(1,0.5,0))
 **description:**
 Sets text color using A98-RGB color space.
 **csss:**
-$color(#a98Rgb(0.9,0.3,0.1))
+ $color(#a98Rgb(0.9,0.3,0.1))
 **css:**
 ```css
 .\$color\(\#a98Rgb\(0\.9\,0\.3\,0\.1\)\) {
@@ -188,7 +188,7 @@ $color(#a98Rgb(0.9,0.3,0.1))
 **description:**
 Sets text color using ProPhoto RGB color space.
 **csss:**
-$color(#prophotoRgb(0.8,0.4,0.2))
+ $color(#prophotoRgb(0.8,0.4,0.2))
 **css:**
 ```css
 .\$color\(\#prophotoRgb\(0\.8\,0\.4\,0\.2\)\) {
@@ -199,7 +199,7 @@ $color(#prophotoRgb(0.8,0.4,0.2))
 **description:**
 Sets text color using Rec. 2020 color space.
 **csss:**
-$color(#rec2020(0.7,0.6,0.1))
+ $color(#rec2020(0.7,0.6,0.1))
 **css:**
 ```css
 .\$color\(\#rec2020\(0\.7\,0\.6\,0\.1\)\) {
@@ -210,7 +210,7 @@ $color(#rec2020(0.7,0.6,0.1))
 **description:**
 Sets text color using XYZ color space.
 **csss:**
-$color(#xyz(0.5,0.3,0.1))
+ $color(#xyz(0.5,0.3,0.1))
 **css:**
 ```css
 .\$color\(\#xyz\(0\.5\,0\.3\,0\.1\)\) {
@@ -221,7 +221,7 @@ $color(#xyz(0.5,0.3,0.1))
 **description:**
 Sets text color using XYZ-D50 illuminant color space.
 **csss:**
-$color(#xyzD50(0.4,0.3,0.2))
+ $color(#xyzD50(0.4,0.3,0.2))
 **css:**
 ```css
 .\$color\(\#xyzD50\(0\.4\,0\.3\,0\.2\)\) {
@@ -232,7 +232,7 @@ $color(#xyzD50(0.4,0.3,0.2))
 **description:**
 Sets text color using XYZ-D65 illuminant color space.
 **csss:**
-$color(#xyzD65(0.6,0.4,0.1))
+ $color(#xyzD65(0.6,0.4,0.1))
 **css:**
 ```css
 .\$color\(\#xyzD65\(0\.6\,0\.4\,0\.1\)\) {
@@ -243,7 +243,7 @@ $color(#xyzD65(0.6,0.4,0.1))
 **description:**
 Mixes red and blue 50/50 in oklch color space.
 **csss:**
-$color(#mix(oklch,#red,50%,#blue,50%))
+ $color(#mix(oklch,#red,50%,#blue,50%))
 **css:**
 ```css
 .\$color\(\#mix\(oklch\,\#red\,50\%\,\#blue\,50\%\)\) {
@@ -254,7 +254,7 @@ $color(#mix(oklch,#red,50%,#blue,50%))
 **description:**
 Mixes orange and purple 75% using HSL longer hue interpolation.
 **csss:**
-$color(#mix(hslLongerHue,#orange,25%,#purple,75%))
+ $color(#mix(hslLongerHue,#orange,25%,#purple,75%))
 **css:**
 ```css
 .\$color\(\#mix\(hslLongerHue\,\#orange\,25\%\,\#purple\,75\%\)\) {
@@ -265,7 +265,7 @@ $color(#mix(hslLongerHue,#orange,25%,#purple,75%))
 **description:**
 Sets background using oklch with computed hue (180+30=210).
 **csss:**
-$bg(#oklch(70%,0.15,180+30))
+ $bg(#oklch(70%,0.15,180+30))
 **css:**
 ```css
 .\$bg\(\#oklch\(70\%\,0\.15\,180\+30\)\) {
@@ -276,7 +276,7 @@ $bg(#oklch(70%,0.15,180+30))
 **description:**
 Sets background using lab with computed lightness (50%*1.5=75%).
 **csss:**
-$bg(#lab(50%*1.5,10,-20))
+ $bg(#lab(50%*1.5,10,-20))
 **css:**
 ```css
 .\$bg\(\#lab\(50\%\*1\.5\,10\,-20\)\) {
@@ -287,7 +287,7 @@ $bg(#lab(50%*1.5,10,-20))
 **description:**
 Generates primary palette from coral with white contrast color.
 **csss:**
-$Palette(primary,#ff5470,#ffffff)
+ $Palette(primary,#ff5470,#ffffff)
 **css:**
 ```css
 .\$Palette\(primary\,\#ff5470\,\#ffffff\) {
@@ -307,7 +307,7 @@ $Palette(primary,#ff5470,#ffffff)
 **description:**
 Generates warm palette from red with brown contrast color.
 **csss:**
-$Palette(warm,#red,#brown)
+ $Palette(warm,#red,#brown)
 **css:**
 ```css
 .\$Palette\(warm\,\#red\,\#brown\) {
@@ -327,7 +327,7 @@ $Palette(warm,#red,#brown)
 **description:**
 Generates primary palette from royalblue with skyblue contrast.
 **csss:**
-$Palette(primary,#royalblue,#skyblue)
+ $Palette(primary,#royalblue,#skyblue)
 **css:**
 ```css
 .\$Palette\(primary\,\#royalblue\,\#skyblue\) {
@@ -347,7 +347,7 @@ $Palette(primary,#royalblue,#skyblue)
 **description:**
 Uses the primary palette variable for text color.
 **csss:**
-$color(#primary)
+ $color(#primary)
 **css:**
 ```css
 .\$color\(\#primary\) {
@@ -358,7 +358,7 @@ $color(#primary)
 **description:**
 Mixes primary with 50% of its secondary variant.
 **csss:**
-$color(#primary#50)
+ $color(#primary#50)
 **css:**
 ```css
 .\$color\(\#primary\#50\) {
@@ -369,7 +369,7 @@ $color(#primary#50)
 **description:**
 Mixes primary with 80% of its secondary variant.
 **csss:**
-$color(#primary#80)
+ $color(#primary#80)
 **css:**
 ```css
 .\$color\(\#primary\#80\) {
@@ -380,7 +380,7 @@ $color(#primary#80)
 **description:**
 Mixes neutral with 99% of its secondary variant.
 **csss:**
-$color(#neutral#99)
+ $color(#neutral#99)
 **css:**
 ```css
 .\$color\(\#neutral\#99\) {
@@ -391,7 +391,7 @@ $color(#neutral#99)
 **description:**
 Sets background to primary palette color.
 **csss:**
-$bg(#primary)
+ $bg(#primary)
 **css:**
 ```css
 .\$bg\(\#primary\) {
@@ -402,7 +402,7 @@ $bg(#primary)
 **description:**
 Sets background to 50% mix of primary palette.
 **csss:**
-$bg(#primary#50)
+ $bg(#primary#50)
 **css:**
 ```css
 .\$bg\(\#primary\#50\) {
@@ -413,7 +413,7 @@ $bg(#primary#50)
 **description:**
 Sets background to 20% primary mix with 50% transparency.
 **csss:**
-$bg(#primary#20#a50)
+ $bg(#primary#20#a50)
 **css:**
 ```css
 .\$bg\(\#primary\#20\#a50\) {
@@ -424,7 +424,7 @@ $bg(#primary#20#a50)
 **description:**
 Sets border color to 40% neutral palette mix.
 **csss:**
-$border(#neutral#40)
+ $border(#neutral#40)
 **css:**
 ```css
 .\$border\(\#neutral\#40\) {
@@ -435,7 +435,7 @@ $border(#neutral#40)
 **description:**
 Sets border color to 60% neutral palette mix.
 **csss:**
-$border(#neutral#60)
+ $border(#neutral#60)
 **css:**
 ```css
 .\$border\(\#neutral\#60\) {

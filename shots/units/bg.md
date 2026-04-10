@@ -1,7 +1,7 @@
 **description:**
 Sets background-color to green and applies a white-to-transparent gradient.
 **csss:**
-$bgColor(#green)$bg(#white,#transparent)
+ $bgColor(#green)$bg(#white,#transparent)
 **css:**
 ```css
 .\$bgColor\(\#green\)\$bg\(\#white\,\#transparent\) {

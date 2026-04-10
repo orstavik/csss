@@ -1,7 +1,7 @@
 **description:**
 Sets stroke width, round linecap and miterlimit.
 **csss:**
-$stroke(3px,round,miterlimit(4))
+ $stroke(3px,round,miterlimit(4))
 **css:**
 ```css
 .\$stroke\(3px\,round\,miterlimit\(4\)\) {
@@ -14,7 +14,7 @@ $stroke(3px,round,miterlimit(4))
 **description:**
 Sets stroke opacity to 0.8.
 **csss:**
-$stroke(0.8)
+ $stroke(0.8)
 **css:**
 ```css
 .\$stroke\(0\.8\) {
@@ -25,7 +25,7 @@ $stroke(0.8)
 **description:**
 Sets round linecap on stroke.
 **csss:**
-$stroke(round)
+ $stroke(round)
 **css:**
 ```css
 .\$stroke\(round\) {
@@ -36,7 +36,7 @@ $stroke(round)
 **description:**
 Sets bevel linejoin on stroke.
 **csss:**
-$stroke(bevel)
+ $stroke(bevel)
 **css:**
 ```css
 .\$stroke\(bevel\) {
@@ -47,7 +47,7 @@ $stroke(bevel)
 **description:**
 Sets a 5,5 dash pattern on stroke.
 **csss:**
-$stroke(dasharray(5,5))
+ $stroke(dasharray(5,5))
 **css:**
 ```css
 .\$stroke\(dasharray\(5\,5\)\) {
@@ -58,7 +58,7 @@ $stroke(dasharray(5,5))
 **description:**
 Sets stroke color, width, opacity, linejoin, linecap and dash pattern.
 **csss:**
-$stroke(#deepskyblue,3px,.5,bevel,butt,dasharray(5px,5%))
+ $stroke(#deepskyblue,3px,.5,bevel,butt,dasharray(5px,5%))
 **css:**
 ```css
 .\$stroke\(\#deepskyblue\,3px\,\.5\,bevel\,butt\,dasharray\(5px\,5\%\)\) {
@@ -74,7 +74,7 @@ $stroke(#deepskyblue,3px,.5,bevel,butt,dasharray(5px,5%))
 **description:**
 Resets all stroke properties then sets width, linecap and miterlimit.
 **csss:**
-$Stroke(3px,round,miterlimit(4))
+ $Stroke(3px,round,miterlimit(4))
 **css:**
 ```css
 .\$Stroke\(3px\,round\,miterlimit\(4\)\) {
@@ -92,7 +92,7 @@ $Stroke(3px,round,miterlimit(4))
 **description:**
 Removes stroke and resets all stroke properties.
 **csss:**
-$strokeNone
+ $strokeNone
 **css:**
 ```css
 .\$strokeNone {
@@ -110,7 +110,7 @@ $strokeNone
 **description:**
 Sets fill color, opacity and fill rule.
 **csss:**
-$fill(#azure,.5,evenodd)
+ $fill(#azure,.5,evenodd)
 **css:**
 ```css
 .\$fill\(\#azure\,\.5\,evenodd\) {
@@ -123,7 +123,7 @@ $fill(#azure,.5,evenodd)
 **description:**
 Sets fill opacity to 0.5.
 **csss:**
-$fill(0.5)
+ $fill(0.5)
 **css:**
 ```css
 .\$fill\(0\.5\) {
@@ -134,7 +134,7 @@ $fill(0.5)
 **description:**
 Sets fill color, opacity and rule (uppercase resets all fill props).
 **csss:**
-$Fill(#azure,.5,evenodd)
+ $Fill(#azure,.5,evenodd)
 **css:**
 ```css
 .\$Fill\(\#azure\,\.5\,evenodd\) {
@@ -147,7 +147,7 @@ $Fill(#azure,.5,evenodd)
 **description:**
 Removes fill and resets fill properties.
 **csss:**
-$fillNone
+ $fillNone
 **css:**
 ```css
 .\$fillNone {
@@ -160,7 +160,7 @@ $fillNone
 **description:**
 Sets gradient stop color to blue.
 **csss:**
-$stopColor(#blue)
+ $stopColor(#blue)
 **css:**
 ```css
 .\$stopColor\(\#blue\) {
@@ -171,7 +171,7 @@ $stopColor(#blue)
 **description:**
 Sets text-anchor to middle.
 **csss:**
-$svgText(middle)
+ $svgText(middle)
 **css:**
 ```css
 .\$svgText\(middle\) {
@@ -182,7 +182,7 @@ $svgText(middle)
 **description:**
 Sets text-anchor, dominant-baseline and alignment-baseline.
 **csss:**
-$svgText(start,middle,textAfterEdge)
+ $svgText(start,middle,textAfterEdge)
 **css:**
 ```css
 .\$svgText\(start\,middle\,textAfterEdge\) {
@@ -195,7 +195,7 @@ $svgText(start,middle,textAfterEdge)
 **description:**
 Sets text-anchor, baselines with baseline-shift reset.
 **csss:**
-$SvgText(middle,alphabetic,textBeforeEdge)
+ $SvgText(middle,alphabetic,textBeforeEdge)
 **css:**
 ```css
 .\$SvgText\(middle\,alphabetic\,textBeforeEdge\) {
@@ -209,7 +209,7 @@ $SvgText(middle,alphabetic,textBeforeEdge)
 **description:**
 Sets shape rendering to crisp edges for sharp SVG paths.
 **csss:**
-$shapeRendering(crispEdges)
+ $shapeRendering(crispEdges)
 **css:**
 ```css
 .\$shapeRendering\(crispEdges\) {
@@ -220,7 +220,7 @@ $shapeRendering(crispEdges)
 **description:**
 Applies non-scaling-stroke so stroke width stays constant on zoom.
 **csss:**
-$vectorEffect(nonScalingStroke)
+ $vectorEffect(nonScalingStroke)
 **css:**
 ```css
 .\$vectorEffect\(nonScalingStroke\) {
@@ -231,7 +231,7 @@ $vectorEffect(nonScalingStroke)
 **description:**
 Sets paint order to render stroke before fill.
 **csss:**
-$paintOrder(stroke,fill)
+ $paintOrder(stroke,fill)
 **css:**
 ```css
 .\$paintOrder\(stroke\,fill\) {

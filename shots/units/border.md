@@ -1,7 +1,7 @@
 **description:**
 Sets 1px solid border with radius reset to 0.
 **csss:**
-$Border(1px,solid)
+ $Border(1px,solid)
 **css:**
 ```css
 .\$Border\(1px\,solid\) {
@@ -13,7 +13,7 @@ $Border(1px,solid)
 **description:**
 Sets asymmetric widths, dotted style, dual colors and 4-corner radius.
 **csss:**
-$Border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))
+ $Border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))
 **css:**
 ```css
 .\$Border\(2px\,4px\,dotted\,\#red\,\#blue\,radius\(0\,5px\,3\%\,1rem\)\) {
@@ -32,7 +32,7 @@ $Border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))
 **description:**
 Sets 2px solid red border with simple 2-value radius.
 **csss:**
-$Border(2px,solid,#red,radius(2px,4px))
+ $Border(2px,solid,#red,radius(2px,4px))
 **css:**
 ```css
 .\$Border\(2px\,solid\,\#red\,radius\(2px\,4px\)\) {
@@ -47,7 +47,7 @@ $Border(2px,solid,#red,radius(2px,4px))
 **description:**
 Sets border to none with 20px uniform radius.
 **csss:**
-$Border(radius(20px))
+ $Border(radius(20px))
 **css:**
 ```css
 .\$Border\(radius\(20px\)\) {
@@ -59,7 +59,7 @@ $Border(radius(20px))
 **description:**
 Sets asymmetric widths, dotted style, dual colors and 4-corner radius.
 **csss:**
-$border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))
+ $border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))
 **css:**
 ```css
 .\$border\(2px\,4px\,dotted\,\#red\,\#blue\,radius\(0\,5px\,3\%\,1rem\)\) {
@@ -78,7 +78,7 @@ $border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))
 **description:**
 Sets 2px solid red border with 2-value radius without reset.
 **csss:**
-$border(2px,solid,#red,radius(2px,4px))
+ $border(2px,solid,#red,radius(2px,4px))
 **css:**
 ```css
 .\$border\(2px\,solid\,\#red\,radius\(2px\,4px\)\) {
@@ -95,7 +95,7 @@ $border(2px,solid,#red,radius(2px,4px))
 **description:**
 Sets complex border with split styles, 3 colors and 7-value radius.
 **csss:**
-$border(2px,dotted,dashed,#red,#blue,#white,radius(0,1px,2px,3px,4px,5px,6px))
+ $border(2px,dotted,dashed,#red,#blue,#white,radius(0,1px,2px,3px,4px,5px,6px))
 **css:**
 ```css
 .\$border\(2px\,dotted\,dashed\,\#red\,\#blue\,\#white\,radius\(0\,1px\,2px\,3px\,4px\,5px\,6px\)\) {
@@ -114,7 +114,7 @@ $border(2px,dotted,dashed,#red,#blue,#white,radius(0,1px,2px,3px,4px,5px,6px))
 **description:**
 Removes all borders from the element.
 **csss:**
-$noBorder
+ $noBorder
 **css:**
 ```css
 .\$noBorder {

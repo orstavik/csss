@@ -1,7 +1,7 @@
 **description:**
 Sets 1rem gap and padding on a flex container.
 **csss:**
-$flex(gap(1rem),padding(1rem))
+ $flex(gap(1rem),padding(1rem))
 **css:**
 ```css
 .\$flex\(gap\(1rem\)\,padding\(1rem\)\) {
@@ -57,7 +57,7 @@ Adds 2rem margin on all grandchildren via default grand items layer.
 **description:**
 Creates 2-column grid with 1rem gap.
 **csss:**
-$grid(cols(repeat(2,1fr)),gap(1rem))
+ $grid(cols(repeat(2,1fr)),gap(1rem))
 **css:**
 ```css
 .\$grid\(cols\(repeat\(2\,1fr\)\)\,gap\(1rem\)\) {

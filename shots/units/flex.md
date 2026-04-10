@@ -1,7 +1,7 @@
 **description:**
 A vertical Flex settings panel with shared item basis.
 **csss:**
-$Flex(column,gap(0.5rem),padding(1rem))
+ $Flex(column,gap(0.5rem),padding(1rem))
 |$FlexItem(100px)
 **css:**
 ```css
@@ -26,7 +26,7 @@ $Flex(column,gap(0.5rem),padding(1rem))
 **description:**
 A reversed Flex action bar with mixed growth.
 **csss:**
-$Flex(rowReverse,gap(0.5rem),padding(1rem))
+ $Flex(rowReverse,gap(0.5rem),padding(1rem))
 |:nth-child(1)$flexItem(1)
 |:nth-child(2)$flexItem(2)
 **css:**
@@ -53,7 +53,7 @@ $Flex(rowReverse,gap(0.5rem),padding(1rem))
 **description:**
 A wrapping Flex card grid with fixed tile sizing.
 **csss:**
-$Flex(wrap,gap(1rem,2rem))
+ $Flex(wrap,gap(1rem,2rem))
 |$FlexItem(margin(5px,1rem))$Box(150px,120px)$BoxItem(scrollMargin(10px))
 **css:**
 ```css
@@ -91,7 +91,7 @@ $Flex(wrap,gap(1rem,2rem))
 **description:**
 A wrapping Flex toolbar where key actions are reordered and aligned differently once the row starts to fill up.
 **csss:**
-$Flex(start,gap(1rem),padding(1rem),wrap)
+ $Flex(start,gap(1rem),padding(1rem),wrap)
 |$FlexItem(order(3),start,margin(1rem))
 |.two$flexItem(order(1),center)
 |.three$flexItem(order(2),end)
@@ -128,7 +128,7 @@ $Flex(start,gap(1rem),padding(1rem),wrap)
 **description:**
 A centered Flex row with a stretched featured item.
 **csss:**
-$Flex(center,gap(1rem),padding(1rem),wrap)
+ $Flex(center,gap(1rem),padding(1rem),wrap)
 |.featured$FlexItem(stretch)
 **css:**
 ```css
@@ -153,7 +153,7 @@ $Flex(center,gap(1rem),padding(1rem),wrap)
 **description:**
 A scrollable Flex control strip with mixed item sizing.
 **csss:**
-$Flex(gap(1rem),padding(1rem))$box(scroll)
+ $Flex(gap(1rem),padding(1rem))$box(scroll)
 |:nth-child(1)$flexItem(1)
 |:nth-child(2)$flexItem(center)
 |:nth-child(3)$flexItem(1,0.5)
@@ -186,7 +186,7 @@ $Flex(gap(1rem),padding(1rem))$box(scroll)
 **description:**
 A Flex comparison row with a flexible lead item, supporting items aligned independently, and a note moved later in the visual order.
 **csss:**
-$Flex(row,gap(1rem),padding(1rem),wrap)
+ $Flex(row,gap(1rem),padding(1rem),wrap)
 |:nth-child(1)$flexItem(1,200px)
 |:nth-child(2)$flexItem(center)
 |:nth-child(3)$flexItem(end)
@@ -224,7 +224,7 @@ $Flex(row,gap(1rem),padding(1rem),wrap)
 **description:**
 A Flex inheritance example with parent item defaults and targeted child overrides.
 **csss:**
-$Flex(gap(1rem),padding(1rem),wrap)
+ $Flex(gap(1rem),padding(1rem),wrap)
 |$FlexItem(1,180px,margin(0.5rem))
 |.wide$flexItem(2,280px)
 |.pin$flexItem(order(5),end)

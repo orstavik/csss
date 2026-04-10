@@ -1,7 +1,7 @@
 **description:**
 Generates warm palette with red foreground and brown contrast.
 **csss:**
-$Palette(warm,#red,#brown)
+ $Palette(warm,#red,#brown)
 **css:**
 ```css
 .\$Palette\(warm\,\#red\,\#brown\) {
@@ -21,7 +21,7 @@ $Palette(warm,#red,#brown)
 **description:**
 Generates primary palette with royalblue foreground and skyblue contrast.
 **csss:**
-$Palette(primary,#royalblue,#skyblue)
+ $Palette(primary,#royalblue,#skyblue)
 **css:**
 ```css
 .\$Palette\(primary\,\#royalblue\,\#skyblue\) {
@@ -41,7 +41,7 @@ $Palette(primary,#royalblue,#skyblue)
 **description:**
 Uses primary palette variable for text color.
 **csss:**
-$color(#primary)
+ $color(#primary)
 **css:**
 ```css
 .\$color\(\#primary\) {
@@ -52,7 +52,7 @@ $color(#primary)
 **description:**
 Mixes primary with 50% of its secondary variant.
 **csss:**
-$color(#primary#50)
+ $color(#primary#50)
 **css:**
 ```css
 .\$color\(\#primary\#50\) {
@@ -63,7 +63,7 @@ $color(#primary#50)
 **description:**
 Mixes primary with 80% of its secondary variant.
 **csss:**
-$color(#primary#80)
+ $color(#primary#80)
 **css:**
 ```css
 .\$color\(\#primary\#80\) {
@@ -74,7 +74,7 @@ $color(#primary#80)
 **description:**
 Mixes neutral with 99% of its secondary variant.
 **csss:**
-$color(#neutral#99)
+ $color(#neutral#99)
 **css:**
 ```css
 .\$color\(\#neutral\#99\) {
@@ -85,7 +85,7 @@ $color(#neutral#99)
 **description:**
 Sets background using primary palette variable.
 **csss:**
-$bg(#primary)
+ $bg(#primary)
 **css:**
 ```css
 .\$bg\(\#primary\) {
@@ -96,7 +96,7 @@ $bg(#primary)
 **description:**
 Sets background to 50% primary palette mix.
 **csss:**
-$bg(#primary#50)
+ $bg(#primary#50)
 **css:**
 ```css
 .\$bg\(\#primary\#50\) {
@@ -107,7 +107,7 @@ $bg(#primary#50)
 **description:**
 Sets background to 20% primary mix with 50% transparency.
 **csss:**
-$bg(#primary#20#a50)
+ $bg(#primary#20#a50)
 **css:**
 ```css
 .\$bg\(\#primary\#20\#a50\) {
@@ -118,7 +118,7 @@ $bg(#primary#20#a50)
 **description:**
 Sets border color to 40% neutral palette mix.
 **csss:**
-$border(#neutral#40)
+ $border(#neutral#40)
 **css:**
 ```css
 .\$border\(\#neutral\#40\) {
@@ -129,7 +129,7 @@ $border(#neutral#40)
 **description:**
 Sets border color to 60% neutral palette mix.
 **csss:**
-$border(#neutral#60)
+ $border(#neutral#60)
 **css:**
 ```css
 .\$border\(\#neutral\#60\) {

@@ -1,7 +1,7 @@
 **description:**
 A two-column Grid shell with a spanning lead item.
 **csss:**
-$Grid(cols(1fr,2fr),rows(auto),gap(1rem),padding(1rem))
+ $Grid(cols(1fr,2fr),rows(auto),gap(1rem),padding(1rem))
 |:nth-child(1)$gridItem(column(1,span(2)))
 **css:**
 ```css
@@ -25,7 +25,7 @@ $Grid(cols(1fr,2fr),rows(auto),gap(1rem),padding(1rem))
 **description:**
 A column-flow Grid board with a tall spanning item.
 **csss:**
-$Grid(rows(repeat(3,1fr)),column,gap(0.5rem),padding(1rem))
+ $Grid(rows(repeat(3,1fr)),column,gap(0.5rem),padding(1rem))
 |:nth-child(2)$gridItem(row(1,span(2)))
 **css:**
 ```css
@@ -49,7 +49,7 @@ $Grid(rows(repeat(3,1fr)),column,gap(0.5rem),padding(1rem))
 **description:**
 A feature Grid with a spanning hero and a side card that can be aligned independently for contrast.
 **csss:**
-$Grid(center,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
+ $Grid(center,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
 |$gridItem(stretch)
 |.hero$GridItem(column(1,span(2)),margin(1rem))
 |.aside$GridItem(startEnd,row(2))
@@ -89,7 +89,7 @@ $Grid(center,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
 **description:**
 A two-column Grid editorial layout with placed items.
 **csss:**
-$Grid(startEnd,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
+ $Grid(startEnd,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
 |$gridItem(stretchStart)
 |:nth-child(1)$gridItem(column(1,1))
 |:nth-child(2)$gridItem(row(2,span(2)),column(2))
@@ -124,7 +124,7 @@ $Grid(startEnd,cols(repeat(2,1fr)),gap(1rem),padding(1rem))
 **description:**
 A collage Grid with a wide featured panel, a centered highlight tile, and a tall supporting column.
 **csss:**
-$Grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),padding(1rem))
+ $Grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),padding(1rem))
 |.a$gridItem(column(1,span(2)),row(1))
 |.b$gridItem(center,column(3),row(2))
 |.c$gridItem(stretchStart,column(1),row(2,span(2)))
@@ -163,7 +163,7 @@ $Grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),padding(1rem))
 **description:**
 A scrollable Grid gallery with a wide first item.
 **csss:**
-$Grid(cols(repeat(4,1fr)),gap(1rem))$box(scrollHidden)
+ $Grid(cols(repeat(4,1fr)),gap(1rem))$box(scrollHidden)
 |:nth-child(1)$gridItem(column(1,span(3)))
 **css:**
 ```css
