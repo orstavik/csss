@@ -48,10 +48,10 @@ $block(padding(1.5rem))$Box(scroll)
 }
 
 .\|\$Box\(100px\,60px\)>* {
-  block-size: 100px;
+  block-size: 60px;
   min-block-size: unset;
   max-block-size: unset;
-  inline-size: 60px;
+  inline-size: 100px;
   min-inline-size: unset;
   max-inline-size: unset;
   overflow: unset;
@@ -93,7 +93,7 @@ $Box(hiddenScroll)$paragraph(breakWord)
 A centered Block reading panel with capped line length.
 **csss:**
 $Block$box(auto)$Paragraph(_,center)
-|$Box(_,_<_<600px)
+|$Box(_<_<600px)
 **css:**
 ```css
 .\$Block\$box\(auto\)\$Paragraph\(_\,center\) {
@@ -113,7 +113,7 @@ $Block$box(auto)$Paragraph(_,center)
   hanging-punctuation: unset;
 }
 
-.\|\$Box\(_\,_\<_\<600px\)>* {
+.\|\$Box\(_\<_\<600px\)>* {
   block-size: unset;
   min-block-size: unset;
   max-block-size: unset;

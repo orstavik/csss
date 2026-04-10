@@ -68,10 +68,8 @@ const scrollPaddingProps = {
 };
 
 const box = TypeBasedFunction(
-  SizeFunction("block", "<", LengthPercentUnset),
   SizeFunction("inline", "<", LengthPercentUnset),
-  // SizeFunction("inline", ["minInlineSize", "inlineSize", "maxInlineSize"], LengthPercentUnset),
-  // SizeFunction("block", ["minBlockSize", "blockSize", "maxBlockSize"], LengthPercentUnset),
+  SizeFunction("block", "<", LengthPercentUnset),
   SingleTable("overflow", overflow),
   LogicalFour("scrollPadding", "scrollPadding", LengthPercent),
   SingleTable("scrollSnapType", scrollSnapType)

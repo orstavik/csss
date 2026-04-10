@@ -44,7 +44,7 @@ $IBlock(padding(0.5rem))$box(hidden)
 An IBlock card row with padding, fixed width, and mixed alignment, where edge items can opt into top alignment.
 **csss:**
 $IBlock(padding(1rem))$paragraph(center)
-|$paragraphItem(middle)$Box(_,200px)
+|$paragraphItem(middle)$Box(200px)
 |.edge$paragraphItem(top)
 **css:**
 ```css
@@ -54,7 +54,7 @@ $IBlock(padding(1rem))$paragraph(center)
   text-align: center;
 }
 
-.\|\$paragraphItem\(middle\)\$Box\(_\,200px\)>* {
+.\|\$paragraphItem\(middle\)\$Box\(200px\)>* {
   vertical-align: middle;
   block-size: unset;
   min-block-size: unset;
@@ -102,8 +102,8 @@ An IBlock metadata row with padding, shared spacing, plus width and alignment ov
 **csss:**
 $IBlock(padding(0.75rem))$paragraph(center)
 |$IBlockItem(margin(0.5rem,1rem))$paragraphItem(middle)
-|.card$box(_,240px)
-|.meta$box(_,120px)$paragraphItem(top)
+|.card$box(240px)
+|.meta$box(120px)$paragraphItem(top)
 **css:**
 ```css
 .\$IBlock\(padding\(0\.75rem\)\)\$paragraph\(center\) {
@@ -120,13 +120,11 @@ $IBlock(padding(0.75rem))$paragraph(center)
   vertical-align: middle;
 }
 
-.\|\.card\$box\(_\,240px\)>:where(.card) {
-  block-size: unset;
+.\|\.card\$box\(240px\)>:where(.card) {
   inline-size: 240px;
 }
 
-.\|\.meta\$box\(_\,120px\)\$paragraphItem\(top\)>:where(.meta) {
-  block-size: unset;
+.\|\.meta\$box\(120px\)\$paragraphItem\(top\)>:where(.meta) {
   inline-size: 120px;
   vertical-align: top;
 }

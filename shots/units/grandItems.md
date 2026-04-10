@@ -73,7 +73,7 @@ Sets 50x50px size on all grid grandchildren.
 **css:**
 ```css
 .\|\*\|\*\$box\(50px\,50px\)>*>* {
-  block-size: 50px;
   inline-size: 50px;
+  block-size: 50px;
 }
 ```
