@@ -132,3 +132,61 @@
   --handwrittenFontFamily: "Segoe Print", "Bradley Hand", Chilanka, Kavivanar, "Comic Sans MS", "Chalkboard SE", "Comic Neue", cursive;
 }
 ```
+
+**description:** Defines a "comic" typeface with web font URL, size, stretch, style and weight.
+**csss:** $Typeface(comic,"MS+Comic+Sans","https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2",xxSmall,semiExpanded,italic,bolder)
+**css:**
+```css
+@font-face /*https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2*/ {
+  font-family: ComicNeue;
+  src: /*https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2*/
+local("ComicNeue"),
+url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2");
+}
+
+.\$Typeface\(comic\,\"MS\+Comic\+Sans\"\,\"https\:\/\/cdn\.jsdelivr\.net\/npm\/\@openfonts\/comic-neue_latin\@latest\/files\/ComicNeue-Regular\.woff2\"\,xxSmall\,semiExpanded\,italic\,bolder\) {
+  --comicFontFamily: "MS Comic Sans", ComicNeue;
+  --comicFontSize: xx-small;
+  --comicFontStyle: italic;
+  --comicFontWeight: bolder;
+  --comicFontStretch: semi-expanded;
+}
+```
+
+**description:** Defines a standard "body" (brødtekst) typeface using system fonts, ensuring high readability with normalized style overrides.
+**csss:** 
+$Typeface(body,system-ui,sans-serif,1rem)
+|body$Font(body)
+**css:**
+```css
+.\$Typeface\(body\,system-ui\,sans-serif\,1rem\) {
+  --bodyFontFamily: system-ui, sans-serif;
+  --bodyFontSize: 1rem;
+}
+
+.\|body\$Font\(body\)>:where(body) {
+  font-family: var(--bodyFontFamily, unset);
+  font-size: var(--bodyFontSize, unset);
+  font-style: var(--bodyFontStyle, unset);
+  font-weight: var(--bodyFontWeight, unset);
+  font-size-adjust: var(--bodyFontSizeAdjust, unset);
+  letter-spacing: var(--bodyLetterSpacing, unset);
+  text-transform: var(--bodyTextTransform, unset);
+  font-stretch: var(--bodyFontStretch, unset);
+  font-variant-caps: var(--bodyFontVariantCaps, unset);
+  font-synthesis: var(--bodyFontSynthesis, unset);
+  font-feature-settings: var(--bodyFontFeatureSettings, unset);
+  font-variation-settings: var(--bodyFontVariationSettings, unset);
+  font-kerning: var(--bodyFontKerning, unset);
+}
+```
+
+**description:** FinePrint. Intentionally exhausting yet technically compliant. It maximizes character density to fulfill legal obligations while presenting a monotonous, tightly packed texture that subtly discourages the user from actually reading it. Keywords: Dense, Bureaucratic, Compliance, EULA, Friction. Best for: Terms of Service, Disclaimers, Legal Footnotes, Copyright Notices.
+**csss:** $Typeface(FinePrint,"Arial+Narrow","Helvetica+Neue+Condensed",sans-serif-condensed,sans-serif,11px)
+**css:**
+```css
+.\$Typeface\(FinePrint\,\"Arial\+Narrow\"\,\"Helvetica\+Neue\+Condensed\"\,sans-serif-condensed\,sans-serif\,11px\) {
+  --finePrintFontFamily: "Arial Narrow", "Helvetica Neue Condensed", sans-serif-condensed, sans-serif;
+  --finePrintFontSize: 11px;
+}
+```
