@@ -1,4 +1,4 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func2.js";
+import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, SF2: SF2, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercent, LengthPercentUnset, Repeat } = CsssPrimitives;
 const { LogicalFourReverse, SingleTableReverse, SequentialFunctionReverse, Optional } = CssFunctions;

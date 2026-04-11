@@ -1,4 +1,4 @@
-import { CsssFunctions, CsssPrimitives, CssFunctions } from "./func2.js";
+import { CsssFunctions, CsssPrimitives, CssFunctions } from "./func.js";
 const { LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
 const { LogicalFourReverse } = CssFunctions;
 const { LengthPercentAuto } = CsssPrimitives;

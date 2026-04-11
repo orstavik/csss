@@ -1,5 +1,5 @@
 import NativeCss from "./nativeCss.js";
-import { CsssPrimitives, CsssFunctions } from "./func2.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
 import { Color } from "./funcColor.js";
 
 import backgrounds from "./bg.js";

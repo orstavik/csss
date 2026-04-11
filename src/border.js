@@ -1,4 +1,4 @@
-import { CsssPrimitives, CsssFunctions, matchArgsWithInterpreters } from "./func2.js";
+import { CsssPrimitives, CsssFunctions, matchArgsWithInterpreters } from "./func.js";
 const { LengthPercent } = CsssPrimitives;
 const { CssValuesToCsssTable } = CsssFunctions;
 import { Color } from "./funcColor.js";
@@ -179,9 +179,9 @@ export default {
         args.push(`radius(${style.borderRadius.replace(/\s+/g, ",")})`);
         hasBorder = true;
       } else if (style.borderStartStartRadius) {
-         // handling logical border radius is complex, just push a basic radius
-         args.push(`radius(${style.borderStartStartRadius.replace(/\s+/g, ",")})`);
-         hasBorder = true;
+        // handling logical border radius is complex, just push a basic radius
+        args.push(`radius(${style.borderStartStartRadius.replace(/\s+/g, ",")})`);
+        hasBorder = true;
       }
 
       return hasBorder ? `border(${args.join(",")})` : undefined;

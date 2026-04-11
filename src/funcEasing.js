@@ -147,7 +147,7 @@ const CURVES = {
   wobble,
 };
 
-import { CsssFunctions, CsssPrimitives } from "./func2.js";
+import { CsssFunctions, CsssPrimitives } from "./func.js";
 const { CssValuesToCsssTable, SF2 } = CsssFunctions;
 const { NumberInterpreter } = CsssPrimitives;
 

@@ -1,5 +1,5 @@
 
-import { CsssPrimitives, CsssFunctions } from "./func2.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
 const { FunctionWithDefaultValues, SF2, TypeBasedFunction, PropertyType, SingleTable, CssValuesToCsssTable, FunctionPropertyType } = CsssFunctions;
 const { SingleTableRaw, LengthPercentNumber, NumberInterpreter, Url, Length, UrlUnset } = CsssPrimitives;
 import { Color } from "./funcColor.js";

@@ -1,4 +1,4 @@
-import { matchArgsWithInterpreters, CsssFunctions, CsssPrimitives, flatVector } from "./func2.js";
+import { matchArgsWithInterpreters, CsssFunctions, CsssPrimitives, flatVector } from "./func.js";
 const { CssValuesToCsssTable } = CsssFunctions;
 const { MsOrNumber, Time, PositiveInteger } = CsssPrimitives;
 const IterationCount = a => a.text === 'infinite' ? 'infinite' : PositiveInteger(a);

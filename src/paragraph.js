@@ -1,4 +1,4 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func2.js";
+import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
 const { LengthPercent, LengthPercentNumber } = CsssPrimitives;
 const { TypeBasedFunction, FunctionPropertyType, FunctionWithDefaultValues, ParseFirstThenRest, CssValuesToCsssTable, SingleTable, PropertyType } = CsssFunctions;
 const { SingleArgumentFunctionReverse, Optional, SingleTableReverse } = CssFunctions;

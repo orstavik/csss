@@ -1,4 +1,4 @@
-import { CsssPrimitives, CsssFunctions, BadArgument } from "./func2.js";
+import { CsssPrimitives, CsssFunctions, BadArgument } from "./func.js";
 const { NumberPercent, Length, Angle, Url } = CsssPrimitives;
 const { CssValuesToCsssTable } = CsssFunctions;
 import shadow from "./shadows.js";

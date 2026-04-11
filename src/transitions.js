@@ -1,4 +1,4 @@
-import { CsssPrimitives, BadArgument } from "./func2.js";
+import { CsssPrimitives, BadArgument } from "./func.js";
 const { Name, Time } = CsssPrimitives;
 import Easing from "./funcEasing.js";
 const { easingFunction } = Easing.csss;

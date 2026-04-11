@@ -1,4 +1,4 @@
-import Maths from "./funcMath2.js";
+import Maths from "./funcMath.js";
 
 const toCamelCase = s => s.replace(/[^a-z]./ig, m => m[1].toUpperCase());
 

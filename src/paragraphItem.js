@@ -1,4 +1,4 @@
-import { CsssFunctions, CssFunctions } from "./func2.js";
+import { CsssFunctions, CssFunctions } from "./func.js";
 const { TypeBasedFunction, CssValuesToCsssTable, SingleTable } = CsssFunctions;
 const { Optional, SingleTableReverse } = CssFunctions;
 

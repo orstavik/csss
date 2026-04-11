@@ -1,5 +1,5 @@
 import { fromLCH, fromHex6 } from "./Color.js";
-import { CsssPrimitives, CsssFunctions } from "./func2.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
 import { ColorPrimitive } from "./funcColor.js";
 const { SF2 } = CsssFunctions;
 const { Name } = CsssPrimitives;

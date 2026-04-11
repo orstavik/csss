@@ -1,6 +1,6 @@
 //todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
 import { Color } from "./funcColor.js";
-import { CsssPrimitives, matchArgsWithInterpreters, BadArgument, CssPrimitives } from "./func2.js";
+import { CsssPrimitives, matchArgsWithInterpreters, BadArgument, CssPrimitives } from "./func.js";
 const { Length, Radian, LengthNumberRaw } = CsssPrimitives;
 // There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 
 // Then in the $shadow(shade,angle,length,color?) to use it.

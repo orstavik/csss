@@ -1,4 +1,4 @@
-import { CsssPrimitives, CsssFunctions } from "./func2.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
 const { NumberPercent, Length, Angle, LengthPercent, AnglePercent, NumberInterpreter, SingleFunctionFunction } = CsssPrimitives;
 const { SF2 } = CsssFunctions;
 

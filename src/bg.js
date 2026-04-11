@@ -1,5 +1,5 @@
 //todo isImage, interpretImage,
-import { CsssFunctions, CsssPrimitives, BadArgument } from "./func2.js";
+import { CsssFunctions, CsssPrimitives, BadArgument } from "./func.js";
 const { LengthPercent, Url, LengthPercentAuto } = CsssPrimitives;
 const { SF2, CssValuesToCsssTable, FunctionPropertyType, FunctionWithDefaultValues } = CsssFunctions;
 import { Color } from "./funcColor.js";
@@ -113,7 +113,7 @@ export default {
       if (style.backgroundClip && style.backgroundClip !== "border-box") args.push(style.backgroundClip);
       if (style.backgroundAttachment && style.backgroundAttachment !== "scroll") args.push(style.backgroundAttachment);
       if (style.backgroundBlendMode && style.backgroundBlendMode !== "normal") args.push(style.backgroundBlendMode);
-      
+
       return args.length ? `bg(${args.join(",")})` : undefined;
     }
   }
