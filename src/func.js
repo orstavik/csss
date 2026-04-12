@@ -205,7 +205,7 @@ const CssFunctions = {
     if (arg !== DEFAULT) return `${CsssFnName}(${arg})`;
   },
   LogicalFourReverse: (CssPrefix, CsssFnName, INTERPRETER, DEFAULT = "_") => {
-    const PROPS = ["BlockStart", "InlineStart", "BlockEnd", "InlineEnd"].map(s => CssPrefix + s);
+    const PROPS = ["-block-start", "-inline-start", "-block-end", "-inline-end"].map(s => CssPrefix + s);
     return style => {
       let args = PROPS.map(p => INTERPRETER(style[p]) ?? DEFAULT);
       if (args.every(a => a === DEFAULT)) return undefined;

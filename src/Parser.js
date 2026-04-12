@@ -161,13 +161,16 @@ function interpretShort(res, x) {
 }
 
 export function reverse(style) {
+  style = { ...style };
   const parts = [];
-  for (const fn of Object.values(REVERSES)) {
+  for (const [key, fn] of Object.entries(REVERSES)) {
     const res = fn(style);
-    if (res !== undefined)
+    if (res !== undefined) {
       parts.push(res);
+      //todo remove the props from the style object?
+    }
   }
-  return parts.join(" ");
+  return parts.join("");
 }
 
 const MAGICWORD = `$"'$`;
