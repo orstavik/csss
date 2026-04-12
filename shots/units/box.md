@@ -55,13 +55,13 @@ A fixed-size vertical scrolling block container with hidden overflow on the inli
 **description:**
 A standard modal layout using a Box with auto overflow, max block constraints to ensure it scrolls if content is too long, and scroll paddings to ensure content isn't flush with the viewport.
 **csss:**
- $Box(_,_<90vh,auto,scrollPadding(2rem))
+ $Box(_,_<_<90vh,auto,scrollPadding(2rem))
 **css:**
 ```css
-.\$Box\(_\,_\<90vh\,auto\,scrollPadding\(2rem\)\) {
-  block-size: 90vh;
+.\$Box\(_\,_\<_\<90vh\,auto\,scrollPadding\(2rem\)\) {
+  block-size: unset;
   min-block-size: unset;
-  max-block-size: unset;
+  max-block-size: 90vh;
   inline-size: unset;
   min-inline-size: unset;
   max-inline-size: unset;
