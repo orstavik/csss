@@ -1,0 +1,203 @@
+**description:**
+Sets 1px solid border with radius reset to 0.
+**userInstruction:**
+Add a thin, but visible border to the section element.
+**before:**
+```html
+…<section>…</section>…
+```
+**after:**
+```html
+…<section class="$Border(1px,solid)">…</section>…
+```
+**css:**
+```css
+.\$Border\(1px\,solid\) {
+  border: 1px solid;
+  border-radius: 0;
+}
+```
+
+**description:**
+Sets asymmetric widths, dotted style, dual colors and 4-corner radius.
+**userInstruction:**
+Fix the border: it should use the $Border umbrella, not separate border properties.
+**before:**
+```html
+…<div class="$border(2px,4px,dotted,#red,#blue) $border(radius(0,5px,3%,1rem))">…</div>…
+```
+**after:**
+```html
+…<div class="$Border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))">…</div>…
+```
+**css:**
+```css
+.\$Border\(2px\,4px\,dotted\,\#red\,\#blue\,radius\(0\,5px\,3\%\,1rem\)\) {
+  border-block-width: 2px;
+  border-inline-width: 4px;
+  border-style: dotted;
+  border-block-color: red;
+  border-inline-color: blue;
+  border-start-start-radius: 5px 0;
+  border-start-end-radius: 5px 3%;
+  border-end-start-radius: 1rem 0;
+  border-end-end-radius: 1rem 3%;
+}
+```
+
+**description:**
+Sets 2px solid red border with simple 2-value radius.
+**userInstruction:**
+The border definition is complete, use the $Border umbrella instead of lowercase $border.
+**before:**
+```html
+…<div class="$border(2px,solid,#red,radius(2px,4px))">…</div>…
+```
+**after:**
+```html
+…<div class="$Border(2px,solid,#red,radius(2px,4px))">…</div>…
+```
+**css:**
+```css
+.\$Border\(2px\,solid\,\#red\,radius\(2px\,4px\)\) {
+  border: 2px solid red;
+  border-start-start-radius: 4px 2px;
+  border-start-end-radius: 4px 2px;
+  border-end-end-radius: 4px 2px;
+  border-end-start-radius: 4px 2px;
+}
+```
+
+**description:**
+Sets border to none with 20px uniform radius.
+**userInstruction:**
+Remove the border from the button and give it a 20px radius.
+**before:**
+```html
+…<button class="$Border(1px,solid,#ccc)">…</button>…
+```
+**after:**
+```html
+…<button class="$Border(radius(20px))">…</button>…
+```
+**css:**
+```css
+.\$Border\(radius\(20px\)\) {
+  border: none;
+  border-radius: 20px;
+}
+```
+
+**description:**
+On hover, overrides to asymmetric widths, dotted style, dual colors and 4-corner radius.
+**userInstruction:**
+The hover border should use the $border droplet, not $Border.
+**before:**
+```html
+…<div class="$Border(1px,solid,#333) :hover$Border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))">…</div>…
+```
+**after:**
+```html
+…<div class="$Border(1px,solid,#333) :hover$border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))">…</div>…
+```
+**css:**
+```css
+.\$Border\(1px\,solid\,\#333\) {
+  border: 1px solid #333;
+  border-radius: 0;
+}
+.\:hover.\$border\(2px\,4px\,dotted\,\#red\,\#blue\,radius\(0\,5px\,3\%\,1rem\)\):where(:hover) {
+  border-block-width: 2px;
+  border-inline-width: 4px;
+  border-style: dotted;
+  border-block-color: red;
+  border-inline-color: blue;
+  border-start-start-radius: 5px 0;
+  border-start-end-radius: 5px 3%;
+  border-end-start-radius: 1rem 0;
+  border-end-end-radius: 1rem 3%;
+}
+```
+
+**description:**
+On focus, overrides to 2px solid red border with 2-value radius without reset.
+**userInstruction:**
+Add a focus state to attract more attention.
+**before:**
+```html
+…<input class="$Border(1px,solid,#ccc,radius(4px))">…
+```
+**after:**
+```html
+…<input class="$Border(1px,solid,#ccc,radius(4px)) :focus$border(2px,#red,radius(2px,4px))">…
+```
+**css:**
+```css
+.\$Border\(1px\,solid\,\#ccc\,radius\(4px\)\) {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.\:focus.\$border\(2px\,solid\,\#red\,radius\(2px\,4px\)\):where(:focus) {
+  border-width: 2px;
+  border-style: solid;
+  border-color: red;
+  border-start-start-radius: 4px 2px;
+  border-start-end-radius: 4px 2px;
+  border-end-end-radius: 4px 2px;
+  border-end-start-radius: 4px 2px;
+}
+```
+
+**description:**
+When .active, overrides to complex border with split styles, 3 colors and 7-value radius.
+**userInstruction:**
+The active border wrongly uses the $Border umbrella. Change it to a $border droplet.
+**before:**
+```html
+…<div class="$Border(1px,solid,#ddd) .active$Border(2px,dotted,dashed,#red,#blue,#white,radius(0,1px,2px,3px,4px,5px,6px))">…</div>…
+```
+**after:**
+```html
+…<div class="$Border(1px,solid,#ddd) .active$border(2px,dotted,dashed,#red,#blue,#white,radius(0,1px,2px,3px,4px,5px,6px))">…</div>…
+```
+**css:**
+```css
+.\$Border\(1px\,solid\,\#ddd\) {
+  border: 1px solid #ddd;
+  border-radius: 0;
+}
+.\.active.\$border\(2px\,dotted\,dashed\,\#red\,\#blue\,\#white\,radius\(0\,1px\,2px\,3px\,4px\,5px\,6px\)\):where(.active) {
+  border-width: 2px;
+  border-block-style: dotted;
+  border-inline-style: dashed;
+  border-block-color: red white;
+  border-inline-color: blue;
+  border-start-start-radius: 1px 0;
+  border-start-end-radius: 5px 2px;
+  border-end-start-radius: 3px 4px;
+  border-end-end-radius: 3px 6px;
+}
+```
+
+**description:**
+When :disabled, removes all borders from the element.
+**userInstruction:**
+Add a disabled state that removes the border entirely.
+**before:**
+```html
+…<button class="$Border(1px,solid,#999)">…</button>…
+```
+**after:**
+```html
+…<button class="$Border(1px,solid,#999) :disabled$noBorder">…</button>…
+```
+**css:**
+```css
+.\$Border\(1px\,solid\,\#999\) {
+  border: 1px solid #999;
+  border-radius: 0;
+}
+.\:disabled.\$noBorder:where(:disabled) {
+  border: none;
+}
+```
