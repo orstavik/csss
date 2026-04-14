@@ -1,7 +1,5 @@
-**description:**
-Sets 1px solid border with radius reset to 0.
-**userInstruction:**
-Add a thin, but visible border to the section element.
+**description:** Sets 1px solid border with radius reset to 0.
+**userInstruction:** Add a thin, but visible border to the section element.
 **before:**
 ```html
 …<section>…</section>…
@@ -18,10 +16,8 @@ Add a thin, but visible border to the section element.
 }
 ```
 
-**description:**
-Sets asymmetric widths, dotted style, dual colors and 4-corner radius.
-**userInstruction:**
-Fix the border: it should use the $Border umbrella, not separate border properties.
+**description:** Sets asymmetric widths, dotted style, dual colors and 4-corner radius.
+**userInstruction:** Fix the border: it should use the $Border umbrella, not separate border properties.
 **before:**
 ```html
 …<div class="$border(2px,4px,dotted,#red,#blue) $border(radius(0,5px,3%,1rem))">…</div>…
@@ -45,10 +41,8 @@ Fix the border: it should use the $Border umbrella, not separate border properti
 }
 ```
 
-**description:**
-Sets 2px solid red border with simple 2-value radius.
-**userInstruction:**
-The border definition is complete, use the $Border umbrella instead of lowercase $border.
+**description:** Sets 2px solid red border with simple 2-value radius.
+**userInstruction:** The border definition is complete, use the $Border umbrella instead of lowercase $border.
 **before:**
 ```html
 …<div class="$border(2px,solid,#red,radius(2px,4px))">…</div>…
@@ -68,10 +62,8 @@ The border definition is complete, use the $Border umbrella instead of lowercase
 }
 ```
 
-**description:**
-Sets border to none with 20px uniform radius.
-**userInstruction:**
-Remove the border from the button and give it a 20px radius.
+**description:** Sets border to none with 20px uniform radius.
+**userInstruction:** Remove the border from the button and give it a 20px radius.
 **before:**
 ```html
 …<button class="$Border(1px,solid,#ccc)">…</button>…
@@ -88,10 +80,8 @@ Remove the border from the button and give it a 20px radius.
 }
 ```
 
-**description:**
-On hover, overrides to asymmetric widths, dotted style, dual colors and 4-corner radius.
-**userInstruction:**
-The hover border should use the $border droplet, not $Border.
+**description:** On hover, overrides to asymmetric widths, dotted style, dual colors and 4-corner radius.
+**userInstruction:** The hover border should use the $border droplet, not $Border.
 **before:**
 ```html
 …<div class="$Border(1px,solid,#333) :hover$Border(2px,4px,dotted,#red,#blue,radius(0,5px,3%,1rem))">…</div>…
@@ -103,10 +93,11 @@ The hover border should use the $border droplet, not $Border.
 **css:**
 ```css
 .\$Border\(1px\,solid\,\#333\) {
-  border: 1px solid #333;
+  border: 1px solid #333333;
   border-radius: 0;
 }
-.\:hover.\$border\(2px\,4px\,dotted\,\#red\,\#blue\,radius\(0\,5px\,3\%\,1rem\)\):where(:hover) {
+
+.\:hover\$border\(2px\,4px\,dotted\,\#red\,\#blue\,radius\(0\,5px\,3\%\,1rem\)\):where(:hover) {
   border-block-width: 2px;
   border-inline-width: 4px;
   border-style: dotted;
@@ -119,10 +110,8 @@ The hover border should use the $border droplet, not $Border.
 }
 ```
 
-**description:**
-On focus, overrides to 2px solid red border with 2-value radius without reset.
-**userInstruction:**
-Add a focus state to attract more attention.
+**description:** On focus, overrides to 2px solid red border with 2-value radius without reset.
+**userInstruction:** Add a focus state to attract more attention.
 **before:**
 ```html
 …<input class="$Border(1px,solid,#ccc,radius(4px))">…
@@ -134,12 +123,12 @@ Add a focus state to attract more attention.
 **css:**
 ```css
 .\$Border\(1px\,solid\,\#ccc\,radius\(4px\)\) {
-  border: 1px solid #ccc;
+  border: 1px solid #cccccc;
   border-radius: 4px;
 }
-.\:focus.\$border\(2px\,solid\,\#red\,radius\(2px\,4px\)\):where(:focus) {
+
+.\:focus\$border\(2px\,\#red\,radius\(2px\,4px\)\):where(:focus) {
   border-width: 2px;
-  border-style: solid;
   border-color: red;
   border-start-start-radius: 4px 2px;
   border-start-end-radius: 4px 2px;
@@ -148,10 +137,8 @@ Add a focus state to attract more attention.
 }
 ```
 
-**description:**
-When .active, overrides to complex border with split styles, 3 colors and 7-value radius.
-**userInstruction:**
-The active border wrongly uses the $Border umbrella. Change it to a $border droplet.
+**description:** When .active, overrides to complex border with split styles, 3 colors and 7-value radius.
+**userInstruction:** The active border wrongly uses the $Border umbrella. Change it to a $border droplet.
 **before:**
 ```html
 …<div class="$Border(1px,solid,#ddd) .active$Border(2px,dotted,dashed,#red,#blue,#white,radius(0,1px,2px,3px,4px,5px,6px))">…</div>…
@@ -163,10 +150,11 @@ The active border wrongly uses the $Border umbrella. Change it to a $border drop
 **css:**
 ```css
 .\$Border\(1px\,solid\,\#ddd\) {
-  border: 1px solid #ddd;
+  border: 1px solid #dddddd;
   border-radius: 0;
 }
-.\.active.\$border\(2px\,dotted\,dashed\,\#red\,\#blue\,\#white\,radius\(0\,1px\,2px\,3px\,4px\,5px\,6px\)\):where(.active) {
+
+.\.active\$border\(2px\,dotted\,dashed\,\#red\,\#blue\,\#white\,radius\(0\,1px\,2px\,3px\,4px\,5px\,6px\)\):where(.active) {
   border-width: 2px;
   border-block-style: dotted;
   border-inline-style: dashed;
@@ -179,10 +167,8 @@ The active border wrongly uses the $Border umbrella. Change it to a $border drop
 }
 ```
 
-**description:**
-When :disabled, removes all borders from the element.
-**userInstruction:**
-Add a disabled state that removes the border entirely.
+**description:** When :disabled, removes all borders from the element.
+**userInstruction:** Add a disabled state that removes the border entirely.
 **before:**
 ```html
 …<button class="$Border(1px,solid,#999)">…</button>…
@@ -194,18 +180,17 @@ Add a disabled state that removes the border entirely.
 **css:**
 ```css
 .\$Border\(1px\,solid\,\#999\) {
-  border: 1px solid #999;
+  border: 1px solid #999999;
   border-radius: 0;
 }
-.\:disabled.\$noBorder:where(:disabled) {
+
+.\:disabled\$noBorder:where(:disabled) {
   border: none;
 }
 ```
 
-**description:**
-Inline-start green color for all children elements. The child with important color is overridden to red.
-**userInstruction:**
-Keep the green border for the items under the container, but make sure the important element has a red border instead.
+**description:** Inline-start green color for all children elements. The child with important color is overridden to red.
+**userInstruction:** Keep the green border for the items under the container, but make sure the important element has a red border instead.
 **before:**
 ```html
 …<div class="|$Border(#green,solid,0,4px,0,0)">
@@ -228,23 +213,17 @@ Keep the green border for the items under the container, but make sure the impor
   border-block-width: 0;
   border-inline-width: 4px 0;
   border-style: solid;
-  border-block-color: unset;
-  border-inline-color: green;
-  border-start-start-radius: unset;
-  border-start-end-radius: unset;
-  border-end-start-radius: unset;
-  border-end-end-radius: unset;
+  border-color: green;
+  border-radius: 0;
 }
-.\$border\(#red\) {
+
+.\$border\(\#red\) {
   border-color: red;
 }
 ```
 
-
-**description:**
-Left border with grey color to mark text as a comment. Left border with a 1/3 font size width.
-**userInstruction:**
-Use border-width 0 instead of none to adjust border visibility.
+**description:** Left border with grey color to mark text as a comment. Left border with a 1/3 font size width.
+**userInstruction:** Use border-width 0 instead of none to adjust border visibility.
 **before:**
 ```html
 …<div class="|$Border(#darkgrey,1em/3,none,solid,none,none)">…</div>…
@@ -257,16 +236,9 @@ Use border-width 0 instead of none to adjust border visibility.
 ```css
 .\|\$Border\(\#darkgrey\,solid\,0\,1em\/3\,0\,0\)>* {
   border-block-width: 0;
-  border-inline-width: calc(1em / 3);
+  border-inline-width: 0.3333333333333333em 0;
   border-style: solid;
-  border-block-color: unset;
-  border-inline-color: darkgrey;
-  border-start-start-radius: unset;
-  border-start-end-radius: unset;
-  border-end-start-radius: unset;
-  border-end-end-radius: unset;
-}
-.\$border\(#red\) {
-  border-color: red;
+  border-color: darkgrey;
+  border-radius: 0;
 }
 ```
