@@ -201,3 +201,72 @@ Add a disabled state that removes the border entirely.
   border: none;
 }
 ```
+
+**description:**
+Inline-start green color for all children elements. The child with important color is overridden to red.
+**userInstruction:**
+Keep the green border for the items under the container, but make sure the important element has a red border instead.
+**before:**
+```html
+…<div class="|$Border(#green,solid,0,4px,0,0)">
+  …
+  <div class="…">this is more important</div>
+  …
+</div>…
+```
+**after:**
+```html
+…<div class="|$Border(#green,solid,0,4px,0,0)">
+  …
+  <div class="… $border(#red)">this is more important</div>
+  …
+</div>…
+```
+**css:**
+```css
+.\|\$Border\(\#green\,solid\,0\,4px\,0\,0\)>* {
+  border-block-width: 0;
+  border-inline-width: 4px 0;
+  border-style: solid;
+  border-block-color: unset;
+  border-inline-color: green;
+  border-start-start-radius: unset;
+  border-start-end-radius: unset;
+  border-end-start-radius: unset;
+  border-end-end-radius: unset;
+}
+.\$border\(#red\) {
+  border-color: red;
+}
+```
+
+
+**description:**
+Left border with grey color to mark text as a comment. Left border with a 1/3 font size width.
+**userInstruction:**
+Use border-width 0 instead of none to adjust border visibility.
+**before:**
+```html
+…<div class="|$Border(#darkgrey,1em/3,none,solid,none,none)">…</div>…
+```
+**after:**
+```html
+…<div class="|$Border(#darkgrey,solid,0,1em/3,0,0)">…</div>…
+```
+**css:**
+```css
+.\|\$Border\(\#darkgrey\,solid\,0\,1em\/3\,0\,0\)>* {
+  border-block-width: 0;
+  border-inline-width: calc(1em / 3);
+  border-style: solid;
+  border-block-color: unset;
+  border-inline-color: darkgrey;
+  border-start-start-radius: unset;
+  border-start-end-radius: unset;
+  border-end-start-radius: unset;
+  border-end-end-radius: unset;
+}
+.\$border\(#red\) {
+  border-color: red;
+}
+```
