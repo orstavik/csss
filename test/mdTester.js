@@ -26,7 +26,7 @@ function splitMd(txt) {
 function printShot(shot) {
   return Object.entries(shot).map(([k, { type: t, value: v }]) => {
     k = "**" + k + ":**";
-    k += (v.includes("\n") || v.length > 120) ? "\n" : " ";
+    k += (v.includes("\n") || v[0] === "`" || v.length > 120) ? "\n" : " ";
     v = v.replaceAll(/^\$/g, " $");
     if (["css", "csss", "html", "js"].includes(t)) v = `\`\`\`${t}\n${v}\n\`\`\``;
     return `${k}${v}`;
