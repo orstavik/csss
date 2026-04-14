@@ -13,8 +13,10 @@
 ```html
 …<div class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,0,1rem))">
-  …
+  |$BlockItem(margin(0,0,1rem))">
+  <div>…</div>
+  <div>…</div>
+  <div>…</div>
 </div>…
 ```
 **css:**
@@ -24,7 +26,7 @@
   padding: 1.5rem;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,1rem\)\)>* {
+.\|\$BlockItem\(margin\(0\,0\,1rem\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 1rem;
@@ -38,7 +40,7 @@
 ```html
 …<article class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,0,1rem))$Paragraph(_,indent(32px))">
+  |$BlockItem(margin(0,0,1rem))$Paragraph(_,indent(32px))">
   …
   <h2 class="title">…</h2>
   …
@@ -50,7 +52,7 @@
 ```html
 …<article class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,0,1rem))$Paragraph(_,indent(2em))
+  |$BlockItem(margin(0,0,1rem))$Paragraph(_,indent(2em))
   |.title$blockItem(margin(0,0,2rem))$paragraph(indent(0))
   |.subtitle$blockItem(margin(0,0,1.5rem))$paragraph(indent(1em))">
   …
@@ -67,7 +69,7 @@
   padding: 1.5rem;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,1rem\)\)\$Paragraph\(_\,indent\(2em\)\)>* {
+.\|\$BlockItem\(margin\(0\,0\,1rem\)\)\$Paragraph\(_\,indent\(2em\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 1rem;
@@ -104,7 +106,7 @@
 ```html
 …<article class="
   $Block$Box(_<_<600px)
-  |*$BlockItem(margin(0.5rem,1rem))
+  |$BlockItem(margin(0.5rem,1rem))
   |p$blockItem(margin(0,0,1rem))
   |h4$blockItem(margin(0,0,0.5rem))
   |.content$blockItem(margin(0,0,1rem))">
@@ -120,7 +122,7 @@
 ```html
 …<article class="
   $Block$Box(_<_<600px) 
-  |*$BlockItem(margin(0.5rem,1rem)) 
+  |$BlockItem(margin(0.5rem,1rem)) 
   |.box$blockItem(floatStart,margin(0,1rem,1rem,0)) 
   |p$blockItem(margin(0,0,1rem)) 
   |h4$blockItem(margin(0,0,0.5rem)) 
@@ -151,7 +153,7 @@
   scroll-snap-type: unset;
 }
 
-.\|\*\$BlockItem\(margin\(0\.5rem\,1rem\)\)>* {
+.\|\$BlockItem\(margin\(0\.5rem\,1rem\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0.5rem;
@@ -196,11 +198,11 @@
 **userInstruction:** The card container uses a fixed 80px inline padding. Change this to 10vh so the padding scales better with screen height.
 **before:**
 ```html
-…<div class="$Block(padding(0,80px)) |*$BlockItem(margin(_,0))$Box(_<_<300px)">…</div>…
+…<div class="$Block(padding(0,80px)) |$BlockItem(margin(_,0))$Box(_<_<300px)">…</div>…
 ```
 **after:**
 ```html
-…<div class="$Block(padding(0,10vh)) |*$BlockItem(margin(_,0))$Box(_<_<300px)">…</div>…
+…<div class="$Block(padding(0,10vh)) |$BlockItem(margin(_,0))$Box(_<_<300px)">…</div>…
 ```
 **css:**
 ```css
@@ -210,7 +212,7 @@
   padding-inline: 10vh;
 }
 
-.\|\*\$BlockItem\(margin\(_\,0\)\)\$Box\(_\<_\<300px\)>* {
+.\|\$BlockItem\(margin\(_\,0\)\)\$Box\(_\<_\<300px\)>* {
   float: unset;
   clear: unset;
   margin-block: auto;
@@ -233,7 +235,7 @@
 ```html
 …<article class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,0,1.5rem))$Box(_<_<65ch)">
+  |$BlockItem(margin(0,0,1.5rem))$Box(_<_<65ch)">
   <h1>…</h1>
   <h2>…</h2>
   <h3>…</h3>
@@ -244,11 +246,10 @@
 ```html
 …<article class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,0,1.5rem))$Box(_<_<65ch)
+  |$BlockItem(margin(0,0,1.5rem))$Box(_<_<65ch)
   |h1$blockItem(margin(0,0,2.5rem))
   |h2$blockItem(margin(0,0,2rem))
-  |h3$blockItem(margin(0,0,1.75rem))
-  |p$blockItem(margin(0,0,1.5rem))">
+  |h3$blockItem(margin(0,0,1.75rem))">
   <h1>…</h1>
   <h2>…</h2>
   <h3>…</h3>
@@ -262,7 +263,7 @@
   padding: 1.5rem;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)\$Box\(_\<_\<65ch\)>* {
+.\|\$BlockItem\(margin\(0\,0\,1\.5rem\)\)\$Box\(_\<_\<65ch\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 1.5rem;
@@ -292,11 +293,6 @@
   margin-block: 0 1.75rem;
   margin-inline: 0;
 }
-
-.\|p\$blockItem\(margin\(0\,0\,1\.5rem\)\)>:where(p) {
-  margin-block: 0 1.5rem;
-  margin-inline: 0;
-}
 ```
 
 **description:** A Block layout for a documentation page with wide outer padding, generous bottom margins on section-level elements, and tighter margins on paragraphs and code blocks to group related content visually within each section.
@@ -305,7 +301,7 @@
 ```html
 …<article class="
   $Block(padding(2rem))
-  |*$BlockItem(margin(0,0,1.5rem))
+  |$BlockItem(margin(0,0,1.5rem))
   |h1$blockItem(margin(0,0,3rem))
   |h2$blockItem(margin(0,0,2rem))
   |h3$blockItem(margin(0,0,1.5rem))
@@ -322,7 +318,7 @@
 ```html
 …<article class="
   $Block(padding(2rem))$Paragraph(_,breakWord)
-  |*$BlockItem(margin(0,0,1.5rem))
+  |$BlockItem(margin(0,0,1.5rem))
   |h1$blockItem(margin(0,0,3rem))
   |h2$blockItem(margin(0,0,2rem))
   |h3$blockItem(margin(0,0,1.5rem))
@@ -353,7 +349,7 @@
   hanging-punctuation: unset;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
+.\|\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 1.5rem;
@@ -392,7 +388,7 @@
 ```html
 …<section class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,0,1.5rem))$Box(_<_<800px)
+  |$BlockItem(margin(0,0,1.5rem))$Box(_<_<800px)
   |.description$blockItem(margin(0,0,1.5rem))
   |.specs$blockItem(margin(0,0,1.5rem))">
   <div class="hero">…</div>
@@ -404,7 +400,7 @@
 ```html
 …<section class="
   $Block(padding(1.5rem))$Box(clip)
-  |*$BlockItem(margin(0,0,1.5rem))$Box(_<_<800px)
+  |$BlockItem(margin(0,0,1.5rem))$Box(_<_<800px)
   |.hero$blockItem(margin(0,0,0))
   |.description$blockItem(margin(0,0,1.5rem))
   |.specs$blockItem(margin(0,0,1.5rem))">
@@ -429,7 +425,7 @@
   scroll-snap-type: unset;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)\$Box\(_\<_\<800px\)>* {
+.\|\$BlockItem\(margin\(0\,0\,1\.5rem\)\)\$Box\(_\<_\<800px\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 1.5rem;
@@ -477,7 +473,7 @@
 ```html
 …<nav class="
   $Block(padding(1.5rem,0))$Box(auto) 
-  |*$BlockItem(margin(0.25rem,0)) 
+  |$BlockItem(margin(0.25rem,0)) 
   |.nav-group$blockItem(margin(1.5rem,0,0))">
   …
   <div class="nav-group">…</div>
@@ -501,7 +497,7 @@
   scroll-snap-type: unset;
 }
 
-.\|\*\$BlockItem\(margin\(0\.25rem\,0\)\)>* {
+.\|\$BlockItem\(margin\(0\.25rem\,0\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0.25rem;
@@ -520,7 +516,7 @@
 ```html
 …<section class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(1rem,0))
+  |$BlockItem(margin(1rem,0))
   |.section-title$blockItem(margin(0,0,2rem))">
   …
   <h2 class="section-title">…</h2>
@@ -531,7 +527,7 @@
 ```html
 …<section class="
   $Block(padding(1.5rem)) 
-  |*$BlockItem(margin(1rem,_))$Box(_<_<400px) 
+  |$BlockItem(margin(1rem,_))$Box(_<_<400px) 
   |.section-title$blockItem(margin(0,0,2rem))">
   …
   <h2 class="section-title">…</h2>
@@ -545,7 +541,7 @@
   padding: 1.5rem;
 }
 
-.\|\*\$BlockItem\(margin\(1rem\,_\)\)\$Box\(_\<_\<400px\)>* {
+.\|\$BlockItem\(margin\(1rem\,_\)\)\$Box\(_\<_\<400px\)>* {
   float: unset;
   clear: unset;
   margin-block: 1rem;
@@ -573,7 +569,7 @@
 ```html
 …<section class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,0,1.5rem))">
+  |$BlockItem(margin(0,0,1.5rem))">
   …
   <div class="question">…</div>
   …
@@ -585,7 +581,7 @@
 ```html
 …<section class="
   $Block(padding(1.5rem)) 
-  |*$BlockItem(margin(0,0,1.5rem)) 
+  |$BlockItem(margin(0,0,1.5rem)) 
   |.question$blockItem(margin(0,0,2rem)) 
   |.answer$blockItem(margin(0,0,1rem))">
   …
@@ -602,7 +598,7 @@
   padding: 1.5rem;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
+.\|\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 1.5rem;
@@ -626,7 +622,7 @@
 ```html
 …<article class="
   $Block(padding(1.5rem))$Paragraph(_,breakWord)
-  |*$BlockItem(margin(0,0,1.5rem))$Box(_<_<700px)">
+  |$BlockItem(margin(0,0,1.5rem))$Box(_<_<700px)">
   …
   <div class="section">…</div>
   …
@@ -638,7 +634,7 @@
 ```html
 …<article class="
   $Block(padding(1.5rem))$Paragraph(_,breakWord) 
-  |*$BlockItem(margin(0,0,1.5rem))$Box(_<_<700px) 
+  |$BlockItem(margin(0,0,1.5rem))$Box(_<_<700px) 
   |.section$blockItem(margin(1.5rem,0,0)) 
   |.sub-item$blockItem(margin(0,0,0,1.5rem))">
   …
@@ -666,7 +662,7 @@
   hanging-punctuation: unset;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)\$Box\(_\<_\<700px\)>* {
+.\|\$BlockItem\(margin\(0\,0\,1\.5rem\)\)\$Box\(_\<_\<700px\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 1.5rem;
@@ -699,7 +695,7 @@
 ```html
 …<article class="
   $Block(padding(1.5rem))$Paragraph(_,breakWord)
-  |*$BlockItem(margin(0,0,1.5rem))">
+  |$BlockItem(margin(0,0,1.5rem))">
   …
   <h2 class="section-heading">…</h2>
   …
@@ -713,7 +709,7 @@
 ```html
 …<article class="
   $Block(padding(1.5rem))$Paragraph(_,breakWord) 
-  |*$BlockItem(margin(0,0,1.5rem)) 
+  |$BlockItem(margin(0,0,1.5rem)) 
   |.section-heading$blockItem(margin(0,0,2rem)) 
   |.entry$blockItem(margin(0,0,1rem)) 
   |.sub-line$blockItem(margin(0,0,0.5rem))">
@@ -744,7 +740,7 @@
   hanging-punctuation: unset;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
+.\|\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 1.5rem;
@@ -773,7 +769,7 @@
 ```html
 …<article class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,0,1.5rem))$Box(_<_<600px)
+  |$BlockItem(margin(0,0,1.5rem))$Box(_<_<600px)
   |.header$blockItem(margin(0,0,0))">
   …
   <div class="header">…</div>
@@ -788,7 +784,7 @@
 ```html
 …<article class="
   $Block(padding(1.5rem)) 
-  |*$BlockItem(margin(0,0,1.5rem))$Box(_<_<600px) 
+  |$BlockItem(margin(0,0,1.5rem))$Box(_<_<600px) 
   |.header$blockItem(margin(0,0,0)) 
   |.pullquote$blockItem(floatEnd,margin(0,0,1.5rem,1.5rem)) 
   |.paragraph$blockItem(clearEnd,margin(0,0,1.5rem))">
@@ -808,7 +804,7 @@
   padding: 1.5rem;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)\$Box\(_\<_\<600px\)>* {
+.\|\$BlockItem\(margin\(0\,0\,1\.5rem\)\)\$Box\(_\<_\<600px\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 1.5rem;
@@ -848,7 +844,7 @@
 ```html
 …<section class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,0,1.5rem))">
+  |$BlockItem(margin(0,0,1.5rem))">
   …
   <fieldset class="form-group">…</fieldset>
   …
@@ -860,7 +856,7 @@
 ```html
 …<section class="
   $Block(padding(1.5rem)) 
-  |*$BlockItem(margin(0,0,1.5rem)) 
+  |$BlockItem(margin(0,0,1.5rem)) 
   |.form-group$blockItem(margin(1.5rem,0,0)) 
   |.form-item$blockItem(margin(0,0,0))">
   …
@@ -877,7 +873,7 @@
   padding: 1.5rem;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
+.\|\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 1.5rem;
@@ -901,7 +897,7 @@
 ```html
 …<section class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,0,1.5rem))">
+  |$BlockItem(margin(0,0,1.5rem))">
   …
   <div class="avatar">…</div>
   …
@@ -917,7 +913,7 @@
 ```html
 …<section class="
   $Block(padding(1.5rem)) 
-  |*$BlockItem(margin(0,_))$Box(_<_<500px) 
+  |$BlockItem(margin(0,_))$Box(_<_<500px) 
   |.avatar$blockItem(margin(0)) 
   |.bio$blockItem(margin(0,0,1.5rem)) 
   |.stats$blockItem(margin(0,0,1.5rem)) 
@@ -940,7 +936,7 @@
   padding: 1.5rem;
 }
 
-.\|\*\$BlockItem\(margin\(0\,_\)\)\$Box\(_\<_\<500px\)>* {
+.\|\$BlockItem\(margin\(0\,_\)\)\$Box\(_\<_\<500px\)>* {
   float: unset;
   clear: unset;
   margin-block: 0;
@@ -982,7 +978,7 @@
 ```html
 …<main class="
   $Block(padding(1.5rem,24px))
-  |*$BlockItem(margin(0,0,1.5rem))">
+  |$BlockItem(margin(0,0,1.5rem))">
   …
   <h1>…</h1>
   …
@@ -998,7 +994,7 @@
 ```html
 …<main class="
   $Block(padding(1.5rem,5vw))
-  |*$BlockItem(margin(0,0,1.5rem))
+  |$BlockItem(margin(0,0,1.5rem))
   |h1$blockItem(margin(0,0,2.5rem))
   |h2$blockItem(margin(0,0,2rem))
   |h3$blockItem(margin(0,0,1.75rem))
@@ -1022,7 +1018,7 @@
   padding-inline: 5vw;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
+.\|\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 1.5rem;
@@ -1056,7 +1052,7 @@
 ```html
 …<article class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,0,1.5rem))
+  |$BlockItem(margin(0,0,1.5rem))
   |.title$blockItem(margin(0,0,2rem))">
   …
   <h1 class="title">…</h1>
@@ -1073,7 +1069,7 @@
 ```html
 …<article class="
   $Block(padding(1.5rem)) 
-  |*$BlockItem(margin(0,0,1.5rem)) 
+  |$BlockItem(margin(0,0,1.5rem)) 
   |.title$blockItem(margin(0,0,2rem)) 
   |.metadata$blockItem(floatStart,margin(0,1.5rem,1rem,0)) 
   |.ingredients$blockItem(clearStart,margin(0,0,1.5rem)) 
@@ -1096,7 +1092,7 @@
   padding: 1.5rem;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
+.\|\$BlockItem\(margin\(0\,0\,1\.5rem\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 1.5rem;
@@ -1132,7 +1128,7 @@
 ```html
 …<div class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,_))$Box(_<_<600px)
+  |$BlockItem(margin(0,_))$Box(_<_<600px)
   |.section$blockItem(margin(0,0,1.5rem))
   |.footer$blockItem(margin(0,0,0))">
   …
@@ -1150,7 +1146,7 @@
 ```html
 …<div class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,_))$Box(_<_<600px)
+  |$BlockItem(margin(0,_))$Box(_<_<600px)
   |.section$blockItem(margin(0,0,1.5rem))
   |.footer$blockItem(margin(0,0,0))
   ||.footer-content$blockItem(floatEnd,margin(0))">
@@ -1172,7 +1168,7 @@
   padding: 1.5rem;
 }
 
-.\|\*\$BlockItem\(margin\(0\,_\)\)\$Box\(_\<_\<600px\)>* {
+.\|\$BlockItem\(margin\(0\,_\)\)\$Box\(_\<_\<600px\)>* {
   float: unset;
   clear: unset;
   margin-block: 0;
@@ -1198,7 +1194,7 @@
   margin-inline: 0;
 }
 
-.\|\|\.footer-content\$blockItem\(floatEnd\,margin\(0\)\)>:where(.footer-content) {
+.\|\|\.footer-content\$blockItem\(floatEnd\,margin\(0\)\)>*>:where(.footer-content) {
   margin: 0;
   float: inline-end;
 }
@@ -1210,7 +1206,7 @@
 ```html
 …<div class="
   $Block(padding(0))
-  |*$BlockItem(margin(0.25rem,0))
+  |$BlockItem(margin(0.25rem,0))
   |.widget-header$blockItem(margin(0,0,0.5rem))
   |.data-row$blockItem(margin(0,0,0))">
   …
@@ -1224,7 +1220,7 @@
 ```html
 …<div class="
   $Block(padding(0))$Box(scroll)
-  |*$BlockItem(margin(0.25rem,0))
+  |$BlockItem(margin(0.25rem,0))
   |.widget-header$blockItem(margin(0,0,0.5rem))
   |.data-row$blockItem(margin(0,0,0))$Box(_,2.5rem)">
   …
@@ -1250,7 +1246,7 @@
   scroll-snap-type: unset;
 }
 
-.\|\*\$BlockItem\(margin\(0\.25rem\,0\)\)>* {
+.\|\$BlockItem\(margin\(0\.25rem\,0\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0.25rem;
@@ -1283,7 +1279,7 @@
 ```html
 …<div class="
   $Block(padding(0))$Box(auto,snapMandatory)
-  |*$BlockItem(margin(0))$Box(_,100vh)$BoxItem(snapStart)">
+  |$BlockItem(margin(0))$Box(_,100vh)$BoxItem(snapStart)">
   …
   <div class="intro">…</div>
   …
@@ -1293,7 +1289,7 @@
 ```html
 …<div class="
   $Block(padding(0))$Box(auto,snapMandatory,scrollPadding(3.5rem,0))
-  |*$BlockItem(margin(0))$Box(_,100vh)$BoxItem(snapStart,scrollMargin(3.5rem,0,0))
+  |$BlockItem(margin(0))$Box(_,100vh)$BoxItem(snapStart,scrollMargin(3.5rem,0,0))
   |.intro$boxItem(snapNone)">
   …
   <div class="intro">…</div>
@@ -1317,7 +1313,7 @@
   scroll-padding-inline: 0;
 }
 
-.\|\*\$BlockItem\(margin\(0\)\)\$Box\(_\,100vh\)\$BoxItem\(snapStart\,scrollMargin\(3\.5rem\,0\,0\)\)>* {
+.\|\$BlockItem\(margin\(0\)\)\$Box\(_\,100vh\)\$BoxItem\(snapStart\,scrollMargin\(3\.5rem\,0\,0\)\)>* {
   margin: 0;
   float: unset;
   clear: unset;
@@ -1347,7 +1343,7 @@
 ```html
 …<article class="
   $Block(padding(2rem))$Box(auto,snap,scrollPadding(2rem,0))
-  |*$BlockItem(margin(0,0,2rem))
+  |$BlockItem(margin(0,0,2rem))
   |h2$boxItem(snapStart,scrollMargin(2rem,0,0))
   |h3$boxItem(snapStart,scrollMargin(2rem,0,0))">
   …
@@ -1361,7 +1357,7 @@
 ```html
 …<article class="
   $Block(padding(2rem))$Box(auto,snap,scrollPadding(2rem,0))
-  |*$BlockItem(margin(0,0,2rem))
+  |$BlockItem(margin(0,0,2rem))
   |h2$boxItem(snapStart,snapAlways,scrollMargin(2rem,0,0))
   |h3$boxItem(snapStart,snapAlways,scrollMargin(2rem,0,0))">
   …
@@ -1388,7 +1384,7 @@
   scroll-padding-inline: 0;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,2rem\)\)>* {
+.\|\$BlockItem\(margin\(0\,0\,2rem\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 2rem;
@@ -1416,7 +1412,7 @@
 ```html
 …<aside class="
   $Block(padding(1rem))$Box(auto)
-  |*$BlockItem(margin(0,0,0.5rem))
+  |$BlockItem(margin(0,0,0.5rem))
   |.group-header$blockItem(margin(1.5rem,0,0.5rem))">
   …
   <h3 class="group-header">…</h3>
@@ -1427,7 +1423,7 @@
 ```html
 …<aside class="
   $Block(padding(1rem))$Box(autoHidden)
-  |*$BlockItem(margin(0,0,0.5rem))
+  |$BlockItem(margin(0,0,0.5rem))
   |.group-header$blockItem(margin(1.5rem,0,0.5rem))">
   …
   <h3 class="group-header">…</h3>
@@ -1450,7 +1446,7 @@
   scroll-snap-type: unset;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,0\.5rem\)\)>* {
+.\|\$BlockItem\(margin\(0\,0\,0\.5rem\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 0.5rem;
@@ -1469,7 +1465,7 @@
 ```html
 …<article class="
   $Block(padding(1.5rem))$Box(hidden)
-  |*$BlockItem(margin(0,0,1rem))
+  |$BlockItem(margin(0,0,1rem))
   |.footer$blockItem(margin(2rem,0,0))">
   …
   <figure class="figure">…</figure>
@@ -1484,7 +1480,7 @@
 ```html
 …<article class="
   $Block(padding(1.5rem))$Box(hidden)
-  |*$BlockItem(margin(0,0,1rem))
+  |$BlockItem(margin(0,0,1rem))
   |.figure$blockItem(floatStart,margin(0,1.5rem,1rem,0))$Box(40%)
   |.aside$blockItem(floatEnd,margin(0,0,1rem,1.5rem))$Box(30%)
   |.footer$blockItem(clear,margin(2rem,0,0))">
@@ -1513,7 +1509,7 @@
   scroll-snap-type: unset;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,1rem\)\)>* {
+.\|\$BlockItem\(margin\(0\,0\,1rem\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 1rem;
@@ -1563,7 +1559,7 @@
 ```html
 …<div class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,0,1.25rem))
+  |$BlockItem(margin(0,0,1.25rem))
   |h2$blockItem(margin(0,0,1.75rem))">
   …
   <h2>…</h2>
@@ -1574,7 +1570,7 @@
 ```html
 …<div class="
   $Block(padding(1.5rem))$Paragraph(_,breakLongWords)
-  |*$BlockItem(margin(0,0,1.25rem))
+  |$BlockItem(margin(0,0,1.25rem))
   |h2$blockItem(margin(0,0,1.75rem))">
   …
   <h2>…</h2>
@@ -1599,7 +1595,7 @@
   hanging-punctuation: unset;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,1\.25rem\)\)>* {
+.\|\$BlockItem\(margin\(0\,0\,1\.25rem\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 1.25rem;
@@ -1618,7 +1614,7 @@
 ```html
 …<div class="
   $Block(padding(1rem))
-  |*$BlockItem(margin(0,0,0.25rem))
+  |$BlockItem(margin(0,0,0.25rem))
   |.log-entry$blockItem(margin(0,0,0.5rem))$Box(100%)">
   …
   <div class="log-entry">…</div>
@@ -1629,7 +1625,7 @@
 ```html
 …<div class="
   $Block(padding(1rem))$Paragraph(_,breakAnywhere)
-  |*$BlockItem(margin(0,0,0.25rem))
+  |$BlockItem(margin(0,0,0.25rem))
   |.log-entry$blockItem(margin(0,0,0.5rem))$Box(100%)">
   …
   <div class="log-entry">…</div>
@@ -1654,7 +1650,7 @@
   hanging-punctuation: unset;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,0\.25rem\)\)>* {
+.\|\$BlockItem\(margin\(0\,0\,0\.25rem\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 0.25rem;
@@ -1682,7 +1678,7 @@
 ```html
 …<div class="
   $Block(padding(1.5rem))$Box(auto)
-  |*$BlockItem(margin(0.5rem,_))$Box(10rem,10rem)">
+  |$BlockItem(margin(0.5rem,_))$Box(10rem,10rem)">
   …
 </div>…
 ```
@@ -1690,7 +1686,7 @@
 ```html
 …<div class="
   $Block(padding(1.5rem))$Box(auto,snap)
-  |*$BlockItem(margin(0.5rem,_))$Box(10rem,10rem)$BoxItem(snapCenter)">
+  |$BlockItem(margin(0.5rem,_))$Box(10rem,10rem)$BoxItem(snapCenter)">
   …
 </div>…
 ```
@@ -1710,7 +1706,7 @@
   scroll-snap-type: both;
 }
 
-.\|\*\$BlockItem\(margin\(0\.5rem\,_\)\)\$Box\(10rem\,10rem\)\$BoxItem\(snapCenter\)>* {
+.\|\$BlockItem\(margin\(0\.5rem\,_\)\)\$Box\(10rem\,10rem\)\$BoxItem\(snapCenter\)>* {
   float: unset;
   clear: unset;
   margin-block: 0.5rem;
