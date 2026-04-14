@@ -2,13 +2,13 @@
 **userInstruction:** Set up a basic Block layout with 1.5rem padding and 1rem bottom gap between child elements.
 **before:**
 ```html
-…<div>
-  …
-</div>…
+…<div>…</div>…
 ```
 **after:**
 ```html
-…<div class="$Block(padding(1.5rem)) |*$BlockItem(margin(0,0,1rem))">
+…<div class="
+  $Block(padding(1.5rem))
+  |*$BlockItem(margin(0,0,1rem))">
   …
 </div>…
 ```
@@ -41,7 +41,11 @@
 ```
 **after:**
 ```html
-…<article class="$Block(padding(1.5rem)) |*$BlockItem(margin(0,0,1rem))$Paragraph(_,indent(2em)) |.title$blockItem(margin(0,0,2rem))$paragraph(indent(0)) |.subtitle$blockItem(margin(0,0,1.5rem))$paragraph(indent(1em))">
+…<article class="
+  $Block(padding(1.5rem))
+  |*$BlockItem(margin(0,0,1rem))$Paragraph(_,indent(2em))
+  |.title$blockItem(margin(0,0,2rem))$paragraph(indent(0))
+  |.subtitle$blockItem(margin(0,0,1.5rem))$paragraph(indent(1em))">
   …
   <h2 class="title">…</h2>
   …
@@ -224,7 +228,13 @@
 ```
 **after:**
 ```html
-…<article class="$Block(padding(1.5rem)) |*$BlockItem(margin(0,0,1.5rem))$Box(_<_<65ch) |h1$blockItem(margin(0,0,2.5rem)) |h2$blockItem(margin(0,0,2rem)) |h3$blockItem(margin(0,0,1.75rem)) |p$blockItem(margin(0,0,1.5rem))">
+…<article class="
+  $Block(padding(1.5rem))
+  |*$BlockItem(margin(0,0,1.5rem))$Box(_<_<65ch)
+  |h1$blockItem(margin(0,0,2.5rem))
+  |h2$blockItem(margin(0,0,2rem))
+  |h3$blockItem(margin(0,0,1.75rem))
+  |p$blockItem(margin(0,0,1.5rem))">
   <h1>…</h1>
   <h2>…</h2>
   <h3>…</h3>
@@ -289,7 +299,14 @@
 ```
 **after:**
 ```html
-…<article class="$Block(padding(2rem))$Paragraph(_,breakWord) |*$BlockItem(margin(0,0,1.5rem)) |h1$blockItem(margin(0,0,3rem)) |h2$blockItem(margin(0,0,2rem)) |h3$blockItem(margin(0,0,1.5rem)) |p$blockItem(margin(0,0,1rem)) |pre$blockItem(margin(0,0,1rem))">
+…<article class="
+  $Block(padding(2rem))$Paragraph(_,breakWord)
+  |*$BlockItem(margin(0,0,1.5rem))
+  |h1$blockItem(margin(0,0,3rem))
+  |h2$blockItem(margin(0,0,2rem))
+  |h3$blockItem(margin(0,0,1.5rem))
+  |p$blockItem(margin(0,0,1rem))
+  |pre$blockItem(margin(0,0,1rem))">
   <h1>…</h1>
   <h2>…</h2>
   <h3>…</h3>
@@ -360,7 +377,12 @@
 ```
 **after:**
 ```html
-…<section class="$Block(padding(1.5rem))$Box(clip) |*$BlockItem(margin(0,0,1.5rem))$Box(_<_<800px) |.hero$blockItem(margin(0,0,0)) |.description$blockItem(margin(0,0,1.5rem)) |.specs$blockItem(margin(0,0,1.5rem))">
+…<section class="
+  $Block(padding(1.5rem))$Box(clip)
+  |*$BlockItem(margin(0,0,1.5rem))$Box(_<_<800px)
+  |.hero$blockItem(margin(0,0,0))
+  |.description$blockItem(margin(0,0,1.5rem))
+  |.specs$blockItem(margin(0,0,1.5rem))">
   <div class="hero">…</div>
   <div class="description">…</div>
   <div class="specs">…</div>
@@ -929,7 +951,13 @@
 ```
 **after:**
 ```html
-…<main class="$Block(padding(1.5rem,5vw)) |*$BlockItem(margin(0,0,1.5rem)) |h1$blockItem(margin(0,0,2.5rem)) |h2$blockItem(margin(0,0,2rem)) |h3$blockItem(margin(0,0,1.75rem)) |p$blockItem(margin(0,0,1.5rem))">
+…<main class="
+  $Block(padding(1.5rem,5vw))
+  |*$BlockItem(margin(0,0,1.5rem))
+  |h1$blockItem(margin(0,0,2.5rem))
+  |h2$blockItem(margin(0,0,2rem))
+  |h3$blockItem(margin(0,0,1.75rem))
+  |p$blockItem(margin(0,0,1.5rem))">
   …
   <h1>…</h1>
   …
@@ -1073,7 +1101,7 @@
   |*$BlockItem(margin(0,_))$Box(_<_<600px)
   |.section$blockItem(margin(0,0,1.5rem))
   |.footer$blockItem(margin(0,0,0))
-  |.footer-content$blockItem(floatEnd,margin(0))">
+  ||.footer-content$blockItem(floatEnd,margin(0))">
   …
   <div class="section">…</div>
   …
@@ -1118,7 +1146,7 @@
   margin-inline: 0;
 }
 
-.\|\.footer-content\$blockItem\(floatEnd\,margin\(0\)\)>:where(.footer-content) {
+.\|\|\.footer-content\$blockItem\(floatEnd\,margin\(0\)\)>:where(.footer-content) {
   margin: 0;
   float: inline-end;
 }
@@ -1578,9 +1606,7 @@
 **userInstruction:** Build a scrollable thumbnail gallery with auto overflow, center-snap on each 10rem by 10rem item, and auto inline margins for centering.
 **before:**
 ```html
-…<div>
-  …
-</div>…
+…<div>…</div>…
 ```
 **after:**
 ```html
