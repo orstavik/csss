@@ -1,0 +1,38 @@
+<script type="module">
+  import * as CSSS from "/src/csss.js";
+  import runTests from "./mdTester.js";
+
+  function stripLayers(css) {
+    return css.replace(/@layer[^{]+\{([\s\S]*?)\n\}/g, (_, inner) =>
+      inner.replace(/^  /gm, "").trim()
+    ).trim();
+  }
+
+  function txtToBodies(txt) {
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(txt);
+    return [...sheet.cssRules]
+      .filter(r => !(r instanceof CSSKeyframeRule || r instanceof CSSFontFaceRule))
+      .map(rule => Object.fromEntries([...rule.styleMap.keys()].map(k => [k, rule.style[k]])));
+  }
+
+  const style = document.createElement("style");
+  async function test({ csss, css }) {
+    debugger
+    const statement = csss.value;
+    const rules = txtToBodies(css?.value ?? "");
+    let statement2 = "", rules2 = "";
+    for (let rule of rules) {
+      const csss2 = CSSS.reverse(rule);
+      const rule2 = CSSS.parse(csss2)?.[0];
+      statement2 += csss2 + "\n";
+      rules2 += rule2?.cssText.split("\n").slice(1, -1).join("\n") + "\n";
+    }
+    const actualCsss = statement2.trim();
+    const inputCsss = statement.trim();
+    const actual = JSON.stringify(txtToBodies(rules2), null, 2);
+    const expected = JSON.stringify(rules, null, 2);
+    return { key: statement, actual, expected };
+  }
+  runTests("box", test);
+</script>

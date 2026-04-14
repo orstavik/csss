@@ -1,18 +1,12 @@
-**description:** Sets background-color to green and applies a white-to-transparent gradient.
-**csss:** $bgColor(#green)$bg(#white,#transparent)
+**description:**
+Sets background-color to green and applies a white-to-transparent gradient.
+**csss:**
+ $bgColor(#green)$bg(#white,#transparent)
 **css:**
 ```css
 .\$bgColor\(\#green\)\$bg\(\#white\,\#transparent\) {
   background-color: green;
-  background: none;
   background-image: linear-gradient(white, transparent);
-  background-position: 0% 0%;
-  background-repeat: repeat;
-  background-size: auto;
-  background-origin: padding-box;
-  background-clip: border-box;
-  background-blend-mode: normal;
-  background-attachment: scroll;
 }
 ```
 

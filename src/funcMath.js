@@ -81,34 +81,18 @@ function angleToRad({ unit, num }) {
         num;
 }
 
-function plus(a, b) { return a + b; }
-function minus(a, b) { return a - b; }
-function multi(a, b) { return a * b; }
-function divide(a, b) { return a / b; }
-
-function mod(a, b) { return a - b * Math.floor(a / b); }
-function rem(a, b) { return a - b * Math.trunc(a / b); }
-function clamp(a, b, c) { return Math.min(Math.max(a, b), c); }
-
-function sin(a) { return Math.sin(angleToRad(a)); }
-function cos(a) { return Math.cos(angleToRad(a)); }
-function tan(a) { return Math.tan(angleToRad(a)); }
-
-function log(a, b = Math.E) { return Math.log(a) / Math.log(b); }
-
-const pow = Math.pow;
-const min = Math.min;
-const max = Math.max;
-const round = Math.round;
-const asin = Math.asin;
-const acos = Math.acos;
-const atan = Math.atan;
-const atan2 = Math.atan2;
-const sqrt = Math.sqrt;
-const hypot = Math.hypot;
-const exp = Math.exp;
-const abs = Math.abs;
-const sign = Math.sign;
+const plus = (a, b) => a + b;
+const minus = (a, b) => a - b;
+const multi = (a, b) => a * b;
+const divide = (a, b) => a / b;
+const mod = (a, b) => a - b * Math.floor(a / b);
+const rem = (a, b) => a - b * Math.trunc(a / b);
+const clamp = (a, b, c) => Math.min(Math.max(a, b), c);
+const sin = (a) => Math.sin(angleToRad(a));
+const cos = (a) => Math.cos(angleToRad(a));
+const tan = (a) => Math.tan(angleToRad(a));
+const log = (a, b = Math.E) => Math.log(a) / Math.log(b);
+const { pow, min, max, round, asin, acos, atan, atan2, sqrt, hypot, exp, abs, sign } = Math;
 
 //CHECKS
 //returns [inputUnit, outputUnit].
@@ -121,7 +105,7 @@ function sameType(args) {
     return a.type ? a : t;
   }, null);
 }
-function illegalDividend(a, b) {
+function illegalDividend([a, b]) {
   if (b.type != "number") throw "Divisor must be a plain number.";
   if (b.num == 0) throw "Divide by zero.";
 }
@@ -156,10 +140,6 @@ function optionalSecondNumber(args) {
 function onlyOneArgWithUnit(args) {
   if (args.filter(a => a.unit).length > 1) throw "Only one argument can have a unit.";
 }
-function firstIsVar(args) {
-  if (args[0].kind != "VAR")
-    throw "?? must follow a var() expression.";
-}
 //POSTS
 function toNumber(num, a) { return { type: "number", unit: "", num, text: num }; }
 function toAngle(num, a) { return { type: "angle", unit: "rad", num, text: num }; }
@@ -170,21 +150,12 @@ function stripCalc(name, args) {
   return `${name}(${args.map(a => a.replaceAll(/^calc\((.*)\)$/g, (_, a) => a)).join(", ")})`;
 }
 
-function doMath(check, func, post, texter, name, args) {
-  check(args);
-  const nums = computableNumbers(args);
-  return nums ?
-    post(func(...nums), args[0]) :
-    { type: args.find(a => a.type)?.type, text: texter(args.map(a => a.text)) };
-}
-
-export default {
+const Maths = {
   "-": doMath.bind(null, sameType, minus, updateFirst, txts => `calc(${txts.join(" - ")})`),
   "+": doMath.bind(null, sameType, plus, updateFirst, txts => `calc(${txts.join(" + ")})`),
   "*": doMath.bind(null, onlyOneArgWithUnit, multi, updateFirst, txts => `calc(${txts.join(" * ")})`),
   "/": doMath.bind(null, illegalDividend, divide, updateFirst, txts => `calc(${txts.join(" / ")})`),
   "**": doMath.bind(null, secondArgumentIsNumber, pow, updateFirst, texter.bind(null, "pow")),
-  "??": doMath.bind(null, firstIsVar, undefined, undefined, txts => txts[0].slice(0, -1) + "," + txts[1] + ")"),
   mod: doMath.bind(null, illegalDividend, mod, updateFirst, texter.bind(null, "mod")),
   rem: doMath.bind(null, illegalDividend, rem, updateFirst, texter.bind(null, "rem")),
   clamp: doMath.bind(null, sameType, clamp, updateFirst, texter.bind(null, "clamp")),
@@ -204,4 +175,53 @@ export default {
   exp: doMath.bind(null, singleArgumentOnly, exp, updateFirst, texter.bind(null, "exp")),
   abs: doMath.bind(null, singleArgumentOnly, abs, updateFirst, texter.bind(null, "abs")),
   sign: doMath.bind(null, singleArgumentOnly, sign, toNumber, texter.bind(null, "sign")),
+};
+
+const Cache = new WeakMap();
+const resolve = a => {
+  let result = Cache.get(a);
+  if (result === undefined)
+    Cache.set(a, result = a.name in Maths ? Maths[a.name]?.(a.args) : a);
+  return result;
+};
+
+function doMath(check, func, post, texter, args) {
+  args = args.map(resolve);
+  check(args);
+  const nums = computableNumbers(args);
+  return nums ?
+    post(func(...nums), args[0]) :
+    { type: args.find(a => a.type)?.type, text: texter(args.map(a => a.text)) };
 }
+
+const ResolveMath = CB => a => CB(resolve(a));
+
+export default {
+  csss: {
+    Length: ResolveMath(a => (a.type === "length" || a.text === "0") ? a.text : undefined),
+    LengthPercent: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0") ? a.text : undefined),
+    LengthPercentUnset: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0" || a.text === "_") ? (a.text === "_" ? "unset" : a.text) : undefined),
+    LengthPercentAuto: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.text === "0" || a.text === "_") ? (a.text === "_" ? "auto" : a.text) : undefined),
+    Repeat: ResolveMath(a => a.name === "repeat" ? `repeat(${a.args.map(a => a.text).join(", ")})` : a.text),
+    Span: ResolveMath(a => a.name === "span" ? `span ${a.args[0].text}` : a.text),
+    NumberInterpreter: ResolveMath(a => (a.type === "number" && a.unit === "") ? a.num : undefined),
+    Integer: ResolveMath(a => (a.type === "number" && a.unit === "" && Number.isInteger(a.num)) ? a.num : undefined),
+    PositiveInteger: ResolveMath(a => (a.type === "number" && a.unit === "" && Number.isInteger(a.num) && a.num > 0) ? a.num : undefined),
+    LengthPercentNumber: ResolveMath(a => (a.type === "length" || a.type === "percent" || a.type === "number") ? a.text : undefined),
+    LengthNumber: ResolveMath(a => (a.type === "length" || (a.type === "number" && a.unit === "")) ? a.text : undefined),
+    LengthNumberRaw: ResolveMath(a => (a.type === "length" || (a.type === "number" && a.unit === "")) ? a : undefined),
+    Percent: ResolveMath(a => a.type === "percent" ? a.text : undefined),
+    PercentFraction: ResolveMath(a => a.type === "percent" ? a.num / 100 : (a.unit === "" && a.num >= 0 && a.num <= 1) ? a.num : undefined),
+    Time: ResolveMath(a => a.type === "time" ? a.text : undefined),
+    MsOrNumber: ResolveMath(a => a.unit === "ms" || a.unit === "" ? a.num : a.unit === "s" ? a.num * 1000 : undefined),
+    Resolution: ResolveMath(a => a.type === "resolution" ? a.text : a.num === 0 && a.unit === "" ? "0x" : undefined),
+    ResolutionNumber: ResolveMath(a => a.type === "resolution" ? a.text : a.unit === "" ? a.num + "x" : undefined),
+    MinMax: ResolveMath(a => a.name === "minmax" ? `minmax(${a.args.map(a => a.text).join(", ")})` : a.text),
+    PercentNumber: ResolveMath(a => (a.type === "percent" || a.type === "number") ? a.text : undefined),
+    Angle: ResolveMath(a => (a.type === "angle") ? a.text : undefined),
+    AnglePercent: ResolveMath(a => (a.type === "angle" || a.type === "percent") ? a.text : undefined),
+    AngleNumber: ResolveMath(a => (a.type === "angle" || (a.type === "number" && a.unit === "")) ? a.text : undefined),
+    NumberPercent: ResolveMath(a => (a.type === "number" || a.type === "percent") ? a.text : undefined),
+    Radian: ResolveMath(a => a.type === "angle" ? angleToRad(a) : a?.num == 0 && a.type === "number" ? 0 : undefined),
+  },
+};

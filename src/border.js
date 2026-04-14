@@ -1,25 +1,12 @@
-import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, SequentialFunction } = FunctionTypes;
-const { Color, LengthPercent, CamelWords } = ValueTypes;
+import { CsssPrimitives, CsssFunctions, matchArgsWithInterpreters } from "./func.js";
+const { LengthPercent } = CsssPrimitives;
+const { CssValuesToCsssTable } = CsssFunctions;
+import { Color } from "./funcColor.js";
 
-const BorderFunctionWithDefaultValues = cb => exp => {
-  const res = cb(exp);
-  if (!res.borderStartStartRadius) res.borderRadius ??= "0";
-  if (!res.borderInlineColor && !res.borderInlineStyle && !res.borderInlineWidth) {
-    const res2 = {
-      border: [res.borderWidth, res.borderStyle, res.borderColor].filter(Boolean).join(" ") || "none",
-      ...res,
-    }
-    delete res2.borderColor;
-    delete res2.borderStyle;
-    delete res2.borderWidth;
-    return res2;
-  }
-  if (!res.borderInlineStyle) res.borderStyle ??= "solid";
-  if (!res.borderInlineWidth) res.borderWidth ??= "medium";
-  if (!res.borderInlineColor) res.borderColor ??= "currentColor";
-  return res;
-};
+const Styles = CssValuesToCsssTable("solid|dotted|dashed|double|groove|ridge|inset|outset|none|hidden");
+const Style = a => Styles[a.text];
+const Widths = CssValuesToCsssTable("thin|medium|thick");
+const Width = a => Widths[a.text] ?? LengthPercent(a);
 
 //1. BlockInline order is the naming sequence of each corner, and also the two values for each corner.
 //   borderStartEndRadius: 2px 4px means something like borderTopRightRadius with top radius 2px side radius 4px.
@@ -30,7 +17,10 @@ const BorderFunctionWithDefaultValues = cb => exp => {
 //   6: blockTopRight (and 2: blockTopLeft), 
 //   7: inlineRightBottom (and 3: inlineRightTop), 
 //   8: blockBottomRight (and 4: blockBottomLeft).
-const radius = SequentialFunction("/1-8", [LengthPercent], (n, ar) => {
+const Radius = ({ name, args }) => {
+  if (name !== "radius") return;
+  if (!args.length || args.length > 8) throw new SyntaxError(`radius() takes 1-8 arguments, got ${args.length}.`);
+  const ar = args.map(LengthPercent);
   if (ar.length === 1)
     return { borderRadius: ar[0] };
   if (ar.length === 2) {
@@ -58,45 +48,61 @@ const radius = SequentialFunction("/1-8", [LengthPercent], (n, ar) => {
     borderEndStartRadius: bl == lb ? bl : `${bl} ${lb}`,
     borderEndEndRadius: br == rb ? br : `${br} ${rb}`,
   };
-});
+};
 
-function inlineBlockFour(prop, ar) {
-  if (!ar)
-    return {};
-  if (ar.length > 4)
-    throw new SyntaxError(`More than 4 border ${prop} arguments.`);
-  return ar.length == 1 ?
-    { ["border" + prop]: ar[0] } :
-    {
-      ["borderInline" + prop]: [ar[0], ar[2]].filter(Boolean).join(" "),
-      ["borderBlock" + prop]: [ar[1], ar[3]].filter(Boolean).join(" "),
-    };
+function borderFourToOneOrTwo(Type, args) {
+  return !args.length ? undefined :
+    args.length === 1 ? ({ ["border" + Type]: args[0] }) :
+      ({
+        ["borderBlock" + Type]: args[2] != null && args[2] != args[0] ? args[0] + " " + args[2] : args[0],
+        ["borderInline" + Type]: args[3] != null && args[3] != args[1] ? (args[1] ?? args[0]) + " " + args[3] : args[1] ?? args[0],
+      });
 }
 
-const border = FunctionBasedOnValueTypes({
-  radius,
-  r: radius,
-},
-  {},
-  {
-    Color,
-    Width: a => LengthPercent(a) ?? CamelWords("thin|medium|thick")(a),
-    Style: CamelWords("solid|dotted|dashed|double|groove|ridge|inset|outset|none|hidden"),
-  }, obj => {
-    const res = {};
-    if (obj.Width) Object.assign(res, inlineBlockFour("Width", obj.Width));
-    if (obj.Style) Object.assign(res, inlineBlockFour("Style", obj.Style));
-    if (obj.Color) Object.assign(res, inlineBlockFour("Color", obj.Color));
-    if (obj.radius ?? obj.r) Object.assign(res, obj.radius ?? obj.r);
-    return res;
+const border = ({ name, args }) => {
+  const [
+    w1, w2, w3, w4,
+    s1, s2, s3, s4,
+    c1, c2, c3, c4,
+    radius
+  ] = matchArgsWithInterpreters(name, 0, args, [
+    Width, Width, Width, Width,
+    Style, Style, Style, Style,
+    Color, Color, Color, Color,
+    Radius,
+  ]);
+  const widths = [w1, w2, w3, w4].filter(Boolean);
+  const styles = [s1, s2, s3, s4].filter(Boolean);
+  const colors = [c1, c2, c3, c4].filter(Boolean);
+  const res = {};
+  if (widths.length) Object.assign(res, borderFourToOneOrTwo("Width", widths));
+  if (styles.length) Object.assign(res, borderFourToOneOrTwo("Style", styles));
+  if (colors.length) Object.assign(res, borderFourToOneOrTwo("Color", colors));
+  if (radius) Object.assign(res, radius);
+  return res;
+}
+
+const Border = exp => {
+  const res = border(exp);
+  if (!res.borderStartStartRadius) res.borderRadius ??= "0";
+  if (!res.borderInlineColor && !res.borderInlineStyle && !res.borderInlineWidth) {
+    const res2 = {
+      border: [res.borderWidth, res.borderStyle, res.borderColor].filter(Boolean).join(" ") || "none",
+      ...res,
+    }
+    delete res2.borderColor;
+    delete res2.borderStyle;
+    delete res2.borderWidth;
+    return res2;
   }
-);
+  if (!res.borderInlineStyle) res.borderStyle ??= "solid";
+  if (!res.borderInlineWidth) res.borderWidth ??= "medium";
+  if (!res.borderInlineColor) res.borderColor ??= "currentColor";
+  return res;
+};
 
-export default {
-  border,
-  Border: BorderFunctionWithDefaultValues(border),
-  noBorder: { border: "none" },
-
+const props = {
+  border: undefined,
   borderStyle: undefined,
   borderWidth: undefined,
   borderColor: undefined,
@@ -145,7 +151,43 @@ export default {
   borderEndStartRadius: undefined,
   borderStartStartRadius: undefined,
   borderEndEndRadius: undefined,
-  //todo block all the others properties that can set border style, width, color, and radius.
+}
+
+
+export default {
+  props,
+  csss: {
+    border,
+    Border,
+    noBorder: { border: "none" },
+  },
+  css: {
+    border: style => {
+      let args = [];
+      if (style.border === "none") return "noBorder";
+
+      // Just reconstructing a simple border statement
+      let hasBorder = false;
+
+      // Extract width, style, color
+      if (style.borderWidth) { args.push(style.borderWidth); hasBorder = true; }
+      if (style.borderStyle) { args.push(style.borderStyle); hasBorder = true; }
+      if (style.borderColor) { args.push(style.borderColor); hasBorder = true; }
+
+      // Also radius if present
+      if (style.borderRadius && style.borderRadius !== "0") {
+        args.push(`radius(${style.borderRadius.replace(/\s+/g, ",")})`);
+        hasBorder = true;
+      } else if (style.borderStartStartRadius) {
+        // handling logical border radius is complex, just push a basic radius
+        args.push(`radius(${style.borderStartStartRadius.replace(/\s+/g, ",")})`);
+        hasBorder = true;
+      }
+
+      return hasBorder ? `border(${args.join(",")})` : undefined;
+    }
+  }
+  //todo border-image!
 }
 
 // //there are different ways to do the logic here..

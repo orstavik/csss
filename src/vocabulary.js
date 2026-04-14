@@ -1,71 +1,186 @@
-import nativeAndMore from "./func.js";
+import NativeCss from "./nativeCss.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
+import { Color } from "./funcColor.js";
+
 import backgrounds from "./bg.js";
 import border from "./border.js";
 import fonts from "./font.js";
-import layouts from "./layout.js";
+import block from "./block.js";
+import blockItem from "./blockItem.js";
+import flex from "./flex.js";
+import flexItem from "./flexItem.js";
+import grid from "./grid.js";
+import gridItem from "./gridItem.js";
+import iBlock from "./iBlock.js";
+import iBlockItem from "./iBlockItem.js";
+import lineClamp from "./lineClamp.js";
+import boxItem from "./boxItem.js";
 import box from "./box.js";
 import palette from "./palette.js";
 import transitions from "./transitions.js";
 import textDecorations from "./textDecorations.js";
-import filterTransforms from "./filterTransform.js";
 import shadows from "./shadows.js";
 import position from "./position.js";
 import svg from "./svg.js";
-import whitespace from "./whitespace.js";
 import paragraph from "./paragraph.js";
-import { animationHo } from "./animations.js";
+import paragraphItem from "./paragraphItem.js";
+import filter from "./filter.js";
+import transforms from "./transform.js";
+import animations from "./animations.js";
 
-const Animations = {
-  translateY: animationHo(filterTransforms.translateY),
-  translate: animationHo(filterTransforms.translate),
-  translateX: animationHo(filterTransforms.translateX),
-  translateZ: animationHo(filterTransforms.translateZ),
-  scale: animationHo(filterTransforms.scale),
-  scaleX: animationHo(filterTransforms.scaleX),
-  scaleY: animationHo(filterTransforms.scaleY),
-  scaleZ: animationHo(filterTransforms.scaleZ),
-  rotate: animationHo(filterTransforms.rotate),
-  rotateX: animationHo(filterTransforms.rotateX),
-  rotateY: animationHo(filterTransforms.rotateY),
-  rotateZ: animationHo(filterTransforms.rotateZ),
-  skewX: animationHo(filterTransforms.skewX),
-  skewY: animationHo(filterTransforms.skewY),
-  opacity: animationHo(nativeAndMore.opacity),
-  bg: animationHo(backgrounds.bg),
-  bgColor: animationHo(backgrounds.bgColor),
-  color: animationHo(nativeAndMore.color),
-  border: animationHo(border.border),
-  Border: animationHo(border.Border),
-}
-
-const ObjectFit = {
+const ObjectFit = {       //convert to objectFit("fill|contain|cover|scale-down|none") etc.
   objectFit: undefined,
   fitFill: { objectFit: "fill" },
   fitContain: { objectFit: "contain" },
   fitCover: { objectFit: "cover" },
   fitScaleDown: { objectFit: "scale-down" },
-  noObjectFit: { objectFit: "none" },
+  fitNone: { objectFit: "none" },
 };
+const Opacity = CsssFunctions.FunctionPropertyType("opacity", "opacity", CsssPrimitives.PercentFraction);
 
 const SHORTS = {
-  ...nativeAndMore,
-  ...backgrounds,
-  ...fonts,
+  ...boxItem.props,
+  ...box.props,
+
+  ...backgrounds.props,
+  ...fonts.props,
   ...palette,
-  ...layouts,
-  ...box,
-  ...transitions,
-  ...textDecorations,
-  ...border,
-  ...filterTransforms,
-  ...shadows,
-  ...position,
-  ...svg,
-  ...paragraph,
-  ...whitespace,
+  ...block.props,
+  ...blockItem.props,
+  ...flex.props,
+  ...flexItem.props,
+  ...grid.props,
+  ...gridItem.props,
+  ...iBlock.props,
+  ...iBlockItem.props,
+  ...lineClamp.props,
+  ...paragraph.props,
+  ...paragraphItem.props,
+  ...textDecorations.props,
+  ...position.props,
+  ...shadows.props,
+  ...transitions.props,
+  ...border.props,
+  ...svg.props,
+  ...filter.props,
+  ...transforms.props,
+  ...paragraph.props,
+  ...animations.props,
   ...ObjectFit,
-  ...Animations,
+  opacity: Opacity,
+  ...box.csss,
+  ...boxItem.csss,
+  ...block.csss,
+  ...blockItem.csss,
+  ...flex.csss,
+  ...flexItem.csss,
+  ...grid.csss,
+  ...gridItem.csss,
+  ...iBlock.csss,
+  ...iBlockItem.csss,
+  ...lineClamp.csss,
+  ...paragraph.csss,
+  ...paragraphItem.csss,
+  ...textDecorations.csss,
+  ...position.csss,
+  ...fonts.csss,
+  ...backgrounds.csss,
+  ...shadows.csss,
+  ...transitions.csss,
+  ...border.csss,
+  ...svg.csss,
+  ...filter.csss,
+  ...transforms.csss,
+  ...animations.csss,
+  displayNone: { display: "none" },
 };
+
+for (let [kebab, types] of Object.entries(NativeCss.supported)) {
+  let camel = kebab.replace(/-([a-z])/g, g => g[1].toUpperCase());
+  if (camel in SHORTS)
+    continue;
+
+  const Interpreters2 = {
+    number: CsssPrimitives.NumberInterpreter,
+    zero: CsssPrimitives.Zero,
+    length: CsssPrimitives.Length,
+    percent: CsssPrimitives.Percent,
+    angle: CsssPrimitives.Angle,
+    time: CsssPrimitives.Time,
+    resolution: CsssPrimitives.Resolution,
+    color: Color,
+    url: CsssPrimitives.Url,
+    repeat: CsssPrimitives.Repeat,
+    minmax: CsssPrimitives.MinMax,
+    span: CsssPrimitives.Span,
+    image: CsssPrimitives.Image,
+    quote: CsssPrimitives.Quote,
+    lengthNumber: CsssPrimitives.LengthNumber,
+    lengthPercent: CsssPrimitives.LengthPercent,
+    lengthPercentNumber: CsssPrimitives.LengthPercentNumber,
+    anglePercent: CsssPrimitives.AnglePercent,
+    numberPercent: CsssPrimitives.NumberPercent,
+  };
+  const functions = [...types.map(t => Interpreters2[t]).filter(Boolean)].reverse();
+
+  function interpretNativeValue({ args, name }) {
+    const argsOut = args.map(a => {
+      let result;
+      for (const cb of functions)
+        if (result = cb(a))
+          return result;
+      if (a.name)
+        throw new SyntaxError(`Could not interpret to ${camel}(${a.name}(...)).`);
+      return a;
+    });
+    return { [camel]: argsOut.join(" ") };
+  }
+  Object.defineProperty(interpretNativeValue, 'name', { value: camel });
+  SHORTS[camel] = interpretNativeValue;
+}
+
+const REVERSES = {
+  ...boxItem.css,
+  ...box.css,
+  ...block.css,
+  ...blockItem.css,
+  ...flex.css,
+  ...flexItem.css,
+  ...grid.css,
+  ...gridItem.css,
+  ...iBlock.css,
+  ...iBlockItem.css,
+  ...lineClamp.css,
+  ...paragraph.css,
+  ...paragraphItem.css,
+  ...textDecorations.css,
+  ...position.css,
+  ...animations.css,
+  ...backgrounds.css,
+  ...border.css,
+  ...filter.css,
+  ...fonts.css,
+  ...shadows.css,
+  ...svg.css,
+  ...transforms.css,
+  ...transitions.css,
+};
+
+for (let [kebab, types] of Object.entries(NativeCss.supported)) {
+  let camel = kebab.replace(/-([a-z])/g, g => g[1].toUpperCase());
+  if (camel in SHORTS)
+    continue;
+
+  if (!(camel in REVERSES)) {
+    REVERSES[camel] = style => {
+      let v = style[camel];
+      if (v !== undefined) {
+        return `${camel}(${v.replace(/\s+/g, ",")})`;
+      }
+      return undefined;
+    };
+  }
+}
 
 const MEDIA_WORDS = {
   progressive: "scan: progressive",
@@ -134,9 +249,9 @@ const MEDIA_WORDS = {
   xl: "min-width:1280px",
   xxl: "min-width:1536px",
   xxxl: "min-width:1920px",
-  // dark: "(prefers-color-scheme:dark)",
 };
 
+//i think this is not needed, as we are using the overflow shorthand, and that fixes this issue?
 // | **overflow-block**       | `none`, `scroll`, `optional-paged`, `paged` | `@media (overflow-block: scroll) {…}`
 // | **overflow-inline**      | `none`, `scroll`, `optional-paged`, `paged` | `@media (overflow-inline: none) {…}`
 // const RENAMES = {
@@ -144,7 +259,7 @@ const MEDIA_WORDS = {
 //   "overflow-inline": "overflow-x",
 // };
 
-export { SHORTS, MEDIA_WORDS };
+export { SHORTS, MEDIA_WORDS, REVERSES };
 
 
 /*

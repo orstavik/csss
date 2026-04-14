@@ -20,11 +20,6 @@ const TYPES = {
   //attr: "attr(data-my-attr)", //is supported for all props, for some reason, but only works in content.
 };
 
-function isSupported(k) {
-  return CSS.supports(k, "unset") &&
-    Object.entries(TYPES).map(([type, tst]) => CSS.supports(k, tst) && type).filter(Boolean);
-}
-
 function longhands(obj) {
   const keys = Object.keys(obj).sort((a, b) => b.length - a.length);
   const longs = keys.filter((k, i) => keys.findIndex(x => x.startsWith(k)) === i);
@@ -36,14 +31,22 @@ async function analyzeNativeCssProps() {
   const SPEC = await (await fetch("https://cdn.jsdelivr.net/npm/@mdn/browser-compat-data")).json();
   const supported = {};
   const unsupported = {};
-  for (let k of longhands(SPEC.css.properties)) {
-    const types = isSupported(k);
+  const all = {
+    ...SPEC.css.properties,
+    ...SPEC.css["at-rules"]["font-face"]
+  };
+  all["-webkit-line-clamp"] = all["line-clamp"];
+  all["-webkit-box-orient"] = all["box-orient"];
+  const longs = longhands(all);
+  for (let k of longs) {
+    const types = CSS.supports(k, "unset") &&
+      Object.entries(TYPES).map(([type, tst]) => CSS.supports(k, tst) && type).filter(Boolean);;
     types ?
       supported[k] = types : //mergeTypes(types)
-      unsupported[k] = SPEC.css.properties[k];
+      unsupported[k] = all[k];
   }
   supported.content.push("attr");
-  return { supported, unsupported };
+  return { supported, unsupported, all };
 }
 const NativeCss = await analyzeNativeCssProps();
 export default NativeCss;

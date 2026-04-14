@@ -1,4 +1,5 @@
-import { SHORTS, MEDIA_WORDS } from "./vocabulary.js";
+import { SHORTS, MEDIA_WORDS, REVERSES } from "./vocabulary.js";
+import NativeCss from "./nativeCss.js";
 
 /**
  * If you have a cssRules object, then you need to do:
@@ -53,72 +54,7 @@ export function extractShort(rule) {
   return className && className.slice(1).replaceAll("\\", "");
 }
 
-function extractAtRules(obj) {
-  const atRules = {}, mainRule = {};
-  for (let [k, v] of Object.entries(obj))
-    ((k.match(/^[@:]/)) ? atRules : mainRule)[k] = v;
-  return { atRules, mainRule };
-}
-
-function kebabcaseKeys(obj) {
-  if (!(obj instanceof Object)) return obj;
-  return Object.fromEntries(Object.entries(obj).map(([k, v]) =>
-    [k.match(/^(--|@|:)/) ? k : k.replace(/[A-Z]/g, "-$&").toLowerCase(), kebabcaseKeys(v)]));
-}
-
-function checkProperty(obj) {
-  for (let k in obj)
-    if (CSS.supports(k, "inherit") && !CSS.supports(k, obj[k]))
-      throw new SyntaxError(`Invalid CSS$ value => ${k}: ${obj[k]}`);
-}
-
-function bodyToTxt(name, body, depth = 0) {
-  const spaces = "  ".repeat(depth);
-  const spaces2 = "  ".repeat(depth + 1);
-  const body2 = Object.entries(body).map(([k, v]) =>
-    v instanceof Object ?
-      bodyToTxt(k, v, depth + 1) :
-      `${spaces2}${k}: ${v};`
-  ).join("\n");
-  return `${spaces}${name} {\n${body2}\n${spaces}}`;
-}
-
-function interpretShort(exp) {
-  try {
-    const cb = SHORTS[exp.name ?? exp.text];
-    if (!cb) throw new ReferenceError(exp.name);
-    return cb instanceof Function ? cb(exp) : cb;
-  } catch (e) {
-    debugger;
-    //todo improve error message
-    throw e;
-  }
-}
-
-const MAGICWORD = `$"'$`;
-export function parse(short) {
-  const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
-  short = short.match(/(.*?)\!*$/)[1];
-  const { exp, media } = parseMediaQuery(short, MEDIA_WORDS);
-  let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
-  exprList = exprList.map(parseNestedExpression);
-  exprList = exprList.map(interpretShort);
-  exprList &&= clashOrStack(exprList);
-  let { selector, item, grandItem } = parseSelectorPipe(sel, clazz);
-  const layer = (grandItem ? "grandItems" : item ? "items" : "container") + (short.match(/^(\$|\|\$|\|\|\$)/) ? "Default" : "");
-  exprList = kebabcaseKeys(exprList);
-  const { atRules, mainRule: body } = extractAtRules(exprList);
-  checkProperty(body);
-  let obj = { [selector]: body };
-  if (media) obj = { [`@media ${media}`]: obj };
-  const cssText = bodyToTxt(`@layer ${layer}`, obj);
-  const main = { short, layer, media, selector, body, cssText };
-
-  const atRuleTexts = Object.entries(atRules).map(([rule, body]) => ({ rule, body, cssText: bodyToTxt(rule, body) }));
-  return [...atRuleTexts, main];
-}
-
-const clashOrStack = (function () {
+const csssToCss = (function () {
   const STACKABLE_PROPERTIES = {
     background: ", ",
     backgroundImage: ", ",
@@ -147,23 +83,117 @@ const clashOrStack = (function () {
     fontVariant: " ",
   };
 
-  return function clashOrStack(shortsI) {
-    const res = {};
-    for (const obj of shortsI) {
-      for (let [k, v] of Object.entries(obj)) {
-        if (v == null) continue;
-        if (!(k in res))
-          res[k] = v;
-        //todo if ::before and ::after or >* or other atRules clash, then add /*comments to separate them*/ as transitions and @font-face does.
-        else if (k in STACKABLE_PROPERTIES)
-          res[k] += (STACKABLE_PROPERTIES[k] + v);
-        else
-          throw new SyntaxError(`CSS$ clash: ${k} = ${res[k]}  AND = ${v}.`);
-      }
-    }
-    return res;
+  function csssToCss(obj) {
+    return Object.fromEntries(Object.entries(obj).map(([k, v]) => {
+      if (Array.isArray(v) && k in STACKABLE_PROPERTIES)
+        v = v.join(STACKABLE_PROPERTIES[k]);
+      if (k[0] === "@" || k[0] === ":" || k.endsWith("%"))
+        return [k, csssToCss(v)];
+      if (Array.isArray(v))
+        throw new SyntaxError(`Unstackable CSS property: ${k} = ${v.map(toString).toString()}.`);
+      if (k.startsWith("--"))
+        return [k, v];
+      k = k.replace(/[A-Z]/g, "-$&").toLowerCase();
+      if (!(k in NativeCss.all))
+        return;
+      if ((k in NativeCss.supported) && !CSS.supports(k, v))
+        throw new SyntaxError(`Invalid CSS value => ${k}: ${v}`);
+      return [k, v];
+    }).filter(Boolean));
   }
+
+  return function (selector, obj) {
+    const res = { [selector]: {} };
+    for (let [k, v] of Object.entries(obj)) {
+      if (k.match(/^(@|:)/)) { //split the main rule from the @|:root rules, 
+        if (Array.isArray(v))
+          throw new SyntaxError(`At-rules with the same key differ!!: ${k} = ${v.map(toString).toString()}.`);
+        res[k] = csssToCss(v);
+      } else
+        res[selector][k] = v;
+    }
+    res[selector] = csssToCss(res[selector]);
+    return res;
+  };
 })();
+
+function ObjectAssignStack(a, b) {
+  for (let [k, v] of Object.entries(b)) {
+    if (v == null) continue;
+    else if (Array.isArray(a[k]))
+      a[k].push(v);
+    else if (k in a && JSON.stringify(a[k]) != JSON.stringify(v))
+      a[k] = [a[k], v];
+    else
+      a[k] = v;
+  }
+  return a;
+}
+
+function bodyToTxt(name, body, depth = 0) {
+  const spaces = "  ".repeat(depth);
+  const spaces2 = "  ".repeat(depth + 1);
+  const body2 = Object.entries(body).map(([k, v]) =>
+    v instanceof Object ?
+      bodyToTxt(k, v, depth + 1) :
+      `${spaces2}${k}: ${v};`
+  ).join("\n");
+  return `${spaces}${name} {\n${body2}\n${spaces}}`;
+}
+
+function interpretShort(res, x) {
+  try {
+    const cb = SHORTS[x.name ?? x.text];
+    if (!cb) throw new ReferenceError(x.name ?? x.text);
+    if (cb instanceof Function && res.$ instanceof Function)
+      return ObjectAssignStack(res, res.$(cb, x));
+    if (cb instanceof Function && res.$)
+      return res.$.reduceRight((acc, fn) => ObjectAssignStack(acc, fn(cb, x)), res);
+    if (cb instanceof Function)
+      return ObjectAssignStack(res, cb(x));
+    //we don't run hofs on fixed values. as they cannot contain >-vectors. for now.
+    return ObjectAssignStack(res, cb);
+  } catch (e) {
+    // debugger;
+    //todo improve error message
+    throw e;
+  }
+}
+
+export function reverse(style) {
+  style = { ...style };
+  const parts = [];
+  for (const [key, fn] of Object.entries(REVERSES)) {
+    const res = fn(style);
+    if (res !== undefined) {
+      parts.push(res);
+      //todo remove the props from the style object?
+    }
+  }
+  return parts.join("");
+}
+
+const MAGICWORD = `$"'$`;
+export function parse(short) {
+  const clazz = "." + short.replaceAll(/[^a-zA-Z0-9_-]/g, "\\$&");
+  short = short.match(/(.*?)\!*$/)[1];
+  const { exp, media } = parseMediaQuery(short, MEDIA_WORDS);
+  let [sel, ...exprList] = exp.split(/\$(?=(?:[^"]*"[^"]*")*[^"]*$)(?=(?:[^']*'[^']*')*[^']*$)/);
+  exprList = exprList.map(parseNestedExpression);
+  let resCsss = exprList.reduce(interpretShort, {});
+  let { selector, item, grandItem } = parseSelectorPipe(sel, clazz);
+  const layer = (grandItem ? "grandItems" : item ? "items" : "container") + (short.match(/^(\$|\|\$|\|\|\$)/) ? "Default" : "");
+  const resCss = csssToCss(selector, resCsss);
+
+  let obj, body;
+  obj = body = { [selector]: resCss[selector] };
+  if (media) obj = { [`@media ${media}`]: obj };
+  const cssText = bodyToTxt(`@layer ${layer}`, obj);
+  const main = { short, layer, media, selector, body, cssText };
+
+  const atRuleTexts = Object.entries(resCss).filter(([k]) => k !== selector).map(([rule, body]) => ({ rule, body, cssText: bodyToTxt(rule, body) }));
+  return [...atRuleTexts, main];
+}
 
 function goRightComma(tokens, divider) {
   const args = [];
@@ -182,7 +212,7 @@ function goRightComma(tokens, divider) {
 }
 
 function operatorPriority(a, name, b) {
-  const PRI = { "**": 1, "*": 2, "/": 2, "+": 3, "-": 3, "??": 4, };
+  const PRI = { "**": 1, "*": 2, "/": 2, "+": 3, "-": 3, "??": 4, "<": 5, ">": 6 };
   const leftPri = PRI[a.name] ?? 0;
   const rightPri = PRI[name] ?? 10;
   if (leftPri <= rightPri)
@@ -436,10 +466,10 @@ const NUMBER = `(-?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)(?:(${TYPES.LENGTHS})|($
 const tokenize = (_ => {
   const QUOTE = /([`'"])(\\.|(?!\2).)*?\2/.source;
   const VAR = /--[a-zA-Z][a-zA-Z0-9_]*/.source;
-  const WORD = /[._a-zA-Z][._%a-zA-Z0-9+<-]*/.source;
+  const WORD = /[._a-zA-Z][._%a-zA-Z0-9+-]*/.source;
   const NUMBER_WORDS = /e|pi|infinity|NaN/.source; //todo not added yet.
   const COLOR = `#[a-zA-Z0-9_]+`;
-  const OPERATOR = /\?\?|\*\*|[*/+-]/.source;
+  const OPERATOR = /\?\?|\*\*|[><*/+-]/.source;
   const CPP = /[,()]/.source;
 
   const TOKENS = new RegExp([

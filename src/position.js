@@ -1,45 +1,37 @@
+import { CsssFunctions, CsssPrimitives, CssFunctions } from "./func.js";
+const { LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
+const { LogicalFourReverse } = CssFunctions;
+const { LengthPercentAuto } = CsssPrimitives;
 
-import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues } = FunctionTypes;
-const { WordToValue, LengthPercent } = ValueTypes;
-const ORIGINS = {
-  left: ["left"],
-  right: ["right"],
-  top: ["top"],
-  bottom: ["bottom"],
-  leftTop: ["left", "top"],
-  rightTop: ["right", "top"],
-  leftBottom: ["left", "bottom"],
-  rightBottom: ["right", "bottom"],
-  start: ["insetInlineStart", "insetBlockStart"],
-  end: ["insetInlineEnd", "insetBlockEnd"],
-  startEnd: ["insetInlineStart", "insetBlockEnd"],
-  endStart: ["insetInlineEnd", "insetBlockStart"],
-  startTop: ["insetInlineStart", "top"],
-  endTop: ["insetInlineEnd", "top"],
-  startBottom: ["insetInlineStart", "bottom"],
-  endBottom: ["insetInlineEnd", "bottom"],
-  leftStart: ["left", "insetBlockStart"],
-  rightStart: ["right", "insetBlockStart"],
-  leftEnd: ["left", "insetBlockEnd"],
-  rightEnd: ["right", "insetBlockEnd"],
+const CssPositions = {
+  absolute: LogicalFourReverse("inset", "absolute", v => v),
+  relative: LogicalFourReverse("inset", "relative", v => v),
+  fixed: LogicalFourReverse("inset", "fixed", v => v),
+  sticky: LogicalFourReverse("inset", "sticky", v => v),
 };
 
-function processPosition({ origin = ["left", "top"], one = 0, two = 0 }) {
-  return (origin.length == 1) ?
-    { [origin[0]]: one } :
-    { [origin[0]]: one, [origin[1]]: two };
-}
-
-const Position = FunctionBasedOnValueTypes({}, {
-  origin: WordToValue(ORIGINS),
-  one: LengthPercent,
-  two: LengthPercent,
-}, {}, processPosition);
-
 export default {
-  absolute: FunctionWithDefaultValues({ position: "absolute" }, Position),
-  relative: FunctionWithDefaultValues({ position: "relative" }, Position),
-  fixed: FunctionWithDefaultValues({ position: "fixed" }, Position),
-  sticky: FunctionWithDefaultValues({ position: "sticky" }, Position),
+  csss: {
+    absolute: FunctionWithDefaultValues({ position: "absolute" }, LogicalFour("absolute", "inset", LengthPercentAuto)),
+    relative: FunctionWithDefaultValues({ position: "relative" }, LogicalFour("relative", "inset", LengthPercentAuto)),
+    fixed: FunctionWithDefaultValues({ position: "fixed" }, LogicalFour("fixed", "inset", LengthPercentAuto)),
+    sticky: FunctionWithDefaultValues({ position: "sticky" }, LogicalFour("sticky", "inset", LengthPercentAuto)),
+  },
+  props: {
+    position: undefined,
+    inset: undefined,
+    top: undefined,
+    right: undefined,
+    bottom: undefined,
+    left: undefined,
+    insetInline: undefined,
+    insetBlock: undefined,
+    insetInlineStart: undefined,
+    insetBlockStart: undefined,
+    insetInlineEnd: undefined,
+    insetBlockEnd: undefined,
+  },
+  css: {
+    position: style => CssPositions[style.position]?.(style),
+  },
 };

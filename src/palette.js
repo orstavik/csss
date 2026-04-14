@@ -1,7 +1,8 @@
-import { ValueTypes, FunctionTypes } from "./func.js";
 import { fromLCH, fromHex6 } from "./Color.js";
-const { FunctionBasedOnValueTypes } = FunctionTypes;
-const { Name, ColorPrimitive } = ValueTypes;
+import { CsssPrimitives, CsssFunctions } from "./func.js";
+import { ColorPrimitive } from "./funcColor.js";
+const { SF2 } = CsssFunctions;
+const { Name } = CsssPrimitives;
 
 function makeColors(name, color) {
   const round = (num, places = 3) => Math.round(num * 10 ** places) / (10 ** places);
@@ -23,11 +24,7 @@ function makeColors(name, color) {
   };
 }
 
-const Palette = FunctionBasedOnValueTypes({}, {
-  name: Name,
-  main: ColorPrimitive,
-  on: ColorPrimitive,
-}, {}, ({ name, main, on }) => ({
+const Palette = SF2("Palette/3", [Name, ColorPrimitive, ColorPrimitive], (_, [name, main, on]) => ({
   ...makeColors(`--color-${name}`, main),
   ...makeColors(`--color-on${name[0].toUpperCase() + name.slice(1)}`, on)
 }));

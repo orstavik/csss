@@ -1,53 +1,59 @@
-import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, SingleArgumentFunction } = FunctionTypes;
-const { Name, NumberInterpreter, Time } = ValueTypes;
+import { CsssPrimitives, BadArgument } from "./func.js";
+const { Name, Time } = CsssPrimitives;
+import Easing from "./funcEasing.js";
+const { easingFunction } = Easing.csss;
 
-import * as CURVES from "./Curves.js";
+const AllowDiscrete = a => a.text === "allowDiscrete" ? "allow-discrete" : undefined;
+const TransitionProperty = a => Name(a)?.replaceAll(/[A-Z]/g, m => `-${m.toLowerCase()}`);
 
-function cubicBezierFunction(ar) {
-  if (ar.length != 4) throw new SyntaxError(`cubic-bezier timing function requires 4 numbers, got ${ar.length}`);
-  return `cubic-bezier(${ar.join(",")})`;
-}
+const transition = ({ args }) => {
+  let i = 0;
+  const ease = easingFunction(args[i]);
+  if (ease) i++;
+  const duration = (i < args.length) && Time(args[i]);
+  if (duration) i++;
+  const delay = (i < args.length) && Time(args[i]);
+  if (delay) i++;
+  const allowDiscrete = (i < args.length) && AllowDiscrete(args[i]);
+  if (allowDiscrete) i++;
 
-const transition = FunctionBasedOnValueTypes({
-  ease: "ease",
-  easeIn: "ease-in",
-  easeOut: "ease-out",
-  easeInOut: "ease-in-out",
-  linear: "linear",
-  ...CURVES,
-  steps: SingleArgumentFunction(NumberInterpreter, (n, v) => `steps(${v})`),
-  stepsEnd: SingleArgumentFunction(NumberInterpreter, (n, v) => `steps(${v})`),
-  stepsStart: SingleArgumentFunction(NumberInterpreter, (n, v) => `steps(${v}, start)`),
-  stepsBoth: SingleArgumentFunction(NumberInterpreter, (n, v) => `steps(${v}, jump-both)`),
-  stepsNone: SingleArgumentFunction(NumberInterpreter, (n, v) => `steps(${v}, jump-none)`),
-  allowDiscrete: "allow-discrete",
-}, {
-  duration: Time,
-  delay: Time,
-}, {
-  cubicBezier: NumberInterpreter,
-  properties: Name,
-},
-  ({ properties, duration, delay, allowDiscrete, ...timers }) => {
-    if (Object.keys(timers).length > 1) throw new SyntaxError(`more than one transition timing function: ${Object.keys(timers).join(" AND ")}`);
-    timers.cubicBezier &&= cubicBezierFunction(timers.cubicBezier);
-    let [timerName, timerValue] = Object.entries(timers)[0] ?? [];
-    const res = {};
-    if (timerName in CURVES) {
-      res[`:root /*--transition-${timerName}*/`] = { [`--transition-${timerName}`]: timerValue };
-      timerValue = `var(--transition-${timerName})`;
-    }
-    const tail = [timerValue, duration, delay, allowDiscrete].filter(Boolean).join(" ");
-    res.transition = !properties ? tail : properties.map(p => `${p} ${tail}`).join(", ");
-    return res;
-  });
+  const properties = args.slice(i).map(TransitionProperty);
+  for (let j = 0; j < properties.length; j++)
+    if (properties[j] == null)
+      throw BadArgument("transition", args, i + j);
+  if (properties.includes("all"))
+    properties.length = 0;
+
+  const res = ease?.[1] ?? {};
+  const tail = [ease?.[0], duration, delay, allowDiscrete].filter(Boolean).join(" ");
+  res.transition = !properties.length ? tail : properties.map(p => `${p} ${tail}`).join(", ");
+  return res;
+};
 
 export default {
-  transitionProperty: undefined,
-  transitionDuration: undefined,
-  transitionTimingFunction: undefined,
-  transitionDelay: undefined,
-  transitionSkipInk: undefined,
-  transition,
+  props: {
+    transitionProperty: undefined,
+    transitionDuration: undefined,
+    transitionTimingFunction: undefined,
+    transitionDelay: undefined,
+    transitionSkipInk: undefined,
+  },
+  csss: {
+    transition,
+  },
+  css: {
+    transition: style => {
+      if (!style.transition) return undefined;
+      // transitions are tricky to reverse correctly because properties could be grouped or not.
+      // let's do a basic reverse by joining the commas as separate transition() calls,
+      // or try to recreate transition(ease, dur, delay, prop).
+      // actually, just putting it as transition(prop, dur, ease) is not perfectly matching original csss
+      // csss signature is ease, dur, delay, allowDiscrete, props...
+      // CSS output is `prop ease dur delay` comma separated.
+      // Let's implement a simple reverse by comma replacing.
+      let transitions = style.transition.split(/,(?![^(]*\))/);
+      transitions = transitions.map(t => t.trim().split(/\s+/).join(","));
+      return `transition(${transitions.join("), transition(")})`;
+    }
+  }
 };

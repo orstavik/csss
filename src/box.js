@@ -1,118 +1,133 @@
-import { ValueTypes, FunctionTypes, Interpreters } from "./func.js";
-const { basic: isBasic } = Interpreters;
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, LogicalFour } = FunctionTypes;
-const { LengthPercent } = ValueTypes;
+import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
+const { SingleTable, TypeBasedFunction, LogicalFour, SizeFunction, FunctionWithDefaultValues } = CsssFunctions;
+const { LengthPercent, LengthPercentUnset } = CsssPrimitives;
+const { LogicalFourReverse } = CssFunctions;
 
-function toSize(NAME, { args }) {
-  if (args.length != 1 && args.length != 3)
-    throw new SyntaxError(`$${NAME}() accepts only 1 or 3 arguments, got ${args.length}.`);
-  args = args.map(a =>
-    a.text == "_" ? "unset" :
-      isBasic(a).text
-  );
-  if (args.length === 1)
-    return { [NAME]: args[0] };
-  const NAME2 = NAME[0].toUpperCase() + NAME.slice(1);
-  return {
-    ["min" + NAME2]: args[0],
-    [NAME]: args[1],
-    ["max" + NAME2]: args[2]
-  };
-}
+const scrollPaddingProps = {
+  scrollPadding: undefined,
+  scrollPaddingBlock: undefined,
+  scrollPaddingInline: undefined,
+  scrollPaddingBlockStart: undefined,
+  scrollPaddingInlineStart: undefined,
+  scrollPaddingBlockEnd: undefined,
+  scrollPaddingInlineEnd: undefined,
+  scrollPaddingTop: undefined,
+  scrollPaddingRight: undefined,
+  scrollPaddingBottom: undefined,
+  scrollPaddingLeft: undefined,
+};
 
-function size({ args }) {
-  if (args.length == 1)
-    return toSize("inlineSize", { args });
-  if (args.length == 2)
-    return {
-      ...toSize("inlineSize", { args: [args[0]] }),
-      ...toSize("blockSize", { args: [args[1]] })
-    };
-  if (args.length == 6)
-    return {
-      ...toSize("inlineSize", { args: args.slice(0, 3) }),
-      ...toSize("blockSize", { args: args.slice(3) })
-    };
-  throw new SyntaxError(`$size() accepts only 1, 2 or 6 arguments, got ${args.length}.`);
-}
+const props = {
+  inlineSize: undefined,
+  blockSize: undefined,
+  minInlineSize: undefined,
+  maxInlineSize: undefined,
+  minBlockSize: undefined,
+  maxBlockSize: undefined,
+  overflow: undefined,
+  overflowX: undefined,
+  overflowY: undefined,
+  ...scrollPaddingProps,
+  scrollSnapType: undefined,
+};
 
-const OVERFLOWS = (_ => {
-  const SETTINGS = {
-    Visible: { overflow: "visible" },
-    Hidden: { overflow: "hidden" },
-    Clip: { overflow: "clip" },
-    Auto: { overflow: "auto" },
-    Scroll: { overflow: "scroll" },
-    Snap: { overflow: "auto", scrollSnapType: "both" },
-    SnapMandatory: { overflow: "auto", scrollSnapType: "both mandatory" },
-    ScrollSnap: { overflow: "scroll", scrollSnapType: "both" },
-    ScrollSnapMandatory: { overflow: "scroll", scrollSnapType: "both mandatory" },
-  };
-  const res = {};
-  for (let [A, a] of Object.entries(SETTINGS)) {
-    res["overflow" + A] = a;
-    for (let [B, b] of Object.entries(SETTINGS)) {
-      if (A == B) continue;
-      res["overflow" + A + B] = { overflow: a.overflow + " " + b.overflow };
-      if (a.scrollSnapType && b.scrollSnapType)
-        res["overflow" + A + B].scrollSnapType = "both" + (A.endsWith("Mandatory") || B.endsWith("Mandatory") ? " mandatory" : "");
-      else if (a.scrollSnapType)
-        res["overflow" + A + B].scrollSnapType = a.scrollSnapType.replace("both", "block")
-      else if (b.scrollSnapType)
-        res["overflow" + A + B].scrollSnapType = b.scrollSnapType.replace("both", "inline");
-    }
+const overflow = {
+  auto: "auto",
+  clip: "clip",
+  hidden: "hidden",
+  scroll: "scroll",
+  visible: "visible",
+  autoClip: "auto clip",
+  autoHidden: "auto hidden",
+  autoScroll: "auto scroll",
+  autoVisible: "auto visible",
+  clipAuto: "clip auto",
+  clipHidden: "clip hidden",
+  clipScroll: "clip scroll",
+  clipVisible: "clip visible",
+  hiddenAuto: "hidden auto",
+  hiddenClip: "hidden clip",
+  hiddenScroll: "hidden scroll",
+  hiddenVisible: "hidden visible",
+  scrollAuto: "scroll auto",
+  scrollClip: "scroll clip",
+  scrollHidden: "scroll hidden",
+  scrollVisible: "scroll visible",
+  visibleAuto: "visible auto",
+  visibleClip: "visible clip",
+  visibleHidden: "visible hidden",
+  visibleScroll: "visible scroll",
+};
+
+const scrollSnapType = {
+  snap: "both",
+  snapNone: "none",
+  snapBlock: "block",
+  snapInline: "inline",
+  snapMandatory: "both mandatory",
+  snapBlockMandatory: "block mandatory",
+  snapInlineMandatory: "inline mandatory",
+};
+
+const DefaultBox = {
+  blockSize: "unset",
+  minBlockSize: "unset",
+  maxBlockSize: "unset",
+  inlineSize: "unset",
+  minInlineSize: "unset",
+  maxInlineSize: "unset",
+  overflow: "unset",
+  scrollPadding: "unset",
+  scrollSnapType: "unset",
+};
+
+const box = TypeBasedFunction(
+  SizeFunction("inline", "<", LengthPercentUnset),
+  SizeFunction("block", "<", LengthPercentUnset),
+  SingleTable("overflow", overflow),
+  LogicalFour("scrollPadding", "scrollPadding", LengthPercent),
+  SingleTable("scrollSnapType", scrollSnapType)
+);
+
+const Box = FunctionWithDefaultValues(DefaultBox, box);
+
+const overflowReverse = Object.fromEntries(Object.entries(overflow).map(([k, v]) => [v, k]));
+const scrollSnapTypeReverse = Object.fromEntries(Object.entries(scrollSnapType).map(([k, v]) => [v, k]));
+const scrollPadding = LogicalFourReverse("scroll-padding", "scrollPadding", v => v, "_");
+const ReverseSizeFunction = prefix => {
+  const min = `min-${prefix}-size`, normal = `${prefix}-size`, max = `max-${prefix}-size`;
+  return ({ [min]: vMin, [normal]: vNormal, [max]: vMax }) => {
+    if (vMax == "unset") vMax = "_";
+    if (vMin == "unset") vMin = "_";
+    if (vNormal == "unset") vNormal = "_";
+    return vMax ? `${vMin ?? "_"}<${vNormal ?? "_"}<${vMax}` :
+      vMin ? `${vMin}<${vNormal ?? "_"}` :
+        vNormal;
   }
-  return res;
-})();
-
-const BOX = {
-  inlineSize: toSize.bind(null, "inlineSize"),
-  blockSize: toSize.bind(null, "blockSize"),
-  size,
-  scrollPadding: LogicalFour("scroll-padding", LengthPercent),
-  ...OVERFLOWS,
 };
-
-const BOX_ITEM = {
-  scrollMargin: LogicalFour("scroll-margin", LengthPercent),
-  snapStart: { scrollSnapAlign: "start" },
-  snapStartCenter: { scrollSnapAlign: "start center" },
-  snapStartEnd: { scrollSnapAlign: "start end" },
-  snapCenter: { scrollSnapAlign: "center" },
-  snapCenterStart: { scrollSnapAlign: "center start" },
-  snapCenterEnd: { scrollSnapAlign: "center end" },
-  snapEnd: { scrollSnapAlign: "end" },
-  snapEndStart: { scrollSnapAlign: "end start" },
-  snapEndCenter: { scrollSnapAlign: "end center" },
-  noSnap: { scrollSnapAlign: "none" },
-  snapStop: { scrollSnapStop: "always" },
-};
-
-const DEFAULTS = {
-  Box: {
-    inlineSize: "unset",
-    blockSize: "unset",
-    minInlineSize: "unset",
-    maxInlineSize: "unset",
-    minBlockSize: "unset",
-    maxBlockSize: "unset",
-    overflow: "unset",
-    scrollPadding: "unset",
-    scrollSnapType: "unset",
-  },
-  BoxItem: {
-    scrollMargin: "unset",
-    scrollSnapAlign: "unset",
-    scrollSnapStop: "unset",
-  },
-};
-
-const box = FunctionBasedOnValueTypes(BOX, {}, {}, res => Object.assign({}, ...Object.values(res)));
-const boxItem = FunctionBasedOnValueTypes(BOX_ITEM, {}, {}, res => Object.assign({}, ...Object.values(res)));
+const blockSizeReverse = ReverseSizeFunction("block");
+const inlineSizeReverse = ReverseSizeFunction("inline");
 
 export default {
-  box,
-  boxItem,
-  Box: FunctionWithDefaultValues(DEFAULTS.Box, box),
-  BoxItem: FunctionWithDefaultValues(DEFAULTS.BoxItem, boxItem),
+  csss: {
+    box,
+    Box
+  },
+  props,
+  css: {
+    box: style => {
+      let x, y;
+      let o = overflowReverse[(x = style["overflow-x"] ?? "auto") === (y = style["overflow-y"] ?? "auto") ? x : `${x} ${y}`];
+      if (o === "auto") o = undefined;
+      let inline = inlineSizeReverse(style);
+      let block = blockSizeReverse(style);
+      const snapType = scrollSnapTypeReverse[style["scroll-snap-type"]];
+      const padding = scrollPadding(style);
+      const bigB = o && inline && block && snapType && padding;
+      if (block === "_<_<_") block = undefined;
+      if (inline === "_<_<_") inline = block && "_";
+      const res = [inline, block, o, snapType, padding].filter(Boolean);
+      return !res.length ? undefined : `$${bigB ? "B" : "b"}ox(${res.join(",")})`;
+    },
+  }
 };

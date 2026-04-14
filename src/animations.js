@@ -1,212 +1,79 @@
-import { ValueTypes, FunctionTypes } from "./func.js";
-const { NumberInterpreter, Time } = ValueTypes;
-const { FunctionBasedOnValueTypes } = FunctionTypes;
-import * as CURVES from "./Curves.js";
+import { matchArgsWithInterpreters, CsssFunctions, CsssPrimitives, flatVector } from "./func.js";
+const { CssValuesToCsssTable } = CsssFunctions;
+const { MsOrNumber, Time, PositiveInteger } = CsssPrimitives;
+const IterationCount = a => a.text === 'infinite' ? 'infinite' : PositiveInteger(a);
+import Easing from "./funcEasing.js";
 
-const DIRECTION_WORDS = {
-  normal: "normal",
-  reverse: "reverse",
-  alternate: "alternate",
-  alternateReverse: "alternate-reverse",
-};
+const EasingFunction = Easing.csss.easingFunction;
+const BehaviorWords = CssValuesToCsssTable("alternate|reverse|alternate-reverse");
+const Behavior = a => BehaviorWords[a.text];
+const FillModeWords = CssValuesToCsssTable("forwards|backwards|both");
+const FillMode = a => FillModeWords[a.text];
+const TimeVector = x => (x = flatVector(">", MsOrNumber, x))?.length === 1 ? [0, x[0]] : x;
 
-const FILL_MODE_WORDS = {
-  forwards: "forwards",
-  backwards: "backwards",
-  both: "both",
-  none: "none",
-};
+function extract(x, i) {
+  if (x.name === ">") return extract(x.args[i % x.args.length], i);
+  const args = x.args?.map(a => extract(a, i));
+  return { ...x, args };
+}
 
-const PLAY_STATE_WORDS = {
-  running: "running",
-  paused: "paused",
-};
+function makeName(obj) {
+  let res = ["a"];
+  for (let [k, v] of Object.entries(obj)) {
+    res.push(parseFloat(k));
+    for (let [kk, vv] of Object.entries(v)) {
+      res.push(kk);
+      res.push(vv.replaceAll?.(/[^a-z0-9_-]/ig, m => !m.trim() ? "_" : "\\" + m) ?? vv);
+    }
+  }
+  return res.join("_");
+}
 
-const EASingleArgumentFunctionG_WORDS = {
-  ease: "ease",
-  linear: "linear",
-  easeIn: "ease-in",
-  easeOut: "ease-out",
-  easeInOut: "ease-in-out",
-  ...CURVES,
-};
-
-const ANIMS = {
-  animation: FunctionBasedOnValueTypes({
-    infinite: "infinite",
-    ...EASingleArgumentFunctionG_WORDS,
-    ...DIRECTION_WORDS,
-    ...FILL_MODE_WORDS,
-    ...PLAY_STATE_WORDS,
-  }, {
-    duration: Time,
-    delay: Time,
-    iterationCount: NumberInterpreter,
-  }, {
-    cubicBezier: NumberInterpreter,
-    steps: NumberInterpreter,
-  }, (res) => {
-    const settings = {};
-    if (res.duration) settings.duration = res.duration;
-    if (res.delay) settings.delay = res.delay;
-    if (res.iterationCount) settings.iterationCount = res.iterationCount;
-    if (res.infinite) settings.iterationCount = "infinite";
-    // Handle direction
-    for (let key in DIRECTION_WORDS) {
-      if (res[key]) {
-        settings.direction = DIRECTION_WORDS[key];
-        break;
+//ctx is the existing results, CB is the next $short, X is the full expr for that short.
+function animationHof({ animation, keyFrames }, CB, X) {
+  const flatArgs = keyFrames.map((num, i) => extract(X, i));
+  const resAr = flatArgs.map(CB);
+  const base = resAr.reduce((acc, obj) => { for (let k in acc) if (acc[k] !== obj[k]) delete acc[k]; return acc; }, {});
+  const keyFrameBodies = resAr.map(obj => { obj = { ...obj }; for (let k in base) delete obj[k]; return obj; });
+  const keyFrameBodiesStrings = keyFrameBodies.map(JSON.stringify);
+  const done = new Set();
+  const res = {};
+  for (let i = 0; i < keyFrames.length; i++) {
+    if (done.has(i)) continue;
+    done.add(i);
+    let key = keyFrames[i] + "%";
+    for (let j = i + 1; j < keyFrames.length; j++) {
+      if (keyFrameBodiesStrings[i] === keyFrameBodiesStrings[j]) {
+        key += ", " + keyFrames[j] + "%";
+        done.add(j);
       }
     }
-    // Handle fillMode
-    for (let key in FILL_MODE_WORDS) {
-      if (res[key]) {
-        settings.fillMode = FILL_MODE_WORDS[key];
-        break;
-      }
-    }
+    res[key] = keyFrameBodies[i];
+  }
+  const name = makeName(res);
+  return { ...base, ["@keyFrames " + name]: res, animation: animation + " " + name };
+}
 
-    // Handle playState
-    for (let key in PLAY_STATE_WORDS) {
-      if (res[key]) {
-        settings.playState = PLAY_STATE_WORDS[key];
-        break;
-      }
-    }
-
-    // Handle easing
-    for (let key in EASingleArgumentFunctionG_WORDS) {
-      if (res[key]) {
-        settings.easing = EASingleArgumentFunctionG_WORDS[key];
-        break;
-      }
-    }
-    if (res.cubicBezier) {
-      settings.easing = { name: "cubicBezier", args: res.cubicBezier };
-    }
-    if (res.steps) {
-      settings.easing = { name: "steps", args: res.steps };
-    }
-    return { settings };
-  }),
-  to: function ({ args }) {
-    return { settings: {}, stepKey: "100%", nextArgs: args };
-  },
-  from: function ({ args }) {
-    return { settings: {}, stepKey: "0%", nextArgs: args };
-  },
-  go: function ({ args }) {
-    // go(50%) means keyframe at 50%
-    const percent = args[0]?.text || "50%";
-    return { settings: {}, stepKey: percent, nextArgs: args.slice(1) };
-  },
-  infiniteAlternate: { settings: { iterationCount: "infinite", direction: "alternate" } },
-  infinite: { settings: { iterationCount: "infinite" } },
-  alternate: { settings: { direction: "alternate" } },
-  reverse: { settings: { direction: "reverse" } },
-  forwards: { settings: { fillMode: "forwards" } },
-  backwards: { settings: { fillMode: "backwards" } },
-  both: { settings: { fillMode: "both" } },
-};
-
-//TODO not implemented/supported, neither here nor in the Parser.js
-// **csssx:** $translateX(100px,to(*3))
-// **cssx:**
-// ```css
-// @keyframes translateX-to-\*3 {
-//   100% {
-//     transform: translateX(300px);
-//   }
-// }
-
-// @layer containerDefault {
-//   .\$translateX\(100px\,to\(\*3\)\) {
-//     transform: translateX(100px);
-//     animation: translateX-to-\*3 1s;
-//   }
-// }
-// ```
-// function isRelativeCalc(arg) {
-//   return arg?.kind === "EXP" && arg.name in Maths && arg.args?.length > 0;
-// }
-// function processRelCalc(relCalcs, argsIn) {
-//  for each relCalc in relCalcs
-//  find out if relCalc is a relative calc
-//  if(!(relCalc.kind == "EXP" && relCalc.args.length > 1 && relCalc.args[0] == null))
-//    return undefined;
-//  run the relCalc against all the incoming argsIn
-//  here we can either fail if not all argsIn are computable, 
-//  or we can just filter away the argsIn that are not computable.
-//  const argsOut = argsIn.map(a => /*compute(relCalc.name, a, relCalc.args[1])?.text*/);
-//  then return the resulting argsIn.map(arg => arg.text);
-//         if (nextArgs && isRelativeCalc(nextArgs[0]))
-//         nextArgs = args2.map(baseArg => {
-//           const relCalc = nextArgs.find(na => isRelativeCalc(na));
-//           return relCalc ? processRelCalc(relCalc, baseArg) : baseArg;
-//         });
-// }
-
-export function animationHo(cb) {
-  return ({ name, args }) => {
-    // Find where animation functions start (check both .name for EXP and .text for WORD)
-    const i = args.findIndex(a => (a.name in ANIMS) || (a.text in ANIMS));
-    if (i === -1)
-      return cb({ name, args });
-
-    const args2 = args.slice(0, i);
-    const anims = args.slice(i);
-
-    // Generate unique animation name based on property name and content
-    //todo we need to have the expression get the .text property too..
-    const animContent = [name, ...anims.map(({ text, name, args }) => text ?? (name + args.map(a => a.text).join(",")))].join("-");
-    const animName = animContent.replaceAll(/[^a-zA-Z0-9-_]/g, "\\$&").substring(0, 50);
-
-    const result = cb({ name, args: args2 });
-    const settings = {};
-    const keyframes = {};
-    // Process each animation step
-    for (let anim of anims) {
-      let extraSettings, stepKey, nextArgs;
-      if (anim.text in ANIMS)
-        ({ settings: extraSettings, stepKey, nextArgs } = ANIMS[anim.text]);
-      else if (anim.name in ANIMS)
-        ({ settings: extraSettings, stepKey, nextArgs } = ANIMS[anim.name](anim));
-      else
-        throw new SyntaxError(`Not a valid animation argument: ${animName}. Remember, all animation arguments must come after other arguments for every property.`);
-
-      // nextArgs = processRelCalc(nextArgs[0], nextArgs);
-      if (nextArgs)
-        keyframes[stepKey] = cb({ name, args: nextArgs });
-      if (extraSettings)
-        Object.assign(settings, extraSettings);
-    }
-
-    // Build animation CSS property
-    const animationParts = [animName];
-    // Add default duration if not specified
-    animationParts.push(settings.duration || "2s");
-    if (settings.easing) {
-      if (typeof settings.easing === "string") {
-        animationParts.push(settings.easing);
-      } else if (settings.easing.name === "cubicBezier") {
-        animationParts.push(`cubic-bezier(${settings.easing.args.map(NumberInterpreter).join(",")})`);
-      } else if (settings.easing.name === "steps") {
-        animationParts.push(`steps(${settings.easing.args.map(NumberInterpreter).join(",")})`);
-      }
-    }
-    if (settings.delay) animationParts.push(settings.delay);
-    if (settings.iterationCount) animationParts.push(settings.iterationCount);
-    if (settings.direction) animationParts.push(settings.direction);
-    if (settings.fillMode) animationParts.push(settings.fillMode);
-    if (settings.playState) animationParts.push(settings.playState);
-
-    result.animation = animationParts.join(" ");
-    result[`@keyframes ${animName}`] = keyframes;
-    return result;
+function animate({ name, args }) {
+  let [ease, behavior, fillMode, count, delay, times] = matchArgsWithInterpreters("animate", 0, args, [EasingFunction, Behavior, FillMode, IterationCount, Time, TimeVector]);
+  if (delay == null && times == null)
+    times = [0, 300]; //todo here we are adding a default animation length.
+  if (delay != null && times == null) {
+    times = [0, delay];
+    delay = undefined;
+  }
+  if (delay != null) delay += "ms";
+  const duration = times.reduce((a, b) => a + b, 0);
+  return {
+    $: animationHof.bind(null, {
+      animation: [ease?.[0], behavior, duration + "ms", delay, fillMode, count].filter(Boolean).join(" "),
+      keyFrames: times.map(a => Math.floor(a * 100 / duration)),
+    }),
+    ...(ease?.[1] ?? {}),
   };
 }
 
-export default {
+const props = {
   animation: undefined,
   animationName: undefined,
   animationDuration: undefined,
@@ -216,4 +83,20 @@ export default {
   animationDirection: undefined,
   animationFillMode: undefined,
   animationPlayState: undefined,
+};
+
+export default {
+  csss: {
+    animate,
+  },
+  props,
+  css: {
+    animate: style => {
+      // Reversing animation involves checking multiple properties
+      if (!style.animation) return undefined;
+      // Because `animate` in csss creates @keyFrames, it's very hard to perfectly reverse it just from the `animation` property.
+      // We will provide a best effort fallback for the animation property if it doesn't contain generated names, or just ignore.
+      return undefined; // actually, we should return undefined if we can't reliably reverse.
+    }
+  }
 };

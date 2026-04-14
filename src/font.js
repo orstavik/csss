@@ -1,119 +1,88 @@
-import { ValueTypes, FunctionTypes } from "./func.js";
-const { FunctionBasedOnValueTypes, FunctionWithDefaultValues, SequentialFunction, SingleArgumentFunction, ParseFirstThenRest } = FunctionTypes;
-const { Angle, Length, Name, Fraction, Integer, Quote, Percent, Word, Basic, NameUnset, AbsoluteUrl } = ValueTypes;
+import { CsssPrimitives, CsssFunctions, BadArgument } from "./func.js";
+const { Angle, Length, Name, Integer, Quote, Percent, Word, NumberInterpreter, AbsoluteUrl } = CsssPrimitives;
+const { FunctionType, SF2, CssValuesToCsssTable } = CsssFunctions;
 
-const FontDefaults = {
-  fontFamily: "unset",
-  fontSize: "unset",
-  fontStyle: "unset",
-  fontWeight: "unset",
-  fontSizeAdjust: "unset",
-  letterSpacing: "unset",
-  textTransform: "unset",
-  fontWidth: "unset",
-  fontStretch: "unset",
-  fontVariantCaps: "unset",
-  fontSynthesis: "unset",
-  fontFeatureSettings: "unset",
-  fontVariationSettings: "unset",
-  WebkitFontSmoothing: "unset",
-  MozOsxFontSmoothing: "unset",
-  fontKerning: "unset",
-  hyphens: "unset",
+// http://dbushell.com/2024/11/05/webkit-font-smoothing/
+// this should be added by default, same as padding:0, margin: 0, box-sizing: border-box, etc.
+// :root { -webkit-font-smoothing: antialiased; }
+
+// note: font-width is not supported yet.
+
+const props = {
+  fontFamily: undefined,
+  fontSize: undefined,
+  fontStyle: undefined,
+  fontWeight: undefined,
+  fontSizeAdjust: undefined,
+  letterSpacing: undefined,
+  textTransform: undefined,
+  fontStretch: undefined,
+  fontVariantCaps: undefined,
+  fontSynthesis: undefined,
+  fontFeatureSettings: undefined,
+  fontVariationSettings: undefined,
+  fontKerning: undefined,
 };
+
+const SynthesisTable = CssValuesToCsssTable("none|style|weight|small-caps|position");
+const fontSynthesis = SF2("synthesis/1-4", [a => SynthesisTable[a.text]], (_, ar) => {
+  if (ar.find((a, i) => ar.lastIndexOf(a) !== i))
+    throw BadArgument("synthesis", ar, i, "Duplicate synthesis type.");
+  return ar.map(a => SynthesisTable[a.text]).join(" ");
+});
 
 /**
  * TextTransform is a semi inherited css property (inherits over inline elements, but not block elements).
  * The same way as shifting font family or style, caption is a family-ish trait. Would be normal to consider part of font umbrella.
- * Most of the text properties are either layout (text-align, line-height, word-spacing, hyphenation).
  * text-decoration is standalone. text-shadow is standalone (in same space as colors).
- * ??candidate for font is hyphenation. Where we break the words, that could be more a font characteristic than a layout characteristic??
  */
-const SYNTHESIS_WORDS = (function () {
-  function* permutations(arr, remainder) {
-    for (let i = 0; i < arr.length; i++) {
-      const x = arr[i];
-      const rest = arr.slice(0, i).concat(arr.slice(i + 1));
-      if (remainder == 1)
-        yield [x];
-      else
-        for (let p of permutations(rest, remainder - 1))
-          yield [x, ...p];
-    }
-  }
-  const res = {};
-  const synths = ["Style", "Weight", "SmallCaps", "Position"];
-  for (let k = 1; k <= synths.length - 1; k++)
-    for (const combo of permutations(synths, k))
-      res["no" + combo.join("") + "Synthesis"] = synths.filter(k => !combo.includes(k)).join(" ").replace("Caps", "-caps").toLowerCase();
-  res.noSynthesis = { fontSynthesis: "none" };
-  return res;
-})();
 
-const FONT_WORDS = {
-  ...SYNTHESIS_WORDS,
-  uppercase: { textTransform: "uppercase" },
-  lowercase: { textTransform: "lowercase" },
-  capitalize: { textTransform: "capitalize" },
-  fullWidth: { textTransform: "full-width" },
-  noTransform: { textTransform: "none" },
+const Transforms = CssValuesToCsssTable("uppercase|lowercase|capitalize|full-width");
+Transforms.transformNone = "none";
+const textTransform = a => Transforms[a.text];
 
-  bold: { fontWeight: "bold" },
-  b: { fontWeight: "bold" },
-  bolder: { fontWeight: "bolder" },
-  lighter: { fontWeight: "lighter" },
-  noWeight: { fontWeight: "normal" },
+const Weights = CssValuesToCsssTable("bold|bolder|lighter");
+Weights.weightNormal = "normal";
+const fontWeight = a => Weights[a.text] ?? (((a = Integer(a)) && a >= 1 && a <= 1000 && a) || undefined);
 
-  italic: { fontStyle: "italic" },
-  ital: { fontStyle: "italic" },
-  i: { fontStyle: "italic" },
-  noStyle: { fontStyle: "normal" },
+const Styles = CssValuesToCsssTable("italic");
+Styles.styleNormal = "normal";
+const fontStyle = a => Styles[a.text] ?? ((a = Angle(a)) && `oblique ${a}`);
 
-  smallCaps: { fontVariantCaps: "small-caps" },
-  allSmallCaps: { fontVariantCaps: "all-small-caps" },
-  petiteCaps: { fontVariantCaps: "petite-caps" },
-  allPetiteCaps: { fontVariantCaps: "all-petite-caps" },
-  unicase: { fontVariantCaps: "unicase" },
-  titlingCaps: { fontVariantCaps: "titling-caps" },
-  noVariant: { fontVariantCaps: "normal" },
+const VariantCaps = CssValuesToCsssTable("small-caps|all-small-caps|petite-caps|all-petite-caps|unicase|titling-caps");
+const VariantNumeric = CssValuesToCsssTable("ordinal|slashed-zero|lining-nums|oldstyle-nums|proportional-nums|tabular-nums");
+const VariantEastAsian = CssValuesToCsssTable("jis78|jis83|jis90|jis04|simplified|traditional");
+const VariantEmoji = CssValuesToCsssTable("emoji|text|unicode");
+const VariantAlternate = CssValuesToCsssTable("historical-forms");//|stylistic(set)?\\d+|styleset\\d+|character-variant\\d+");
+const VariantLigatures = CssValuesToCsssTable("common-ligatures|no-common-ligatures|discretionary-ligatures|no-discretionary-ligatures|historical-ligatures|no-historical-ligatures|contextual|no-contextual");
+const VariantPosition = CssValuesToCsssTable("sub|super");
+const fontVariant = SF2("variant/1-9", [({ text }) => VariantCaps[text] ?? VariantNumeric[text] ?? VariantEastAsian[text] ?? VariantEmoji[text] ?? VariantAlternate[text] ?? VariantLigatures[text] ?? VariantPosition[text]], (name, args) => args.map(a => a.text).join(" "));
 
-  condensed: { fontWidth: "condensed" },
-  expanded: { fontWidth: "expanded" },
-  semiCondensed: { fontWidth: "semi-condensed" },
-  semiExpanded: { fontWidth: "semi-expanded" },
-  extraCondensed: { fontWidth: "extra-condensed" },
-  extraExpanded: { fontWidth: "extra-expanded" },
-  ultraCondensed: { fontWidth: "ultra-condensed" },
-  ultraExpanded: { fontWidth: "ultra-expanded" },
-  noStretch: { fontWidth: "normal" },
+const Stretches = CssValuesToCsssTable("condensed|expanded|semi-condensed|semi-expanded|extra-condensed|extra-expanded|ultra-condensed|ultra-expanded");
+const Stretch = FunctionType("width", a => a.text === "normal" ? "normal" : Percent(a));
+const fontStretch = a => Stretches[a.text] ?? Stretch(a);
 
-  kerning: { fontKerning: "normal" },
-  noKerning: { fontKerning: "none" },
+const Kernings = CssValuesToCsssTable("auto|normal|none");
+const fontKerning = SF2("kerning/1", [a => Kernings[a.text]], (_, args) => args[0]);
 
-  hyphens: { hyphens: "auto" },
-  shy: { hyphens: "manual" },
-  noHyphens: { hyphens: "none" },
+const Sizes = CssValuesToCsssTable("larger|smaller|xx-small|x-small|small|medium|large|x-large|xx-large|xxx-large");
+const fontSize = a => Sizes[a.text] ?? Length(a);
 
-  normal: { fontStyle: "normal", fontWeight: "normal" },
-  smooth: { WebkitFontSmoothing: "auto", MozOsxFontSmoothing: "auto" }, //todo this is wrong? should be "antialiased" for WebkitFontSmoothing and "grayscale" for MozOsxFontSmoothing??
+const letterSpacing = FunctionType("spacing", Length);
 
-  larger: { fontSize: "larger" },
-  smaller: { fontSize: "smaller" },
-  xxs: { fontSize: "xx-small" },
-  xs: { fontSize: "x-small" },
-  sm: { fontSize: "small" },
-  md: { fontSize: "medium" },
-  lg: { fontSize: "large" },
-  xl: { fontSize: "x-large" },
-  xxl: { fontSize: "xx-large" },
-  xxxl: { fontSize: "xxx-large" },
-
-  variant: SequentialFunction("variant/1-5", [Word], (n, v) => ({ fontVariant: v.join(" ") })), //todo: more specific parsing?
-  width: SingleArgumentFunction(Percent, (n, v) => ({ fontWidth: v })),
-  spacing: SingleArgumentFunction(Length, (n, v) => ({ letterSpacing: v })), //"_" => "normal". This should be LengthNormal? where we do "_" as "normal"?
-  adjust: SingleArgumentFunction(Basic, (n, v) => ({ fontSizeAdjust: v })),
+const FontMetrics = CssValuesToCsssTable("ex-height|cap-height|ch-width|ic-width|ic-height");
+const fontSizeAdjust = ({ name, args }) => {
+  if (name !== "adjust") return;
+  let i = 0;
+  const fontMetric = FontMetrics[args[i].text];
+  if (fontMetric) i++;
+  const fromFont = args[i].text === "fromFont" ? "from-font" : undefined;
+  if (fromFont) i++;
+  const number = NumberInterpreter(args[i]);
+  if (number != null) i++;
+  if (i !== args.length) throw BadArgument(name, args, i, "Invalid argument.");
+  return [fontMetric, fromFont, number].filter(Boolean).join(" ");
 };
-
 
 // @font-face {
 // font-family: "Trickster";
@@ -158,78 +127,111 @@ function FontFaceUrl(t) {
   return res;
 }
 
-const font = FunctionBasedOnValueTypes(FONT_WORDS, {
-  fontSize: Length,
-  fontSizeAdjust: Fraction,
-  fontWeight: Integer,
-  Angle,
-}, {
-  fontFamily: t => FontFaceUrl(t) ?? Word(t) ?? Quote(t)
-}, obj => {
-  const res = {};
-  for (let [k, v] of Object.entries(obj)) {
-    if (k === "fontFamily") {
-      if (v.includes("emoji")) {
-        v.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
-        v = v.filter(f => f !== "emoji");
-      }
-      res.fontFamily = v
-        .map(f => f.fontFamily ?? f)
-        .map(f => f.replaceAll("+", " "))
-        .join(", ");
-      for (let face of v.filter(f => f instanceof Object))
-        res["@font-face " + face.src.split("\n")[0]] = face;
-    } else if (k === "Angle") res.fontStyle = "oblique " + v;
-    else if (v instanceof Object) Object.assign(res, v);
-    else res[k] = v;
+const FontFamily = a => FontFaceUrl(a) ?? Word(a) ?? Quote(a);
+
+function fontImpl(NAME, I, args) {
+  const cache = new Set();
+  const Singles = {
+    fontSize,
+    fontStyle,
+    fontWeight,
+    fontSizeAdjust,
+    letterSpacing,
+    textTransform,
+    fontStretch,
+    fontVariant,
+    fontSynthesis,
+    fontKerning,
+  };
+  const res = {}, fontFamilies = [];
+  main: for (let i = I; i < args.length; i++) {
+    const a = args[i];
+    for (let key in Singles) {
+      if (cache.has(key))
+        continue;
+      const v = Singles[key](a);
+      if (v == null)
+        continue;
+      cache.add(key);
+      res[key] = v;
+      continue main;
+    }
+    const v = FontFamily(a);
+    if (v != null) {
+      fontFamilies.push(v);
+      continue main;
+    }
+    for (let k in cache)
+      if (Singles[k](a) != null)
+        throw BadArgument(NAME, args, i, `Multiple values for ${k} specified.`);
+    throw BadArgument(NAME, args, i, "Unknown argument.");
   }
+  if (!fontFamilies.length)
+    return res;
+  if (fontFamilies.includes("emoji")) {
+    fontFamilies.push("Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+    fontFamilies = fontFamilies.filter(f => f !== "emoji");
+  }
+  const fontFamily = fontFamilies
+    .map(f => f.fontFamily ?? f)
+    .map(f => typeof f === "string" ? f.replaceAll("+", " ") : f)
+    .join(", ");
+  for (let face of fontFamilies.filter(f => f instanceof Object))
+    res["@font-face " + face.src.split("\n")[0]] = face;
+  return { fontFamily, ...res };
+}
+
+const font = ({ name, args }) => name === "font" && fontImpl(name, 0, args);
+
+const Font = ({ name, args }) => {
+  if (name !== "Font") return;
+  const typeface = Name(args[0]);
+  if (!typeface) throw BadArgument(name, args, 0, "First argument must be a typeface name.");
+  const res = fontImpl(name, 1, args);
+  for (let k in props)
+    if (!(k in res))
+      res[k] = typeface === "_" ? "unset" : `var(--${typeface + k[0].toUpperCase() + k.slice(1)}, unset)`;
   return res;
-});
+};
 
-const Font = ParseFirstThenRest(NameUnset, font,
-  (_, typeName, fontProps = {}) => {
-    const res = { ...FontDefaults, ...fontProps };
-    if (typeName !== "unset")
-      for (let k in res)
-        if (res[k] === FontDefaults[k])
-          res[k] = `var(--${typeName + k[0].toUpperCase() + k.slice(1)}, unset)`;
-    return res;
-  }
-);
-
-const Typeface = ParseFirstThenRest(Name, font,
-  (_, typeName, tmp = {}) => {
-    const res = {};
-    for (let k in FontDefaults)
-      if (tmp[k] !== undefined)
-        res[`--${typeName + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
-    for (let k in tmp)
-      if (k.startsWith("@"))
-        res[k] = tmp[k];
-    return res;
-  }
-)
+const Typeface = ({ name, args }) => {
+  if (name !== "Typeface") return;
+  const typeface = Name(args[0]);
+  if (!typeface) throw BadArgument(name, args, 0, "First argument must be a typeface name.");
+  const tmp = fontImpl(name, 1, args);
+  const res = {};
+  for (let k in props)
+    if (tmp[k] !== undefined)
+      res[`--${typeface + k[0].toUpperCase() + k.slice(1)}`] = tmp[k];
+  for (let k in tmp)
+    if (k.startsWith("@"))
+      res[k] = tmp[k];
+  return res;
+};
 
 export default {
-  font,
-  Font: FunctionWithDefaultValues(FontDefaults, Font),
-  Typeface,
+  props,
+  csss: {
+    font,
+    Font,
+    Typeface,
+  },
+  css: {
+    font: style => {
+      let args = [];
+      if (style.fontFamily && style.fontFamily !== "unset") args.push(style.fontFamily.replace(/\s+/g, "+").replace(/,/g, ", "));
+      if (style.fontSize && style.fontSize !== "unset") args.push(style.fontSize);
+      if (style.fontStyle && style.fontStyle !== "unset") args.push(style.fontStyle);
+      if (style.fontWeight && style.fontWeight !== "unset") args.push(style.fontWeight);
+      if (style.fontSizeAdjust && style.fontSizeAdjust !== "unset") args.push(`adjust(${style.fontSizeAdjust.replace(/\s+/g, ",")})`);
+      if (style.letterSpacing && style.letterSpacing !== "unset") args.push(`spacing(${style.letterSpacing})`);
+      if (style.textTransform && style.textTransform !== "unset") args.push(style.textTransform);
+      if (style.fontStretch && style.fontStretch !== "unset") args.push(style.fontStretch.replace(/\s+/g, ""));
+      if (style.fontVariant && style.fontVariant !== "unset") args.push(`variant(${style.fontVariant.replace(/\s+/g, ",")})`);
+      if (style.fontSynthesis && style.fontSynthesis !== "unset") args.push(`synthesis(${style.fontSynthesis.replace(/\s+/g, ",")})`);
+      if (style.fontKerning && style.fontKerning !== "unset") args.push(`kerning(${style.fontKerning})`);
 
-  fontFamily: undefined,
-  fontSize: undefined,
-  fontStyle: undefined,
-  fontWeight: undefined,
-  fontSizeAdjust: undefined,
-  letterSpacing: undefined,
-  textTransform: undefined,
-  fontWidth: undefined,
-  fontStretch: undefined,
-  fontVariantCaps: undefined,
-  fontSynthesis: undefined,
-  fontFeatureSettings: undefined,
-  fontVariationSettings: undefined,
-  WebkitFontSmoothing: undefined,
-  MozOsxFontSmoothing: undefined,
-  fontKerning: undefined,
-  hyphens: undefined,
+      return args.length ? `font(${args.join(",")})` : undefined;
+    }
+  }
 };
