@@ -1,11 +1,15 @@
-Update shots/genre/typeface.md:
+## Each test should look like:
 
-1. Convert the current csss: fields into after: HTML blocks that encapsulate the CSSS string in an appropriate HTML element with descriptive contextual classes if necessary. 
-    1. Add a before: HTML block for each example, which displays an earlier state of the HTML before the CSSS changes. 
-    2. Add a userInstruction: line before the before: block that gives natural instructions motivating the transformation from the before state to the after state.
-    3. Remove the csss: lines completely.
+**description:** A brief explanation of what the CSSS transformation does.
+**userInstruction:** A natural language instruction that motivates the transformation from the before state to the after state.
+**before:** An HTML snippet showing the state of the code before the CSSS transformation.
+**after:** An HTML snippet showing the state of the code after the CSSS transformation, with the CSSS string applied in the appropriate place.
+**css:** A CSS snippet showing the compiled CSS that corresponds to the CSSS string used in the after HTML snippet.
 
-When updating 1b., you should use a variety from this list of reasons:
+## Background for the change from before to after:
+
+The following list illustrates the rationale behind the transformation from the before state to the after state, which can be used as a reference for understanding the intent of the change:
+
 1. Greenfield Addition: Starting from raw HTML and applying initial CSSS styling (e.g. `…<section>…</section>…` -> `…<section class="$Border(2px,solid,#green)">…</section>…`).
 2. Syntax Optimization/Refactoring: The developer wrote functional but suboptimal code (e.g., combining multiple $border droplets into a single $Border umbrella, or changing none to 0 for border widths).
 3. Fixing CSSS Semantic Errors: Correcting the misuse of tools, such as accidentally using an umbrella class ($Border) inside a state modifier like :hover or .active, and replacing it with a droplet ($border) to avoid resetting other properties.
