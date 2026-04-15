@@ -35,22 +35,29 @@ Formats user-generated comments or markdown blocks by targeting a specific class
 ```
 **after:**
 ```html
-…<div class="comment $Paragraph(preWrap,breakWord,spacing(0.1em),1.5)">…</div>…
+…<div class="comment $Paragraph(_,preWrap,breakWord,spacing(0.1em),1.5)">…</div>…
 ```
 **css:**
 ```css
-.\.comment\$Paragraph\(preWrap\,breakWord\,spacing\(0\.1em\)\,1\.5\):where(.comment) {
+.\$Paragraph\(_\,preWrap\,breakWord\,spacing\(0\.1em\)\,1\.5\) {
   line-height: 1.5;
-  white-space: pre-wrap;
+  text-indent: unset;
   word-spacing: 0.1em;
-  word-break: normal;
+  hyphens: unset;
+  white-space: pre-wrap;
   overflow-wrap: break-word;
+  word-break: normal;
+  line-break: unset;
+  text-align: unset;
+  text-align-last: unset;
+  hanging-punctuation: unset;
 }
 ```
 
 **description:**
 Sets strict typographic rules for formal, mixed-language documents (like legal text with CJK). Resets all paragraph defaults, preventing word breaks within CJK text but allowing long strings to break, while controlling line-breaking and punctuation.
-**userInstruction:** Apply strict typographic rules for formal mixed-language documents, preventing word breaks in CJK text but allowing long strings to break.
+**userInstruction:**
+Apply strict typographic rules for formal mixed-language documents, preventing word breaks in CJK text but allowing long strings to break.
 **before:**
 ```html
 …<div>…</div>…
@@ -99,7 +106,8 @@ Styles the first child in a container (like a terminal output or hash dump block
 
 **description:**
 Resets paragraph inheritance defaults for nested elements using a universal child selector. Forces a left-aligned, nowrap block with strict line-breaking rules and absolutely no indent.
-**userInstruction:** Reset paragraph defaults for all nested elements, forcing a left-aligned, nowrap block with strict line-breaking rules and no indent.
+**userInstruction:**
+Reset paragraph defaults for all nested elements, forcing a left-aligned, nowrap block with strict line-breaking rules and no indent.
 **before:**
 ```html
 …<div>…</div>…
@@ -166,7 +174,7 @@ Sets typography for poetry or lyrics block. Keeps spaces and lines as authored b
 ```
 **css:**
 ```css
-.\.poetry\$paragraph\(preserve\,1\.4\,center\):where(.poetry) {
+.\$paragraph\(preserve\,1\.4\,center\) {
   line-height: 1.4;
   white-space: preserve;
   text-align: center;
@@ -333,8 +341,7 @@ Applies the dense journal format for formal text, overriding the default strict 
 }
 ```
 
-**description:**
-Styles classic prose layout with an indent, using the novel baseline without any additional overrides.
+**description:** Styles classic prose layout with an indent, using the novel baseline without any additional overrides.
 **userInstruction:** Style classic prose layout with an indent using the novel baseline.
 **before:**
 ```html
@@ -389,8 +396,7 @@ Sets up a hero display text block. Uses the display baseline but explicitly cent
 }
 ```
 
-**description:**
-Formats a short image caption centrally aligned without any hyphens using the caption baseline.
+**description:** Formats a short image caption centrally aligned without any hyphens using the caption baseline.
 **userInstruction:** Format a short image caption centrally aligned without hyphens using the caption baseline.
 **before:**
 ```html
@@ -417,8 +423,7 @@ Formats a short image caption centrally aligned without any hyphens using the ca
 }
 ```
 
-**description:**
-Ensures numbers align to the end edge and never wrap, using the tabular baseline without any tweaks.
+**description:** Ensures numbers align to the end edge and never wrap, using the tabular baseline without any tweaks.
 **userInstruction:** Ensure numbers align to the end edge and never wrap using the tabular baseline.
 **before:**
 ```html
@@ -501,8 +506,7 @@ Styles a terminal log block using the terminal baseline. Adjusts the white-space
 }
 ```
 
-**description:**
-Prepares a text block for aggressive breaking on long compound words, using the compound baseline.
+**description:** Prepares a text block for aggressive breaking on long compound words, using the compound baseline.
 **userInstruction:** Prepare the text block for aggressive breaking on long compound words using the compound baseline.
 **before:**
 ```html
