@@ -1,8 +1,22 @@
 **description:**
 A horizontal scrolling container with snapping and custom inline sizing constraints, along with items that center-snap and have scroll margins.
-**csss:**
- $Box(100px<100%<800px,scroll,snapInlineMandatory,scrollPadding(0,1rem))
-|$BoxItem(snapCenter,scrollMargin(0,1rem))
+**userInstruction:** The horizontal list currently scrolls freely and allows content to stretch infinitely. Constrain its width between 100px and 800px, and implement mandatory inline scroll snapping so items lock into the center.
+**before:**
+```html
+…<div class="$Box(100%,scroll)">
+  <div>…</div>
+  <div>…</div>
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Box(100px<100%<800px,scroll,snapInlineMandatory,scrollPadding(0,1rem))
+  |*$BoxItem(snapCenter,scrollMargin(0,1rem))">
+  <div>…</div>
+  <div>…</div>
+</div>…
+```
 **css:**
 ```css
 .\$Box\(100px\<100\%\<800px\,scroll\,snapInlineMandatory\,scrollPadding\(0\,1rem\)\) {
@@ -28,9 +42,25 @@ A horizontal scrolling container with snapping and custom inline sizing constrai
 
 **description:**
 A fixed-size vertical scrolling block container with hidden overflow on the inline axis and mandatory block snapping. Items align to start and stop always.
-**csss:**
- $Box(100%,300px,hiddenScroll,snapBlockMandatory)
-|$BoxItem(snapStart,snapAlways)
+**userInstruction:** Users are scrolling past items too quickly in the vertical feed. Enforce mandatory block snapping so the scroll always stops at the start of an item.
+**before:**
+```html
+…<div class="$Box(100%,300px,hiddenScroll)">
+  …
+  <div>…</div>
+  …
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Box(100%,300px,hiddenScroll,snapBlockMandatory)
+  |*$BoxItem(snapStart,snapAlways)">
+  …
+  <div>…</div>
+  …
+</div>…
+```
 **css:**
 ```css
 .\$Box\(100\%\,300px\,hiddenScroll\,snapBlockMandatory\) {
@@ -54,8 +84,19 @@ A fixed-size vertical scrolling block container with hidden overflow on the inli
 
 **description:**
 A standard modal layout using a Box with auto overflow, max block constraints to ensure it scrolls if content is too long, and scroll paddings to ensure content isn't flush with the viewport.
-**csss:**
- $Box(_,_<_<90vh,auto,scrollPadding(2rem))
+**userInstruction:** The modal is overflowing the screen vertically on small devices. Limit its maximum block size to 90vh and allow it to scroll automatically, adding some scroll padding so content isn't flush with the edges.
+**before:**
+```html
+…<dialog class="$Box(visible)">
+  <div class="content">…</div>
+</dialog>…
+```
+**after:**
+```html
+…<dialog class="$Box(_,_<_<90vh,auto,scrollPadding(2rem))">
+  <div class="content">…</div>
+</dialog>…
+```
 **css:**
 ```css
 .\$Box\(_\,_\<_\<90vh\,auto\,scrollPadding\(2rem\)\) {
@@ -73,9 +114,23 @@ A standard modal layout using a Box with auto overflow, max block constraints to
 
 **description:**
 A gallery container where elements scroll automatically on the inline axis, snapping at the end of each item with scroll margin inline ends.
-**csss:**
- $Flex(row,gap(10px))$Box(100%,autoHidden,snapInline)
-|$BoxItem(snapEnd,scrollMargin(0,20px,0,0))
+**userInstruction:** The flex gallery doesn't have scroll snapping, making it hard to align images. Add inline snapping to the container, and make the children snap to their end edge with a 20px inline margin.
+**before:**
+```html
+…<div class="$Flex(row,gap(10px))$Box(100%,autoHidden)">
+  <img src="…" />
+  <img src="…" />
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Flex(row,gap(10px))$Box(100%,autoHidden,snapInline)
+  |img$BoxItem(snapEnd,scrollMargin(0,20px,0,0))">
+  <img src="…" />
+  <img src="…" />
+</div>…
+```
 **css:**
 ```css
 .\$Flex\(row\,gap\(10px\)\)\$Box\(100\%\,autoHidden\,snapInline\) {
@@ -107,8 +162,19 @@ A gallery container where elements scroll automatically on the inline axis, snap
 
 **description:**
 A side navigation bar with fixed block bounds, visible overflow, and auto inline.
-**csss:**
- $Box(250px,100vh,visibleAuto)
+**userInstruction:** The sidebar is taking up the full height but cuts off long content vertically. Make the block overflow visible and the inline overflow auto, while keeping the 250px inline size and 100vh block size.
+**before:**
+```html
+…<aside class="$Box(250px,100vh,hidden)">
+  <nav>…</nav>
+</aside>…
+```
+**after:**
+```html
+…<aside class="$Box(250px,100vh,visibleAuto)">
+  <nav>…</nav>
+</aside>…
+```
 **css:**
 ```css
 .\$Box\(250px\,100vh\,visibleAuto\) {
@@ -126,8 +192,19 @@ A side navigation bar with fixed block bounds, visible overflow, and auto inline
 
 **description:**
 A box utilizing both block and inline sizing with minimums and maximums, testing the complex sizing function, along with clip overflow.
-**csss:**
- $Box(200px<80%<1000px,100px<50%<500px,clip)
+**userInstruction:** This generic box stretches too much on large screens and shrinks too much on mobile. Constrain its inline size to 80% (between 200px and 1000px) and its block size to 50% (between 100px and 500px), while keeping the overflow clipped.
+**before:**
+```html
+…<div class="$Box(80%,50%,clip)">
+  …
+</div>…
+```
+**after:**
+```html
+…<div class="$Box(200px<80%<1000px,100px<50%<500px,clip)">
+  …
+</div>…
+```
 **css:**
 ```css
 .\$Box\(200px\<80\%\<1000px\,100px\<50\%\<500px\,clip\) {
@@ -145,9 +222,23 @@ A box utilizing both block and inline sizing with minimums and maximums, testing
 
 **description:**
 A carousel layout where the items stop normally and align at the start and end using $Flex and $BoxItem.
-**csss:**
- $Flex(row)$Box(auto,snap)
-|$BoxItem(snapStartEnd,snapNormal)
+**userInstruction:** The flex carousel has snap enabled on the container, but the items don't know where to snap. Add a BoxItem rule to make the children align at the start and end, with normal snapping behavior.
+**before:**
+```html
+…<div class="$Flex(row)$Box(auto,snap)">
+  <div class="slide">…</div>
+  <div class="slide">…</div>
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Flex(row)$Box(auto,snap)
+  |*$BoxItem(snapStartEnd,snapNormal)">
+  <div class="slide">…</div>
+  <div class="slide">…</div>
+</div>…
+```
 **css:**
 ```css
 .\$Flex\(row\)\$Box\(auto\,snap\) {
@@ -178,9 +269,23 @@ A carousel layout where the items stop normally and align at the start and end u
 
 **description:**
 A vertical content feed where the Box container masks overflow outside of the block, padding the scroll area at the top and bottom.
-**csss:**
- $Box(hiddenScroll,scrollPadding(2rem,0))
-|$BoxItem(scrollMargin(1rem,0))
+**userInstruction:** The vertical feed's first and last items touch the very edges of the scrollable area. Add 2rem of block scroll padding to the container, and give the children 1rem of block scroll margin so they don't sit flush against the scroll boundaries.
+**before:**
+```html
+…<div class="$Box(hiddenScroll)">
+  <article>…</article>
+  <article>…</article>
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Box(hiddenScroll,scrollPadding(2rem,0))
+  |*$BoxItem(scrollMargin(1rem,0))">
+  <article>…</article>
+  <article>…</article>
+</div>…
+```
 **css:**
 ```css
 .\$Box\(hiddenScroll\,scrollPadding\(2rem\,0\)\) {
@@ -206,8 +311,19 @@ A vertical content feed where the Box container masks overflow outside of the bl
 
 **description:**
 A full-screen container with block and inline 100%, clipping all overflow, meant to serve as an application root.
-**csss:**
- $Box(100%,100%,clip)
+**userInstruction:** The root app container uses 100vh for height, which causes issues on mobile browsers with dynamic toolbars. Change both block and inline sizes to 100% and ensure all overflow is clipped so child views handle their own scrolling.
+**before:**
+```html
+…<main class="$Box(100vw,100vh)">
+  <div class="app-view">…</div>
+</main>…
+```
+**after:**
+```html
+…<main class="$Box(100%,100%,clip)">
+  <div class="app-view">…</div>
+</main>…
+```
 **css:**
 ```css
 .\$Box\(100\%\,100\%\,clip\) {
@@ -225,8 +341,19 @@ A full-screen container with block and inline 100%, clipping all overflow, meant
 
 **description:**
 Testing all box sizing defaults alongside explicit scrollPadding on all four sides.
-**csss:**
- $Box(scrollPadding(10px,20px,30px,40px))
+**userInstruction:** The scroll area is flush with its boundaries. Add explicit 4-value scroll padding (10px top, 20px right, 30px bottom, 40px left) to ensure scrollable content has breathing room inside the box.
+**before:**
+```html
+…<div class="$Box(auto)">
+  …
+</div>…
+```
+**after:**
+```html
+…<div class="$Box(auto,scrollPadding(10px,20px,30px,40px))">
+  …
+</div>…
+```
 **css:**
 ```css
 .\$Box\(scrollPadding\(10px\,20px\,30px\,40px\)\) {
@@ -245,8 +372,19 @@ Testing all box sizing defaults alongside explicit scrollPadding on all four sid
 
 **description:**
 An item designed to snap in the center of the block axis and the start of the inline axis, with specific margin constraints.
-**csss:**
- $BoxItem(snapCenterStart,scrollMargin(5px,10px,15px,20px))
+**userInstruction:** This item is currently snapping to the start on both axes. Change it to snap to the center on the block axis and start on the inline axis, and apply explicit 4-value scroll margins.
+**before:**
+```html
+…<div class="$BoxItem(snapStart)">
+  …
+</div>…
+```
+**after:**
+```html
+…<div class="$BoxItem(snapCenterStart,scrollMargin(5px,10px,15px,20px))">
+  …
+</div>…
+```
 **css:**
 ```css
 .\$BoxItem\(snapCenterStart\,scrollMargin\(5px\,10px\,15px\,20px\)\) {
@@ -259,8 +397,19 @@ An item designed to snap in the center of the block axis and the start of the in
 
 **description:**
 A highly constrained box item enforcing a stop always behavior with snapping end center.
-**csss:**
- $BoxItem(snapEndCenter,snapAlways)
+**userInstruction:** Users are skipping over this crucial item when scrolling fast. Force the scroll to always stop here by adding snapAlways, and change the alignment to snap to the end on the block axis and center on the inline axis.
+**before:**
+```html
+…<div class="$BoxItem(snapEnd)">
+  …
+</div>…
+```
+**after:**
+```html
+…<div class="$BoxItem(snapEndCenter,snapAlways)">
+  …
+</div>…
+```
 **css:**
 ```css
 .\$BoxItem\(snapEndCenter\,snapAlways\) {
