@@ -413,13 +413,18 @@ A Flex inheritance example with parent item defaults and targeted child override
 ```
 **after:**
 ```html
-…<div class="|$flexItem(margin(1rem)) |.a$flexItem(margin(0,0,2rem))">
+…<div class="
+  |$flexItem(margin(1rem)) 
+  |.a$flexItem(margin(0,0,2rem))">
   <div class="a">…</div>
   <div>…</div>
 </div>…
 ```
 **css:**
 ```css
+.\|\$flexItem\(margin\(1rem\)\)>* {
+  margin: 1rem;
+}
 .\|\.a\$flexItem\(margin\(0\,0\,2rem\)\)>:where(.a) {
   margin-block: 0 2rem;
   margin-inline: 0;

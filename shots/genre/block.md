@@ -1198,7 +1198,7 @@
   margin-inline: 0;
 }
 
-.\|\|\.footer-content\$blockItem\(floatEnd\,margin\(0\)\)>:where(.footer-content) {
+.\|\|\.footer-content\$blockItem\(floatEnd\,margin\(0\)\)>*>:where(.footer-content) {
   margin: 0;
   float: inline-end;
 }

@@ -152,7 +152,7 @@ A gallery container where elements scroll automatically on the inline axis, snap
   scroll-snap-type: inline;
 }
 
-.\|\$BoxItem\(snapEnd\,scrollMargin\(0\,20px\,0\,0\)\)>* {
+.\|img\$BoxItem\(snapEnd\,scrollMargin\(0\,20px\,0\,0\)\)>:where(img) {
   scroll-snap-align: end;
   scroll-snap-stop: unset;
   scroll-margin-block: 0;
@@ -356,14 +356,14 @@ Testing all box sizing defaults alongside explicit scrollPadding on all four sid
 ```
 **css:**
 ```css
-.\$Box\(scrollPadding\(10px\,20px\,30px\,40px\)\) {
+.\$Box\(auto\,scrollPadding\(10px\,20px\,30px\,40px\)\) {
   block-size: unset;
   min-block-size: unset;
   max-block-size: unset;
   inline-size: unset;
   min-inline-size: unset;
   max-inline-size: unset;
-  overflow: unset;
+  overflow: auto;
   scroll-snap-type: unset;
   scroll-padding-block: 10px 30px;
   scroll-padding-inline: 20px 40px;
