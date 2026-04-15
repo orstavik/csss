@@ -1,5 +1,6 @@
 **description:** Sets font-family, weight, size-adjust, style, width and size directly.
-**userInstruction:** Greenfield Addition: Give the newly added disclaimer text its initial styling, setting it to a small, condensed, italic system font.
+**userInstruction:**
+Greenfield Addition: Give the newly added disclaimer text its initial styling, setting it to a small, condensed, italic system font.
 **before:**
 ```html
 <p class="disclaimer">Terms and conditions apply.</p>
@@ -21,7 +22,8 @@
 ```
 
 **description:** Sets font-family to "body" font.
-**userInstruction:** Theme Adjustments: Update the article content to use the generic theme-mapped "body" font instead of a hardcoded specific font stack.
+**userInstruction:**
+Theme Adjustments: Update the article content to use the generic theme-mapped "body" font instead of a hardcoded specific font stack.
 **before:**
 ```html
 <article class="content $font(Helvetica,Arial)">
@@ -42,7 +44,8 @@
 ```
 
 **description:** Sets serif font family.
-**userInstruction:** Feature Requests/Tweaks: The editorial team wants the pull quotes to feel more classical and authoritative; switch the font family specifically to a generic serif.
+**userInstruction:**
+Feature Requests/Tweaks: The editorial team wants the pull quotes to feel more classical and authoritative; switch the font family specifically to a generic serif.
 **before:**
 ```html
 <blockquote class="pull-quote">
@@ -63,7 +66,8 @@
 ```
 
 **description:** Resets all font properties and overrides family, size and weight.
-**userInstruction:** Fixing CSSS Semantic Errors: The previous styling used individual font properties that unintentionally inherited bad letter spacing and line heights; replace it with the uppercase Umbrella $Font to reset the inheritance before applying the new Arial font stack.
+**userInstruction:**
+Fixing CSSS Semantic Errors: The previous styling used individual font properties that unintentionally inherited bad letter spacing and line heights; replace it with the uppercase Umbrella $Font to reset the inheritance before applying the new Arial font stack.
 **before:**
 ```html
 <h1 class="main-heading $font(Arial) $font(16px) $font(bold)">Welcome</h1>
@@ -92,7 +96,8 @@
 ```
 
 **description:** Transforms text to uppercase.
-**userInstruction:** Accessibility Improvements: The small labels in the form are a bit hard to read; convert them to uppercase to improve visual clarity and stand out against the input fields.
+**userInstruction:**
+Accessibility Improvements: The small labels in the form are a bit hard to read; convert them to uppercase to improve visual clarity and stand out against the input fields.
 **before:**
 ```html
 <label class="input-label">First Name</label>
@@ -109,14 +114,15 @@
 ```
 
 **description:** Removes any text transformation.
-**userInstruction:** Contextual Overrides: The global CSS forces all table headers into uppercase, but this specific data table needs its headers preserved in their original casing to avoid misinterpreting acronyms.
+**userInstruction:**
+Contextual Overrides: The global CSS forces all table headers into uppercase, but this specific data table needs its headers preserved in their original casing to avoid misinterpreting acronyms.
 **before:**
 ```html
-<th class="data-header">NaCl</th>
+<div class="data-header">NaCl</div>
 ```
 **after:**
 ```html
-<th class="data-header $font(transformNone)">NaCl</th>
+<div class="data-header $font(transformNone)">NaCl</div>
 ```
 **css:**
 ```css
@@ -127,7 +133,8 @@
 
 **description:**
 Inherits the operating system's default personality. It feels native, fast, frictionless, and completely invisible to the user, building immediate familiarity and trust without drawing attention to itself.
-**userInstruction:** The app root has an outdated, complex custom font stack that slows down rendering. Strip it back and use the system-ui typeface definition for a frictionless, native feel.
+**userInstruction:**
+The app root has an outdated, complex custom font stack that slows down rendering. Strip it back and use the system-ui typeface definition for a frictionless, native feel.
 **before:**
 ```html
 …<body class="$Font(Arial,Helvetica,sans-serif)">…</body>…
@@ -145,7 +152,8 @@ Inherits the operating system's default personality. It feels native, fast, fric
 
 **description:**
 Bridges the gap between classic print and modern digital. It provides a crisp, authoritative reading experience that feels academic and reliable, making it perfect for holding a user's focus during long-form articles.
-**userInstruction:** The developer hardcoded a long list of serif fonts directly on the article. Refactor this suboptimal code by using the centralized transitional typeface preset.
+**userInstruction:**
+The developer hardcoded a long list of serif fonts directly on the article. Refactor this suboptimal code by using the centralized transitional typeface preset.
 **before:**
 ```html
 …<article class="long-form $Font(Charter,'Bitstream+Charter','Sitka+Text',Cambria,serif)">…</article>…
@@ -156,14 +164,15 @@ Bridges the gap between classic print and modern digital. It provides a crisp, a
 ```
 **css:**
 ```css
-.\$Typeface\(transitional\,Charter\,\"Bitstream\+Charter\"\,\"Sitka\+Text\"\,Cambria\,serif\) {
-  --transitionalFontFamily: Charter, "Bitstream Charter", "Sitka Text", Cambria, serif;
+.\$Typeface\(transitional\,Charter\,\'Bitstream\+Charter\'\,\'Sitka\+Text\'\,Cambria\,serif\) {
+  --transitionalFontFamily: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif;
 }
 ```
 
 **description:**
 Evokes the cozy familiarity of a well-worn, comfortable hardcover book. It offers a warm, inviting, and deeply human aesthetic that naturally lowers reading fatigue on screens.
-**userInstruction:** To support the new 'vintage reading' mode, replace the default fonts with an old-style typeface to evoke the cozy familiarity of a hardcover book.
+**userInstruction:**
+To support the new 'vintage reading' mode, replace the default fonts with an old-style typeface to evoke the cozy familiarity of a hardcover book.
 **before:**
 ```html
 …<div class="novel-view">…</div>…
@@ -174,14 +183,15 @@ Evokes the cozy familiarity of a well-worn, comfortable hardcover book. It offer
 ```
 **css:**
 ```css
-.\$Typeface\(oldStyle\,\"Iowan\+Old\+Style\"\,\"Palatino\+Linotype\"\,\"URW\+Palladio\+L\"\,Pica\,\"Book\+Antiqua\"\,serif\) {
-  --oldStyleFontFamily: "Iowan Old Style", "Palatino Linotype", "URW Palladio L", Pica, "Book Antiqua", serif;
+.\$Typeface\(oldStyle\,\'Iowan\+Old\+Style\'\,\'Palatino\+Linotype\'\,\'URW\+Palladio\+L\'\,Pica\,\'Book\+Antiqua\'\,serif\) {
+  --oldStyleFontFamily: 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', Pica, 'Book Antiqua', serif;
 }
 ```
 
 **description:**
 Highly legible with a friendly, approachable voice. The open counters and organic strokes make digital interfaces feel less robotic, highly conversational, and effortlessly accessible.
-**userInstruction:** The current UI feels too robotic. We need a friendly, conversational tone. Apply the humanist typeface stack to the app root.
+**userInstruction:**
+The current UI feels too robotic. We need a friendly, conversational tone. Apply the humanist typeface stack to the app root.
 **before:**
 ```html
 …<body class="app-root $Typeface(industrial)">…</body>…
@@ -192,14 +202,15 @@ Highly legible with a friendly, approachable voice. The open counters and organi
 ```
 **css:**
 ```css
-.\$Typeface\(humanist\,Seravek\,\"Gill\+Sans\+Nova\"\,Ubuntu\,Calibri\,\"DejaVu\+Sans\"\,source-sans-pro\,sans-serif\) {
-  --humanistFontFamily: Seravek, "Gill Sans Nova", Ubuntu, Calibri, "DejaVu Sans", source-sans-pro, sans-serif;
+.\$Typeface\(humanist\,Seravek\,\'Gill\+Sans\+Nova\'\,Ubuntu\,Calibri\,\'DejaVu\+Sans\'\,source-sans-pro\,sans-serif\) {
+  --humanistFontFamily: Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu Sans', source-sans-pro, sans-serif;
 }
 ```
 
 **description:**
 Clean, architectural, and thoroughly modern. It provides a crisp, contemporary aesthetic that feels inherently forward-thinking, making it excellent for tech-focused, minimalist user journeys.
-**userInstruction:** The modern theme relies on an older, less crisp geometric font setup. Upgrade it to the architectural geometricHumanist preset.
+**userInstruction:**
+The modern theme relies on an older, less crisp geometric font setup. Upgrade it to the architectural geometricHumanist preset.
 **before:**
 ```html
 …<div class="theme-modern $Font(Avenir,sans-serif)">…</div>…
@@ -210,14 +221,15 @@ Clean, architectural, and thoroughly modern. It provides a crisp, contemporary a
 ```
 **css:**
 ```css
-.\$Typeface\(geometricHumanist\,Avenir\,Montserrat\,Corbel\,\"URW\+Gothic\"\,source-sans-pro\,sans-serif\) {
-  --geometricHumanistFontFamily: Avenir, Montserrat, Corbel, "URW Gothic", source-sans-pro, sans-serif;
+.\$Typeface\(geometricHumanist\,Avenir\,Montserrat\,Corbel\,\'URW\+Gothic\'\,source-sans-pro\,sans-serif\) {
+  --geometricHumanistFontFamily: Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
 }
 ```
 
 **description:**
 Graceful and gently sophisticated. It brings a touch of subtle elegance to the interface, offering a refined, premium user experience without demanding too much visual attention.
-**userInstruction:** The premium content section inherits a standard sans-serif font from its parent, but it needs a subtle elegance. Override it with the classical humanist typeface.
+**userInstruction:**
+The premium content section inherits a standard sans-serif font from its parent, but it needs a subtle elegance. Override it with the classical humanist typeface.
 **before:**
 ```html
 …<section class="premium-content">…</section>…
@@ -228,14 +240,15 @@ Graceful and gently sophisticated. It brings a touch of subtle elegance to the i
 ```
 **css:**
 ```css
-.\$Typeface\(classicalHumanist\,Optima\,Candara\,\"Noto\+Sans\"\,source-sans-pro\,sans-serif\) {
-  --classicalHumanistFontFamily: Optima, Candara, "Noto Sans", source-sans-pro, sans-serif;
+.\$Typeface\(classicalHumanist\,Optima\,Candara\,\'Noto\+Sans\'\,source-sans-pro\,sans-serif\) {
+  --classicalHumanistFontFamily: Optima, Candara, 'Noto Sans', source-sans-pro, sans-serif;
 }
 ```
 
 **description:**
 Acts as the ultimate neutral canvas. It feels objective and universally legible, ensuring the user's emotional focus remains entirely on the content itself rather than the styling.
-**userInstruction:** The dashboard is cluttered with specific font overrides. Simplify it by applying the ultimate neutral canvas: the neoGrotesque typeface.
+**userInstruction:**
+The dashboard is cluttered with specific font overrides. Simplify it by applying the ultimate neutral canvas: the neoGrotesque typeface.
 **before:**
 ```html
 …<main class="dashboard $Font(Inter) $Font(Roboto)">…</main>…
@@ -246,8 +259,8 @@ Acts as the ultimate neutral canvas. It feels objective and universally legible,
 ```
 **css:**
 ```css
-.\$Typeface\(neoGrotesque\,Inter\,Roboto\,\"Helvetica\+Neue\"\,\"Arial\+Nova\"\,\"Nimbus\+Sans\"\,Arial\,sans-serif\) {
-  --neoGrotesqueFontFamily: Inter, Roboto, "Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;
+.\$Typeface\(neoGrotesque\,Inter\,Roboto\,\'Helvetica\+Neue\'\,\'Arial\+Nova\'\,\'Nimbus\+Sans\'\,Arial\,sans-serif\) {
+  --neoGrotesqueFontFamily: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
 }
 ```
 
@@ -264,14 +277,15 @@ Brings a tactile, typewriter-like nostalgia to the screen. It feels deliberate a
 ```
 **css:**
 ```css
-.\$Typeface\(monospaceSlab\,\"Nimbus\+Mono\+PS\"\,\"Courier\+New\"\,monospace\) {
-  --monospaceSlabFontFamily: "Nimbus Mono PS", "Courier New", monospace;
+.\$Typeface\(monospaceSlab\,\'Nimbus\+Mono\+PS\'\,\'Courier\+New\'\,monospace\) {
+  --monospaceSlabFontFamily: 'Nimbus Mono PS', 'Courier New', monospace;
 }
 ```
 
 **description:**
 Feels precise, technical, and strictly organized. It immediately signals a highly structured environment, giving users a sense of control, accuracy, and rigorous alignment.
-**userInstruction:** The code snippets are using proportional fonts which makes them hard to read. Ensure they are perfectly legible by applying the monospace code typeface.
+**userInstruction:**
+The code snippets are using proportional fonts which makes them hard to read. Ensure they are perfectly legible by applying the monospace code typeface.
 **before:**
 ```html
 …<pre class="code-snippet">…</pre>…
@@ -282,14 +296,15 @@ Feels precise, technical, and strictly organized. It immediately signals a highl
 ```
 **css:**
 ```css
-.\$Typeface\(monospaceCode\,ui-monospace\,\"Cascadia\+Code\"\,\"Source\+Code\+Pro\"\,Menlo\,Consolas\,\"DejaVu\+Sans\+Mono\"\,monospace\) {
-  --monospaceCodeFontFamily: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+.\$Typeface\(monospaceCode\,ui-monospace\,\'Cascadia\+Code\'\,\'Source\+Code\+Pro\'\,Menlo\,Consolas\,\'DejaVu\+Sans\+Mono\'\,monospace\) {
+  --monospaceCodeFontFamily: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
 }
 ```
 
 **description:**
 Bold, utilitarian, and distinctly no-nonsense. It delivers information with visual urgency and confidence, making it ideal for impactful messaging where clarity and space efficiency are paramount.
-**userInstruction:** The warning label was accidentally using a font droplet instead of defining the typeface umbrella correctly. Fix the semantics to use the industrial typeface definition.
+**userInstruction:**
+The warning label was accidentally using a font droplet instead of defining the typeface umbrella correctly. Fix the semantics to use the industrial typeface definition.
 **before:**
 ```html
 …<div class="warning-label $font(Bahnschrift,'DIN+Alternate')">…</div>…
@@ -300,8 +315,8 @@ Bold, utilitarian, and distinctly no-nonsense. It delivers information with visu
 ```
 **css:**
 ```css
-.\$Typeface\(industrial\,Bahnschrift\,\"DIN\+Alternate\"\,\"Franklin\+Gothic\+Medium\"\,\"Nimbus\+Sans\+Narrow\"\,sans-serif-condensed\,sans-serif\) {
-  --industrialFontFamily: Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;
+.\$Typeface\(industrial\,Bahnschrift\,\'DIN\+Alternate\'\,\'Franklin\+Gothic\+Medium\'\,\'Nimbus\+Sans\+Narrow\'\,sans-serif-condensed\,sans-serif\) {
+  --industrialFontFamily: Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif-condensed, sans-serif;
 }
 ```
 
@@ -318,8 +333,8 @@ Soft, playful, and entirely unthreatening. It creates a joyful, relaxed user exp
 ```
 **css:**
 ```css
-.\$Typeface\(roundedSans\,ui-rounded\,\"Hiragino\+Maru\+Gothic\+ProN\"\,Quicksand\,Comfortaa\,Manjari\,\"Arial\+Rounded\+MT\"\,\"Arial\+Rounded\+MT\+Bold\"\,Calibri\,source-sans-pro\,sans-serif\) {
-  --roundedSansFontFamily: ui-rounded, "Hiragino Maru Gothic ProN", Quicksand, Comfortaa, Manjari, "Arial Rounded MT", "Arial Rounded MT Bold", Calibri, source-sans-pro, sans-serif;
+.\$Typeface\(roundedSans\,ui-rounded\,\'Hiragino\+Maru\+Gothic\+ProN\'\,Quicksand\,Comfortaa\,Manjari\,\'Arial\+Rounded\+MT\'\,\'Arial\+Rounded\+MT\+Bold\'\,Calibri\,source-sans-pro\,sans-serif\) {
+  --roundedSansFontFamily: ui-rounded, 'Hiragino Maru Gothic ProN', Quicksand, Comfortaa, Manjari, 'Arial Rounded MT', 'Arial Rounded MT Bold', Calibri, source-sans-pro, sans-serif;
 }
 ```
 
@@ -336,14 +351,15 @@ Sturdy, grounded, and highly confident. It commands attention with a steady, rel
 ```
 **css:**
 ```css
-.\$Typeface\(slabSerif\,Rockwell\,\"Rockwell\+Nova\"\,\"Roboto\+Slab\"\,\"DejaVu\+Serif\"\,\"Sitka\+Small\"\,serif\) {
-  --slabSerifFontFamily: Rockwell, "Rockwell Nova", "Roboto Slab", "DejaVu Serif", "Sitka Small", serif;
+.\$Typeface\(slabSerif\,Rockwell\,\'Rockwell\+Nova\'\,\'Roboto\+Slab\'\,\'DejaVu\+Serif\'\,\'Sitka\+Small\'\,serif\) {
+  --slabSerifFontFamily: Rockwell, 'Rockwell Nova', 'Roboto Slab', 'DejaVu Serif', 'Sitka Small', serif;
 }
 ```
 
 **description:**
 Carries a warm, vintage charm that feels culturally established and rooted in history. It provides a cozy storytelling vibe that signals long-lasting value and craftsmanship.
-**userInstruction:** Clean up the messy specific font overrides on the story container and replace them with the standard antique typeface preset for a warm vintage charm.
+**userInstruction:**
+Clean up the messy specific font overrides on the story container and replace them with the standard antique typeface preset for a warm vintage charm.
 **before:**
 ```html
 …<article class="story $Font('Superclarendon',Georgia)">…</article>…
@@ -354,8 +370,8 @@ Carries a warm, vintage charm that feels culturally established and rooted in hi
 ```
 **css:**
 ```css
-.\$Typeface\(antique\,\"Superclarendon\"\,\"Bookman\+Old\+Style\"\,\"URW\+Bookman\"\,\"URW\+Bookman\+L\"\,\"Georgia\+Pro\"\,Georgia\,serif\) {
-  --antiqueFontFamily: "Superclarendon", "Bookman Old Style", "URW Bookman", "URW Bookman L", "Georgia Pro", Georgia, serif;
+.\$Typeface\(antique\,\'Superclarendon\'\,\'Bookman\+Old\+Style\'\,\'URW\+Bookman\'\,\'URW\+Bookman\+L\'\,\'Georgia\+Pro\'\,Georgia\,serif\) {
+  --antiqueFontFamily: 'Superclarendon', 'Bookman Old Style', 'URW Bookman', 'URW Bookman L', 'Georgia Pro', Georgia, serif;
 }
 ```
 
@@ -372,14 +388,15 @@ Exudes high fashion, luxury, and strict elegance. The extreme contrast between t
 ```
 **css:**
 ```css
-.\$Typeface\(didone\,Didot\,\"Bodoni\+MT\"\,\"Noto\+Serif\+Display\"\,\"URW\+Palladio\+L\"\,Pica\,serif\) {
-  --didoneFontFamily: Didot, "Bodoni MT", "Noto Serif Display", "URW Palladio L", Pica, serif;
+.\$Typeface\(didone\,Didot\,\'Bodoni\+MT\'\,\'Noto\+Serif\+Display\'\,\'URW\+Palladio\+L\'\,Pica\,serif\) {
+  --didoneFontFamily: Didot, 'Bodoni MT', 'Noto Serif Display', 'URW Palladio L', Pica, serif;
 }
 ```
 
 **description:**
 Feels casual, deeply personal, and delightfully imperfect. It breaks the digital barrier, injecting the interface with a sense of human touch, spontaneity, and creative whimsy.
-**userInstruction:** The postcard element needs to break the digital barrier. Override the global font with a deeply personal, handwritten typeface.
+**userInstruction:**
+The postcard element needs to break the digital barrier. Override the global font with a deeply personal, handwritten typeface.
 **before:**
 ```html
 …<div class="postcard">…</div>…
@@ -390,14 +407,14 @@ Feels casual, deeply personal, and delightfully imperfect. It breaks the digital
 ```
 **css:**
 ```css
-.\$Typeface\(handwritten\,\"Segoe\+Print\"\,\"Bradley\+Hand\"\,Chilanka\,Kavivanar\,\"Comic\+Sans\+MS\"\,\"Chalkboard\+SE\"\,\"Comic\+Neue\"\,cursive\) {
-  --handwrittenFontFamily: "Segoe Print", "Bradley Hand", Chilanka, Kavivanar, "Comic Sans MS", "Chalkboard SE", "Comic Neue", cursive;
+.\$Typeface\(handwritten\,\'Segoe\+Print\'\,\'Bradley\+Hand\'\,Chilanka\,Kavivanar\,\'Comic\+Sans\+MS\'\,\'Chalkboard\+SE\'\,\'Comic\+Neue\'\,cursive\) {
+  --handwrittenFontFamily: 'Segoe Print', 'Bradley Hand', Chilanka, Kavivanar, 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive;
 }
 ```
 
-**description:**
-Defines a "comic" typeface with web font URL, size, stretch, style and weight.
-**userInstruction:** Refactor the hardcoded remote font-face import and individual font styling into a reusable comic typeface definition with exact sizes and weights.
+**description:** Defines a "comic" typeface with web font URL, size, stretch, style and weight.
+**userInstruction:**
+Refactor the hardcoded remote font-face import and individual font styling into a reusable comic typeface definition with exact sizes and weights.
 **before:**
 ```html
 …<div class="fun-text $Font('MS+Comic+Sans') $FontSize(xx-small)">…</div>…
@@ -415,8 +432,8 @@ local("ComicNeue"),
 url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2");
 }
 
-.\$Typeface\(comic\,\"MS\+Comic\+Sans\"\,\"https\:\/\/cdn\.jsdelivr\.net\/npm\/\@openfonts\/comic-neue_latin\@latest\/files\/ComicNeue-Regular\.woff2\"\,xxSmall\,semiExpanded\,italic\,bolder\) {
-  --comicFontFamily: "MS Comic Sans", ComicNeue;
+.\$Typeface\(comic\,\'MS\+Comic\+Sans\'\,\'https\:\/\/cdn\.jsdelivr\.net\/npm\/\@openfonts\/comic-neue_latin\@latest\/files\/ComicNeue-Regular\.woff2\'\,xxSmall\,semiExpanded\,italic\,bolder\) {
+  --comicFontFamily: 'MS Comic Sans', ComicNeue;
   --comicFontSize: xx-small;
   --comicFontStyle: italic;
   --comicFontWeight: bolder;
@@ -426,7 +443,8 @@ url("https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/Comic
 
 **description:**
 Defines a standard "body" (brødtekst) typeface using system fonts, ensuring high readability with normalized style overrides.
-**userInstruction:** The global document was defining the body font individually, but we need it to use the proper Typeface umbrella along with its child selector override.
+**userInstruction:**
+The global document was defining the body font individually, but we need it to use the proper Typeface umbrella along with its child selector override.
 **before:**
 ```html
 …<html class="root-doc $Font(system-ui,sans-serif)">…</html>…
@@ -462,7 +480,8 @@ Defines a standard "body" (brødtekst) typeface using system fonts, ensuring hig
 
 **description:**
 FinePrint. Intentionally exhausting yet technically compliant. It maximizes character density to fulfill legal obligations while presenting a monotonous, tightly packed texture that subtly discourages the user from actually reading it. Keywords: Dense, Bureaucratic, Compliance, EULA, Friction. Best for: Terms of Service, Disclaimers, Legal Footnotes, Copyright Notices.
-**userInstruction:** The legal footnotes must fulfill compliance while discouraging reading through a monotonous, dense texture. Apply the FinePrint typeface.
+**userInstruction:**
+The legal footnotes must fulfill compliance while discouraging reading through a monotonous, dense texture. Apply the FinePrint typeface.
 **before:**
 ```html
 …<footer class="legal-footer">…</footer>…
@@ -474,7 +493,7 @@ FinePrint. Intentionally exhausting yet technically compliant. It maximizes char
 **css:**
 ```css
 .\$Typeface\(FinePrint\,\'Arial\+Narrow\'\,\'Helvetica\+Neue\+Condensed\'\,sans-serif-condensed\,sans-serif\,11px\) {
-  --FinePrintFontFamily: "Arial Narrow", "Helvetica Neue Condensed", sans-serif-condensed, sans-serif;
+  --FinePrintFontFamily: 'Arial Narrow', 'Helvetica Neue Condensed', sans-serif-condensed, sans-serif;
   --FinePrintFontSize: 11px;
 }
 ```

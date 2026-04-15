@@ -1,5 +1,4 @@
-**description:**
-Adds a subtle box shadow with 2px blur and semi-transparent black.
+**description:** Adds a subtle box shadow with 2px blur and semi-transparent black.
 **userInstruction:** Add a subtle drop shadow to the card so it stands out slightly from the background.
 **before:**
 ```html
@@ -16,9 +15,9 @@ Adds a subtle box shadow with 2px blur and semi-transparent black.
 }
 ```
 
-**description:**
-Stacks two box shadows with different colors and offsets.
-**userInstruction:** The primary button has too many complex, muddy shadows from an old design. Strip them back and simplify it by stacking just two clean blue shadows.
+**description:** Stacks two box shadows with different colors and offsets.
+**userInstruction:**
+The primary button has too many complex, muddy shadows from an old design. Strip them back and simplify it by stacking just two clean blue shadows.
 **before:**
 ```html
 …<button class="primary-button $boxShadow(0,2px,4px,#000)$boxShadow(inset,0,-1px,0,#fff)$boxShadow(0,10px,20px,#333)">…</button>…
@@ -34,8 +33,7 @@ Stacks two box shadows with different colors and offsets.
 }
 ```
 
-**description:**
-Adds an inset box shadow with 4px blur and 60% opacity black.
+**description:** Adds an inset box shadow with 4px blur and 60% opacity black.
 **userInstruction:** When the search input is focused, add a heavy inset shadow to make it look deeply pressed.
 **before:**
 ```html
@@ -47,14 +45,14 @@ Adds an inset box shadow with 4px blur and 60% opacity black.
 ```
 **css:**
 ```css
-.\$boxShadow\(inset\,0\,2px\,4px\,0\,\#rgba\(0\,0\,0\,0\.6\)\) {
+.\:focus\$boxShadow\(inset\,0\,2px\,4px\,0\,\#rgba\(0\,0\,0\,0\.6\)\):where(:focus) {
   box-shadow: inset 0 2px 4px 0 rgba(0 0 0 / 0.6);
 }
 ```
 
-**description:**
-Creates an ambient glow shadow at default 45° angle.
-**userInstruction:** The avatar currently uses hardcoded, non-scalable pixel offsets for its drop shadow. Replace those magic numbers with the semantic ambient glow preset.
+**description:** Creates an ambient glow shadow at default 45° angle.
+**userInstruction:**
+The avatar currently uses hardcoded, non-scalable pixel offsets for its drop shadow. Replace those magic numbers with the semantic ambient glow preset.
 **before:**
 ```html
 …<img class="avatar $boxShadow(7px,7px,15px,12px,#efa4)">…
@@ -70,8 +68,7 @@ Creates an ambient glow shadow at default 45° angle.
 }
 ```
 
-**description:**
-Creates an ambient glow shadow at 90° angle.
+**description:** Creates an ambient glow shadow at 90° angle.
 **userInstruction:** The developer tried to create a 90-degree ambient glow but accidentally misspelled 'ambient'. Fix the syntax error.
 **before:**
 ```html
@@ -88,8 +85,7 @@ Creates an ambient glow shadow at 90° angle.
 }
 ```
 
-**description:**
-Adds a text shadow with 8px blur and semi-transparent black.
+**description:** Adds a text shadow with 8px blur and semi-transparent black.
 **userInstruction:** The white heading is hard to read against the light background image. Add a soft dark text shadow to improve contrast.
 **before:**
 ```html
@@ -106,9 +102,9 @@ Adds a text shadow with 8px blur and semi-transparent black.
 }
 ```
 
-**description:**
-Adds a sharp 2px text shadow in solid black.
-**userInstruction:** The retro logo inherits a soft blurry text shadow from the global typography settings, but it specifically needs a sharp solid black shadow to look 8-bit. Add a contextual override.
+**description:** Adds a sharp 2px text shadow in solid black.
+**userInstruction:**
+The retro logo inherits a soft blurry text shadow from the global typography settings, but it specifically needs a sharp solid black shadow to look 8-bit. Add a contextual override.
 **before:**
 ```html
 …<div class="|$textShadow(0,5px,10px,#rgba(0,0,0,0.5))">
@@ -123,6 +119,10 @@ Adds a sharp 2px text shadow in solid black.
 ```
 **css:**
 ```css
+.\|\$textShadow\(0\,5px\,10px\,\#rgba\(0\,0\,0\,0\.5\)\)>* {
+  text-shadow: 0 5px 10px rgba(0 0 0 / 0.5);
+}
+
 .\$textShadow\(2px\,2px\,4px\,\#000000\) {
   text-shadow: 2px 2px 4px #000000;
 }
