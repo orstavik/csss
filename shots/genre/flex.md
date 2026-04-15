@@ -1,8 +1,22 @@
 **description:**
 A vertical Flex settings panel with shared item basis.
-**csss:**
- $Flex(column,gap(0.5rem),padding(1rem))
-|$FlexItem(100px)
+**userInstruction:** The settings panel needs to be a column layout with gaps, and all child settings items should share a 100px flex basis.
+**before:**
+```html
+…<div class="settings $Flex">
+  <div>…</div>
+  <div>…</div>
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Flex(column,gap(0.5rem),padding(1rem))
+  |$FlexItem(100px)">
+  <div>…</div>
+  <div>…</div>
+</div>…
+```
 **css:**
 ```css
 .\$Flex\(column\,gap\(0\.5rem\)\,padding\(1rem\)\) {
@@ -25,10 +39,24 @@ A vertical Flex settings panel with shared item basis.
 
 **description:**
 A reversed Flex action bar with mixed growth.
-**csss:**
- $Flex(rowReverse,gap(0.5rem),padding(1rem))
-|:nth-child(1)$flexItem(1)
-|:nth-child(2)$flexItem(2)
+**userInstruction:** The action bar is currently left-to-right. Reverse the row direction and make the second button grow twice as fast as the first button.
+**before:**
+```html
+…<div class="$Flex(row,gap(0.5rem),padding(1rem))">
+  <button>…</button>
+  <button>…</button>
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Flex(rowReverse,gap(0.5rem),padding(1rem))
+  |:nth-child(1)$flexItem(1)
+  |:nth-child(2)$flexItem(2)">
+  <button>…</button>
+  <button>…</button>
+</div>…
+```
 **css:**
 ```css
 .\$Flex\(rowReverse\,gap\(0\.5rem\)\,padding\(1rem\)\) {
@@ -52,9 +80,23 @@ A reversed Flex action bar with mixed growth.
 
 **description:**
 A wrapping Flex card grid with fixed tile sizing.
-**csss:**
- $Flex(wrap,gap(1rem,2rem))
-|$FlexItem(margin(5px,1rem))$Box(150px,120px)$BoxItem(scrollMargin(10px))
+**userInstruction:** The flex cards aren't wrapping to the next line when the screen is too small, and they need fixed width/height (150px/120px).
+**before:**
+```html
+…<div class="$Flex(gap(1rem,2rem))">
+  <div>…</div>
+  <div>…</div>
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Flex(wrap,gap(1rem,2rem))
+  |$FlexItem(margin(5px,1rem))$Box(150px,120px)$BoxItem(scrollMargin(10px))">
+  <div>…</div>
+  <div>…</div>
+</div>…
+```
 **css:**
 ```css
 .\$Flex\(wrap\,gap\(1rem\,2rem\)\) {
@@ -90,11 +132,27 @@ A wrapping Flex card grid with fixed tile sizing.
 
 **description:**
 A wrapping Flex toolbar where key actions are reordered and aligned differently once the row starts to fill up.
-**csss:**
- $Flex(start,gap(1rem),padding(1rem),wrap)
-|$FlexItem(order(3),start,margin(1rem))
-|.two$flexItem(order(1),center)
-|.three$flexItem(order(2),end)
+**userInstruction:** The visual order of the toolbar items needs to be rearranged. Set a default order of 3 for all items, but move .two to the front (order 1) and .three to the middle (order 2), adjusting their individual alignments as well.
+**before:**
+```html
+…<div class="$Flex(start,gap(1rem),padding(1rem),wrap)">
+  <button class="one">…</button>
+  <button class="two">…</button>
+  <button class="three">…</button>
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Flex(start,gap(1rem),padding(1rem),wrap)
+  |$FlexItem(order(3),start,margin(1rem))
+  |.two$flexItem(order(1),center)
+  |.three$flexItem(order(2),end)">
+  <button class="one">…</button>
+  <button class="two">…</button>
+  <button class="three">…</button>
+</div>…
+```
 **css:**
 ```css
 .\$Flex\(start\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
@@ -127,9 +185,23 @@ A wrapping Flex toolbar where key actions are reordered and aligned differently 
 
 **description:**
 A centered Flex row with a stretched featured item.
-**csss:**
- $Flex(center,gap(1rem),padding(1rem),wrap)
-|.featured$FlexItem(stretch)
+**userInstruction:** The items are centered, but the featured item should stretch vertically to fill the height of the row.
+**before:**
+```html
+…<div class="$Flex(center,gap(1rem),padding(1rem),wrap)">
+  <div>…</div>
+  <div class="featured">…</div>
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Flex(center,gap(1rem),padding(1rem),wrap)
+  |.featured$FlexItem(stretch)">
+  <div>…</div>
+  <div class="featured">…</div>
+</div>…
+```
 **css:**
 ```css
 .\$Flex\(center\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
@@ -152,11 +224,27 @@ A centered Flex row with a stretched featured item.
 
 **description:**
 A scrollable Flex control strip with mixed item sizing.
-**csss:**
- $Flex(gap(1rem),padding(1rem))$box(scroll)
-|:nth-child(1)$flexItem(1)
-|:nth-child(2)$flexItem(center)
-|:nth-child(3)$flexItem(1,0.5)
+**userInstruction:** The control strip is overflowing its container. Add a scroll box to it, and adjust the flex-grow and flex-shrink properties of the children so they respond correctly when space is tight.
+**before:**
+```html
+…<div class="$Flex(gap(1rem),padding(1rem))">
+  <div>…</div>
+  <div>…</div>
+  <div>…</div>
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Flex(gap(1rem),padding(1rem))$box(scroll)
+  |:nth-child(1)$flexItem(1)
+  |:nth-child(2)$flexItem(center)
+  |:nth-child(3)$flexItem(1,0.5)">
+  <div>…</div>
+  <div>…</div>
+  <div>…</div>
+</div>…
+```
 **css:**
 ```css
 .\$Flex\(gap\(1rem\)\,padding\(1rem\)\)\$box\(scroll\) {
@@ -185,12 +273,30 @@ A scrollable Flex control strip with mixed item sizing.
 
 **description:**
 A Flex comparison row with a flexible lead item, supporting items aligned independently, and a note moved later in the visual order.
-**csss:**
- $Flex(row,gap(1rem),padding(1rem),wrap)
-|:nth-child(1)$flexItem(1,200px)
-|:nth-child(2)$flexItem(center)
-|:nth-child(3)$flexItem(end)
-|.note$flexItem(order(4),margin(1rem))
+**userInstruction:** The row needs more complex alignment. The first item should grow with a 200px basis, the middle items should align to center and end, and the note item should be pushed to the very end of the flex order.
+**before:**
+```html
+…<div class="$Flex(row,gap(1rem),padding(1rem),wrap)">
+  <div>…</div>
+  <div>…</div>
+  <div>…</div>
+  <div class="note">…</div>
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Flex(row,gap(1rem),padding(1rem),wrap)
+  |:nth-child(1)$flexItem(1,200px)
+  |:nth-child(2)$flexItem(center)
+  |:nth-child(3)$flexItem(end)
+  |.note$flexItem(order(4),margin(1rem))">
+  <div>…</div>
+  <div>…</div>
+  <div>…</div>
+  <div class="note">…</div>
+</div>…
+```
 **css:**
 ```css
 .\$Flex\(row\,gap\(1rem\)\,padding\(1rem\)\,wrap\) {
@@ -223,11 +329,27 @@ A Flex comparison row with a flexible lead item, supporting items aligned indepe
 
 **description:**
 A Flex inheritance example with parent item defaults and targeted child overrides.
-**csss:**
- $Flex(gap(1rem),padding(1rem),wrap)
-|$FlexItem(1,180px,margin(0.5rem))
-|.wide$flexItem(2,280px)
-|.pin$flexItem(order(5),end)
+**userInstruction:** Apply a default flex grow of 1 and basis of 180px to all items. Then, make the .wide element grow twice as fast with a 280px basis, and pin the pinned element to the end.
+**before:**
+```html
+…<div class="$Flex(gap(1rem),padding(1rem),wrap)">
+  <div>…</div>
+  <div class="wide">…</div>
+  <div class="pin">…</div>
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Flex(gap(1rem),padding(1rem),wrap)
+  |$FlexItem(1,180px,margin(0.5rem))
+  |.wide$flexItem(2,280px)
+  |.pin$flexItem(order(5),end)">
+  <div>…</div>
+  <div class="wide">…</div>
+  <div class="pin">…</div>
+</div>…
+```
 **css:**
 ```css
 .\$Flex\(gap\(1rem\)\,padding\(1rem\)\,wrap\) {
@@ -258,16 +380,44 @@ A Flex inheritance example with parent item defaults and targeted child override
 ```
 
 **description:** Applies uniform 1rem margin on all flex children.
-**csss:** |*$flexItem(margin(1rem))
+**userInstruction:** Change the wildcard |*$ to just the generic child selector |$ to apply margins to flex items.
+**before:**
+```html
+…<div class="|*$flexItem(margin(1rem))">
+  <div>…</div>
+  <div>…</div>
+</div>…
+```
+**after:**
+```html
+…<div class="|$flexItem(margin(1rem))">
+  <div>…</div>
+  <div>…</div>
+</div>…
+```
 **css:**
 ```css
-.\|\*\$flexItem\(margin\(1rem\)\)>* {
+.\|\$flexItem\(margin\(1rem\)\)>* {
   margin: 1rem;
 }
 ```
 
 **description:** Applies 2rem bottom margin on .a flex child.
-**csss:** |.a$flexItem(margin(0,0,2rem))
+**userInstruction:** Add a 2rem bottom margin specifically to the child with class .a.
+**before:**
+```html
+…<div class="|$flexItem(margin(1rem))">
+  <div class="a">…</div>
+  <div>…</div>
+</div>…
+```
+**after:**
+```html
+…<div class="|$flexItem(margin(1rem)) |.a$flexItem(margin(0,0,2rem))">
+  <div class="a">…</div>
+  <div>…</div>
+</div>…
+```
 **css:**
 ```css
 .\|\.a\$flexItem\(margin\(0\,0\,2rem\)\)>:where(.a) {

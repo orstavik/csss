@@ -12,7 +12,7 @@ A horizontal scrolling container with snapping and custom inline sizing constrai
 ```html
 …<div class="
   $Box(100px<100%<800px,scroll,snapInlineMandatory,scrollPadding(0,1rem))
-  |*$BoxItem(snapCenter,scrollMargin(0,1rem))">
+  |$BoxItem(snapCenter,scrollMargin(0,1rem))">
   <div>…</div>
   <div>…</div>
 </div>…
@@ -55,7 +55,7 @@ A fixed-size vertical scrolling block container with hidden overflow on the inli
 ```html
 …<div class="
   $Box(100%,300px,hiddenScroll,snapBlockMandatory)
-  |*$BoxItem(snapStart,snapAlways)">
+  |$BoxItem(snapStart,snapAlways)">
   …
   <div>…</div>
   …
@@ -234,7 +234,7 @@ A carousel layout where the items stop normally and align at the start and end u
 ```html
 …<div class="
   $Flex(row)$Box(auto,snap)
-  |*$BoxItem(snapStartEnd,snapNormal)">
+  |$BoxItem(snapStartEnd,snapNormal)">
   <div class="slide">…</div>
   <div class="slide">…</div>
 </div>…
@@ -281,7 +281,7 @@ A vertical content feed where the Box container masks overflow outside of the bl
 ```html
 …<div class="
   $Box(hiddenScroll,scrollPadding(2rem,0))
-  |*$BoxItem(scrollMargin(1rem,0))">
+  |$BoxItem(scrollMargin(1rem,0))">
   <article>…</article>
   <article>…</article>
 </div>…
