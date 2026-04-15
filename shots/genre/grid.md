@@ -80,7 +80,7 @@ A column-flow Grid board with a tall spanning item.
 
 **description:**
 A feature Grid with a spanning hero and a side card that can be aligned independently for contrast.
-**userInstruction:** Set the grid to stretch all items by default using |$. Then, make the .hero item span two columns with a 1rem margin, and align the .aside to the start and end of row 2.
+**userInstruction:** Set the grid to stretch all items by default. Then, make the hero item span two columns with a 1rem margin, and align the aside to the start and end of row 2.
 **before:**
 ```html
 …<div class="$Grid(center,cols(repeat(2,1fr)),gap(1rem),padding(1rem))">

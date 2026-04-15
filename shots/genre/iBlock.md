@@ -1,6 +1,6 @@
 **description:**
 An IBlock badge row with centered text, padding, and even spacing.
-**userInstruction:** The badges are packed too tightly and have no internal padding. Add 0.5rem padding, center the text, and separate the items with an inline-block spacing using the general child selector |$.
+**userInstruction:** The badges are packed too tightly and have no internal padding. Add 0.5rem padding, center the text, and separate the items with an inline-block spacing.
 **before:**
 ```html
 …<div class="$IBlock">
@@ -35,7 +35,7 @@ An IBlock badge row with centered text, padding, and even spacing.
 
 **description:**
 An IBlock stat row with hidden overflow, padding, and shared spacing.
-**userInstruction:** Long stat numbers are pushing the bounds of the container. Hide the overflow and ensure the child items have consistent margin spacing using |$.
+**userInstruction:** Long stat numbers are pushing the bounds of the container. Hide the overflow and ensure the child items have consistent margin spacing.
 **before:**
 ```html
 …<div class="$IBlock(padding(0.5rem))">

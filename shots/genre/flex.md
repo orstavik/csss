@@ -1,11 +1,11 @@
 **description:**
 A vertical Flex settings panel with shared item basis.
-**userInstruction:** The settings panel needs to be a column layout with gaps, and all child settings items should share a 100px flex basis. Use the general child selector |$ for the flex items.
+**userInstruction:** The settings panel needs to be a column layout with gaps, and all child settings items should share a 100px flex basis.
 **before:**
 ```html
-…<div class="$Flex">
-  <div class="setting">…</div>
-  <div class="setting">…</div>
+…<div class="settings $Flex">
+  <div>…</div>
+  <div>…</div>
 </div>…
 ```
 **after:**
@@ -13,8 +13,8 @@ A vertical Flex settings panel with shared item basis.
 …<div class="
   $Flex(column,gap(0.5rem),padding(1rem))
   |$FlexItem(100px)">
-  <div class="setting">…</div>
-  <div class="setting">…</div>
+  <div>…</div>
+  <div>…</div>
 </div>…
 ```
 **css:**
@@ -80,7 +80,7 @@ A reversed Flex action bar with mixed growth.
 
 **description:**
 A wrapping Flex card grid with fixed tile sizing.
-**userInstruction:** The flex cards aren't wrapping to the next line when the screen is too small, and they need fixed width/height (150px/120px). Add wrap and use |$ to style the items.
+**userInstruction:** The flex cards aren't wrapping to the next line when the screen is too small, and they need fixed width/height (150px/120px).
 **before:**
 ```html
 …<div class="$Flex(gap(1rem,2rem))">
@@ -132,7 +132,7 @@ A wrapping Flex card grid with fixed tile sizing.
 
 **description:**
 A wrapping Flex toolbar where key actions are reordered and aligned differently once the row starts to fill up.
-**userInstruction:** The visual order of the toolbar items needs to be rearranged. Set a default order of 3 for all items using |$, but move .two to the front (order 1) and .three to the middle (order 2), adjusting their individual alignments as well.
+**userInstruction:** The visual order of the toolbar items needs to be rearranged. Set a default order of 3 for all items, but move .two to the front (order 1) and .three to the middle (order 2), adjusting their individual alignments as well.
 **before:**
 ```html
 …<div class="$Flex(start,gap(1rem),padding(1rem),wrap)">
@@ -185,7 +185,7 @@ A wrapping Flex toolbar where key actions are reordered and aligned differently 
 
 **description:**
 A centered Flex row with a stretched featured item.
-**userInstruction:** The items are centered, but the .featured item should stretch vertically to fill the height of the row.
+**userInstruction:** The items are centered, but the featured item should stretch vertically to fill the height of the row.
 **before:**
 ```html
 …<div class="$Flex(center,gap(1rem),padding(1rem),wrap)">
@@ -273,7 +273,7 @@ A scrollable Flex control strip with mixed item sizing.
 
 **description:**
 A Flex comparison row with a flexible lead item, supporting items aligned independently, and a note moved later in the visual order.
-**userInstruction:** The row needs more complex alignment. The first item should grow with a 200px basis, the middle items should align to center and end, and the .note should be pushed to the very end of the flex order.
+**userInstruction:** The row needs more complex alignment. The first item should grow with a 200px basis, the middle items should align to center and end, and the note item should be pushed to the very end of the flex order.
 **before:**
 ```html
 …<div class="$Flex(row,gap(1rem),padding(1rem),wrap)">
@@ -329,7 +329,7 @@ A Flex comparison row with a flexible lead item, supporting items aligned indepe
 
 **description:**
 A Flex inheritance example with parent item defaults and targeted child overrides.
-**userInstruction:** Apply a default flex grow of 1 and basis of 180px to all items using |$. Then, make the .wide element grow twice as fast with a 280px basis, and pin the .pin element to the end.
+**userInstruction:** Apply a default flex grow of 1 and basis of 180px to all items. Then, make the .wide element grow twice as fast with a 280px basis, and pin the pinned element to the end.
 **before:**
 ```html
 …<div class="$Flex(gap(1rem),padding(1rem),wrap)">
