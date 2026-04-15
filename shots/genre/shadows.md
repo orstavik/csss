@@ -1,7 +1,14 @@
 **description:**
 Adds a subtle box shadow with 2px blur and semi-transparent black.
-**csss:**
- $boxShadow(0,2px,4px,#rgba(0,0,0,0.1))
+**userInstruction:** Add a subtle drop shadow to the card so it stands out slightly from the background.
+**before:**
+```html
+…<div class="card">…</div>…
+```
+**after:**
+```html
+…<div class="card $boxShadow(0,2px,4px,#rgba(0,0,0,0.1))">…</div>…
+```
 **css:**
 ```css
 .\$boxShadow\(0\,2px\,4px\,\#rgba\(0\,0\,0\,0\.1\)\) {
@@ -11,8 +18,15 @@ Adds a subtle box shadow with 2px blur and semi-transparent black.
 
 **description:**
 Stacks two box shadows with different colors and offsets.
-**csss:**
- $boxShadow(0,1rem,.25rem,#3f51b5)$boxShadow(0,.5rem,.5rem,#blue)
+**userInstruction:** The primary button has too many complex, muddy shadows from an old design. Strip them back and simplify it by stacking just two clean blue shadows.
+**before:**
+```html
+…<button class="primary-button $boxShadow(0,2px,4px,#000)$boxShadow(inset,0,-1px,0,#fff)$boxShadow(0,10px,20px,#333)">…</button>…
+```
+**after:**
+```html
+…<button class="primary-button $boxShadow(0,1rem,.25rem,#3f51b5)$boxShadow(0,.5rem,.5rem,#blue)">…</button>…
+```
 **css:**
 ```css
 .\$boxShadow\(0\,1rem\,\.25rem\,\#3f51b5\)\$boxShadow\(0\,\.5rem\,\.5rem\,\#blue\) {
@@ -22,8 +36,15 @@ Stacks two box shadows with different colors and offsets.
 
 **description:**
 Adds an inset box shadow with 4px blur and 60% opacity black.
-**csss:**
- $boxShadow(inset,0,2px,4px,0,#rgba(0,0,0,0.6))
+**userInstruction:** When the search input is focused, add a heavy inset shadow to make it look deeply pressed.
+**before:**
+```html
+…<input class="search-input">…
+```
+**after:**
+```html
+…<input class="search-input :focus$boxShadow(inset,0,2px,4px,0,#rgba(0,0,0,0.6))">…
+```
 **css:**
 ```css
 .\$boxShadow\(inset\,0\,2px\,4px\,0\,\#rgba\(0\,0\,0\,0\.6\)\) {
@@ -33,8 +54,15 @@ Adds an inset box shadow with 4px blur and 60% opacity black.
 
 **description:**
 Creates an ambient glow shadow at default 45° angle.
-**csss:**
- $boxShadow(ambient,10px,#efa4)
+**userInstruction:** The avatar currently uses hardcoded, non-scalable pixel offsets for its drop shadow. Replace those magic numbers with the semantic ambient glow preset.
+**before:**
+```html
+…<img class="avatar $boxShadow(7px,7px,15px,12px,#efa4)">…
+```
+**after:**
+```html
+…<img class="avatar $boxShadow(ambient,10px,#efa4)" src="…">…
+```
 **css:**
 ```css
 .\$boxShadow\(ambient\,10px\,\#efa4\) {
@@ -44,8 +72,15 @@ Creates an ambient glow shadow at default 45° angle.
 
 **description:**
 Creates an ambient glow shadow at 90° angle.
-**csss:**
- $boxShadow(ambient,10px,90deg,#efa4)
+**userInstruction:** The developer tried to create a 90-degree ambient glow but accidentally misspelled 'ambient'. Fix the syntax error.
+**before:**
+```html
+…<span class="badge $boxShadow(ambiant,10px,90deg,#efa4)">…</span>…
+```
+**after:**
+```html
+…<span class="badge $boxShadow(ambient,10px,90deg,#efa4)">…</span>…
+```
 **css:**
 ```css
 .\$boxShadow\(ambient\,10px\,90deg\,\#efa4\) {
@@ -55,8 +90,15 @@ Creates an ambient glow shadow at 90° angle.
 
 **description:**
 Adds a text shadow with 8px blur and semi-transparent black.
-**csss:**
- $textShadow(0,4px,8px,#rgba(0,0,0,0.3))
+**userInstruction:** The white heading is hard to read against the light background image. Add a soft dark text shadow to improve contrast.
+**before:**
+```html
+…<h1 class="hero-title">…</h1>…
+```
+**after:**
+```html
+…<h1 class="hero-title $textShadow(0,4px,8px,#rgba(0,0,0,0.3))">…</h1>…
+```
 **css:**
 ```css
 .\$textShadow\(0\,4px\,8px\,\#rgba\(0\,0\,0\,0\.3\)\) {
@@ -66,8 +108,19 @@ Adds a text shadow with 8px blur and semi-transparent black.
 
 **description:**
 Adds a sharp 2px text shadow in solid black.
-**csss:**
- $textShadow(2px,2px,4px,#000000)
+**userInstruction:** The retro logo inherits a soft blurry text shadow from the global typography settings, but it specifically needs a sharp solid black shadow to look 8-bit. Add a contextual override.
+**before:**
+```html
+…<div class="|$textShadow(0,5px,10px,#rgba(0,0,0,0.5))">
+  <h2 class="retro-logo">…</h2>
+</div>…
+```
+**after:**
+```html
+…<div class="|$textShadow(0,5px,10px,#rgba(0,0,0,0.5))">
+  <h2 class="retro-logo $textShadow(2px,2px,4px,#000000)">…</h2>
+</div>…
+```
 **css:**
 ```css
 .\$textShadow\(2px\,2px\,4px\,\#000000\) {

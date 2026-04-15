@@ -28,20 +28,20 @@
 ```
 
 **description:** Applies flex row with 0.5rem gap to all direct children.
-**csss:** |*$flex(row,gap(0.5rem))
+**csss:** |$flex(row,gap(0.5rem))
 **css:**
 ```css
-.\|\*\$flex\(row\,gap\(0\.5rem\)\)>* {
+.\|\$flex\(row\,gap\(0\.5rem\)\)>* {
   flex-direction: row;
   gap: 0.5rem;
 }
 ```
 
 **description:** Adds 1rem margin on all grandchildren (wildcard default).
-**csss:** ||*$blockItem(margin(1rem))
+**csss:** ||$blockItem(margin(1rem))
 **css:**
 ```css
-.\|\|\*\$blockItem\(margin\(1rem\)\)>*>* {
+.\|\|\$blockItem\(margin\(1rem\)\)>*>* {
   margin: 1rem;
 }
 ```

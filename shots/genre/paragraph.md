@@ -1,7 +1,14 @@
 **description:**
 Creates a highly legible blog paragraph using a preset. Resets all inherited styles and applies full justification, a comfortable line-height, hyphenation, and a slight indent for new paragraphs.
-**csss:**
- $Paragraph(_,1.6,justify,indent(1.5em),hyphens)
+**userInstruction:** Make the paragraph highly legible with full justification, hyphenation, and a slight indent.
+**before:**
+```html
+…<p>…</p>…
+```
+**after:**
+```html
+…<p class="$Paragraph(_,1.6,justify,indent(1.5em),hyphens)">…</p>…
+```
 **css:**
 ```css
 .\$Paragraph\(_\,1\.6\,justify\,indent\(1\.5em\)\,hyphens\) {
@@ -21,11 +28,18 @@ Creates a highly legible blog paragraph using a preset. Resets all inherited sty
 
 **description:**
 Formats user-generated comments or markdown blocks by targeting a specific class. Additively applies whitespace preservation, safe wrapping for long URLs, and custom line-height.
-**csss:**
-.comment$paragraph(preWrap,breakWord,spacing(0.1em),1.5)
+**userInstruction:** Format the comment text to preserve whitespace, safely wrap long URLs, and increase line height.
+**before:**
+```html
+…<div class="comment">…</div>…
+```
+**after:**
+```html
+…<div class="comment $Paragraph(preWrap,breakWord,spacing(0.1em),1.5)">…</div>…
+```
 **css:**
 ```css
-.\.comment\$paragraph\(preWrap\,breakWord\,spacing\(0\.1em\)\,1\.5\):where(.comment) {
+.\.comment\$Paragraph\(preWrap\,breakWord\,spacing\(0\.1em\)\,1\.5\):where(.comment) {
   line-height: 1.5;
   white-space: pre-wrap;
   word-spacing: 0.1em;
@@ -36,8 +50,15 @@ Formats user-generated comments or markdown blocks by targeting a specific class
 
 **description:**
 Sets strict typographic rules for formal, mixed-language documents (like legal text with CJK). Resets all paragraph defaults, preventing word breaks within CJK text but allowing long strings to break, while controlling line-breaking and punctuation.
-**csss:**
- $Paragraph(_,breakLongWords,lineBreakStrict,hangingPunctuationFirst,1.8)
+**userInstruction:** Apply strict typographic rules for formal mixed-language documents, preventing word breaks in CJK text but allowing long strings to break.
+**before:**
+```html
+…<div>…</div>…
+```
+**after:**
+```html
+…<div class="$Paragraph(_,breakLongWords,lineBreakStrict,hangingPunctuationFirst,1.8)">…</div>…
+```
 **css:**
 ```css
 .\$Paragraph\(_\,breakLongWords\,lineBreakStrict\,hangingPunctuationFirst\,1\.8\) {
@@ -57,8 +78,15 @@ Sets strict typographic rules for formal, mixed-language documents (like legal t
 
 **description:**
 Styles the first child in a container (like a terminal output or hash dump block). Additively forces aggressive word-breaking at the box edge, tight line height, and zero spacing.
-**csss:**
-|:first-child$paragraph(breakAll,spacing(0),1.2)
+**userInstruction:** Force aggressive word-breaking at the box edge, tight line height, and zero spacing for the first child element.
+**before:**
+```html
+…<div>…</div>…
+```
+**after:**
+```html
+…<div class="|:first-child$paragraph(breakAll,spacing(0),1.2)">…</div>…
+```
 **css:**
 ```css
 .\|\:first-child\$paragraph\(breakAll\,spacing\(0\)\,1\.2\)>:where(:first-child) {
@@ -71,11 +99,18 @@ Styles the first child in a container (like a terminal output or hash dump block
 
 **description:**
 Resets paragraph inheritance defaults for nested elements using a universal child selector. Forces a left-aligned, nowrap block with strict line-breaking rules and absolutely no indent.
-**csss:**
-|*$Paragraph(_,left,nowrap,indent(0),lineBreakNormal)
+**userInstruction:** Reset paragraph defaults for all nested elements, forcing a left-aligned, nowrap block with strict line-breaking rules and no indent.
+**before:**
+```html
+…<div>…</div>…
+```
+**after:**
+```html
+…<div class="|$Paragraph(_,left,nowrap,indent(0),lineBreakNormal)">…</div>…
+```
 **css:**
 ```css
-.\|\*\$Paragraph\(_\,left\,nowrap\,indent\(0\)\,lineBreakNormal\)>* {
+.\|\$Paragraph\(_\,left\,nowrap\,indent\(0\)\,lineBreakNormal\)>* {
   line-height: unset;
   text-indent: 0;
   word-spacing: unset;
@@ -92,8 +127,15 @@ Resets paragraph inheritance defaults for nested elements using a universal chil
 
 **description:**
 Styles a journal document preset. Sets specific paragraph alignment defaults with a predefined style `journal`. Resets inherited line height, white space and more.
-**csss:**
- $Paragraph(journal,1.7,shy,hangingPunctuationAllowEnd)
+**userInstruction:** Apply the journal preset with custom line height, manual hyphens, and hanging punctuation at the end.
+**before:**
+```html
+…<article class="$Paragraph(journal)">…</article>…
+```
+**after:**
+```html
+…<article class="$Paragraph(journal,1.7,shy,hangingPunctuationAllowEnd)">…</article>…
+```
 **css:**
 ```css
 .\$Paragraph\(journal\,1\.7\,shy\,hangingPunctuationAllowEnd\) {
@@ -113,8 +155,15 @@ Styles a journal document preset. Sets specific paragraph alignment defaults wit
 
 **description:**
 Sets typography for poetry or lyrics block. Keeps spaces and lines as authored by preserving formatting and breaks. It uses a specific selector to target the poetry class.
-**csss:**
-.poetry$paragraph(preserve,1.4,center)
+**userInstruction:** Format the poetry block to preserve authored spaces and line breaks, centrally aligned.
+**before:**
+```html
+…<div class="poetry">…</div>…
+```
+**after:**
+```html
+…<div class="poetry $paragraph(preserve,1.4,center)">…</div>…
+```
 **css:**
 ```css
 .\.poetry\$paragraph\(preserve\,1\.4\,center\):where(.poetry) {
@@ -126,8 +175,15 @@ Sets typography for poetry or lyrics block. Keeps spaces and lines as authored b
 
 **description:**
 Renders a classic prose format using a novel preset, with smaller line-height, text alignment justified, and hanging punctuation on both start and end.
-**csss:**
- $Paragraph(novel,1.3,lastCenter,hangingPunctuationForceEnd,indent(1rem))
+**userInstruction:** Render classic prose with a novel preset, justified text, and centered last line.
+**before:**
+```html
+…<p>…</p>…
+```
+**after:**
+```html
+…<p class="$Paragraph(novel,1.3,lastCenter,hangingPunctuationForceEnd,indent(1rem))">…</p>…
+```
 **css:**
 ```css
 .\$Paragraph\(novel\,1\.3\,lastCenter\,hangingPunctuationForceEnd\,indent\(1rem\)\) {
@@ -147,8 +203,15 @@ Renders a classic prose format using a novel preset, with smaller line-height, t
 
 **description:**
 Renders hover styles for a summary card description, where text might overflow and should break appropriately, slightly tightening word spacing.
-**csss:**
-:hover$paragraph(breakSpaces,spacing(-0.05em),1.5)
+**userInstruction:** Add a hover state to the summary card description that tightens word spacing and breaks spaces appropriately.
+**before:**
+```html
+…<p class="summary-card">…</p>…
+```
+**after:**
+```html
+…<p class="summary-card :hover$paragraph(breakSpaces,spacing(-0.05em),1.5)">…</p>…
+```
 **css:**
 ```css
 .\:hover\$paragraph\(breakSpaces\,spacing\(-0\.05em\)\,1\.5\):where(:hover) {
@@ -160,8 +223,15 @@ Renders hover styles for a summary card description, where text might overflow a
 
 **description:**
 A dense code block reset. Disables hyphens, enforces pre formatting, preserves spaces and breaks, and ensures normal word breaking. Resets all the defaults.
-**csss:**
- $Paragraph(_,pre,breakNormal,indent(0),shy)
+**userInstruction:** Reset the dense code block to preserve spaces and breaks while ensuring normal word breaking.
+**before:**
+```html
+…<pre class="code-block">…</pre>…
+```
+**after:**
+```html
+…<pre class="code-block $Paragraph(_,pre,breakNormal,indent(0),shy)">…</pre>…
+```
 **css:**
 ```css
 .\$Paragraph\(_\,pre\,breakNormal\,indent\(0\)\,shy\) {
@@ -181,8 +251,15 @@ A dense code block reset. Disables hyphens, enforces pre formatting, preserves s
 
 **description:**
 Styles standard web copy using the body baseline. Ensures safe word breaks and automatic hyphenation for clean reading, with no additional tweaks.
-**csss:**
- $Paragraph(body)
+**userInstruction:** Style standard web copy using the body baseline for clean reading.
+**before:**
+```html
+…<body>…</body>…
+```
+**after:**
+```html
+…<body class="$Paragraph(body)">…</body>…
+```
 **css:**
 ```css
 .\$Paragraph\(body\) {
@@ -202,8 +279,15 @@ Styles standard web copy using the body baseline. Ensures safe word breaks and a
 
 **description:**
 Sets up a high-legibility text block for accessibility, but adds a tweak to fully justify the text and strictly control line breaks.
-**csss:**
- $Paragraph(legible,justify,lineBreakStrict)
+**userInstruction:** Make the text more legible.
+**before:**
+```html
+…<p class="$paragraph(justify,lineBreakStrict)">…</p>…
+```
+**after:**
+```html
+…<p class="$Paragraph(legible,justify,lineBreakStrict)">…</p>…
+```
 **css:**
 ```css
 .\$Paragraph\(legible\,justify\,lineBreakStrict\) {
@@ -223,8 +307,15 @@ Sets up a high-legibility text block for accessibility, but adds a tweak to full
 
 **description:**
 Applies the dense journal format for formal text, overriding the default strict line breaking to normal to accommodate specific language requirements.
-**csss:**
- $Paragraph(journal,lineBreakNormal)
+**userInstruction:** Override the strict line breaking to normal for the formal journal text to accommodate specific language requirements.
+**before:**
+```html
+…<article class="$Paragraph(journal)">…</article>…
+```
+**after:**
+```html
+…<article class="$Paragraph(journal,lineBreakNormal)">…</article>…
+```
 **css:**
 ```css
 .\$Paragraph\(journal\,lineBreakNormal\) {
@@ -244,8 +335,15 @@ Applies the dense journal format for formal text, overriding the default strict 
 
 **description:**
 Styles classic prose layout with an indent, using the novel baseline without any additional overrides.
-**csss:**
- $Paragraph(novel)
+**userInstruction:** Style classic prose layout with an indent using the novel baseline.
+**before:**
+```html
+…<p>…</p>…
+```
+**after:**
+```html
+…<p class="$Paragraph(novel)">…</p>…
+```
 **css:**
 ```css
 .\$Paragraph\(novel\) {
@@ -265,8 +363,15 @@ Styles classic prose layout with an indent, using the novel baseline without any
 
 **description:**
 Sets up a hero display text block. Uses the display baseline but explicitly centers the text and removes the hanging punctuation on the first line.
-**csss:**
- $Paragraph(display,center,hangingPunctuationNone)
+**userInstruction:** Set up a hero display text block, explicitly centered and with no hanging punctuation.
+**before:**
+```html
+…<h1 class="$Paragraph(display)">…</h1>…
+```
+**after:**
+```html
+…<h1 class="$Paragraph(display,center,hangingPunctuationNone)">…</h1>…
+```
 **css:**
 ```css
 .\$Paragraph\(display\,center\,hangingPunctuationNone\) {
@@ -286,8 +391,15 @@ Sets up a hero display text block. Uses the display baseline but explicitly cent
 
 **description:**
 Formats a short image caption centrally aligned without any hyphens using the caption baseline.
-**csss:**
- $Paragraph(caption)
+**userInstruction:** Format a short image caption centrally aligned without hyphens using the caption baseline.
+**before:**
+```html
+…<figcaption>…</figcaption>…
+```
+**after:**
+```html
+…<figcaption class="$Paragraph(caption)">…</figcaption>…
+```
 **css:**
 ```css
 .\$Paragraph\(caption\) {
@@ -307,8 +419,15 @@ Formats a short image caption centrally aligned without any hyphens using the ca
 
 **description:**
 Ensures numbers align to the end edge and never wrap, using the tabular baseline without any tweaks.
-**csss:**
- $Paragraph(tabular)
+**userInstruction:** Ensure numbers align to the end edge and never wrap using the tabular baseline.
+**before:**
+```html
+…<div>…</div>…
+```
+**after:**
+```html
+…<div class="$Paragraph(tabular)">…</div>…
+```
 **css:**
 ```css
 .\$Paragraph\(tabular\) {
@@ -328,8 +447,15 @@ Ensures numbers align to the end edge and never wrap, using the tabular baseline
 
 **description:**
 Formats a button label using the interactive baseline. Adds a slight word-spacing increase for button legibility and forces it to start-align instead of center.
-**csss:**
- $Paragraph(interactive,spacing(0.02em),start)
+**userInstruction:** Format the button label with the interactive baseline, increasing word spacing slightly and start-aligning.
+**before:**
+```html
+…<button class="$Paragraph(interactive)">…</button>…
+```
+**after:**
+```html
+…<button class="$Paragraph(interactive,spacing(0.02em),start)">…</button>…
+```
 **css:**
 ```css
 .\$Paragraph\(interactive\,spacing\(0\.02em\)\,start\) {
@@ -349,8 +475,15 @@ Formats a button label using the interactive baseline. Adds a slight word-spacin
 
 **description:**
 Styles a terminal log block using the terminal baseline. Adjusts the white-space rule from pre-wrap to pre to ensure strict formatting preservation on massive logs.
-**csss:**
- $Paragraph(terminal,pre)
+**userInstruction:** Make the text look more technical.
+**before:**
+```html
+…<div class="$paragraph(pre)">…</div>…
+```
+**after:**
+```html
+…<div class="$Paragraph(terminal,pre)">…</div>…
+```
 **css:**
 ```css
 .\$Paragraph\(terminal\,pre\) {
@@ -370,8 +503,15 @@ Styles a terminal log block using the terminal baseline. Adjusts the white-space
 
 **description:**
 Prepares a text block for aggressive breaking on long compound words, using the compound baseline.
-**csss:**
- $Paragraph(compound)
+**userInstruction:** Prepare the text block for aggressive breaking on long compound words using the compound baseline.
+**before:**
+```html
+…<p>…</p>…
+```
+**after:**
+```html
+…<p class="$Paragraph(compound)">…</p>…
+```
 **css:**
 ```css
 .\$Paragraph\(compound\) {

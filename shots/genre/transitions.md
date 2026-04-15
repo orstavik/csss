@@ -1,5 +1,13 @@
 **description:** Applies bounceInOut easing to margin and color transitions over 2s.
-**csss:** $transition(bounceInOut,2s,margin,color)
+**userInstruction:** The sidebar transition is too rigid. Add a playful bounce-in-out easing over 2 seconds specifically for margin and color changes.
+**before:**
+```html
+…<aside>…</aside>…
+```
+**after:**
+```html
+…<aside class="$transition(bounceInOut,2s,margin,color)">…</aside>…
+```
 **css:**
 ```css
 :root /*--transition-bounceInOut*/ {
@@ -12,7 +20,15 @@
 ```
 
 **description:** Applies backInOut easing to transform and opacity with 1s duration and 1s delay.
-**csss:** $transition(backInOut,1s,1s,transform,opacity)
+**userInstruction:** Apply a back-in-out easing for transform and opacity to create an elastic entry animation on the modal.
+**before:**
+```html
+…<dialog>…</dialog>…
+```
+**after:**
+```html
+…<dialog class="$transition(backInOut,1s,1s,transform,opacity)">…</dialog>…
+```
 **css:**
 ```css
 :root /*--transition-backInOut*/ {
@@ -25,7 +41,15 @@
 ```
 
 **description:** Applies ease-in timing function with 2s duration.
-**csss:** $transition(easeIn,2s)
+**userInstruction:** The hero image fade-in is too quick. Override its timing to use a slow ease-in curve over 2 seconds.
+**before:**
+```html
+…<img src="...">…
+```
+**after:**
+```html
+…<img class="$transition(easeIn,2s)" src="...">…
+```
 **css:**
 ```css
 .\$transition\(easeIn\,2s\) {
@@ -34,7 +58,15 @@
 ```
 
 **description:** Creates a 5-step transition (default jump-end).
-**csss:** $transition(steps(5))
+**userInstruction:** Create a choppy, retro 5-step animation effect for the loading spinner.
+**before:**
+```html
+…<div>…</div>…
+```
+**after:**
+```html
+…<div class="$transition(steps(5))">…</div>…
+```
 **css:**
 ```css
 .\$transition\(steps\(5\)\) {
@@ -43,7 +75,15 @@
 ```
 
 **description:** Creates a 5-step transition with jump-end timing.
-**csss:** $transition(steps(5,end))
+**userInstruction:** Be explicit with the step transition's jump behavior by explicitly stating jump-end.
+**before:**
+```html
+…<div class="$transition(steps(5))">…</div>…
+```
+**after:**
+```html
+…<div class="$transition(steps(5,end))">…</div>…
+```
 **css:**
 ```css
 .\$transition\(steps\(5\,end\)\) {
@@ -52,7 +92,15 @@
 ```
 
 **description:** Creates a 5-step transition with jump-both timing.
-**csss:** $transition(steps(5,jumpBoth))
+**userInstruction:** The step animation feels uneven because it skips the start/end states. Switch it to jump-both for a symmetrical sequence.
+**before:**
+```html
+…<div class="$transition(steps(5,end))">…</div>…
+```
+**after:**
+```html
+…<div class="$transition(steps(5,jumpBoth))">…</div>…
+```
 **css:**
 ```css
 .\$transition\(steps\(5\,jumpBoth\)\) {
@@ -61,7 +109,15 @@
 ```
 
 **description:** Combines two custom easing functions for different properties in one rule.
-**csss:** $transition(backInOut,1s,1s,transform,opacity)$transition(bounceInOut,2s,margin,color)
+**userInstruction:** The card needs complex micro-interactions: use back-in-out for entry properties (transform/opacity) and bounce-in-out for interaction properties (margin/color).
+**before:**
+```html
+…<article>…</article>…
+```
+**after:**
+```html
+…<article class="$transition(backInOut,1s,1s,transform,opacity)$transition(bounceInOut,2s,margin,color)">…</article>…
+```
 **css:**
 ```css
 :root /*--transition-backInOut*/ {

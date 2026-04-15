@@ -17,19 +17,19 @@
 ```
 
 **description:** Applies backdrop brightness with an SVG filter reference.
-**csss:** $backdrop(brightness(0.5),"common-filters.svg#filter")
+**csss:** $backdrop(brightness(0.5),'common-filters.svg#filter')
 **css:**
 ```css
-.\$backdrop\(brightness\(0\.5\)\,\"common-filters\.svg\#filter\"\) {
+.\$backdrop\(brightness\(0\.5\)\,\'common-filters\.svg\#filter\'\) {
   backdrop-filter: brightness(0.5) url("common-filters.svg#filter");
 }
 ```
 
 **description:** Applies a red drop-shadow filter with URL and ID-based SVG filters.
-**csss:** $filter(dropShadow(#red,5px,5px,5px),url("https://example.com/filter"),"#anotherFilter")
+**csss:** $filter(dropShadow(#red,5px,5px,5px),url('https://example.com/filter'),'#anotherFilter')
 **css:**
 ```css
-.\$filter\(dropShadow\(\#red\,5px\,5px\,5px\)\,url\(\"https\:\/\/example\.com\/filter\"\)\,\"\#anotherFilter\"\) {
+.\$filter\(dropShadow\(\#red\,5px\,5px\,5px\)\,url\(\'https\:\/\/example\.com\/filter\'\)\,\'\#anotherFilter\'\) {
   filter: drop-shadow(5px 5px 5px red) url("https://example.com/filter") url("#anotherFilter");
 }
 ```

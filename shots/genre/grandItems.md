@@ -13,10 +13,10 @@ Sets 1rem gap and padding on a flex container.
 **description:**
 Adds 0.5rem margin on all direct flex children.
 **csss:**
-|*$flexItem(margin(0.5rem))
+|$flexItem(margin(0.5rem))
 **css:**
 ```css
-.\|\*\$flexItem\(margin\(0\.5rem\)\)>* {
+.\|\$flexItem\(margin\(0\.5rem\)\)>* {
   margin: 0.5rem;
 }
 ```
@@ -24,10 +24,10 @@ Adds 0.5rem margin on all direct flex children.
 **description:**
 Adds 1rem margin on all grandchildren (children of children).
 **csss:**
-|*|*$blockItem(margin(1rem))
+||$blockItem(margin(1rem))
 **css:**
 ```css
-.\|\*\|\*\$blockItem\(margin\(1rem\)\)>*>* {
+.\|\|\$blockItem\(margin\(1rem\)\)>*>* {
   margin: 1rem;
 }
 ```
@@ -69,10 +69,10 @@ Creates 2-column grid with 1rem gap.
 **description:**
 Sets 50x50px size on all grid grandchildren.
 **csss:**
-|*|*$box(50px,50px)
+||$box(50px,50px)
 **css:**
 ```css
-.\|\*\|\*\$box\(50px\,50px\)>*>* {
+.\|\|\$box\(50px\,50px\)>*>* {
   inline-size: 50px;
   block-size: 50px;
 }
