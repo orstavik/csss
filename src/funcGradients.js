@@ -1,6 +1,6 @@
 import { CsssFunctions, CsssPrimitives } from "./func.js";
 const { SF2, CssValuesToCsssTable } = CsssFunctions;
-const { Length, LengthPercent, Angle, AnglePercent, SingleTableRaw } = CsssPrimitives;
+const { LengthPercent, Angle, AnglePercent, SingleTableRaw } = CsssPrimitives;
 
 import { Color, ColorInterpolationMethod } from "./funcColor.js";
 
@@ -17,7 +17,9 @@ const atPositionY = SingleTableRaw(atPositionsY);
 
 const AngleOrLinearDirection = e => Angle(e) ?? LinearDirection(e);
 const ColorStopAnglePercentTuple = SF2("(/1-3", [Color, AnglePercent], (_, res) => res.join(" "));
+const ColorStopLengthPercentTuple = SF2("(/1-3", [Color, LengthPercent], (_, res) => res.join(" "));
 const ColorStopAnglePercent = e => Color(e) ?? ColorStopAnglePercentTuple(e);
+const ColorStopLengthPercent = e => Color(e) ?? ColorStopLengthPercentTuple(e);
 
 const At2 = ({ name, args }) => {
   if (name !== "at") return;
@@ -38,12 +40,12 @@ const At2 = ({ name, args }) => {
   return at.length ? "at " + at : "";
 }
 
-function getColorStops(args, i, name) {
+function getColorStops(args, i, name, Interpreter) {
   const stops = [];
   for (; i < args.length; i++) {
-    const c = ColorStopAnglePercent(args[i]);
+    const c = Interpreter(args[i]);
     if (!c)
-      throw BadArgument(name, args, i, "conic(angle,at,colorInterpolationMethod,...[Color|(Color,Percent,Percent)]");
+      throw BadArgument(name, args, i, "not a " + Interpreter.name);
     stops.push(c);
   }
   if (!stops.length)
@@ -64,7 +66,7 @@ const conic = ({ name, args }) => {
   let colorMeth = ColorInterpolationMethod(args[i]);
   if (colorMeth) { colorMeth = "in " + colorMeth; i++; }
 
-  const colorStops = getColorStops(args, i, name);
+  const colorStops = getColorStops(args, i, name, ColorStopAnglePercent);
 
   if (angle || at || colorMeth)
     colorStops.unshift([angle, at, colorMeth].filter(Boolean).join(" "));
@@ -82,7 +84,7 @@ const linear = ({ name, args }) => {
   let colorMeth = ColorInterpolationMethod(args[i]);
   if (colorMeth) { colorMeth = "in " + colorMeth; i++; }
 
-  const colorStops = getColorStops(args, i, name);
+  const colorStops = getColorStops(args, i, name, ColorStopLengthPercent);
   if (angleOrDir || colorMeth)
     colorStops.unshift([angleOrDir, colorMeth].filter(Boolean).join(" "));
   return `${repeating}linear-gradient(${colorStops.join(", ")})`;
@@ -102,7 +104,7 @@ const ellipse = ({ name, args }) => {
   if (at != null) { i++; }
   let colorMeth = ColorInterpolationMethod(args[i]);
   if (colorMeth) { colorMeth = "in " + colorMeth; i++; }
-  const colorStops = getColorStops(args, i, name);
+  const colorStops = getColorStops(args, i, name, ColorStopLengthPercent);
   colorStops.unshift(["ellipse", size1, size2, at, colorMeth].filter(Boolean).join(" "));
   return `${repeating}radial-gradient(${colorStops.join(", ")})`;
 }
@@ -113,13 +115,13 @@ const circle = ({ name, args }) => {
   const repeating = m[1] ? "repeating-" : "";
 
   let i = 0;
-  let size = Length(args[i]) ?? FarthestClosest(args[i]);
+  let size = LengthPercent(args[i]) ?? FarthestClosest(args[i]);
   if (size) { i++; }
   let at = At2(args[i]);
   if (at != null) { i++; }
   let colorMeth = ColorInterpolationMethod(args[i]);
   if (colorMeth) { colorMeth = "in " + colorMeth; i++; }
-  const colorStops = getColorStops(args, i, name);
+  const colorStops = getColorStops(args, i, name, ColorStopLengthPercent);
   const first = [size, at, colorMeth].filter(Boolean).join(" ");
   if (first) colorStops.unshift(first);
   return `${repeating}radial-gradient(${colorStops.join(", ")})`;
