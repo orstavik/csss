@@ -33,7 +33,8 @@
 ```
 
 **description:** Default Block layout for book-styled text with indented paragraphs, title has 0 indentation, subtitle 50% indentation.
-**userInstruction:** The book text uses hardcoded 32px indents. Change the paragraph indent to 2em for better responsiveness, and adjust the title to have no indent and the subtitle to have a 1em indent.
+**userInstruction:**
+The book text uses hardcoded 32px indents. Change the paragraph indent to 2em for better responsiveness, and adjust the title to have no indent and the subtitle to have a 1em indent.
 **before:**
 ```html
 …<article class="
@@ -99,7 +100,8 @@
 ```
 
 **description:** A Block layout for a blog post with upto 600px wide, a gap between items, and a floating note on the right side.
-**userInstruction:** The blog layout is mostly there, but the box and note elements are just sitting inline. Make the .box float to the start with appropriate margins, make the .note float to the end, and ensure .intro clears the start float.
+**userInstruction:**
+The blog layout is mostly there, but the box and note elements are just sitting inline. Make the .box float to the start with appropriate margins, make the .note float to the end, and ensure .intro clears the start float.
 **before:**
 ```html
 …<article class="
@@ -193,7 +195,8 @@
 ```
 
 **description:** A Block layout for a centered card upto 300px wide and no gap between items.
-**userInstruction:** The card container uses a fixed 80px inline padding. Change this to 10vh so the padding scales better with screen height.
+**userInstruction:**
+The card container uses a fixed 80px inline padding. Change this to 10vh so the padding scales better with screen height.
 **before:**
 ```html
 …<div class="$Block(padding(0,80px)) |*$BlockItem(margin(_,0))$Box(_<_<300px)">…</div>…
@@ -227,8 +230,10 @@
 }
 ```
 
-**description:** A Block layout for a narrow centered reading column with a max-width of 65ch, comfortable vertical spacing between paragraphs, and extra bottom margin on headings to reinforce visual hierarchy for long-form articles or essays.
-**userInstruction:** The reading column has uniform 1.5rem spacing everywhere. To improve visual hierarchy, give the h1, h2, and h3 headings larger bottom margins (2.5rem, 2rem, and 1.75rem respectively).
+**description:**
+A Block layout for a narrow centered reading column with a max-width of 65ch, comfortable vertical spacing between paragraphs, and extra bottom margin on headings to reinforce visual hierarchy for long-form articles or essays.
+**userInstruction:**
+The reading column has uniform 1.5rem spacing everywhere. To improve visual hierarchy, give the h1, h2, and h3 headings larger bottom margins (2.5rem, 2rem, and 1.75rem respectively).
 **before:**
 ```html
 …<article class="
@@ -299,8 +304,10 @@
 }
 ```
 
-**description:** A Block layout for a documentation page with wide outer padding, generous bottom margins on section-level elements, and tighter margins on paragraphs and code blocks to group related content visually within each section.
-**userInstruction:** The documentation page layout is causing horizontal scrolling due to long text strings. Add break-word wrapping to fix the overflow, while keeping the existing padding and margin structure.
+**description:**
+A Block layout for a documentation page with wide outer padding, generous bottom margins on section-level elements, and tighter margins on paragraphs and code blocks to group related content visually within each section.
+**userInstruction:**
+The documentation page layout is causing horizontal scrolling due to long text strings. Add break-word wrapping to fix the overflow, while keeping the existing padding and margin structure.
 **before:**
 ```html
 …<article class="
@@ -386,8 +393,10 @@
 }
 ```
 
-**description:** A Block layout for a product detail page with a constrained max-width of 800px, a full-bleed hero image block at the top with no bottom margin, and evenly spaced descriptive sections stacked below it, with overflow clipped so hero images never bleed outside the container.
-**userInstruction:** The hero image in the product detail section is bleeding outside the container's rounded corners and has an unwanted bottom margin. Clip the container's overflow and remove the hero's bottom margin.
+**description:**
+A Block layout for a product detail page with a constrained max-width of 800px, a full-bleed hero image block at the top with no bottom margin, and evenly spaced descriptive sections stacked below it, with overflow clipped so hero images never bleed outside the container.
+**userInstruction:**
+The hero image in the product detail section is bleeding outside the container's rounded corners and has an unwanted bottom margin. Clip the container's overflow and remove the hero's bottom margin.
 **before:**
 ```html
 …<section class="
@@ -461,8 +470,10 @@
 }
 ```
 
-**description:** A Block layout for a sidebar navigation panel with no inline padding, compact vertical spacing between nav items, and extra top margin on group headings to create clear visual clusters without decorative separators.
-**userInstruction:** This sidebar uses inline $blockItem classes for every item. Refactor it to use umbrella classes on the parent for the 0.25rem spacing, and use an umbrella selector for the .nav-group headers' top margin.
+**description:**
+A Block layout for a sidebar navigation panel with no inline padding, compact vertical spacing between nav items, and extra top margin on group headings to create clear visual clusters without decorative separators.
+**userInstruction:**
+This sidebar uses inline $blockItem classes for every item. Refactor it to use umbrella classes on the parent for the 0.25rem spacing, and use an umbrella selector for the .nav-group headers' top margin.
 **before:**
 ```html
 …<nav class="$Block(padding(1.5rem,0))$Box(auto)">
@@ -514,8 +525,10 @@
 }
 ```
 
-**description:** A Block layout for a card list where each card is horizontally centered with a max-width of 400px, receives equal top and bottom margins, and section headings above groups of cards get double the bottom margin for clear grouping.
-**userInstruction:** The cards in this list are left-aligned and too wide on large screens. Center them horizontally and restrict their max-width to 400px.
+**description:**
+A Block layout for a card list where each card is horizontally centered with a max-width of 400px, receives equal top and bottom margins, and section headings above groups of cards get double the bottom margin for clear grouping.
+**userInstruction:**
+The cards in this list are left-aligned and too wide on large screens. Center them horizontally and restrict their max-width to 400px.
 **before:**
 ```html
 …<section class="
@@ -567,8 +580,10 @@
 }
 ```
 
-**description:** A Block layout for a FAQ page with an accordion-style structure where question blocks carry a larger bottom margin than their associated answer blocks, and the container itself has generous top and bottom padding to frame the content.
-**userInstruction:** The FAQ items all have uniform 1.5rem spacing. To make the accordion pairs clearer, increase the margin below questions to 2rem and decrease the margin below answers to 1rem.
+**description:**
+A Block layout for a FAQ page with an accordion-style structure where question blocks carry a larger bottom margin than their associated answer blocks, and the container itself has generous top and bottom padding to frame the content.
+**userInstruction:**
+The FAQ items all have uniform 1.5rem spacing. To make the accordion pairs clearer, increase the margin below questions to 2rem and decrease the margin below answers to 1rem.
 **before:**
 ```html
 …<section class="
@@ -620,8 +635,10 @@
 }
 ```
 
-**description:** A Block layout for a legal or terms-of-service document with a tight reading width of 700px, major numbered sections receiving extra top margin for separation, and nested sub-items indented with a left margin to indicate hierarchy.
-**userInstruction:** The legal document is hard to read because everything is flush left. Add a 1.5rem top margin to the .section dividers and indent the .sub-item elements by 1.5rem.
+**description:**
+A Block layout for a legal or terms-of-service document with a tight reading width of 700px, major numbered sections receiving extra top margin for separation, and nested sub-items indented with a left margin to indicate hierarchy.
+**userInstruction:**
+The legal document is hard to read because everything is flush left. Add a 1.5rem top margin to the .section dividers and indent the .sub-item elements by 1.5rem.
 **before:**
 ```html
 …<article class="
@@ -693,8 +710,10 @@
 }
 ```
 
-**description:** A Block layout for a resume or CV with a full-width container, section headings getting a large bottom margin to anchor each section, individual entries with moderate vertical spacing, and fine-detail sub-lines with tight margins.
-**userInstruction:** The resume layout is too sparse because every element gets 1.5rem bottom margin. Tighten up the .entry margin to 1rem and the .sub-line margin to 0.5rem, while giving .section-heading a 2rem margin.
+**description:**
+A Block layout for a resume or CV with a full-width container, section headings getting a large bottom margin to anchor each section, individual entries with moderate vertical spacing, and fine-detail sub-lines with tight margins.
+**userInstruction:**
+The resume layout is too sparse because every element gets 1.5rem bottom margin. Tighten up the .entry margin to 1rem and the .sub-line margin to 0.5rem, while giving .section-heading a 2rem margin.
 **before:**
 ```html
 …<article class="
@@ -767,8 +786,10 @@
 }
 ```
 
-**description:** A Block layout for a news article with a 600px centered content column, a flush top header with no leading margin, inline pullquotes floating to the end side with a left margin, and paragraphs clearing the end-side float so they always sit below pulled quotes.
-**userInstruction:** The layout is mostly complete, but the pullquote is breaking the flow. Make the pullquote float to the end with a 1.5rem margin, and ensure the paragraphs clear the end float so they drop below it properly.
+**description:**
+A Block layout for a news article with a 600px centered content column, a flush top header with no leading margin, inline pullquotes floating to the end side with a left margin, and paragraphs clearing the end-side float so they always sit below pulled quotes.
+**userInstruction:**
+The layout is mostly complete, but the pullquote is breaking the flow. Make the pullquote float to the end with a 1.5rem margin, and ensure the paragraphs clear the end float so they drop below it properly.
 **before:**
 ```html
 …<article class="
@@ -842,8 +863,10 @@
 }
 ```
 
-**description:** A Block layout for a settings or preferences panel with form groups separated by visible top margins, items stacked flush to the container edges with zero inline padding, and the last item in each group carrying no trailing margin.
-**userInstruction:** The settings panel forms have too much space after each item, making the groups look disconnected. Remove the margin from the .form-item elements, and separate the .form-group elements with a 1.5rem top margin.
+**description:**
+A Block layout for a settings or preferences panel with form groups separated by visible top margins, items stacked flush to the container edges with zero inline padding, and the last item in each group carrying no trailing margin.
+**userInstruction:**
+The settings panel forms have too much space after each item, making the groups look disconnected. Remove the margin from the .form-item elements, and separate the .form-group elements with a 1.5rem top margin.
 **before:**
 ```html
 …<section class="
@@ -895,8 +918,10 @@
 }
 ```
 
-**description:** A Block layout for a user profile page with a centered column up to 500px wide, a top avatar block that has no bottom gap and bleeds into the bio section, followed by stats and action blocks with a consistent small vertical rhythm.
-**userInstruction:** The user profile is rendering at full width on large screens. Constrain the children to a max-width of 500px and center them. Also, remove the margin from the avatar so it sits flush against the bio.
+**description:**
+A Block layout for a user profile page with a centered column up to 500px wide, a top avatar block that has no bottom gap and bleeds into the bio section, followed by stats and action blocks with a consistent small vertical rhythm.
+**userInstruction:**
+The user profile is rendering at full width on large screens. Constrain the children to a max-width of 500px and center them. Also, remove the margin from the avatar so it sits flush against the bio.
 **before:**
 ```html
 …<section class="
@@ -976,8 +1001,10 @@
 }
 ```
 
-**description:** A Block layout for a mobile-first stacked content view where all items are full-width with small vertical margins, the outer container adds horizontal padding that scales with viewport width, and headings receive proportionally larger bottom margins.
-**userInstruction:** The current layout uses fixed pixel padding (24px). Change the padding to use responsive 5vw inline padding, and increase the bottom margins for h1, h2, and h3 to improve the visual rhythm on mobile devices.
+**description:**
+A Block layout for a mobile-first stacked content view where all items are full-width with small vertical margins, the outer container adds horizontal padding that scales with viewport width, and headings receive proportionally larger bottom margins.
+**userInstruction:**
+The current layout uses fixed pixel padding (24px). Change the padding to use responsive 5vw inline padding, and increase the bottom margins for h1, h2, and h3 to improve the visual rhythm on mobile devices.
 **before:**
 ```html
 …<main class="
@@ -1050,8 +1077,10 @@
 }
 ```
 
-**description:** A Block layout for a recipe page with a large title block carrying extra bottom margin, an ingredients list and step-by-step blocks with tight uniform gaps, and a floating metadata summary anchored to the start side beside the first body paragraph.
-**userInstruction:** The metadata aside is taking up too much vertical space. Make it float to the start with some right margin, and ensure the ingredients section clears this float so it drops below properly.
+**description:**
+A Block layout for a recipe page with a large title block carrying extra bottom margin, an ingredients list and step-by-step blocks with tight uniform gaps, and a floating metadata summary anchored to the start side beside the first body paragraph.
+**userInstruction:**
+The metadata aside is taking up too much vertical space. Make it float to the start with some right margin, and ensure the ingredients section clears this float so it drops below properly.
 **before:**
 ```html
 …<article class="
@@ -1126,8 +1155,10 @@
 }
 ```
 
-**description:** A Block layout for an email newsletter column capped at 600px with centered alignment, alternating section blocks that use top margin to space content rhythmically, and a footer block whose inner content floats to the end side.
-**userInstruction:** The newsletter footer content is left-aligned. We need it to float to the end side. Use the double-pipe syntax `||` to apply a floatEnd blockItem to the footer-content class.
+**description:**
+A Block layout for an email newsletter column capped at 600px with centered alignment, alternating section blocks that use top margin to space content rhythmically, and a footer block whose inner content floats to the end side.
+**userInstruction:**
+The newsletter footer content is left-aligned. We need it to float to the end side. Use the double-pipe syntax `||` to apply a floatEnd blockItem to the footer-content class.
 **before:**
 ```html
 …<div class="
@@ -1204,8 +1235,10 @@
 }
 ```
 
-**description:** A Block layout for a compact dashboard widget with no outer padding, tightly packed rows with only 0.25rem vertical gaps, widget header blocks with a slightly larger bottom margin to separate them from their data rows, and a permanent scrollbar so the layout never shifts when content changes.
-**userInstruction:** The widget layout shifts horizontally when the content gets too long and a scrollbar appears. Force the scrollbar to be permanently visible using $Box(scroll) so the layout stays stable, and set a fixed height of 2.5rem for the data rows.
+**description:**
+A Block layout for a compact dashboard widget with no outer padding, tightly packed rows with only 0.25rem vertical gaps, widget header blocks with a slightly larger bottom margin to separate them from their data rows, and a permanent scrollbar so the layout never shifts when content changes.
+**userInstruction:**
+The widget layout shifts horizontally when the content gets too long and a scrollbar appears. Force the scrollbar to be permanently visible using $Box(scroll) so the layout stays stable, and set a fixed height of 2.5rem for the data rows.
 **before:**
 ```html
 …<div class="
@@ -1277,8 +1310,10 @@
 }
 ```
 
-**description:** A full-screen vertical slideshow where each slide fills the viewport height and snaps mandatorily into place, with scroll padding and scroll margin offsetting a fixed 3.5rem top navigation bar, and an intro spacer that is explicitly opted out of snapping.
-**userInstruction:** The vertical slideshow is working, but it's snapping to the top of the viewport and hiding behind the 3.5rem fixed navigation bar. Add scrollPadding to the container and scrollMargin to the slides to offset this, and disable snapping entirely on the intro section.
+**description:**
+A full-screen vertical slideshow where each slide fills the viewport height and snaps mandatorily into place, with scroll padding and scroll margin offsetting a fixed 3.5rem top navigation bar, and an intro spacer that is explicitly opted out of snapping.
+**userInstruction:**
+The vertical slideshow is working, but it's snapping to the top of the viewport and hiding behind the 3.5rem fixed navigation bar. Add scrollPadding to the container and scrollMargin to the slides to offset this, and disable snapping entirely on the intro section.
 **before:**
 ```html
 …<div class="
@@ -1341,8 +1376,10 @@
 }
 ```
 
-**description:** A long-form article where major section headings softly snap into view when scrolling stops, using scroll margin to keep each section from hiding behind a sticky header, and snapAlways ensures the scroll always comes to rest exactly on a heading.
-**userInstruction:** The article scroll snapping isn't strict enough; sometimes users scroll past the h2 or h3 headings without stopping. Add snapAlways to the h2 and h3 headings so the browser is forced to stop at them.
+**description:**
+A long-form article where major section headings softly snap into view when scrolling stops, using scroll margin to keep each section from hiding behind a sticky header, and snapAlways ensures the scroll always comes to rest exactly on a heading.
+**userInstruction:**
+The article scroll snapping isn't strict enough; sometimes users scroll past the h2 or h3 headings without stopping. Add snapAlways to the h2 and h3 headings so the browser is forced to stop at them.
 **before:**
 ```html
 …<article class="
@@ -1410,8 +1447,10 @@
 }
 ```
 
-**description:** A tall sidebar panel that scrolls vertically when content overflows but clips any content that spills horizontally, keeping the layout clean without a horizontal scrollbar.
-**userInstruction:** The sidebar is displaying a horizontal scrollbar because some text is slightly too wide. Change the overflow from 'auto' to 'autoHidden' so it scrolls vertically but clips horizontally.
+**description:**
+A tall sidebar panel that scrolls vertically when content overflows but clips any content that spills horizontally, keeping the layout clean without a horizontal scrollbar.
+**userInstruction:**
+The sidebar is displaying a horizontal scrollbar because some text is slightly too wide. Change the overflow from 'auto' to 'autoHidden' so it scrolls vertically but clips horizontally.
 **before:**
 ```html
 …<aside class="
@@ -1463,8 +1502,10 @@
 }
 ```
 
-**description:** A block layout with a start-side figure and an end-side aside that float beside the body text, and a footer that clears both floats to always sit below all floated content.
-**userInstruction:** The figure and aside are just full-width blocks right now. Float the figure to the start (40% width) and the aside to the end (30% width). Also, make sure the footer clears both floats so it drops beneath them.
+**description:**
+A block layout with a start-side figure and an end-side aside that float beside the body text, and a footer that clears both floats to always sit below all floated content.
+**userInstruction:**
+The figure and aside are just full-width blocks right now. Float the figure to the start (40% width) and the aside to the end (30% width). Also, make sure the footer clears both floats so it drops beneath them.
 **before:**
 ```html
 …<article class="
@@ -1557,8 +1598,10 @@
 }
 ```
 
-**description:** A content block for East Asian text where words must never be broken mid-word at line ends, giving natural CJK line-breaking with generous paragraph spacing.
-**userInstruction:** This CJK text is breaking in the middle of words. Apply the breakLongWords modifier to the $Paragraph umbrella to enforce keep-all word breaking.
+**description:**
+A content block for East Asian text where words must never be broken mid-word at line ends, giving natural CJK line-breaking with generous paragraph spacing.
+**userInstruction:**
+This CJK text is breaking in the middle of words. Apply the breakLongWords modifier to the $Paragraph umbrella to enforce keep-all word breaking.
 **before:**
 ```html
 …<div class="
@@ -1612,8 +1655,10 @@
 }
 ```
 
-**description:** A debug log or hash-display panel where every character is an eligible break point so that long unbreakable strings like SHA hashes or minified code never overflow their container.
-**userInstruction:** Long SHA hashes are overflowing the debug panel horizontally. Use breakAnywhere on the $Paragraph umbrella to allow breaking at any character.
+**description:**
+A debug log or hash-display panel where every character is an eligible break point so that long unbreakable strings like SHA hashes or minified code never overflow their container.
+**userInstruction:**
+Long SHA hashes are overflowing the debug panel horizontally. Use breakAnywhere on the $Paragraph umbrella to allow breaking at any character.
 **before:**
 ```html
 …<div class="
@@ -1676,8 +1721,10 @@
 }
 ```
 
-**description:** A square thumbnail gallery where each item is a fixed 10rem by 10rem block centered horizontally with auto inline margins, and each thumbnail snaps to center as the user scrolls through the stack.
-**userInstruction:** The thumbnail gallery is scrolling freely. Add snapping so it stops on each item, and configure the items to snap to the center of the viewport.
+**description:**
+A square thumbnail gallery where each item is a fixed 10rem by 10rem block centered horizontally with auto inline margins, and each thumbnail snaps to center as the user scrolls through the stack.
+**userInstruction:**
+The thumbnail gallery is scrolling freely. Add snapping so it stops on each item, and configure the items to snap to the center of the viewport.
 **before:**
 ```html
 …<div class="
@@ -1730,9 +1777,9 @@
 }
 ```
 
-
 **description:** A 3-line clamp for teaser text and previews.
-**userInstruction:** The article excerpts in the blog feed are too long and breaking the grid layout. Constrain the excerpt paragraph to a maximum of 3 lines and force word breaks to handle long URLs.
+**userInstruction:**
+The article excerpts in the blog feed are too long and breaking the grid layout. Constrain the excerpt paragraph to a maximum of 3 lines and force word breaks to handle long URLs.
 **before:**
 ```html
 …<article class="post-card">
@@ -1762,9 +1809,9 @@
 }
 ```
 
-
 **description:** A centered Block reading panel with capped line length.
-**userInstruction:** The hero text panel is left-aligned, which looks unbalanced on the landing page. Center the text alignment within the block while maintaining the 600px maximum width for the inner content.
+**userInstruction:**
+The hero text panel is left-aligned, which looks unbalanced on the landing page. Center the text alignment within the block while maintaining the 600px maximum width for the inner content.
 **before:**
 ```html
 …<section class="
@@ -1820,7 +1867,8 @@
 ```
 
 **description:** display none utility for hiding elements.
-**userInstruction:** The promotional banner at the top of the layout is no longer active, but we want to keep the markup in place for the next campaign. Hide it completely from the document flow.
+**userInstruction:**
+The promotional banner at the top of the layout is no longer active, but we want to keep the markup in place for the next campaign. Hide it completely from the document flow.
 **before:**
 ```html
 …<div class="layout-wrapper">
@@ -1844,9 +1892,9 @@
 }
 ```
 
-
 **description:** A scrollable Block note rail with clean word breaks.
-**userInstruction:** The sidebar rail containing user comments is occasionally causing unwanted horizontal page scrolling when users post long, unbroken strings. Restrict the overflow so it clips horizontally and scrolls vertically, and force word-breaking on the text.
+**userInstruction:**
+The sidebar rail containing user comments is occasionally causing unwanted horizontal page scrolling when users post long, unbroken strings. Restrict the overflow so it clips horizontally and scrolls vertically, and force word-breaking on the text.
 **before:**
 ```html
 …<aside class="
@@ -1887,5 +1935,74 @@
   clear: unset;
   margin-block: 0.5rem;
   margin-inline: 1rem;
+}
+```
+
+**description:**
+A nested comment section utilizing a Block layout, where child threads receive vertical separation margins, and grandchild messages receive specific box constraints and contrasting backgrounds.
+**userInstruction:**
+The comment threads lack spacing, and the individual nested messages bleed into the container background. Apply a block layout to the container, space the child threads with a 2rem bottom margin, and target the grandchild messages with a full-width auto-height Box and a distinct background.
+**before:**
+```html
+…<div class="$Box(100%,auto)$Block()">
+  <div class="thread">
+    <div class="message">…</div>
+    <div class="message">…</div>
+  </div>
+  …
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Box(100%,auto)$Block()$Bg(#surface)
+  |.thread$BlockItem(margin(0,0,2rem))
+  ||.message$Box(100%,auto)$Bg(#raised)">
+  <div class="thread">
+    <div class="message">…</div>
+    <div class="message">…</div>
+  </div>
+  …
+</div>…
+```
+**css:**
+```css
+.\$Box\(100\%\,auto\)\$Block\(\)\$Bg\(\#surface\) {
+  block-size: unset;
+  min-block-size: unset;
+  max-block-size: unset;
+  inline-size: 100%;
+  min-inline-size: unset;
+  max-inline-size: unset;
+  overflow: auto;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
+  display: block;
+  padding: unset;
+  background-color: var(--color-surface);
+  background: none;
+  background-blend-mode: normal;
+}
+
+.\|\.thread\$BlockItem\(margin\(0\,0\,2rem\)\)>:where(.thread) {
+  float: unset;
+  clear: unset;
+  margin-block: 0 2rem;
+  margin-inline: 0;
+}
+
+.\|\|\.message\$Box\(100\%\,auto\)\$Bg\(\#raised\)>*>:where(.message) {
+  block-size: unset;
+  min-block-size: unset;
+  max-block-size: unset;
+  inline-size: 100%;
+  min-inline-size: unset;
+  max-inline-size: unset;
+  overflow: auto;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
+  background-color: var(--color-raised);
+  background: none;
+  background-blend-mode: normal;
 }
 ```

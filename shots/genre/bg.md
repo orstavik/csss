@@ -12,7 +12,7 @@
 ```css
 .\$Bg\(\#green\)\$Bg\(linear\(\#white\,\#transparent\)\) {
   background-color: green;
-  background: linear-gradient(white, transparent);
+  background: none, linear-gradient(white, transparent);
   background-blend-mode: normal;
 }
 ```
@@ -615,14 +615,20 @@
 ```css
 .\|\:nth-child\(even\)\$Bg\(\#lightgreen\)>:where(:nth-child(even)) {
   background-color: lightgreen;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(even\)\$Bg\(\#lightgreen\)>:where(:nth-child(even)) {
   background-color: lightgreen;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(even\)\$Bg\(\#lightgreen\)>:where(:nth-child(even)) {
   background-color: lightgreen;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -648,14 +654,20 @@
 ```css
 .\|\:nth-child\(odd\)\$Bg\(\#lightblue\)>:where(:nth-child(odd)) {
   background-color: lightblue;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(odd\)\$Bg\(\#lightblue\)>:where(:nth-child(odd)) {
   background-color: lightblue;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(odd\)\$Bg\(\#lightblue\)>:where(:nth-child(odd)) {
   background-color: lightblue;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -673,6 +685,8 @@
 ```css
 .\|\:hover\$Bg\(\#lightcoral\)>:where(:hover) {
   background-color: lightcoral;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -690,6 +704,8 @@
 ```css
 .\|\:focus\$Bg\(\#yellow\)>:where(:focus) {
   background-color: yellow;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -707,6 +723,8 @@
 ```css
 .\|\:active\$Bg\(\#darkred\)>:where(:active) {
   background-color: darkred;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -730,10 +748,14 @@
 ```css
 .\|\:first-child\$Bg\(\#gold\)>:where(:first-child) {
   background-color: gold;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:first-child\$Bg\(\#gold\)>:where(:first-child) {
   background-color: gold;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -769,6 +791,8 @@
 ```css
 .\|\:disabled\$Bg\(\#gray\)>:where(:disabled) {
   background-color: gray;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -794,14 +818,20 @@
 ```css
 .\|\:nth-child\(even\)\$Bg\(\#lightgreen\)>:where(:nth-child(even)) {
   background-color: lightgreen;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(even\)\$Bg\(\#lightgreen\)>:where(:nth-child(even)) {
   background-color: lightgreen;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(even\)\$Bg\(\#lightgreen\)>:where(:nth-child(even)) {
   background-color: lightgreen;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -827,14 +857,20 @@
 ```css
 .\|\:nth-child\(odd\)\$Bg\(\#lightblue\)>:where(:nth-child(odd)) {
   background-color: lightblue;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(odd\)\$Bg\(\#lightblue\)>:where(:nth-child(odd)) {
   background-color: lightblue;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(odd\)\$Bg\(\#lightblue\)>:where(:nth-child(odd)) {
   background-color: lightblue;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -852,6 +888,8 @@
 ```css
 .\|\:hover\$Bg\(\#lightcoral\)>:where(:hover) {
   background-color: lightcoral;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -869,6 +907,8 @@
 ```css
 .\|\:focus\$Bg\(\#yellow\)>:where(:focus) {
   background-color: yellow;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -886,6 +926,8 @@
 ```css
 .\|\:active\$Bg\(\#darkred\)>:where(:active) {
   background-color: darkred;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -909,10 +951,14 @@
 ```css
 .\|\:first-child\$Bg\(\#gold\)>:where(:first-child) {
   background-color: gold;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:first-child\$Bg\(\#gold\)>:where(:first-child) {
   background-color: gold;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -948,6 +994,8 @@
 ```css
 .\|\:disabled\$Bg\(\#gray\)>:where(:disabled) {
   background-color: gray;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -973,14 +1021,20 @@
 ```css
 .\|\:nth-child\(even\)\$Bg\(\#lightgreen\)>:where(:nth-child(even)) {
   background-color: lightgreen;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(even\)\$Bg\(\#lightgreen\)>:where(:nth-child(even)) {
   background-color: lightgreen;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(even\)\$Bg\(\#lightgreen\)>:where(:nth-child(even)) {
   background-color: lightgreen;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -1006,14 +1060,20 @@
 ```css
 .\|\:nth-child\(odd\)\$Bg\(\#lightblue\)>:where(:nth-child(odd)) {
   background-color: lightblue;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(odd\)\$Bg\(\#lightblue\)>:where(:nth-child(odd)) {
   background-color: lightblue;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(odd\)\$Bg\(\#lightblue\)>:where(:nth-child(odd)) {
   background-color: lightblue;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -1031,6 +1091,8 @@
 ```css
 .\|\:hover\$Bg\(\#lightcoral\)>:where(:hover) {
   background-color: lightcoral;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -1048,6 +1110,8 @@
 ```css
 .\|\:focus\$Bg\(\#yellow\)>:where(:focus) {
   background-color: yellow;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -1065,6 +1129,8 @@
 ```css
 .\|\:active\$Bg\(\#darkred\)>:where(:active) {
   background-color: darkred;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -1088,10 +1154,14 @@
 ```css
 .\|\:first-child\$Bg\(\#gold\)>:where(:first-child) {
   background-color: gold;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:first-child\$Bg\(\#gold\)>:where(:first-child) {
   background-color: gold;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -1127,6 +1197,8 @@
 ```css
 .\|\:disabled\$Bg\(\#gray\)>:where(:disabled) {
   background-color: gray;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -1152,14 +1224,20 @@
 ```css
 .\|\:nth-child\(even\)\$Bg\(\#lightgreen\)>:where(:nth-child(even)) {
   background-color: lightgreen;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(even\)\$Bg\(\#lightgreen\)>:where(:nth-child(even)) {
   background-color: lightgreen;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(even\)\$Bg\(\#lightgreen\)>:where(:nth-child(even)) {
   background-color: lightgreen;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -1185,14 +1263,20 @@
 ```css
 .\|\:nth-child\(odd\)\$Bg\(\#lightblue\)>:where(:nth-child(odd)) {
   background-color: lightblue;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(odd\)\$Bg\(\#lightblue\)>:where(:nth-child(odd)) {
   background-color: lightblue;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:nth-child\(odd\)\$Bg\(\#lightblue\)>:where(:nth-child(odd)) {
   background-color: lightblue;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -1210,6 +1294,8 @@
 ```css
 .\|\:hover\$Bg\(\#lightcoral\)>:where(:hover) {
   background-color: lightcoral;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -1227,6 +1313,8 @@
 ```css
 .\|\:focus\$Bg\(\#yellow\)>:where(:focus) {
   background-color: yellow;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -1244,6 +1332,8 @@
 ```css
 .\|\:active\$Bg\(\#darkred\)>:where(:active) {
   background-color: darkred;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -1267,10 +1357,14 @@
 ```css
 .\|\:first-child\$Bg\(\#gold\)>:where(:first-child) {
   background-color: gold;
+  background: none;
+  background-blend-mode: normal;
 }
 
 .\|\:first-child\$Bg\(\#gold\)>:where(:first-child) {
   background-color: gold;
+  background: none;
+  background-blend-mode: normal;
 }
 ```
 
@@ -1306,5 +1400,7 @@
 ```css
 .\|\:disabled\$Bg\(\#gray\)>:where(:disabled) {
   background-color: gray;
+  background: none;
+  background-blend-mode: normal;
 }
 ```

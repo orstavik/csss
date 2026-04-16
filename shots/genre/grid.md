@@ -1,6 +1,6 @@
-**description:**
-A two-column Grid shell with a spanning lead item.
-**userInstruction:** The grid currently has equally sized columns, but the second column should be twice as wide as the first. Also, make the first child span across both columns to act as a header.
+**description:** A two-column Grid shell with a spanning lead item.
+**userInstruction:**
+The grid currently has equally sized columns, but the second column should be twice as wide as the first. Also, make the first child span across both columns to act as a header.
 **before:**
 ```html
 …<div class="$Grid(cols(1fr,1fr),gap(1rem),padding(1rem))">
@@ -38,9 +38,9 @@ A two-column Grid shell with a spanning lead item.
 }
 ```
 
-**description:**
-A column-flow Grid board with a tall spanning item.
-**userInstruction:** The grid flows in rows by default. Change it to flow in columns with 3 equal rows, and make the second item span across the first two rows.
+**description:** A column-flow Grid board with a tall spanning item.
+**userInstruction:**
+The grid flows in rows by default. Change it to flow in columns with 3 equal rows, and make the second item span across the first two rows.
 **before:**
 ```html
 …<div class="$Grid(gap(0.5rem),padding(1rem))">
@@ -78,9 +78,9 @@ A column-flow Grid board with a tall spanning item.
 }
 ```
 
-**description:**
-A feature Grid with a spanning hero and a side card that can be aligned independently for contrast.
-**userInstruction:** Set the grid to stretch all items by default. Then, make the hero item span two columns with a 1rem margin, and align the aside to the start and end of row 2.
+**description:** A feature Grid with a spanning hero and a side card that can be aligned independently for contrast.
+**userInstruction:**
+Set the grid to stretch all items by default. Then, make the hero item span two columns with a 1rem margin, and align the aside to the start and end of row 2.
 **before:**
 ```html
 …<div class="$Grid(center,cols(repeat(2,1fr)),gap(1rem),padding(1rem))">
@@ -134,9 +134,9 @@ A feature Grid with a spanning hero and a side card that can be aligned independ
 }
 ```
 
-**description:**
-A two-column Grid editorial layout with placed items.
-**userInstruction:** The editorial layout needs precise placement. Default all items to stretch and align start. Put the first child in column 1, and make the second child span two rows in column 2.
+**description:** A two-column Grid editorial layout with placed items.
+**userInstruction:**
+The editorial layout needs precise placement. Default all items to stretch and align start. Put the first child in column 1, and make the second child span two rows in column 2.
 **before:**
 ```html
 …<div class="$Grid(startEnd,cols(repeat(2,1fr)),gap(1rem),padding(1rem))">
@@ -185,9 +185,9 @@ A two-column Grid editorial layout with placed items.
 }
 ```
 
-**description:**
-A collage Grid with a wide featured panel, a centered highlight tile, and a tall supporting column.
-**userInstruction:** The grid cells are flowing automatically, but we need a specific collage layout. Manually position .a to span 2 columns in row 1, .b to center in column 3 of row 2, and .c to span 2 rows starting in column 1.
+**description:** A collage Grid with a wide featured panel, a centered highlight tile, and a tall supporting column.
+**userInstruction:**
+The grid cells are flowing automatically, but we need a specific collage layout. Manually position .a to span 2 columns in row 1, .b to center in column 3 of row 2, and .c to span 2 rows starting in column 1.
 **before:**
 ```html
 …<div class="$Grid(cols(repeat(3,1fr)),rows(repeat(3,80px)),gap(1rem),padding(1rem))">
@@ -240,9 +240,9 @@ A collage Grid with a wide featured panel, a centered highlight tile, and a tall
 }
 ```
 
-**description:**
-A scrollable Grid gallery with a wide first item.
-**userInstruction:** The 4-column gallery overflows its container horizontally. Add a scroll box to allow horizontal scrolling but hide vertical overflow, and make the first child prominently span 3 columns.
+**description:** A scrollable Grid gallery with a wide first item.
+**userInstruction:**
+The 4-column gallery overflows its container horizontally. Add a scroll box to allow horizontal scrolling but hide vertical overflow, and make the first child prominently span 3 columns.
 **before:**
 ```html
 …<div class="$Grid(cols(repeat(4,1fr)),gap(1rem))">
@@ -276,5 +276,79 @@ A scrollable Grid gallery with a wide first item.
 
 .\|\:nth-child\(1\)\$gridItem\(column\(1\,span\(3\)\)\)>:where(:nth-child(1)) {
   grid-column: 1 / span 3;
+}
+```
+
+**description:**
+A chessboard layout using Grid, where the board is a fixed-size Box with a background, and all grandchild elements (the squares) are explicitly sized to 50x50px using the double-pipe grandchild selector.
+**userInstruction:**
+The chessboard squares are collapsing because they lack explicit dimensions. Target the grandchildren (.square) to have a fixed 50x50px size, apply a background to the main container, and ensure the .row children clear their margins.
+**before:**
+```html
+…<div class="$Box(400px,400px)$Grid()$Bg(#board)">
+  <div class="row">
+    <div class="square"></div>
+    <div class="square"></div>
+    …
+  </div>
+  …
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Box(400px,400px)$Grid()$Bg(#board)
+  |.row$BlockItem(margin(0))
+  ||.square$Box(50px,50px)">
+  <div class="row">
+    <div class="square"></div>
+    <div class="square"></div>
+    …
+  </div>
+  …
+</div>…
+```
+**css:**
+```css
+.\$Box\(400px\,400px\)\$Grid\(\)\$Bg\(\#board\) {
+  block-size: 400px;
+  min-block-size: unset;
+  max-block-size: unset;
+  inline-size: 400px;
+  min-inline-size: unset;
+  max-inline-size: unset;
+  overflow: unset;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
+  display: grid;
+  padding: unset;
+  place-items: unset;
+  place-content: unset;
+  grid-template-columns: unset;
+  grid-template-rows: unset;
+  grid-template-areas: unset;
+  gap: unset;
+  grid-auto-flow: unset;
+  background-color: var(--color-board);
+  background: none;
+  background-blend-mode: normal;
+}
+
+.\|\.row\$BlockItem\(margin\(0\)\)>:where(.row) {
+  margin: 0;
+  float: unset;
+  clear: unset;
+}
+
+.\|\|\.square\$Box\(50px\,50px\)>*>:where(.square) {
+  block-size: 50px;
+  min-block-size: unset;
+  max-block-size: unset;
+  inline-size: 50px;
+  min-inline-size: unset;
+  max-inline-size: unset;
+  overflow: unset;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
 }
 ```

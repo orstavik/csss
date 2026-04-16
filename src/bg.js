@@ -6,18 +6,6 @@ import { Color } from "./funcColor.js";
 import gradients from "./funcGradients.js";
 const { linear, ellipse, circle, conic, } = gradients.csss;
 
-// const DEFAULTS = {
-//   background: "none",
-//   backgroundImage: "unset",
-//   backgroundPosition: "0% 0%",
-//   backgroundRepeat: "repeat",
-//   backgroundSize: "auto",
-//   backgroundOrigin: "padding-box",
-//   backgroundClip: "border-box",
-//   backgroundBlendMode: "normal",
-//   backgroundAttachment: "scroll",
-// };
-
 const Repeats = CssValuesToCsssTable("repeat|repeat-x|repeat-y|space|round|no-repeat");
 const Sizes = CssValuesToCsssTable("cover|contain");
 const Origins = { originBorderBox: "border-box", originPaddingBox: "padding-box", originContentBox: "content-box" };
@@ -55,7 +43,12 @@ const Bg = ({ name, args }) => {
     }
     throw BadArgument(name, args, i);
   }
-  if (colors.length && args.length === 1) return { backgroundColor: colors[0] };
+  if (colors.length && args.length === 1)
+    return {
+      backgroundColor: colors[0],
+      background: "none",
+      backgroundBlendMode: "normal"
+    };
   if (colors.length) image = `linear-gradient(${colors.join(", ")})`;
   if (!image) throw BadArgument(name, args, args.length, "Bg() requires a color, image, gradient, or none.");
   const pos = [x, xl, y, yl].filter(Boolean).join(" ");
@@ -68,16 +61,16 @@ const Bg = ({ name, args }) => {
 
 export default {
   props: {
-    background: undefined,
-    backgroundImage: undefined,
-    backgroundPosition: undefined,
-    backgroundRepeat: undefined,
-    backgroundSize: undefined,
-    backgroundOrigin: undefined,
-    backgroundClip: undefined,
-    backgroundBlendMode: undefined,
-    backgroundAttachment: undefined,
-    backgroundColor: undefined,
+    background: undefined, // "none"
+    backgroundImage: undefined, // "unset"
+    backgroundPosition: undefined, // "0% 0%"
+    backgroundRepeat: undefined, // "repeat"
+    backgroundSize: undefined, // "auto"
+    backgroundOrigin: undefined, // "padding-box"
+    backgroundClip: undefined, // "border-box"
+    backgroundBlendMode: undefined, // "normal"
+    backgroundAttachment: undefined, // "scroll"
+    backgroundColor: undefined, // "transparent"
   },
   csss: {
     Bg,
