@@ -1729,3 +1729,163 @@
   scroll-snap-stop: unset;
 }
 ```
+
+
+**description:** A 3-line clamp for teaser text and previews.
+**userInstruction:** The article excerpts in the blog feed are too long and breaking the grid layout. Constrain the excerpt paragraph to a maximum of 3 lines and force word breaks to handle long URLs.
+**before:**
+```html
+…<article class="post-card">
+  <h2>…</h2>
+  <p class="excerpt">…very long introductory paragraph that goes on for six or seven lines and disrupts the vertical rhythm of the card grid…</p>
+  <a href="#">Read more</a>
+</article>…
+```
+**after:**
+```html
+…<article class="post-card">
+  <h2>…</h2>
+  <p class="$lineClamp(3)$paragraph(breakAll) excerpt">…very long introductory paragraph that goes on for six or seven lines and disrupts the vertical rhythm of the card grid…</p>
+  <a href="#">Read more</a>
+</article>…
+```
+**css:**
+```css
+.\$lineClamp\(3\)\$paragraph\(breakAll\) {
+  display: -webkit-box;
+  padding: unset;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow-block: hidden;
+  word-break: break-all;
+  overflow-wrap: normal;
+}
+```
+
+
+**description:** A centered Block reading panel with capped line length.
+**userInstruction:** The hero text panel is left-aligned, which looks unbalanced on the landing page. Center the text alignment within the block while maintaining the 600px maximum width for the inner content.
+**before:**
+```html
+…<section class="
+  $Block$box(auto)
+  |*$Box(_<_<600px)">
+  <div class="hero-content">
+    <h1>…</h1>
+    <p>…</p>
+  </div>
+</section>…
+```
+**after:**
+```html
+…<section class="
+  $Block$box(auto)$Paragraph(_,center)
+  |*$Box(_<_<600px)">
+  <div class="hero-content">
+    <h1>…</h1>
+    <p>…</p>
+  </div>
+</section>…
+```
+**css:**
+```css
+.\$Block\$box\(auto\)\$Paragraph\(_\,center\) {
+  display: block;
+  padding: unset;
+  overflow: auto;
+  line-height: unset;
+  text-indent: unset;
+  word-spacing: unset;
+  hyphens: unset;
+  white-space: unset;
+  overflow-wrap: unset;
+  word-break: unset;
+  line-break: unset;
+  text-align: center;
+  text-align-last: unset;
+  hanging-punctuation: unset;
+}
+
+.\|\*\$Box\(_\<_\<600px\)>* {
+  block-size: unset;
+  min-block-size: unset;
+  max-block-size: unset;
+  inline-size: unset;
+  min-inline-size: unset;
+  max-inline-size: 600px;
+  overflow: unset;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
+}
+```
+
+**description:** display none utility for hiding elements.
+**userInstruction:** The promotional banner at the top of the layout is no longer active, but we want to keep the markup in place for the next campaign. Hide it completely from the document flow.
+**before:**
+```html
+…<div class="layout-wrapper">
+  <aside class="promo-banner">…Spring Sale: 20% Off!…</aside>
+  <header>…</header>
+  <main>…</main>
+</div>…
+```
+**after:**
+```html
+…<div class="layout-wrapper">
+  <aside class="$displayNone promo-banner">…Spring Sale: 20% Off!…</aside>
+  <header>…</header>
+  <main>…</main>
+</div>…
+```
+**css:**
+```css
+.\$displayNone {
+  display: none;
+}
+```
+
+
+**description:** A scrollable Block note rail with clean word breaks.
+**userInstruction:** The sidebar rail containing user comments is occasionally causing unwanted horizontal page scrolling when users post long, unbroken strings. Restrict the overflow so it clips horizontally and scrolls vertically, and force word-breaking on the text.
+**before:**
+```html
+…<aside class="
+  |*$BlockItem(margin(0.5rem,1rem))">
+  <div class="comment">…</div>
+  <div class="comment">…</div>
+  <div class="comment">…</div>
+</aside>…
+```
+**after:**
+```html
+…<aside class="
+  $Box(hiddenScroll)$paragraph(breakWord)
+  |*$BlockItem(margin(0.5rem,1rem))">
+  <div class="comment">…</div>
+  <div class="comment">…</div>
+  <div class="comment">…</div>
+</aside>…
+```
+**css:**
+```css
+.\$Box\(hiddenScroll\)\$paragraph\(breakWord\) {
+  block-size: unset;
+  min-block-size: unset;
+  max-block-size: unset;
+  inline-size: unset;
+  min-inline-size: unset;
+  max-inline-size: unset;
+  overflow: hidden scroll;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+.\|\*\$BlockItem\(margin\(0\.5rem\,1rem\)\)>* {
+  float: unset;
+  clear: unset;
+  margin-block: 0.5rem;
+  margin-inline: 1rem;
+}
+```
