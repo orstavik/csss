@@ -22,3 +22,16 @@ The following list illustrates the rationale behind the transformation from the 
 10. Removing Obsolete Styles: A before state that has too much styling, where the instruction is to strip it back or simplify it.
 11. Layout Bug Fixes: A before state where a float or clear is missing, causing a layout break, and the instruction is to fix the layout issue.
 12. Accessibility Improvements: Ensuring better contrast or clearer focus states.
+
+
+## Font
+
+I need you to update shots/genre/font.md
+
+1. read the shots/genre/AGENTS.md for a description of the output format.
+
+The examples of $font/$Font/$Typeface are not realistic now. The idea is that:
+
+1. we set a series of $Typeface(...) in the <body element class. These entities essentially establishes a set of $font variables. The $Typeface() can also be used to load @font-face definitions. We might for example set a typeface for body copy text, legal print, headers, buttons/uix etc.
+2. Then, on branches of DOM, we apply those $Typefaces. These then rain down into the branches. The $Font sets all the $font properties, so we don't have to worry about leaking inheritance from above. Commonly, the $Font(body) is set on the <body, and this is the default font in the document. But it doesn't have to be like that.
+3. If we need a new $Font on an element, such as a header or note inside the branch, we can either use a new $Font on a sub branch. Or just override individual properties using $font(..)
