@@ -11,8 +11,8 @@ We want a native app feel. Set up the `systemUI` typeface at the body level, enf
 ```
 **after:**
 ```html
-…<body class="$Typeface(systemUI,system-ui,sans-serif) …" …>…
-  <main class="$Font(systemUI) …" …>…
+…<body class="$Typeface(systemUI,system-ui,sans-serif)" …>…
+  <main class="$Font(systemUI)" …>…
     <button class="$font(bold)">Submit</button>
   …</main>
 …</body>…
@@ -50,19 +50,19 @@ We want a native app feel. Set up the `systemUI` typeface at the body level, enf
 Syntax Optimization/Refactoring: Standardize the long-form article by defining the `transitional` preset at the root, applying its baseline umbrella on the article. Keep the intro text italic.
 **before:**
 ```html
-…<div class="reading-root">
-  <article class="long-form $font(Charter,'Bitstream+Charter','Sitka+Text',Cambria,serif)">
-    <p class="intro $font(italic)">Welcome to the first chapter.</p>
-  </article>
-</div>…
+…<div class="reading-root …" …>…
+  <article class="long-form $font(Charter,'Bitstream+Charter','Sitka+Text',Cambria,serif) …" …>…
+    <p class="intro $font(italic) …" …>Welcome to the first chapter.</p>
+  …</article>
+…</div>…
 ```
 **after:**
 ```html
-…<div class="reading-root $Typeface(transitional,Charter,'Bitstream+Charter','Sitka+Text',Cambria,serif)">
-  <article class="long-form $Font(transitional)">
-    <p class="intro $font(italic)">Welcome to the first chapter.</p>
-  </article>
-</div>…
+…<div class="reading-root $Typeface(transitional,Charter,'Bitstream+Charter','Sitka+Text',Cambria,serif) …" …>…
+  <article class="long-form $Font(transitional) …" …>…
+    <p class="intro $font(italic) …" …>Welcome to the first chapter.</p>
+  …</article>
+…</div>…
 ```
 **css:**
 ```css
@@ -97,19 +97,19 @@ Syntax Optimization/Refactoring: Standardize the long-form article by defining t
 Theme Adjustments: To fully support the 'vintage reading' theme, set up the `oldStyle` typeface globally, secure inheritance on the text view, and increase the drop-cap size using $font.
 **before:**
 ```html
-…<div class="theme-vintage">
-  <div class="novel-view">
-    <span class="drop-cap">O</span>nce upon a time...
-  </div>
-</div>…
+…<div class="theme-vintage …" …>…
+  <div class="novel-view …" …>…
+    <span class="drop-cap …" …>O</span>nce upon a time...
+  …</div>
+…</div>…
 ```
 **after:**
 ```html
-…<div class="theme-vintage $Typeface(oldStyle,'Iowan+Old+Style','Palatino+Linotype','URW+Palladio+L',Pica,'Book+Antiqua',serif)">
-  <div class="novel-view $Font(oldStyle)">
-    <span class="drop-cap $font(x-large)">O</span>nce upon a time...
-  </div>
-</div>…
+…<div class="theme-vintage $Typeface(oldStyle,'Iowan+Old+Style','Palatino+Linotype','URW+Palladio+L',Pica,'Book+Antiqua',serif) …" …>…
+  <div class="novel-view $Font(oldStyle) …" …>…
+    <span class="drop-cap $font(xLarge) …" …>O</span>nce upon a time...
+  …</div>
+…</div>…
 ```
 **css:**
 ```css
@@ -133,7 +133,7 @@ Theme Adjustments: To fully support the 'vintage reading' theme, set up the `old
   font-kerning: var(--oldStyleFontKerning, unset);
 }
 
-.\$font\(x-large\) {
+.\$font\(xLarge\) {
   font-size: x-large;
 }
 ```
@@ -145,11 +145,11 @@ Highly legible with a friendly, approachable voice. The open counters and organi
 The current UI feels too robotic. We need a friendly, conversational tone. Apply the humanist typeface stack to the app root.
 **before:**
 ```html
-…<body class="app-root">…</body>…
+…<body class="app-root …" …>…</body>…
 ```
 **after:**
 ```html
-…<body class="app-root $Typeface(humanist,Seravek,'Gill+Sans+Nova',Ubuntu,Calibri,'DejaVu+Sans',source-sans-pro,sans-serif)">…</body>…
+…<body class="app-root $Typeface(humanist,Seravek,'Gill+Sans+Nova',Ubuntu,Calibri,'DejaVu+Sans',source-sans-pro,sans-serif) …" …>…</body>…
 ```
 **css:**
 ```css
@@ -165,11 +165,11 @@ Clean, architectural, and thoroughly modern. It provides a crisp, contemporary a
 The modern theme relies on an older, less crisp geometric font setup. Upgrade it to the architectural geometricHumanist preset.
 **before:**
 ```html
-…<div class="theme-modern">…</div>…
+…<div class="theme-modern …" …>…</div>…
 ```
 **after:**
 ```html
-…<div class="theme-modern $Typeface(geometricHumanist,Avenir,Montserrat,Corbel,'URW+Gothic',source-sans-pro,sans-serif)">…</div>…
+…<div class="theme-modern $Typeface(geometricHumanist,Avenir,Montserrat,Corbel,'URW+Gothic',source-sans-pro,sans-serif) …" …>…</div>…
 ```
 **css:**
 ```css
@@ -185,11 +185,11 @@ Graceful and gently sophisticated. It brings a touch of subtle elegance to the i
 The premium content section inherits a standard sans-serif font from its parent, but it needs a subtle elegance. Override it with the classical humanist typeface.
 **before:**
 ```html
-…<section class="premium-content">…</section>…
+…<section class="premium-content …" …>…</section>…
 ```
 **after:**
 ```html
-…<section class="premium-content $Typeface(classicalHumanist,Optima,Candara,'Noto+Sans',source-sans-pro,sans-serif)">…</section>…
+…<section class="premium-content $Typeface(classicalHumanist,Optima,Candara,'Noto+Sans',source-sans-pro,sans-serif) …" …>…</section>…
 ```
 **css:**
 ```css
@@ -205,11 +205,11 @@ Acts as the ultimate neutral canvas. It feels objective and universally legible,
 The dashboard is cluttered with specific font overrides. Simplify it by applying the ultimate neutral canvas: the neoGrotesque typeface.
 **before:**
 ```html
-…<main class="dashboard">…</main>…
+…<main class="dashboard …" …>…</main>…
 ```
 **after:**
 ```html
-…<main class="dashboard $Typeface(neoGrotesque,Inter,Roboto,'Helvetica+Neue','Arial+Nova','Nimbus+Sans',Arial,sans-serif)">…</main>…
+…<main class="dashboard $Typeface(neoGrotesque,Inter,Roboto,'Helvetica+Neue','Arial+Nova','Nimbus+Sans',Arial,sans-serif) …" …>…</main>…
 ```
 **css:**
 ```css
@@ -224,11 +224,11 @@ Brings a tactile, typewriter-like nostalgia to the screen. It feels deliberate a
 **userInstruction:** The quote block blends in too much with the surrounding text. Give it a typewriter-like nostalgia to make it stand out.
 **before:**
 ```html
-…<blockquote class="quote-block">…</blockquote>…
+…<blockquote class="quote-block …" …>…</blockquote>…
 ```
 **after:**
 ```html
-…<blockquote class="quote-block $Typeface(monospaceSlab,'Nimbus+Mono+PS','Courier+New',monospace)">…</blockquote>…
+…<blockquote class="quote-block $Typeface(monospaceSlab,'Nimbus+Mono+PS','Courier+New',monospace) …" …>…</blockquote>…
 ```
 **css:**
 ```css
@@ -244,11 +244,11 @@ Feels precise, technical, and strictly organized. It immediately signals a highl
 The code snippets are using proportional fonts which makes them hard to read. Ensure they are perfectly legible by applying the monospace code typeface.
 **before:**
 ```html
-…<pre class="code-snippet">…</pre>…
+…<pre class="code-snippet …" …>…</pre>…
 ```
 **after:**
 ```html
-…<pre class="code-snippet $Typeface(monospaceCode,ui-monospace,'Cascadia+Code','Source+Code+Pro',Menlo,Consolas,'DejaVu+Sans+Mono',monospace)">…</pre>…
+…<pre class="code-snippet $Typeface(monospaceCode,ui-monospace,'Cascadia+Code','Source+Code+Pro',Menlo,Consolas,'DejaVu+Sans+Mono',monospace) …" …>…</pre>…
 ```
 **css:**
 ```css
@@ -264,11 +264,11 @@ Bold, utilitarian, and distinctly no-nonsense. It delivers information with visu
 The warning label was accidentally using a font droplet instead of defining the typeface umbrella correctly. Fix the semantics to use the industrial typeface definition.
 **before:**
 ```html
-…<div class="warning-label">…</div>…
+…<div class="warning-label …" …>…</div>…
 ```
 **after:**
 ```html
-…<div class="warning-label $Typeface(industrial,Bahnschrift,'DIN+Alternate','Franklin+Gothic+Medium','Nimbus+Sans+Narrow',sans-serif-condensed,sans-serif)">…</div>…
+…<div class="warning-label $Typeface(industrial,Bahnschrift,'DIN+Alternate','Franklin+Gothic+Medium','Nimbus+Sans+Narrow',sans-serif-condensed,sans-serif) …" …>…</div>…
 ```
 **css:**
 ```css
@@ -284,11 +284,11 @@ Feels casual, deeply personal, and delightfully imperfect. It breaks the digital
 The postcard element needs to break the digital barrier. Override the global font with a deeply personal, handwritten typeface.
 **before:**
 ```html
-…<div class="postcard">…</div>…
+…<div class="postcard …" …>…</div>…
 ```
 **after:**
 ```html
-…<div class="postcard $Typeface(handwritten,'Segoe+Print','Bradley+Hand',Chilanka,Kavivanar,'Comic+Sans+MS','Chalkboard+SE','Comic+Neue',cursive)">…</div>…
+…<div class="postcard $Typeface(handwritten,'Segoe+Print','Bradley+Hand',Chilanka,Kavivanar,'Comic+Sans+MS','Chalkboard+SE','Comic+Neue',cursive) …" …>…</div>…
 ```
 **css:**
 ```css
@@ -304,11 +304,11 @@ FinePrint. Intentionally exhausting yet technically compliant. It maximizes char
 The legal footnotes must fulfill compliance while discouraging reading through a monotonous, dense texture. Apply the FinePrint typeface.
 **before:**
 ```html
-…<footer class="legal-footer">…</footer>…
+…<footer class="legal-footer …" …>…</footer>…
 ```
 **after:**
 ```html
-…<footer class="legal-footer $Typeface(FinePrint,'Arial+Narrow','Helvetica+Neue+Condensed',sans-serif-condensed,sans-serif,11px)">…</footer>…
+…<footer class="legal-footer $Typeface(FinePrint,'Arial+Narrow','Helvetica+Neue+Condensed',sans-serif-condensed,sans-serif,11px) …" …>…</footer>…
 ```
 **css:**
 ```css
@@ -324,11 +324,11 @@ The legal footnotes must fulfill compliance while discouraging reading through a
 Refactor the hardcoded remote font-face import and individual font styling into a reusable comic typeface definition with exact sizes and weights.
 **before:**
 ```html
-…<div class="fun-text">…</div>…
+…<div class="fun-text …" …>…</div>…
 ```
 **after:**
 ```html
-…<div class="fun-text $Typeface(comic,'MS+Comic+Sans','https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2',xxSmall,semiExpanded,italic,bolder)">…</div>…
+…<div class="fun-text $Typeface(comic,'MS+Comic+Sans','https://cdn.jsdelivr.net/npm/@openfonts/comic-neue_latin@latest/files/ComicNeue-Regular.woff2',xxSmall,semiExpanded,italic,bolder) …" …>…</div>…
 ```
 **css:**
 ```css
@@ -354,15 +354,15 @@ Soft, playful, and entirely unthreatening. Set up the `roundedSans` typeface and
 **userInstruction:** We want the kids zone to feel soft and playful. Define and apply the rounded sans-serif typeface to it to secure inheritance.
 **before:**
 ```html
-…<div class="container">
-  <section class="kids-zone">…</section>
-</div>…
+…<div class="container …" …>…
+  <section class="kids-zone …" …>…</section>
+…</div>…
 ```
 **after:**
 ```html
-…<div class="container $Typeface(roundedSans,ui-rounded,'Hiragino+Maru+Gothic+ProN',Quicksand,Comfortaa,Manjari,'Arial+Rounded+MT','Arial+Rounded+MT+Bold',Calibri,source-sans-pro,sans-serif)">
-  <section class="kids-zone $Font(roundedSans)">…</section>
-</div>…
+…<div class="container $Typeface(roundedSans,ui-rounded,'Hiragino+Maru+Gothic+ProN',Quicksand,Comfortaa,Manjari,'Arial+Rounded+MT','Arial+Rounded+MT+Bold',Calibri,source-sans-pro,sans-serif) …" …>…
+  <section class="kids-zone $Font(roundedSans) …" …>…</section>
+…</div>…
 ```
 **css:**
 ```css
@@ -393,15 +393,15 @@ Sturdy, grounded, and highly confident. Define the `slabSerif` and secure it on 
 **userInstruction:** Define a sturdy slab serif typeface at the app level, and enforce it on the headlines to give a confident, grounded voice.
 **before:**
 ```html
-…<main>
-  <header class="article-header">…</header>
-</main>…
+…<main …>…
+  <header class="article-header …" …>…</header>
+…</main>…
 ```
 **after:**
 ```html
-…<main class="$Typeface(slabSerif,Rockwell,'Rockwell+Nova','Roboto+Slab','DejaVu+Serif','Sitka+Small',serif)">
-  <header class="article-header $Font(slabSerif)">…</header>
-</main>…
+…<main class="$Typeface(slabSerif,Rockwell,'Rockwell+Nova','Roboto+Slab','DejaVu+Serif','Sitka+Small',serif)" …>…
+  <header class="article-header $Font(slabSerif) …" …>…</header>
+…</main>…
 ```
 **css:**
 ```css
@@ -433,12 +433,12 @@ Defines a standard "body" (brødtekst) typeface using system fonts, ensuring hig
 The global document was defining the body font individually, but we need it to use the proper Typeface umbrella along with its child selector override to apply it properly.
 **before:**
 ```html
-…<html class="root-doc">…</html>…
+…<html class="root-doc …" …>…</html>…
 ```
 **after:**
 ```html
 …<html class="root-doc $Typeface(body,system-ui,sans-serif,1rem)
-|body$Font(body)">…</html>…
+|body$Font(body) …" …>…</html>…
 ```
 **css:**
 ```css
@@ -470,11 +470,11 @@ The global document was defining the body font individually, but we need it to u
 Fixing CSSS Semantic Errors: The previous styling used individual font properties that unintentionally inherited bad letter spacing and line heights; replace it with the uppercase Umbrella $Font to reset the inheritance before applying the new Arial font stack.
 **before:**
 ```html
-…<h1 class="main-heading">Welcome</h1>…
+…<h1 class="main-heading …" …>Welcome</h1>…
 ```
 **after:**
 ```html
-…<h1 class="main-heading $Font(_,Arial,16px,bold)">Welcome</h1>…
+…<h1 class="main-heading $Font(_,Arial,16px,bold) …" …>Welcome</h1>…
 ```
 **css:**
 ```css
@@ -501,13 +501,13 @@ Fixing CSSS Semantic Errors: The previous styling used individual font propertie
 Feature Requests/Tweaks: The editorial team wants the pull quotes to feel more classical and authoritative; reset and switch the font family specifically to a generic serif.
 **before:**
 ```html
-…<blockquote class="pull-quote">
+…<blockquote class="pull-quote …" …>
   This is a significant statement.
 </blockquote>…
 ```
 **after:**
 ```html
-…<blockquote class="pull-quote $Font(_,serif)">
+…<blockquote class="pull-quote $Font(_,serif) …" …>
   This is a significant statement.
 </blockquote>…
 ```
@@ -536,11 +536,11 @@ Feature Requests/Tweaks: The editorial team wants the pull quotes to feel more c
 Greenfield Addition: Give the newly added disclaimer text its initial styling, setting it to a small, condensed, italic system font.
 **before:**
 ```html
-…<p class="disclaimer">Terms and conditions apply.</p>…
+…<p class="disclaimer …" …>Terms and conditions apply.</p>…
 ```
 **after:**
 ```html
-…<p class="disclaimer $font(system-ui,sans-serif,400,adjust(0.5),italic,condensed,12px)">Terms and conditions apply.</p>…
+…<p class="disclaimer $font(system-ui,sans-serif,400,adjust(0.5),italic,condensed,12px) …" …>Terms and conditions apply.</p>…
 ```
 **css:**
 ```css
@@ -560,11 +560,11 @@ Greenfield Addition: Give the newly added disclaimer text its initial styling, s
 Accessibility Improvements: The small labels in the form are a bit hard to read; convert them to uppercase to improve visual clarity and stand out against the input fields.
 **before:**
 ```html
-…<label class="input-label">First Name</label>…
+…<label class="input-label …" …>First Name</label>…
 ```
 **after:**
 ```html
-…<label class="input-label $font(uppercase)">First Name</label>…
+…<label class="input-label $font(uppercase) …" …>First Name</label>…
 ```
 **css:**
 ```css
@@ -579,11 +579,11 @@ Accessibility Improvements: The small labels in the form are a bit hard to read;
 Contextual Overrides: The global CSS forces all table headers into uppercase, but this specific data table needs its headers preserved in their original casing to avoid misinterpreting acronyms.
 **before:**
 ```html
-…<div class="data-header">NaCl</div>…
+…<div class="data-header …" …>NaCl</div>…
 ```
 **after:**
 ```html
-…<div class="data-header $font(transformNone)">NaCl</div>…
+…<div class="data-header $font(transformNone) …" …>NaCl</div>…
 ```
 **css:**
 ```css
@@ -598,15 +598,15 @@ Exudes high fashion, luxury, and strict elegance. Override a specific element wi
 **userInstruction:** The luxury landing page needs to exude high fashion and dramatic contrast. Secure didone inheritance and make the specific highlight bold.
 **before:**
 ```html
-…<div class="hero-wrapper">
-  <div class="luxury-hero">Exclusive</div>
-</div>…
+…<div class="hero-wrapper …" …>…
+  <div class="luxury-hero …" …>Exclusive</div>
+…</div>…
 ```
 **after:**
 ```html
-…<div class="hero-wrapper $Typeface(didone,Didot,'Bodoni+MT','Noto+Serif+Display','URW+Palladio+L',Pica,serif)">
-  <div class="luxury-hero $Font(didone) $font(bold)">Exclusive</div>
-</div>…
+…<div class="hero-wrapper $Typeface(didone,Didot,'Bodoni+MT','Noto+Serif+Display','URW+Palladio+L',Pica,serif) …" …>…
+  <div class="luxury-hero $Font(didone) $font(bold) …" …>Exclusive</div>
+…</div>…
 ```
 **css:**
 ```css
@@ -642,15 +642,15 @@ Carries a warm, vintage charm that feels culturally established. Secure the anti
 Clean up the messy specific font overrides on the story container, secure the standard antique typeface, and apply an italic override.
 **before:**
 ```html
-…<section class="container">
-  <article class="story">Once <span class="highlight">again</span></article>
-</section>…
+…<section class="container …" …>…
+  <article class="story …" …>Once <span class="highlight …" …>again</span></article>
+…</section>…
 ```
 **after:**
 ```html
-…<section class="container $Typeface(antique,'Superclarendon','Bookman+Old+Style','URW+Bookman','URW+Bookman+L','Georgia+Pro',Georgia,serif)">
-  <article class="story $Font(antique)">Once <span class="highlight $font(italic)">again</span></article>
-</section>…
+…<section class="container $Typeface(antique,'Superclarendon','Bookman+Old+Style','URW+Bookman','URW+Bookman+L','Georgia+Pro',Georgia,serif) …" …>…
+  <article class="story $Font(antique) …" …>Once <span class="highlight $font(italic) …" …>again</span></article>
+…</section>…
 ```
 **css:**
 ```css
@@ -685,15 +685,15 @@ Exudes high fashion, luxury, and strict elegance. Override a specific element wi
 **userInstruction:** The luxury landing page needs to exude high fashion and dramatic contrast. Secure didone inheritance and make the specific highlight bold.
 **before:**
 ```html
-…<div class="hero-wrapper">
-  <div class="luxury-hero $Font(didone)">Exclusive</div>
-</div>…
+…<div class="hero-wrapper …" …>…
+  <div class="luxury-hero $Font(didone) …" …>Exclusive</div>
+…</div>…
 ```
 **after:**
 ```html
-…<div class="hero-wrapper">
-  <div class="luxury-hero $Font(didone) $font(bold)">Exclusive</div>
-</div>…
+…<div class="hero-wrapper …" …>…
+  <div class="luxury-hero $Font(didone) $font(bold) …" …>Exclusive</div>
+…</div>…
 ```
 **css:**
 ```css
@@ -724,15 +724,15 @@ Carries a warm, vintage charm that feels culturally established. Secure the anti
 Clean up the messy specific font overrides on the story container, secure the standard antique typeface, and apply an italic override.
 **before:**
 ```html
-…<section class="container">
-  <article class="story $Font(antique)">Once <span class="highlight">again</span></article>
-</section>…
+…<section class="container …" …>…
+  <article class="story $Font(antique) …" …>Once <span class="highlight …" …>again</span></article>
+…</section>…
 ```
 **after:**
 ```html
-…<section class="container">
-  <article class="story $Font(antique)">Once <span class="highlight $font(italic)">again</span></article>
-</section>…
+…<section class="container …" …>…
+  <article class="story $Font(antique) …" …>Once <span class="highlight $font(italic) …" …>again</span></article>
+…</section>…
 ```
 **css:**
 ```css
