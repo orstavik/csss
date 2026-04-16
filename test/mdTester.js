@@ -60,7 +60,7 @@ export default async function runTests(paths, test, mdLocation) {
         printDiff(result);
         shot.css = { type: "css", value: result.actual };
       } catch (e) {
-        console.error(`💣${shot.csss.value} in ${file}:`, e);
+        console.error(`💣${JSON.stringify(shot).slice(0, 100)} in ${file}: ${e.message ?? e}`);
       }
     }
     createLinkToCopyContent("Copy result of " + file, shots.map(printShot).join("\n\n"));
