@@ -1,22 +1,22 @@
 //todo isImage, interpretImage,
 import { CsssFunctions, CsssPrimitives, BadArgument } from "./func.js";
 const { LengthPercent, Url, LengthPercentAuto } = CsssPrimitives;
-const { SF2, CssValuesToCsssTable, FunctionPropertyType, FunctionWithDefaultValues } = CsssFunctions;
+const { SF2, CssValuesToCsssTable } = CsssFunctions;
 import { Color } from "./funcColor.js";
 import gradients from "./funcGradients.js";
 const { linear, ellipse, circle, conic, } = gradients.csss;
 
-const DEFAULTS = {
-  background: "none",
-  backgroundImage: "unset",
-  backgroundPosition: "0% 0%",
-  backgroundRepeat: "repeat",
-  backgroundSize: "auto",
-  backgroundOrigin: "padding-box",
-  backgroundClip: "border-box",
-  backgroundBlendMode: "normal",
-  backgroundAttachment: "scroll",
-};
+// const DEFAULTS = {
+//   background: "none",
+//   backgroundImage: "unset",
+//   backgroundPosition: "0% 0%",
+//   backgroundRepeat: "repeat",
+//   backgroundSize: "auto",
+//   backgroundOrigin: "padding-box",
+//   backgroundClip: "border-box",
+//   backgroundBlendMode: "normal",
+//   backgroundAttachment: "scroll",
+// };
 
 const Repeats = CssValuesToCsssTable("repeat|repeat-x|repeat-y|space|round|no-repeat");
 const Sizes = CssValuesToCsssTable("cover|contain");
@@ -55,7 +55,6 @@ const Bg = ({ name, args }) => {
     }
     throw BadArgument(name, args, i);
   }
-  // debugger
   if (colors.length && args.length === 1) return { backgroundColor: colors[0] };
   if (colors.length) image = `linear-gradient(${colors.join(", ")})`;
   if (!image) throw BadArgument(name, args, args.length, "Bg() requires a color, image, gradient, or none.");
