@@ -418,3 +418,95 @@ A highly constrained box item enforcing a stop always behavior with snapping end
   scroll-snap-stop: always;
 }
 ```
+
+
+**description:** Sets object-fit to cover for replaced elements like images and videos.
+**userInstruction:** The images in the gallery are stretching and overflowing their containers. Apply object-fit cover to ensure they fill their boxes without distortion.
+**before:**
+```html
+…<div class="
+  |$Box(162px,100px)
+  ">
+  <img src="…" />
+  <img src="…" />
+</div>…
+```
+**after:**
+```html
+…<div class="
+  |$Box(162px,100px,cover)
+  ">
+  <img src="…" />
+  <img src="…" />
+</div>…
+```
+**csss:**
+ $fitCover
+**css:**
+```css
+.\|\$Box\(162px\,100px\,cover\)>* {
+
+  object-fit: cover;
+}
+```
+
+**description:** Sets aspect-ratio to 16/9 on a video element to maintain a consistent widescreen ratio.
+**userInstruction:** The video element is stretching to fill its container without maintaining its aspect ratio. Set the aspect ratio to 16:9, use object-fit cover to fill the container, and center the video with object-position.
+**before:**
+```html
+…<div class="video|$Box(400px,300px)">
+  <video src="…" autoplay muted loop></video>
+</div>…
+```
+**after:**
+```html
+…<div>
+  <video src="…" autoplay muted loop class="$Box(400px,300px,16/9,cover,center)"></video>
+</div>…
+```
+**csss:**
+```css
+.\$Box\(400px\,300px\,16\/9\,cover\,center\) {
+  block-size: 300px;
+  min-block-size: unset;
+  max-block-size: unset;
+  inline-size: 400px;
+  min-inline-size: unset;
+  max-inline-size: unset;
+  overflow: unset;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center;
+}
+```
+
+**description:** Uses clamp() for responsive inline sizing that scales fluidly between a minimum and maximum.
+**userInstruction:** The sidebar has a fixed 300px width that doesn't adapt. Use clamp so it scales between 200px and 400px based on viewport width.
+**before:**
+```html
+…<aside class="$Box(300px,auto)">
+  …
+</aside>…
+```
+**after:**
+```html
+…<aside class="$Box(clamp(200px,25vw,400px),auto)">
+  …
+</aside>…
+```
+**css:**
+```css
+.\$Box\(clamp\(200px\,25vw\,400px\)\,auto\) {
+  block-size: unset;
+  min-block-size: unset;
+  max-block-size: unset;
+  inline-size: clamp(200px, 25vw, 400px);
+  min-inline-size: unset;
+  max-inline-size: unset;
+  overflow: auto;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
+}
+```
