@@ -352,3 +352,39 @@ The chessboard squares are collapsing because they lack explicit dimensions. Tar
   scroll-snap-type: unset;
 }
 ```
+
+
+**description:** A Grid layout with responsive gap using clamp for fluid spacing between items.
+**userInstruction:** The fixed 16px grid gap is too tight on large screens and too generous on small ones. Use clamp to make it fluid.
+**before:**
+```html
+…<div class="
+  $Grid(columns(repeat(3,1fr)),gap(16px))">
+  <div>…</div>
+  <div>…</div>
+  <div>…</div>
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Grid(columns(repeat(3,1fr)),gap(clamp(8px,2vw,24px)))">
+  <div>…</div>
+  <div>…</div>
+  <div>…</div>
+</div>…
+```
+**css:**
+```css
+.\$Grid\(columns\(repeat\(3\,1fr\)\)\,gap\(clamp\(8px\,2vw\,24px\)\)\) {
+  display: grid;
+  padding: unset;
+  place-items: unset;
+  place-content: unset;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: unset;
+  grid-template-areas: unset;
+  gap: clamp(8px, 2vw, 24px);
+  grid-auto-flow: unset;
+}
+```

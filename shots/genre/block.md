@@ -2006,3 +2006,76 @@ The comment threads lack spacing, and the individual nested messages bleed into 
   background-blend-mode: normal;
 }
 ```
+
+
+**description:** A Block layout with clamp-based responsive padding that scales between 1rem and 3rem.
+**userInstruction:** The fixed 2rem padding doesn't adapt well across screen sizes. Use clamp so it scales fluidly between 1rem and 3rem based on viewport width.
+**before:**
+```html
+…<div class="
+  $Block(padding(2rem))
+  |*$BlockItem(margin(0,0,1rem))">
+  …
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Block(padding(clamp(1rem,3vw,3rem)))
+  |*$BlockItem(margin(0,0,1rem))">
+  …
+</div>…
+```
+**css:**
+```css
+.\$Block\(padding\(clamp\(1rem\,3vw\,3rem\)\)\) {
+  display: block;
+  padding: clamp(1rem, 3vw, 3rem);
+}
+
+.\|\*\$BlockItem\(margin\(0\,0\,1rem\)\)>* {
+  float: unset;
+  clear: unset;
+  margin-block: 0 1rem;
+  margin-inline: 0;
+}
+```
+
+
+**description:** A centered Block reading panel with a max-width computed using min() for fluid constrained width.
+**userInstruction:** The article uses a fixed 600px max-width which is too rigid. Replace with min() so it's 600px or 90% of the viewport, whichever is smaller.
+**before:**
+```html
+…<article class="
+  $Block(padding(2rem))
+  $Box(_<_<600px)">
+  …
+</article>…
+```
+**after:**
+```html
+…<article class="
+  $Block(padding(2rem))
+  $Box(_<_<min(600px,90vw))">
+  …
+</article>…
+```
+**css:**
+```css
+.\$Block\(padding\(2rem\)\) {
+  display: block;
+  padding: 2rem;
+}
+
+.\$Box\(_\<_\<min\(600px\,90vw\)\) {
+  block-size: unset;
+  min-block-size: unset;
+  max-block-size: unset;
+  inline-size: unset;
+  min-inline-size: unset;
+  max-inline-size: min(600px, 90vw);
+  overflow: unset;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
+}
+```

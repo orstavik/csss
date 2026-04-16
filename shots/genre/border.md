@@ -242,3 +242,21 @@
   border-radius: 0;
 }
 ```
+
+**description:** Uses clamp to create a responsive border width that scales between 1px and 4px based on viewport width.
+**userInstruction:** The card border looks too thin on large screens and too thick on small screens. Use a clamp calculation to make the border width responsive.
+**before:**
+```html
+…<div class="card $Border(2px,solid,#333,radius(8px))">…</div>…
+```
+**after:**
+```html
+…<div class="card $Border(clamp(1px,0.3vw,4px),solid,#333,radius(8px))">…</div>…
+```
+**css:**
+```css
+.\$Border\(clamp\(1px\,0\.3vw\,4px\)\,solid\,\#333\,radius\(8px\)\) {
+  border: clamp(1px, 0.3vw, 4px) solid #333333;
+  border-radius: 8px;
+}
+```

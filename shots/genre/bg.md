@@ -1404,3 +1404,80 @@
   background-blend-mode: normal;
 }
 ```
+
+**description:** Uses min() in background-size to cap the gradient tile width responsively.
+**userInstruction:** The repeating stripe pattern looks too wide on large screens. Use min() so each tile is at most 200px or 30% of the element.
+**before:**
+```html
+…<div class="$Bg(repeatingLinear(45deg,(#eee,10px),(#fff,20px)))">…</div>…
+```
+**after:**
+```html
+…<div class="$Bg(size(min(200px,30%)),repeatingLinear(45deg,(#eee,10px),(#fff,20px)))">…</div>…
+```
+**css:**
+```css
+.\$Bg\(size\(min\(200px\,30\%\)\)\,repeatingLinear\(45deg\,\(\#eee\,10px\)\,\(\#fff\,20px\)\)\) {
+  background: none;
+  background-image: repeating-linear-gradient(45deg, #eeeeee 10px, #ffffff 20px);
+  background-position: 0% 0%;
+  background-repeat: repeat;
+  background-size: min(200px, 30%);
+  background-origin: padding-box;
+  background-clip: border-box;
+  background-blend-mode: normal;
+  background-attachment: scroll;
+}
+```
+
+
+**description:** Uses arithmetic to compute a static gradient stop position from a fraction.
+**userInstruction:** The gradient color stop should be at exactly one third. Use a computed percentage instead of a magic number.
+**before:**
+```html
+…<div class="$Bg(linear(toRight,(#blue,33%),#white))">…</div>…
+```
+**after:**
+```html
+…<div class="$Bg(linear(toRight,(#blue,100%/3),#white))">…</div>…
+```
+**css:**
+```css
+.\$Bg\(linear\(toRight\,\(\#blue\,100\%\/3\)\,\#white\)\) {
+  background: none;
+  background-image: linear-gradient(to right, blue 33.33333333333333%, white);
+  background-position: 0% 0%;
+  background-repeat: repeat;
+  background-size: auto;
+  background-origin: padding-box;
+  background-clip: border-box;
+  background-blend-mode: normal;
+  background-attachment: scroll;
+}
+```
+
+
+**description:** Uses max() for responsive background position offset from the start edge.
+**userInstruction:** The background image position should be at least 2rem from the start edge, but scale up on wider screens.
+**before:**
+```html
+…<div class="$Bg(url('hero.jpg'),2rem,center,noRepeat,cover)">…</div>…
+```
+**after:**
+```html
+…<div class="$Bg(url('hero.jpg'),max(2rem,5vw),center,noRepeat,cover)">…</div>…
+```
+**css:**
+```css
+.\$Bg\(url\(\'hero\.jpg\'\)\,max\(2rem\,5vw\)\,center\,noRepeat\,cover\) {
+  background: none;
+  background-image: url('hero.jpg');
+  background-position: max(2rem, 5vw) center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-origin: padding-box;
+  background-clip: border-box;
+  background-blend-mode: normal;
+  background-attachment: scroll;
+}
+```
