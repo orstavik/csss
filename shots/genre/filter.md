@@ -57,7 +57,7 @@
 **css:**
 ```css
 .\$backdrop\(brightness\(0\.5\)\,\'common-filters\.svg\#filter\'\) {
-  backdrop-filter: brightness(0.5) url("common-filters.svg#filter");
+  backdrop-filter: brightness(0.5) url('common-filters.svg#filter');
 }
 ```
 
@@ -74,12 +74,13 @@
 **css:**
 ```css
 .\$filter\(dropShadow\(\#red\,5px\,5px\,5px\)\,url\(\'https\:\/\/example\.com\/filter\'\)\,\'\#anotherFilter\'\) {
-  filter: drop-shadow(5px 5px 5px red) url("https://example.com/filter") url("#anotherFilter");
+  filter: drop-shadow(5px 5px 5px red) url('https://example.com/filter') url('#anotherFilter');
 }
 ```
 
 **description:** Chains 9 filter functions: blur, brightness, contrast, grayscale, invert, opacity, saturate, sepia and hue-rotate.
-**userInstruction:** Contextual Overrides: Apply an extreme array of chained filter effects to create a unique vintage dream-like style for the hero image.
+**userInstruction:**
+Contextual Overrides: Apply an extreme array of chained filter effects to create a unique vintage dream-like style for the hero image.
 **before:**
 ```html
 …<img src="hero.jpg" class="hero-img">…
