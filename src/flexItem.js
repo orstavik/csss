@@ -36,15 +36,15 @@ const flexItem = ({ name, args }) => {
   let flexGrow, flexShrink, flexBasis, order, align, margin;
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    if (flexGrow == null) if (flexGrow = NumberInterpreter(arg)) continue;
-    if (flexShrink == null) if (flexShrink = NumberInterpreter(arg)) continue;
-    if (flexBasis == null) if (flexBasis = LengthPercentAuto(arg)) continue;
-    if (align == null && arg.kind === "WORD") if (align = alignSelf(arg)) continue;
-    if (margin == null) if (margin = LogicalFour("margin", "margin", LengthPercentAuto)(arg)) continue;
+    if (flexGrow == null) if ((flexGrow = NumberInterpreter(arg)) != null) continue;
+    if (flexShrink == null) if ((flexShrink = NumberInterpreter(arg)) != null) continue;
+    if (flexBasis == null) if ((flexBasis = LengthPercentAuto(arg)) != null) continue;
+    if (align == null && arg.kind === "WORD") if ((align = alignSelf(arg)) != null) continue;
+    if (margin == null) if ((margin = LogicalFour("margin", "margin", LengthPercentAuto)(arg)) != null) continue;
     if (order == null) if ((order = orderFn(arg)?.[0]) != null) continue;
     throw BadArgument(name, args, i);
   }
-  const flex = [flexGrow, flexShrink, flexBasis].filter(Boolean);
+  const flex = [flexGrow, flexShrink, flexBasis].filter(v => v != null);
   const res = {};
   if (flex.length) res.flex = flex.join(" ");
   if (order) res.order = order;

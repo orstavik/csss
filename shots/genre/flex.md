@@ -1,3 +1,49 @@
+
+
+**description:** A Flex card layout with a clamp-based responsive flex-basis for smooth scaling.
+**userInstruction:** The cards use a fixed 250px basis which doesn't scale well. Use clamp so each card scales between 200px and 350px based on the viewport.
+**before:**
+```html
+…<div class="
+  $Flex(row,wrap,gap(1rem))
+  |*$FlexItem(0,1,250px)">
+  <div>…</div>
+  <div>…</div>
+  <div>…</div>
+</div>…
+```
+**after:**
+```html
+…<div class="
+  $Flex(row,wrap,gap(1rem))
+  |*$FlexItem(0,1,clamp(200px,30vw,350px))">
+  <div>…</div>
+  <div>…</div>
+  <div>…</div>
+</div>…
+```
+**css:**
+```css
+.\$Flex\(row\,wrap\,gap\(1rem\)\) {
+  display: flex;
+  padding: unset;
+  align-items: unset;
+  place-content: unset;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.\|\*\$FlexItem\(0\,1\,clamp\(200px\,30vw\,350px\)\)>* {
+  margin: unset;
+  flex: 0 1 clamp(200px, 30vw, 350px);
+  align-self: unset;
+  order: unset;
+}
+```
+
+
+
 **description:** A vertical Flex settings panel with shared item basis.
 **userInstruction:** The settings panel needs to be a column layout with gaps, and all child settings items should share a 100px flex basis.
 **before:**
@@ -512,48 +558,5 @@ The albums are stacking vertically and the photos are rendering at their native 
   background-color: var(--color-neutral);
   background: none;
   background-blend-mode: normal;
-}
-```
-
-
-**description:** A Flex card layout with a clamp-based responsive flex-basis for smooth scaling.
-**userInstruction:** The cards use a fixed 250px basis which doesn't scale well. Use clamp so each card scales between 200px and 350px based on the viewport.
-**before:**
-```html
-…<div class="
-  $Flex(row,wrap,gap(1rem))
-  |*$FlexItem(0,1,250px)">
-  <div>…</div>
-  <div>…</div>
-  <div>…</div>
-</div>…
-```
-**after:**
-```html
-…<div class="
-  $Flex(row,wrap,gap(1rem))
-  |*$FlexItem(0,1,clamp(200px,30vw,350px))">
-  <div>…</div>
-  <div>…</div>
-  <div>…</div>
-</div>…
-```
-**css:**
-```css
-.\$Flex\(row\,wrap\,gap\(1rem\)\) {
-  display: flex;
-  padding: unset;
-  align-items: unset;
-  place-content: unset;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.\|\*\$FlexItem\(0\,1\,clamp\(200px\,30vw\,350px\)\)>* {
-  margin: unset;
-  flex: 0 1 clamp(200px, 30vw, 350px);
-  align-self: unset;
-  order: unset;
 }
 ```
