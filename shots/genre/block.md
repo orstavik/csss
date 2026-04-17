@@ -151,6 +151,9 @@ The blog layout is mostly there, but the box and note elements are just sitting 
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\*\$BlockItem\(margin\(0\.5rem\,1rem\)\)>* {
@@ -227,6 +230,9 @@ The card container uses a fixed 80px inline padding. Change this to 10vh so the 
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 ```
 
@@ -281,6 +287,9 @@ The reading column has uniform 1.5rem spacing everywhere. To improve visual hier
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|h1\$blockItem\(margin\(0\,0\,2\.5rem\)\)>:where(h1) {
@@ -436,6 +445,9 @@ The hero image in the product detail section is bleeding outside the container's
   overflow: clip;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\*\$BlockItem\(margin\(0\,0\,1\.5rem\)\)\$Box\(_\<_\<800px\)>* {
@@ -452,6 +464,9 @@ The hero image in the product detail section is bleeding outside the container's
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\.hero\$blockItem\(margin\(0\,0\,0\)\)>:where(.hero) {
@@ -510,6 +525,9 @@ This sidebar uses inline $blockItem classes for every item. Refactor it to use u
   overflow: auto;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\*\$BlockItem\(margin\(0\.25rem\,0\)\)>* {
@@ -572,6 +590,9 @@ The cards in this list are left-aligned and too wide on large screens. Center th
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\.section-title\$blockItem\(margin\(0\,0\,2rem\)\)>:where(.section-title) {
@@ -697,6 +718,9 @@ The legal document is hard to read because everything is flush left. Add a 1.5re
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\.section\$blockItem\(margin\(1\.5rem\,0\,0\)\)>:where(.section) {
@@ -843,6 +867,9 @@ The layout is mostly complete, but the pullquote is breaking the flow. Make the 
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\.header\$blockItem\(margin\(0\,0\,0\)\)>:where(.header) {
@@ -979,6 +1006,9 @@ The user profile is rendering at full width on large screens. Constrain the chil
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\.avatar\$blockItem\(margin\(0\)\)>:where(.avatar) {
@@ -1217,6 +1247,9 @@ The newsletter footer content is left-aligned. We need it to float to the end si
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\.section\$blockItem\(margin\(0\,0\,1\.5rem\)\)>:where(.section) {
@@ -1281,6 +1314,9 @@ The widget layout shifts horizontally when the content gets too long and a scrol
   overflow: scroll;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\*\$BlockItem\(margin\(0\.25rem\,0\)\)>* {
@@ -1307,6 +1343,9 @@ The widget layout shifts horizontally when the content gets too long and a scrol
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 ```
 
@@ -1348,6 +1387,9 @@ The vertical slideshow is working, but it's snapping to the top of the viewport 
   max-inline-size: unset;
   overflow: auto;
   scroll-snap-type: both mandatory;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
   scroll-padding-block: 3.5rem;
   scroll-padding-inline: 0;
 }
@@ -1365,6 +1407,9 @@ The vertical slideshow is working, but it's snapping to the top of the viewport 
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
   scroll-snap-align: start;
   scroll-snap-stop: unset;
   scroll-margin-block: 3.5rem 0;
@@ -1421,6 +1466,9 @@ The article scroll snapping isn't strict enough; sometimes users scroll past the
   max-inline-size: unset;
   overflow: auto;
   scroll-snap-type: both;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
   scroll-padding-block: 2rem;
   scroll-padding-inline: 0;
 }
@@ -1487,6 +1535,9 @@ The sidebar is displaying a horizontal scrollbar because some text is slightly t
   overflow: auto hidden;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\*\$BlockItem\(margin\(0\,0\,0\.5rem\)\)>* {
@@ -1552,6 +1603,9 @@ The figure and aside are just full-width blocks right now. Float the figure to t
   overflow: hidden;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\*\$BlockItem\(margin\(0\,0\,1rem\)\)>* {
@@ -1574,6 +1628,9 @@ The figure and aside are just full-width blocks right now. Float the figure to t
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\.aside\$blockItem\(floatEnd\,margin\(0\,0\,1rem\,1\.5rem\)\)\$Box\(30\%\)>:where(.aside) {
@@ -1589,6 +1646,9 @@ The figure and aside are just full-width blocks right now. Float the figure to t
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\.footer\$blockItem\(clear\,margin\(2rem\,0\,0\)\)>:where(.footer) {
@@ -1718,6 +1778,9 @@ Long SHA hashes are overflowing the debug panel horizontally. Use breakAnywhere 
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 ```
 
@@ -1755,6 +1818,9 @@ The thumbnail gallery is scrolling freely. Add snapping so it stops on each item
   overflow: auto;
   scroll-padding: unset;
   scroll-snap-type: both;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\*\$BlockItem\(margin\(0\.5rem\,_\)\)\$Box\(10rem\,10rem\)\$BoxItem\(snapCenter\)>* {
@@ -1771,6 +1837,9 @@ The thumbnail gallery is scrolling freely. Add snapping so it stops on each item
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
   scroll-margin: unset;
   scroll-snap-align: center;
   scroll-snap-stop: unset;
@@ -1863,6 +1932,9 @@ The hero text panel is left-aligned, which looks unbalanced on the landing page.
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 ```
 
@@ -1926,6 +1998,9 @@ The sidebar rail containing user comments is occasionally causing unwanted horiz
   overflow: hidden scroll;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
   word-break: normal;
   overflow-wrap: break-word;
 }
@@ -1977,6 +2052,9 @@ The comment threads lack spacing, and the individual nested messages bleed into 
   overflow: auto;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
   display: block;
   padding: unset;
   background-color: var(--color-surface);
@@ -2001,6 +2079,9 @@ The comment threads lack spacing, and the individual nested messages bleed into 
   overflow: auto;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
   background-color: var(--color-raised);
   background: none;
   background-blend-mode: normal;
@@ -2077,5 +2158,8 @@ The comment threads lack spacing, and the individual nested messages bleed into 
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 ```

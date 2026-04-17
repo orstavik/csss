@@ -320,6 +320,9 @@ The chessboard squares are collapsing because they lack explicit dimensions. Tar
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
   display: grid;
   padding: unset;
   place-items: unset;
@@ -350,6 +353,9 @@ The chessboard squares are collapsing because they lack explicit dimensions. Tar
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 ```
 

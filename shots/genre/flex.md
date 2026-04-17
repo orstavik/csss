@@ -123,6 +123,9 @@ The flex cards aren't wrapping to the next line when the screen is too small, an
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
   scroll-margin: 10px;
   scroll-snap-align: unset;
   scroll-snap-stop: unset;
@@ -471,6 +474,9 @@ The albums are stacking vertically and the photos are rendering at their native 
   overflow: auto;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
   display: flex;
   padding: unset;
   align-items: unset;
@@ -500,6 +506,9 @@ The albums are stacking vertically and the photos are rendering at their native 
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
   background-color: var(--color-neutral);
   background: none;
   background-blend-mode: normal;

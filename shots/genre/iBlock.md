@@ -1,6 +1,6 @@
-**description:**
-An IBlock badge row with centered text, padding, and even spacing.
-**userInstruction:** The badges are packed too tightly and have no internal padding. Add 0.5rem padding, center the text, and separate the items with an inline-block spacing.
+**description:** An IBlock badge row with centered text, padding, and even spacing.
+**userInstruction:**
+The badges are packed too tightly and have no internal padding. Add 0.5rem padding, center the text, and separate the items with an inline-block spacing.
 **before:**
 ```html
 …<div class="$IBlock">
@@ -33,9 +33,9 @@ An IBlock badge row with centered text, padding, and even spacing.
 }
 ```
 
-**description:**
-An IBlock stat row with hidden overflow, padding, and shared spacing.
-**userInstruction:** Long stat numbers are pushing the bounds of the container. Hide the overflow and ensure the child items have consistent margin spacing.
+**description:** An IBlock stat row with hidden overflow, padding, and shared spacing.
+**userInstruction:**
+Long stat numbers are pushing the bounds of the container. Hide the overflow and ensure the child items have consistent margin spacing.
 **before:**
 ```html
 …<div class="$IBlock(padding(0.5rem))">
@@ -68,9 +68,9 @@ An IBlock stat row with hidden overflow, padding, and shared spacing.
 }
 ```
 
-**description:**
-An IBlock card row with padding, fixed width, and mixed alignment, where edge items can opt into top alignment.
-**userInstruction:** The cards are varying in width and aligning unpredictably. Set a fixed 200px width and middle alignment for all children, but allow the .edge card to align to the top.
+**description:** An IBlock card row with padding, fixed width, and mixed alignment, where edge items can opt into top alignment.
+**userInstruction:**
+The cards are varying in width and aligning unpredictably. Set a fixed 200px width and middle alignment for all children, but allow the .edge card to align to the top.
 **before:**
 ```html
 …<div class="$IBlock(padding(1rem))$paragraph(center)">
@@ -107,6 +107,9 @@ An IBlock card row with padding, fixed width, and mixed alignment, where edge it
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\.edge\$paragraphItem\(top\)>:where(.edge) {
@@ -114,9 +117,9 @@ An IBlock card row with padding, fixed width, and mixed alignment, where edge it
 }
 ```
 
-**description:**
-An inline media row with centered text and mixed top and middle alignment.
-**userInstruction:** The .lead and .cta elements are sitting on the same baseline. Refactor this to align the .lead to the top with some margin, and align the .cta to the middle.
+**description:** An inline media row with centered text and mixed top and middle alignment.
+**userInstruction:**
+The .lead and .cta elements are sitting on the same baseline. Refactor this to align the .lead to the top with some margin, and align the .cta to the middle.
 **before:**
 ```html
 …<div class="$IBlock(padding(0.5rem))$paragraph(center)">
@@ -153,9 +156,9 @@ An inline media row with centered text and mixed top and middle alignment.
 }
 ```
 
-**description:**
-An IBlock metadata row with padding, shared spacing, plus width and alignment overrides on selected items.
-**userInstruction:** The metadata elements are squished. Give all children a 0.5rem block / 1rem inline margin, set a 240px width for .card, and a 120px width and top alignment for .meta.
+**description:** An IBlock metadata row with padding, shared spacing, plus width and alignment overrides on selected items.
+**userInstruction:**
+The metadata elements are squished. Give all children a 0.5rem block / 1rem inline margin, set a 240px width for .card, and a 120px width and top alignment for .meta.
 **before:**
 ```html
 …<div class="$IBlock(padding(0.75rem))$paragraph(center)">
