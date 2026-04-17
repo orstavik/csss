@@ -28,14 +28,6 @@ import filter from "./filter.js";
 import transforms from "./transform.js";
 import animations from "./animations.js";
 
-const ObjectFit = {       //convert to objectFit("fill|contain|cover|scale-down|none") etc.
-  objectFit: undefined,
-  fitFill: { objectFit: "fill" },
-  fitContain: { objectFit: "contain" },
-  fitCover: { objectFit: "cover" },
-  fitScaleDown: { objectFit: "scale-down" },
-  fitNone: { objectFit: "none" },
-};
 const Opacity = CsssFunctions.FunctionPropertyType("opacity", "opacity", CsssPrimitives.PercentFraction);
 
 const SHORTS = {
@@ -66,7 +58,6 @@ const SHORTS = {
   ...transforms.props,
   ...paragraph.props,
   ...animations.props,
-  ...ObjectFit,
   opacity: Opacity,
   ...box.csss,
   ...boxItem.csss,
