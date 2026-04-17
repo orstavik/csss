@@ -472,7 +472,7 @@ An image container with object-fit cover, 16/9 aspect ratio, and centered object
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 1.7777777777777777;
   object-fit: cover;
   object-position: center;
 }
@@ -487,7 +487,7 @@ A thumbnail box with contained fit, square aspect ratio, and custom object posit
 ```
 **after:**
 ```html
-…<img class="$Box(200px,200px,contain(1,25% 75%))" src="thumb.jpg" />…
+…<img class="$Box(200px,200px,contain(1,25%,75%))" src="thumb.jpg" />…
 ```
 **css:**
 ```css
@@ -516,11 +516,11 @@ A video container with scale-down fit, 4/3 aspect ratio, and top-left object pos
 ```
 **after:**
 ```html
-…<video class="$Box(100%,_<_<480px,fitScaleDown,4/3,topLeft)" src="video.mp4"></video>…
+…<video class="$Box(100%,_<_<480px,scaleDown(4/3,left,top))" src="video.mp4"></video>…
 ```
 **css:**
 ```css
-.\$Box\(100\%\,_\<_\<480px\,fitScaleDown\,4\/3\,topLeft\) {
+.\$Box\(100\%\,_\<_\<480px\,scaleDown\(4\/3\,left\,top\)\) {
   block-size: unset;
   min-block-size: unset;
   max-block-size: 480px;
@@ -530,9 +530,9 @@ A video container with scale-down fit, 4/3 aspect ratio, and top-left object pos
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1.3333333333333333;
   object-fit: scale-down;
-  object-position: top left;
+  object-position: left top;
 }
 ```
 
@@ -589,7 +589,7 @@ A video container with scale-down fit, 4/3 aspect ratio, and top-left object pos
   <video src="…" autoplay muted loop class="$Box(400px,300px,cover(16/9,center))"></video>
 </div>…
 ```
-**csss:**
+**css:**
 ```css
 .\$Box\(400px\,300px\,cover\(16\/9\,center\)\) {
   block-size: 300px;
@@ -601,7 +601,7 @@ A video container with scale-down fit, 4/3 aspect ratio, and top-left object pos
   overflow: unset;
   scroll-padding: unset;
   scroll-snap-type: unset;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 1.7777777777777777;
   object-fit: cover;
   object-position: center;
 }
@@ -633,5 +633,8 @@ A video container with scale-down fit, 4/3 aspect ratio, and top-left object pos
   overflow: auto;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 ```
