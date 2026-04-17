@@ -92,7 +92,7 @@ const sin = (a) => Math.sin(angleToRad(a));
 const cos = (a) => Math.cos(angleToRad(a));
 const tan = (a) => Math.tan(angleToRad(a));
 const log = (a, b = Math.E) => Math.log(a) / Math.log(b);
-const { pow, min, max, round, asin, acos, atan, atan2, sqrt, hypot, exp, abs, sign } = Math;
+const { pow, min, max, round, floor, ceil, trunc, asin, acos, atan, atan2, sqrt, hypot, exp, abs, sign } = Math;
 
 //CHECKS
 //returns [inputUnit, outputUnit].
@@ -104,6 +104,10 @@ function sameType(args) {
       throw new SyntaxError(`Incompatible type differences: ${t.text} vs ${a.text}`);
     return a.type ? a : t;
   }, null);
+}
+function allNumbers(args) {
+  if (args.find(a => a.kind != "NUMBER"))
+    throw "Arguments must be plain numbers.";
 }
 function illegalDividend([a, b]) {
   if (b.type != "number") throw "Divisor must be a plain number.";
@@ -146,9 +150,6 @@ function toAngle(num, a) { return { type: "angle", unit: "rad", num, text: num }
 function updateFirst(num, a) { return { ...a, num, text: num + a.unit }; }
 //TEXTERS
 function texter(name, args) { return `${name}(${args.join(", ")})`; }
-function stripCalc(name, args) {
-  return `${name}(${args.map(a => a.replaceAll(/^calc\((.*)\)$/g, (_, a) => a)).join(", ")})`;
-}
 
 const Maths = {
   "-": doMath.bind(null, sameType, minus, updateFirst, txts => `calc(${txts.join(" - ")})`),
@@ -158,10 +159,13 @@ const Maths = {
   "**": doMath.bind(null, secondArgumentIsNumber, pow, updateFirst, texter.bind(null, "pow")),
   mod: doMath.bind(null, illegalDividend, mod, updateFirst, texter.bind(null, "mod")),
   rem: doMath.bind(null, illegalDividend, rem, updateFirst, texter.bind(null, "rem")),
-  clamp: doMath.bind(null, sameType, clamp, updateFirst, texter.bind(null, "clamp")),
-  min: doMath.bind(null, sameType, min, updateFirst, texter.bind(null, "min")),
-  max: doMath.bind(null, sameType, max, updateFirst, texter.bind(null, "max")),
-  round: doMath.bind(null, sameType, round, updateFirst, stripCalc.bind(null, "round")),
+  clamp: doMath.bind(null, allNumbers, clamp, updateFirst, texter.bind(null, "clamp")),
+  min: doMath.bind(null, allNumbers, min, updateFirst, texter.bind(null, "min")),
+  max: doMath.bind(null, allNumbers, max, updateFirst, texter.bind(null, "max")),
+  round: doMath.bind(null, allNumbers, round, updateFirst, txts => `round(${txts.join(", ")})`),
+  floor: doMath.bind(null, allNumbers, floor, updateFirst, txts => `floor(down, ${txts.join(", ")})`),
+  ceil: doMath.bind(null, allNumbers, ceil, updateFirst, txts => `ceil(up, ${txts.join(", ")})`),
+  trunc: doMath.bind(null, allNumbers, trunc, updateFirst, txts => `trunc(to-zero, ${txts.join(", ")})`),
   sin: doMath.bind(null, singleAngleOnly, sin, toNumber, texter.bind(null, "sin")),
   cos: doMath.bind(null, singleAngleOnly, cos, toNumber, texter.bind(null, "cos")),
   tan: doMath.bind(null, singleAngleOnly, tan, toNumber, texter.bind(null, "tan")),
