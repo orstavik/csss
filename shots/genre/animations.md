@@ -1,460 +1,281 @@
-**description:** Animates translate y from -20px to 20px in infinite alternate loop.
-**csss:**  $animate(alternate,infinite,0s>10s)$translate(0px,-20px>20px)
-**css:**
-```css
-@keyFrames a_0_translate_0px_-20px_100_translate_0px_20px {
-  0% {
-    translate: 0px -20px;
-  }
-  100% {
-    translate: 0px 20px;
-  }
-}
-
-.\$animate\(alternate\,infinite\,0s\>10s\)\$translate\(0px\,-20px\>20px\) {
-  animation: alternate 10000ms infinite a_0_translate_0px_-20px_100_translate_0px_20px;
-}
+**description:** Creates a spinning loading indicator that rotates indefinitely.
+**userInstruction:**
+Syntax Optimization/Refactoring: The developer wrote custom keyframes in a separate stylesheet for a spinning loader. Refactor this to use CSSS for better maintainability.
+**before:**
+```html
+…<div class="spinner-legacy"></div>…
 ```
-
-**description:** Animates translate x from 0px to 100px over 2000 milliseconds.
-**csss:**  $animate(0s>2000ms)$translate(0px>100px)
-**css:**
-```css
-@keyFrames a_0_translate_0px_100_translate_100px {
-  0% {
-    translate: 0px;
-  }
-  100% {
-    translate: 100px;
-  }
-}
-
-.\$animate\(0s\>2000ms\)\$translate\(0px\>100px\) {
-  animation: 2000ms a_0_translate_0px_100_translate_100px;
-}
+**after:**
+```html
+…<div class="spinner $animate(linear,infinite,0s>1s)$rotate(0deg>360deg)"></div>…
 ```
-
-**description:** Animates opacity from 1 down to 0.3 over 3 seconds.
-**csss:**  $animate(0s>3s)$opacity(1>0.3)
 **css:**
 ```css
-@keyFrames a_0_opacity_1_100_opacity_0.3 {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.3;
-  }
-}
-
-.\$animate\(0s\>3s\)\$opacity\(1\>0\.3\) {
-  animation: 3000ms a_0_opacity_1_100_opacity_0.3;
-}
-```
-
-**description:** Animates scale from 1 up to 1.5 over 4000 milliseconds.
-**csss:**  $animate(0s>4000ms)$scale(1>1.5)
-**css:**
-```css
-@keyFrames a_0_scale_1_100_scale_1\.5 {
-  0% {
-    scale: 1;
-  }
-  100% {
-    scale: 1.5;
-  }
-}
-
-.\$animate\(0s\>4000ms\)\$scale\(1\>1\.5\) {
-  animation: 4000ms a_0_scale_1_100_scale_1\.5;
-}
-```
-
-**description:** Animates rotation from 0deg to 180deg over 5 seconds.
-**csss:**  $animate(0s>5s)$rotate(0deg>180deg)
-**css:**
-```css
-@keyFrames a_0_rotate_0deg_100_rotate_180deg {
+@keyFrames a_0_rotate_0deg_100_rotate_360deg {
   0% {
     rotate: 0deg;
   }
   100% {
-    rotate: 180deg;
+    rotate: 360deg;
   }
 }
 
-.\$animate\(0s\>5s\)\$rotate\(0deg\>180deg\) {
-  animation: 5000ms a_0_rotate_0deg_100_rotate_180deg;
+.\$animate\(linear\,infinite\,0s\>1s\)\$rotate\(0deg\>360deg\) {
+  animation: linear 1000ms infinite a_0_rotate_0deg_100_rotate_360deg;
 }
 ```
 
-**description:** Runs three simultaneous animations: fade in, scale up and slide up.
-**csss:**  $animate(0s>6s)$opacity(0.3>1)$scale(0.8>1.2)$translate(0px,30px>0px)
+**description:** Animates a bouncing notification badge that hops up and down.
+**userInstruction:** Feature Requests: Make the static notification badge bounce to attract attention.
+**before:**
+```html
+…<div class="badge"></div>…
+```
+**after:**
+```html
+…<div class="badge $animate(alternate,infinite,0s>0.5s)$translate(0px,0px>-10px)"></div>…
+```
 **css:**
 ```css
-@keyFrames a_0_opacity_0.3_100_opacity_1 {
+@keyFrames a_0_translate_0px_0px_100_translate_0px_-10px {
   0% {
-    opacity: 0.3;
+    translate: 0px 0px;
+  }
+  100% {
+    translate: 0px -10px;
+  }
+}
+
+.\$animate\(alternate\,infinite\,0s\>0\.5s\)\$translate\(0px\,0px\>-10px\) {
+  animation: alternate 500ms infinite a_0_translate_0px_0px_100_translate_0px_-10px;
+}
+```
+
+**description:** Fades in a modal dialog gracefully over 300 milliseconds.
+**userInstruction:**
+Syntax Optimization/Refactoring: The modal has a CSS transition but requires JS to toggle a class for it to fade in. Change it to an animation so it plays automatically on mount.
+**before:**
+```html
+…<dialog class="$transition(fadeIn,1s,1s,transform,opacity)" open>…</dialog>…
+```
+**after:**
+```html
+…<dialog class="$animate(0s>300ms)$opacity(0>1)" open>…</dialog>…
+```
+**css:**
+```css
+@keyFrames a_0_opacity_0_100_opacity_1 {
+  0% {
+    opacity: 0;
   }
   100% {
     opacity: 1;
   }
 }
 
-@keyFrames a_0_scale_0\.8_100_scale_1\.2 {
+.\$animate\(0s\>300ms\)\$opacity\(0\>1\) {
+  animation: 300ms a_0_opacity_0_100_opacity_1;
+}
+```
+
+**description:** Creates a pulsing heartbeat effect on a call-to-action button to encourage clicks.
+**userInstruction:** Feature Requests: Add a subtle pulsing scale animation to the CTA button to draw user focus.
+**before:**
+```html
+…<button>Subscribe</button>…
+```
+**after:**
+```html
+…<button class="$animate(easeInOut,alternate,infinite,0s>1s)$scale(1>1.05)">Subscribe</button>…
+```
+**css:**
+```css
+@keyFrames a_0_scale_1_100_scale_1\.05 {
   0% {
-    scale: 0.8;
+    scale: 1;
   }
   100% {
-    scale: 1.2;
+    scale: 1.05;
   }
 }
 
-@keyFrames a_0_translate_0px_30px_100_translate_0px_0px {
+.\$animate\(easeInOut\,alternate\,infinite\,0s\>1s\)\$scale\(1\>1\.05\) {
+  animation: ease-in-out alternate 1000ms infinite a_0_scale_1_100_scale_1\.05;
+}
+```
+
+**description:** Slides a side menu in from off-screen left over half a second.
+**userInstruction:**
+Layout Bug Fixes: The sidebar slide-in animation is using negative margins which is causing layout reflows. Refactor it to use translate.
+**before:**
+```html
+…<nav class="sidebar" style="animation: slideMargin 0.5s ease-out forwards;">…</nav>…
+```
+**after:**
+```html
+…<nav class="sidebar $animate(easeOut,0s>0.5s)$translate(-100%>0%)">…</nav>…
+```
+**css:**
+```css
+@keyFrames a_0_translate_-100\%_100_translate_0\% {
   0% {
-    translate: 0px 30px;
+    translate: -100%;
+  }
+  100% {
+    translate: 0%;
+  }
+}
+
+.\$animate\(easeOut\,0s\>0\.5s\)\$translate\(-100\%\>0\%\) {
+  animation: ease-out 500ms a_0_translate_-100\%_100_translate_0\%;
+}
+```
+
+**description:** Flashes a warning alert background color between yellow and transparent to signal an error.
+**userInstruction:**
+Syntax Optimization/Refactoring: The alert is flashing because JS is toggling a background class every second. Move this to a pure CSSS animation.
+**before:**
+```html
+…<div class="alert js-flash-interval">Warning: Disk space low</div>…
+```
+**after:**
+```html
+…<div class="alert $animate(alternate,infinite,0s>1s)$Bg(#yellow>#transparent)">Warning: Disk space low</div>…
+```
+**css:**
+```css
+@keyFrames a_0_backgroundColor_yellow_background_none_backgroundBlendMode_normal_100_backgroundColor_transparent_background_none_backgroundBlendMode_normal {
+  0% {
+    background-color: yellow;
+    background: none;
+    background-blend-mode: normal;
+  }
+  100% {
+    background-color: transparent;
+    background: none;
+    background-blend-mode: normal;
+  }
+}
+
+.\$animate\(alternate\,infinite\,0s\>1s\)\$Bg\(\#yellow\>\#transparent\) {
+  animation: alternate 1000ms infinite a_0_backgroundColor_yellow_background_none_backgroundBlendMode_normal_100_backgroundColor_transparent_background_none_backgroundBlendMode_normal;
+}
+```
+
+**description:** Combines fade in and slide up to create a dramatic entrance for a hero text element.
+**userInstruction:**
+Syntax Optimization/Refactoring: Consolidate the two separate animations (fade-in and slide-up) into a single `$animate` declaration to apply them synchronously to the hero text.
+**before:**
+```html
+…<h1 class="$animate(0s>1s)$opacity(0>1) $animate(0s>1s)$translate(0px,20px>0px)">Welcome to the App</h1>…
+```
+**after:**
+```html
+…<h1 class="$animate(0s>1s)$opacity(0>1)$translate(0px,20px>0px)">Welcome to the App</h1>…
+```
+**css:**
+```css
+@keyFrames a_0_opacity_0_100_opacity_1 {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyFrames a_0_translate_0px_20px_100_translate_0px_0px {
+  0% {
+    translate: 0px 20px;
   }
   100% {
     translate: 0px 0px;
   }
 }
 
-.\$animate\(0s\>6s\)\$opacity\(0\.3\>1\)\$scale\(0\.8\>1\.2\)\$translate\(0px\,30px\>0px\) {
-  animation: 6000ms a_0_opacity_0.3_100_opacity_1, 6000ms a_0_scale_0\.8_100_scale_1\.2, 6000ms a_0_translate_0px_30px_100_translate_0px_0px;
+.\$animate\(0s\>1s\)\$opacity\(0\>1\)\$translate\(0px\,20px\>0px\) {
+  animation: 1000ms a_0_opacity_0_100_opacity_1, 1000ms a_0_translate_0px_20px_100_translate_0px_0px;
 }
 ```
 
-**description:** Animates translate x from 0px+1px to 30px*2 over 2 seconds.
-**csss:**  $animate(0>2s)$translate(0px+1px>30px*2)
+**description:** Animates an element filling with color permanently by using the forwards fill mode.
+**userInstruction:**
+Syntax Optimization/Refactoring: We use a JS timeout to append an 'is-green' class after 2 seconds. Replace it by using the 'forwards' mode to fill the state natively with CSS.
+**before:**
+```html
+…<div class="success-msg">Action completed!</div>…
+```
+**after:**
+```html
+…<div class="success-msg $animate(forwards,0s>2s)$Bg(#transparent>#lightgreen)">Action completed!</div>…
+```
 **css:**
 ```css
-@keyFrames a_0_translate_1px_100_translate_60px {
+@keyFrames a_0_backgroundColor_transparent_background_none_backgroundBlendMode_normal_100_backgroundColor_lightgreen_background_none_backgroundBlendMode_normal {
   0% {
-    translate: 1px;
+    background-color: transparent;
+    background: none;
+    background-blend-mode: normal;
   }
   100% {
-    translate: 60px;
+    background-color: lightgreen;
+    background: none;
+    background-blend-mode: normal;
   }
 }
 
-.\$animate\(0\>2s\)\$translate\(0px\+1px\>30px\*2\) {
-  animation: 2000ms a_0_translate_1px_100_translate_60px;
+.\$animate\(forwards\,0s\>2s\)\$Bg\(\#transparent\>\#lightgreen\) {
+  animation: 2000ms forwards a_0_backgroundColor_transparent_background_none_backgroundBlendMode_normal_100_backgroundColor_lightgreen_background_none_backgroundBlendMode_normal;
 }
 ```
 
-**description:** Animates translate y while leaving x unchanged.
-**csss:**  $animate(0>2s)$translate(4px,0px+1px>30px*2)
-**css:**
-```css
-@keyFrames a_0_translate_4px_1px_100_translate_4px_60px {
-  0% {
-    translate: 4px 1px;
-  }
-  100% {
-    translate: 4px 60px;
-  }
-}
-
-.\$animate\(0\>2s\)\$translate\(4px\,0px\+1px\>30px\*2\) {
-  animation: 2000ms a_0_translate_4px_1px_100_translate_4px_60px;
-}
+**description:** Cycles through three different scales using mismatched time/value vectors, creating a complex heartbeat.
+**userInstruction:**
+Removing Obsolete Styles: The 'Live' indicator has leftover complex separate keyframes for scaling. Clean it up into a single looping vector that scales up and back down.
+**before:**
+```html
+…<span class="live-dot pulse-anim scale-reset"></span>…
 ```
-
-**description:** Animates opacity with 'forwards' fill mode so the final state is retained.
-**csss:**  $animate(forwards,0s>2s)$opacity(0>1)
-**css:**
-```css
-@keyFrames a_0_opacity_0_100_opacity_1 {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.\$animate\(forwards\,0s\>2s\)\$opacity\(0\>1\) {
-  animation: 2000ms forwards a_0_opacity_0_100_opacity_1;
-}
+**after:**
+```html
+…<span class="live-dot $animate(infinite,0s>1s>2s)$scale(1>1.2>1)"></span>…
 ```
-
-**description:** Animates opacity with 'backwards' fill mode so the initial state is applied before the animation starts.
-**csss:**  $animate(backwards,0s>2s)$opacity(0>1)
 **css:**
 ```css
-@keyFrames a_0_opacity_0_100_opacity_1 {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.\$animate\(backwards\,0s\>2s\)\$opacity\(0\>1\) {
-  animation: 2000ms backwards a_0_opacity_0_100_opacity_1;
-}
-```
-
-**description:** Animates opacity with 'both' fill mode combining forwards and backwards behavior.
-**csss:**  $animate(both,0s>2s)$opacity(0>1)
-**css:**
-```css
-@keyFrames a_0_opacity_0_100_opacity_1 {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.\$animate\(both\,0s\>2s\)\$opacity\(0\>1\) {
-  animation: 2000ms both a_0_opacity_0_100_opacity_1;
-}
-```
-
-**description:** Animates rotation in 'reverse' direction.
-**csss:**  $animate(reverse,0s>2s)$rotate(0deg>90deg)
-**css:**
-```css
-@keyFrames a_0_rotate_0deg_100_rotate_90deg {
-  0% {
-    rotate: 0deg;
-  }
-  100% {
-    rotate: 90deg;
-  }
-}
-
-.\$animate\(reverse\,0s\>2s\)\$rotate\(0deg\>90deg\) {
-  animation: reverse 2000ms a_0_rotate_0deg_100_rotate_90deg;
-}
-```
-
-**description:** Animates rotation in 'alternate-reverse' direction.
-**csss:**  $animate(alternateReverse,0s>2s)$rotate(0deg>90deg)
-**css:**
-```css
-@keyFrames a_0_rotate_0deg_100_rotate_90deg {
-  0% {
-    rotate: 0deg;
-  }
-  100% {
-    rotate: 90deg;
-  }
-}
-
-.\$animate\(alternateReverse\,0s\>2s\)\$rotate\(0deg\>90deg\) {
-  animation: alternate-reverse 2000ms a_0_rotate_0deg_100_rotate_90deg;
-}
-```
-
-**description:** Animates scale exactly 3 times.
-**csss:**  $animate(3,0s>1s)$scale(1>2)
-**css:**
-```css
-@keyFrames a_0_scale_1_100_scale_2 {
-  0% {
+@keyFrames a_0_scale_1 {
+  0%, 33%, 66% {
     scale: 1;
   }
-  100% {
-    scale: 2;
-  }
 }
 
-.\$animate\(3\,0s\>1s\)\$scale\(1\>2\) {
-  animation: 1000ms 3 a_0_scale_1_100_scale_2;
+.\$animate\(infinite\,0s\>1s\>2s\)\$scale\(1\>1\.2\>1\) {
+  animation: 3000ms infinite a_0_scale_1;
 }
 ```
 
-**description:** Animates translation using the native ease-in-out timing function.
-**csss:**  $animate(easeInOut,0s>1s)$translate(0px>10px)
-**css:**
-```css
-@keyFrames a_0_translate_0px_100_translate_10px {
-  0% {
-    translate: 0px;
-  }
-  100% {
-    translate: 10px;
-  }
-}
-
-.\$animate\(easeInOut\,0s\>1s\)\$translate\(0px\>10px\) {
-  animation: ease-in-out 1000ms a_0_translate_0px_100_translate_10px;
-}
+**description:** Animates an image translating diagonally across multiple keyframes.
+**userInstruction:**
+Syntax Optimization/Refactoring: The cloud icon is moved using JS updating `style="transform: translate(...)"` in steps. Turn this into a CSSS animation spanning 4 seconds.
+**before:**
+```html
+…<img src="cloud.svg" style="transform: translate(50px, 20px);">…
 ```
-
-**description:** Animates translation using a custom 'steps' timing function.
-**csss:**  $animate(steps(4,end),0s>1s)$translate(0px>10px)
-**css:**
-```css
-@keyFrames a_0_translate_0px_100_translate_10px {
-  0% {
-    translate: 0px;
-  }
-  100% {
-    translate: 10px;
-  }
-}
-
-.\$animate\(steps\(4\,end\)\,0s\>1s\)\$translate\(0px\>10px\) {
-  animation: steps(4, end) 1000ms a_0_translate_0px_100_translate_10px;
-}
+**after:**
+```html
+…<img src="cloud.svg" class="$animate(0s>2s>4s)$translate(0px>40px,0px>50px,20px>100px)">…
 ```
-
-**description:** Animates translation using a custom 'cubic-bezier' timing function.
-**csss:**  $animate(cubicBezier(0.1,0.7,1.0,0.1),0s>1s)$translate(0px>10px)
 **css:**
 ```css
-@keyFrames a_0_translate_0px_100_translate_10px {
-  0% {
-    translate: 0px;
-  }
-  100% {
-    translate: 10px;
-  }
-}
-
-.\$animate\(cubicBezier\(0\.1\,0\.7\,1\.0\,0\.1\)\,0s\>1s\)\$translate\(0px\>10px\) {
-  animation: cubic-bezier(0.1,0.7,1,0.1) 1000ms a_0_translate_0px_100_translate_10px;
-}
-```
-
-**description:** Animates background color with a 1s delay and 2s duration.
-**csss:**  $animate(1s,0s>2s)$bg(#red>#blue)
-**css:**
-```css
-@keyFrames a_0_backgroundColor_red_100_backgroundColor_blue {
-  0% {
-    background-color: red;
-  }
-  100% {
-    background-color: blue;
-  }
-}
-
-.\$animate\(1s\,0s\>2s\)\$bg\(\#red\>\#blue\) {
-  animation: 2000ms 1sms a_0_backgroundColor_red_100_backgroundColor_blue;
-}
-```
-
-**description:**
-Tests mismatched vectors: 3 time slots (0s, 1s, 2s) but 2 value slots (1, 2) in scale. The values should cycle (1, 2, 1).
-**csss:**  $animate(0s>1s>2s)$scale(1>2)
-**css:**
-```css
-@keyFrames a_0_scale_1_33_scale_2 {
+@keyFrames a_0_translate_0px_0px_20px_33_translate_40px_50px_100px {
   0%, 66% {
-    scale: 1;
+    translate: 0px 0px 20px;
   }
   33% {
-    scale: 2;
+    translate: 40px 50px 100px;
   }
 }
 
-.\$animate\(0s\>1s\>2s\)\$scale\(1\>2\) {
-  animation: 3000ms a_0_scale_1_33_scale_2;
-}
-```
-
-**description:** Tests mismatched vectors: 2 time slots (0s, 1s) but 3 value slots (1, 2, 3) in scale. The extra value is ignored (1, 2).
-**csss:**  $animate(0s>1s)$scale(1>2>3)
-**css:**
-```css
-@keyFrames a_0_scale_1_100_scale_3 {
-  0% {
-    scale: 1;
-  }
-  100% {
-    scale: 3;
-  }
-}
-
-.\$animate\(0s\>1s\)\$scale\(1\>2\>3\) {
-  animation: 1000ms a_0_scale_1_100_scale_3;
-}
-```
-
-**description:** Tests multiple mismatched vectors: 4 time slots, cycling opacity (2 values) and scale (3 values).
-**csss:**  $animate(0s>1s>2s>3s)$opacity(0>1)$scale(1>2>3)
-**css:**
-```css
-@keyFrames a_0_opacity_0_16_opacity_1 {
-  0%, 33% {
-    opacity: 0;
-  }
-  16%, 50% {
-    opacity: 1;
-  }
-}
-
-@keyFrames a_0_scale_1_16_scale_3 {
-  0%, 33% {
-    scale: 1;
-  }
-  16%, 50% {
-    scale: 3;
-  }
-}
-
-.\$animate\(0s\>1s\>2s\>3s\)\$opacity\(0\>1\)\$scale\(1\>2\>3\) {
-  animation: 6000ms a_0_opacity_0_16_opacity_1, 6000ms a_0_scale_1_16_scale_3;
-}
-```
-
-**description:** Animates a translation where X changes while Y remains static, over 3 time slots.
-**csss:**  $animate(0s>1s>2s)$translate(0px>10px,50px)
-**css:**
-```css
-@keyFrames a_0_translate_0px_50px_33_translate_10px_50px {
-  0%, 66% {
-    translate: 0px 50px;
-  }
-  33% {
-    translate: 10px 50px;
-  }
-}
-
-.\$animate\(0s\>1s\>2s\)\$translate\(0px\>10px\,50px\) {
-  animation: 3000ms a_0_translate_0px_50px_33_translate_10px_50px;
-}
-```
-
-**description:**
-Complex combination of parameters: alternate behavior, forwards fill mode, infinite count, 500ms delay, over a 2s duration.
-**csss:**  $animate(alternate,forwards,infinite,500ms,0s>2s)$opacity(0>1)
-**css:**
-```css
-@keyFrames a_0_opacity_0_100_opacity_1 {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.\$animate\(alternate\,forwards\,infinite\,500ms\,0s\>2s\)\$opacity\(0\>1\) {
-  animation: alternate 2000ms 500msms forwards infinite a_0_opacity_0_100_opacity_1;
-}
-```
-
-**description:** Tests mismatched vectors: 4 time slots and 2 value slots for translation. The translation cycles back and forth.
-**csss:**  $animate(0s>1s>2s>3s)$translate(0px>100px)
-**css:**
-```css
-@keyFrames a_0_translate_0px_16_translate_100px {
-  0%, 33% {
-    translate: 0px;
-  }
-  16%, 50% {
-    translate: 100px;
-  }
-}
-
-.\$animate\(0s\>1s\>2s\>3s\)\$translate\(0px\>100px\) {
-  animation: 6000ms a_0_translate_0px_16_translate_100px;
+.\$animate\(0s\>2s\>4s\)\$translate\(0px\>40px\,0px\>50px\,20px\>100px\) {
+  animation: 6000ms a_0_translate_0px_0px_20px_33_translate_40px_50px_100px;
 }
 ```
