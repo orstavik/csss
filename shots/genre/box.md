@@ -28,6 +28,9 @@ A horizontal scrolling container with snapping and custom inline sizing constrai
   max-inline-size: 800px;
   overflow: scroll;
   scroll-snap-type: inline mandatory;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
   scroll-padding-block: 0;
   scroll-padding-inline: 1rem;
 }
@@ -73,6 +76,9 @@ A fixed-size vertical scrolling block container with hidden overflow on the inli
   overflow: hidden scroll;
   scroll-padding: unset;
   scroll-snap-type: block mandatory;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\$BoxItem\(snapStart\,snapAlways\)>* {
@@ -109,6 +115,9 @@ A standard modal layout using a Box with auto overflow, max block constraints to
   overflow: auto;
   scroll-padding: 2rem;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 ```
 
@@ -150,6 +159,9 @@ A gallery container where elements scroll automatically on the inline axis, snap
   overflow: auto hidden;
   scroll-padding: unset;
   scroll-snap-type: inline;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|img\$BoxItem\(snapEnd\,scrollMargin\(0\,20px\,0\,0\)\)>:where(img) {
@@ -187,6 +199,9 @@ A side navigation bar with fixed block bounds, visible overflow, and auto inline
   overflow: visible auto;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 ```
 
@@ -217,6 +232,9 @@ A box utilizing both block and inline sizing with minimums and maximums, testing
   overflow: clip;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 ```
 
@@ -258,6 +276,9 @@ A carousel layout where the items stop normally and align at the start and end u
   overflow: auto;
   scroll-padding: unset;
   scroll-snap-type: both;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 
 .\|\$BoxItem\(snapStartEnd\,snapNormal\)>* {
@@ -297,6 +318,9 @@ A vertical content feed where the Box container masks overflow outside of the bl
   max-inline-size: unset;
   overflow: hidden scroll;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
   scroll-padding-block: 2rem;
   scroll-padding-inline: 0;
 }
@@ -336,6 +360,9 @@ A full-screen container with block and inline 100%, clipping all overflow, meant
   overflow: clip;
   scroll-padding: unset;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
 }
 ```
 
@@ -365,6 +392,9 @@ Testing all box sizing defaults alongside explicit scrollPadding on all four sid
   max-inline-size: unset;
   overflow: auto;
   scroll-snap-type: unset;
+  aspect-ratio: unset;
+  object-fit: unset;
+  object-position: unset;
   scroll-padding-block: 10px 30px;
   scroll-padding-inline: 20px 40px;
 }
@@ -419,6 +449,93 @@ A highly constrained box item enforcing a stop always behavior with snapping end
 }
 ```
 
+**description:**
+An image container with object-fit cover, 16/9 aspect ratio, and centered object position for responsive hero images.
+**userInstruction:** The hero image is stretched and distorted. Make it cover the container while maintaining a 16:9 aspect ratio, centering the image within the container.
+**before:**
+```html
+…<img class="$Box(100%)" src="hero.jpg" />…
+```
+**after:**
+```html
+…<img class="$Box(100%,cover(16/9,center))" src="hero.jpg" />…
+```
+**css:**
+```css
+.\$Box\(100\%\,cover\(16\/9\,center\)\) {
+  block-size: unset;
+  min-block-size: unset;
+  max-block-size: unset;
+  inline-size: 100%;
+  min-inline-size: unset;
+  max-inline-size: unset;
+  overflow: unset;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center;
+}
+```
+
+**description:**
+A thumbnail box with contained fit, square aspect ratio, and custom object position using percentage values.
+**userInstruction:** The thumbnail image needs to fit within a 200px square without cropping, positioning the visible content towards the bottom-right.
+**before:**
+```html
+…<img class="$Box(200px,200px)" src="thumb.jpg" />…
+```
+**after:**
+```html
+…<img class="$Box(200px,200px,contain(1,25% 75%))" src="thumb.jpg" />…
+```
+**css:**
+```css
+.\$Box\(200px\,200px\,contain\(1\,25\%\,75\%\)\) {
+  block-size: 200px;
+  min-block-size: unset;
+  max-block-size: unset;
+  inline-size: 200px;
+  min-inline-size: unset;
+  max-inline-size: unset;
+  overflow: unset;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
+  aspect-ratio: 1;
+  object-fit: contain;
+  object-position: 25% 75%;
+}
+```
+
+**description:**
+A video container with scale-down fit, 4/3 aspect ratio, and top-left object position keyword.
+**userInstruction:** The legacy video container stretches content on wide screens. Use scale-down to prevent upscaling, enforce a 4:3 aspect ratio, and anchor the content to the top-left corner.
+**before:**
+```html
+…<video class="$Box(100%)" src="video.mp4"></video>…
+```
+**after:**
+```html
+…<video class="$Box(100%,_<_<480px,fitScaleDown,4/3,topLeft)" src="video.mp4"></video>…
+```
+**css:**
+```css
+.\$Box\(100\%\,_\<_\<480px\,fitScaleDown\,4\/3\,topLeft\) {
+  block-size: unset;
+  min-block-size: unset;
+  max-block-size: 480px;
+  inline-size: 100%;
+  min-inline-size: unset;
+  max-inline-size: unset;
+  overflow: unset;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
+  aspect-ratio: 4 / 3;
+  object-fit: scale-down;
+  object-position: top left;
+}
+```
+
 
 **description:** Sets object-fit to cover for replaced elements like images and videos.
 **userInstruction:** The images in the gallery are stretching and overflowing their containers. Apply object-fit cover to ensure they fill their boxes without distortion.
@@ -440,13 +557,21 @@ A highly constrained box item enforcing a stop always behavior with snapping end
   <img src="…" />
 </div>…
 ```
-**csss:**
- $fitCover
 **css:**
 ```css
 .\|\$Box\(162px\,100px\,cover\)>* {
-
+  block-size: 100px;
+  min-block-size: unset;
+  max-block-size: unset;
+  inline-size: 162px;
+  min-inline-size: unset;
+  max-inline-size: unset;
+  overflow: unset;
+  scroll-padding: unset;
+  scroll-snap-type: unset;
+  aspect-ratio: unset;
   object-fit: cover;
+  object-position: unset;
 }
 ```
 
@@ -461,12 +586,12 @@ A highly constrained box item enforcing a stop always behavior with snapping end
 **after:**
 ```html
 …<div>
-  <video src="…" autoplay muted loop class="$Box(400px,300px,16/9,cover,center)"></video>
+  <video src="…" autoplay muted loop class="$Box(400px,300px,cover(16/9,center))"></video>
 </div>…
 ```
 **csss:**
 ```css
-.\$Box\(400px\,300px\,16\/9\,cover\,center\) {
+.\$Box\(400px\,300px\,cover\(16\/9\,center\)\) {
   block-size: 300px;
   min-block-size: unset;
   max-block-size: unset;
