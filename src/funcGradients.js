@@ -1,4 +1,4 @@
-import { CsssFunctions, CsssPrimitives } from "./func.js";
+import { CsssFunctions, CsssPrimitives, BadArgument } from "./func.js";
 const { SF2, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercent, Angle, AnglePercent, SingleTableRaw } = CsssPrimitives;
 
