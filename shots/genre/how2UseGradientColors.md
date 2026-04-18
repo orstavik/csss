@@ -6,15 +6,7 @@ Generates warm palette with red foreground and brown contrast.
 ```css
 .\$Palette\(warm\,\#red\,\#brown\) {
   --color-warm: red;
-  --color-warmPop: #ffa67d;
-  --color-warmAccent: #ff9f6c;
-  --color-warmBland: #f3c3b9;
-  --color-warmNeutral: #d0d0d0;
-  --color-onWarm: brown;
-  --color-onWarmPop: #ff8b6a;
-  --color-onWarmAccent: #ff7f4d;
-  --color-onWarmBland: #d3afa9;
-  --color-onWarmNeutral: #b8b8b8;
+  --color-warm-1: brown;
 }
 ```
 
@@ -26,15 +18,7 @@ Generates primary palette with royalblue foreground and skyblue contrast.
 ```css
 .\$Palette\(primary\,\#royalblue\,\#skyblue\) {
   --color-primary: royalblue;
-  --color-primaryPop: #87c8ff;
-  --color-primaryAccent: #77c9ff;
-  --color-primaryBland: #b7c6e2;
-  --color-primaryNeutral: #c5c5c5;
-  --color-onPrimary: skyblue;
-  --color-onPrimaryPop: #8bfbff;
-  --color-onPrimaryAccent: #57ffff;
-  --color-onPrimaryBland: #dfecf1;
-  --color-onPrimaryNeutral: #e9e9e9;
+  --color-primary-1: skyblue;
 }
 ```
 
@@ -56,7 +40,7 @@ Mixes primary with 50% of its secondary variant.
 **css:**
 ```css
 .\$color\(\#primary\#50\) {
-  color: color-mix(in oklab, var(--color-primary), var(--color-primary1) 50%);
+  color: color-mix(in oklab, var(--color-primary), var(--color-primary-1) 50%);
 }
 ```
 
@@ -67,18 +51,18 @@ Mixes primary with 80% of its secondary variant.
 **css:**
 ```css
 .\$color\(\#primary\#80\) {
-  color: color-mix(in oklab, var(--color-primary), var(--color-primary1) 80%);
+  color: color-mix(in oklab, var(--color-primary), var(--color-primary-1) 80%);
 }
 ```
 
 **description:**
-Mixes neutral with 99% of its secondary variant.
+Mixes neutral with 100% of its secondary variant.
 **csss:**
- $color(#neutral#99)
+ $color(#neutral#100)
 **css:**
 ```css
-.\$color\(\#neutral\#99\) {
-  color: color-mix(in oklab, var(--color-neutral), var(--color-neutral1) 99%);
+.\$color\(\#neutral\#100\) {
+  color: color-mix(in oklab, var(--color-neutral), var(--color-neutral-1) 100%);
 }
 ```
 
@@ -100,39 +84,17 @@ Sets background to 50% primary palette mix.
 **css:**
 ```css
 .\$bg\(\#primary\#50\) {
-  background-color: color-mix(in oklab, var(--color-primary), var(--color-primary1) 50%);
+  background-color: color-mix(in oklab, var(--color-primary), var(--color-primary-1) 50%);
 }
 ```
 
 **description:**
 Sets background to 20% primary mix with 50% transparency.
 **csss:**
- $bg(#primary#20#a50)
+ $bg(#primary#20#A50)
 **css:**
 ```css
-.\$bg\(\#primary\#20\#a50\) {
-  background-color: color-mix(in oklab, color-mix(in oklab, var(--color-primary), var(--color-primary1) 20%), transparent 50%);
-}
-```
-
-**description:**
-Sets border color to 40% neutral palette mix.
-**csss:**
- $border(#neutral#40)
-**css:**
-```css
-.\$border\(\#neutral\#40\) {
-  border-color: color-mix(in oklab, var(--color-neutral), var(--color-neutral1) 40%);
-}
-```
-
-**description:**
-Sets border color to 60% neutral palette mix.
-**csss:**
- $border(#neutral#60)
-**css:**
-```css
-.\$border\(\#neutral\#60\) {
-  border-color: color-mix(in oklab, var(--color-neutral), var(--color-neutral1) 60%);
+.\$bg\(\#primary\#20\#A50\) {
+  background-color: color-mix(in oklab, color-mix(in oklab, var(--color-primary), var(--color-primary-1) 20%), transparent 50%);
 }
 ```
