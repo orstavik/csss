@@ -234,7 +234,9 @@ function rgbToHex6({ r, g, b }) {
   return { hex6: [r, g, b].map(c => Math.round(c).toString(16).padStart(2, "0")).join("") };
 }
 function hex6AToHex8({ hex6, alpha }) {
-  return { hex8: hex6 + Math.round(alpha * 255).toString(16).padStart(2, "0") };
+  return (alpha == null || alpha === 1) ?
+    { hex8: hex6 } :
+    { hex8: hex6 + Math.round(alpha * 255).toString(16).padStart(2, "0") };
 }
 
 //main functions
@@ -274,10 +276,10 @@ export function fromNameAlpha(txt) {
   });
 }
 
-export function fromHex(txt){
+export function fromHex(txt) {
   if (!txt.match(/^([0-9a-f]{3}[0-9a-f]?){1,2}$/i))
     return;
-  if(txt.length < 6)
+  if (txt.length < 6)
     txt = txt.split("").map(c => c + c).join("");
   return txt.length === 8 ? fromHex8(txt) : fromHex6(txt);
 }
