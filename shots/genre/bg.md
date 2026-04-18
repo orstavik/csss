@@ -187,12 +187,12 @@
 ```
 **after:**
 ```html
-…<div class="$Bg(circle(#transparent,#red,#000000))">…</div>…
+…<div class="$Bg(circle(#transparent,#red,#000))">…</div>…
 ```
 **css:**
 ```css
-.\$Bg\(circle\(\#transparent\,\#red\,\#000000\)\) {
-  background: radial-gradient(transparent, red, #000000);
+.\$Bg\(circle\(\#transparent\,\#red\,\#000\)\) {
+  background: radial-gradient(transparent, red, black);
   background-blend-mode: normal;
 }
 ```
@@ -241,12 +241,12 @@
 ```
 **after:**
 ```html
-…<div class="$Bg(circle(at(50%,50%),#ff0000,#transparent))">…</div>…
+…<div class="$Bg(circle(at(50%,50%),#f00,#transparent))">…</div>…
 ```
 **css:**
 ```css
-.\$Bg\(circle\(at\(50\%\,50\%\)\,\#ff0000\,\#transparent\)\) {
-  background: radial-gradient(at 50% 50%, #ff0000, transparent);
+.\$Bg\(circle\(at\(50\%\,50\%\)\,\#f00\,\#transparent\)\) {
+  background: radial-gradient(at 50% 50%, red, transparent);
   background-blend-mode: normal;
 }
 ```
@@ -259,12 +259,12 @@
 ```
 **after:**
 ```html
-…<div class="$Bg(circle(at(20%,30%),#rgba(255,255,255,0.1),#transparent))">…</div>…
+…<div class="$Bg(circle(at(20%,30%),#fff1,#transparent))">…</div>…
 ```
 **css:**
 ```css
-.\$Bg\(circle\(at\(20\%\,30\%\)\,\#rgba\(255\,255\,255\,0\.1\)\,\#transparent\)\) {
-  background: radial-gradient(at 20% 30%, rgba(255 255 255 / 0.1), transparent);
+.\$Bg\(circle\(at\(20\%\,30\%\)\,\#fff1\,\#transparent\)\) {
+  background: radial-gradient(at 20% 30%, #ffffff11, transparent);
   background-blend-mode: normal;
 }
 ```
@@ -790,7 +790,7 @@
 **css:**
 ```css
 .\|\:disabled\$Bg\(\#gray\)>:where(:disabled) {
-  background-color: gray;
+  background-color: grey;
   background: none;
   background-blend-mode: normal;
 }
@@ -993,7 +993,7 @@
 **css:**
 ```css
 .\|\:disabled\$Bg\(\#gray\)>:where(:disabled) {
-  background-color: gray;
+  background-color: grey;
   background: none;
   background-blend-mode: normal;
 }
@@ -1196,7 +1196,7 @@
 **css:**
 ```css
 .\|\:disabled\$Bg\(\#gray\)>:where(:disabled) {
-  background-color: gray;
+  background-color: grey;
   background: none;
   background-blend-mode: normal;
 }
@@ -1399,7 +1399,7 @@
 **css:**
 ```css
 .\|\:disabled\$Bg\(\#gray\)>:where(:disabled) {
-  background-color: gray;
+  background-color: grey;
   background: none;
   background-blend-mode: normal;
 }
@@ -1410,7 +1410,7 @@
 The repeating stripe pattern looks too wide on large screens. Use min() so each tile is at most 200px or 30% of the element.
 **before:**
 ```html
-…<div class="$Bg(repeatingLinear(45deg,(#eee,10px),(#fff,20px)))">…</div>…
+…<div class="$Bg(repeatingLinear(45deg,(#eeeeee,10px),(#ffffff,20px)))">…</div>…
 ```
 **after:**
 ```html
@@ -1419,7 +1419,7 @@ The repeating stripe pattern looks too wide on large screens. Use min() so each 
 **css:**
 ```css
 .\$Bg\(size\(min\(200px\,30\%\)\)\,repeatingLinear\(45deg\,\(\#eee\,10px\)\,\(\#fff\,20px\)\)\) {
-  background: repeating-linear-gradient(45deg, #eeeeee 10px, #ffffff 20px) 0% 0%/min(200px, 30%);
+  background: repeating-linear-gradient(45deg, #eeeeee 10px, white 20px) 0% 0%/min(200px, 30%);
   background-blend-mode: normal;
 }
 ```

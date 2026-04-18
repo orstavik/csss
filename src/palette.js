@@ -1,33 +1,17 @@
-import { fromLCH, fromHex6 } from "./Color.js";
-import { CsssPrimitives, CsssFunctions } from "./func.js";
-import { ColorPrimitive } from "./funcColor.js";
-const { SF2 } = CsssFunctions;
+import { CsssPrimitives } from "./func.js";
+import { AbsoluteColorVector } from "./funcColor.js";
 const { Name } = CsssPrimitives;
 
-function makeColors(name, color) {
-  const round = (num, places = 3) => Math.round(num * 10 ** places) / (10 ** places);
-  let { L, C, H } = fromHex6(color.hex);
-  if (C == 0)
-    return { [name]: color.text };
-  L = round(L);
-  H = Math.round(H);
-  const pop = fromLCH(L, round((.5 - C) * .5 + C), H);
-  const accent = fromLCH(L, round((.5 - C) * .7 + C), H);
-  const bland = fromLCH(L, round(C * .5), H);
-  const neutral = fromLCH(L, 0, H);
-  return {
-    [name]: color.text,
-    [name + "Pop"]: "#" + pop.hex6,
-    [name + "Accent"]: "#" + accent.hex6,
-    [name + "Bland"]: "#" + bland.hex6,
-    [name + "Neutral"]: "#" + neutral.hex6,
-  };
+function Palette({ name, args }) {
+  if (name !== "Palette") return;
+  if (args.length !== 2) throw new SyntaxError(`Palette() takes exactly 2 arguments, got ${args.length}.`);
+  const n = Name(args[0]);
+  if (!n) throw new SyntaxError("First argument of Palette() must be a name.");
+  const vector = AbsoluteColorVector(args[1]);
+  if (!vector) throw new SyntaxError("Second argument of Palette() must be an AbsoluteColor vector.");
+  return Object.fromEntries(vector.map((color, i) =>
+    [i ? `--color-${n}-${i}` : `--color-${n}`, color]));
 }
-
-const Palette = SF2("Palette/3", [Name, ColorPrimitive, ColorPrimitive], (_, [name, main, on]) => ({
-  ...makeColors(`--color-${name}`, main),
-  ...makeColors(`--color-on${name[0].toUpperCase() + name.slice(1)}`, on)
-}));
 
 export default {
   Palette,

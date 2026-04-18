@@ -468,7 +468,7 @@ const tokenize = (_ => {
   const VAR = /--[a-zA-Z][a-zA-Z0-9_]*/.source;
   const WORD = /[._a-zA-Z][._%a-zA-Z0-9+-]*/.source;
   const NUMBER_WORDS = /e|pi|infinity|NaN/.source; //todo not added yet.
-  const COLOR = `#[a-zA-Z0-9_]+`;
+  const COLOR = `#[a-zA-Z0-9_+*/.-]+`;
   const OPERATOR = /\?\?|\*\*|[><*/+-]/.source;
   const CPP = /[,()]/.source;
 

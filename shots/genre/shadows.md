@@ -6,12 +6,12 @@
 ```
 **after:**
 ```html
-…<div class="card $boxShadow(0,2px,4px,#rgba(0,0,0,0.1))">…</div>…
+…<div class="card $boxShadow(0,2px,4px,#0001)">…</div>…
 ```
 **css:**
 ```css
-.\$boxShadow\(0\,2px\,4px\,\#rgba\(0\,0\,0\,0\.1\)\) {
-  box-shadow: 0 2px 4px rgba(0 0 0 / 0.1);
+.\$boxShadow\(0\,2px\,4px\,\#0001\) {
+  box-shadow: 0 2px 4px #00000011;
 }
 ```
 
@@ -41,12 +41,12 @@ The primary button has too many complex, muddy shadows from an old design. Strip
 ```
 **after:**
 ```html
-…<input class="search-input :focus$boxShadow(inset,0,2px,4px,0,#rgba(0,0,0,0.6))">…
+…<input class="search-input :focus$boxShadow(inset,0,2px,4px,0,#000e)">…
 ```
 **css:**
 ```css
-.\:focus\$boxShadow\(inset\,0\,2px\,4px\,0\,\#rgba\(0\,0\,0\,0\.6\)\):where(:focus) {
-  box-shadow: inset 0 2px 4px 0 rgba(0 0 0 / 0.6);
+.\:focus\$boxShadow\(inset\,0\,2px\,4px\,0\,\#000e\):where(:focus) {
+  box-shadow: inset 0 2px 4px 0 #000000ee;
 }
 ```
 
@@ -93,12 +93,12 @@ The avatar currently uses hardcoded, non-scalable pixel offsets for its drop sha
 ```
 **after:**
 ```html
-…<h1 class="hero-title $textShadow(0,4px,8px,#rgba(0,0,0,0.3))">…</h1>…
+…<h1 class="hero-title $textShadow(0,4px,8px,#0004)">…</h1>…
 ```
 **css:**
 ```css
-.\$textShadow\(0\,4px\,8px\,\#rgba\(0\,0\,0\,0\.3\)\) {
-  text-shadow: 0 4px 8px rgba(0 0 0 / 0.3);
+.\$textShadow\(0\,4px\,8px\,\#0004\) {
+  text-shadow: 0 4px 8px #00000044;
 }
 ```
 
@@ -107,23 +107,23 @@ The avatar currently uses hardcoded, non-scalable pixel offsets for its drop sha
 The retro logo inherits a soft blurry text shadow from the global typography settings, but it specifically needs a sharp solid black shadow to look 8-bit. Add a contextual override.
 **before:**
 ```html
-…<div class="|$textShadow(0,5px,10px,#rgba(0,0,0,0.5))">
+…<div class="|$textShadow(0,5px,10px,#00000080)">
   <h2 class="retro-logo">…</h2>
 </div>…
 ```
 **after:**
 ```html
-…<div class="|$textShadow(0,5px,10px,#rgba(0,0,0,0.5))">
-  <h2 class="retro-logo $textShadow(2px,2px,4px,#000000)">…</h2>
+…<div class="|$textShadow(0,5px,10px,#0008)">
+  <h2 class="retro-logo $textShadow(2px,2px,4px,#000)">…</h2>
 </div>…
 ```
 **css:**
 ```css
-.\|\$textShadow\(0\,5px\,10px\,\#rgba\(0\,0\,0\,0\.5\)\)>* {
-  text-shadow: 0 5px 10px rgba(0 0 0 / 0.5);
+.\|\$textShadow\(0\,5px\,10px\,\#0008\)>* {
+  text-shadow: 0 5px 10px #00000088;
 }
 
-.\$textShadow\(2px\,2px\,4px\,\#000000\) {
-  text-shadow: 2px 2px 4px #000000;
+.\$textShadow\(2px\,2px\,4px\,\#000\) {
+  text-shadow: 2px 2px 4px black;
 }
 ```

@@ -91,7 +91,7 @@ Make this decorative SVG line use a dashed stroke with a pattern of 4px dashes a
 **before:**
 ```html
 …<svg width="100%" height="2">
-  <line x1="0" y1="1" x2="100%" y2="1" class="$stroke(#ccc,1px)" />
+  <line x1="0" y1="1" x2="100%" y2="1" class="$stroke(#cccccc,1px)" />
 </svg>…
 ```
 **after:**
@@ -181,12 +181,12 @@ The map path gets too thick when zoomed in. Apply the non-scaling-stroke vector 
 ```
 **after:**
 ```html
-…<path d="M10 10 H 90 V 90 H 10 Z" class="$stroke(#000,1px) $fillNone $vectorEffect(nonScalingStroke)" />…
+…<path d="M10 10 H 90 V 90 H 10 Z" class="$stroke(#black,1px) $fillNone $vectorEffect(nonScalingStroke)" />…
 ```
 **css:**
 ```css
-.\$stroke\(\#000\,1px\) {
-  stroke: #000000;
+.\$stroke\(\#black\,1px\) {
+  stroke: black;
   stroke-width: 1px;
 }
 
@@ -213,15 +213,15 @@ This info badge should have a semi-transparent background by default. Make the f
 ```
 **after:**
 ```html
-…<svg viewBox="0 0 24 24" width="24" height="24" tabindex="0" class="$fill(#e0e0e0,0.5) :focus_$fill(1)">
+…<svg viewBox="0 0 24 24" width="24" height="24" tabindex="0" class="$fill(#eee,0.5) :focus_$fill(1)">
   <circle cx="12" cy="12" r="10" />
   <text x="12" y="16" class="$svgText(middle) $fill(#000)">i</text>
 </svg>…
 ```
 **css:**
 ```css
-.\$fill\(\#e0e0e0\,0\.5\) {
-  fill: #e0e0e0;
+.\$fill\(\#eee\,0\.5\) {
+  fill: #eeeeee;
   fill-opacity: 0.5;
 }
 
@@ -234,7 +234,7 @@ This info badge should have a semi-transparent background by default. Make the f
 }
 
 .\$fill\(\#000\) {
-  fill: #000000;
+  fill: black;
 }
 ```
 
