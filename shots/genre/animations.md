@@ -11,14 +11,18 @@ Removing Obsolete Styles: The 'Live' indicator has leftover complex separate key
 ```
 **css:**
 ```css
-@keyFrames a_0_scale_1 {
-  0%, 50%, 100% {
+@keyFrames a0_100_scale150_scale1\.2 {
+  0%, 100% {
     scale: 1;
+  }
+  50% {
+    scale: 1.2;
   }
 }
 
 .\$animate\(infinite\,0s\>1s\>1s\)\$scale\(1\>1\.2\>1\) {
-  animation: 2000ms 0ms infinite a_0_scale_1;
+  scale: 1;
+  animation: 2000ms infinite a0_100_scale150_scale1\.2;
 }
 ```
 
@@ -35,14 +39,21 @@ Interaction Update: When the input fails validation, apply a quick horizontal sh
 ```
 **css:**
 ```css
-@keyFrames a_0_translate_0px {
-  0%, 17%, 50%, 100% {
+@keyFrames a0_100_translate0px17_translate10px50_translate-10px {
+  0%, 100% {
     translate: 0px;
+  }
+  17% {
+    translate: 10px;
+  }
+  50% {
+    translate: -10px;
   }
 }
 
 .\$animate\(backwards\,3\,0s\>100ms\>200ms\>300ms\)\$translate\(0px\>10px\>-10px\>0px\) {
-  animation: 600ms 0ms backwards 3 a_0_translate_0px;
+  translate: 0px;
+  animation: 600ms backwards 3 a0_100_translate0px17_translate10px50_translate-10px;
 }
 ```
 
@@ -59,7 +70,7 @@ Syntax Optimization/Refactoring: The developer wrote custom keyframes in a separ
 ```
 **css:**
 ```css
-@keyFrames a_0_rotate_0deg_100_rotate_360deg {
+@keyFrames a0_rotate0deg100_rotate360deg {
   0% {
     rotate: 0deg;
   }
@@ -69,7 +80,8 @@ Syntax Optimization/Refactoring: The developer wrote custom keyframes in a separ
 }
 
 .\$animate\(linear\,infinite\,0s\>1s\)\$rotate\(0deg\>360deg\) {
-  animation: linear 1000ms 0ms infinite a_0_rotate_0deg_100_rotate_360deg;
+  rotate: 0deg;
+  animation: linear 1000ms infinite a0_rotate0deg100_rotate360deg;
 }
 ```
 
@@ -85,7 +97,7 @@ Syntax Optimization/Refactoring: The developer wrote custom keyframes in a separ
 ```
 **css:**
 ```css
-@keyFrames a_0_translate_0px_0px_100_translate_0px_-10px {
+@keyFrames a0_translate0px_0px100_translate0px_-10px {
   0% {
     translate: 0px 0px;
   }
@@ -95,7 +107,8 @@ Syntax Optimization/Refactoring: The developer wrote custom keyframes in a separ
 }
 
 .\$animate\(alternate\,infinite\,0s\>0\.5s\)\$translate\(0px\,0px\>-10px\) {
-  animation: alternate 500ms 0ms infinite a_0_translate_0px_0px_100_translate_0px_-10px;
+  translate: 0px 0px;
+  animation: alternate 500ms infinite a0_translate0px_0px100_translate0px_-10px;
 }
 ```
 
@@ -112,7 +125,7 @@ Syntax Optimization/Refactoring: The modal has a CSS transition but requires JS 
 ```
 **css:**
 ```css
-@keyFrames a_0_opacity_0_100_opacity_1 {
+@keyFrames a0_opacity0100_opacity1 {
   0% {
     opacity: 0;
   }
@@ -122,7 +135,8 @@ Syntax Optimization/Refactoring: The modal has a CSS transition but requires JS 
 }
 
 .\$animate\(0s\>300ms\)\$opacity\(0\>1\) {
-  animation: 300ms 0ms a_0_opacity_0_100_opacity_1;
+  opacity: 0;
+  animation: 300ms a0_opacity0100_opacity1;
 }
 ```
 
@@ -138,7 +152,7 @@ Syntax Optimization/Refactoring: The modal has a CSS transition but requires JS 
 ```
 **css:**
 ```css
-@keyFrames a_0_scale_1_100_scale_1\.05 {
+@keyFrames a0_scale1100_scale1\.05 {
   0% {
     scale: 1;
   }
@@ -148,7 +162,8 @@ Syntax Optimization/Refactoring: The modal has a CSS transition but requires JS 
 }
 
 .\$animate\(easeInOut\,alternate\,infinite\,0s\>1s\)\$scale\(1\>1\.05\) {
-  animation: ease-in-out alternate 1000ms 0ms infinite a_0_scale_1_100_scale_1\.05;
+  scale: 1;
+  animation: ease-in-out alternate 1000ms infinite a0_scale1100_scale1\.05;
 }
 ```
 
@@ -165,7 +180,7 @@ Layout Bug Fixes: The sidebar slide-in animation is using negative margins which
 ```
 **css:**
 ```css
-@keyFrames a_0_translate_-100\%_100_translate_0\% {
+@keyFrames a0_translate-100\%100_translate0\% {
   0% {
     translate: -100%;
   }
@@ -175,7 +190,8 @@ Layout Bug Fixes: The sidebar slide-in animation is using negative margins which
 }
 
 .\$animate\(easeOut\,0s\>0\.5s\)\$translate\(-100\%\>0\%\) {
-  animation: ease-out 500ms 0ms a_0_translate_-100\%_100_translate_0\%;
+  translate: -100%;
+  animation: ease-out 500ms a0_translate-100\%100_translate0\%;
 }
 ```
 
@@ -192,21 +208,20 @@ Syntax Optimization/Refactoring: The alert is flashing because JS is toggling a 
 ```
 **css:**
 ```css
-@keyFrames a_0_backgroundColor_yellow_background_none_backgroundBlendMode_normal_100_backgroundColor_transparent_background_none_backgroundBlendMode_normal {
+@keyFrames a0_backgroundColoryellow100_backgroundColortransparent {
   0% {
     background-color: yellow;
-    background: none;
-    background-blend-mode: normal;
   }
   100% {
     background-color: transparent;
-    background: none;
-    background-blend-mode: normal;
   }
 }
 
 .\$animate\(alternate\,infinite\,0s\>1s\)\$Bg\(\#yellow\>\#transparent\) {
-  animation: alternate 1000ms 0ms infinite a_0_backgroundColor_yellow_background_none_backgroundBlendMode_normal_100_backgroundColor_transparent_background_none_backgroundBlendMode_normal;
+  background-color: yellow;
+  background: none;
+  background-blend-mode: normal;
+  animation: alternate 1000ms infinite a0_backgroundColoryellow100_backgroundColortransparent;
 }
 ```
 
@@ -223,7 +238,7 @@ Syntax Optimization/Refactoring: Consolidate the two separate animations (fade-i
 ```
 **css:**
 ```css
-@keyFrames a_0_opacity_0_100_opacity_1 {
+@keyFrames a0_opacity0100_opacity1 {
   0% {
     opacity: 0;
   }
@@ -232,7 +247,7 @@ Syntax Optimization/Refactoring: Consolidate the two separate animations (fade-i
   }
 }
 
-@keyFrames a_0_translate_0px_20px_100_translate_0px_0px {
+@keyFrames a0_translate0px_20px100_translate0px_0px {
   0% {
     translate: 0px 20px;
   }
@@ -242,7 +257,9 @@ Syntax Optimization/Refactoring: Consolidate the two separate animations (fade-i
 }
 
 .\$animate\(0s\>1s\)\$opacity\(0\>1\)\$translate\(0px\,20px\>0px\) {
-  animation: 1000ms 0ms a_0_opacity_0_100_opacity_1, 1000ms 0ms a_0_translate_0px_20px_100_translate_0px_0px;
+  opacity: 0;
+  animation: 1000ms a0_opacity0100_opacity1, 1000ms a0_translate0px_20px100_translate0px_0px;
+  translate: 0px 20px;
 }
 ```
 
@@ -259,21 +276,20 @@ Syntax Optimization/Refactoring: We use a JS timeout to append an 'is-green' cla
 ```
 **css:**
 ```css
-@keyFrames a_0_backgroundColor_transparent_background_none_backgroundBlendMode_normal_100_backgroundColor_lightgreen_background_none_backgroundBlendMode_normal {
+@keyFrames a0_backgroundColortransparent100_backgroundColorlightgreen {
   0% {
     background-color: transparent;
-    background: none;
-    background-blend-mode: normal;
   }
   100% {
     background-color: lightgreen;
-    background: none;
-    background-blend-mode: normal;
   }
 }
 
 .\$animate\(forwards\,0s\>2s\)\$Bg\(\#transparent\>\#lightgreen\) {
-  animation: 2000ms 0ms forwards a_0_backgroundColor_transparent_background_none_backgroundBlendMode_normal_100_backgroundColor_lightgreen_background_none_backgroundBlendMode_normal;
+  background-color: transparent;
+  background: none;
+  background-blend-mode: normal;
+  animation: 2000ms forwards a0_backgroundColortransparent100_backgroundColorlightgreen;
 }
 ```
 
@@ -290,7 +306,7 @@ Syntax Optimization/Refactoring: The cloud icon is moved using JS updating `styl
 ```
 **css:**
 ```css
-@keyFrames a_0_translate_0px_0px_20px_33_translate_40px_50px_100px {
+@keyFrames a0_100_translate0px_0px_20px33_translate40px_50px_100px {
   0%, 100% {
     translate: 0px 0px 20px;
   }
@@ -300,7 +316,8 @@ Syntax Optimization/Refactoring: The cloud icon is moved using JS updating `styl
 }
 
 .\$animate\(0s\>2s\>4s\)\$translate\(0px\>40px\,0px\>50px\,20px\>100px\) {
-  animation: 6000ms 0ms a_0_translate_0px_0px_20px_33_translate_40px_50px_100px;
+  translate: 0px 0px 20px;
+  animation: 6000ms a0_100_translate0px_0px_20px33_translate40px_50px_100px;
 }
 ```
 
@@ -317,7 +334,7 @@ Feature Requests: Make the cog icon spin in a reverse direction using discrete s
 ```
 **css:**
 ```css
-@keyFrames a_0_rotate_0deg_100_rotate_360deg {
+@keyFrames a0_rotate0deg100_rotate360deg {
   0% {
     rotate: 0deg;
   }
@@ -327,7 +344,8 @@ Feature Requests: Make the cog icon spin in a reverse direction using discrete s
 }
 
 .\$animate\(reverse\,steps\(8\,end\)\,infinite\,0s\>2s\)\$rotate\(0deg\>360deg\) {
-  animation: steps(8, end) reverse 2000ms 0ms infinite a_0_rotate_0deg_100_rotate_360deg;
+  rotate: 0deg;
+  animation: steps(8, end) reverse 2000ms infinite a0_rotate0deg100_rotate360deg;
 }
 ```
 
@@ -345,7 +363,7 @@ Contextual Overrides: The skeleton loader needs an intricate shimmer and scale e
 ```
 **css:**
 ```css
-@keyFrames a_0_opacity_0.3_33_opacity_1 {
+@keyFrames a0_66_opacity0.333_100_opacity1 {
   0%, 66% {
     opacity: 0.3;
   }
@@ -354,16 +372,21 @@ Contextual Overrides: The skeleton loader needs an intricate shimmer and scale e
   }
 }
 
-@keyFrames a_0_scale_1_33_scale_1\.1 {
-  0%, 66% {
+@keyFrames a0_100_scale133_scale1\.0566_scale1\.1 {
+  0%, 100% {
     scale: 1;
   }
-  33%, 100% {
+  33% {
+    scale: 1.05;
+  }
+  66% {
     scale: 1.1;
   }
 }
 
 .\$animate\(alternateReverse\,both\,infinite\,cubicBezier\(0\.25\,0\.1\,0\.25\,1\)\,500ms\>1s\>1s\>1s\)\$opacity\(0\.3\>1\)\$scale\(1\>1\+0\.05\>1\.1\) {
-  animation: cubic-bezier(0.25,0.1,0.25,1) alternate-reverse 3000ms 500ms both infinite a_0_opacity_0.3_33_opacity_1, cubic-bezier(0.25,0.1,0.25,1) alternate-reverse 3000ms 500ms both infinite a_0_scale_1_33_scale_1\.1;
+  opacity: 0.3;
+  animation: cubic-bezier(0.25,0.1,0.25,1) alternate-reverse 3000ms 500ms both infinite a0_66_opacity0.333_100_opacity1, cubic-bezier(0.25,0.1,0.25,1) alternate-reverse 3000ms 500ms both infinite a0_100_scale133_scale1\.0566_scale1\.1;
+  scale: 1;
 }
 ```

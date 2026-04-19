@@ -1,6 +1,6 @@
-import { matchArgsWithInterpreters, CsssFunctions, CsssPrimitives, flatVector } from "./func.js";
+import { matchArgsWithInterpreters, CsssFunctions, CsssPrimitives, flatVector, BadArgument } from "./func.js";
 const { CssValuesToCsssTable } = CsssFunctions;
-const { MsOrNumber, Time, PositiveInteger } = CsssPrimitives;
+const { MsOrNumber, PositiveInteger } = CsssPrimitives;
 const IterationCount = a => a.text === 'infinite' ? 'infinite' : PositiveInteger(a);
 import Easing from "./funcEasing.js";
 
@@ -12,29 +12,37 @@ const FillMode = a => FillModeWords[a.text];
 const TimeVector = x => (x = flatVector(">", MsOrNumber, x))?.length === 1 ? [0, x[0]] : x;
 
 function extract(x, i) {
-  if (x.name === ">") return extract(x.args[i % x.args.length], i);
-  const args = x.args?.map(a => extract(a, i));
-  if (typeof x === "string") return x; //todo this is a hack.. i don't know why the colors here are not good.
-  return { ...x, args };
+  if (x.name === ">" && !x.flat) x.flat = flattenVector(x);
+  if (x.flat) return extract(x.flat[i % x.flat.length], i);
+  if (x.name == null) return x;
+  return { ...x, args: x.args?.map(a => extract(a, i)) };
 }
 
 function makeName(obj) {
   let res = ["a"];
   for (let [k, v] of Object.entries(obj)) {
-    res.push(parseFloat(k));
-    for (let [kk, vv] of Object.entries(v)) {
-      res.push(kk);
-      res.push(vv.replaceAll?.(/[^a-z0-9_-]/ig, m => !m.trim() ? "_" : "\\" + m) ?? vv);
-    }
+    res.push(k.replaceAll(".", "-").replaceAll(/[^\d-]+/ig, "_"));
+    for (let [kk, vv] of Object.entries(v))
+      res.push(kk, vv.replaceAll?.(/[^a-z0-9_-]/ig, m => !m.trim() ? "_" : "\\" + m) ?? vv);
   }
-  return res.join("_");
+  return res.join("");
+}
+
+function flattenVector(a) {
+  const res = [a.args[1]];
+  while (a.args[0]?.name === ">") {
+    a = a.args[0];
+    res.unshift(a.args[1]);
+  }
+  res.unshift(a.args[0]);
+  return res;
 }
 
 //ctx is the existing results, CB is the next $short, X is the full expr for that short.
 function animationHof({ animation, keyFrames }, CB, X) {
-  const flatArgs = keyFrames.map((num, i) => extract(X, i));
+  const flatArgs = keyFrames.map((_, i) => extract(X, i));
   const resAr = flatArgs.map(CB);
-  const base = resAr.reduce((acc, obj) => { for (let k in acc) if (acc[k] !== obj[k]) delete acc[k]; return acc; }, {});
+  const base = resAr.slice(1).reduce((acc, obj) => { for (let k in acc) if (acc[k] !== obj[k]) delete acc[k]; return acc; }, { ...resAr[0] });
   const keyFrameBodies = resAr.map(obj => { obj = { ...obj }; for (let k in base) delete obj[k]; return obj; });
   const keyFrameBodiesStrings = keyFrameBodies.map(JSON.stringify);
   const done = new Set();
@@ -52,23 +60,31 @@ function animationHof({ animation, keyFrames }, CB, X) {
     res[key] = keyFrameBodies[i];
   }
   const name = makeName(res);
-  return { ...base, ["@keyFrames " + name]: res, animation: animation + " " + name };
+  return { ...resAr[0], ["@keyFrames " + name]: res, animation: animation + " " + name };
+}
+
+function interpretTimeVector(times) {
+  if (times.length < 2) times.unshift(0);
+  const duration = times.slice(1).reduce((a, b) => a + b, 0);
+  if (!duration) return {};
+  const delay = times[0] ? times[0] + "ms" : 0;
+  const keyFrames = [0];
+  for (let i = 1; i < times.length - 1; i++)
+    keyFrames[i] = Math.round(times[i] * 100 / duration) + keyFrames[i - 1];
+  keyFrames.push(100);
+  return { keyFrames, delay, duration: duration + "ms" };
 }
 
 function animate({ name, args }) {
-  let [ease, behavior, fillMode, count, delay, times] = matchArgsWithInterpreters("animate", 0, args, [EasingFunction, Behavior, FillMode, IterationCount, Time, TimeVector]);
-  if (delay == null && times == null)
-    times = [0, 300]; //todo here we are adding a default animation length.
-  if (delay != null && times == null) {
-    times = [0, delay];
-    delay = undefined;
-  }
-  if (delay != null) delay += "ms";
-  const duration = times.reduce((a, b) => a + b, 0);
+  const [ease, behavior, fillMode, count, times = [0, 300]] =
+    matchArgsWithInterpreters("animate", 0, args, [EasingFunction, Behavior, FillMode, IterationCount, TimeVector]);
+  if (times.length < 2) times.unshift(0);
+  const { keyFrames, duration, delay } = interpretTimeVector(times);
+  if (!duration) throw BadArgument("animate", args, args.length, "duration must be greater than 0.");
   return {
     $: animationHof.bind(null, {
-      animation: [ease?.[0], behavior, duration + "ms", delay, fillMode, count].filter(Boolean).join(" "),
-      keyFrames: times.map(a => Math.floor(a * 100 / duration)),
+      animation: [ease?.[0], behavior, duration, delay, fillMode, count].filter(Boolean).join(" "),
+      keyFrames,
     }),
     ...(ease?.[1] ?? {}),
   };
