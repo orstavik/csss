@@ -264,14 +264,13 @@ export function fromLab(L, a, b, alpha) {
 export function fromLCH(L, C, H, alpha) {
   return makeColor([lchToLab, labToXyz, xyzToRGB, RGBToRgb, rgbToHex6, hex6AToHex8, hex6ToName], { L, C, H, alpha });
 }
-const namePercent = new RegExp(`^(${Object.keys(WebColors).join("|")})([0-9]{2})?$`);
 
+const namePercent = new RegExp(`^(${Object.keys(WebColors).join("|")})(\\.\\d+)?$`);
 export function fromNameAlpha(txt) {
   const [, name, alpha] = txt.toLowerCase().match(namePercent) || [];
-  if (!name) return;
-  return makeColor([hex6ToRgb, rgbToRGB, RGBToXyz, xyzToLab, labToLch, hex6AToHex8, hex6ToName], {
+  return name && makeColor([hex6ToRgb, rgbToRGB, RGBToXyz, xyzToLab, labToLch, hex6AToHex8, hex6ToName], {
     name,
-    alpha: alpha != null ? parseInt(alpha) / 100 : undefined,
+    alpha: alpha != null ? parseFloat(alpha) : undefined,
     hex6: WebColors[name],
   });
 }

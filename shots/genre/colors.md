@@ -9,13 +9,13 @@ The checkmark icon currently has no styling and inherits default colors. Apply a
 ```
 **after:**
 ```html
-…<svg viewBox="0 0 24 24" width="24" height="24" class="$Stroke(#green#white10,1px,round,round) $Fill(#green)">
+…<svg viewBox="0 0 24 24" width="24" height="24" class="$Stroke(#green#white.1,1px,round,round) $Fill(#green)">
   <path d="M5 13l4 4L19 7" />
 </svg>…
 ```
 **css:**
 ```css
-.\$Stroke\(\#green\#white10\,1px\,round\,round\) {
+.\$Stroke\(\#green\#white\.1\,1px\,round\,round\) {
   stroke: color-mix(in oklab, green, white 10%);
   stroke-width: 1px;
   stroke-opacity: unset;
@@ -60,13 +60,13 @@ Define a color palette named "primary" with a foreground color of #darkblue and 
 ```
 **after:**
 ```html
-…<p class="$color(#primary#08)$Bg(#primary#75)">This text should be a mix of primary and its secondary variant.</p>…
+…<p class="$color(#primary08)$Bg(#primary75)">This text should be a mix of primary and its secondary variant.</p>…
 ```
 **css:**
 ```css
-.\$color\(\#primary\#08\)\$Bg\(\#primary\#75\) {
-  color: color-mix(in oklab, var(--color-primary), var(--color-primary-1, var(--color-primary)) 8%);
-  background-color: color-mix(in oklab, var(--color-primary), var(--color-primary-1, var(--color-primary)) 75%);
+.\$color\(\#primary08\)\$Bg\(\#primary75\) {
+  color: color-mix(in oklab, var(--color-primary) 8%, var(--color-primary-1));
+  background-color: color-mix(in oklab, var(--color-primary) 75%, var(--color-primary-1));
   background: none;
   background-blend-mode: normal;
 }
@@ -86,7 +86,7 @@ Define a color palette named "primary" with a foreground color of #darkblue and 
 ```html
 …<div class="|$Border(#green,solid,0,4px,0,0)">
   …
-  <div class="… $border(#red#yellow23)">this is more important</div>
+  <div class="… $border(#red#yellow.23)">this is more important</div>
   …
 </div>…
 ```
@@ -100,7 +100,7 @@ Define a color palette named "primary" with a foreground color of #darkblue and 
   border-radius: 0;
 }
 
-.\$border\(\#red\#yellow23\) {
+.\$border\(\#red\#yellow\.23\) {
   border-color: color-mix(in oklab, red, yellow 23%);
 }
 ```
@@ -157,5 +157,176 @@ Define a color palette named "primary" with a foreground color of #darkblue and 
 
 .\$color\(\#primary\#H\+45\) {
   color: oklch(from var(--color-primary) l c calc(h + 45) / alpha);
+}
+```
+
+
+**description:**
+Global palette definitions and usage on nested elements. This demonstrates the `primary` and `warm` palettes established on a parent element, with sub-elements inheriting those palettes and applying them via `$color`, `$Bg`, and `$border` using mixes and transparency.
+**userInstruction:**
+Set up two palettes on the body: a "primary" palette with royalblue/skyblue and a "warm" palette with red/brown. Inside the body, have several elements that use these palettes. Specifically: 
+- Set text color to primary.
+- Set a primary mix text color (50% primary secondary).
+- Set another primary mix text color (80% primary secondary).
+- Set a neutral text color (100% neutral secondary).
+- Set background to primary.
+- Set background to 50% primary mix.
+- Set background to a 20% primary mix with 50% transparency.
+- Set border colors using neutral 40% and 60% mixes.
+**before:**
+```html
+<body class="">
+  <p class="">Primary text</p>
+  <p class="">Primary 50% mix</p>
+  <p class="">Primary 80% mix</p>
+  <p class="">Neutral 100% mix</p>
+  <div class="">Primary bg</div>
+  <div class="">Primary 50% mix bg</div>
+  <div class="">Primary 20% mix with 50% transparency bg</div>
+  <div class="">Neutral 40% border</div>
+  <div class="">Neutral 60% border</div>
+</body>
+```
+**after:**
+```html
+<body class="$Palette(primary,#royalblue#skyblue) $Palette(warm,#red#brown) $Palette(neutral,#black#white)">
+  <p class="$color(#primary)">Primary text</p>
+  <p class="$color(#primary50)">Primary 50% mix</p>
+  <p class="$color(#primary80)">Primary 80% mix</p>
+  <p class="$color(##neutral)">Neutral secondary 100% (ie. white here)</p>
+  <div class="$Bg(#primary)">Primary bg</div>
+  <div class="$Bg(#primary50)">Primary 50% mix bg</div>
+  <div class="$Bg(#primary20/50)">Primary 20% mix with 50% transparency bg</div>
+  <div class="$border(#neutral40)">Neutral 40% border</div>
+  <div class="$border(#neutral60)">Neutral 60% border</div>
+</body>
+```
+**css:**
+```css
+.\$Palette\(primary\,\#royalblue\#skyblue\) {
+  --color-primary: royalblue;
+  --color-primary-1: skyblue;
+}
+
+.\$Palette\(warm\,\#red\#brown\) {
+  --color-warm: red;
+  --color-warm-1: brown;
+}
+
+.\$Palette\(neutral\,\#black\#white\) {
+  --color-neutral: black;
+  --color-neutral-1: white;
+}
+
+.\$color\(\#primary\) {
+  color: var(--color-primary);
+}
+
+.\$color\(\#primary50\) {
+  color: color-mix(in oklab, var(--color-primary) 50%, var(--color-primary-1));
+}
+
+.\$color\(\#primary80\) {
+  color: color-mix(in oklab, var(--color-primary) 80%, var(--color-primary-1));
+}
+
+.\$color\(\#\#neutral\) {
+  color: var(--color-neutral);
+}
+
+.\$Bg\(\#primary\) {
+  background-color: var(--color-primary);
+  background: none;
+  background-blend-mode: normal;
+}
+
+.\$Bg\(\#primary50\) {
+  background-color: color-mix(in oklab, var(--color-primary) 50%, var(--color-primary-1));
+  background: none;
+  background-blend-mode: normal;
+}
+
+.\$Bg\(\#primary20\/50\) {
+  background-color: rgb(from color-mix(in oklab, var(--color-primary) 20%, var(--color-primary-1)) r g b / 50%);
+  background: none;
+  background-blend-mode: normal;
+}
+
+.\$border\(\#neutral40\) {
+  border-color: color-mix(in oklab, var(--color-neutral) 40%, var(--color-neutral-1));
+}
+
+.\$border\(\#neutral60\) {
+  border-color: color-mix(in oklab, var(--color-neutral) 60%, var(--color-neutral-1));
+}
+```
+
+**description:**
+Demonstrate various origin colors using hex/web names and their modifiers (chroma adjustments, explicit mixes, alpha, hue, and math computations) instead of native color space functions.
+**userInstruction:**
+Consolidate various text and background color modifications into a single element test. We need to demonstrate:
+- Mixing orange with 75% purple.
+- A triple mix: orange with 75% purple, and then 53% dark gray (#333).
+- Using alpha: red with 50% opacity (#ff0000a8 or using web name). Let's use red with 33% orange.
+- Mixing red and blue 50/50 using explicitly specified oklch.
+- Mixing orange and purple 75% using HSL longer hue interpolation.
+- Background with hue math calculation (e.g. green with hue +30).
+- Background with lightness math calculation (e.g. blue with chroma * 1.5).
+**before:**
+```html
+<div>
+  <p class="">Orange purple mix</p>
+  <p class="">Triple mix</p>
+  <p class="">Red orange mix</p>
+  <p class="">Oklch mix</p>
+  <p class="">Hsl mix</p>
+  <div class="">Bg hue math</div>
+  <div class="">Bg lightness math</div>
+</div>
+```
+**after:**
+```html
+<div>
+  <p class="$color(#orange#purple.75)">Orange purple mix</p>
+  <p class="$color(#orange#purple.75#3338)">Triple mix</p>
+  <p class="$color(#red#orange.33)">Red orange mix</p>
+  <p class="$color(#oklch#red#blue)">Oklch mix</p>
+  <p class="$color(#hslLongerHue#orange#purple.75)">Hsl mix</p>
+  <div class="$Bg(#green#H+30)">Bg hue math</div>
+  <div class="$Bg(#blue#C*1.5)">Bg lightness math</div>
+</div>
+```
+**css:**
+```css
+.\$color\(\#orange\#purple\.75\) {
+  color: color-mix(in oklab, orange, purple 75%);
+}
+
+.\$color\(\#orange\#purple\.75\#3338\) {
+  color: color-mix(in oklab, color-mix(in oklab, orange, purple 75%), #333333 53.333333333333336%);
+}
+
+.\$color\(\#red\#orange\.33\) {
+  color: color-mix(in oklab, red, orange 33%);
+}
+
+.\$color\(\#oklch\#red\#blue\) {
+  color: color-mix(in oklch, red, blue 50%);
+}
+
+.\$color\(\#hslLongerHue\#orange\#purple\.75\) {
+  color: color-mix(in hsl longer hue, orange, purple 75%);
+}
+
+.\$Bg\(\#green\#H\+30\) {
+  background-color: oklch(from green l c calc(h + 30) / alpha);
+  background: none;
+  background-blend-mode: normal;
+}
+
+.\$Bg\(\#blue\#C\*1\.5\) {
+  background-color: oklch(from blue l max(c * 1.5, c + 0.01) h / alpha);
+  background: none;
+  background-blend-mode: normal;
 }
 ```

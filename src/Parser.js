@@ -229,8 +229,6 @@ function goRightOperator(tokens) {
       a = operatorPriority(a, tokens.shift().text, goDeep(tokens));
     else if (kind === "NUMBER" && (text[0] == "-" || text[0] == "+"))
       a = { kind: "EXP", name: "+", args: [a, goDeep(tokens)] };
-    else if (kind == "COLOR" && (a.type == "color" || a.kind == "COLOR"))
-      a = { kind: "EXP", name: "#hash", type: "color", args: [a, goDeep(tokens)] };
     else
       break;
   }
@@ -244,11 +242,9 @@ function goDeep(tokens) {
   if (tokens[0].kind === "SYN")
     throw new SyntaxError(`Expected expression, got: ${tokens[0].text}`);
   if (tokens[1].text === "(") {
-    const { text: name, kind } = tokens.shift();
+    const { text: name } = tokens.shift();
     tokens.shift();
-    return kind == "COLOR" ?
-      { kind: "EXP", type: "color", name, args: goRightComma(tokens, ",") } :
-      { kind: "EXP", name, args: goRightComma(tokens, ",") };
+    return { kind: "EXP", name, args: goRightComma(tokens, ",") };
   }
   //todo we must check here that the .kind is valid.
   return tokens.shift();
@@ -468,7 +464,7 @@ const tokenize = (_ => {
   const VAR = /--[a-zA-Z][a-zA-Z0-9_]*/.source;
   const WORD = /[._a-zA-Z][._%a-zA-Z0-9+-]*/.source;
   const NUMBER_WORDS = /e|pi|infinity|NaN/.source; //todo not added yet.
-  const COLOR = `#[a-zA-Z0-9_+*/.-]+`;
+  const COLOR = `#[#a-zA-Z_0-9.*+-]+`;
   const OPERATOR = /\?\?|\*\*|[><*/+-]/.source;
   const CPP = /[,()]/.source;
 
@@ -497,7 +493,7 @@ const tokenize = (_ => {
         const unit = length ?? angle ?? time ?? percent ?? fr ?? "";
         out.push({ text, kind: "NUMBER", num: n, unit, type });
       }
-      else if (c) out.push({ text, kind: "COLOR" });
+      else if (c) out.push({ name: "#", kind: "EXP", args: text.slice(1).split("#") });
       else if (quote) out.push({ text, kind: "QUOTE" });
       else if (vari) out.push({ text, kind: "VAR" });
       else if (word) out.push({ text, kind: "WORD" });

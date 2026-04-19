@@ -14,6 +14,7 @@ const TimeVector = x => (x = flatVector(">", MsOrNumber, x))?.length === 1 ? [0,
 function extract(x, i) {
   if (x.name === ">") return extract(x.args[i % x.args.length], i);
   const args = x.args?.map(a => extract(a, i));
+  if (typeof x === "string") return x; //todo this is a hack.. i don't know why the colors here are not good.
   return { ...x, args };
 }
 
