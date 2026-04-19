@@ -61,7 +61,7 @@ function relativeColor(color, txt) {
   return D(color, C, parseFloat(val));
 }
 
-function parseVector(colorspace, color, txt) {
+function colorVector(colorspace, color, txt) {
   const m = txt.match(/^([a-z_]+)(00|\d\d)?(\.\d+)?$/i);
   if (!m) return;
   const [_, vectorName, index, alpha] = m;
@@ -83,7 +83,7 @@ function HardColor(a) {
       return res;
     if (txt in ColorInterpolationMethods)
       return (colorSpace = ColorInterpolationMethods[txt]), res;
-    const c = fullColor(colorSpace, res, txt) ?? relativeColor(res, txt) ?? parseVector(colorSpace, res, txt);
+    const c = fullColor(colorSpace, res, txt) ?? relativeColor(res, txt) ?? colorVector(colorSpace, res, txt);
     if (c)
       return c;
     throw new BadArgument(`#color`, a.args, i);
