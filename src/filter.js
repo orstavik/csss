@@ -56,14 +56,21 @@ export default {
       val = val.replace(/([a-z-]+)\(/g, (_, m) => m.replace(/-([a-z])/g, g => g[1].toUpperCase()) + "(");
       // internal spaces in dropShadow(1px 1px) -> dropShadow(1px,1px)
       val = val.replace(/([a-zA-Z]+\()([^)]+)(\))/g, (_, start, inner, end) => start + inner.replace(/,\s*/g, ",").replace(/\s+/g, ",") + end);
-      return `filter(${val})`;
+      val = val.replace(/dropShadow\(([^)]+)\)/g, (_, inner) => {
+        const parts = inner.split(",").map(p => {
+          p = p.trim();
+          return /^[a-zA-Z]+$/.test(p) ? "#" + p : p;
+        });
+        return `dropShadow(${parts.join(",")})`;
+      });
+      return `$filter(${val})`;
     },
     backdrop: style => {
       if (!style.backdropFilter || style.backdropFilter === "none") return undefined;
       let val = style.backdropFilter.replace(/\) /g, "),");
       val = val.replace(/([a-z-]+)\(/g, (_, m) => m.replace(/-([a-z])/g, g => g[1].toUpperCase()) + "(");
       val = val.replace(/([a-zA-Z]+\()([^)]+)(\))/g, (_, start, inner, end) => start + inner.replace(/,\s*/g, ",").replace(/\s+/g, ",") + end);
-      return `backdrop(${val})`;
+      return `$backdrop(${val})`;
     }
   },
 };

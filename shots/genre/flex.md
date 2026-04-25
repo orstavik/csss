@@ -530,8 +530,8 @@ The albums are stacking vertically and the photos are rendering at their native 
   flex-direction: row;
   flex-wrap: unset;
   gap: unset;
-  background-color: var(--color-dark);
   background: none;
+  background-color: var(--color-dark);
   background-blend-mode: normal;
 }
 
@@ -555,8 +555,8 @@ The albums are stacking vertically and the photos are rendering at their native 
   aspect-ratio: unset;
   object-fit: unset;
   object-position: unset;
-  background-color: var(--color-neutral);
   background: none;
+  background-color: var(--color-neutral);
   background-blend-mode: normal;
 }
 ```

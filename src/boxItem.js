@@ -1,7 +1,7 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions, matchArgsWithInterpreters } from "./func.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
 const { LengthPercent } = CsssPrimitives;
-const { LogicalFourReverse, SingleTableReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, SingleTableReverse, Optional, OptionalReset, ValueReverse, normalizeToLogical, DisplayMode } = CssFunctions;
 
 const scrollMarginProps = {
   scrollMargin: undefined,
@@ -18,6 +18,7 @@ const scrollMarginProps = {
 };
 
 const props = {
+  display: undefined,
   ...scrollMarginProps,
   scrollSnapAlign: undefined,
   scrollSnapStop: undefined,
@@ -44,18 +45,29 @@ const DefaultBoxItem = {
   scrollSnapAlign: "unset",
   scrollSnapStop: "unset",
 };
-
 const boxItem = TypeBasedFunction(
   LogicalFour("scrollMargin", "scrollMargin", LengthPercent),
   SingleTable("scrollSnapAlign", scrollSnapAlign),
   SingleTable("scrollSnapStop", scrollSnapStop)
 );
+const scrollMarginReverse = (style) => {
+  const { scrollMarginTop, scrollMarginRight, scrollMarginBottom, scrollMarginLeft } = style;
+  const allSame = (
+    scrollMarginTop === scrollMarginRight &&
+    scrollMarginTop === scrollMarginBottom &&
+    scrollMarginTop === scrollMarginLeft
+  );
+  if (allSame && scrollMarginTop !== undefined) {
+    return `scrollMargin(${scrollMarginTop})`;
+  }
+  return LogicalFourReverse("scroll-margin", "scrollMargin", ValueReverse, "_")(style);
+};
 const BoxItem = FunctionWithDefaultValues(DefaultBoxItem, boxItem);
 
 const scrollSnapAlignReverse = Object.fromEntries(Object.entries(scrollSnapAlign).map(([k, v]) => [v, k]));
 
 const scrollSnapStopReverse = Object.fromEntries(Object.entries(scrollSnapStop).map(([k, v]) => [v, k]));
-const scrollMargin = LogicalFourReverse("scroll-margin", "scrollMargin", v => v, "_");
+const scrollMargin = LogicalFourReverse("scroll-margin", "scrollMargin", ValueReverse, "_");
 
 export default {
   csss: {
@@ -65,12 +77,12 @@ export default {
   props,
   css: {
     boxItem: style => {
-      const margin = scrollMargin(style);
-      const snapAlign = scrollSnapAlignReverse[style["scroll-snap-align"]];
-      const snapStop = scrollSnapStopReverse[style["scroll-snap-stop"]];
-      const bigB = margin && (snapAlign || style["scroll-snap-align"]) && (snapStop || style["scroll-snap-stop"] === "unset");
-      const res = [margin, snapAlign, snapStop].filter(Boolean);
-      return !res.length ? undefined : `$${bigB ? "B" : "b"}oxItem(${res.join(",")})`;
+      const normalized = normalizeToLogical(style);
+      return OptionalReset("$boxItem", "$BoxItem", DefaultBoxItem,
+        { prop: ["scrollMargin", "scrollMarginTop", "scrollMarginRight", "scrollMarginBottom", "scrollMarginLeft", "scrollMarginBlockStart", "scrollMarginInlineStart", "scrollMarginBlockEnd", "scrollMarginInlineEnd"], rev: LogicalFourReverse("scroll-margin", "scrollMargin", ValueReverse, "_") },
+        { prop: "scrollSnapAlign", rev: style => scrollSnapAlignReverse[style.scrollSnapAlign] },
+        { prop: "scrollSnapStop", rev: style => scrollSnapStopReverse[style.scrollSnapStop] }
+      )(normalized);
     },
   }
 };

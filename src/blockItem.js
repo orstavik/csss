@@ -1,7 +1,7 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
 const { LengthPercentAuto } = CsssPrimitives;
-const { LogicalFourReverse, SingleTableReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, SingleTableReverse, Optional, OptionalReset, ValueReverse, normalizeToLogical, DisplayMode } = CssFunctions;
 
 const float = {
   floatStart: "inline-start",
@@ -18,7 +18,7 @@ const clear = {
 const DefaultBlockItem = {
   margin: "unset",
   float: "unset",
-  clear: "unset",
+  clear: "unset"
 };
 
 const marginProps = {
@@ -49,16 +49,20 @@ export default {
     BlockItem
   },
   props: {
+    display: undefined,
     ...marginProps,
     float: undefined,
     clear: undefined,
     verticalAlign: undefined,
   },
   css: {
-    blockItem: Optional("blockItem",
-      LogicalFourReverse("margin", "margin", v => v, "_"),
-      SingleTableReverse("float", float),
-      SingleTableReverse("clear", clear)
-    ),
+    blockItem: style => {
+      const normalized = normalizeToLogical(style);
+      return OptionalReset("$blockItem", "$BlockItem", DefaultBlockItem,
+        { prop: ["margin", "marginTop", "marginRight", "marginBottom", "marginLeft", "marginBlockStart", "marginInlineStart", "marginBlockEnd", "marginInlineEnd"], rev: LogicalFourReverse("margin", "margin", ValueReverse, "_") },
+        { prop: "float", rev: SingleTableReverse("float", float) },
+        { prop: "clear", rev: SingleTableReverse("clear", clear) }
+      )(normalized);
+    },
   }
 };

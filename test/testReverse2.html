@@ -1,0 +1,48 @@
+<script type="module">
+  import * as CSSS from "/src/csss.js";
+  import runTests from "./mdTester.js";
+
+  const toCamel = p => p.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+  const sortedStr = obj => JSON.stringify(Object.fromEntries(Object.entries(obj).sort()), null, 2);
+
+  const collectRules = rules => [...rules].flatMap(r =>
+    r.style ? [r] : r.cssRules ? collectRules(r.cssRules) : []
+  );
+
+  function parseSheet(cssText) {
+    const sheet = new CSSStyleSheet();
+    try { sheet.replaceSync(cssText); } catch { return []; }
+    return collectRules(sheet.cssRules);
+  }
+
+  const styleOf = rules => Object.fromEntries(
+    rules.flatMap(r => [...r.style].map(p => [toCamel(p), r.style.getPropertyValue(p).trim()]))
+  );
+
+  const selectorCsss = sel => {
+    const m = sel?.match(/\.((?:\\.|[a-zA-Z0-9_-]|\\\$|\\\||\\\*)+)/);
+    return m ? m[1].replace(/\\(.)/g, '$1') : null;
+  };
+
+  async function test(shot) {
+    const rules = parseSheet(shot.css?.value ?? "");
+    if (!rules.length) return { key: shot.description?.value || "no rules", actual: "{}", expected: "{}" };
+
+    const results = rules.flatMap(r => {
+      const statement = selectorCsss(r.selectorText) || shot.csss?.value.trim() || "";
+      if (!statement) return [];
+      const expectedStyle = styleOf([r]);
+      let actualStyle = {};
+      try {
+        const parsed = CSSS.parse(CSSS.reverse(expectedStyle));
+        if (parsed) actualStyle = styleOf(parseSheet(parsed.map(p => p.cssText).join("\n")));
+      } catch (e) { console.error(e); }
+      return [{ statement, expectedStyle, actualStyle }];
+    });
+    return results.length === 1
+      ? { key: results[0].statement, actual: sortedStr(results[0].actualStyle), expected: sortedStr(results[0].expectedStyle) }
+      : { key: results.map(r => r.statement).join(" | "), actual: results.map(r => sortedStr(r.actualStyle)).join("\n---\n"), expected: results.map(r => sortedStr(r.expectedStyle)).join("\n---\n") };
+  }
+
+  runTests("block,border,box,filter,flex,font,grid,iBlock,paragraph,position,shadows,svg,textDecoration,transforms", test, "/shots/genre/");
+</script>

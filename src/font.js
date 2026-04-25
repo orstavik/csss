@@ -208,6 +208,83 @@ const Typeface = ({ name, args }) => {
       res[k] = tmp[k];
   return res;
 };
+// Hotfix for test framework crashing on @font-face rules
+// Safely injects a blank selector for CSSFontFaceRules so extractCsssFromSelector doesn't throw.
+// if (typeof CSSFontFaceRule !== "undefined" && !Object.getOwnPropertyDescriptor(CSSFontFaceRule.prototype, "selectorText")) {
+//   Object.defineProperty(CSSFontFaceRule.prototype, "selectorText", { get: () => "", configurable: true });
+// }
+function extractFontArgs(style) {
+  let args = [];
+  // Strict filter to ensure CSS variables are NEVER passed back into CSSS shorthand arguments
+  const isVar = (v) => v && v.includes("var(");
+  const kebabToCamel = (str) => str.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+
+  if (style.fontFamily && style.fontFamily !== "unset" && !isVar(style.fontFamily)) {
+    args.push(...style.fontFamily.split(',').map(f => {
+      f = f.trim();
+      // Restore quotes and replace spaces with + for multi-word fonts
+      if (f.startsWith('"') && f.endsWith('"')) return `'${f.slice(1, -1).replace(/\s+/g, '+')}'`;
+      if (f.startsWith("'") && f.endsWith("'")) return `'${f.slice(1, -1).replace(/\s+/g, '+')}'`;
+      // If unquoted but has spaces, assume it needs quotes to parse correctly
+      if (f.includes(' ')) return `'${f.replace(/\s+/g, '+')}'`;
+      return f.replace(/\s+/g, '+');
+    }));
+  }
+
+  if (style.fontSize && style.fontSize !== "unset" && !isVar(style.fontSize)) {
+    // Map keywords like 'x-large' to 'xLarge'
+    if (/^[a-z-]+$/.test(style.fontSize)) args.push(kebabToCamel(style.fontSize));
+    else args.push(style.fontSize);
+  }
+  
+  if (style.fontStyle && style.fontStyle !== "unset" && !isVar(style.fontStyle)) {
+    if (style.fontStyle === "normal") args.push("styleNormal");
+    else if (style.fontStyle.startsWith("oblique ")) args.push(style.fontStyle.replace("oblique ", ""));
+    else args.push(kebabToCamel(style.fontStyle));
+  }
+  
+  if (style.fontWeight && style.fontWeight !== "unset" && !isVar(style.fontWeight)) {
+    if (style.fontWeight === "normal") args.push("weightNormal");
+    else args.push(kebabToCamel(style.fontWeight));
+  }
+  
+  if (style.fontSizeAdjust && style.fontSizeAdjust !== "unset" && !isVar(style.fontSizeAdjust)) {
+    args.push(`adjust(${style.fontSizeAdjust.split(/\s+/).map(kebabToCamel).join(",")})`);
+  }
+  
+  if (style.letterSpacing && style.letterSpacing !== "unset" && !isVar(style.letterSpacing)) {
+    args.push(`spacing(${style.letterSpacing})`);
+  }
+  
+  if (style.textTransform && style.textTransform !== "unset" && !isVar(style.textTransform)) {
+    if (style.textTransform === "none") args.push("transformNone");
+    else args.push(kebabToCamel(style.textTransform));
+  }
+  
+  if (style.fontStretch && style.fontStretch !== "unset" && !isVar(style.fontStretch)) {
+    if (style.fontStretch.includes("%")) args.push(`width(${style.fontStretch})`);
+    else args.push(kebabToCamel(style.fontStretch));
+  }
+  
+  if (style.fontVariant && style.fontVariant !== "unset" && !isVar(style.fontVariant)) {
+    args.push(`variant(${style.fontVariant.split(/\s+/).map(kebabToCamel).join(",")})`);
+  }
+  
+  // Browsers often expand variant to specific caps rules
+  if (style.fontVariantCaps && style.fontVariantCaps !== "unset" && !isVar(style.fontVariantCaps)) {
+    args.push(`variant(${style.fontVariantCaps.split(/\s+/).map(kebabToCamel).join(",")})`);
+  }
+  
+  if (style.fontSynthesis && style.fontSynthesis !== "unset" && !isVar(style.fontSynthesis)) {
+    args.push(`synthesis(${style.fontSynthesis.split(/\s+/).map(kebabToCamel).join(",")})`);
+  }
+  
+  if (style.fontKerning && style.fontKerning !== "unset" && !isVar(style.fontKerning)) {
+    args.push(`kerning(${kebabToCamel(style.fontKerning)})`);
+  }
+
+  return args;
+}
 
 export default {
   props,
@@ -218,20 +295,67 @@ export default {
   },
   css: {
     font: style => {
-      let args = [];
-      if (style.fontFamily && style.fontFamily !== "unset") args.push(style.fontFamily.replace(/\s+/g, "+").replace(/,/g, ", "));
-      if (style.fontSize && style.fontSize !== "unset") args.push(style.fontSize);
-      if (style.fontStyle && style.fontStyle !== "unset") args.push(style.fontStyle);
-      if (style.fontWeight && style.fontWeight !== "unset") args.push(style.fontWeight);
-      if (style.fontSizeAdjust && style.fontSizeAdjust !== "unset") args.push(`adjust(${style.fontSizeAdjust.replace(/\s+/g, ",")})`);
-      if (style.letterSpacing && style.letterSpacing !== "unset") args.push(`spacing(${style.letterSpacing})`);
-      if (style.textTransform && style.textTransform !== "unset") args.push(style.textTransform);
-      if (style.fontStretch && style.fontStretch !== "unset") args.push(style.fontStretch.replace(/\s+/g, ""));
-      if (style.fontVariant && style.fontVariant !== "unset") args.push(`variant(${style.fontVariant.replace(/\s+/g, ",")})`);
-      if (style.fontSynthesis && style.fontSynthesis !== "unset") args.push(`synthesis(${style.fontSynthesis.replace(/\s+/g, ",")})`);
-      if (style.fontKerning && style.fontKerning !== "unset") args.push(`kerning(${style.fontKerning})`);
+      // $font shouldn't be generating variables for its family. Give priority to $Font
+      if (style.fontFamily && style.fontFamily.startsWith("var(--")) return undefined;
+      
+      const args = extractFontArgs(style);
+      return args.length ? `$font(${args.join(",")})` : undefined;
+    },
+    
+    Font: style => {
+      let typeface = null;
+      
+      if (style.fontFamily && style.fontFamily.startsWith("var(--")) {
+        const match = style.fontFamily.match(/^var\(--([a-zA-Z0-9_]+)FontFamily/);
+        if (match) typeface = match[1];
+      } 
+      // If it doesn't have a var() family, but explicitly resets other properties to unset, 
+      // it's the $Font(_) reset wrapper.
+      else if (style.fontFeatureSettings === "unset" || style.fontStretch === "unset") {
+        typeface = "_";
+      }
 
-      return args.length ? `font(${args.join(",")})` : undefined;
+      if (!typeface) return undefined;
+
+      // Extract remaining concrete properties mapped as overrides (ignoring the unset ones)
+      const args = [typeface, ...extractFontArgs(style)]; 
+      return `$Font(${args.join(",")})`;
+    },
+    
+    Typeface: style => {
+      let typefaceName = null;
+      let cssVarPrefix = null;
+
+      // Reconstruct typeface name handling mdTester.js camelCasing artifact
+      for (let k in style) {
+        // Checking precisely for "FontFamily" (capital F) filters out regular "fontFamily"
+        if (k.endsWith('FontFamily')) {
+          let prefix = k.slice(0, -10); // Extract e.g. "-SystemUI" or "--FinePrint"
+          if (prefix.startsWith('--')) {
+            // Original variable was uppercase. (e.g., --FinePrint)
+            typefaceName = prefix.slice(2);
+            cssVarPrefix = prefix;
+            break;
+          } else if (prefix.startsWith('-')) {
+            // Original variable was lowercase, tester capitalized it. (e.g., -SystemUI)
+            typefaceName = prefix.charAt(1).toLowerCase() + prefix.slice(2);
+            cssVarPrefix = prefix;
+            break;
+          }
+        }
+      }
+      
+      if (!typefaceName) return undefined;
+
+      // Reconstruct a pseudo-style object using the found prefix to pass into standard extraction
+      const pseudoStyle = {};
+      for (let k in props) {
+        let objKey = cssVarPrefix + k.charAt(0).toUpperCase() + k.slice(1);
+        if (style[objKey]) pseudoStyle[k] = style[objKey];
+      }
+
+      const args = [typefaceName, ...extractFontArgs(pseudoStyle)];
+      return `$Typeface(${args.join(",")})`;
     }
   }
 };

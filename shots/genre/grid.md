@@ -332,8 +332,8 @@ The chessboard squares are collapsing because they lack explicit dimensions. Tar
   grid-template-areas: unset;
   gap: unset;
   grid-auto-flow: unset;
-  background-color: var(--color-board);
   background: none;
+  background-color: var(--color-board);
   background-blend-mode: normal;
 }
 

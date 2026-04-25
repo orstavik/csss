@@ -166,7 +166,7 @@ for (let [kebab, types] of Object.entries(NativeCss.supported)) {
     REVERSES[camel] = style => {
       let v = style[camel];
       if (v !== undefined) {
-        return `${camel}(${v.replace(/\s+/g, ",")})`;
+        return `$${camel}(${v.replace(/\s+/g, ",")})`;
       }
       return undefined;
     };

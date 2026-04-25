@@ -122,8 +122,17 @@ function ObjectAssignStack(a, b) {
     if (v == null) continue;
     else if (Array.isArray(a[k]))
       a[k].push(v);
-    else if (k in a && JSON.stringify(a[k]) != JSON.stringify(v))
-      a[k] = [a[k], v];
+    else if (k in a && JSON.stringify(a[k]) != JSON.stringify(v)) {
+      if (k === "display") {
+        if (v === "block" && (a[k] === "flex" || a[k] === "grid" || a[k] === "inline-flex" || a[k] === "inline-grid")) {
+          // keep the more specific layout mode
+        } else {
+          a[k] = v;
+        }
+      } else {
+        a[k] = [a[k], v];
+      }
+    }
     else
       a[k] = v;
   }

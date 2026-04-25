@@ -1,6 +1,7 @@
-import { CsssPrimitives, BadArgument, CsssFunctions } from "./func.js";
+import { CsssPrimitives, BadArgument, CsssFunctions, CssFunctions } from "./func.js";
 const { Length } = CsssPrimitives;
 const { CssValuesToCsssTable } = CsssFunctions;
+const { ValueReverse, ColorReverse, Optional, normalizeToLogical, TableReverse } = CssFunctions;
 import { Color } from "./funcColor.js";
 
 const style = CssValuesToCsssTable("solid|dashed|dotted|double|wavy|blink|grammar-error|spelling-error");
@@ -27,31 +28,50 @@ const textDecoration = ({ name, args }) => {
 const textDecorationNone = {
   textDecoration: "none",
   textDecorationSkipInk: "auto",
-}
+};
+const styleReverse = TableReverse(style);
+
+const props = {
+  textDecoration: undefined,
+  textDecorationColor: undefined,
+  textDecorationLine: undefined,
+  textDecorationSkip: undefined,
+  textDecorationSkipInk: undefined,
+  textDecorationStyle: undefined,
+  textDecorationThickness: undefined,
+};
+
 export default {
   csss: {
     textDecoration,
     textDecorationNone,
   },
-  props: {
-    textDecoration: undefined,
-    textDecorationColor: undefined,
-    textDecorationLine: undefined,
-    textDecorationSkip: undefined,
-    textDecorationSkipInk: undefined,
-    textDecorationStyle: undefined,
-    textDecorationThickness: undefined,
-  },
+  props,
   css: {
     textDecoration: style => {
-      const v = style.textDecoration;
-      const skip = style.textDecorationSkipInk;
-      if (v === "none") return "textDecorationNone";
-      if (!v && !skip) return undefined;
-      const parts = (v || "").split(" ").filter(p => p && p !== "solid");
-      if (skip === "none") parts.push("noSkipInk");
-      if (parts.length === 0) return "textDecoration(solid)";
-      return `textDecoration(${parts.map(p => p === "overline" ? "over" : p === "underline" ? "under" : p === "line-through" ? "through" : p).join(",")})`;
+      style = normalizeToLogical(style);
+      if (style.textDecorationLine === "none" || style.textDecoration === "none") return "$textDecorationNone";
+      return Optional("$textDecoration",
+        style => {
+          const s = style.textDecorationStyle?.toLowerCase();
+          return (s && s !== "solid" && s !== "initial") ? styleReverse[s] : undefined;
+        },
+        style => {
+          const l = style.textDecorationLine?.toLowerCase();
+          if (!l || l === "none" || l === "initial") return undefined;
+          const res = [];
+          if (l.includes("overline")) res.push("over");
+          if (l.includes("underline")) res.push("under");
+          if (l.includes("line-through")) res.push("through");
+          return res.length ? res.join(",") : undefined;
+        },
+        style => {
+          const c = style.textDecorationColor;
+          return (c && c !== "initial" && c !== "currentcolor") ? ColorReverse(c) : undefined;
+        },
+        style => ValueReverse(style.textDecorationThickness),
+        style => style.textDecorationSkipInk === "none" ? "noSkipInk" : undefined
+      )(style);
     }
   }
-}
+};

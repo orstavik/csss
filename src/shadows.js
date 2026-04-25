@@ -1,6 +1,7 @@
 //todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
 import { Color } from "./funcColor.js";
-import { CsssPrimitives, matchArgsWithInterpreters, BadArgument, CssPrimitives } from "./func.js";
+import { CsssPrimitives, matchArgsWithInterpreters, BadArgument, CssPrimitives, CssFunctions } from "./func.js";
+const { ColorReverse, ValueReverse } = CssFunctions;
 const { Length, Radian, LengthNumberRaw } = CsssPrimitives;
 // There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 
 // Then in the $shadow(shade,angle,length,color?) to use it.
@@ -13,6 +14,8 @@ const { Length, Radian, LengthNumberRaw } = CsssPrimitives;
 // By design, we flip @light/@dark on the elements with the shadow. Lob.
 // This is likely better than trying to cluster such changes, as the shadows is unlikely to follow the same thematic logic in light and dark mode.
 // Ie. elements that have the same shadow in lightmode, might have different/no shadows in darkmode, and vice versa.
+// 
+// angle default is 135deg.
 
 const SHADES = {
   ambient: { l: 1, b: 1.5, s: 1.25 },
@@ -80,6 +83,25 @@ const textDropShadow = ({ name, args }) => {
 const { splitOnComma, spacelessCssTokens } = CssPrimitives;
 //todo i need to do splitOnComma(unpackCalc(spacelessCssTokens(str)))
 
+const reverseShadow = (name, val) =>
+  !val || val === "none"
+    ? undefined
+    : val
+      .split(/,(?![^(]*\))/)
+      .map(s => {
+        let inset, color;
+        const args = s.trim().split(/\s+(?![^(]*\))/).flatMap(t => {
+          if (t === "inset") return (inset = true), [];
+          const c = ColorReverse(t);
+          if (c) return (color = c), [];
+          return [ValueReverse(t)];
+        });
+        if (color) args.push(color);
+        if (inset) args.unshift("inset");
+        return `$${name}(${args.join(",")})`;
+      })
+      .join("");
+
 export default {
   props: { boxShadow: undefined, textShadow: undefined },
   csss: {
@@ -89,18 +111,8 @@ export default {
     noTextShadow: { textShadow: "none" },
   },
   css: {
-    boxShadow: style => {
-      if (style.boxShadow == null) return undefined;
-      if (style.boxShadow === "none") return "noBoxShadow";
-      return splitOnComma(spacelessCssTokens(style.boxShadow)).map(t =>
-        `$boxShadow(${t.join(",")})`).join("");
-    },
-    textShadow: style => {
-      if (style.textShadow == null) return undefined;
-      if (style.textShadow === "none") return "noTextShadow";
-      return splitOnComma(spacelessCssTokens(style.textShadow)).map(t =>
-        `$textShadow(${t.join(",")})`).join("");
-    },
+    boxShadow: style => reverseShadow("boxShadow", style.boxShadow),
+    textShadow: style => reverseShadow("textShadow", style.textShadow),
   },
   raw: {
     textDropShadowRaw,

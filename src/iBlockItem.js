@@ -1,7 +1,7 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
 const { LengthPercentAuto } = CsssPrimitives;
-const { LogicalFourReverse, SingleTableReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, SingleTableReverse, Optional, OptionalReset, ValueReverse, normalizeToLogical, DisplayMode } = CssFunctions;
 
 const float = {
   floatStart: "inline-start",
@@ -49,16 +49,20 @@ export default {
     IBlockItem
   },
   props: {
+    display: undefined,
     ...marginProps,
     float: undefined,
     clear: undefined,
     verticalAlign: undefined,
   },
   css: {
-    iBlockItem: Optional("iBlockItem",
-      LogicalFourReverse("margin", "margin", v => v, "_"),
-      SingleTableReverse("float", float),
-      SingleTableReverse("clear", clear)
-    ),
+    iBlockItem: style => {
+      const normalized = normalizeToLogical(style);
+      return OptionalReset("$iBlockItem", "$IBlockItem", DefaultIBlockItem,
+        { prop: "margin", rev: LogicalFourReverse("margin", "margin", ValueReverse, "_") },
+        { prop: "float", rev: SingleTableReverse("float", float) },
+        { prop: "clear", rev: SingleTableReverse("clear", clear) }
+      )(normalized);
+    }
   }
 };

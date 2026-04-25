@@ -1,7 +1,7 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, SF2: SF2, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercent, LengthPercentUnset, Repeat } = CsssPrimitives;
-const { LogicalFourReverse, SingleTableReverse, SequentialFunctionReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, SingleTableReverse, SequentialFunctionReverse, Optional, OptionalReset, DisplayMode, ValueReverse, normalizeToLogical } = CssFunctions;
 
 const gridAutoFlow = {
   column: "column",
@@ -53,6 +53,40 @@ const grid = TypeBasedFunction(
 
 const Grid = FunctionWithDefaultValues(DefaultGrid, grid);
 
+/** Split a CSS grid track list (space-separated at top level) into comma-joined CSSS args. */
+function cssTrackToArgs(value) {
+  if (!value || value === "unset" || value === "none") return undefined;
+  const parts = [];
+  let depth = 0, cur = "";
+  for (const c of value) {
+    if (c === "(") { depth++; cur += c; }
+    else if (c === ")") { depth--; cur += c; }
+    else if (c === " " && depth === 0) {
+      if (cur) parts.push(cur);
+      cur = "";
+    } else {
+      cur += c;
+    }
+  }
+  if (cur) parts.push(cur);
+  return parts.length ? parts.map(p => p.replace(/,\s*/g, ",")).join(",") : undefined;
+}
+
+const reverseTrack = (fnName, prop) => style => {
+  const args = cssTrackToArgs(style[prop]);
+  return args ? `${fnName}(${args})` : undefined;
+};
+
+const placeContentRev = Object.fromEntries(Object.entries(placeContent).map(([k, v]) => [v, k]));
+const reversePlaceContent = style => {
+  const ac = style.alignContent, jc = style.justifyContent;
+  const aValid = ac && ac !== "unset";
+  const jValid = jc && jc !== "unset";
+  if (!aValid && !jValid) return undefined;
+  if (!jValid || ac === jc) return placeContentRev[ac];
+  return placeContentRev[`${ac} ${jc}`] ?? placeContentRev[ac];
+};
+
 export default {
   csss: {
     grid,
@@ -72,14 +106,21 @@ export default {
     gridAutoFlow: undefined,
   },
   css: {
-    grid: Optional("grid",
-      LogicalFourReverse("padding", "padding", v => v, "_"),
-      SingleTableReverse("placeContent", placeContent),
-      SequentialFunctionReverse("columns", ["gridTemplateColumns"], v => v, "_"), // can't reliably output cols/columns
-      SequentialFunctionReverse("rows", ["gridTemplateRows"], v => v, "_"),
-      SequentialFunctionReverse("areas", ["gridTemplateAreas"], v => v, "_"),
-      SequentialFunctionReverse("gap", ["rowGap", "columnGap"], v => v, "_"),
-      SingleTableReverse("gridAutoFlow", gridAutoFlow)
-    ),
+    grid: style => {
+      if (style.display && style.display !== "grid" && style.display !== "unset") return;
+      const isGrid = style.display === "grid";
+      const normalized = normalizeToLogical(style);
+      const result = OptionalReset("$grid", "$Grid", DefaultGrid,
+        { prop: ["padding", "paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "paddingBlockStart", "paddingInlineStart", "paddingBlockEnd", "paddingInlineEnd"], rev: LogicalFourReverse("padding", "padding", ValueReverse, "_") },
+        { prop: ["alignContent", "justifyContent"], rev: reversePlaceContent },
+        { prop: "gridTemplateColumns", rev: reverseTrack("cols", "gridTemplateColumns") },
+        { prop: "gridTemplateRows", rev: reverseTrack("rows", "gridTemplateRows") },
+        { prop: "gridTemplateAreas", rev: reverseTrack("areas", "gridTemplateAreas") },
+        { prop: ["rowGap", "columnGap"], rev: SequentialFunctionReverse("gap", ["rowGap", "columnGap"], ValueReverse, "_") },
+        { prop: "gridAutoFlow", rev: SingleTableReverse("gridAutoFlow", gridAutoFlow) }
+      )(normalized);
+      if (result !== undefined) return result;
+      if (isGrid) return "$Grid";
+    },
   }
 };

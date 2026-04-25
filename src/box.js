@@ -1,7 +1,7 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions, BadArgument } from "./func.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, SizeFunction, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercent, LengthPercentUnset, NumberInterpreter } = CsssPrimitives;
-const { LogicalFourReverse } = CssFunctions;
+const { LogicalFourReverse, Optional, OptionalReset, DisplayMode, ValueReverse, normalizeToLogical } = CssFunctions;
 
 const scrollPaddingProps = {
   scrollPadding: undefined,
@@ -100,6 +100,9 @@ function coverImage({ name, args, text }) {
   };
 }
 
+/** $box / $Box reverse: valid on block-level and flex/grid containers, not e.g. inline. */
+const BOX_REVERSE_DISPLAYS = new Set(["block", "inline-block", "flex", "inline-flex", "grid", "inline-grid"]);
+
 const DefaultBox = {
   blockSize: "unset",
   minBlockSize: "unset",
@@ -112,7 +115,7 @@ const DefaultBox = {
   scrollSnapType: "unset",
   aspectRatio: "unset",
   objectFit: "unset",
-  objectPosition: "unset",
+  objectPosition: "unset"
 };
 
 const box = TypeBasedFunction(
@@ -129,9 +132,10 @@ const Box = FunctionWithDefaultValues(DefaultBox, box);
 const overflowReverse = Object.fromEntries(Object.entries(overflow).map(([k, v]) => [v, k]));
 const scrollSnapTypeReverse = Object.fromEntries(Object.entries(scrollSnapType).map(([k, v]) => [v, k]));
 const objectFitReverses = Object.fromEntries(Object.entries(ObjectFits).map(([k, v]) => [v, k]));
-const scrollPadding = LogicalFourReverse("scroll-padding", "scrollPadding", v => v, "_");
+const scrollPadding = LogicalFourReverse("scroll-padding", "scrollPadding", ValueReverse, "_");
 const ReverseSizeFunction = prefix => {
-  const min = `min-${prefix}-size`, normal = `${prefix}-size`, max = `max-${prefix}-size`;
+  const capPrefix = prefix[0].toUpperCase() + prefix.slice(1);
+  const min = `min${capPrefix}Size`, normal = `${prefix}Size`, max = `max${capPrefix}Size`;
   return ({ [min]: vMin, [normal]: vNormal, [max]: vMax }) => {
     if (vMax == "unset") vMax = "_";
     if (vMin == "unset") vMin = "_";
@@ -145,24 +149,18 @@ const blockSizeReverse = ReverseSizeFunction("block");
 const inlineSizeReverse = ReverseSizeFunction("inline");
 
 function objectFitReverse({ objectPosition, objectFit, aspectRatio }) {
+  if (objectFit === "unset") objectFit = undefined;
+  if (aspectRatio === "unset") aspectRatio = undefined;
+  if (objectPosition === "unset") objectPosition = undefined;
   if (!aspectRatio && !objectPosition && !objectFit) return;
   if (!aspectRatio && !objectPosition) return objectFitReverses[objectFit];
   objectFit ||= "fill";
-  aspectRatio &&= aspectRatio.replace(/\s/g, "");
+  aspectRatio &&= aspectRatio.replace(/\s*\/\s*/g, "/");
   if (objectPosition) {
-    const pos = objectPosition?.split(" ") || [];
-    let x, y, x2, y2;
-    for (let i = 0; i < pos.length; i++) {
-      if (!x && (pos[i] === "left" || pos[i] === "right" || pos[i] === "center"))
-        x = pos[i];
-      else if (!y && (pos[i] === "top" || pos[i] === "bottom" || pos[i] === "center"))
-        y = pos[i];
-      else if (!y) x2 = pos[i];
-      else y2 = pos[i];
-    }
-    objectPosition = [x, x2, y, y2].filter(Boolean).join(" "); //here we actually want to remove the 0 as it is the default value.
+    // use comma as separator — space breaks csss parser
+    objectPosition = objectPosition.split(" ").join(",");
   }
-  return `${objectFit}(${[aspectRatio, objectPosition].filter(Boolean).join(",")})`;
+  return `${objectFitReverses[objectFit] ?? objectFit}(${[aspectRatio, objectPosition].filter(Boolean).join(",")})`;
 }
 
 export default {
@@ -173,19 +171,25 @@ export default {
   props,
   css: {
     box: style => {
-      let x, y;
-      let o = overflowReverse[(x = style["overflow-x"] ?? "auto") === (y = style["overflow-y"] ?? "auto") ? x : `${x} ${y}`];
-      if (o === "auto") o = undefined;
-      let inline = inlineSizeReverse(style);
-      let block = blockSizeReverse(style);
-      const snapType = scrollSnapTypeReverse[style["scroll-snap-type"]];
-      const padding = scrollPadding(style);
-      const coverStr = objectFitReverse(style);
-      const bigB = o && inline && block && snapType && padding && coverStr;
-      if (block === "_<_<_") block = undefined;
-      if (inline === "_<_<_") inline = block && "_";
-      const res = [inline, block, o, snapType, padding, coverStr].filter(Boolean);
-      return !res.length ? undefined : `$${bigB ? "B" : "b"}ox(${res.join(",")})`;
-    },
+      const d = style.display;
+      if (d && d !== "unset" && !BOX_REVERSE_DISPLAYS.has(d)) return;
+      const normalized = normalizeToLogical(style);
+      if (style.objectPosition && style.objectPosition !== normalized.objectPosition) normalized.objectPosition = style.objectPosition;
+      return OptionalReset("$box", "$Box", DefaultBox,
+        { prop: ["minInlineSize", "inlineSize", "maxInlineSize"], rev: inlineSizeReverse },
+        { prop: ["minBlockSize", "blockSize", "maxBlockSize"], rev: blockSizeReverse },
+        {
+          prop: ["overflowX", "overflowY", "overflow"], rev: s => {
+            const ox = s.overflowX, oy = s.overflowY, o = s.overflow;
+            if (ox === "unset" && oy === "unset" && (!o || o === "unset")) return undefined;
+            return overflowReverse[o] ?? overflowReverse[ox === oy ? ox : `${ox} ${oy}`];
+          }
+        },
+        { prop: "scrollSnapType", rev: s => scrollSnapTypeReverse[s.scrollSnapType] },
+        { prop: ["scrollPadding", "scrollPaddingTop", "scrollPaddingRight", "scrollPaddingBottom", "scrollPaddingLeft", "scrollPaddingBlockStart", "scrollPaddingInlineStart", "scrollPaddingBlockEnd", "scrollPaddingInlineEnd"], rev: scrollPadding },
+
+        { prop: ["aspectRatio", "objectFit", "objectPosition"], rev: objectFitReverse }
+      )(normalized);
+    }
   }
 };

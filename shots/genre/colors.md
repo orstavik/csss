@@ -66,8 +66,8 @@ Define a color palette named "primary" with a foreground color of #darkblue and 
 ```css
 .\$color\(\#primary08\)\$Bg\(\#primary75\) {
   color: color-mix(in oklab, var(--color-primary) 8%, var(--color-primary-1));
-  background-color: color-mix(in oklab, var(--color-primary) 75%, var(--color-primary-1));
   background: none;
+  background-color: color-mix(in oklab, var(--color-primary) 75%, var(--color-primary-1));
   background-blend-mode: normal;
 }
 ```
@@ -235,20 +235,20 @@ Set up two palettes on the body: a "primary" palette with royalblue/skyblue and 
 }
 
 .\$Bg\(\#primary\) {
-  background-color: var(--color-primary);
   background: none;
+  background-color: var(--color-primary);
   background-blend-mode: normal;
 }
 
 .\$Bg\(\#primary50\) {
-  background-color: color-mix(in oklab, var(--color-primary) 50%, var(--color-primary-1));
   background: none;
+  background-color: color-mix(in oklab, var(--color-primary) 50%, var(--color-primary-1));
   background-blend-mode: normal;
 }
 
 .\$Bg\(\#primary20\/50\) {
-  background-color: rgb(from color-mix(in oklab, var(--color-primary) 20%, var(--color-primary-1)) r g b / 50%);
   background: none;
+  background-color: rgb(from color-mix(in oklab, var(--color-primary) 20%, var(--color-primary-1)) r g b / 50%);
   background-blend-mode: normal;
 }
 
@@ -319,14 +319,14 @@ Consolidate various text and background color modifications into a single elemen
 }
 
 .\$Bg\(\#green\#H\+30\) {
-  background-color: oklch(from green l c calc(h + 30) / alpha);
   background: none;
+  background-color: oklch(from green l c calc(h + 30) / alpha);
   background-blend-mode: normal;
 }
 
 .\$Bg\(\#blue\#C\*1\.5\) {
-  background-color: oklch(from blue l max(c * 1.5, c + 0.01) h / alpha);
   background: none;
+  background-color: oklch(from blue l max(c * 1.5, c + 0.01) h / alpha);
   background-blend-mode: normal;
 }
 ```

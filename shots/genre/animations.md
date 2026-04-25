@@ -218,8 +218,8 @@ Syntax Optimization/Refactoring: The alert is flashing because JS is toggling a 
 }
 
 .\$animate\(alternate\,infinite\,0s\>1s\)\$Bg\(\#yellow\>\#transparent\) {
-  background-color: yellow;
   background: none;
+  background-color: yellow;
   background-blend-mode: normal;
   animation: alternate 1000ms infinite a0_backgroundColoryellow100_backgroundColortransparent;
 }
@@ -286,8 +286,8 @@ Syntax Optimization/Refactoring: We use a JS timeout to append an 'is-green' cla
 }
 
 .\$animate\(forwards\,0s\>2s\)\$Bg\(\#transparent\>\#lightgreen\) {
-  background-color: transparent;
   background: none;
+  background-color: transparent;
   background-blend-mode: normal;
   animation: 2000ms forwards a0_backgroundColortransparent100_backgroundColorlightgreen;
 }

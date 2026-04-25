@@ -1,7 +1,7 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
 const { TypeBasedFunction, LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
 const { LengthPercent } = CsssPrimitives;
-const { LogicalFourReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, Optional, OptionalReset, DisplayMode, ValueReverse, normalizeToLogical } = CssFunctions;
 
 const DefaultIBlock = {
   display: "inline-block",
@@ -38,8 +38,15 @@ export default {
     ...paddingProps,
   },
   css: {
-    iBlock: Optional("iBlock",
-      LogicalFourReverse("padding", "padding", v => v, "_")
-    ),
+    iBlock: style => {
+      if (style.display && style.display !== "inline-block" && style.display !== "unset") return;
+      const isIBlock = style.display === "inline-block";
+      const normalized = normalizeToLogical(style);
+      const paddingRev = LogicalFourReverse("padding", "padding", ValueReverse, "_")(normalized);
+      if (paddingRev) return `${isIBlock ? "$IBlock" : "$iBlock"}(${paddingRev})`;
+      const hasExplicitUnset = Object.keys(paddingProps).some(p => style.hasOwnProperty(p) && (style[p] === "unset" || style[p] === "initial"));
+      if (!hasExplicitUnset) return undefined;
+      return isIBlock ? "$IBlock" : "$iBlock";
+    },
   }
 };

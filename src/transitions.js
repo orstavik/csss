@@ -44,16 +44,16 @@ export default {
   css: {
     transition: style => {
       if (!style.transition) return undefined;
-      // transitions are tricky to reverse correctly because properties could be grouped or not.
-      // let's do a basic reverse by joining the commas as separate transition() calls,
-      // or try to recreate transition(ease, dur, delay, prop).
-      // actually, just putting it as transition(prop, dur, ease) is not perfectly matching original csss
-      // csss signature is ease, dur, delay, allowDiscrete, props...
-      // CSS output is `prop ease dur delay` comma separated.
-      // Let's implement a simple reverse by comma replacing.
-      let transitions = style.transition.split(/,(?![^(]*\))/);
-      transitions = transitions.map(t => t.trim().split(/\s+/).join(","));
-      return `transition(${transitions.join("), transition(")})`;
+
+      const transitions = style.transition
+        .split(/,(?![^(]*\))/)
+        .map(t => t.trim())
+        .filter(Boolean)
+        .map(t => t.split(/\s+/).join(","));
+
+      if (!transitions.length) return undefined;
+
+      return `$transition(${transitions.join("), $transition(")})`;
     }
   }
 };

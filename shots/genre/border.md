@@ -38,6 +38,11 @@
   border-start-end-radius: 5px 3%;
   border-end-start-radius: 1rem 0;
   border-end-end-radius: 1rem 3%;
+  border-image-outset: initial;
+  border-image-repeat: initial;
+  border-image-slice: initial;
+  border-image-source: initial;
+  border-image-width: initial;
 }
 ```
 
@@ -215,6 +220,11 @@
   border-style: solid;
   border-color: green;
   border-radius: 0;
+  border-image-outset: initial;
+  border-image-repeat: initial;
+  border-image-slice: initial;
+  border-image-source: initial;
+  border-image-width: initial;
 }
 
 .\$border\(\#red\) {
@@ -240,6 +250,11 @@
   border-style: solid;
   border-color: darkgrey;
   border-radius: 0;
+  border-image-outset: initial;
+  border-image-repeat: initial;
+  border-image-slice: initial;
+  border-image-source: initial;
+  border-image-width: initial;
 }
 ```
 

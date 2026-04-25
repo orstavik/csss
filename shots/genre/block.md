@@ -2057,8 +2057,8 @@ The comment threads lack spacing, and the individual nested messages bleed into 
   object-position: unset;
   display: block;
   padding: unset;
-  background-color: var(--color-surface);
   background: none;
+  background-color: var(--color-surface);
   background-blend-mode: normal;
 }
 
@@ -2082,8 +2082,8 @@ The comment threads lack spacing, and the individual nested messages bleed into 
   aspect-ratio: unset;
   object-fit: unset;
   object-position: unset;
-  background-color: var(--color-raised);
   background: none;
+  background-color: var(--color-raised);
   background-blend-mode: normal;
 }
 ```

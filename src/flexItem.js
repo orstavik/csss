@@ -1,7 +1,7 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions, BadArgument } from "./func.js";
 const { SF2, TypeBasedFunction, LogicalFour, FunctionPropertyType, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercentAuto, NumberInterpreter, SingleTableRaw, } = CsssPrimitives;
-const { LogicalFourReverse, SingleTableReverse, SingleArgumentFunctionReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, SingleTableReverse, SingleArgumentFunctionReverse, Optional, OptionalReset, DisplayMode, ValueReverse, normalizeToLogical} = CssFunctions;
 
 const AlignSelf = CssValuesToCsssTable(
   "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly|baseline|first baseline|last baseline"
@@ -61,6 +61,7 @@ export default {
     FlexItem,
   },
   props: {
+    display: undefined,
     flex: undefined,
     ...marginProps,
     alignSelf: undefined,
@@ -70,14 +71,25 @@ export default {
     order: undefined,
   },
   css: {
-    flexItem: Optional("flexItem",
-      LogicalFourReverse("margin", "margin", v => v, "_"),
-      SingleTableReverse("alignSelf", AlignSelf),
-      //todo fix the reverse functions here.
-      SingleArgumentFunctionReverse("basis", "flexBasis", v => v, "_"),
-      SingleArgumentFunctionReverse("grow", "flexGrow", v => v, "_"),
-      SingleArgumentFunctionReverse("shrink", "flexShrink", v => v, "_"),
-      SingleArgumentFunctionReverse("order", "order", v => v, "_")
-    ),
+    flexItem: style => {
+      const isGridPlacement = v => v && v !== "unset" && v !== "auto";
+      if (isGridPlacement(style.gridColumnStart) || isGridPlacement(style.gridColumnEnd) ||
+          isGridPlacement(style.gridRowStart) || isGridPlacement(style.gridRowEnd) ||
+          isGridPlacement(style.gridColumn) || isGridPlacement(style.gridRow) ||
+          isGridPlacement(style.justifySelf)) return;
+      const normalized = normalizeToLogical(style);
+      return OptionalReset("$flexItem", "$FlexItem", DefaultFlexItem,
+        { prop: ["flex", "flexGrow"], rev: s => ValueReverse(s.flexGrow) },
+        { prop: ["flex", "flexShrink"], rev: s => ValueReverse(s.flexShrink) },
+        { prop: ["flex", "flexBasis"], rev: s => ValueReverse(s.flexBasis) },
+        { prop: "alignSelf", rev: SingleTableReverse("alignSelf", AlignSelf) },
+        { prop: ["margin", "marginTop", "marginRight", "marginBottom", "marginLeft", "marginBlockStart", "marginInlineStart", "marginBlockEnd", "marginInlineEnd"], rev: LogicalFourReverse("margin", "margin", ValueReverse, "_") },
+        {
+          prop: "order", rev: s => s.order && s.order !== "unset"
+            ? `order(${s.order})`
+            : undefined
+        }
+      )(normalized);
+    }
   }
 };

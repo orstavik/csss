@@ -1,6 +1,6 @@
 import { CsssFunctions, CssFunctions } from "./func.js";
 const { TypeBasedFunction, CssValuesToCsssTable, SingleTable } = CsssFunctions;
-const { Optional, SingleTableReverse } = CssFunctions;
+const { Optional, SingleTableReverse, DisplayMode, normalizeToLogical } = CssFunctions;
 
 const verticalAlign = CssValuesToCsssTable("baseline|sub|super|text-top|text-bottom|middle|top|bottom");
 
@@ -8,6 +8,11 @@ const paragraphItem = TypeBasedFunction(SingleTable("verticalAlign", verticalAli
 
 export default {
   csss: { paragraphItem, },
-  props: { verticalAlign: undefined, },
-  css: { paragraphItem: Optional("paragraphItem", SingleTableReverse("verticalAlign", verticalAlign)), }
+  props: { display: undefined, verticalAlign: undefined, },
+  css: {
+    paragraphItem: style => {
+      const rev = SingleTableReverse("verticalAlign", verticalAlign)(style);
+      return rev ? `$paragraphItem(${rev})` : undefined;
+    },
+  }
 };

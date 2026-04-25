@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, matchArgsWithInterpreters } from "./func.js";
-const { LengthPercent } = CsssPrimitives;
+import { BadArgument, CsssPrimitives, CsssFunctions, CssFunctions, matchArgsWithInterpreters } from "./func.js";
+const { Length, LengthPercent, NumberInterpreter, Percent, Url } = CsssPrimitives;
 const { CssValuesToCsssTable } = CsssFunctions;
 import { Color } from "./funcColor.js";
+const { ColorReverse, ValueReverse, normalizeToLogical, OptionalReset } = CssFunctions;
 
 const Styles = CssValuesToCsssTable("solid|dotted|dashed|double|groove|ridge|inset|outset|none|hidden");
 const Style = a => Styles[a.text];
@@ -84,8 +85,24 @@ const border = ({ name, args }) => {
 
 const Border = exp => {
   const res = border(exp);
-  if (!res.borderStartStartRadius) res.borderRadius ??= "0";
-  if (!res.borderInlineColor && !res.borderInlineStyle && !res.borderInlineWidth) {
+  // $Border resets radius and border-image
+  if (!res.borderStartStartRadius && !res.borderTopLeftRadius && !res.borderRadius) {
+    res.borderRadius = "0";
+  }
+
+  const hasLogical = res.borderInlineWidth || res.borderBlockWidth || res.borderInlineStartWidth ||
+    res.borderInlineStyle || res.borderBlockStyle || res.borderInlineStartStyle ||
+    res.borderInlineColor || res.borderBlockColor || res.borderInlineStartColor;
+
+  if (hasLogical) {
+    res.borderImageOutset = "initial";
+    res.borderImageRepeat = "initial";
+    res.borderImageSlice = "initial";
+    res.borderImageSource = "initial";
+    res.borderImageWidth = "initial";
+  }
+
+  if (!hasLogical && !res.borderBlockColor && !res.borderBlockStyle && !res.borderBlockWidth) {
     const res2 = {
       border: [res.borderWidth, res.borderStyle, res.borderColor].filter(Boolean).join(" ") || "none",
       ...res,
@@ -95,9 +112,9 @@ const Border = exp => {
     delete res2.borderWidth;
     return res2;
   }
-  if (!res.borderInlineStyle) res.borderStyle ??= "solid";
-  if (!res.borderInlineWidth) res.borderWidth ??= "medium";
-  if (!res.borderInlineColor) res.borderColor ??= "currentColor";
+  if (!res.borderInlineStyle && !res.borderBlockStyle) res.borderStyle ??= "solid";
+  if (!res.borderInlineWidth && !res.borderBlockWidth) res.borderWidth ??= "medium";
+  if (!res.borderInlineColor && !res.borderBlockColor) res.borderColor ??= "currentColor";
   return res;
 };
 
@@ -151,8 +168,100 @@ const props = {
   borderEndStartRadius: undefined,
   borderStartStartRadius: undefined,
   borderEndEndRadius: undefined,
+
+  borderImage: undefined,
+  borderImageSource: undefined,
+  borderImageSlice: undefined,
+  borderImageWidth: undefined,
+  borderImageOutset: undefined,
+  borderImageRepeat: undefined,
 }
 
+const borderProps = [
+  "borderWidth", "borderStyle", "borderColor",
+  "borderTopWidth", "borderTopStyle", "borderTopColor",
+  "borderRightWidth", "borderRightStyle", "borderRightColor",
+  "borderBottomWidth", "borderBottomStyle", "borderBottomColor",
+  "borderLeftWidth", "borderLeftStyle", "borderLeftColor",
+  "borderInlineStartWidth", "borderInlineStartStyle", "borderInlineStartColor",
+  "borderInlineEndWidth", "borderInlineEndStyle", "borderInlineEndColor",
+  "borderBlockStartWidth", "borderBlockStartStyle", "borderBlockStartColor",
+  "borderBlockEndWidth", "borderBlockEndStyle", "borderBlockEndColor",
+  "borderRadius", "borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius",
+  "borderStartStartRadius", "borderStartEndRadius", "borderEndStartRadius", "borderEndEndRadius",
+  "borderImage", "borderImageSource", "borderImageSlice", "borderImageWidth", "borderImageOutset", "borderImageRepeat"
+];
+
+function compressFour(a, b, c, d, defaultVal) {
+  const val = v => (v === undefined || v === null || v === "") ? defaultVal : v;
+  a = val(a);
+  b = val(b);
+  c = val(c);
+  d = val(d);
+  if (a === defaultVal && b === defaultVal && c === defaultVal && d === defaultVal) return [];
+  if (a === b && b === c && c === d) return [a];
+  if (a === c && b === d) return [a, b];
+  if (b === d) return [a, b, c];
+  return [a, b, c, d];
+}
+
+function borderReadFour(style, suffix, defaultVal) {
+  let bs = style["borderBlockStart" + suffix], be = style["borderBlockEnd" + suffix];
+  let is_ = style["borderInlineStart" + suffix], ie = style["borderInlineEnd" + suffix];
+  if (bs == null && is_ == null && be == null && ie == null) {
+    bs = style["borderTop" + suffix];
+    ie = style["borderRight" + suffix];
+    be = style["borderBottom" + suffix];
+    is_ = style["borderLeft" + suffix];
+  }
+  return compressFour(bs, is_, be, ie, defaultVal);
+}
+
+function borderReverseRadius(style) {
+  const parse = v => {
+    if (!v || v === "0" || v === "0px" || v === "unset") return ["0px", "0px"];
+    const p = String(v).split(/\s+/);
+    return p.length === 1 ? [p[0], p[0]] : p;
+  };
+  const rd = style.borderRadius;
+  if (rd && rd !== "0" && rd !== "0px" && rd !== "unset") {
+    const p = rd.split(/\s+/);
+    return `radius(${p[0]})`;
+}
+  const ss = parse(style.borderStartStartRadius ?? style.borderTopLeftRadius);
+  const se = parse(style.borderStartEndRadius ?? style.borderTopRightRadius);
+  const ee = parse(style.borderEndEndRadius ?? style.borderBottomRightRadius);
+  const es = parse(style.borderEndStartRadius ?? style.borderBottomLeftRadius);
+  const tl = ss[0], lt = ss[1];
+  const tr = se[0], rt = se[1];
+  const br = ee[0], rb = ee[1];
+  const bl = es[0], lb = es[1];
+  let args = [lt, tl, rt, bl, lb, tr, rb, br];
+  if (tr === tl && rb === rt && br === bl) {
+    args = [lt, tl, rt, bl, lb];
+    if (lb === lt) {
+      args = [lt, tl, rt, bl];
+      // Radius(l, t, r, b=t)
+      if (bl === tl) {
+        args = [lt, tl, rt];
+        // Radius(l, t) -> all corners t l
+        if (rt === lt) {
+          args = [lt, tl];
+          // Radius(val) -> all corners val
+          if (tl === lt) {
+            args = [lt];
+          }
+        }
+      }
+    }
+  }
+  if (args.length === 8 && args[7] === bl) args.pop();
+  if (args.length === 7 && args[6] === rt) args.pop();
+  if (args.length === 6 && args[5] === tl) args.pop();
+  while (args.length > 1 && args.at(-1) === "0px") args.pop();
+  if (args.length === 1 && (args[0] === "0px" || args[0] === "0")) return undefined;
+  return `radius(${args.join(",")})`;
+}
 
 export default {
   props,
@@ -163,68 +272,41 @@ export default {
   },
   css: {
     border: style => {
-      let args = [];
-      if (style.border === "none") return "noBorder";
-
-      // Just reconstructing a simple border statement
-      let hasBorder = false;
-
-      // Extract width, style, color
-      if (style.borderWidth) { args.push(style.borderWidth); hasBorder = true; }
-      if (style.borderStyle) { args.push(style.borderStyle); hasBorder = true; }
-      if (style.borderColor) { args.push(style.borderColor); hasBorder = true; }
-
-      // Also radius if present
-      if (style.borderRadius && style.borderRadius !== "0") {
-        args.push(`radius(${style.borderRadius.replace(/\s+/g, ",")})`);
-        hasBorder = true;
-      } else if (style.borderStartStartRadius) {
-        // handling logical border radius is complex, just push a basic radius
-        args.push(`radius(${style.borderStartStartRadius.replace(/\s+/g, ",")})`);
-        hasBorder = true;
-      }
-
-      return hasBorder ? `border(${args.join(",")})` : undefined;
+      const hasNone = ["borderBlockStartStyle", "borderInlineStartStyle", "borderBlockEndStyle", "borderInlineEndStyle"].every(p => style[p] === "none") ||
+        ["borderTopStyle", "borderRightStyle", "borderBottomStyle", "borderLeftStyle"].every(p => style[p] === "none");
+      const hasRadius = style.borderRadius && style.borderRadius !== "0" && style.borderRadius !== "0px" ||
+        style.borderTopLeftRadius && style.borderTopLeftRadius !== "0" && style.borderTopLeftRadius !== "0px" ||
+        style.borderStartStartRadius && style.borderStartStartRadius !== "0" && style.borderStartStartRadius !== "0px";
+      if (hasNone && !hasRadius) return "$noBorder";
+      const normalized = normalizeToLogical(style);
+      return OptionalReset("$border", "$Border", borderProps,
+        {
+          prop: ["borderWidth", "borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth", "borderBlockStartWidth", "borderBlockEndWidth", "borderInlineStartWidth", "borderInlineEndWidth", "borderBlockWidth", "borderInlineWidth"],
+          rev: s => {
+            const vals = borderReadFour(s, "Width", "medium");
+            return vals.length ? vals.join(",") : undefined;
+          }
+        },
+        {
+          prop: ["borderStyle", "borderTopStyle", "borderRightStyle", "borderBottomStyle", "borderLeftStyle", "borderBlockStartStyle", "borderBlockEndStyle", "borderInlineStartStyle", "borderInlineEndStyle", "borderBlockStyle", "borderInlineStyle"],
+          rev: s => {
+            const vals = borderReadFour(s, "Style", "none");
+            return vals.length ? vals.join(",") : undefined;
+          }
+        },
+        {
+          prop: ["borderColor", "borderTopColor", "borderRightColor", "borderBottomColor", "borderLeftColor", "borderBlockStartColor", "borderBlockEndColor", "borderInlineStartColor", "borderInlineEndColor", "borderBlockColor", "borderInlineColor"],
+          rev: s => {
+            const vals = borderReadFour(s, "Color", "currentcolor");
+            return vals.length ? vals.map(c => ColorReverse(c) ?? c).join(",") : undefined;
+          }
+        },
+        {
+          prop: ["borderRadius", "borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius", "borderStartStartRadius", "borderStartEndRadius", "borderEndStartRadius", "borderEndEndRadius"],
+          rev: borderReverseRadius
+        }
+      )(normalized);
     }
   }
   //todo border-image!
 }
-
-// //there are different ways to do the logic here..
-// //length == 2, I think that we could have top/bottom too
-// //length == 3, then the third becomes all the inline ones
-// //length === 4, then forth is the inline on the end side
-// export function toLogicalEight(NAME, DEFAULT, ar) {
-//   ar = ar.map(isBasic).map(a => a.text);
-//   if (!(ar instanceof Array))
-//     return { [NAME]: ar };
-//   if (ar.length === 1)
-//     return { [NAME]: ar[0] };
-//   let [bss, iss, bes, ies, bse, ise, bee, iee] = ar;
-//   if (ar.length === 2) ise = ies = iee = iss, bse = bes = bee = bss;
-//   if (ar.length === 3) ise = ies = iee = iss, bse = bss, bee = bes;
-//   if (ar.length === 4) ise = iss, iee = ies, bse = bss, bee = bes;
-//   if (ar.length === 5) ise = iss, iee = ies, bee = bes;
-//   if (ar.length === 6) iee = ies, bee = bes;
-//   if (ar.length === 7) iee = ies;
-//   const res = {};
-//   if (bss || iss) res[NAME + "TopLeft"] = `${bss ?? DEFAULT} ${iss ?? DEFAULT}`;
-//   if (bse || ies) res[NAME + "TopRight"] = `${bse ?? DEFAULT} ${ies ?? DEFAULT}`;
-//   if (bes || ise) res[NAME + "BottomLeft"] = `${bes ?? DEFAULT} ${ise ?? DEFAULT}`;
-//   if (bee || iee) res[NAME + "BottomRight"] = `${bee ?? DEFAULT} ${iee ?? DEFAULT}`;
-//   return res;
-// }
-
-// export function toRadiusFour(NAME, ar) {
-//   ar = ar.map(isBasic).map(a => a.text);
-//   if (!(ar instanceof Array))
-//     return { [NAME]: ar };
-//   if (ar.length === 1)
-//     return { [NAME]: ar[0] };
-//   return {
-//     [NAME + "StartStart"]: ar[0],
-//     [NAME + "EndEnd"]: ar[2] ?? ar[0],
-//     [NAME + "StartEnd"]: ar[1],
-//     [NAME + "EndStart"]: ar[3] ?? ar[1],
-//   };
-// }

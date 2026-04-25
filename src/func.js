@@ -1,4 +1,6 @@
 import Maths from "./funcMath.js";
+import { WebColors } from "./Color.js";
+import { cssPhysicalToLogical as normalizeToLogical } from "./cssPhysicalToLogical.js";
 
 const toCamelCase = s => s.replace(/[^a-z]./ig, m => m[1].toUpperCase());
 
@@ -22,6 +24,7 @@ export function matchArgsWithInterpreters(NAME, i, args, INTERPRETERS) {
       res[j] = v;
       continue main;
     }
+    if (args[i].text === "_") continue;
     throw BadArgument(NAME, args, i, "Unknown argument.");
   }
   return res;
@@ -187,7 +190,7 @@ const CsssFunctions = {
 
     const first = INTERPRETER(args[0]);
     if (first == null)
-      throw BadArgument(name, args, 0, INTERPRETER.name);
+      return INNERcb({ args, name });
     const res = args.length > 1 ? INNERcb({ name, args: args.slice(1) }) : undefined;
     return POST(first, res);
   },
@@ -201,30 +204,80 @@ const CsssFunctions = {
 
 const CssFunctions = {
   SingleArgumentFunctionReverse: (CsssFnName, CssProp, INTERPRETER, DEFAULT = "_") => style => {
-    let arg = INTERPRETER(style[CssProp]) ?? DEFAULT;
+    let arg = INTERPRETER(style[CssProp] == "unset" ? undefined : style[CssProp]) ?? DEFAULT;
     if (arg !== DEFAULT) return `${CsssFnName}(${arg})`;
   },
+  normalizeToLogical,
   LogicalFourReverse: (CssPrefix, CsssFnName, INTERPRETER, DEFAULT = "_") => {
-    const PROPS = ["-block-start", "-inline-start", "-block-end", "-inline-end"].map(s => CssPrefix + s);
-    return style => {
-      let args = PROPS.map(p => INTERPRETER(style[p]) ?? DEFAULT);
+    const toCamel = s => s.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+
+    const squeezeArgs = (args, minArgs = 1) => {
       if (args.every(a => a === DEFAULT)) return undefined;
-      if (args[1] === args[3] && (args.pop() || true))
-        if (args[0] === args[2] && (args.pop() || true))
-          if (args[0] === args[1] && (args.pop() || true))
-            ;
+      if (args.length === 4) {
+        if (args[1] === args[3] && (args.pop() || true))
+          if (args[0] === args[2] && (args.pop() || true))
+            if (args.length > minArgs && args[0] === args[1] && (args.pop() || true))
+              ;
+      } else if (args.length === 3) {
+        if (args[0] === args[2]) args.pop();
+        if (args.length > minArgs && args[0] === args[1]) args.pop();
+      } else if (args.length === 2) {
+        if (args.length > minArgs && args[0] === args[1]) args.pop();
+      }
       return `${CsssFnName}(${args.join(",")})`;
+    };
+
+    // Setup for Logical Properties
+    const PROPS = ["-block-start", "-inline-start", "-block-end", "-inline-end"].map(s => CssPrefix + s);
+    const PROPS_CAMEL = PROPS.map(toCamel);
+    const SHORTHAND = toCamel(CssPrefix);
+
+    // Setup for Physical Properties 
+    const prefixCamel = toCamel(CssPrefix);
+    const PHYSICAL_PROPS_CAMEL = ["Top", "Right", "Bottom", "Left"].map(s => prefixCamel + s);
+
+    return style => {
+      // 0. --- SHORTHAND PROPERTY CHECK ---
+      const shorthand = style[SHORTHAND];
+      if (shorthand !== undefined) {
+        const tokens = spacelessCssTokens(shorthand);
+        if (!tokens.length) return undefined;
+        const args = tokens.map(v => INTERPRETER(v) ?? DEFAULT);
+        return squeezeArgs(args);
+      }
+
+      // 1. --- PHYSICAL PROPERTIES CHECK ---
+      const [t, r, b, l] = PHYSICAL_PROPS_CAMEL.map(p => style[p]);
+      const hasPhysical = t !== undefined || r !== undefined || b !== undefined || l !== undefined;
+
+      if (hasPhysical) {
+        if (t !== undefined && t === r && t === b && t === l) {
+          const val = INTERPRETER(t) ?? DEFAULT;
+          // CRITICAL FIX: If it resolves to the default value, hide it!
+          if (val === DEFAULT) return undefined;
+
+          return `${CsssFnName}(${val})`;
+        }
+      }
+
+      // 2. --- ORIGINAL LOGICAL PROPERTIES LOGIC ---
+      let args = PROPS_CAMEL.map(p => INTERPRETER(style[p]) ?? DEFAULT);
+      return squeezeArgs(args, 2);
     }
   },
   SingleTableReverse: (CssProp, Table) => {
-    Table = Object.fromEntries(Object.entries(Table).map(([k, v]) => [v, k]));
-    return style => Table[style[CssProp]];
+    Table = Object.fromEntries(Object.entries(Table).map(([k, v]) => [v.toLowerCase(), k]));
+    return style => style[CssProp] && Table[style[CssProp].toLowerCase()];
   },
   SingleTableReverseObject: Table => style => {
     main: for (let short in Table) {
-      for (let p in Table[short])
-        if (style[p] !== Table[short][p])
+      const preset = Table[short];
+      if (!Object.keys(preset).length) continue;
+      for (let p in preset) {
+        if (style[p]?.toLowerCase() !== preset[p]?.toLowerCase()) {
           continue main;
+        }
+      }
       return short;
     }
   },
@@ -240,7 +293,104 @@ const CssFunctions = {
       if ((fn = fn(style)) !== undefined)
         (args ??= []).push(fn);
     return args?.length && `${CsssName}(${args.join(",")})`;
-  }
+  },
+  /**
+   * OptionalReset reverses CSS styles into a CSSS shorthand.
+   * It handles two names:
+   * - shortName: Used when only a subset of properties are explicitly set (additive mode).
+   * - longName: Used when all properties are set or some are explicitly "unset" (reset mode).
+   * 
+   * @param {string} shortName - The shorthand name (e.g., "$boxItem")
+   * @param {string} longName - The longhand name that implies defaults (e.g., "$BoxItem")
+   * @param {object} defaults - Default values for the properties covered by this function.
+   * @param {...object} PropFns - Array of { prop, rev } where rev() returns the CSSS argument.
+   */
+  OptionalReset: (shortName, longName, defaults, ...PropFns) => style => {
+    let args = [];
+    const props = Array.isArray(defaults) ? defaults : Object.keys(defaults);
+    const covered = new Set();
+    const explicitProps = [];
+
+    // 1. Run all reverse mapping functions to see which properties are explicitly set.
+    for (const { prop, rev } of PropFns) {
+      const val = rev(style);
+      const propArray = Array.isArray(prop) ? prop : [prop];
+
+      if (val !== undefined) {
+        args.push(val);
+        // Mark these properties as "covered" by the generated arguments.
+        propArray.forEach(p => covered.add(p));
+      }
+      // Keep track of all properties we *can* check for unsets.
+      explicitProps.push(...propArray);
+    }
+
+    // If no properties were explicitly set, we don't output anything.
+    if (!args.length) return;
+
+    // 2. Check for "explicit unsets". 
+    // If a property is "unset" or "initial" in the style but not "covered" by our arguments,
+    // it means the user explicitly wanted to reset it (e.g., using a reset shorthand).
+    let anyExplicitUnset = false;
+    for (const p of explicitProps) {
+      if (!covered.has(p) && style.hasOwnProperty(p) && (style[p] === "unset" || style[p] === "initial")) {
+        anyExplicitUnset = true;
+        break;
+      }
+    }
+
+    // Also check properties listed in defaults that might not have been in PropFns.
+    if (!anyExplicitUnset) {
+      const isReset = v => v === "unset" || v === "initial" || v === "0" || v === "0px" || v === "none";
+      for (const p of props) {
+        if (!covered.has(p) && isReset(style[p])) {
+          anyExplicitUnset = true;
+          break;
+        }
+      }
+    }
+
+    // 3. Decide between shortName (additive) and longName (reset).
+    // Use longName if ALL properties are covered OR if any property was explicitly unset.
+    const allSet = props.every(p => covered.has(p));
+    const name = (allSet || anyExplicitUnset) ? longName : shortName;
+    return `${name}(${args.join(",")})`;
+  },
+  CalcReverse: val => {
+    if (typeof val !== "string") return undefined;
+    if (val.startsWith("calc(") && val.endsWith(")")) {
+      return val.slice(5, -1).replace(/\s+/g, "");
+    }
+    if (/^(min|max|clamp|round|mod|rem|sin|cos|tan|asin|acos|atan|atan2|sqrt|hypot|log|exp|abs|sign)\(/.test(val)) {
+      return val.replace(/\s+/g, "");
+    }
+    return undefined;
+  },
+  TableReverse: Table => Object.fromEntries(Object.entries(Table).map(([k, v]) => [v.toLowerCase(), k])),
+  ColorReverse: val => {
+    if (!val || val === "none" || val === "unset" || val === "transparent" || val === "currentColor" || val === "currentcolor")
+      return undefined;
+    const m = val.match(/^rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\s*\)$/);
+    if (m) {
+      const [r, g, b] = [+m[1], +m[2], +m[3]];
+      const a = m[4] != null ? parseFloat(m[4]) : 1;
+      if (a === 0) return undefined;
+      const hex = [r, g, b].map(c => c.toString(16).padStart(2, "0")).join("");
+      if (a < 1) return `#${hex}${Math.round(a * 255).toString(16).padStart(2, "0")}`;
+      return `#${hex}`;
+    }
+    if (val.startsWith("#")) return val;
+    if (/^[a-z]+$/i.test(val) && val.toLowerCase() in WebColors) return `#${val}`;
+    return undefined;
+  },
+  ValueReverse: val => (val === "unset" || val === "initial") ? undefined : (val === "auto" ? "_" : (CssFunctions.CalcReverse(val) ?? CssFunctions.ColorReverse(val) ?? (val === "0px" ? "0" : val))),
+  DisplayMode: (style, displayValue, LowerName, UpperName) => {
+    return style.display === displayValue
+      ? UpperName
+      : (!style.display || style.display === "unset")
+        ? LowerName
+        : undefined;
+  },
 };
 
 function spacelessCssTokens(str) {

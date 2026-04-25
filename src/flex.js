@@ -1,7 +1,7 @@
 import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, SF2: SF2, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercent, LengthPercentUnset } = CsssPrimitives;
-const { LogicalFourReverse, SingleTableReverse, SequentialFunctionReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, SingleTableReverse, SequentialFunctionReverse, Optional, OptionalReset, DisplayMode, ValueReverse, normalizeToLogical} = CssFunctions;
 
 const placeContent = CssValuesToCsssTable(
   "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly|baseline|first baseline|last baseline",
@@ -61,12 +61,29 @@ export default {
     columnGap: undefined,
   },
   css: {
-    flex: Optional("flex",
-      SingleTableReverse("flexDirection", flexDirection),
-      SequentialFunctionReverse("gap", ["gap"], v => v ? v.replace(/\s+/g, ",") : v, "_"), // gap parses row and column directly via `gap` property mapping in tests
-      LogicalFourReverse("padding", "padding", v => v, "_"),
-      SingleTableReverse("flexWrap", flexWrap),
-      SingleTableReverse("placeContent", placeContent)
-    ),
+    flex: style => {
+      if (style.display && style.display !== "flex" && style.display !== "unset") return;
+      const normalized = normalizeToLogical(style);
+      return OptionalReset("$flex", "$Flex", DefaultFlex,
+        { prop: "flexDirection", rev: SingleTableReverse("flexDirection", flexDirection) },
+        {
+          prop: "rowGap", rev: s => {
+            const row = ValueReverse(s.rowGap);
+            const col = ValueReverse(s.columnGap);
+            if (!row && !col) return undefined;
+            return row === col ? `gap(${row})` : `gap(${row ?? "_"},${col ?? "_"})`;
+          }
+        },
+        { prop: "paddingBlockStart", rev: LogicalFourReverse("padding", "padding", ValueReverse, "_") },
+        { prop: "flexWrap", rev: SingleTableReverse("flexWrap", flexWrap) },
+        {
+          prop: "alignContent", rev: s => {
+            const ac = s.alignContent;
+            if (!ac || ac === "unset") return undefined;
+            return SingleTableReverse("placeContent", placeContent)({ placeContent: ac });
+          }
+        },
+      )(normalized);
+    },
   }
 };

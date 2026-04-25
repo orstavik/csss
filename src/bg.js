@@ -45,8 +45,8 @@ const Bg = ({ name, args }) => {
   }
   if (colors.length && args.length === 1)
     return {
-      backgroundColor: colors[0],
       background: "none",
+      backgroundColor: colors[0],
       backgroundBlendMode: "normal"
     };
   if (colors.length) image = `linear-gradient(${colors.join(", ")})`;
@@ -78,8 +78,13 @@ export default {
   css: {
     bg: style => {
       let args = [];
-      if (style.backgroundColor && style.backgroundColor !== "none" && style.backgroundColor !== "unset" && !style.backgroundImage) {
-        args.push(style.backgroundColor);
+      const hasRealImage = style.backgroundImage && style.backgroundImage !== "none" && style.backgroundImage !== "unset";
+      const bgColor = style.backgroundColor;
+      const bgColorIsDefault = !bgColor || bgColor === "none" || bgColor === "unset" || bgColor === "transparent" || bgColor === "initial";
+      if (!hasRealImage && !bgColorIsDefault) {
+        args.push(bgColor.replace(/^var\(--color-([^)]+)\)$/, '#$1'));
+      } else if (!hasRealImage && style.backgroundImage === "none") {
+        args.push("none");
       }
       if (style.backgroundImage && style.backgroundImage !== "none" && style.backgroundImage !== "unset") {
         let bi = style.backgroundImage;
@@ -93,15 +98,16 @@ export default {
         }
         args.push(bi);
       }
-      if (style.backgroundPosition && style.backgroundPosition !== "0% 0%") args.push(style.backgroundPosition.replace(/\s+/g, ","));
-      if (style.backgroundRepeat && style.backgroundRepeat !== "repeat") args.push(style.backgroundRepeat);
-      if (style.backgroundSize && style.backgroundSize !== "auto") args.push(style.backgroundSize.replace(/\s+/g, ","));
-      if (style.backgroundOrigin && style.backgroundOrigin !== "padding-box") args.push(style.backgroundOrigin);
-      if (style.backgroundClip && style.backgroundClip !== "border-box") args.push(style.backgroundClip);
-      if (style.backgroundAttachment && style.backgroundAttachment !== "scroll") args.push(style.backgroundAttachment);
-      if (style.backgroundBlendMode && style.backgroundBlendMode !== "normal") args.push(style.backgroundBlendMode);
+      const notDefault = (v, def) => v && v !== def && v !== "initial" && v !== "unset";
+      if (notDefault(style.backgroundPosition, "0% 0%")) args.push(style.backgroundPosition.replace(/\s+/g, ","));
+      if (notDefault(style.backgroundRepeat, "repeat")) args.push(style.backgroundRepeat);
+      if (notDefault(style.backgroundSize, "auto")) args.push(style.backgroundSize.replace(/\s+/g, ","));
+      if (notDefault(style.backgroundOrigin, "padding-box")) args.push(style.backgroundOrigin);
+      if (notDefault(style.backgroundClip, "border-box")) args.push(style.backgroundClip);
+      if (notDefault(style.backgroundAttachment, "scroll")) args.push(style.backgroundAttachment);
+      if (notDefault(style.backgroundBlendMode, "normal")) args.push(style.backgroundBlendMode);
 
-      return args.length ? `bg(${args.join(",")})` : undefined;
+      return args.length ? `$Bg(${args.join(",")})` : undefined;
     }
   }
 };
