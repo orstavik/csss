@@ -1,5 +1,11 @@
 **description:** Default Block with padding and a gap after each item.
 **userInstruction:** Refactor this layout to use a wildcard umbrella class for the child gaps instead of repeating $blockItem on every child.
+**filter:**
+```js
+function filter(dots) {
+  return dots.is(CssClass(/$Block/)).add(Children);
+}
+```
 **before:**
 ```html
 …<div class="$Block(padding(1.5rem))">
@@ -35,6 +41,17 @@
 **description:** Default Block layout for book-styled text with indented paragraphs, title has 0 indentation, subtitle 50% indentation.
 **userInstruction:**
 The book text uses hardcoded 32px indents. Change the paragraph indent to 2em for better responsiveness, and adjust the title to have no indent and the subtitle to have a 1em indent.
+**filter:**
+```js
+function filter(dots) {
+  return dots.is(CssClass(/$Block/)).add(Children(Element(/h\d/))); 
+  //todo here we are filtering out the h2.title/h3.subtitle based on what?
+  //todo we actually should have much more text in this example as we wouldn't know what to exclude under the $Block.
+  //todo and we would need to clip Text() at length 45.
+  //todo and, in the agent chain, we are missing a full html text that contains this excerpt. We actually need that
+  //todo to train the model in finding the right filter. The filter has a dependency in the original document.
+}
+```
 **before:**
 ```html
 …<article class="

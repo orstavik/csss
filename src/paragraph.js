@@ -1,11 +1,13 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
 const { LengthPercent, LengthPercentNumber } = CsssPrimitives;
-const { TypeBasedFunction, FunctionPropertyType, FunctionWithDefaultValues, ParseFirstThenRest, CssValuesToCsssTable, SingleTable, PropertyType } = CsssFunctions;
-const { SingleArgumentFunctionReverse, Optional, SingleTableReverse } = CssFunctions;
+const { TypeBasedFunction, FunctionPropertyType, CssValuesToCsssTable, SingleTable, PropertyType } = CsssFunctions;
+import { CssFunctions } from "./funcReverse.js";
+const { SingleArgumentFunctionReverse, Optional, SingleTableReverse, SingleTableReverseObject, normalizeToLogical } = CssFunctions;
 
 const hyphens = {
   hyphens: "auto",
   shy: "manual",
+  noHyphens: "none",
 };
 
 const whiteSpace = {
@@ -30,8 +32,22 @@ const wordBreakAndOverflowWrap = {
   breakNone: { wordBreak: "keep-all", overflowWrap: "normal" },
   breakAll: { wordBreak: "break-all", overflowWrap: "normal" },
   breakNormal: { wordBreak: "normal", overflowWrap: "normal" },
+  breakTerminal: { wordBreak: "break-all", overflowWrap: "anywhere" },
+  breakCompound: { wordBreak: "break-word", overflowWrap: "anywhere" },
 };
 
+//killing wordBreak and overflowWrap might be good..
+const wordBreak = {
+  breakAll: "break-all",
+  keepAll: "keep-all",
+  breakNormal: "normal",
+  breakWord: "break-word",
+};
+const overflowWrap = {
+  wrapNormal: "normal",
+  wrapBreakWord: "break-word",
+  wrapAnywhere: "anywhere",
+};
 const lineBreak = {
   lineBreakLoose: "loose",
   lineBreakStrict: "strict",
@@ -65,13 +81,14 @@ const paragraph = TypeBasedFunction(
   SingleTable("textAlignLast", textAlignLast),
   SingleTable("textAlign", alignText),
   SingleTable("hangingPunctuation", hangingPunctuation),
+  SingleTable("wordBreak", wordBreak),
+  SingleTable("overflowWrap", overflowWrap),
   FunctionPropertyType("indent", "textIndent", LengthPercent),
   FunctionPropertyType("spacing", "wordSpacing", LengthPercent),
   a => a.text && wordBreakAndOverflowWrap[a.text]
 );
 
 const PARAGRAPHS = {
-  _: {},
   body: {
     lineHeight: "1.5",
     hyphens: "auto",
@@ -155,14 +172,31 @@ const props = {
   hangingPunctuation: undefined,
 };
 
-const Paragraph = FunctionWithDefaultValues(
-  Object.fromEntries(Object.keys(props).map(k => [k, "unset"])),
-  ParseFirstThenRest(
-    a => a.text && PARAGRAPHS[a.text],
-    paragraph,
-    (a, b) => ({ ...a, ...b })
-  )
-);
+const paragraphDefaults = {
+  lineHeight: "normal",
+  textIndent: "0px",
+  wordSpacing: "0px",
+  hyphens: "none",
+  whiteSpace: "normal",
+  overflowWrap: "normal",
+  wordBreak: "normal",
+  lineBreak: "auto",
+  textAlign: "start",
+  textAlignLast: "auto",
+  hangingPunctuation: "none",
+};
+const paragraphDefaultsUnset = Object.fromEntries(Object.keys(props).map(k => [k, "unset"]));
+
+function Paragraph({ name, args }) {
+  const namedParagraphStyle = PARAGRAPHS[args[0]?.text];
+  if (namedParagraphStyle)
+    args = args.slice(1);
+  return {
+    ...paragraphDefaultsUnset,
+    ...namedParagraphStyle,
+    ...paragraph({ name, args })
+  };
+}
 
 export default {
   csss: {
@@ -171,27 +205,42 @@ export default {
   },
   props,
   css: {
-    paragraph: Optional("paragraph",
-      SingleArgumentFunctionReverse("indent", "textIndent", v => v, "_"),
-      SingleArgumentFunctionReverse("spacing", "wordSpacing", v => v, "_"),
-      style => {
-        if (style.lineHeight && style.lineHeight !== "_") return style.lineHeight;
-      },
-      SingleTableReverse("hyphens", hyphens),
-      SingleTableReverse("whiteSpace", whiteSpace),
-      style => {
-        const w = style.wordBreak;
-        const o = style.overflowWrap;
-        if (!w && !o) return undefined;
-        for (let [k, v] of Object.entries(wordBreakAndOverflowWrap)) {
-          if (v.wordBreak === w && v.overflowWrap === o) return k;
-        }
-        return undefined;
-      },
-      SingleTableReverse("lineBreak", lineBreak),
-      SingleTableReverse("textAlign", alignText),
-      SingleTableReverse("textAlignLast", textAlignLast),
-      SingleTableReverse("hangingPunctuation", hangingPunctuation)
-    )
+    //simplify imperative
+    paragraph: style => {
+      const s = normalizeToLogical(style);
+      if (style.textAlign && style.textAlign !== s.textAlign) s.textAlign = style.textAlign;
+      return Optional("$paragraph", "$Paragraph", paragraphDefaults,
+        { prop: Object.keys(props), rev: SingleTableReverseObject(PARAGRAPHS) },
+        { prop: "lineHeight", rev: s => (s.lineHeight && s.lineHeight !== "_" && s.lineHeight !== "unset") ? s.lineHeight : undefined },
+        { prop: "hyphens", rev: SingleTableReverse("hyphens", hyphens) },
+        {
+          prop: ["whiteSpace", "whiteSpaceCollapse", "textWrapMode"],
+          rev: s => {
+            if (s.whiteSpace && s.whiteSpace !== "unset" && s.whiteSpace !== "initial") {
+              const rev = SingleTableReverse("whiteSpace", whiteSpace)(s);
+              if (rev) return rev;
+            }
+            const c = s.whiteSpaceCollapse, tw = s.textWrapMode;
+            if (!c && !tw) return;
+            if (c === "collapse" && tw === "nowrap") return "nowrap";
+            if (c === "preserve" && tw === "nowrap") return "pre";
+            if (c === "preserve" && (!tw || tw === "unset" || tw === "initial")) return "preserve";
+            if (c === "preserve" && tw === "wrap") return "preWrap";
+            if (c === "preserve-breaks" && tw === "wrap") return "preLine";
+            if (c === "collapse" && tw === "wrap") return "whiteSpaceNormal";
+            if (c === "preserve-breaks" && (!tw || tw === "unset" || tw === "initial")) return "preserveBreaks";
+            if (c === "break-spaces" && tw === "wrap") return "breakSpaces";
+          }
+        },
+        { prop: "lineBreak", rev: SingleTableReverse("lineBreak", lineBreak) },
+        { prop: "textAlignLast", rev: SingleTableReverse("textAlignLast", textAlignLast) },
+        { prop: "textAlign", rev: SingleTableReverse("textAlign", alignText) },
+        { prop: "hangingPunctuation", rev: SingleTableReverse("hangingPunctuation", hangingPunctuation) },
+        { prop: "textIndent", rev: SingleArgumentFunctionReverse("indent", "textIndent", v => v, "_") },
+        { prop: "wordSpacing", rev: SingleArgumentFunctionReverse("spacing", "wordSpacing", v => v, "_") },
+        { prop: "wordBreak", rev: SingleTableReverse("wordBreak", wordBreak) },
+        { prop: "overflowWrap", rev: SingleTableReverse("overflowWrap", overflowWrap) }
+      )(s);
+    }
   }
 };

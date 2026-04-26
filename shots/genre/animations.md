@@ -1,6 +1,12 @@
 **description:** Cycles through three different scales using mismatched time/value vectors, creating a complex heartbeat.
 **userInstruction:**
 Removing Obsolete Styles: The 'Live' indicator has leftover complex separate keyframes for scaling. Clean it up into a single looping vector that scales up and back down.
+**filter:**
+```js
+function filter(dots) {
+  return dots.is(CssClass, "pulse-anim").add(Siblings, Parents);
+}
+```
 **before:**
 ```html
 …<span class="live-dot pulse-anim scale-reset"></span>…
@@ -29,6 +35,12 @@ Removing Obsolete Styles: The 'Live' indicator has leftover complex separate key
 **description:** Shakes an input field exactly 3 times when a validation error occurs, starting with a backwards fill mode.
 **userInstruction:**
 Interaction Update: When the input fails validation, apply a quick horizontal shake animation that repeats exactly 3 times and returns to its original position.
+**filter:**
+```js
+function filter(dots) {
+  return dots.is(CssClass, "error-shake").add(Parents);
+}
+```
 **before:**
 ```html
 …<input type="text" class="error-shake" />…
@@ -60,6 +72,12 @@ Interaction Update: When the input fails validation, apply a quick horizontal sh
 **description:** Creates a spinning loading indicator that rotates indefinitely.
 **userInstruction:**
 Syntax Optimization/Refactoring: The developer wrote custom keyframes in a separate stylesheet for a spinning loader. Refactor this to use CSSS for better maintainability.
+**filter:**
+```js
+function filter(dots) {
+  return dots.is(CssClass, "spinner-legacy").add(Parents);
+}
+```
 **before:**
 ```html
 …<div class="spinner-legacy"></div>…
@@ -87,6 +105,12 @@ Syntax Optimization/Refactoring: The developer wrote custom keyframes in a separ
 
 **description:** Animates a bouncing notification badge that hops up and down.
 **userInstruction:** Feature Requests: Make the static notification badge bounce to attract attention.
+**filter:**
+```js
+function filter(dots) {
+  return dots.is(CssClass, "badge").add(Parents);
+}
+```
 **before:**
 ```html
 …<div class="badge"></div>…
@@ -115,13 +139,19 @@ Syntax Optimization/Refactoring: The developer wrote custom keyframes in a separ
 **description:** Fades in a modal dialog gracefully over 300 milliseconds.
 **userInstruction:**
 Syntax Optimization/Refactoring: The modal has a CSS transition but requires JS to toggle a class for it to fade in. Change it to an animation so it plays automatically on mount.
+**filter:**
+```js
+function filter(dots) {
+  return dots.is(ElementTag, "dialog").add(Children(CssClass, Attribute));
+}
+```
 **before:**
 ```html
 …<dialog class="$transition(fadeIn,1s,1s,transform,opacity)" open>…</dialog>…
 ```
 **after:**
 ```html
-…<dialog class="$animate(0s>300ms)$opacity(0>1)" open>…</dialog>…
+…<dialog class="[open]$animate(0s>300ms)$opacity(0>1)" open>…</dialog>…
 ```
 **css:**
 ```css
@@ -134,7 +164,7 @@ Syntax Optimization/Refactoring: The modal has a CSS transition but requires JS 
   }
 }
 
-.\$animate\(0s\>300ms\)\$opacity\(0\>1\) {
+.\[open\]\$animate\(0s\>300ms\)\$opacity\(0\>1\):where([open]) {
   opacity: 0;
   animation: 300ms a0_opacity0100_opacity1;
 }
@@ -142,6 +172,12 @@ Syntax Optimization/Refactoring: The modal has a CSS transition but requires JS 
 
 **description:** Creates a pulsing heartbeat effect on a call-to-action button to encourage clicks.
 **userInstruction:** Feature Requests: Add a subtle pulsing scale animation to the CTA button to draw user focus.
+**filter:**
+```js
+function filter(dots) {
+  return dots.is(CssClass, "cta-button").add(Parents);
+}
+```
 **before:**
 ```html
 …<button>Subscribe</button>…
@@ -170,6 +206,16 @@ Syntax Optimization/Refactoring: The modal has a CSS transition but requires JS 
 **description:** Slides a side menu in from off-screen left over half a second.
 **userInstruction:**
 Layout Bug Fixes: The sidebar slide-in animation is using negative margins which is causing layout reflows. Refactor it to use translate.
+**filter:**
+```js
+function filter(dots) {
+  return dots.is(Value(/animation:/)).get(Siblings(Trigger)).is("style").get(Parents).add(Children(CssClass, Attribute));
+}
+```
+**filter2:**
+```js
+dots.is(Attribute("style",/animation:/)).get(Parents,Siblings)
+```
 **before:**
 ```html
 …<nav class="sidebar" style="animation: slideMargin 0.5s ease-out forwards;">…</nav>…
