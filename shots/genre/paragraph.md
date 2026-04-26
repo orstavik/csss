@@ -105,20 +105,20 @@ Styles the first child in a container (like a terminal output or hash dump block
 ```
 
 **description:**
-Resets paragraph inheritance defaults for nested elements using a universal child selector. Forces a left-aligned, nowrap block with strict line-breaking rules and absolutely no indent.
+Resets paragraph inheritance defaults for nested elements using a universal child selector. Forces a start-aligned, nowrap block with strict line-breaking rules and absolutely no indent.
 **userInstruction:**
-Reset paragraph defaults for all nested elements, forcing a left-aligned, nowrap block with strict line-breaking rules and no indent.
+Reset paragraph defaults for all nested elements, forcing a start-aligned, nowrap block with strict line-breaking rules and no indent.
 **before:**
 ```html
 …<div>…</div>…
 ```
 **after:**
 ```html
-…<div class="|$Paragraph(_,left,nowrap,indent(0),lineBreakNormal)">…</div>…
+…<div class="|$Paragraph(start,nowrap,indent(0),lineBreakNormal)">…</div>…
 ```
 **css:**
 ```css
-.\|\$Paragraph\(_\,left\,nowrap\,indent\(0\)\,lineBreakNormal\)>* {
+.\|\$Paragraph\(start\,nowrap\,indent\(0\)\,lineBreakNormal\)>* {
   line-height: unset;
   text-indent: 0;
   word-spacing: unset;
@@ -127,7 +127,7 @@ Reset paragraph defaults for all nested elements, forcing a left-aligned, nowrap
   overflow-wrap: unset;
   word-break: unset;
   line-break: normal;
-  text-align: left;
+  text-align: start;
   text-align-last: unset;
   hanging-punctuation: unset;
 }
