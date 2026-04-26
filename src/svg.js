@@ -1,7 +1,8 @@
-
 import { CsssPrimitives, CsssFunctions } from "./func.js";
 const { FunctionWithDefaultValues, SF2, TypeBasedFunction, PropertyType, SingleTable, CssValuesToCsssTable, FunctionPropertyType } = CsssFunctions;
 const { SingleTableRaw, LengthPercentNumber, NumberInterpreter, Url, Length, UrlUnset } = CsssPrimitives;
+import { CssFunctions } from "./funcReverse.js";
+const { ValueReverse, TableReverse, ColorReverse, SingleArgumentFunctionReverse: SAR, Optional, normalizeToLogical } = CssFunctions;
 import { Color } from "./funcColor.js";
 const ColorUrl = a => Color(a) ?? Url(a);
 
@@ -45,6 +46,21 @@ const colorRendering = CssValuesToCsssTable("auto|optimizeSpeed|optimizeQuality"
 const imageRendering = CssValuesToCsssTable("auto|smooth|high-quality|pixelated|crisp-edges");
 const maskType = CssValuesToCsssTable("luminance|alpha");
 const paintOrder = CssValuesToCsssTable("normal|fill|stroke|markers");
+
+const strokeLinecapRev = TableReverse(strokeLinecap);
+const strokeLinejoinRev = TableReverse(strokeLinejoin);
+const fillRuleRev = TableReverse(fillRule);
+const textAnchorRev = TableReverse(textAnchor);
+const dominantBaselineRev = TableReverse(dominantBaseline);
+const alignmentBaselineRev = TableReverse(alignmentBaseline);
+const baselineShiftRev = TableReverse(baselineShift);
+const vectorEffectRev = TableReverse(vectorEffect);
+const colorInterpolationRev = TableReverse(colorInterpolation);
+const shapeRenderingRev = TableReverse(shapeRendering);
+const colorRenderingRev = TableReverse(colorRendering);
+const imageRenderingRev = TableReverse(imageRendering);
+const maskTypeRev = TableReverse(maskType);
+const paintOrderRev = TableReverse(paintOrder);
 
 //todo should we make a table with some common words? 
 // It will be hard for the llm to know these words, and i am not sure we need to teach it this thing..
@@ -127,7 +143,6 @@ export default {
     stroke,
     fill,
     svgText,
-
     Stroke: FunctionWithDefaultValues(strokeDefaults, stroke),
     Fill: FunctionWithDefaultValues(fillDefaults, fill),
     SvgText: FunctionWithDefaultValues(svgTextDefaults, svgText),
@@ -164,52 +179,57 @@ export default {
   },
   css: {
     stroke: style => {
-      let args = [];
-      if (style.stroke === "none") return "strokeNone";
-      if (style.stroke && style.stroke !== "unset") args.push(style.stroke);
-      if (style.strokeWidth && style.strokeWidth !== "unset") args.push(style.strokeWidth);
-      if (style.strokeOpacity && style.strokeOpacity !== "unset") args.push(style.strokeOpacity);
-      if (style.strokeLinecap && style.strokeLinecap !== "unset") args.push(style.strokeLinecap);
-      if (style.strokeLinejoin && style.strokeLinejoin !== "unset") args.push(style.strokeLinejoin);
-      if (style.strokeDasharray && style.strokeDasharray !== "unset") args.push(`dasharray(${style.strokeDasharray.replace(/,\s*/g, ",")})`);
-      if (style.strokeDashoffset && style.strokeDashoffset !== "unset") args.push(`dashoffset(${style.strokeDashoffset})`);
-      if (style.strokeMiterlimit && style.strokeMiterlimit !== "unset") args.push(`miterlimit(${style.strokeMiterlimit})`);
-      return args.length ? `stroke(${args.join(",")})` : undefined;
+      const s = normalizeToLogical(style);
+      if (s.stroke === "none") return "$strokeNone";
+      return Optional("$stroke", "$Stroke", strokeDefaults,
+        { prop: "stroke", rev: style => (style.stroke && style.stroke !== "unset") ? (ColorReverse(style.stroke) ?? style.stroke) : undefined },
+        { prop: "strokeWidth", rev: style => (style.strokeWidth && style.strokeWidth !== "unset") ? style.strokeWidth : undefined },
+        { prop: "strokeOpacity", rev: style => (style.strokeOpacity && style.strokeOpacity !== "unset") ? ValueReverse(style.strokeOpacity) : undefined },
+        { prop: "strokeLinecap", rev: style => (style.strokeLinecap && style.strokeLinecap !== "unset") ? strokeLinecapRev[style.strokeLinecap.toLowerCase()] : undefined },
+        { prop: "strokeLinejoin", rev: style => (style.strokeLinejoin && style.strokeLinejoin !== "unset") ? strokeLinejoinRev[style.strokeLinejoin.toLowerCase()] : undefined },
+        { prop: "strokeDasharray", rev: style => (style.strokeDasharray && style.strokeDasharray !== "unset") ? `dasharray(${ValueReverse(style.strokeDasharray.replace(/,\s*/g, ","))})` : undefined },
+        { prop: "strokeDashoffset", rev: style => (style.strokeDashoffset && style.strokeDashoffset !== "unset") ? `dashoffset(${ValueReverse(style.strokeDashoffset)})` : undefined },
+        { prop: "strokeMiterlimit", rev: style => (style.strokeMiterlimit && style.strokeMiterlimit !== "unset") ? `miterlimit(${ValueReverse(style.strokeMiterlimit)})` : undefined },
+      )(s);
     },
     fill: style => {
-      let args = [];
-      if (style.fill === "none") return "fillNone";
-      if (style.fill && style.fill !== "unset") args.push(style.fill);
-      if (style.fillOpacity && style.fillOpacity !== "unset") args.push(style.fillOpacity);
-      if (style.fillRule && style.fillRule !== "unset") args.push(style.fillRule);
-      return args.length ? `fill(${args.join(",")})` : undefined;
+      const s = normalizeToLogical(style);
+      if (s.fill === "none") return "$fillNone";
+      return Optional("$fill", "$Fill", fillDefaults,
+        { prop: "fill", rev: style => (style.fill && style.fill !== "unset") ? ColorReverse(style.fill) : undefined },
+        { prop: "fillOpacity", rev: style => (style.fillOpacity && style.fillOpacity !== "unset") ? ValueReverse(style.fillOpacity) : undefined },
+        { prop: "fillRule", rev: style => (style.fillRule && style.fillRule !== "unset") ? fillRuleRev[style.fillRule.toLowerCase()] : undefined },
+      )(s);
     },
-    svgText: style => {
-      let args = [];
-      if (style.textAnchor && style.textAnchor !== "unset") args.push(style.textAnchor);
-      if (style.dominantBaseline && style.dominantBaseline !== "unset") args.push(style.dominantBaseline);
-      if (style.alignmentBaseline && style.alignmentBaseline !== "unset") args.push(style.alignmentBaseline);
-      if (style.baselineShift && style.baselineShift !== "unset") args.push(style.baselineShift);
-      return args.length ? `svgText(${args.join(",")})` : undefined;
-    },
+    svgText: style => Optional("$svgText", "$SvgText", svgTextDefaults,
+      { prop: "textAnchor", rev: style => (style.textAnchor && style.textAnchor !== "unset") ? textAnchorRev[style.textAnchor.toLowerCase()] : undefined },
+      { prop: "dominantBaseline", rev: style => (style.dominantBaseline && style.dominantBaseline !== "unset") ? dominantBaselineRev[style.dominantBaseline.toLowerCase()] : undefined },
+      { prop: "alignmentBaseline", rev: style => (style.alignmentBaseline && style.alignmentBaseline !== "unset") ? alignmentBaselineRev[style.alignmentBaseline.toLowerCase()] : undefined },
+      { prop: "baselineShift", rev: style => (style.baselineShift && style.baselineShift !== "unset") ? baselineShiftRev[style.baselineShift.toLowerCase()] : undefined },
+    )(normalizeToLogical(style)),
     marker: style => {
-      if (style.marker === "none") return "markerNone";
-      if (style.marker) return `marker(${style.marker})`;
-      if (style.markerStart && style.markerMid && style.markerEnd) return `marker(${style.markerStart},${style.markerMid},${style.markerEnd})`;
-      if (style.markerStart && style.markerEnd) return `marker(${style.markerStart},${style.markerEnd})`;
-      return undefined;
+      const s = normalizeToLogical(style);
+      if (s.marker === "none") return "$markerNone";
+      if (s.marker) return `$marker(${ValueReverse(s.marker)})`;
+      if (s.markerStart && s.markerMid && s.markerEnd) return `$marker(${ValueReverse(s.markerStart)},${ValueReverse(s.markerMid)},${ValueReverse(s.markerEnd)})`;
+      if (s.markerStart && s.markerEnd) return `$marker(${ValueReverse(s.markerStart)},${ValueReverse(s.markerEnd)})`;
     },
-    stopColor: style => style.stopColor ? `stopColor(${style.stopColor})` : undefined,
-    stopOpacity: style => style.stopOpacity ? `stopOpacity(${style.stopOpacity})` : undefined,
-    vectorEffect: style => style.vectorEffect ? `vectorEffect(${style.vectorEffect})` : undefined,
-    clipRule: style => style.clipRule ? `clipRule(${style.clipRule})` : undefined,
-    colorInterpolation: style => style.colorInterpolation ? `colorInterpolation(${style.colorInterpolation})` : undefined,
-    shapeRendering: style => style.shapeRendering ? `shapeRendering(${style.shapeRendering})` : undefined,
-    colorRendering: style => style.colorRendering ? `colorRendering(${style.colorRendering})` : undefined,
-    imageRendering: style => style.imageRendering ? `imageRendering(${style.imageRendering})` : undefined,
-    maskType: style => style.maskType ? `maskType(${style.maskType})` : undefined,
-    paintOrder: style => style.paintOrder ? `paintOrder(${style.paintOrder.replace(/\s+/g, ",")})` : undefined,
-    lightingColor: style => style.lightingColor ? `lightingColor(${style.lightingColor})` : undefined,
-    svgOpacity: style => style.svgOpacity ? `svgOpacity(${style.svgOpacity})` : undefined,
+    stopColor: style => SAR("$stopColor", "stopColor", v => ColorReverse(v) ?? v)(normalizeToLogical(style)),
+    stopOpacity: style => SAR("$stopOpacity", "stopOpacity", ValueReverse)(normalizeToLogical(style)),
+    vectorEffect: style => SAR("$vectorEffect", "vectorEffect", v => vectorEffectRev[v])(normalizeToLogical(style)),
+    clipRule: style => SAR("$clipRule", "clipRule", v => fillRuleRev[v])(normalizeToLogical(style)),
+    colorInterpolation: style => SAR("$colorInterpolation", "colorInterpolation", v => colorInterpolationRev[v])(normalizeToLogical(style)),
+    shapeRendering: style => SAR("$shapeRendering", "shapeRendering", v => shapeRenderingRev[v])(normalizeToLogical(style)),
+    colorRendering: style => SAR("$colorRendering", "colorRendering", v => colorRenderingRev[v])(normalizeToLogical(style)),
+    imageRendering: style => SAR("$imageRendering", "imageRendering", v => imageRenderingRev[v])(normalizeToLogical(style)),
+    maskType: style => SAR("$maskType", "maskType", v => maskTypeRev[v])(normalizeToLogical(style)),
+    paintOrder: style => {
+      const s = normalizeToLogical(style);
+      if (!s.paintOrder || s.paintOrder === "normal") return undefined;
+      const args = s.paintOrder.split(/\s+/).map(v => paintOrderRev[v] ?? v);
+      return `$paintOrder(${args.join(",")})`;
+    },
+    lightingColor: style => SAR("$lightingColor", "lightingColor", v => ColorReverse(v) ?? v)(normalizeToLogical(style)),
+    svgOpacity: style => SAR("$svgOpacity", "svgOpacity", ValueReverse)(normalizeToLogical(style)),
   }
 };
