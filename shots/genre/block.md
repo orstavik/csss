@@ -56,7 +56,7 @@ function filter(dots) {
 ```html
 …<article class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,0,1rem))$Paragraph(_,indent(32px))">
+  |*$BlockItem(margin(0,0,1rem))$Paragraph(indent(32px))">
   …
   <h2 class="title">…</h2>
   …
@@ -68,7 +68,7 @@ function filter(dots) {
 ```html
 …<article class="
   $Block(padding(1.5rem))
-  |*$BlockItem(margin(0,0,1rem))$Paragraph(_,indent(2em))
+  |*$BlockItem(margin(0,0,1rem))$Paragraph(indent(2em))
   |.title$blockItem(margin(0,0,2rem))$paragraph(indent(0))
   |.subtitle$blockItem(margin(0,0,1.5rem))$paragraph(indent(1em))">
   …
@@ -85,7 +85,7 @@ function filter(dots) {
   padding: 1.5rem;
 }
 
-.\|\*\$BlockItem\(margin\(0\,0\,1rem\)\)\$Paragraph\(_\,indent\(2em\)\)>* {
+.\|\*\$BlockItem\(margin\(0\,0\,1rem\)\)\$Paragraph\(indent\(2em\)\)>* {
   float: unset;
   clear: unset;
   margin-block: 0 1rem;
@@ -354,7 +354,7 @@ The documentation page layout is causing horizontal scrolling due to long text s
 **after:**
 ```html
 …<article class="
-  $Block(padding(2rem))$Paragraph(_,breakWord)
+  $Block(padding(2rem))$Paragraph(breakWord)
   |*$BlockItem(margin(0,0,1.5rem))
   |h1$blockItem(margin(0,0,3rem))
   |h2$blockItem(margin(0,0,2rem))
@@ -370,7 +370,7 @@ The documentation page layout is causing horizontal scrolling due to long text s
 ```
 **css:**
 ```css
-.\$Block\(padding\(2rem\)\)\$Paragraph\(_\,breakWord\) {
+.\$Block\(padding\(2rem\)\)\$Paragraph\(breakWord\) {
   display: block;
   padding: 2rem;
   line-height: unset;
@@ -379,7 +379,7 @@ The documentation page layout is causing horizontal scrolling due to long text s
   hyphens: unset;
   white-space: unset;
   overflow-wrap: break-word;
-  word-break: normal;
+  word-break: unset;
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
@@ -680,7 +680,7 @@ The legal document is hard to read because everything is flush left. Add a 1.5re
 **before:**
 ```html
 …<article class="
-  $Block(padding(1.5rem))$Paragraph(_,breakWord)
+  $Block(padding(1.5rem))$Paragraph(breakWord)
   |*$BlockItem(margin(0,0,1.5rem))$Box(_<_<700px)">
   …
   <div class="section">…</div>
@@ -692,7 +692,7 @@ The legal document is hard to read because everything is flush left. Add a 1.5re
 **after:**
 ```html
 …<article class="
-  $Block(padding(1.5rem))$Paragraph(_,breakWord) 
+  $Block(padding(1.5rem))$Paragraph(breakWord) 
   |*$BlockItem(margin(0,0,1.5rem))$Box(_<_<700px)
   |.section$blockItem(margin(1.5rem,0,0)) 
   |.sub-item$blockItem(margin(0,0,0,1.5rem))">
@@ -705,7 +705,7 @@ The legal document is hard to read because everything is flush left. Add a 1.5re
 ```
 **css:**
 ```css
-.\$Block\(padding\(1\.5rem\)\)\$Paragraph\(_\,breakWord\) {
+.\$Block\(padding\(1\.5rem\)\)\$Paragraph\(breakWord\) {
   display: block;
   padding: 1.5rem;
   line-height: unset;
@@ -714,7 +714,7 @@ The legal document is hard to read because everything is flush left. Add a 1.5re
   hyphens: unset;
   white-space: unset;
   overflow-wrap: break-word;
-  word-break: normal;
+  word-break: unset;
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
@@ -758,7 +758,7 @@ The resume layout is too sparse because every element gets 1.5rem bottom margin.
 **before:**
 ```html
 …<article class="
-  $Block(padding(1.5rem))$Paragraph(_,breakWord)
+  $Block(padding(1.5rem))$Paragraph(breakWord)
   |*$BlockItem(margin(0,0,1.5rem))">
   …
   <h2 class="section-heading">…</h2>
@@ -772,7 +772,7 @@ The resume layout is too sparse because every element gets 1.5rem bottom margin.
 **after:**
 ```html
 …<article class="
-  $Block(padding(1.5rem))$Paragraph(_,breakWord) 
+  $Block(padding(1.5rem))$Paragraph(breakWord) 
   |*$BlockItem(margin(0,0,1.5rem))
   |.section-heading$blockItem(margin(0,0,2rem)) 
   |.entry$blockItem(margin(0,0,1rem)) 
@@ -788,7 +788,7 @@ The resume layout is too sparse because every element gets 1.5rem bottom margin.
 ```
 **css:**
 ```css
-.\$Block\(padding\(1\.5rem\)\)\$Paragraph\(_\,breakWord\) {
+.\$Block\(padding\(1\.5rem\)\)\$Paragraph\(breakWord\) {
   display: block;
   padding: 1.5rem;
   line-height: unset;
@@ -797,7 +797,7 @@ The resume layout is too sparse because every element gets 1.5rem bottom margin.
   hyphens: unset;
   white-space: unset;
   overflow-wrap: break-word;
-  word-break: normal;
+  word-break: unset;
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
@@ -1693,7 +1693,7 @@ This CJK text is breaking in the middle of words. Apply the breakLongWords modif
 **after:**
 ```html
 …<div class="
-  $Block(padding(1.5rem))$Paragraph(_,breakLongWords)
+  $Block(padding(1.5rem))$Paragraph(keepAll,breakWord)
   |*$BlockItem(margin(0,0,1.25rem))
   |h2$blockItem(margin(0,0,1.75rem))">
   …
@@ -1703,7 +1703,7 @@ This CJK text is breaking in the middle of words. Apply the breakLongWords modif
 ```
 **css:**
 ```css
-.\$Block\(padding\(1\.5rem\)\)\$Paragraph\(_\,breakLongWords\) {
+.\$Block\(padding\(1\.5rem\)\)\$Paragraph\(keepAll\,breakWord\) {
   display: block;
   padding: 1.5rem;
   line-height: unset;
@@ -1750,7 +1750,7 @@ Long SHA hashes are overflowing the debug panel horizontally. Use breakAnywhere 
 **after:**
 ```html
 …<div class="
-  $Block(padding(1rem))$Paragraph(_,breakAnywhere)
+  $Block(padding(1rem))$Paragraph(breakAnywhere)
   |*$BlockItem(margin(0,0,0.25rem))
   |.log-entry$blockItem(margin(0,0,0.5rem))$Box(100%)">
   …
@@ -1760,7 +1760,7 @@ Long SHA hashes are overflowing the debug panel horizontally. Use breakAnywhere 
 ```
 **css:**
 ```css
-.\$Block\(padding\(1rem\)\)\$Paragraph\(_\,breakAnywhere\) {
+.\$Block\(padding\(1rem\)\)\$Paragraph\(breakAnywhere\) {
   display: block;
   padding: 1rem;
   line-height: unset;
@@ -1769,7 +1769,7 @@ Long SHA hashes are overflowing the debug panel horizontally. Use breakAnywhere 
   hyphens: unset;
   white-space: unset;
   overflow-wrap: anywhere;
-  word-break: normal;
+  word-break: unset;
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
@@ -1891,7 +1891,6 @@ The article excerpts in the blog feed are too long and breaking the grid layout.
   -webkit-box-orient: vertical;
   overflow-block: hidden;
   word-break: break-all;
-  overflow-wrap: normal;
 }
 ```
 
@@ -1912,7 +1911,7 @@ The hero text panel is left-aligned, which looks unbalanced on the landing page.
 **after:**
 ```html
 …<section class="
-  $Block$box(auto)$Paragraph(_,center)
+  $Block$box(auto)$Paragraph(center)
   |*$Box(_<_<600px)">
   <div class="hero-content">
     <h1>…</h1>
@@ -1922,7 +1921,7 @@ The hero text panel is left-aligned, which looks unbalanced on the landing page.
 ```
 **css:**
 ```css
-.\$Block\$box\(auto\)\$Paragraph\(_\,center\) {
+.\$Block\$box\(auto\)\$Paragraph\(center\) {
   display: block;
   padding: unset;
   overflow: auto;
@@ -2018,7 +2017,6 @@ The sidebar rail containing user comments is occasionally causing unwanted horiz
   aspect-ratio: unset;
   object-fit: unset;
   object-position: unset;
-  word-break: normal;
   overflow-wrap: break-word;
 }
 

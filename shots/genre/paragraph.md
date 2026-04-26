@@ -7,11 +7,11 @@ Creates a highly legible blog paragraph using a preset. Resets all inherited sty
 ```
 **after:**
 ```html
-…<p class="$Paragraph(_,1.6,justify,indent(1.5em),hyphens)">…</p>…
+…<p class="$Paragraph(1.6,justify,indent(1.5em),hyphens)">…</p>…
 ```
 **css:**
 ```css
-.\$Paragraph\(_\,1\.6\,justify\,indent\(1\.5em\)\,hyphens\) {
+.\$Paragraph\(1\.6\,justify\,indent\(1\.5em\)\,hyphens\) {
   line-height: 1.6;
   text-indent: 1.5em;
   word-spacing: unset;
@@ -35,18 +35,18 @@ Formats user-generated comments or markdown blocks by targeting a specific class
 ```
 **after:**
 ```html
-…<div class="comment $Paragraph(_,preWrap,breakWord,spacing(0.1em),1.5)">…</div>…
+…<div class="comment $Paragraph(preWrap,breakWord,spacing(0.1em),1.5)">…</div>…
 ```
 **css:**
 ```css
-.\$Paragraph\(_\,preWrap\,breakWord\,spacing\(0\.1em\)\,1\.5\) {
+.\$Paragraph\(preWrap\,breakWord\,spacing\(0\.1em\)\,1\.5\) {
   line-height: 1.5;
   text-indent: unset;
   word-spacing: 0.1em;
   hyphens: unset;
   white-space: pre-wrap;
   overflow-wrap: break-word;
-  word-break: normal;
+  word-break: unset;
   line-break: unset;
   text-align: unset;
   text-align-last: unset;
@@ -64,11 +64,11 @@ Apply strict typographic rules for formal mixed-language documents, preventing w
 ```
 **after:**
 ```html
-…<div class="$Paragraph(_,breakLongWords,lineBreakStrict,hangingPunctuationFirst,1.8)">…</div>…
+…<div class="$Paragraph(breakWord,keepAll,lineBreakStrict,hangingPunctuationFirst,1.8)">…</div>…
 ```
 **css:**
 ```css
-.\$Paragraph\(_\,breakLongWords\,lineBreakStrict\,hangingPunctuationFirst\,1\.8\) {
+.\$Paragraph\(breakWord\,keepAll\,lineBreakStrict\,hangingPunctuationFirst\,1\.8\) {
   line-height: 1.8;
   text-indent: unset;
   word-spacing: unset;
@@ -98,9 +98,8 @@ Styles the first child in a container (like a terminal output or hash dump block
 ```css
 .\|\:first-child\$paragraph\(breakAll\,spacing\(0\)\,1\.2\)>:where(:first-child) {
   line-height: 1.2;
-  word-spacing: 0;
   word-break: break-all;
-  overflow-wrap: normal;
+  word-spacing: 0;
 }
 ```
 
@@ -170,13 +169,13 @@ Sets typography for poetry or lyrics block. Keeps spaces and lines as authored b
 ```
 **after:**
 ```html
-…<div class="poetry $paragraph(preserve,1.4,center)">…</div>…
+…<div class="poetry $paragraph(pre,1.4,center)">…</div>…
 ```
 **css:**
 ```css
-.\$paragraph\(preserve\,1\.4\,center\) {
+.\$paragraph\(pre\,1\.4\,center\) {
   line-height: 1.4;
-  white-space: preserve;
+  white-space: pre;
   text-align: center;
 }
 ```
@@ -238,11 +237,11 @@ A dense code block reset. Disables hyphens, enforces pre formatting, preserves s
 ```
 **after:**
 ```html
-…<pre class="code-block $Paragraph(_,pre,breakNormal,indent(0),shy)">…</pre>…
+…<pre class="code-block $Paragraph(pre,wordBreakNormal,overflowWrapNormal,indent(0),shy)">…</pre>…
 ```
 **css:**
 ```css
-.\$Paragraph\(_\,pre\,breakNormal\,indent\(0\)\,shy\) {
+.\$Paragraph\(pre\,wordBreakNormal\,overflowWrapNormal\,indent\(0\)\,shy\) {
   line-height: unset;
   text-indent: 0;
   word-spacing: unset;
@@ -525,7 +524,7 @@ Styles a terminal log block using the terminal baseline. Adjusts the white-space
   hyphens: auto;
   white-space: unset;
   overflow-wrap: anywhere;
-  word-break: break-word;
+  word-break: normal;
   line-break: unset;
   text-align: start;
   text-align-last: unset;

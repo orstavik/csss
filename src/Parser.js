@@ -1,5 +1,6 @@
 import { SHORTS, MEDIA_WORDS, REVERSES } from "./vocabulary.js";
 import NativeCss from "./nativeCss.js";
+import { cssPhysicalToLogical } from "./cssPhysicalToLogical.js";
 
 /**
  * If you have a cssRules object, then you need to do:
@@ -161,7 +162,7 @@ function interpretShort(res, x) {
 }
 
 export function reverse(style) {
-  style = { ...style };
+  style = cssPhysicalToLogical({ ...style });
   const parts = [];
   for (const [key, fn] of Object.entries(REVERSES)) {
     const res = fn(style);
