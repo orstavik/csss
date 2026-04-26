@@ -178,6 +178,7 @@ export default {
     markerNone: { marker: "none" },
   },
   css: {
+    //simplify imperative
     stroke: style => {
       const s = normalizeToLogical(style);
       if (s.stroke === "none") return "$strokeNone";

@@ -1,6 +1,8 @@
 //todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
 import { Color } from "./funcColor.js";
-import { CsssPrimitives, matchArgsWithInterpreters, BadArgument, CssPrimitives } from "./func.js";
+import { CsssPrimitives, matchArgsWithInterpreters, BadArgument } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
+const { ColorReverse, ValueReverse } = CssFunctions;
 const { Length, Radian, LengthNumberRaw } = CsssPrimitives;
 // There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 
 // Then in the $shadow(shade,angle,length,color?) to use it.
@@ -32,7 +34,7 @@ const SHADES = {
 const ShadeType = a => SHADES[a.text];
 const Inset = a => a.text === "inset" ? "inset" : undefined;
 
-//default angle 135deg
+// default angle 135deg
 // default length is plain number? 5 is "normal" => 0.25rem. 1 is very small => 0.05rem. 10 is large => 0.5rem.
 function calculateShadow({ type, angle = Math.PI * .75, length = { num: 5 }, color = "var(--shadowColor, #0003)" }, doSpread) {
   if (!type) throw new SyntaxError("Missing shadow name: " + Object.keys(SHADES).join("|"));
@@ -77,8 +79,22 @@ const textDropShadow = ({ name, args }) => {
   throw BadArgument("textShadow", args.length, args, `Must get either two lengths (x,y) or start with a shadeType: ${Object.keys(SHADES).join("|")}.`);
 }
 
-const { splitOnComma, spacelessCssTokens } = CssPrimitives;
-//todo i need to do splitOnComma(unpackCalc(spacelessCssTokens(str)))
+const splitOnComma = str => str.split(/,(?![^(]*\))/).map(s => s.trim());
+const splitOnSpace = str => str.split(/\s+(?![^(]*\))/).map(s => s.trim());
+
+const shadowArg = t => t === "inset" ? "inset" : ColorReverse(t) ?? ValueReverse(t);
+
+const reverseShadow = (name, val) => {
+  if (!val)
+    return undefined;
+  if (val === "none" || val === "unset")
+    return `$no${name[0].toUpperCase() + name.slice(1)}`;
+  return splitOnComma(val)
+    .map(splitOnSpace)
+    .map(args => args.map(shadowArg))
+    .map(args => `$${name}(${args.join(",")})`)
+    .join("");
+}
 
 export default {
   props: { boxShadow: undefined, textShadow: undefined },
@@ -89,18 +105,8 @@ export default {
     noTextShadow: { textShadow: "none" },
   },
   css: {
-    boxShadow: style => {
-      if (style.boxShadow == null) return undefined;
-      if (style.boxShadow === "none") return "noBoxShadow";
-      return splitOnComma(spacelessCssTokens(style.boxShadow)).map(t =>
-        `$boxShadow(${t.join(",")})`).join("");
-    },
-    textShadow: style => {
-      if (style.textShadow == null) return undefined;
-      if (style.textShadow === "none") return "noTextShadow";
-      return splitOnComma(spacelessCssTokens(style.textShadow)).map(t =>
-        `$textShadow(${t.join(",")})`).join("");
-    },
+    boxShadow: style => reverseShadow("boxShadow", style.boxShadow),
+    textShadow: style => reverseShadow("textShadow", style.textShadow),
   },
   raw: {
     textDropShadowRaw,

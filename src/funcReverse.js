@@ -1,35 +1,21 @@
 import { WebColors } from "./Color.js";
 import { cssPhysicalToLogical as normalizeToLogical } from "./cssPhysicalToLogical.js";
 
-function spacelessCssTokens(str) {
-  // a) Replace spaces inside quotes with '+', ignoring escaped quotes
-  str = str.trim().replaceAll(/(["'])(?:\\.|(?!\1)[^\\])*\1/g, m => m.replaceAll(' ', '+'));
-  let now = "", res = [];
-  for (let i = 0, d = 0; i < str.length; i++) {
-    const c = str[i];
-    if (c === "(") d++;
-    else if (c === ")") d--;
+// function spacelessCssTokens(str) {
+//   // a) Replace spaces inside quotes with '+', ignoring escaped quotes
+//   str = str.trim().replaceAll(/(["'])(?:\\.|(?!\1)[^\\])*\1/g, m => m.replaceAll(' ', '+'));
+//   let now = "", res = [];
+//   for (let i = 0, d = 0; i < str.length; i++) {
+//     const c = str[i];
+//     if (c === "(") d++;
+//     else if (c === ")") d--;
 
-    if (c !== " " || d) now += c;
-    else if (now) { res.push(now); (now = ""); }
-  }
-  now && res.push(now);
-  return res;
-}
-
-const splitOnComma = ar => {
-  const res = [];
-  let now = [];
-  for (let a of ar) {
-    if (a.endsWith(",")) {
-      now.push(a.slice(0, -1));
-      res.push(now.join(","));
-      now = [];
-    } else
-      now.push(a);
-  }
-  return res;
-}
+//     if (c !== " " || d) now += c;
+//     else if (now) { res.push(now); (now = ""); }
+//   }
+//   now && res.push(now);
+//   return res;
+// }
 
 const Word = a => a.kind === "WORD" ? a.text : undefined;
 
@@ -185,8 +171,8 @@ const CssFunctions = {
 };
 
 const CssPrimitives = {
-  spacelessCssTokens,
-  splitOnComma,
+  // spacelessCssTokens,
+  // splitOnComma,
   Word
 }
 
