@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { TypeBasedFunction, LogicalFour, ParseFirstThenRest, FunctionWithDefaultValues } = CsssFunctions;
 const { NumberInterpreter, LengthPercent } = CsssPrimitives;
-const { LogicalFourReverse, Optional, OptionalReset, ValueReverse, normalizeToLogical } = CssFunctions;
+const { LogicalFourReverse, Optional, ValueReverse, normalizeToLogical } = CssFunctions;
 
 const DefaultLineClamp = {
   display: "-webkit-box",
@@ -50,11 +51,10 @@ export default {
   css: {
     lineClamp: style => {
       if (style.display && style.display !== "-webkit-box" && style.display !== "unset") return;
-      const normalized = normalizeToLogical(style);
-      return OptionalReset("$lineClamp", "$LineClamp", DefaultLineClamp,
-        { prop: "WebkitLineClamp", rev: style => ValueReverse(style.WebkitLineClamp) },
-        { prop: "padding", rev: LogicalFourReverse("padding", "padding", ValueReverse, "_") }
-      )(normalized);
+      return Optional("$lineClamp", "$LineClamp", DefaultLineClamp,
+        { prop: "WebkitLineClamp", rev: s => ValueReverse(s.WebkitLineClamp) },
+        { prop: Object.keys(paddingProps), rev: LogicalFourReverse("padding", "padding", ValueReverse, "_") }
+      )(normalizeToLogical(style));
     },
   }
 };

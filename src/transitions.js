@@ -1,11 +1,10 @@
 import { CsssPrimitives, BadArgument } from "./func.js";
 const { Name, Time } = CsssPrimitives;
 import Easing from "./funcEasing.js";
-const { easingFunction, CURVES_REVERSE } = Easing.csss;
+const { easingFunction } = Easing.csss;
 
 const AllowDiscrete = a => a.text === "allowDiscrete" ? "allow-discrete" : undefined;
 const TransitionProperty = a => Name(a)?.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`);
-
 
 const transition = ({ args }) => {
   let i = 0;
@@ -25,6 +24,7 @@ const transition = ({ args }) => {
   if (properties.includes("all"))
     properties.length = 0;
 
+  // Only output standard CSS properties, not custom easing property outputs
   const res = ease?.[1] ?? {};
   const tail = [ease?.[0], duration, delay, allowDiscrete].filter(Boolean).join(" ");
   res.transition = !properties.length ? tail : properties.map(p => `${p} ${tail}`).join(", ");
@@ -82,45 +82,30 @@ export default {
   },
   css: {
     transition: style => {
-      let props = style.transitionProperty?.split(",").map(s => s.trim()).filter(Boolean) ?? [];
-      let durations = style.transitionDuration?.split(",").map(s => s.trim()) ?? [];
-      let delays = style.transitionDelay?.split(",").map(s => s.trim()) ?? [];
-      let easings = style.transitionTimingFunction?.split(/,(?![^(]*\))/).map(s => s.trim()) ?? [];
+      let props, durations, delays, easings;
+      if (style.transitionProperty) {
+        props = style.transitionProperty.split(",").map(s => s.trim());
+        durations = (style.transitionDuration ?? "0s").split(",").map(s => s.trim());
+        delays = (style.transitionDelay ?? "0s").split(",").map(s => s.trim());
+        easings = (style.transitionTimingFunction ?? "ease").split(/,(?![^(]*\))/).map(s => s.trim());
+      } else if (style.transition) {
+        const parsed = style.transition.split(/,(?![^(]*\))/).map(t => parseSingleTransition(t.trim()));
+        props = parsed.map(p => p.prop);
+        durations = parsed.map(p => p.duration);
+        delays = parsed.map(p => p.delay);
+        easings = parsed.map(p => p.easing);
+      } else return;
 
-      if (!props.length && style.transition) {
-        const raw = style.transition.split(/,(?![^(]*\))/).map(t => t.trim()).filter(Boolean);
-        props = []; durations = []; delays = []; easings = [];
-        for (const t of raw) {
-          const parsed = parseSingleTransition(t);
-          props.push(parsed.prop);
-          durations.push(parsed.duration);
-          delays.push(parsed.delay);
-          easings.push(parsed.easing);
-        }
-      }
-
-      if (!props.length) return undefined;
-
-      const count = props.length;
-      const results = [];
-
-      for (let i = 0; i < count; i++) {
-        const prop = props[i] === "all" ? [] : [props[i].replace(/-([a-z])/g, (_, c) => c.toUpperCase())];
-        const duration = durations[i % durations.length];
-        const delay = delays[i % delays.length];
-        const easing = reverseEasing(easings[i % easings.length]);
-
+      return props.map((p, i) => {
+        const prop = p === "all" ? [] : [p.replace(/-([a-z])/g, (_, c) => c.toUpperCase())];
         const args = [
-          easing,
-          duration !== "0s" ? duration : null,
-          delay !== "0s" ? delay : null,
+          reverseEasing(easings[i % easings.length]),
+          durations[i % durations.length],
+          delays[i % delays.length],
           ...prop,
-        ].filter(Boolean);
-
-        results.push(`$transition(${args.join(",")})`);
-      }
-
-      return results.join("");
+        ].map(v => (v === "0s" || v === "_" || !v) ? null : v).filter(Boolean);
+        return `$transition(${args.join(",")})`;
+      }).join("");
     }
   }
 };

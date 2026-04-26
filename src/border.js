@@ -1,8 +1,9 @@
-import { BadArgument, CsssPrimitives, CsssFunctions, CssFunctions, matchArgsWithInterpreters } from "./func.js";
+import { BadArgument, CsssPrimitives, CsssFunctions, matchArgsWithInterpreters } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { Length, LengthPercent, NumberInterpreter, Percent, Url } = CsssPrimitives;
 const { CssValuesToCsssTable } = CsssFunctions;
 import { Color } from "./funcColor.js";
-const { ColorReverse, ValueReverse, normalizeToLogical, OptionalReset } = CssFunctions;
+const { ColorReverse, ValueReverse, normalizeToLogical, Optional } = CssFunctions;
 
 const Styles = CssValuesToCsssTable("solid|dotted|dashed|double|groove|ridge|inset|outset|none|hidden");
 const Style = a => Styles[a.text];
@@ -272,40 +273,24 @@ export default {
   },
   css: {
     border: style => {
-      const hasNone = ["borderBlockStartStyle", "borderInlineStartStyle", "borderBlockEndStyle", "borderInlineEndStyle"].every(p => style[p] === "none") ||
-        ["borderTopStyle", "borderRightStyle", "borderBottomStyle", "borderLeftStyle"].every(p => style[p] === "none");
-      const hasRadius = style.borderRadius && style.borderRadius !== "0" && style.borderRadius !== "0px" ||
-        style.borderTopLeftRadius && style.borderTopLeftRadius !== "0" && style.borderTopLeftRadius !== "0px" ||
-        style.borderStartStartRadius && style.borderStartStartRadius !== "0" && style.borderStartStartRadius !== "0px";
-      if (hasNone && !hasRadius) return "$noBorder";
-      const normalized = normalizeToLogical(style);
-      return OptionalReset("$border", "$Border", borderProps,
-        {
-          prop: ["borderWidth", "borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth", "borderBlockStartWidth", "borderBlockEndWidth", "borderInlineStartWidth", "borderInlineEndWidth", "borderBlockWidth", "borderInlineWidth"],
-          rev: s => {
-            const vals = borderReadFour(s, "Width", "medium");
-            return vals.length ? vals.join(",") : undefined;
-          }
-        },
-        {
-          prop: ["borderStyle", "borderTopStyle", "borderRightStyle", "borderBottomStyle", "borderLeftStyle", "borderBlockStartStyle", "borderBlockEndStyle", "borderInlineStartStyle", "borderInlineEndStyle", "borderBlockStyle", "borderInlineStyle"],
-          rev: s => {
-            const vals = borderReadFour(s, "Style", "none");
-            return vals.length ? vals.join(",") : undefined;
-          }
-        },
-        {
-          prop: ["borderColor", "borderTopColor", "borderRightColor", "borderBottomColor", "borderLeftColor", "borderBlockStartColor", "borderBlockEndColor", "borderInlineStartColor", "borderInlineEndColor", "borderBlockColor", "borderInlineColor"],
-          rev: s => {
-            const vals = borderReadFour(s, "Color", "currentcolor");
-            return vals.length ? vals.map(c => ColorReverse(c) ?? c).join(",") : undefined;
-          }
-        },
-        {
-          prop: ["borderRadius", "borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius", "borderStartStartRadius", "borderStartEndRadius", "borderEndStartRadius", "borderEndEndRadius"],
-          rev: borderReverseRadius
-        }
-      )(normalized);
+      const is0 = v => !v || v === "0" || v === "0px" || v === "none";
+      if ((["borderBlockStartStyle", "borderInlineStartStyle", "borderBlockEndStyle", "borderInlineEndStyle"].every(p => style[p] === "none") ||
+           ["borderTopStyle", "borderRightStyle", "borderBottomStyle", "borderLeftStyle"].every(p => style[p] === "none")) &&
+        is0(style.borderRadius) && is0(style.borderTopLeftRadius) && is0(style.borderStartStartRadius)) return "$noBorder";
+      
+      const r4 = (s, t, d) => {
+        const v = borderReadFour(s, t, d);
+        return v.length ? v.join(",") : undefined;
+      };
+      return Optional("$border", "$Border", borderProps,
+        { prop: borderProps.filter(p => p.endsWith("Width")), rev: s => r4(s, "Width", "medium") },
+        { prop: borderProps.filter(p => p.endsWith("Style")), rev: s => r4(s, "Style", "none") },
+        { prop: borderProps.filter(p => p.endsWith("Color")), rev: s => {
+          const v = borderReadFour(s, "Color", "currentcolor");
+          return v.length ? v.map(c => ColorReverse(c) ?? c).join(",") : undefined;
+        }},
+        { prop: borderProps.filter(p => p.includes("Radius")), rev: borderReverseRadius }
+      )(normalizeToLogical(style));
     }
   }
   //todo border-image!

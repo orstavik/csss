@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { LengthPercent, LengthPercentNumber } = CsssPrimitives;
 const { TypeBasedFunction, FunctionPropertyType, FunctionWithDefaultValues, ParseFirstThenRest, CssValuesToCsssTable, SingleTable, PropertyType } = CsssFunctions;
-const { SingleArgumentFunctionReverse, Optional, SingleTableReverse, OptionalReset, SingleTableReverseObject, normalizeToLogical } = CssFunctions;
+const { SingleArgumentFunctionReverse, Optional, SingleTableReverse, SingleTableReverseObject, normalizeToLogical } = CssFunctions;
 
 const hyphens = {
   hyphens: "auto",
@@ -22,14 +23,8 @@ const whiteSpace = {
   preserveBreaksNowrap: "preserve-breaks nowrap",
   breakSpacesNowrap: "break-spaces nowrap",
 };
-const alignText = {
-  start: "start",
-  end: "end",
-  left: "left",
-  right: "right",
-  center: "center",
-  justify: "justify"
-};
+const alignText = CssValuesToCsssTable("start|end|left|right|center|justify");
+
 const wordBreakAndOverflowWrap = {
   breakWord: { wordBreak: "normal", overflowWrap: "break-word" },
   breakAnywhere: { wordBreak: "normal", overflowWrap: "anywhere" },
@@ -207,76 +202,40 @@ export default {
   props,
   css: {
     paragraph: style => {
-      const normalized = normalizeToLogical(style);
-      if (style.textAlign && style.textAlign !== normalized.textAlign) normalized.textAlign = style.textAlign;
-      return OptionalReset("$paragraph", "$Paragraph", paragraphDefaults,
-        {
-          prop: Object.keys(props),
-          rev: SingleTableReverseObject(PARAGRAPHS)
-        },
-        {
-          prop: "lineHeight",
-          rev: s => (s.lineHeight && s.lineHeight !== "_" && s.lineHeight !== "unset") ? s.lineHeight : undefined
-        },
-        {
-          prop: "hyphens",
-          rev: SingleTableReverse("hyphens", hyphens)
-        },
+      const s = normalizeToLogical(style);
+      if (style.textAlign && style.textAlign !== s.textAlign) s.textAlign = style.textAlign;
+      return Optional("$paragraph", "$Paragraph", paragraphDefaults,
+        { prop: Object.keys(props), rev: SingleTableReverseObject(PARAGRAPHS) },
+        { prop: "lineHeight", rev: s => (s.lineHeight && s.lineHeight !== "_" && s.lineHeight !== "unset") ? s.lineHeight : undefined },
+        { prop: "hyphens", rev: SingleTableReverse("hyphens", hyphens) },
         {
           prop: ["whiteSpace", "whiteSpaceCollapse", "textWrapMode"],
           rev: s => {
-            // Check if it's already using the shorthand
             if (s.whiteSpace && s.whiteSpace !== "unset" && s.whiteSpace !== "initial") {
               const rev = SingleTableReverse("whiteSpace", whiteSpace)(s);
               if (rev) return rev;
             }
-
-            // Check if the browser or test suite split it into longhands
-            const c = s.whiteSpaceCollapse;
-            const tw = s.textWrapMode;
-            if (!c && !tw) return undefined;
-
-            // Map browser longhands back to our clean CSSS token
+            const c = s.whiteSpaceCollapse, tw = s.textWrapMode;
+            if (!c && !tw) return;
             if (c === "collapse" && tw === "nowrap") return "nowrap";
             if (c === "preserve" && tw === "nowrap") return "pre";
             if (c === "preserve" && (!tw || tw === "unset" || tw === "initial")) return "preserve";
             if (c === "preserve" && tw === "wrap") return "preWrap";
             if (c === "preserve-breaks" && tw === "wrap") return "preLine";
             if (c === "collapse" && tw === "wrap") return "whiteSpaceNormal";
-            if (c === "preserve" && (!tw || tw === "unset" || tw === "initial")) return "preserve";
             if (c === "preserve-breaks" && (!tw || tw === "unset" || tw === "initial")) return "preserveBreaks";
             if (c === "break-spaces" && tw === "wrap") return "breakSpaces";
-
-            return undefined;
           }
         },
-        {
-          prop: "lineBreak",
-          rev: SingleTableReverse("lineBreak", lineBreak)
-        },
-        {
-          prop: "textAlignLast",
-          rev: SingleTableReverse("textAlignLast", textAlignLast)
-        },
-        {
-          prop: "textAlign",
-          rev: SingleTableReverse("textAlign", alignText)
-        },
-        {
-          prop: "hangingPunctuation",
-          rev: SingleTableReverse("hangingPunctuation", hangingPunctuation)
-        },
+        { prop: "lineBreak", rev: SingleTableReverse("lineBreak", lineBreak) },
+        { prop: "textAlignLast", rev: SingleTableReverse("textAlignLast", textAlignLast) },
+        { prop: "textAlign", rev: SingleTableReverse("textAlign", alignText) },
+        { prop: "hangingPunctuation", rev: SingleTableReverse("hangingPunctuation", hangingPunctuation) },
         { prop: "textIndent", rev: SingleArgumentFunctionReverse("indent", "textIndent", v => v, "_") },
         { prop: "wordSpacing", rev: SingleArgumentFunctionReverse("spacing", "wordSpacing", v => v, "_") },
-        {
-          prop: "wordBreak",
-          rev: SingleTableReverse("wordBreak", wordBreak)
-        },
-        {
-          prop: "overflowWrap",
-          rev: SingleTableReverse("overflowWrap", overflowWrap)
-        },
-      )(normalized);
+        { prop: "wordBreak", rev: SingleTableReverse("wordBreak", wordBreak) },
+        { prop: "overflowWrap", rev: SingleTableReverse("overflowWrap", overflowWrap) }
+      )(s);
     }
   }
 };

@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions, matchArgsWithInterpreters } from "./func.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
 const { LengthPercent } = CsssPrimitives;
-const { LogicalFourReverse, SingleTableReverse, Optional, OptionalReset, ValueReverse, normalizeToLogical, DisplayMode } = CssFunctions;
+const { LogicalFourReverse, SingleTableReverse, Optional, ValueReverse, normalizeToLogical } = CssFunctions;
 
 const scrollMarginProps = {
   scrollMargin: undefined,
@@ -50,24 +51,7 @@ const boxItem = TypeBasedFunction(
   SingleTable("scrollSnapAlign", scrollSnapAlign),
   SingleTable("scrollSnapStop", scrollSnapStop)
 );
-const scrollMarginReverse = (style) => {
-  const { scrollMarginTop, scrollMarginRight, scrollMarginBottom, scrollMarginLeft } = style;
-  const allSame = (
-    scrollMarginTop === scrollMarginRight &&
-    scrollMarginTop === scrollMarginBottom &&
-    scrollMarginTop === scrollMarginLeft
-  );
-  if (allSame && scrollMarginTop !== undefined) {
-    return `scrollMargin(${scrollMarginTop})`;
-  }
-  return LogicalFourReverse("scroll-margin", "scrollMargin", ValueReverse, "_")(style);
-};
 const BoxItem = FunctionWithDefaultValues(DefaultBoxItem, boxItem);
-
-const scrollSnapAlignReverse = Object.fromEntries(Object.entries(scrollSnapAlign).map(([k, v]) => [v, k]));
-
-const scrollSnapStopReverse = Object.fromEntries(Object.entries(scrollSnapStop).map(([k, v]) => [v, k]));
-const scrollMargin = LogicalFourReverse("scroll-margin", "scrollMargin", ValueReverse, "_");
 
 export default {
   csss: {
@@ -76,13 +60,10 @@ export default {
   },
   props,
   css: {
-    boxItem: style => {
-      const normalized = normalizeToLogical(style);
-      return OptionalReset("$boxItem", "$BoxItem", DefaultBoxItem,
-        { prop: ["scrollMargin", "scrollMarginTop", "scrollMarginRight", "scrollMarginBottom", "scrollMarginLeft", "scrollMarginBlockStart", "scrollMarginInlineStart", "scrollMarginBlockEnd", "scrollMarginInlineEnd"], rev: LogicalFourReverse("scroll-margin", "scrollMargin", ValueReverse, "_") },
-        { prop: "scrollSnapAlign", rev: style => scrollSnapAlignReverse[style.scrollSnapAlign] },
-        { prop: "scrollSnapStop", rev: style => scrollSnapStopReverse[style.scrollSnapStop] }
-      )(normalized);
-    },
+    boxItem: style => Optional("$boxItem", "$BoxItem", DefaultBoxItem,
+        { prop: Object.keys(scrollMarginProps), rev: LogicalFourReverse("scroll-margin", "scrollMargin", ValueReverse, "_") },
+        { prop: "scrollSnapAlign", rev: SingleTableReverse("scrollSnapAlign", scrollSnapAlign) },
+        { prop: "scrollSnapStop", rev: SingleTableReverse("scrollSnapStop", scrollSnapStop) }
+      )(normalizeToLogical(style)),
   }
 };

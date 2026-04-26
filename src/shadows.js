@@ -1,6 +1,7 @@
 //todo we could beneficially use the clock 10:30 etc. as directions for both shadows and gradients!!
 import { Color } from "./funcColor.js";
-import { CsssPrimitives, matchArgsWithInterpreters, BadArgument, CssPrimitives, CssFunctions } from "./func.js";
+import { CsssPrimitives, matchArgsWithInterpreters, BadArgument } from "./func.js";
+import { CssPrimitives, CssFunctions } from "./funcReverse.js";
 const { ColorReverse, ValueReverse } = CssFunctions;
 const { Length, Radian, LengthNumberRaw } = CsssPrimitives;
 // There are say 10 different types of SHADES. They specify a lengthFactor, blurFactor, spreadFactor. 

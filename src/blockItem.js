@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
 const { LengthPercentAuto } = CsssPrimitives;
-const { LogicalFourReverse, SingleTableReverse, Optional, OptionalReset, ValueReverse, normalizeToLogical, DisplayMode } = CssFunctions;
+const { LogicalFourReverse, SingleTableReverse, Optional, ValueReverse, normalizeToLogical, DisplayMode } = CssFunctions;
 
 const float = {
   floatStart: "inline-start",
@@ -56,13 +57,10 @@ export default {
     verticalAlign: undefined,
   },
   css: {
-    blockItem: style => {
-      const normalized = normalizeToLogical(style);
-      return OptionalReset("$blockItem", "$BlockItem", DefaultBlockItem,
-        { prop: ["margin", "marginTop", "marginRight", "marginBottom", "marginLeft", "marginBlockStart", "marginInlineStart", "marginBlockEnd", "marginInlineEnd"], rev: LogicalFourReverse("margin", "margin", ValueReverse, "_") },
+    blockItem: style => Optional("$blockItem", "$BlockItem", DefaultBlockItem,
+        { prop: Object.keys(marginProps), rev: LogicalFourReverse("margin", "margin", ValueReverse, "_") },
         { prop: "float", rev: SingleTableReverse("float", float) },
         { prop: "clear", rev: SingleTableReverse("clear", clear) }
-      )(normalized);
-    },
+      )(normalizeToLogical(style)),
   }
 };

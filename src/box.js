@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions, BadArgument } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
+import { CsssPrimitives, CsssFunctions, BadArgument } from "./func.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, SizeFunction, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercent, LengthPercentUnset, NumberInterpreter } = CsssPrimitives;
-const { LogicalFourReverse, Optional, OptionalReset, DisplayMode, ValueReverse, normalizeToLogical } = CssFunctions;
+const { LogicalFourReverse, Optional, DisplayMode, ValueReverse, normalizeToLogical, TableReverse, ShorthandPairReverse, SingleTableReverse } = CssFunctions;
 
 const scrollPaddingProps = {
   scrollPadding: undefined,
@@ -129,10 +130,11 @@ const box = TypeBasedFunction(
 
 const Box = FunctionWithDefaultValues(DefaultBox, box);
 
-const overflowReverse = Object.fromEntries(Object.entries(overflow).map(([k, v]) => [v, k]));
-const scrollSnapTypeReverse = Object.fromEntries(Object.entries(scrollSnapType).map(([k, v]) => [v, k]));
-const objectFitReverses = Object.fromEntries(Object.entries(ObjectFits).map(([k, v]) => [v, k]));
+const overflowReverse = ShorthandPairReverse(overflow, "overflowX", "overflowY");
+const scrollSnapTypeReverse = SingleTableReverse("scrollSnapType", scrollSnapType);
+const objectFitReverses = TableReverse(ObjectFits);
 const scrollPadding = LogicalFourReverse("scroll-padding", "scrollPadding", ValueReverse, "_");
+
 const ReverseSizeFunction = prefix => {
   const capPrefix = prefix[0].toUpperCase() + prefix.slice(1);
   const min = `min${capPrefix}Size`, normal = `${prefix}Size`, max = `max${capPrefix}Size`;
@@ -157,7 +159,6 @@ function objectFitReverse({ objectPosition, objectFit, aspectRatio }) {
   objectFit ||= "fill";
   aspectRatio &&= aspectRatio.replace(/\s*\/\s*/g, "/");
   if (objectPosition) {
-    // use comma as separator — space breaks csss parser
     objectPosition = objectPosition.split(" ").join(",");
   }
   return `${objectFitReverses[objectFit] ?? objectFit}(${[aspectRatio, objectPosition].filter(Boolean).join(",")})`;
@@ -173,23 +174,16 @@ export default {
     box: style => {
       const d = style.display;
       if (d && d !== "unset" && !BOX_REVERSE_DISPLAYS.has(d)) return;
-      const normalized = normalizeToLogical(style);
-      if (style.objectPosition && style.objectPosition !== normalized.objectPosition) normalized.objectPosition = style.objectPosition;
-      return OptionalReset("$box", "$Box", DefaultBox,
+      const s = normalizeToLogical(style);
+      if (style.objectPosition && style.objectPosition !== s.objectPosition) s.objectPosition = style.objectPosition;
+      return Optional("$box", "$Box", DefaultBox,
         { prop: ["minInlineSize", "inlineSize", "maxInlineSize"], rev: inlineSizeReverse },
         { prop: ["minBlockSize", "blockSize", "maxBlockSize"], rev: blockSizeReverse },
-        {
-          prop: ["overflowX", "overflowY", "overflow"], rev: s => {
-            const ox = s.overflowX, oy = s.overflowY, o = s.overflow;
-            if (ox === "unset" && oy === "unset" && (!o || o === "unset")) return undefined;
-            return overflowReverse[o] ?? overflowReverse[ox === oy ? ox : `${ox} ${oy}`];
-          }
-        },
-        { prop: "scrollSnapType", rev: s => scrollSnapTypeReverse[s.scrollSnapType] },
+        { prop: ["overflowX", "overflowY", "overflow"], rev: overflowReverse },
+        { prop: "scrollSnapType", rev: scrollSnapTypeReverse },
         { prop: ["scrollPadding", "scrollPaddingTop", "scrollPaddingRight", "scrollPaddingBottom", "scrollPaddingLeft", "scrollPaddingBlockStart", "scrollPaddingInlineStart", "scrollPaddingBlockEnd", "scrollPaddingInlineEnd"], rev: scrollPadding },
-
         { prop: ["aspectRatio", "objectFit", "objectPosition"], rev: objectFitReverse }
-      )(normalized);
+      )(s);
     }
   }
 };

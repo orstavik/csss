@@ -3,6 +3,8 @@ import { CsssFunctions, CsssPrimitives, BadArgument } from "./func.js";
 const { LengthPercent, Url, LengthPercentAuto } = CsssPrimitives;
 const { SF2, CssValuesToCsssTable } = CsssFunctions;
 import { Color } from "./funcColor.js";
+import { CssFunctions } from "./funcReverse.js";
+const { ColorReverse } = CssFunctions;
 import gradients from "./funcGradients.js";
 const { linear, ellipse, circle, conic, } = gradients.csss;
 
@@ -82,7 +84,7 @@ export default {
       const bgColor = style.backgroundColor;
       const bgColorIsDefault = !bgColor || bgColor === "none" || bgColor === "unset" || bgColor === "transparent" || bgColor === "initial";
       if (!hasRealImage && !bgColorIsDefault) {
-        args.push(bgColor.replace(/^var\(--color-([^)]+)\)$/, '#$1'));
+        args.push(ColorReverse(bgColor) ?? bgColor.replace(/^var\(--color-([^)]+)\)$/, '#$1') ?? bgColor);
       } else if (!hasRealImage && style.backgroundImage === "none") {
         args.push("none");
       }

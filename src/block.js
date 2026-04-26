@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { TypeBasedFunction, LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
 const { LengthPercent } = CsssPrimitives;
-const { LogicalFourReverse, OptionalReset, ValueReverse, normalizeToLogical, DisplayMode } = CssFunctions;
+const { LogicalFourReverse, Optional, ValueReverse, normalizeToLogical, DisplayMode } = CssFunctions;
 
 const DefaultBlock = {
   display: "block",
@@ -39,22 +40,15 @@ export default {
   },
   css: {
       block: style => {
-        const normalized = normalizeToLogical(style);
         if (style.display === "none") return "$displayNone";
         if (style.display && style.display !== "block" && style.display !== "unset") return undefined;
-        
-        const isBlock = style.display === "block";
-        const paddingRev = LogicalFourReverse("padding", "padding", ValueReverse, "_")(normalized);
-        
-        if (paddingRev) {
-           const name = isBlock ? "$Block" : "$block";
-           return `${name}(${paddingRev})`;
-        }
-        
+        const normalized = normalizeToLogical(style);
+        const res = Optional("$block", "$Block", DefaultBlock,
+          { prop: ["display", ...Object.keys(paddingProps)], rev: LogicalFourReverse("padding", "padding", ValueReverse, "_") }
+        )(normalized);
+        if (res) return res;
         const hasExplicitUnset = Object.keys(paddingProps).some(p => style.hasOwnProperty(p) && (style[p] === "unset" || style[p] === "initial"));
-        if (!hasExplicitUnset) return undefined;
-
-        return isBlock ? "$Block" : "$block";
+        if (hasExplicitUnset) return style.display === "block" ? "$Block" : "$block";
     }
   }
 };

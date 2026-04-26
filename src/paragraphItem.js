@@ -1,4 +1,5 @@
-import { CsssFunctions, CssFunctions } from "./func.js";
+import { CsssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { TypeBasedFunction, CssValuesToCsssTable, SingleTable } = CsssFunctions;
 const { Optional, SingleTableReverse, DisplayMode, normalizeToLogical } = CssFunctions;
 

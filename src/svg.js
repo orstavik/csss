@@ -1,8 +1,8 @@
-
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { FunctionWithDefaultValues, SF2, TypeBasedFunction, PropertyType, SingleTable, CssValuesToCsssTable, FunctionPropertyType } = CsssFunctions;
 const { SingleTableRaw, LengthPercentNumber, NumberInterpreter, Url, Length, UrlUnset } = CsssPrimitives;
-const { ValueReverse, TableReverse, ColorReverse, SingleArgumentFunctionReverse: SAR, Optional, OptionalReset, normalizeToLogical } = CssFunctions;
+const { ValueReverse, TableReverse, ColorReverse, SingleArgumentFunctionReverse: SAR, Optional, normalizeToLogical } = CssFunctions;
 import { Color } from "./funcColor.js";
 const ColorUrl = a => Color(a) ?? Url(a);
 
@@ -179,9 +179,9 @@ export default {
   },
   css: {
     stroke: style => {
-      style = normalizeToLogical(style);
-      if (style.stroke === "none") return "$strokeNone";
-      return OptionalReset("$stroke", "$Stroke", strokeDefaults,
+      const s = normalizeToLogical(style);
+      if (s.stroke === "none") return "$strokeNone";
+      return Optional("$stroke", "$Stroke", strokeDefaults,
         { prop: "stroke", rev: style => (style.stroke && style.stroke !== "unset") ? (ColorReverse(style.stroke) ?? style.stroke) : undefined },
         { prop: "strokeWidth", rev: style => (style.strokeWidth && style.strokeWidth !== "unset") ? style.strokeWidth : undefined },
         { prop: "strokeOpacity", rev: style => (style.strokeOpacity && style.strokeOpacity !== "unset") ? ValueReverse(style.strokeOpacity) : undefined },
@@ -190,33 +190,29 @@ export default {
         { prop: "strokeDasharray", rev: style => (style.strokeDasharray && style.strokeDasharray !== "unset") ? `dasharray(${ValueReverse(style.strokeDasharray.replace(/,\s*/g, ","))})` : undefined },
         { prop: "strokeDashoffset", rev: style => (style.strokeDashoffset && style.strokeDashoffset !== "unset") ? `dashoffset(${ValueReverse(style.strokeDashoffset)})` : undefined },
         { prop: "strokeMiterlimit", rev: style => (style.strokeMiterlimit && style.strokeMiterlimit !== "unset") ? `miterlimit(${ValueReverse(style.strokeMiterlimit)})` : undefined },
-      )(style);
+      )(s);
     },
     fill: style => {
-      style = normalizeToLogical(style);
-      if (style.fill === "none") return "$fillNone";
-      return OptionalReset("$fill", "$Fill", fillDefaults,
+      const s = normalizeToLogical(style);
+      if (s.fill === "none") return "$fillNone";
+      return Optional("$fill", "$Fill", fillDefaults,
         { prop: "fill", rev: style => (style.fill && style.fill !== "unset") ? ColorReverse(style.fill) : undefined },
         { prop: "fillOpacity", rev: style => (style.fillOpacity && style.fillOpacity !== "unset") ? ValueReverse(style.fillOpacity) : undefined },
         { prop: "fillRule", rev: style => (style.fillRule && style.fillRule !== "unset") ? fillRuleRev[style.fillRule.toLowerCase()] : undefined },
-      )(style);
+      )(s);
     },
-    svgText: style => {
-      style = normalizeToLogical(style);
-      return OptionalReset("$svgText", "$SvgText", svgTextDefaults,
-        { prop: "textAnchor", rev: style => (style.textAnchor && style.textAnchor !== "unset") ? textAnchorRev[style.textAnchor.toLowerCase()] : undefined },
-        { prop: "dominantBaseline", rev: style => (style.dominantBaseline && style.dominantBaseline !== "unset") ? dominantBaselineRev[style.dominantBaseline.toLowerCase()] : undefined },
-        { prop: "alignmentBaseline", rev: style => (style.alignmentBaseline && style.alignmentBaseline !== "unset") ? alignmentBaselineRev[style.alignmentBaseline.toLowerCase()] : undefined },
-        { prop: "baselineShift", rev: style => (style.baselineShift && style.baselineShift !== "unset") ? baselineShiftRev[style.baselineShift.toLowerCase()] : undefined },
-      )(style);
-    },
+    svgText: style => Optional("$svgText", "$SvgText", svgTextDefaults,
+      { prop: "textAnchor", rev: style => (style.textAnchor && style.textAnchor !== "unset") ? textAnchorRev[style.textAnchor.toLowerCase()] : undefined },
+      { prop: "dominantBaseline", rev: style => (style.dominantBaseline && style.dominantBaseline !== "unset") ? dominantBaselineRev[style.dominantBaseline.toLowerCase()] : undefined },
+      { prop: "alignmentBaseline", rev: style => (style.alignmentBaseline && style.alignmentBaseline !== "unset") ? alignmentBaselineRev[style.alignmentBaseline.toLowerCase()] : undefined },
+      { prop: "baselineShift", rev: style => (style.baselineShift && style.baselineShift !== "unset") ? baselineShiftRev[style.baselineShift.toLowerCase()] : undefined },
+    )(normalizeToLogical(style)),
     marker: style => {
-      style = normalizeToLogical(style);
-      if (style.marker === "none") return "$markerNone";
-      if (style.marker) return `$marker(${ValueReverse(style.marker)})`;
-      if (style.markerStart && style.markerMid && style.markerEnd) return `$marker(${ValueReverse(style.markerStart)},${ValueReverse(style.markerMid)},${ValueReverse(style.markerEnd)})`;
-      if (style.markerStart && style.markerEnd) return `$marker(${ValueReverse(style.markerStart)},${ValueReverse(style.markerEnd)})`;
-      return undefined;
+      const s = normalizeToLogical(style);
+      if (s.marker === "none") return "$markerNone";
+      if (s.marker) return `$marker(${ValueReverse(s.marker)})`;
+      if (s.markerStart && s.markerMid && s.markerEnd) return `$marker(${ValueReverse(s.markerStart)},${ValueReverse(s.markerMid)},${ValueReverse(s.markerEnd)})`;
+      if (s.markerStart && s.markerEnd) return `$marker(${ValueReverse(s.markerStart)},${ValueReverse(s.markerEnd)})`;
     },
     stopColor: style => SAR("$stopColor", "stopColor", v => ColorReverse(v) ?? v)(normalizeToLogical(style)),
     stopOpacity: style => SAR("$stopOpacity", "stopOpacity", ValueReverse)(normalizeToLogical(style)),
@@ -228,9 +224,9 @@ export default {
     imageRendering: style => SAR("$imageRendering", "imageRendering", v => imageRenderingRev[v])(normalizeToLogical(style)),
     maskType: style => SAR("$maskType", "maskType", v => maskTypeRev[v])(normalizeToLogical(style)),
     paintOrder: style => {
-      style = normalizeToLogical(style);
-      if (!style.paintOrder || style.paintOrder === "normal") return undefined;
-      const args = style.paintOrder.split(/\s+/).map(v => paintOrderRev[v] ?? v);
+      const s = normalizeToLogical(style);
+      if (!s.paintOrder || s.paintOrder === "normal") return undefined;
+      const args = s.paintOrder.split(/\s+/).map(v => paintOrderRev[v] ?? v);
       return `$paintOrder(${args.join(",")})`;
     },
     lightingColor: style => SAR("$lightingColor", "lightingColor", v => ColorReverse(v) ?? v)(normalizeToLogical(style)),

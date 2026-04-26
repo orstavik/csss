@@ -1,4 +1,5 @@
-import { CsssPrimitives, BadArgument, CsssFunctions, CssFunctions } from "./func.js";
+import { CsssPrimitives, BadArgument, CsssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { Length } = CsssPrimitives;
 const { CssValuesToCsssTable } = CsssFunctions;
 const { ValueReverse, ColorReverse, Optional, normalizeToLogical, TableReverse } = CssFunctions;

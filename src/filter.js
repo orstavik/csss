@@ -28,20 +28,6 @@ const filterRaw = ({ name: filterName, args }) => args.map((a, i) => {
   throw BadArgument(filterName, args, i, `Expected ${Object.keys(FunctionToType).join(", ")}, or a url.`);
 }).join(" ");
 
-const reverseFilter = val => {
-  if (!val) return undefined;
-  if (val === "none") return "none";
-  // The value is something like `blur(5px) brightness(0.5) url(test.svg) drop-shadow(1px 1px 1px black)`
-  // For drop-shadow we need to convert it back to `shadow(normal, ...)` but wait, in csss.js it's probably better to just pass the raw css function name if it matches, and url as url('...').
-  // Let's implement a simple reverse that converts space separated functions into comma separated ones.
-  // Wait, filter in Csss: filter(blur(5px), brightness(0.5))
-  // We can just replace ") " with "), " and then wrap in filter().
-  // However drop-shadow(1px 1px 1px black) -> if they just passed dropShadow(1px, 1px, 1px, black) that's not natively parsed by filterRaw. filterRaw expects textDropShadowRaw which takes ShadeType or Lengths. 
-  // Let's just output `filter(${val.replace(/\) /g, "),")})` as a best-effort. Actually, csss spaces inside drop-shadow need comma replacement? No, CSS might have spaces.
-  // We can split by regex that finds functions.
-  return undefined; // A more robust parser would be needed. I will implement this next.
-};
-
 export default {
   props: { filter: undefined, backdrop: undefined, backdropFilter: undefined },
   csss: {
