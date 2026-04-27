@@ -1,6 +1,8 @@
 import { CsssPrimitives, BadArgument, CsssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { Length } = CsssPrimitives;
 const { CssValuesToCsssTable } = CsssFunctions;
+const { ValueReverse, ColorReverse, TableReverse } = CssFunctions;
 import { Color } from "./funcColor.js";
 
 const style = CssValuesToCsssTable("solid|dashed|dotted|double|wavy|blink|grammar-error|spelling-error");
@@ -26,8 +28,10 @@ const textDecoration = ({ name, args }) => {
 };
 const textDecorationNone = {
   textDecoration: "none",
-  textDecorationSkipInk: "auto",
-}
+  textDecorationSkipInk: "auto", //todo do we need to add this property?? nah..
+};
+const styleReverse = TableReverse(style);
+
 export default {
   csss: {
     textDecoration,
@@ -44,14 +48,21 @@ export default {
   },
   css: {
     textDecoration: style => {
-      const v = style.textDecoration;
-      const skip = style.textDecorationSkipInk;
-      if (v === "none") return "textDecorationNone";
-      if (!v && !skip) return undefined;
-      const parts = (v || "").split(" ").filter(p => p && p !== "solid");
-      if (skip === "none") parts.push("noSkipInk");
-      if (parts.length === 0) return "textDecoration(solid)";
-      return `textDecoration(${parts.map(p => p === "overline" ? "over" : p === "underline" ? "under" : p === "line-through" ? "through" : p).join(",")})`;
+      let { textDecoration, textDecorationLine, textDecorationStyle,
+        textDecorationColor, textDecorationThickness, textDecorationSkipInk } = style;
+      if (textDecorationLine === "none" || textDecoration === "none")
+        return "$textDecorationNone";
+
+      textDecorationStyle &&= styleReverse[textDecorationStyle];
+      textDecorationColor &&= ColorReverse(textDecorationColor);
+      textDecorationThickness &&= ValueReverse(textDecorationThickness);
+      textDecorationLine &&= textDecorationLine
+        .replaceAll(/none|initial/g, "").trim()
+        .replaceAll(/line-?/g, "")
+        .replaceAll(" ", ",");
+      textDecorationSkipInk = (textDecorationSkipInk === "none" && "noSkipInk");
+      const args = [textDecorationStyle, textDecorationLine, textDecorationColor, textDecorationThickness, textDecorationSkipInk].filter(Boolean);
+      return args.length ? `$textDecoration(${args.join(",")})` : undefined;
     }
   }
-}
+};
