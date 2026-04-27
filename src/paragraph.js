@@ -11,23 +11,16 @@ const hyphens = {
   noHyphens: "none",
 };
 
-//collapse and //wrap is default
 const whiteSpace = {
   nowrap: "nowrap", //collapse nowrap
   pre: "pre", // preserve nowrap
   preWrap: "pre-wrap", //preserve wrap
   preLine: "pre-line", //preserve-breaks wrap
-  whiteSpaceNormal: "normal", //collapse wrap,
-  // preserveBreaks: "preserve-breaks wrap", // same as pre-line
+  whiteSpaceNormal: "normal", //collapse wrap,  DEFAULT 
   breakSpaces: "break-spaces", //break-spaces wrap
-  preserveNowrap: "preserve nowrap",
   preserveBreaksNowrap: "preserve-breaks nowrap",
   breakSpacesNowrap: "break-spaces nowrap",
 };
-const whiteSpaceTableReverse = TableReverse(whiteSpace);
-whiteSpaceTableReverse["preserve nowrap"] = "pre";
-whiteSpaceTableReverse["preserve-breaks"] = "preLine";
-whiteSpaceTableReverse["preserve"] = "preWrap";
 
 const alignText = CssValuesToCsssTable("start|end|center|justify");
 
@@ -69,6 +62,20 @@ const hangingPunctuation = {
   hangingPunctuationNone: "none",
 };
 
+const hyphensReverse = TableReverse(hyphens);
+const lineBreakReverse = TableReverse(lineBreak);
+const textAlignLastReverse = TableReverse(textAlignLast);
+const textAlignReverse = TableReverse(alignText);
+const hangingPunctuationReverse = TableReverse(hangingPunctuation);
+const wordBreakReverse = TableReverse(wordBreak);
+wordBreakReverse["normal"] = "wordBreakNormal";
+const overflowWrapReverse = TableReverse(overflowWrap);
+overflowWrapReverse["normal"] = "overflowWrapNormal";
+const whiteSpaceTableReverse = TableReverse(whiteSpace);
+whiteSpaceTableReverse["preserve nowrap"] = "pre";
+whiteSpaceTableReverse["preserve-breaks"] = "preLine";
+whiteSpaceTableReverse["preserve"] = "preWrap";
+
 const paragraph =
   TypeBasedFunction(
     PropertyType("lineHeight", LengthPercentNumber),
@@ -81,8 +88,7 @@ const paragraph =
     SingleTable("wordBreak", wordBreak),
     SingleTable("overflowWrap", overflowWrap),
     FunctionPropertyType("indent", "textIndent", LengthPercent),
-    FunctionPropertyType("spacing", "wordSpacing", LengthPercent),
-    // a => a.text && wordBreakAndOverflowWrap[a.text]
+    FunctionPropertyType("spacing", "wordSpacing", LengthPercent)
   );
 
 const PARAGRAPHS = {
@@ -195,37 +201,11 @@ function Paragraph({ name, args }) {
   };
 }
 
-const hyphensReverse = TableReverse(hyphens);
-const lineBreakReverse = TableReverse(lineBreak);
-const textAlignLastReverse = TableReverse(textAlignLast);
-const textAlignReverse = TableReverse(alignText);
-const hangingPunctuationReverse = TableReverse(hangingPunctuation);
-const wordBreakReverse = TableReverse(wordBreak);
-wordBreakReverse["normal"] = "wordBreakNormal";
-const overflowWrapReverse = TableReverse(overflowWrap);
-overflowWrapReverse["normal"] = "overflowWrapNormal";
-
-const reverseProperties = {
-  hyphens: v => hyphensReverse[v],
-  lineBreak: v => lineBreakReverse[v],
-  textAlignLast: v => textAlignLastReverse[v],
-  textAlign: v => textAlignReverse[v],
-  hangingPunctuation: v => hangingPunctuationReverse[v],
-  wordBreak: v => wordBreakReverse[v],
-  overflowWrap: v => overflowWrapReverse[v],
-  lineHeight: ValueReverse,
-  textIndent: v => ((v = ValueReverse(v)) != null) && `indent(${v})`,
-  wordSpacing: v => ((v = ValueReverse(v)) != null) && `spacing(${v})`,
-};
-const whiteSpaceReverse = style => {
-  let { whiteSpace, whiteSpaceCollapse: c, textWrapMode: tw } = style;
-  const wsr = whiteSpaceTableReverse[whiteSpace];
-  if (wsr) return wsr;
+function whiteSpaceLongToShort({ whiteSpaceCollapse: c, textWrapMode: tw }) {
   if (!c && !tw) return;
-  if ((!tw || tw === "unset" || tw === "wrap" || tw === "initial")) tw = "";
+  if (tw === "unset" || tw === "wrap" || tw === "initial") tw = "";
   if (c === "unset" || c === "initial" || c === "collapse") c = "";
-  whiteSpace = [c, tw].filter(Boolean).join(" ");
-  return whiteSpaceTableReverse[whiteSpace];
+  return [c, tw].filter(Boolean).join(" ");
 }
 
 export default {
@@ -236,15 +216,32 @@ export default {
   props,
   css: {
     paragraph: style => {
-      let args = Object.entries(reverseProperties).map(([key, rev]) => rev(style[key]));
-      args.push(whiteSpaceReverse(style))
-      args = args.filter(Boolean);
-      if (!args.length)
+      let {
+        hyphens, textAlign, textAlignLast, hangingPunctuation, lineBreak, wordBreak, overflowWrap,
+        lineHeight, textIndent, wordSpacing, whiteSpace, whiteSpaceCollapse: c, textWrapMode: tw } = style;
+      whiteSpace ||= whiteSpaceLongToShort(style);
+
+      hyphens &&= hyphensReverse[hyphens];
+      textAlign &&= textAlignReverse[textAlign];
+      textAlignLast &&= textAlignLastReverse[textAlignLast];
+      hangingPunctuation &&= hangingPunctuationReverse[hangingPunctuation];
+      lineBreak &&= lineBreakReverse[lineBreak];
+      wordBreak &&= wordBreakReverse[wordBreak];
+      overflowWrap &&= overflowWrapReverse[overflowWrap];
+      lineHeight &&= ValueReverse(lineHeight);
+      textIndent &&= ValueReverse(textIndent);
+      textIndent &&= `indent(${textIndent})`;
+      wordSpacing &&= ValueReverse(wordSpacing);
+      wordSpacing &&= `spacing(${wordSpacing})`;
+      whiteSpace &&= whiteSpaceTableReverse[whiteSpace];
+      const args2 = [
+        hyphens, lineBreak, textAlignLast, textAlign, hangingPunctuation,
+        wordBreak, overflowWrap, lineHeight, textIndent, wordSpacing, whiteSpace].filter(Boolean);
+      if (!args2.length)
         return;
-      const unsets = Object.entries(style).filter(([k]) => style[k] === "unset" || style[k] === "initial");
-      //todo here we can match against the named paragraphs.
-      const name = args.length + unsets.length > 9 ? "$Paragraph" : "$paragraph";
-      return `${name}(${args.join(",")})`;
+      const unsets2 = Object.entries(style).filter(([k]) => style[k] === "unset" || style[k] === "initial");
+      const name2 = args2.length + unsets2.length > 9 ? "$Paragraph" : "$paragraph";
+      return `${name2}(${args2.join(",")})`;
     }
   }
 };
