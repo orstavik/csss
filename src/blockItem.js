@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
 const { LengthPercentAuto } = CsssPrimitives;
-const { LogicalFourReverse, SingleTableReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, SingleTableReverse, TableReverse, ValueReverse } = CssFunctions;
 
 const float = {
   floatStart: "inline-start",
@@ -42,7 +43,8 @@ const blockItem = TypeBasedFunction(
 );
 
 const BlockItem = FunctionWithDefaultValues(DefaultBlockItem, blockItem);
-
+const floatReverse = CssFunctions.TableReverse(float);
+const clearReverse = CssFunctions.TableReverse(clear);
 export default {
   csss: {
     blockItem,
@@ -55,10 +57,16 @@ export default {
     verticalAlign: undefined,
   },
   css: {
-    blockItem: Optional("blockItem",
-      LogicalFourReverse("margin", "margin", v => v, "_"),
-      SingleTableReverse("float", float),
-      SingleTableReverse("clear", clear)
-    ),
+    blockItem: style => {
+      const rev = LogicalFourReverse("margin", "margin", ValueReverse)(style);
+      let { float: floatVal, clear: clearVal } = style;
+      floatVal &&= floatReverse[floatVal];
+      clearVal &&= clearReverse[clearVal];
+      const args = [rev, floatVal, clearVal].filter(Boolean);
+      if (!args.length) return;
+      const unsets = Object.entries(style).filter(([k, v]) => v === "unset" || v === "initial").length;
+      const name = args.length + unsets >= 3 ? "$BlockItem" : "$blockItem";
+      return `${name}(${args.join(",")})`;
+    }
   }
 };

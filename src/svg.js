@@ -193,20 +193,22 @@ export default {
       const args = [stroke, strokeWidth, strokeOpacity, strokeLinecap, strokeLinejoin,
         strokeDasharray, strokeDashoffset, strokeMiterlimit].filter(Boolean);
       if (!args.length) return;
-      const isLong = Object.keys(strokeDefaults).every(k => style[k] !== undefined);
-      return `${isLong ? "$Stroke" : "$stroke"}(${args.join(",")})`;
+      const unsets = Object.entries(style).filter(([k, v]) => v === "unset" || v === "initial").length;
+      const name = args.length + unsets >= Object.keys(strokeDefaults).length ? "$Stroke" : "$stroke";
+      return `${name}(${args.join(",")})`;
     },
 
     fill: style => {
       if (style.fill === "none") return "$fillNone";
       let { fill, fillOpacity, fillRule } = style;
       fill &&= ColorReverse(fill);
-      fillOpacity &&= ValueReverse(fillOpacity);
+      fillOpacity &&= ValueReverse(fillOpacity);  
       fillRule &&= fillRuleRev[fillRule];
       const args = [fill, fillOpacity, fillRule].filter(Boolean);
       if (!args.length) return;
-      const isLong = Object.keys(fillDefaults).every(k => style[k] !== undefined);
-      return `${isLong ? "$Fill" : "$fill"}(${args.join(",")})`;
+      const unsets = Object.entries(style).filter(([k, v]) => v === "unset" || v === "initial").length;
+      const name = args.length + unsets >= Object.keys(fillDefaults).length ? "$Fill" : "$fill";
+      return `${name}(${args.join(",")})`;
     },
 
     svgText: style => {
@@ -217,8 +219,9 @@ export default {
       baselineShift &&= baselineShiftRev[baselineShift];
       const args = [textAnchor, dominantBaseline, alignmentBaseline, baselineShift].filter(Boolean);
       if (!args.length) return;
-      const isLong = Object.keys(svgTextDefaults).every(k => style[k] !== undefined);
-      return `${isLong ? "$SvgText" : "$svgText"}(${args.join(",")})`;
+      const unsets = Object.entries(style).filter(([k, v]) => v === "unset" || v === "initial").length;
+      const name = args.length + unsets >= Object.keys(svgTextDefaults).length ? "$SvgText" : "$svgText";
+      return `${name}(${args.join(",")})`;
     },
     marker: style => {
       if (style.marker === "none") return "$markerNone";

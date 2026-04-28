@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { TypeBasedFunction, LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
 const { LengthPercent } = CsssPrimitives;
-const { LogicalFourReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, ValueReverse } = CssFunctions;
 
 const DefaultBlock = {
   display: "block",
@@ -38,8 +39,14 @@ export default {
     ...paddingProps,
   },
   css: {
-    block: Optional("block",
-      LogicalFourReverse("padding", "padding", v => v, "_")
-    ),
+    block: style => {
+      if (style.display !== "block" && style.display !== undefined) return;
+      const rev = LogicalFourReverse("padding", "padding", ValueReverse)(style);
+      const args = [rev].filter(Boolean);
+      const unsets = Object.entries(style).filter(([k, v]) => v === "unset" || v === "initial").length;
+      if (!args.length && !unsets) return;
+      const name = style.display === "block" && args.length + unsets >= 1 ? "$Block" : "$block";
+      return `${name}(${args.join(",")})`;
+    }
   }
 };

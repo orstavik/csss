@@ -5,7 +5,7 @@
   const camel = s => s.replace(/-([a-z])/g, (_, c) => c.toUpperCase()), json = o => JSON.stringify(Object.fromEntries(Object.entries(o).sort()), null, 2);
   const collect = rules => [...rules].flatMap(r => r.style ? [r] : r.cssRules ? collect(r.cssRules) : []);
   const styleOf = rules => Object.assign({}, ...[rules].flat().map(r => {
-    const s = r.style, o = Object.fromEntries([...s].filter(p => !p.startsWith('--')).map(p => [camel(p), s.getPropertyValue(p).trim()]));
+   const s = r.style, o = Object.fromEntries([...s].map(p => [camel(p), s.getPropertyValue(p).trim()]));
     const t = s.getPropertyValue('transition').trim();
     if (t && !o.transitionProperty) o.transition = t;
     return o;

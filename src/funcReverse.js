@@ -18,6 +18,7 @@ import { cssPhysicalToLogical as normalizeToLogical } from "./cssPhysicalToLogic
 // }
 
 const Word = a => a.kind === "WORD" ? a.text : undefined;
+const toCamelCase = s => s.replace(/[^a-z]./ig, m => m[1].toUpperCase());
 
 const CssFunctions = {
   SingleArgumentFunctionReverse: (CsssFnName, CssProp, INTERPRETER, DEFAULT = "_") => style => {
@@ -25,61 +26,16 @@ const CssFunctions = {
     if (arg !== DEFAULT) return `${CsssFnName}(${arg})`;
   },
   normalizeToLogical,
-  LogicalFourReverse: (CssPrefix, CsssFnName, INTERPRETER, DEFAULT = "_") => {
-    const toCamel = s => s.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
-
-    const squeezeArgs = (args, minArgs = 1) => {
-      if (args.every(a => a === DEFAULT)) return undefined;
-      if (args.length === 4) {
-        if (args[1] === args[3] && (args.pop() || true))
-          if (args[0] === args[2] && (args.pop() || true))
-            if (args.length > minArgs && args[0] === args[1] && (args.pop() || true))
-              ;
-      } else if (args.length === 3) {
-        if (args[0] === args[2]) args.pop();
-        if (args.length > minArgs && args[0] === args[1]) args.pop();
-      } else if (args.length === 2) {
-        if (args.length > minArgs && args[0] === args[1]) args.pop();
-      }
-      return `${CsssFnName}(${args.join(",")})`;
-    };
-
-    // Setup for Logical Properties
-    const PROPS = ["-block-start", "-inline-start", "-block-end", "-inline-end"].map(s => CssPrefix + s);
-    const PROPS_CAMEL = PROPS.map(toCamel);
-    const SHORTHAND = toCamel(CssPrefix);
-
-    // Setup for Physical Properties 
-    const prefixCamel = toCamel(CssPrefix);
-    const PHYSICAL_PROPS_CAMEL = ["Top", "Right", "Bottom", "Left"].map(s => prefixCamel + s);
-
+  LogicalFourReverse: (CssPrefix, CsssName, INTERPRETER, DEFAULT = "_") => {
+    const PROPS = ["-block-start", "-inline-start", "-block-end", "-inline-end"].map(s => toCamelCase(CssPrefix + s));
     return style => {
-      // 0. --- SHORTHAND PROPERTY CHECK ---
-      const shorthand = style[SHORTHAND];
-      if (shorthand !== undefined) {
-        const tokens = spacelessCssTokens(shorthand);
-        if (!tokens.length) return undefined;
-        const args = tokens.map(v => INTERPRETER(v) ?? DEFAULT);
-        return squeezeArgs(args);
-      }
-
-      // 1. --- PHYSICAL PROPERTIES CHECK ---
-      const [t, r, b, l] = PHYSICAL_PROPS_CAMEL.map(p => style[p]);
-      const hasPhysical = t !== undefined || r !== undefined || b !== undefined || l !== undefined;
-
-      if (hasPhysical) {
-        if (t !== undefined && t === r && t === b && t === l) {
-          const val = INTERPRETER(t) ?? DEFAULT;
-          // CRITICAL FIX: If it resolves to the default value, hide it!
-          if (val === DEFAULT) return undefined;
-
-          return `${CsssFnName}(${val})`;
-        }
-      }
-
-      // 2. --- ORIGINAL LOGICAL PROPERTIES LOGIC ---
-      let args = PROPS_CAMEL.map(p => INTERPRETER(style[p]) ?? DEFAULT);
-      return squeezeArgs(args, 2);
+      let args = PROPS.map(p => INTERPRETER(style[p]) ?? DEFAULT);
+      if (args.every(a => a === DEFAULT)) return undefined;
+      if (args[1] === args[3] && (args.pop() || true))
+        if (args[0] === args[2] && (args.pop() || true))
+          if (args[0] === args[1] && (args.pop() || true))
+            ;
+      return `${CsssName}(${args.join(",")})`;
     }
   },
   SingleTableReverse: (CssProp, Table) => {
