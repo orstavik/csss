@@ -228,7 +228,7 @@ export default {
       lineBreak &&= lineBreakReverse[lineBreak];
       wordBreak &&= wordBreakReverse[wordBreak];
       overflowWrap &&= overflowWrapReverse[overflowWrap];
-      lineHeight &&= ValueReverse(lineHeight);
+      lineHeight &&= ValueReverse(lineHeight);     
       textIndent &&= ValueReverse(textIndent);
       textIndent &&= `indent(${textIndent})`;
       wordSpacing &&= ValueReverse(wordSpacing);
@@ -239,8 +239,8 @@ export default {
         wordBreak, overflowWrap, lineHeight, textIndent, wordSpacing, whiteSpace].filter(Boolean);
       if (!args2.length)
         return;
-      const unsets2 = Object.entries(style).filter(([k]) => style[k] === "unset" || style[k] === "initial");
-      const name2 = args2.length + unsets2.length > 9 ? "$Paragraph" : "$paragraph";
+      const unsets2 = Object.entries(props).filter(([k]) => style[k] === "unset" || style[k] === "initial");
+      const name2 = args2.length + unsets2.length >= 9 ? "$Paragraph" : "$paragraph";
       return `${name2}(${args2.join(",")})`;
     }
   }

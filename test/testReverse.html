@@ -5,7 +5,7 @@
   const camel = s => s.replace(/-([a-z])/g, (_, c) => c.toUpperCase()), json = o => JSON.stringify(Object.fromEntries(Object.entries(o).sort()), null, 2);
   const collect = rules => [...rules].flatMap(r => r.style ? [r] : r.cssRules ? collect(r.cssRules) : []);
   const styleOf = rules => Object.assign({}, ...[rules].flat().map(r => {
-   const s = r.style, o = Object.fromEntries([...s].map(p => [camel(p), s.getPropertyValue(p).trim()]));
+    const s = r.style, o = Object.fromEntries([...s].filter(p => !p.startsWith("--")).map(p => [camel(p), s.getPropertyValue(p).trim()]));
     const t = s.getPropertyValue('transition').trim();
     if (t && !o.transitionProperty) o.transition = t;
     return o;
@@ -16,25 +16,37 @@
     sheet.replaceSync(shot.css?.value ?? "");
     const rules = collect(sheet.cssRules);
     if (!rules.length) return { key: shot.description?.value || "no rules", actual: "{}", expected: "{}" };
+    const parentStyle = styleOf(rules[0]);
     const res = rules.flatMap(r => {
       const m = r.selectorText?.match(/\.((?:\\.|[\w-]|\\\$|\\\||\\\*)+)/);
       const statement = (m ? m[1].replace(/\\(.)/g, '$1') : shot.csss?.value || "").trim();
       if (!statement || !r.selectorText) return [];
       const expected = styleOf(r);
       let actual = {};
+      let shorthand = "";
       try {
+        shorthand = CSSS.reverse(expected, parentStyle);
         const sheet2 = new CSSStyleSheet();
-        sheet2.replaceSync(CSSS.parse(CSSS.reverse(expected)).map(p => p.cssText).join("\n"));
+        sheet2.replaceSync(CSSS.parse(shorthand).map(p => p.cssText).join("\n"));
         actual = styleOf(collect(sheet2.cssRules));
-      } catch (e) { }
-      return [{ statement, actual, expected }];
+      } catch (e) {
+        console.error("[REVERSE TEST] error processing statement:", statement);
+        console.error(" -> Expected CSS:", expected);
+        console.error(" -> Generated Shorthand:", shorthand);
+        console.error(" -> Error:", e);
+      }
+      return [{ statement, actual, expected, shorthand }];
     });
+    console.log("[REVERSE TEST] statement:", res.map(r => r.statement));
+    console.log("[REVERSE TEST] shorthand:", res.map(r => r.shorthand));
+    console.log("[REVERSE TEST] expected:", res.map(r => r.expected));
+    console.log("[REVERSE TEST] actual:", res.map(r => r.actual));
     return {
       key: res.map(r => r.statement).join(" | "),
       actual: res.map(r => json(r.actual)).join("\n---\n"),
       expected: res.map(r => json(r.expected)).join("\n---\n")
     };
   }
-  runTests("svg,paragraph,shadows,textDecoration", test, "/shots/genre/");
+  runTests("block,iBlock,flex,grid,paragraph,border,filter,paragraph,position,svg,transform,shadows", test, "/shots/genre/");
   // runTests("block,border,box,filter,flex,font,grid,iBlock,paragraph,position,shadows,svg,textDecoration,transforms,transitions", test, "/shots/genre/");
 </script>

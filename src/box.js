@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions, BadArgument } from "./func.js";
+import { CsssPrimitives, CsssFunctions, BadArgument } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, SizeFunction, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercent, LengthPercentUnset, NumberInterpreter } = CsssPrimitives;
-const { LogicalFourReverse } = CssFunctions;
+const { LogicalFourReverse, ValueReverse, PhysicalFourReverse } = CssFunctions;
 
 const scrollPaddingProps = {
   scrollPadding: undefined,
@@ -129,9 +130,12 @@ const Box = FunctionWithDefaultValues(DefaultBox, box);
 const overflowReverse = Object.fromEntries(Object.entries(overflow).map(([k, v]) => [v, k]));
 const scrollSnapTypeReverse = Object.fromEntries(Object.entries(scrollSnapType).map(([k, v]) => [v, k]));
 const objectFitReverses = Object.fromEntries(Object.entries(ObjectFits).map(([k, v]) => [v, k]));
-const scrollPadding = LogicalFourReverse("scroll-padding", "scrollPadding", v => v, "_");
+const scrollPadding = LogicalFourReverse("scroll-padding", "scrollPadding", ValueReverse, "_");
+const toCamel = s => s.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
 const ReverseSizeFunction = prefix => {
-  const min = `min-${prefix}-size`, normal = `${prefix}-size`, max = `max-${prefix}-size`;
+  const min = toCamel(`min-${prefix}-size`);
+  const normal = toCamel(`${prefix}-size`);
+  const max = toCamel(`max-${prefix}-size`);
   return ({ [min]: vMin, [normal]: vNormal, [max]: vMax }) => {
     if (vMax == "unset") vMax = "_";
     if (vMin == "unset") vMin = "_";
@@ -143,24 +147,46 @@ const ReverseSizeFunction = prefix => {
 };
 const blockSizeReverse = ReverseSizeFunction("block");
 const inlineSizeReverse = ReverseSizeFunction("inline");
+const logicalToPhysical = {
+  "inline-start": "left",
+  "inline-end": "right",
+  "block-start": "top",
+  "block-end": "bottom",
+  "center": "center",
+};
 
 function objectFitReverse({ objectPosition, objectFit, aspectRatio }) {
   if (!aspectRatio && !objectPosition && !objectFit) return;
+  objectFit = ValueReverse(toCamel(objectFit));
+  objectPosition = ValueReverse(objectPosition);
+  aspectRatio = ValueReverse(aspectRatio);
   if (!aspectRatio && !objectPosition) return objectFitReverses[objectFit];
   objectFit ||= "fill";
-  aspectRatio &&= aspectRatio.replace(/\s/g, "");
+  aspectRatio = aspectRatio?.replace(/\s/g, "").replace(/^(\d+)\/\1$/, "$1");
   if (objectPosition) {
-    const pos = objectPosition?.split(" ") || [];
-    let x, y, x2, y2;
-    for (let i = 0; i < pos.length; i++) {
-      if (!x && (pos[i] === "left" || pos[i] === "right" || pos[i] === "center"))
-        x = pos[i];
-      else if (!y && (pos[i] === "top" || pos[i] === "bottom" || pos[i] === "center"))
-        y = pos[i];
-      else if (!y) x2 = pos[i];
-      else y2 = pos[i];
+    const pos = objectPosition.split(" ").map(p => logicalToPhysical[p] ?? p);
+    if (pos.length === 2 && !isNaN(parseFloat(pos[0])) && !isNaN(parseFloat(pos[1]))) {
+      objectPosition = pos.join(",");
+    } else {
+      let x, y, x2, y2;
+      for (let i = 0; i < pos.length; i++) {
+        if (!x && (
+          pos[i] === "left" || pos[i] === "right" || pos[i] === "center"
+        ))
+          x = pos[i];
+
+        else if (!y && (
+          pos[i] === "top" || pos[i] === "bottom" || pos[i] === "center"
+        ))
+          y = pos[i];
+        else if (!y) x2 = pos[i];
+        else y2 = pos[i];
+      }
+      objectPosition = [x, x2, y, y2].filter(Boolean).join(","); //here we actually want to remove the 0 as it is the default value.
+      if (x === "center" && y === "center" && !x2 && !y2) {
+        objectPosition = "center";
+      }
     }
-    objectPosition = [x, x2, y, y2].filter(Boolean).join(" "); //here we actually want to remove the 0 as it is the default value.
   }
   return `${objectFit}(${[aspectRatio, objectPosition].filter(Boolean).join(",")})`;
 }
@@ -173,19 +199,21 @@ export default {
   props,
   css: {
     box: style => {
-      let x, y;
-      let o = overflowReverse[(x = style["overflow-x"] ?? "auto") === (y = style["overflow-y"] ?? "auto") ? x : `${x} ${y}`];
-      if (o === "auto") o = undefined;
+      let { overflowX, overflowY, scrollSnapType, objectFit, objectPosition, aspectRatio } = style;
+      const overflowKey = overflowX === overflowY ? overflowX : `${overflowX ?? ""} ${overflowY ?? ""}`.trim();
+      let o = overflowReverse[overflowKey];
       let inline = inlineSizeReverse(style);
       let block = blockSizeReverse(style);
-      const snapType = scrollSnapTypeReverse[style["scroll-snap-type"]];
+      scrollSnapType &&= scrollSnapTypeReverse[scrollSnapType];
       const padding = scrollPadding(style);
-      const coverStr = objectFitReverse(style);
-      const bigB = o && inline && block && snapType && padding && coverStr;
+      const coverStr = objectFitReverse({ objectFit, objectPosition, aspectRatio });
       if (block === "_<_<_") block = undefined;
       if (inline === "_<_<_") inline = block && "_";
-      const res = [inline, block, o, snapType, padding, coverStr].filter(Boolean);
-      return !res.length ? undefined : `$${bigB ? "B" : "b"}ox(${res.join(",")})`;
+      const res = [inline, block, o, scrollSnapType, padding, coverStr].filter(Boolean);
+      if (!res.length) return;
+      const unsets = Object.entries(DefaultBox).filter(([k, v]) => style[k] === v || style[k] === "unset" || style[k] === "initial");
+      const name = res.length + unsets.length >= 3 ? "Box" : "box";
+      return `$${name}(${res.join(",")})`;
     },
   }
 };

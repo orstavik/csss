@@ -1,13 +1,22 @@
-import { CsssFunctions, CsssPrimitives, CssFunctions } from "./func.js";
+import { CsssFunctions, CsssPrimitives } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
-const { LogicalFourReverse } = CssFunctions;
+const { LogicalFourReverse, ValueReverse } = CssFunctions;
 const { LengthPercentAuto } = CsssPrimitives;
 
 const CssPositions = {
-  absolute: LogicalFourReverse("inset", "absolute", v => v),
-  relative: LogicalFourReverse("inset", "relative", v => v),
-  fixed: LogicalFourReverse("inset", "fixed", v => v),
-  sticky: LogicalFourReverse("inset", "sticky", v => v),
+  absolute: LogicalFourReverse("inset", "$absolute", ValueReverse),
+  relative: LogicalFourReverse("inset", "$relative", ValueReverse),
+  fixed: LogicalFourReverse("inset", "$fixed", ValueReverse),
+  sticky: LogicalFourReverse("inset", "$sticky", ValueReverse),
+};
+
+/** When inset longhands are all default, still emit `$relative` / `$absolute` / … (matches `$Block…$relative`). */
+const barePositionCsss = {
+  relative: "$relative",
+  absolute: "$absolute",
+  fixed: "$fixed",
+  sticky: "$sticky",
 };
 
 export default {
@@ -32,6 +41,16 @@ export default {
     insetBlockEnd: undefined,
   },
   css: {
-    position: style => CssPositions[style.position]?.(style),
+    position: style => {
+      const insetPart = CssPositions[style.position]?.(style);
+      if (insetPart != null) return insetPart;
+      return barePositionCsss[style.position];
+    },
+    /** Native `z-index` is registered in SHORTS so the generic REVERSES skip does not run. */
+    zIndex: style => {
+      const zr = ValueReverse(style.zIndex);
+      if (!zr || zr === "auto") return;
+      return `$zIndex(${zr})`;
+    },
   },
 };

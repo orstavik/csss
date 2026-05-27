@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions, matchArgsWithInterpreters } from "./func.js";
+import { CsssPrimitives, CsssFunctions, matchArgsWithInterpreters } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
 const { LengthPercent } = CsssPrimitives;
-const { LogicalFourReverse, SingleTableReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, SingleTableReverse, ValueReverse } = CssFunctions;
 
 const scrollMarginProps = {
   scrollMargin: undefined,
@@ -55,7 +56,7 @@ const BoxItem = FunctionWithDefaultValues(DefaultBoxItem, boxItem);
 const scrollSnapAlignReverse = Object.fromEntries(Object.entries(scrollSnapAlign).map(([k, v]) => [v, k]));
 
 const scrollSnapStopReverse = Object.fromEntries(Object.entries(scrollSnapStop).map(([k, v]) => [v, k]));
-const scrollMargin = LogicalFourReverse("scroll-margin", "scrollMargin", v => v, "_");
+const scrollMargin = LogicalFourReverse("scroll-margin", "scrollMargin",ValueReverse, "_");
 
 export default {
   csss: {
@@ -64,13 +65,19 @@ export default {
   },
   props,
   css: {
-    boxItem: style => {
+    boxItem: (style, parentStyle) => {
+      // debugger
       const margin = scrollMargin(style);
-      const snapAlign = scrollSnapAlignReverse[style["scroll-snap-align"]];
-      const snapStop = scrollSnapStopReverse[style["scroll-snap-stop"]];
-      const bigB = margin && (snapAlign || style["scroll-snap-align"]) && (snapStop || style["scroll-snap-stop"] === "unset");
+      const snapAlign = scrollSnapAlignReverse[style["scrollSnapAlign"]];
+      const snapStop = scrollSnapStopReverse[style["scrollSnapStop"]];
       const res = [margin, snapAlign, snapStop].filter(Boolean);
-      return !res.length ? undefined : `$${bigB ? "B" : "b"}oxItem(${res.join(",")})`;
+      if (!res.length) return;
+      const unsets = [
+        ...Object.keys(DefaultBoxItem),
+        ...Object.keys(scrollMarginProps)
+      ].filter(k => style[k] === "unset" || style[k] === "initial");
+      const name = res.length + unsets.length >= 3 ? "BoxItem" : "boxItem";
+      return `$${name}(${res.join(",")})`;
     },
   }
 };

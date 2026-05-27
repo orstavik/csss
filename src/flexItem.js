@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions, BadArgument } from "./func.js";
+import { CsssPrimitives, CsssFunctions, BadArgument } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { SF2, TypeBasedFunction, LogicalFour, FunctionPropertyType, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercentAuto, NumberInterpreter, SingleTableRaw, } = CsssPrimitives;
-const { LogicalFourReverse, SingleTableReverse, SingleArgumentFunctionReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, SingleTableReverse, SingleArgumentFunctionReverse, Optional, ValueReverse } = CssFunctions;
 
 const AlignSelf = CssValuesToCsssTable(
   "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly|baseline|first baseline|last baseline"
@@ -70,14 +71,26 @@ export default {
     order: undefined,
   },
   css: {
-    flexItem: Optional("flexItem",
-      LogicalFourReverse("margin", "margin", v => v, "_"),
-      SingleTableReverse("alignSelf", AlignSelf),
-      //todo fix the reverse functions here.
-      SingleArgumentFunctionReverse("basis", "flexBasis", v => v, "_"),
-      SingleArgumentFunctionReverse("grow", "flexGrow", v => v, "_"),
-      SingleArgumentFunctionReverse("shrink", "flexShrink", v => v, "_"),
-      SingleArgumentFunctionReverse("order", "order", v => v, "_")
-    ),
+    flexItem: (style, parentStyle) => {
+      if (parentStyle?.display !== "flex") return;
+      let { flex, flexGrow, flexShrink, flexBasis, alignSelf, order } = style;
+      flexGrow = ValueReverse(flexGrow ?? (flex ? flex.split(" ")[0] : undefined));
+      flexShrink = ValueReverse(flexShrink ?? (flex ? flex.split(" ")[1] : undefined));
+      flexBasis = ValueReverse(flexBasis ?? (flex ? flex.split(" ")[2] : undefined));
+      alignSelf = ValueReverse(alignSelf);
+      order = ValueReverse(order);
+      order &&= `order(${order})`;
+      const margin = LogicalFourReverse("margin", "margin", ValueReverse)(style);
+      const args = [flexGrow, flexShrink, flexBasis, alignSelf, order, margin]
+        .filter(v => v && v !== "unset");
+      const unsets = [
+        ...Object.keys(DefaultFlexItem),
+        ...Object.keys(marginProps),
+        "flexGrow", "flexShrink", "flexBasis"  
+      ].filter(k => style[k] === "unset" || style[k] === "initial").length;
+      if (!args.length && !unsets) return;
+      const name = args.length + unsets >= 4 ? "$FlexItem" : "$flexItem";
+      return `${name}(${args.join(",")})`;
+    }
   }
 };

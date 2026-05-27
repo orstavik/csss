@@ -161,11 +161,11 @@ function interpretShort(res, x) {
   }
 }
 
-export function reverse(style) {
+export function reverse(style, parentStyle) {
   style = cssPhysicalToLogical({ ...style });
   const parts = [];
   for (const [key, fn] of Object.entries(REVERSES)) {
-    const res = fn(style);
+    const res = fn(style, parentStyle);
     if (res !== undefined) {
       parts.push(res);
       //todo remove the props from the style object?

@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
 const { LengthPercentAuto } = CsssPrimitives;
-const { LogicalFourReverse, SingleTableReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, SingleTableReverse, TableReverse, ValueReverse } = CssFunctions;
 
 const float = {
   floatStart: "inline-start",
@@ -42,7 +43,8 @@ const iBlockItem = TypeBasedFunction(
 );
 
 const IBlockItem = FunctionWithDefaultValues(DefaultIBlockItem, iBlockItem);
-
+const floatReverse = TableReverse(float);
+const clearReverse = TableReverse(clear);
 export default {
   csss: {
     iBlockItem,
@@ -55,10 +57,17 @@ export default {
     verticalAlign: undefined,
   },
   css: {
-    iBlockItem: Optional("iBlockItem",
-      LogicalFourReverse("margin", "margin", v => v, "_"),
-      SingleTableReverse("float", float),
-      SingleTableReverse("clear", clear)
-    ),
+    iBlockItem: (style, parentStyle) => {
+      if (parentStyle?.display !== "inline-block") return;
+      const rev = LogicalFourReverse("margin", "margin", ValueReverse)(style);
+      let { float: floatVal, clear: clearVal } = style;
+      floatVal &&= floatReverse[floatVal];
+      clearVal &&= clearReverse[clearVal];
+      const args = [rev, floatVal, clearVal].filter(Boolean);
+      if (!args.length) return;
+      const unsets = Object.keys(DefaultIBlockItem).filter(k => style[k] === "unset" || style[k] === "initial").length;
+      const name = args.length + unsets >= 3 ? "$IBlockItem" : "$iBlockItem";
+      return `${name}(${args.join(",")})`;
+    }
   }
 };

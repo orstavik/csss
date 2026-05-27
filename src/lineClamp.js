@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { TypeBasedFunction, LogicalFour, ParseFirstThenRest, FunctionWithDefaultValues } = CsssFunctions;
 const { NumberInterpreter, LengthPercent } = CsssPrimitives;
-const { LogicalFourReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, ValueReverse } = CssFunctions;
 
 const DefaultLineClamp = {
   display: "-webkit-box",
@@ -48,9 +49,11 @@ export default {
     overflowBlock: undefined,
   },
   css: {
-    lineClamp: Optional("lineClamp",
-      style => style.WebkitLineClamp === undefined ? undefined : style.WebkitLineClamp,
-      LogicalFourReverse("padding", "padding", v => v, "_")
-    ),
+    lineClamp: style => {
+      let count = style.WebkitLineClamp;
+      if (count === undefined || count === "unset") return;
+      let rev = LogicalFourReverse("padding", "padding", ValueReverse, "_")(style);
+      return `$lineClamp(${count}${rev ? "," + rev : ""})`;
+    },
   }
 };

@@ -101,7 +101,7 @@ export default {
       if (style.backgroundAttachment && style.backgroundAttachment !== "scroll") args.push(style.backgroundAttachment);
       if (style.backgroundBlendMode && style.backgroundBlendMode !== "normal") args.push(style.backgroundBlendMode);
 
-      return args.length ? `bg(${args.join(",")})` : undefined;
+      return args.length ? `$bg(${args.join(",")})` : undefined;
     }
   }
 };

@@ -1,18 +1,20 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, SF2: SF2, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercentAuto, Span } = CsssPrimitives;
-const { LogicalFourReverse, SingleTableReverse, SequentialFunctionReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, SingleTableReverse, SequentialFunctionReverse, ValueReverse, TableReverse } = CssFunctions;
 
 const placeSelf = CssValuesToCsssTable(
   "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly|baseline|first baseline|last baseline",
   "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly"
 );
+const placeSelfReverse = TableReverse(placeSelf);
 
 const DefaultGridItem = {
   margin: "unset",
   gridColumn: "unset",
   gridRow: "unset",
-  placeSelf: "unset",
+  placeSelf: "unset"
 };
 
 const marginProps = {
@@ -38,6 +40,29 @@ const gridItem = TypeBasedFunction(
 
 const GridItem = FunctionWithDefaultValues(DefaultGridItem, gridItem);
 
+/** Keys to count toward umbrella `$GridItem` vs `$gridItem`; browsers expose longhands (`gridRowStart`) not always `gridRow` / `placeSelf`. */
+const gridItemUnsetKeys = [...new Set([
+  ...Object.keys(DefaultGridItem),
+  ...Object.keys(marginProps),
+  "alignSelf",
+  "justifySelf",
+  "gridColumnStart",
+  "gridColumnEnd",
+  "gridRowStart",
+  "gridRowEnd",
+])];
+
+function spanReverse(val) {
+  if (!val) return;
+  return val.replace(/span (\S+)/, (_, n) => `span(${n})`);
+}
+
+/** Like ValueReverse but keeps `auto` as `auto` (not `_`) and drops unset/initial. */
+function lineRev(val) {
+  if (val == null || /^(unset|initial)$/i.test(String(val))) return;
+  return String(val).toLowerCase() === "auto" ? "auto" : ValueReverse(val);
+}
+
 export default {
   csss: {
     gridItem,
@@ -50,11 +75,24 @@ export default {
     gridRow: undefined,
   },
   css: {
-    gridItem: Optional("gridItem",
-      LogicalFourReverse("margin", "margin", v => v, "_"),
-      SingleTableReverse("placeSelf", placeSelf),
-      SequentialFunctionReverse("column", ["gridColumn"], v => v, "_"),
-      SequentialFunctionReverse("row", ["gridRow"], v => v, "_")
-    ),
+    gridItem: (style, parentStyle) => {
+      if (parentStyle?.display !== "grid") return;
+      const marginRev = LogicalFourReverse("margin", "margin", ValueReverse)(style);
+      let { placeSelf: ps, gridColumnStart, gridColumnEnd, gridRowStart, gridRowEnd, alignSelf, justifySelf } = style;
+      let gc = [gridColumnStart, gridColumnEnd].map(lineRev).filter(Boolean).map(spanReverse).join(",") || undefined;
+      let gr = [gridRowStart, gridRowEnd].map(lineRev).filter(Boolean).map(spanReverse).join(",") || undefined;
+      const [as, js] = [alignSelf, justifySelf].map(ValueReverse);
+      ps ||= as && (as === js ? as : [as, js].filter(Boolean).join(" "));
+      ps &&= placeSelfReverse[ps];
+      gc &&= `column(${(gc)})`;
+      gr &&= `row(${(gr)})`;
+      const args = [marginRev, ps, gc, gr].filter(Boolean);
+      const unsets = gridItemUnsetKeys.filter(
+        k => style[k] === "unset" || style[k] === "initial"
+      ).length;
+      if (!args.length && !unsets) return;
+      const name = args.length + unsets >= 4 ? "$GridItem" : "$gridItem";
+      return `${name}(${args.join(",")})`;
+    }
   }
 };

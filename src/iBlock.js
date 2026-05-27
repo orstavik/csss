@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { TypeBasedFunction, LogicalFour, FunctionWithDefaultValues } = CsssFunctions;
 const { LengthPercent } = CsssPrimitives;
-const { LogicalFourReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, ValueReverse } = CssFunctions;
 
 const DefaultIBlock = {
   display: "inline-block",
@@ -38,8 +39,14 @@ export default {
     ...paddingProps,
   },
   css: {
-    iBlock: Optional("iBlock",
-      LogicalFourReverse("padding", "padding", v => v, "_")
-    ),
+    iBlock: style => {
+      if (style.display !== "inline-block" && style.display !== undefined) return;
+      const rev = LogicalFourReverse("padding", "padding", ValueReverse)(style);
+      const args = [rev].filter(Boolean);
+      const unsets = Object.keys(DefaultIBlock).filter(k => style[k] === "unset" || style[k] === "initial").length;
+      if (!args.length && !unsets) return;
+      const name = style.display === "inline-block" && args.length + unsets >= 1 ? "$IBlock" : "$iBlock";
+      return `${name}(${args.join(",")})`;
+    }
   }
 };

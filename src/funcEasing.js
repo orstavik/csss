@@ -165,7 +165,7 @@ function easingFunction(a) {
   if (ease) return [ease];
 }
 
-export default {
+ export default {
   csss: {
     easingFunction
   }

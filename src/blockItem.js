@@ -57,16 +57,17 @@ export default {
     verticalAlign: undefined,
   },
   css: {
-    blockItem: style => {
-      const rev = LogicalFourReverse("margin", "margin", ValueReverse)(style);
+    blockItem: (style, parentStyle)  => {
+      const d = parentStyle.display;
+      if (d === "flex" || d === "inline-flex" || d === "grid" || d === "inline-grid") return;      const rev = LogicalFourReverse("margin", "margin", ValueReverse)(style);
       let { float: floatVal, clear: clearVal } = style;
       floatVal &&= floatReverse[floatVal];
       clearVal &&= clearReverse[clearVal];
       const args = [rev, floatVal, clearVal].filter(Boolean);
       if (!args.length) return;
-      const unsets = Object.entries(style).filter(([k, v]) => v === "unset" || v === "initial").length;
+      const unsets = Object.keys(DefaultBlockItem).filter(k => style[k] === "unset" || style[k] === "initial").length;
       const name = args.length + unsets >= 3 ? "$BlockItem" : "$blockItem";
       return `${name}(${args.join(",")})`;
-    }
+    }    
   }
 };

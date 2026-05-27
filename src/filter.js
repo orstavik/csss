@@ -56,14 +56,14 @@ export default {
       val = val.replace(/([a-z-]+)\(/g, (_, m) => m.replace(/-([a-z])/g, g => g[1].toUpperCase()) + "(");
       // internal spaces in dropShadow(1px 1px) -> dropShadow(1px,1px)
       val = val.replace(/([a-zA-Z]+\()([^)]+)(\))/g, (_, start, inner, end) => start + inner.replace(/,\s*/g, ",").replace(/\s+/g, ",") + end);
-      return `filter(${val})`;
+      return `$filter(${val})`;
     },
     backdrop: style => {
       if (!style.backdropFilter || style.backdropFilter === "none") return undefined;
       let val = style.backdropFilter.replace(/\) /g, "),");
       val = val.replace(/([a-z-]+)\(/g, (_, m) => m.replace(/-([a-z])/g, g => g[1].toUpperCase()) + "(");
       val = val.replace(/([a-zA-Z]+\()([^)]+)(\))/g, (_, start, inner, end) => start + inner.replace(/,\s*/g, ",").replace(/\s+/g, ",") + end);
-      return `backdrop(${val})`;
+      return `$backdrop(${val})`;
     }
   },
 };

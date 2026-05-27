@@ -1,7 +1,8 @@
 import { CsssPrimitives, CsssFunctions, BadArgument } from "./func.js";
 const { Angle, Length, Name, Integer, Quote, Percent, Word, NumberInterpreter, AbsoluteUrl } = CsssPrimitives;
 const { FunctionType, SF2, CssValuesToCsssTable } = CsssFunctions;
-
+import { CssFunctions } from "./funcReverse.js";
+const { ValueReverse, TableReverse } = CssFunctions;
 // http://dbushell.com/2024/11/05/webkit-font-smoothing/
 // this should be added by default, same as padding:0, margin: 0, box-sizing: border-box, etc.
 // :root { -webkit-font-smoothing: antialiased; }
@@ -69,7 +70,12 @@ const Sizes = CssValuesToCsssTable("larger|smaller|xx-small|x-small|small|medium
 const fontSize = a => Sizes[a.text] ?? Length(a);
 
 const letterSpacing = FunctionType("spacing", Length);
-
+const WeightsReverse = TableReverse(Weights);
+const StylesReverse = TableReverse(Styles);
+const TransformsReverse = TableReverse(Transforms);
+const StretchesReverse = TableReverse(Stretches);
+const KerningsReverse = TableReverse(Kernings);
+const SizesReverse = TableReverse(Sizes);
 const FontMetrics = CssValuesToCsssTable("ex-height|cap-height|ch-width|ic-width|ic-height");
 const fontSizeAdjust = ({ name, args }) => {
   if (name !== "adjust") return;
@@ -84,6 +90,56 @@ const fontSizeAdjust = ({ name, args }) => {
   return [fontMetric, fromFont, number].filter(Boolean).join(" ");
 };
 
+
+function extractFontArgs(style) { 
+  let args = [];
+  let {
+    fontFamily, fontSize, fontStyle, fontWeight,
+    fontSizeAdjust, letterSpacing, textTransform,
+    fontStretch, fontVariant, fontVariantCaps,
+    fontSynthesis, fontKerning
+  } = style;
+  if (fontStyle && fontStyle !== "unset" && fontStyle !== "normal") {
+    args.push(StylesReverse[fontStyle] || fontStyle.replace("oblique ", ""));
+  }
+  if (fontWeight && fontWeight !== "unset" && fontWeight !== "normal") {
+    args.push(WeightsReverse[fontWeight] || fontWeight);
+  }
+  if (textTransform && textTransform !== "unset" && textTransform !== "none") {
+    args.push(TransformsReverse[textTransform] || textTransform);
+  }
+  if (fontStretch && fontStretch !== "unset" && fontStretch !== "normal") {
+    args.push(StretchesReverse[fontStretch] || fontStretch  );
+  }
+  if (fontKerning && fontKerning !== "unset" && fontKerning !== "auto") {
+    args.push(`kerning(${KerningsReverse[fontKerning] || fontKerning })`);
+  }
+  if (fontSize && fontSize !== "unset") {
+    args.push(SizesReverse[fontSize] || fontSize);
+  }
+  if (letterSpacing && letterSpacing !== "unset" && letterSpacing !== "normal") {
+    args.push(`spacing(${letterSpacing})`);
+  }
+  if (fontSizeAdjust && fontSizeAdjust !== "unset" && fontSizeAdjust !== "none") {
+    args.push(`adjust(${fontSizeAdjust.replace(/\s+/g, ",")})`);
+  }
+  if (fontVariantCaps && fontVariantCaps !== "unset" && fontVariantCaps !== "normal") {
+    args.push(`variant(${fontVariantCaps.replace(/\s+/g, ",")})`);
+  }
+  if (fontSynthesis && fontSynthesis !== "unset" && fontSynthesis !== "weight style small-caps") {
+    args.push(`synthesis(${fontSynthesis.replace(/\s+/g, ",")})`);
+  }
+  if (fontFamily && fontFamily !== "unset") {
+    let families = fontFamily.split(",").map(f => {
+      f = f.trim();
+      // Keep quoted fonts as-is, otherwise swap spaces for + to match CSSS syntax 
+      if (f.startsWith('"') || f.startsWith("'")) return f;
+      return f.replace(/\s+/g, "+");
+    });
+    args.push(...families);
+  }
+  return args;
+}
 // @font-face {
 // font-family: "Trickster";
 // src:
@@ -217,21 +273,54 @@ export default {
     Typeface,
   },
   css: {
+    Typeface: style => {
+      let prefix = Object.keys(style).find(k => k.endsWith("FontFamily"));
+      if (!prefix) return;
+      prefix = prefix.slice(0, -10);
+      const typefaceName = prefix.replace(/^-+/, "").replace(/^./, c => c.toLowerCase());
+      const mappedStyle = Object.fromEntries(
+        Object.keys(props)
+          .map(k => [
+            k,
+            style[`${prefix}${k[0].toUpperCase() + k.slice(1)}`]
+          ])
+          .filter(([, v]) => v != null && v !== "unset")
+      );
+      const args = extractFontArgs(mappedStyle);
+      return `$Typeface(${typefaceName}${args.length ? "," + args.join(",") : ""})`;
+    },
     font: style => {
-      let args = [];
-      if (style.fontFamily && style.fontFamily !== "unset") args.push(style.fontFamily.replace(/\s+/g, "+").replace(/,/g, ", "));
-      if (style.fontSize && style.fontSize !== "unset") args.push(style.fontSize);
-      if (style.fontStyle && style.fontStyle !== "unset") args.push(style.fontStyle);
-      if (style.fontWeight && style.fontWeight !== "unset") args.push(style.fontWeight);
-      if (style.fontSizeAdjust && style.fontSizeAdjust !== "unset") args.push(`adjust(${style.fontSizeAdjust.replace(/\s+/g, ",")})`);
-      if (style.letterSpacing && style.letterSpacing !== "unset") args.push(`spacing(${style.letterSpacing})`);
-      if (style.textTransform && style.textTransform !== "unset") args.push(style.textTransform);
-      if (style.fontStretch && style.fontStretch !== "unset") args.push(style.fontStretch.replace(/\s+/g, ""));
-      if (style.fontVariant && style.fontVariant !== "unset") args.push(`variant(${style.fontVariant.replace(/\s+/g, ",")})`);
-      if (style.fontSynthesis && style.fontSynthesis !== "unset") args.push(`synthesis(${style.fontSynthesis.replace(/\s+/g, ",")})`);
-      if (style.fontKerning && style.fontKerning !== "unset") args.push(`kerning(${style.fontKerning})`);
-
-      return args.length ? `font(${args.join(",")})` : undefined;
-    }
+      if (
+        style.fontFamily?.startsWith("var(--") &&
+        style.fontFamily.endsWith("FontFamily, unset)")
+      ) return;
+      if (style.textTransform === "none") return `$font(transformNone)`;
+      if (Object.keys(props).filter(k => style[k] === "unset").length >= 3) return;
+      const args = extractFontArgs(style);
+      return args.length
+        ? `$font(${args.join(",")})`
+        : undefined;
+    },
+    Font: style => {
+      let typefaceName = style.fontFamily?.match(/^var\(--(.+)FontFamily,\s*unset\)$/)?.[1];
+      const overrides = Object.fromEntries(
+        Object.keys(props)
+          .filter(k => {
+            const expected =
+              `var(--${typefaceName}${k[0].toUpperCase() + k.slice(1)}, unset)`;
+            return (
+              style[k] !== undefined &&
+              style[k] !== expected &&
+              style[k] !== "unset"
+            );
+          })
+          .map(k => [k, style[k]])
+      );
+      const unsets = Object.keys(props).filter(k => style[k] === "unset").length;
+      if (!typefaceName && !unsets) return;
+      if (unsets >= 3 && !typefaceName) typefaceName = "_";
+      const args = extractFontArgs(overrides);
+      return  `$Font(${typefaceName}${args.length ? "," + args.join(",") : ""})`;
+    },
   }
 };

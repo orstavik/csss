@@ -38,6 +38,18 @@ const CssFunctions = {
       return `${CsssName}(${args.join(",")})`;
     }
   },
+  PhysicalFourReverse: (CssPrefix, CssName, INTERPRETER, DEFAULT = "_") => {
+    const PROPS = ["-top", "-right", "-bottom", "-left"].map(s => toCamelCase(CssPrefix + s));
+    return style => {
+      let args = PROPS.map(p => INTERPRETER(style[p]) ?? DEFAULT);
+      if (args.every(a => a === DEFAULT)) return undefined;
+      if (args[3] === args[1] && (args.pop() || true))   
+        if (args[2] === args[0] && (args.pop() || true)) 
+          if (args[1] === args[0] && (args.pop() || true)) 
+            ;
+      return `${CssName}(${args.join(",")})`;
+    };
+  },
   SingleTableReverse: (CssProp, Table) => {
     Table = Object.fromEntries(Object.entries(Table).map(([k, v]) => [v.toLowerCase(), k]));
     return style => style[CssProp] && Table[style[CssProp].toLowerCase()];
@@ -59,25 +71,6 @@ const CssFunctions = {
     while (args.length && args.at(-1) === DEFAULT)
       args.pop();
     return args.length ? `${CsssFnName}(${args.join(",")})` : undefined;
-  },
-  Optional: (short, long, defs, ...fns) => style => {
-    const isReset = typeof long === "string"; // If long name is a string, enable reset detection logic
-    const items = isReset ? fns : [long, defs, ...fns].filter(f => f); // Normalize items based on signature
-    let args = [], covered = new Set(), isR = v => /^(unset|initial|0(px)?|none)$/.test(v);
-    const normalized = items.map(f => (typeof f === "function") ? { prop: [], rev: f } : { prop: [f.prop].flat(), rev: f.rev });
-    let allP = normalized.flatMap(f => { // 1. Coverage Phase
-      let v = f.rev(style);
-      if (v != null) { args.push(v); f.prop.map(covered.add, covered); }
-      return f.prop;
-    });
-    if (!args.length) return;
-    if (isReset) { // 2. Reset Detection Phase (only if long name and defs provided)
-      let props = Array.isArray(defs) ? defs : Object.keys(defs);
-      let reset = allP.some(p => !covered.has(p) && p in style && /^(unset|initial)$/.test(style[p])) ||
-        props.some(p => !covered.has(p) && isR(style[p]));
-      return `${(reset || props.every(p => covered.has(p))) ? long : short}(${args.join(",")})`;
-    }
-    return `${short}(${args.join(",")})`; // Standard additive output
   },
   CalcReverse: val => {
     if (typeof val !== "string") return undefined;

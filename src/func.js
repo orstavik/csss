@@ -204,8 +204,8 @@ const CssFunctions = {
     let arg = INTERPRETER(style[CssProp]) ?? DEFAULT;
     if (arg !== DEFAULT) return `${CsssFnName}(${arg})`;
   },
-  LogicalFourReverse: (CssPrefix, CsssFnName, INTERPRETER, DEFAULT = "_") => {
-    const PROPS = ["-block-start", "-inline-start", "-block-end", "-inline-end"].map(s => CssPrefix + s);
+  LogicalFourReverse: (CssPrefix, CsssName, INTERPRETER, DEFAULT = "_") => {
+    const PROPS = ["-block-start", "-inline-start", "-block-end", "-inline-end"].map(s => toCamelCase(CssPrefix + s));
     return style => {
       let args = PROPS.map(p => INTERPRETER(style[p]) ?? DEFAULT);
       if (args.every(a => a === DEFAULT)) return undefined;
@@ -213,7 +213,7 @@ const CssFunctions = {
         if (args[0] === args[2] && (args.pop() || true))
           if (args[0] === args[1] && (args.pop() || true))
             ;
-      return `${CsssFnName}(${args.join(",")})`;
+      return `${CsssName}(${args.join(",")})`;
     }
   },
   SingleTableReverse: (CssProp, Table) => {

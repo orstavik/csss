@@ -1,7 +1,9 @@
 import { CsssPrimitives, CsssFunctions, matchArgsWithInterpreters } from "./func.js";
 const { LengthPercent } = CsssPrimitives;
 const { CssValuesToCsssTable } = CsssFunctions;
+const { ValueReverse} = CssFunctions
 import { Color } from "./funcColor.js";
+import { CssFunctions } from "./funcReverse.js";
 
 const Styles = CssValuesToCsssTable("solid|dotted|dashed|double|groove|ridge|inset|outset|none|hidden");
 const Style = a => Styles[a.text];
@@ -49,6 +51,55 @@ const Radius = ({ name, args }) => {
     borderEndEndRadius: br == rb ? br : `${br} ${rb}`,
   };
 };
+function borderTypeReverse(Type, style) {
+  const bs = ValueReverse(style[`borderBlockStart${Type}`]);
+  const be = ValueReverse(style[`borderBlockEnd${Type}`]);
+  const is_ = ValueReverse(style[`borderInlineStart${Type}`]);
+  const ie = ValueReverse(style[`borderInlineEnd${Type}`]);
+  if (Type === "Color" && [bs, be, is_, ie].every(v => v == null || v.toLowerCase() === "currentcolor")) return [];
+  const a1 = is_ ?? bs;
+  const a2 = be ?? bs;
+  const a3 = ie ?? a1;
+
+  let args = [
+    bs,
+    a1 !== bs ? a1 : null,
+    a2 !== bs ? a2 : null,
+    a3 !== a1 ? a3 : null,
+  ];
+  while (args.length && args.at(-1) == null) args.pop();
+  if (!args.length || args[0] == null) return [];
+  return args.map(v => v ?? "0");
+}
+function borderRadiusReverse(style) {
+  const parseCorner = val => {
+    if (!val || ["unset", "initial"].includes(val))
+      return ["0", "0"];
+    const [a, b = a] = val.trim().split(/\s+/);
+    return [
+      ValueReverse(a) ?? "0",
+      ValueReverse(b) ?? "0"
+    ];
+  };
+  const [[t, l], [t2, r], [b, l2], [b2, r2]] =
+    [style.borderStartStartRadius, style.borderStartEndRadius, style.borderEndStartRadius, style.borderEndEndRadius].map(parseCorner);
+  if ([t, l, t2, r, b, l2, b2, r2].every(v => v === "0")) return undefined;
+  const isGrid = t === t2 && b === b2 && l === l2 && r === r2;
+  if (isGrid) {
+    if (t === b && l === r)
+      return `radius(${t === l ? l : `${l},${t}`})`;
+    const args = [l, t, r !== l && r, b !== t && b].filter(v => v != null);
+    return `radius(${args.join(",")})`;
+  }
+  const args = [
+    l, t, r, b,
+    l2 !== l && l2,
+    t2 !== t && t2,
+    r2 !== r && r2,
+    b2 !== b && b2,
+  ].filter(v => v != null);
+  return `radius(${args.join(",")})`;
+}
 
 function borderFourToOneOrTwo(Type, args) {
   return !args.length ? undefined :
@@ -163,33 +214,25 @@ export default {
   },
   css: {
     border: style => {
-      let args = [];
-      if (style.border === "none") return "noBorder";
-
-      // Just reconstructing a simple border statement
-      let hasBorder = false;
-
-      // Extract width, style, color
-      if (style.borderWidth) { args.push(style.borderWidth); hasBorder = true; }
-      if (style.borderStyle) { args.push(style.borderStyle); hasBorder = true; }
-      if (style.borderColor) { args.push(style.borderColor); hasBorder = true; }
-
-      // Also radius if present
-      if (style.borderRadius && style.borderRadius !== "0") {
-        args.push(`radius(${style.borderRadius.replace(/\s+/g, ",")})`);
-        hasBorder = true;
-      } else if (style.borderStartStartRadius) {
-        // handling logical border radius is complex, just push a basic radius
-        args.push(`radius(${style.borderStartStartRadius.replace(/\s+/g, ",")})`);
-        hasBorder = true;
-      }
-
-      return hasBorder ? `border(${args.join(",")})` : undefined;
+      if (style.border === "none") return "$noBorder";
+      const widths = borderTypeReverse("Width", style);
+      const styles = borderTypeReverse("Style", style);
+      if (styles.length && styles.every(s => s.toLowerCase() === "none")) return "$noBorder";
+      const colors = borderTypeReverse("Color", style);
+      const radius = borderRadiusReverse(style);
+      console.log({ widths, styles, colors, radius });
+      const args = [...widths, ...styles, ...colors];
+      if (radius) args.push(radius);
+      const hasBorderStyle = Object.keys(props).some(k => k.includes("Style") && style[k] && !["unset", "initial", "none"].includes(style[k]));
+      const hasBorderWidth = Object.keys(props).some(k => k.includes("Width") && style[k] && !["unset", "initial", "0"].includes(style[k]));
+      if (!args.length) return undefined;
+      const name = hasBorderStyle && hasBorderWidth ? "$Border" : "$border";
+      return `${name}(${args.join(",")})`;
     }
   }
   //todo border-image!
 }
-
+ 
 // //there are different ways to do the logic here..
 // //length == 2, I think that we could have top/bottom too
 // //length == 3, then the third becomes all the inline ones

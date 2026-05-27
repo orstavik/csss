@@ -29,31 +29,53 @@ const transition = ({ args }) => {
   res.transition = !properties.length ? tail : properties.map(p => `${p} ${tail}`).join(", ");
   return res;
 };
-
+const toCamelCase = s => s.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
 export default {
   props: {
     transitionProperty: undefined,
     transitionDuration: undefined,
     transitionTimingFunction: undefined,
     transitionDelay: undefined,
-    transitionSkipInk: undefined,
+    transitionBehavior: undefined,
   },
+
   csss: {
     transition,
   },
+
   css: {
     transition: style => {
-      if (!style.transition) return undefined;
-      // transitions are tricky to reverse correctly because properties could be grouped or not.
-      // let's do a basic reverse by joining the commas as separate transition() calls,
-      // or try to recreate transition(ease, dur, delay, prop).
-      // actually, just putting it as transition(prop, dur, ease) is not perfectly matching original csss
-      // csss signature is ease, dur, delay, allowDiscrete, props...
-      // CSS output is `prop ease dur delay` comma separated.
-      // Let's implement a simple reverse by comma replacing.
-      let transitions = style.transition.split(/,(?![^(]*\))/);
-      transitions = transitions.map(t => t.trim().split(/\s+/).join(","));
-      return `transition(${transitions.join("), transition(")})`;
+      debugger
+      let {
+        transitionProperty,
+        transitionDuration,
+        transitionTimingFunction,
+        transitionDelay,
+        transitionBehavior,
+      } = style;
+      const easing =
+        transitionTimingFunction?.match(/^var\(--transition-(.+)\)$/)?.[1]
+        ?? transitionTimingFunction;
+      const behavior =
+        transitionBehavior === "allow-discrete"
+          ? "allowDiscrete"
+          : undefined;
+
+      const properties =
+        transitionProperty && transitionProperty !== "all"
+          ? transitionProperty.split(",").map(toCamelCase)
+          : undefined;
+
+      const args = [];
+      if (easing && easing !== "ease") args.push(toCamelCase(easing));
+      if (transitionDuration && transitionDuration !== "0s") args.push(transitionDuration);
+      if (transitionDelay && transitionDelay !== "0s") args.push(transitionDelay);
+      if (behavior) args.push(behavior);
+      if (properties?.length) args.push(...properties);
+
+      return args.length
+        ? `$transition(${args.join(",")})`
+        : undefined;
     }
   }
 };

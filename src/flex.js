@@ -1,7 +1,8 @@
-import { CsssPrimitives, CsssFunctions, CssFunctions } from "./func.js";
+import { CsssPrimitives, CsssFunctions } from "./func.js";
+import { CssFunctions } from "./funcReverse.js";
 const { SingleTable, TypeBasedFunction, LogicalFour, SF2: SF2, FunctionWithDefaultValues, CssValuesToCsssTable } = CsssFunctions;
 const { LengthPercent, LengthPercentUnset } = CsssPrimitives;
-const { LogicalFourReverse, SingleTableReverse, SequentialFunctionReverse, Optional } = CssFunctions;
+const { LogicalFourReverse, SingleTableReverse, SequentialFunctionReverse, Optional, TableReverse, ValueReverse, ShorthandPairReverse } = CssFunctions;
 
 const placeContent = CssValuesToCsssTable(
   "normal|stretch|start|end|center|safe start|safe end|safe center|space-around|space-between|space-evenly|baseline|first baseline|last baseline",
@@ -9,7 +10,18 @@ const placeContent = CssValuesToCsssTable(
 );
 const flexDirection = CssValuesToCsssTable("column|column-reverse|row-reverse|row");
 const flexWrap = CssValuesToCsssTable("wrap|wrap-reverse|nowrap");
+const flexDirectionReverse = TableReverse(flexDirection);
+const flexWrapReverse = TableReverse(flexWrap);
+const reversePlaceContent = ShorthandPairReverse(placeContent, "alignContent", "justifyContent");
 
+const gapReverse = style => {
+  const { rowGap, columnGap, gap } = style;
+  const r = ValueReverse(rowGap ?? gap);
+  const c = ValueReverse(columnGap ?? gap);
+  if (!r && !c) return undefined;
+  if (r === c) return `gap(${r})`;
+  return `gap(${r},${c})`;
+};
 const DefaultFlex = {
   display: "flex",
   padding: "unset",
@@ -61,12 +73,22 @@ export default {
     columnGap: undefined,
   },
   css: {
-    flex: Optional("flex",
-      SingleTableReverse("flexDirection", flexDirection),
-      SequentialFunctionReverse("gap", ["gap"], v => v ? v.replace(/\s+/g, ",") : v, "_"), // gap parses row and column directly via `gap` property mapping in tests
-      LogicalFourReverse("padding", "padding", v => v, "_"),
-      SingleTableReverse("flexWrap", flexWrap),
-      SingleTableReverse("placeContent", placeContent)
-    ),
+    flex: style => {
+      if (style.display !== "flex" || style.display === undefined) return;
+      let {
+        flexDirection: fd, flexWrap: fw, placeContent: pc, alignItems, gap, rowGap, columnGap
+      } = style;
+      fd &&= flexDirectionReverse[fd];
+      fw &&= flexWrapReverse[fw];
+      pc = reversePlaceContent(style) ?? pc;
+      const gapArgs = (gap || rowGap || columnGap) && gapReverse({ gap, rowGap, columnGap });
+      const paddings = LogicalFourReverse("padding", "padding", ValueReverse)(style);
+      const args = [paddings, fd, fw, pc, alignItems, gapArgs]
+        .filter(v => v && v !== "unset");
+      const unsets = Object.keys(DefaultFlex).filter(k => style[k] ===  "unset" || style[k] === "initial").length;
+      if (!args.length && !unsets) return;
+      const name = args.length + unsets >= 3 ? "$Flex" : "$flex";
+      return `${name}(${args.join(",")})`;
+    }
   }
 };
