@@ -1,5 +1,4 @@
 import { WebColors } from "./Color.js";
-import { cssPhysicalToLogical as normalizeToLogical } from "./cssPhysicalToLogical.js";
 
 // function spacelessCssTokens(str) {
 //   // a) Replace spaces inside quotes with '+', ignoring escaped quotes
@@ -24,7 +23,6 @@ const CssFunctions = {
     let arg = INTERPRETER(style[CssProp] == "unset" ? undefined : style[CssProp]) ?? DEFAULT;
     if (arg !== DEFAULT) return `${CsssFnName}(${arg})`;
   },
-  normalizeToLogical,
   LogicalFourReverse: (CssPrefix, CsssFnName, INTERPRETER, DEFAULT = "_") => {
     const toCamel = s => s.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
 
@@ -135,7 +133,7 @@ const CssFunctions = {
   },
   TableReverse: Table => Object.fromEntries(Object.entries(Table).map(([k, v]) => [v.toLowerCase(), k])),
   ColorReverse: val => {
-    if (!val || val === "none" || val === "unset" || val === "transparent" || val === "currentColor" || val === "currentcolor")
+    if (!val || val === "none" || val === "unset")
       return undefined;
     const m = val.match(/^rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\s*\)$/);
     if (m) {
@@ -146,8 +144,9 @@ const CssFunctions = {
       if (a < 1) return `#${hex}${Math.round(a * 255).toString(16).padStart(2, "0")}`;
       return `#${hex}`;
     }
+    if (val === "currentcolor" || val === "transparent") return "#" + val;
     if (val.startsWith("#")) return val;
-    if (/^[a-z]+$/i.test(val) && val.toLowerCase() in WebColors) return `#${val}`;
+    if (/^[a-z]+$/i.test(val) && val.toLowerCase() in WebColors) return "#" + val;
     return undefined;
   },
   ValueReverse: val => (val === "unset" || val === "initial") ? undefined : (val === "auto" ? "_" : (CssFunctions.CalcReverse(val) ?? CssFunctions.ColorReverse(val) ?? (val === "0px" ? "0" : val))),
@@ -176,4 +175,4 @@ const CssPrimitives = {
   Word
 }
 
-export { CssFunctions, CssPrimitives };
+export { CssFunctions, CssPrimitives, };

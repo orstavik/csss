@@ -34,10 +34,10 @@
   border-style: dotted;
   border-block-color: red;
   border-inline-color: blue;
-  border-start-start-radius: 5px 0;
-  border-start-end-radius: 5px 3%;
-  border-end-start-radius: 1rem 0;
-  border-end-end-radius: 1rem 3%;
+  border-start-start-radius: 0 5px;
+  border-start-end-radius: 0 1rem;
+  border-end-start-radius: 3% 5px;
+  border-end-end-radius: 3% 1rem;
 }
 ```
 
@@ -55,10 +55,10 @@
 ```css
 .\$Border\(2px\,solid\,\#red\,radius\(2px\,4px\)\) {
   border: 2px solid red;
-  border-start-start-radius: 4px 2px;
-  border-start-end-radius: 4px 2px;
-  border-end-end-radius: 4px 2px;
-  border-end-start-radius: 4px 2px;
+  border-start-start-radius: 2px 4px;
+  border-start-end-radius: 2px 4px;
+  border-end-start-radius: 2px 4px;
+  border-end-end-radius: 2px 4px;
 }
 ```
 
@@ -103,10 +103,10 @@
   border-style: dotted;
   border-block-color: red;
   border-inline-color: blue;
-  border-start-start-radius: 5px 0;
-  border-start-end-radius: 5px 3%;
-  border-end-start-radius: 1rem 0;
-  border-end-end-radius: 1rem 3%;
+  border-start-start-radius: 0 5px;
+  border-start-end-radius: 0 1rem;
+  border-end-start-radius: 3% 5px;
+  border-end-end-radius: 3% 1rem;
 }
 ```
 
@@ -130,10 +130,10 @@
 .\:focus\$border\(2px\,\#red\,radius\(2px\,4px\)\):where(:focus) {
   border-width: 2px;
   border-color: red;
-  border-start-start-radius: 4px 2px;
-  border-start-end-radius: 4px 2px;
-  border-end-end-radius: 4px 2px;
-  border-end-start-radius: 4px 2px;
+  border-start-start-radius: 2px 4px;
+  border-start-end-radius: 2px 4px;
+  border-end-start-radius: 2px 4px;
+  border-end-end-radius: 2px 4px;
 }
 ```
 
@@ -160,10 +160,10 @@
   border-inline-style: dashed;
   border-block-color: red white;
   border-inline-color: blue;
-  border-start-start-radius: 1px 0;
-  border-start-end-radius: 5px 2px;
-  border-end-start-radius: 3px 4px;
-  border-end-end-radius: 3px 6px;
+  border-start-start-radius: 0 1px;
+  border-start-end-radius: 4px 3px;
+  border-end-start-radius: 2px 5px;
+  border-end-end-radius: 6px 3px;
 }
 ```
 
@@ -175,7 +175,7 @@
 ```
 **after:**
 ```html
-…<button class="$Border(1px,solid,#999) :disabled$noBorder">…</button>…
+…<button class="$Border(1px,solid,#999) :disabled$border(none)">…</button>…
 ```
 **css:**
 ```css
@@ -184,8 +184,8 @@
   border-radius: 0;
 }
 
-.\:disabled\$noBorder:where(:disabled) {
-  border: none;
+.\:disabled\$border\(none\):where(:disabled) {
+  border-style: none;
 }
 ```
 

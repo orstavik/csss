@@ -286,6 +286,8 @@ export function fromHex(txt) {
 export function fromHexOrName(txt) {
   if (txt[0] === "#")
     txt = txt.slice(1);
+  if (txt === "currentcolor")
+    return { name: txt };
   if (txt === "transparent")
     return { name: txt, alpha: 0 };
   return fromHex(txt) ?? fromNameAlpha(txt);

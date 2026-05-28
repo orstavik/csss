@@ -1,47 +1,38 @@
 import { CsssPrimitives, CsssFunctions, matchArgsWithInterpreters } from "./func.js";
 const { LengthPercent } = CsssPrimitives;
 const { CssValuesToCsssTable } = CsssFunctions;
+const { ValueReverse } = CssFunctions
 import { Color } from "./funcColor.js";
+import { CssFunctions } from "./funcReverse.js";
+
+const squeezeArgs = args => {
+  if (!args) return args;
+  if (args.length === 8 && args[7] === args[3]) args.pop();
+  if (args.length === 7 && args[6] === args[2]) args.pop();
+  if (args.length === 6 && args[5] === args[1]) args.pop();
+  if (args.length === 5 && args[4] === args[0]) args.pop();
+  if (args.length === 4 && args[3] === args[1]) args.pop();
+  if (args.length === 3 && args[2] === args[0]) args.pop();
+  if (args.length === 2 && args[1] === args[0]) args.pop();
+  return args;
+};
 
 const Styles = CssValuesToCsssTable("solid|dotted|dashed|double|groove|ridge|inset|outset|none|hidden");
 const Style = a => Styles[a.text];
 const Widths = CssValuesToCsssTable("thin|medium|thick");
 const Width = a => Widths[a.text] ?? LengthPercent(a);
 
-//1. BlockInline order is the naming sequence of each corner, and also the two values for each corner.
-//   borderStartEndRadius: 2px 4px means something like borderTopRightRadius with top radius 2px side radius 4px.
-//2. When we pass values into the function, we follow the normal css logical property sequence, inline then block, start then end.
-//3. Upto 4 values is easy: inline, block, inlineEnd, blockEnd.
-//4. More than 4 values follows the same sequence for the first 4 values, but then values 5 to 8 will override:
-//   5: inlineLeftBottom (and 1: inlineLeftTop), 
-//   6: blockTopRight (and 2: blockTopLeft), 
-//   7: inlineRightBottom (and 3: inlineRightTop), 
-//   8: blockBottomRight (and 4: blockBottomLeft).
+/**
+ * args.length 0-4: blockStart inlineStart blockEnd inlineEnd 
+ * args.length 4+: blockStartStart inlineStartStart blockEndStart inlineEndStart blockStartEnd inlineStartEnd blockEndEnd inlineEndEnd
+ */
 const Radius = ({ name, args }) => {
   if (name !== "radius") return;
   if (!args.length || args.length > 8) throw new SyntaxError(`radius() takes 1-8 arguments, got ${args.length}.`);
   const ar = args.map(LengthPercent);
   if (ar.length === 1)
     return { borderRadius: ar[0] };
-  if (ar.length === 2) {
-    const [l, t] = ar;
-    return {
-      borderStartStartRadius: `${t} ${l}`,
-      borderStartEndRadius: `${t} ${l}`,
-      borderEndEndRadius: `${t} ${l}`,
-      borderEndStartRadius: `${t} ${l}`,
-    };
-  }
-  if (ar.length <= 4) {
-    const [l, t, r, b = t] = ar;
-    return {
-      borderStartStartRadius: l == t ? l : `${t} ${l}`,
-      borderStartEndRadius: t == r ? t : `${t} ${r}`,
-      borderEndStartRadius: b == l ? b : `${b} ${l}`,
-      borderEndEndRadius: r == b ? r : `${b} ${r}`,
-    };
-  }
-  const [lt, tl, rt, bl, lb, tr = tl, rb = rt, br = bl] = ar;
+  const [tl, lt, bl = tl, rt = lt, tr = tl, lb = lt, br = bl, rb = rt] = ar;
   return {
     borderStartStartRadius: tl == lt ? tl : `${tl} ${lt}`,
     borderStartEndRadius: tr == rt ? tr : `${tr} ${rt}`,
@@ -153,78 +144,55 @@ const props = {
   borderEndEndRadius: undefined,
 }
 
-
 export default {
   props,
   csss: {
     border,
     Border,
-    noBorder: { border: "none" },
   },
   css: {
     border: style => {
-      let args = [];
-      if (style.border === "none") return "noBorder";
-
-      // Just reconstructing a simple border statement
-      let hasBorder = false;
-
-      // Extract width, style, color
-      if (style.borderWidth) { args.push(style.borderWidth); hasBorder = true; }
-      if (style.borderStyle) { args.push(style.borderStyle); hasBorder = true; }
-      if (style.borderColor) { args.push(style.borderColor); hasBorder = true; }
-
-      // Also radius if present
-      if (style.borderRadius && style.borderRadius !== "0") {
-        args.push(`radius(${style.borderRadius.replace(/\s+/g, ",")})`);
-        hasBorder = true;
-      } else if (style.borderStartStartRadius) {
-        // handling logical border radius is complex, just push a basic radius
-        args.push(`radius(${style.borderStartStartRadius.replace(/\s+/g, ",")})`);
-        hasBorder = true;
+      const {
+        borderBlockStartWidth: w1, borderInlineStartWidth: w2, borderBlockEndWidth: w3, borderInlineEndWidth: w4,
+        borderBlockStartStyle: s1, borderInlineStartStyle: s2, borderBlockEndStyle: s3, borderInlineEndStyle: s4,
+        borderBlockStartColor: c1, borderInlineStartColor: c2, borderBlockEndColor: c3, borderInlineEndColor: c4,
+        borderStartStartRadius: r1, borderStartEndRadius: r2, borderEndStartRadius: r3, borderEndEndRadius: r4,
+      } = style;
+      const width1 = (w1 != null || w2 != null || w3 != null || w4 != null) ? [w1, w2, w3, w4] : null;
+      const style1 = (s1 != null || s2 != null || s3 != null || s4 != null) ? [s1, s2, s3, s4] : null;
+      const color1 = (c1 != null || c2 != null || c3 != null || c4 != null) ? [c1, c2, c3, c4] : null;
+      const radius1 = (r1 != null || r2 != null || r3 != null || r4 != null) ? [r1, r2, r3, r4] : null;
+      if (!width1 && !style1 && !color1 && !radius1)
+        return undefined;
+      let radiusX;
+      if (radius1) {
+        const [tl, lt, tr, rt, bl, lb, br, rb] = radius1.flatMap(a => ((a = a.split(/\s+/)), a.length == 2 ? a : [a[0], a[0]]));
+        radiusX = [tl, lt, bl, rt, tr, lb, br, rb];
       }
+      const width2 = width1?.map(v => ValueReverse(v) ?? "0");
+      const style2 = style1?.map(v => ValueReverse(v) ?? "none");
+      const color2 = color1?.map(v => ValueReverse(v) ?? "#currentcolor");
+      const radius2 = radiusX?.map(v => ValueReverse(v) ?? "0");
 
-      return hasBorder ? `border(${args.join(",")})` : undefined;
+      let width3 = squeezeArgs(width2);
+      let style3 = squeezeArgs(style2);
+      let color3 = squeezeArgs(color2);
+      let radius3 = squeezeArgs(radius2);
+
+      const name = (width3 && style3 && color3 && radius3) ? "$Border" : "$border";
+      if (name === "$Border") {
+        if (width3.length === 1 && width3[0] === "medium") width3 = null;
+        // if (style3.length === 1 && style3[0] === "none") style3 = null;
+        if (color3.length === 1 && color3[0] === "#currentcolor") color3 = null;
+        if (radius3.length === 1 && radius3[0] === "0") radius3 = null;
+      }
+      const res = [];
+      if (style3) res.push(...style3);
+      if (width3) res.push(...width3);
+      if (color3) res.push(...color3);
+      if (radius3) res.push(`radius(${radius3.join(",")})`);
+      return `${name}(${res.join(",")})`;
     }
   }
   //todo border-image!
 }
-
-// //there are different ways to do the logic here..
-// //length == 2, I think that we could have top/bottom too
-// //length == 3, then the third becomes all the inline ones
-// //length === 4, then forth is the inline on the end side
-// export function toLogicalEight(NAME, DEFAULT, ar) {
-//   ar = ar.map(isBasic).map(a => a.text);
-//   if (!(ar instanceof Array))
-//     return { [NAME]: ar };
-//   if (ar.length === 1)
-//     return { [NAME]: ar[0] };
-//   let [bss, iss, bes, ies, bse, ise, bee, iee] = ar;
-//   if (ar.length === 2) ise = ies = iee = iss, bse = bes = bee = bss;
-//   if (ar.length === 3) ise = ies = iee = iss, bse = bss, bee = bes;
-//   if (ar.length === 4) ise = iss, iee = ies, bse = bss, bee = bes;
-//   if (ar.length === 5) ise = iss, iee = ies, bee = bes;
-//   if (ar.length === 6) iee = ies, bee = bes;
-//   if (ar.length === 7) iee = ies;
-//   const res = {};
-//   if (bss || iss) res[NAME + "TopLeft"] = `${bss ?? DEFAULT} ${iss ?? DEFAULT}`;
-//   if (bse || ies) res[NAME + "TopRight"] = `${bse ?? DEFAULT} ${ies ?? DEFAULT}`;
-//   if (bes || ise) res[NAME + "BottomLeft"] = `${bes ?? DEFAULT} ${ise ?? DEFAULT}`;
-//   if (bee || iee) res[NAME + "BottomRight"] = `${bee ?? DEFAULT} ${iee ?? DEFAULT}`;
-//   return res;
-// }
-
-// export function toRadiusFour(NAME, ar) {
-//   ar = ar.map(isBasic).map(a => a.text);
-//   if (!(ar instanceof Array))
-//     return { [NAME]: ar };
-//   if (ar.length === 1)
-//     return { [NAME]: ar[0] };
-//   return {
-//     [NAME + "StartStart"]: ar[0],
-//     [NAME + "EndEnd"]: ar[2] ?? ar[0],
-//     [NAME + "StartEnd"]: ar[1],
-//     [NAME + "EndStart"]: ar[3] ?? ar[1],
-//   };
-// }
