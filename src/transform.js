@@ -78,13 +78,13 @@ export default {
   css: {
     transform: style => {
       if (!style.transform) return undefined;
-      if (style.transform === "none") return "transform()";
+      if (style.transform === "none") return "$transform()";
       let val = style.transform.replace(/\) /g, "),");
       val = val.replace(/([a-zA-Z]+\()([^)]+)(\))/g, (_, start, inner, end) => start + inner.replace(/,\s*/g, ",").replace(/\s+/g, ",") + end);
-      return `transform(${val})`;
+      return `$transform(${val})`;
     },
-    translate: style => style.translate ? `translate(${style.translate.replace(/\s+/g, ",")})` : undefined,
-    scale: style => style.scale ? `scale(${style.scale.replace(/\s+/g, ",")})` : undefined,
-    rotate: style => style.rotate ? `rotate(${style.rotate.replace(/\s+/g, ",")})` : undefined,
+    translate: style => style.translate ? `$translate(${style.translate.replace(/\s+/g, ",")})` : undefined,
+    scale: style => style.scale ? `$scale(${style.scale.replace(/\s+/g, ",")})` : undefined,
+    rotate: style => style.rotate ? `$rotate(${style.rotate.replace(/\s+/g, ",")})` : undefined,
   },
 };

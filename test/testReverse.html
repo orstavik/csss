@@ -24,7 +24,8 @@
       let actual = {};
       try {
         const sheet2 = new CSSStyleSheet();
-        sheet2.replaceSync(CSSS.parse(CSSS.reverse(expected)).map(p => p.cssText).join("\n"));
+        const reverse = CSSS.reverse(expected);
+        sheet2.replaceSync(CSSS.parse(reverse).map(p => p.cssText).join("\n"));
         actual = styleOf(collect(sheet2.cssRules));
       } catch (e) { }
       return [{ statement, actual, expected }];
@@ -35,6 +36,7 @@
       expected: res.map(r => json(r.expected)).join("\n---\n")
     };
   }
-  runTests("svg,paragraph,shadows,textDecoration,border,paragraph", test, "/shots/genre/");
+  // ,position needs other test cases as its demo is full of combinations.
+  runTests("svg,paragraph,shadows,textDecoration,border,transforms", test, "/shots/genre/");
   // runTests("block,border,box,filter,flex,font,grid,iBlock,paragraph,position,shadows,svg,textDecoration,transforms,transitions", test, "/shots/genre/");
 </script>
