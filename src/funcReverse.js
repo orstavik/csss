@@ -44,7 +44,7 @@ const parseCssValue = Parser({
   quote: /("(\\.|[^"\\])*"|'(\\.|[^'\\])*')/,
   parenStart: /[a-zA-Z0-9_-]*\(/,
   parenEnd: /\)/,
-  value: /[^\s\/,"'()\-+*:]+/,
+  value: /[^\s\/,"'()+*:]+/,
 });
 
 // function spacelessCssTokens(str) {
@@ -202,11 +202,28 @@ const CssFunctions = {
     if (t.type !== "space") throw new Error("Expected space between values at position " + i);
     return false;
   }),
+  commaArray: args => args.filter((t, i) => {
+    if (!(i % 2)) return true;
+    if (t.type !== "op" && t.value !== ",") throw new Error("Expected ',' between values at position " + i);
+    return false;
+  }),
+  VarReverse: t => {
+    if (t.value !== "var" || t.type !== "fn")
+      return;
+    const args = CssFunctions.commaArray(t.args).map(CssFunctions.ValueReverse2);
+    return args.join("??");
+  },
+  UrlReverse: t => {
+    if (t.value !== "url" || t.type !== "fn")
+      return;
+    const arg = CssFunctions.ValueReverse2(t.args[0]);
+    return `url(${arg})`;
+  },
   ValueReverse2: t => {
     if (t.type !== "fn") return CssFunctions.ValueReverse(t.value);
     if (t.value === "calc") return CalcReverse(t.args); //todo here we can simplify calc()
-    if (t.value === "url") return `url(${t.args[0].value})`; //todo handle urls better?
-    if (t.value === "var") return VarReverse(t.args); //todo not implemented.
+    if (t.value === "url") return CssFunctions.UrlReverse(t);
+    if (t.value === "var") return CssFunctions.VarReverse(t);
 
   },
   ValueReverse: val => (val === "unset" || val === "initial") ? undefined : (val === "auto" ? "_" : (CssFunctions.CalcReverse(val) ?? CssFunctions.ColorReverse(val) ?? (val === "0px" ? "0" : val))),

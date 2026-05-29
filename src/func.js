@@ -67,7 +67,7 @@ const SF2 = (CsssNameArity, INTERPRETERS, POST) => {
 
 const Url = a => a.kind === "QUOTE" ? `url(${a.text})` : a?.name === "url" ? `url(${a.args[0].text})` : undefined;
 const Unset = a => a.text === "_" ? "unset" : undefined;
-const Name = a => a.kind === "WORD" && a.text.match(/^[a-z_][a-z_0-9-]*$/i)?.[0];
+const Name = a => a.kind === "WORD" ? a.text.match(/^[a-z_][a-z_0-9-]*$/i)?.[0] : undefined;
 const Quote = a => a.kind === "QUOTE" ? a.text : undefined;
 const Word = a => a.kind === "WORD" ? a.text : undefined;
 

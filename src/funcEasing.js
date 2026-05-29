@@ -150,15 +150,20 @@ const CURVES = {
 import { CsssFunctions, CsssPrimitives } from "./func.js";
 const { CssValuesToCsssTable, SF2 } = CsssFunctions;
 const { NumberInterpreter } = CsssPrimitives;
+import { CssFunctions } from "./funcReverse.js";
+const { VarReverse } = CssFunctions;
 
 const NativeEaseFunctions = CssValuesToCsssTable("ease|ease-in|ease-out|ease-in-out|linear");
 const StepFunctions = CssValuesToCsssTable("start|end|jump-start|jump-end|jump-both|jump-none");
+const ReverseEasingFuntions = Object.fromEntries(Object.entries(NativeEaseFunctions).map(([k, v]) => [v, k]));
+const ReverseStepFunctions = Object.fromEntries(Object.entries(StepFunctions).map(([k, v]) => [v, k]));
 
 const CubicBezier = SF2("cubicBezier/4", Array(4).fill(NumberInterpreter), (_, ar) => `cubic-bezier(${ar.join(",")})`);
 const Step = SF2("steps/1-2", [NumberInterpreter, a => StepFunctions[a.text]], (_, ar) => `steps(${ar.join(", ")})`);
 const NativeEasingFunction = a => NativeEaseFunctions[a.text] ?? CubicBezier(a) ?? Step(a);
 
 function easingFunction(a) {
+  if (a.kind === "VAR") return [`var(${a.text})`];
   const curve = CURVES[a.text];
   if (curve) return [`var(--transition-${a.text})`, { [`:root /*--transition-${a.text}*/`]: { [`--transition-${a.text}`]: curve } }];
   let ease = NativeEasingFunction(a);
@@ -168,5 +173,22 @@ function easingFunction(a) {
 export default {
   csss: {
     easingFunction
+  },
+  css: {
+    reverseEasingFunction: val => {
+      if (val.type === "fn" && val.value === "var" && val.args[0].value.startsWith("--transition-"))
+        return val.args[0].value.slice("--transition-".length);
+      if (val.type === "fn" && val.value === "var")
+        return VarReverse(val);
+      if (val.type === "value" && val.value in ReverseEasingFuntions)
+        return ReverseEasingFuntions[val.value];
+      if (val.value === "cubic-bezier" && val.type === "fn")
+        return `cubicBezier(${val.args.map(n => 1 - n).reverse().join(",")})`;
+      if (val.value === "steps" && val.type === "fn" && val.args.length === 3 && val.args[1].value.trim() === ",")
+        return `steps(${val.args[0].value},${ReverseStepFunctions[val.args[2].value]})`;
+      if (val.value === "steps" && val.type === "fn" && val.args.length === 1)
+        return `steps(${val.args[0].value})`;
+      throw new Error(`Unsupported easing function: ${val}`);
+    }
   }
 };

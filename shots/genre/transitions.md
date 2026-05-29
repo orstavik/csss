@@ -78,13 +78,13 @@ The sidebar transition is too rigid. Add a playful bounce-in-out easing over 2 s
 ```
 **after:**
 ```html
-…<div class="$transition(steps(5))">…</div>…
+…<div class="$transition(steps(5),1.5s)">…</div>…
 ```
 **css:**
 ```css
-.\$transition\(steps\(5\)\) {
+.\$transition\(steps\(5\)\,1\.5s\) {
   transition-timing-function: steps(5);
-  transition-duration: 0s;
+  transition-duration: 1.5s;
   transition-delay: 0s;
   transition-behavior: normal;
   transition-property: all;
@@ -95,17 +95,17 @@ The sidebar transition is too rigid. Add a playful bounce-in-out easing over 2 s
 **userInstruction:** Be explicit with the step transition's jump behavior by explicitly stating jump-end.
 **before:**
 ```html
-…<div class="$transition(steps(5))">…</div>…
+…<div class="$transition(steps(5),1.5s)">…</div>…
 ```
 **after:**
 ```html
-…<div class="$transition(steps(5,end))">…</div>…
+…<div class="$transition(steps(5,end),1.5s)">…</div>…
 ```
 **css:**
 ```css
-.\$transition\(steps\(5\,end\)\) {
+.\$transition\(steps\(5\,end\)\,1\.5s\) {
   transition-timing-function: steps(5, end);
-  transition-duration: 0s;
+  transition-duration: 1.5s;
   transition-delay: 0s;
   transition-behavior: normal;
   transition-property: all;
@@ -117,17 +117,17 @@ The sidebar transition is too rigid. Add a playful bounce-in-out easing over 2 s
 The step animation feels uneven because it skips the start/end states. Switch it to jump-both for a symmetrical sequence.
 **before:**
 ```html
-…<div class="$transition(steps(5,end))">…</div>…
+…<div class="$transition(steps(5,end),3s)">…</div>…
 ```
 **after:**
 ```html
-…<div class="$transition(steps(5,jumpBoth))">…</div>…
+…<div class="$transition(steps(5,jumpBoth),3s)">…</div>…
 ```
 **css:**
 ```css
-.\$transition\(steps\(5\,jumpBoth\)\) {
+.\$transition\(steps\(5\,jumpBoth\)\,3s\) {
   transition-timing-function: steps(5, jump-both);
-  transition-duration: 0s;
+  transition-duration: 3s;
   transition-delay: 0s;
   transition-behavior: normal;
   transition-property: all;

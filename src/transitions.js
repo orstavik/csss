@@ -2,8 +2,10 @@ import { CsssPrimitives, BadArgument } from "./func.js";
 const { Name, Time } = CsssPrimitives;
 import Easing from "./funcEasing.js";
 const { easingFunction } = Easing.csss;
+import { CssFunctions } from "./funcReverse.js";
+const { commaArray, parseCssValue, ValueReverse2 } = CssFunctions;
 
-const AllowDiscrete = a => a.text === "allowDiscrete" ? "allow-discrete" : undefined;
+const AllowDiscrete = a => (a.text === "allowDiscrete" || a.text === "normal") ? a.text : undefined;
 const TransitionProperty = a => Name(a)?.replaceAll(/[A-Z]/g, m => `-${m.toLowerCase()}`);
 
 const transition = ({ args }) => {
@@ -46,7 +48,6 @@ const transition = ({ args }) => {
   }
   return res;
 };
-import { CssFunctions } from "./funcReverse.js";
 
 export default {
   props: {
@@ -61,9 +62,8 @@ export default {
   },
   css: {
     transition: style => {
-
-      const toCamelCase = s => s.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
-
+      if (!style.transitionProperty || !style.transitionDuration)
+        return;
       let {
         transitionProperty,
         transitionDuration,
@@ -71,33 +71,26 @@ export default {
         transitionDelay,
         transitionBehavior,
       } = style;
-      if (!transitionProperty && !transitionDuration && !transitionTimingFunction && !transitionDelay && !transitionBehavior)
-        return;
-      debugger
+      transitionProperty &&= commaArray(parseCssValue(transitionProperty)).map(ValueReverse2);
+      transitionDuration &&= commaArray(parseCssValue(transitionDuration)).map(ValueReverse2);
+      transitionTimingFunction &&= commaArray(parseCssValue(transitionTimingFunction)).map(Easing.css.reverseEasingFunction);
+      transitionDelay &&= commaArray(parseCssValue(transitionDelay)).map(ValueReverse2);
+      transitionBehavior &&= commaArray(parseCssValue(transitionBehavior)).map(ValueReverse2);
 
-      const easing =
-        transitionTimingFunction?.match(/^var\(--transition-(.+)\)$/)?.[1]
-        ?? transitionTimingFunction;
-      const behavior =
-        transitionBehavior === "allow-discrete"
-          ? "allowDiscrete"
-          : undefined;
-
-      const properties =
-        transitionProperty && transitionProperty !== "all"
-          ? transitionProperty.split(",").map(toCamelCase)
-          : undefined;
-
-      const args = [];
-      if (easing && easing !== "ease") args.push(toCamelCase(easing));
-      if (transitionDuration && transitionDuration !== "0s") args.push(transitionDuration);
-      if (transitionDelay && transitionDelay !== "0s") args.push(transitionDelay);
-      if (behavior) args.push(behavior);
-      if (properties?.length) args.push(...properties);
-
-      return args.length
-        ? `$transition(${args.join(",")})`
-        : undefined;
+      const getTransitionValue = (i, ar) => ar[i] ?? ar[i % ar.length];
+      const tailsToProp = {};
+      for (let i = 0; i < transitionProperty.length; i++) {
+        const p = transitionProperty[i];
+        let tail = getTransitionValue(i, transitionDuration);
+        if (transitionDelay) tail += `,${getTransitionValue(i, transitionDelay)}`;
+        if (transitionTimingFunction) tail = `${getTransitionValue(i, transitionTimingFunction)},` + tail;
+        if (transitionBehavior) tail += `,${getTransitionValue(i, transitionBehavior)}`;
+        if (tail in tailsToProp)
+          tailsToProp[tail] += "," + p;
+        else
+          tailsToProp[tail] = p;
+      }
+      return Object.entries(tailsToProp).map(([a, b]) => `$transition(${a},${b})`).join("");
     }
   }
 };
