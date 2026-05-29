@@ -1,5 +1,6 @@
 **description:** Applies bounceInOut easing to margin and color transitions over 2s.
-**userInstruction:** The sidebar transition is too rigid. Add a playful bounce-in-out easing over 2 seconds specifically for margin and color changes.
+**userInstruction:**
+The sidebar transition is too rigid. Add a playful bounce-in-out easing over 2 seconds specifically for margin and color changes.
 **before:**
 ```html
 …<aside>…</aside>…
@@ -15,7 +16,11 @@
 }
 
 .\$transition\(bounceInOut\,2s\,margin\,color\) {
-  transition: margin var(--transition-bounceInOut) 2s, color var(--transition-bounceInOut) 2s;
+  transition-timing-function: var(--transition-bounceInOut), var(--transition-bounceInOut);
+  transition-duration: 2s, 2s;
+  transition-delay: 0s, 0s;
+  transition-behavior: normal, normal;
+  transition-property: margin, color;
 }
 ```
 
@@ -36,7 +41,11 @@
 }
 
 .\$transition\(backInOut\,1s\,1s\,transform\,opacity\) {
-  transition: transform var(--transition-backInOut) 1s 1s, opacity var(--transition-backInOut) 1s 1s;
+  transition-timing-function: var(--transition-backInOut), var(--transition-backInOut);
+  transition-duration: 1s, 1s;
+  transition-delay: 1s, 1s;
+  transition-behavior: normal, normal;
+  transition-property: transform, opacity;
 }
 ```
 
@@ -53,7 +62,11 @@
 **css:**
 ```css
 .\$transition\(easeIn\,2s\) {
-  transition: ease-in 2s;
+  transition-timing-function: ease-in;
+  transition-duration: 2s;
+  transition-delay: 0s;
+  transition-behavior: normal;
+  transition-property: all;
 }
 ```
 
@@ -70,7 +83,11 @@
 **css:**
 ```css
 .\$transition\(steps\(5\)\) {
-  transition: steps(5);
+  transition-timing-function: steps(5);
+  transition-duration: 0s;
+  transition-delay: 0s;
+  transition-behavior: normal;
+  transition-property: all;
 }
 ```
 
@@ -87,12 +104,17 @@
 **css:**
 ```css
 .\$transition\(steps\(5\,end\)\) {
-  transition: steps(5, end);
+  transition-timing-function: steps(5, end);
+  transition-duration: 0s;
+  transition-delay: 0s;
+  transition-behavior: normal;
+  transition-property: all;
 }
 ```
 
 **description:** Creates a 5-step transition with jump-both timing.
-**userInstruction:** The step animation feels uneven because it skips the start/end states. Switch it to jump-both for a symmetrical sequence.
+**userInstruction:**
+The step animation feels uneven because it skips the start/end states. Switch it to jump-both for a symmetrical sequence.
 **before:**
 ```html
 …<div class="$transition(steps(5,end))">…</div>…
@@ -104,12 +126,17 @@
 **css:**
 ```css
 .\$transition\(steps\(5\,jumpBoth\)\) {
-  transition: steps(5, jump-both);
+  transition-timing-function: steps(5, jump-both);
+  transition-duration: 0s;
+  transition-delay: 0s;
+  transition-behavior: normal;
+  transition-property: all;
 }
 ```
 
 **description:** Combines two custom easing functions for different properties in one rule.
-**userInstruction:** The card needs complex micro-interactions: use back-in-out for entry properties (transform/opacity) and bounce-in-out for interaction properties (margin/color).
+**userInstruction:**
+The card needs complex micro-interactions: use back-in-out for entry properties (transform/opacity) and bounce-in-out for interaction properties (margin/color).
 **before:**
 ```html
 …<article>…</article>…
@@ -129,6 +156,10 @@
 }
 
 .\$transition\(backInOut\,1s\,1s\,transform\,opacity\)\$transition\(bounceInOut\,2s\,margin\,color\) {
-  transition: transform var(--transition-backInOut) 1s 1s, opacity var(--transition-backInOut) 1s 1s, margin var(--transition-bounceInOut) 2s, color var(--transition-bounceInOut) 2s;
+  transition-timing-function: var(--transition-backInOut), var(--transition-backInOut), var(--transition-bounceInOut), var(--transition-bounceInOut);
+  transition-duration: 1s, 1s, 2s, 2s;
+  transition-delay: 1s, 1s, 0s, 0s;
+  transition-behavior: normal, normal;
+  transition-property: transform, opacity, margin, color;
 }
 ```
