@@ -1,5 +1,52 @@
 import { WebColors } from "./Color.js";
 
+const MakeTokenizer = (TypeRegexMap) => {
+  const rxStr = Object.entries(TypeRegexMap)
+    .map(([name, rx]) => `(?<${name}>${rx.source})`)
+    .join("|");
+  return input => {
+    const res = [];
+    const RX = new RegExp(rxStr, "g");
+    for (const match of input.matchAll(RX)) {
+      const [type] = Object.entries(match.groups).find(([_, v]) => v !== undefined);
+      res.push({ type, value: match[0] });
+    }
+    return res;
+  };
+};
+
+function parseParens(tokens, cursor) {
+  const res = [];
+  while (cursor.i < tokens.length) {
+    let t = tokens[cursor.i];
+    cursor.i++;
+    if (t.type === "parenEnd")
+      return res;
+    if (t.type === "parenStart")
+      t = { type: "fn", value: t.value.slice(0, -1), args: parseParens(tokens, cursor) };
+    res.push(t);
+  }
+  return res;
+}
+
+const Parser = (TypeRegexMap) => {
+  const tokenizer = MakeTokenizer(TypeRegexMap);
+  return input => {
+    input = input.trim();
+    const tokens = tokenizer(input);
+    return parseParens(tokens, { i: 0 });
+  };
+};
+
+const parseCssValue = Parser({
+  op: /(?:\s+[+-]\s+)|(?:\s*[\/*,:]\s*)/,
+  space: /\s+/,
+  quote: /("(\\.|[^"\\])*"|'(\\.|[^'\\])*')/,
+  parenStart: /[a-zA-Z0-9_-]*\(/,
+  parenEnd: /\)/,
+  value: /[^\s\/,"'()\-+*:]+/,
+});
+
 // function spacelessCssTokens(str) {
 //   // a) Replace spaces inside quotes with '+', ignoring escaped quotes
 //   str = str.trim().replaceAll(/(["'])(?:\\.|(?!\1)[^\\])*\1/g, m => m.replaceAll(' ', '+'));
@@ -148,6 +195,19 @@ const CssFunctions = {
     if (val.startsWith("#")) return val;
     if (/^[a-z]+$/i.test(val) && val.toLowerCase() in WebColors) return "#" + val;
     return undefined;
+  },
+  parseCssValue,
+  spaceArray: args => args.filter((t, i) => {
+    if (!(i % 2)) return true;
+    if (t.type !== "space") throw new Error("Expected space between values at position " + i);
+    return false;
+  }),
+  ValueReverse2: t => {
+    if (t.type !== "fn") return CssFunctions.ValueReverse(t.value);
+    if (t.value === "calc") return CalcReverse(t.args); //todo here we can simplify calc()
+    if (t.value === "url") return `url(${t.args[0].value})`; //todo handle urls better?
+    if (t.value === "var") return VarReverse(t.args); //todo not implemented.
+
   },
   ValueReverse: val => (val === "unset" || val === "initial") ? undefined : (val === "auto" ? "_" : (CssFunctions.CalcReverse(val) ?? CssFunctions.ColorReverse(val) ?? (val === "0px" ? "0" : val))),
   DisplayMode: (style, displayValue, LowerName, UpperName) => {
